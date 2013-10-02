@@ -7,14 +7,12 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         activity: null
     };
 
-    $routeParams.assets =  ($routeParams.assets && $routeParams.assets.split(',')) || []  ;
-
-    // Formatage des id de l'url en objet { 'id ' : int } pour pouvoir binder au ng-options du select
-    // et setter des valeurs par defaut
-    // TODO: récupérer les objets entier en base, car on a besoin des attributs pour renseigner les valeurs par defauts
-    for (var i = 0; i < $routeParams.assets.length; i++) {
-         $scope.report.assets.push( { id: $routeParams.assets[i]*1 });
-    };
+    if($routeParams.assets){
+        Smartgeo.findAssetsByGuids($scope.site, $routeParams.assets.split(','), function(assets){
+            $scope.report.assets = assets ;
+            $scope.$apply();
+        });
+    }
 
     $scope.loadAssets = function(){
         Smartgeo.findAssetsByOkey($scope.site, $scope.report.activity.okeys[0], function(assets){
