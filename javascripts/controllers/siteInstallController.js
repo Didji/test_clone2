@@ -3,7 +3,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
     $http.get(Smartgeo.get('url')+"gi.maintenance.mobility.site.json")
         .success(function(sites){
-            $scope.sites = JSON.parse(localStorage.sites) ;
+            $scope.sites = JSON.parse(localStorage.sites || '{}') ;
             angular.extend($scope.sites, sites);
 
             for (var i = 0; i < sites.length; i++) {
