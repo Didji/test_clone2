@@ -1,0 +1,19 @@
+.consultation-panel {
+    background-color: #3A3A3A;
+    width: 300px;
+    display: block;
+    height: 100%;
+    position: absolute;
+    right: -300px;
+    z-index: 10;
+    top: 0;
+    -webkit-transition: opacity 0.3s, -webkit-transform 0.1s 0.3s;
+    -moz-transition: opacity 0.3s, -moz-transform 0.1s 0.3s;
+    transition: opacity 0.3s, transform 0.1s 0.3s;
+}
+
+.consultation-panel.open {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
