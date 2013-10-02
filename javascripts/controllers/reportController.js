@@ -32,6 +32,11 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     }
 
     $scope.sendReport = function (event) {
+        for (var i = 0; i < $scope.report.assets.length; i++) {
+            $scope.report.assets[i] = $scope.report.assets[i].id ;
+        }
+
+        // TODO: que faire si la liste des champs est vide ? ie $scope.report.field === {}
         $scope.report.activity = $scope.report.activity.id ;
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
             .success(function(){
