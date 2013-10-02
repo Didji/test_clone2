@@ -38,11 +38,6 @@
             </div>
 
         </div>
-        <div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
-            <h3>Consultation <span ng-click="close()">[x]</span></h3>
-            <ul>
-                <li ng-repeat='asset in assets'>{{asset.label}}</li>
-            </ul>
-        </div>
+        <div ng-include="'partials/consultation.html'"></div>
     </div>
 </div>

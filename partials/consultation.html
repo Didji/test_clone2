@@ -1,0 +1,18 @@
+<div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
+    <h3>Consultation <span ng-click="close()">[x]</span></h3>
+    <ul>
+        <li ng-repeat='asset in assets'>
+            <p>{{site.metamodel[asset.okey].label}} {{asset.label}}</p>
+            <ul>
+                <li ng-repeat='tab in site.metamodel[asset.okey].tabs'>
+                    {{tab.label}}
+                    <ul>
+                        <li ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
+                            {{field.label}} : {{asset.attributes[field.key]}}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
