@@ -1,5 +1,11 @@
 function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http){
+
     $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
+
+    $scope.report = {
+        assets: [],
+        fields: {}
+    };
 
     $scope.loadAssets = function(){
         Smartgeo.findAssetsByOkey($scope.site, $scope.report.activity.okeys[0], function(assets){
@@ -16,6 +22,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             };
             break;
         }
+    }
+
+    if($routeParams.assets){
+        $scope.report.assets = $routeParams.assets.split(',');
     }
 
     if($scope.report && $scope.report.activity){
