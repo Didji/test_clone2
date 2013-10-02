@@ -1,5 +1,5 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
-    $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
+    $rootScope.site = $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
 
     $scope.mapDiv = document.getElementById('smartgeo-map') ;
     $scope.mapDiv.style.height = window.innerHeight+"px";
@@ -97,7 +97,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             return false;
         }
 
-        request += "SELECT * FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
+        request += "SELECT asset, label FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
         request += "AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
         request += "OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
 
@@ -125,9 +125,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                         return false;
                     }
 
-                    var assets = [];
+                    var assets = [], asset;
                     for (var i = 0; i < results.rows.length; i++) {
-                        assets.push(results.rows.item(i));
+                        asset = JSON.parse(results.rows.item(i).asset);
+                        asset.label = results.rows.item(i).label ;
+                        assets.push(asset);
                     }
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
 

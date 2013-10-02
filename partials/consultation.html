@@ -1,0 +1,29 @@
+<div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
+    <p><a href="#" id="trigger2">Menu</a></p>
+    <h3>Consultation <span ng-click="close()">[x]</span></h3>
+    <ul>
+        <li ng-repeat='asset in assets'>
+            <p>{{site.metamodel[asset.okey].label}} {{asset.label}}</p>
+            <ul>
+                <li ng-repeat='tab in site.metamodel[asset.okey].tabs'>
+                    {{tab.label}}
+                    <ul>
+                        <li ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
+                            {{field.label}} : {{asset.attributes[field.key]}}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <button ng-click="asset.showActivities = !asset.showActivities">Compte rendu {{asset.showActivities}}</button>
+            <div ng-show='asset.showActivities'>
+                <ul>
+                    <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey'>
+                        <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
+                    </li>
+                </ul>
+            </div>
+            <button ng-click="locateAsset(asset)">Localiser</button>
+            <button ng-click="gotoAsset(asset)">S'y rendre</button>
+        </li>
+    </ul>
+</div>

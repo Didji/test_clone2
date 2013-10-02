@@ -33,18 +33,11 @@
         <div class="scroller">
             <div class="scroller-inner">
                 <p><a href="#" id="trigger">Menu</a></p>
-                <p><a href="#" id="trigger2">Menu</a></p>
-                <div ng-controller="consultationController">
-                    <h3>Consultation</h3>
-                    <ul>
-                        <li ng-repeat='asset in assets'>{{asset.label}}</li>
-                    </ul>
-                </div>
                 <span ng-controller="mapController"><div id="smartgeo-map" ></div></span>
             </div>
+
+        </div>
+        <div ng-include="'partials/consultation.html'">
         </div>
     </div>
 </div>
-
-
-
