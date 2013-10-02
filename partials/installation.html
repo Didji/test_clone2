@@ -1,0 +1,27 @@
+<div class="content" ng-controller="siteInstallController">
+    <h1>Installation de {{siteId}}</h1>
+    <hr>
+    <p ng-show='!site.installed'>
+        Installation de {{site.metamodel[currentInstalledOkey].label}} en cours
+    </p>
+    <span ng-show='site.installed'>
+        <a href="#/map/{{site.id}}">Installation terminée !</a>
+    </span>
+    <hr>
+    <p>metamodel : {{site.metamodel.length}}</p>
+    <p>activities : {{site.activities.length}}</p>
+    <p>symbology : {{site.symbology.length}}</p>
+    <p>timestamp : {{site.timestamp}}</p>
+    <hr>
+    <span ng-show='site.EXTERNAL_TILEURL'>
+        external tile url : {{site.EXTERNAL_TILEURL}}
+        <hr>
+    </span>
+        {{site.extent}}
+    <hr>
+    <p ng-repeat="(okey, stat) in site.number">{{site.metamodel[okey].label}} : {{stat}}</p>
+    <hr>
+    <span ng-show='site.installed'>
+        <a href="#/map/{{site.id}}">Installation terminée !</a>
+    </span>
+</div>

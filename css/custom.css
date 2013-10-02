@@ -1,0 +1,163 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+@font-face {
+    font-weight: normal;
+    font-style: normal;
+    font-family: 'codropsicons';
+    src:url('../fonts/codropsicons/codropsicons.eot');
+    src:url('../fonts/codropsicons/codropsicons.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/codropsicons/codropsicons.woff') format('woff'),
+        url('../fonts/codropsicons/codropsicons.ttf') format('truetype'),
+        url('../fonts/codropsicons/codropsicons.svg#codropsicons') format('svg');
+}
+
+.add-more-object-link{
+color: rgb(187, 187, 187);
+font-size: 0.90em !important;
+}
+#trigger, #trigger2{
+display: block;
+position: fixed;
+bottom: 10px;
+width: 20px;
+height: 40px;
+
+z-index: 7;
+color: transparent;
+border: 1px solid rgb(173, 173, 173);
+
+}
+#trigger{
+    box-shadow: -1px 0px 5px 1px rgba(0, 0, 0, 0.43);
+    left : 0px;
+    border-left : none;
+border-radius: 0 8px 8px 0;
+background: rgb(204,204,204); /* Old browsers */
+background: -moz-linear-gradient(left, rgba(204,204,204,1) 0%, rgba(238,238,238,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(204,204,204,1)), color-stop(100%,rgba(238,238,238,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left, rgba(204,204,204,1) 0%,rgba(238,238,238,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left, rgba(204,204,204,1) 0%,rgba(238,238,238,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left, rgba(204,204,204,1) 0%,rgba(238,238,238,1) 100%); /* IE10+ */
+background: linear-gradient(to right, rgba(204,204,204,1) 0%,rgba(238,238,238,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#eeeeee',GradientType=1 ); /* IE6-9 */
+}
+#trigger2{
+    box-shadow: 1px 0px 5px 1px rgba(0, 0, 0, 0.43);
+    border-right : none;
+    right : 0px;
+border-radius:  8px 0 0 8px ;
+background: rgb(238,238,238); /* Old browsers */
+background: -moz-linear-gradient(left, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,238,238,1)), color-stop(100%,rgba(204,204,204,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* IE10+ */
+background: linear-gradient(to right, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=1 ); /* IE6-9 */
+}
+a.level3{
+    margin-left: 115px;
+    font-size: 15px!important;
+}
+
+a.level2{
+    margin-left : 50px;
+}
+a.level1{
+    margin-left: 0px;
+}
+
+a.level0{
+    margin-left: -30px;
+}
+
+.level3 img{
+    margin: -3px 4px -3px -3px;
+    width: 16px;
+}
+#rightSidebar{
+
+position: absolute;
+top: 0;
+right: -300px;
+width: 300px;
+height: 100%;
+}
+
+.tree li.level2, .tree li.level3{
+    background-image: url(../images/tree.png);
+background-repeat: no-repeat;
+background-size: 119px;
+background-position-x: 10%;
+}
+
+span.plus{
+    color : #fc9e49;
+
+display: block ;
+border: 1px solid;
+border-radius: 20px;
+width: 20px;
+height: 20px;
+text-align: center;
+line-height: 17px;
+box-sizing: border-box;
+}
+
+span.chevron{
+    color : #fc9e49;
+margin-top: 5px;
+float: right;
+border: 1px solid;
+border-radius: 20px;
+width: 20px;
+height: 20px;
+text-align: center;
+line-height: 17px;
+box-sizing: border-box;
+}
+
+.add-more-object-link.level3{
+    padding-left: 4.50em !important;
+}
+
+
+
+#consultation_in_progress a{
+    color :#fc9e49 ;
+
+    text-shadow: 0 0 10px #e87511 ;
+}
+
+.logo_gi{
+    width: 32px;
+margin-right: 15px;
+margin-bottom: -10px;
+}
+
+.demo_input {
+    background: rgb(39, 39, 39);
+border: 1px solid rgb(39, 39, 39);
+color: white;
+text-align: center;
+margin: 18px auto;
+width: 250px;
+display: block;
+padding: 7px;
+font-size: 1.2em;
+}
+body {
+    background: #34495e;
+    color: #fff;
+    font-weight: 300;
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #f7f7f7;
+    outline: none;
+}
+
+a:hover, a:focus {
+    color: #fff;
+}

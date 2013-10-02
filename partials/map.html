@@ -1,0 +1,50 @@
+
+<div class="container" ng-controller="menuController">
+    <div class="mp-pusher" id="mp-pusher">
+        <nav id="mp-menu" class="mp-menu">
+            <div class="mp-level">
+                <h2><img class="logo_gi" src="images/logo.png" alt="">Smartgeo Mobile</h2>
+                <ul>
+                    <li>
+                        <a class="icon icon-location" href="#">Consultation</a>
+                    </li>
+                    <li>
+                        <a href="#">Compte rendu</a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#">retour</a>
+                            <ul>
+                                <li ng-repeat='activity in site.activities'>
+                                    <a class="icon icon-location" style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">{{activity.label}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="icon icon-arrow-left">
+                        <a class="icon icon-calendar" href="#">Planning</a>
+                    </li>
+
+                    <li><a class="icon icon-cloud" href="#">Synchronisation</a></li>
+                    <li><a class="icon icon-settings" href="#">Paramètres</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="scroller">
+            <div class="scroller-inner">
+                <p><a href="#" id="trigger">Menu</a></p>
+                <p><a href="#" id="trigger2">Menu</a></p>
+                <div ng-controller="consultationController">
+                    <h3>Consultation</h3>
+                    <ul>
+                        <li ng-repeat='asset in assets'>{{asset.label}}</li>
+                    </ul>
+                </div>
+                <span ng-controller="mapController"><div id="smartgeo-map" ></div></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,27 @@
+<div class="content" ng-controller="siteListController">
+    <span>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Installé ?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="site in sites">
+                    <td>
+                        <a ng-show="site.installed" href="#/map/{{site.id}}">{{site.label}}</a>
+                        <a ng-show="!site.installed">{{site.label}}</a>
+                    </td>
+                    <td>
+                        <a href="#" ng-show="site.installed">désinstaller</a>
+                        <a href="#/sites/install/{{site.id}}" ng-click="install(site.id)" ng-show="!site.installed">installer</a>
+                    </td>
+                    <td>
+                        <a href="#" ng-click="update(site.id)" ng-show="site.installed">mettre à jour</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </span>
+</div>

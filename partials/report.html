@@ -1,0 +1,40 @@
+<form ng-controller="reportController">
+    <h3>Compte rendu</h3>
+    <select ng-model="report.assets"
+            ng-options="asset.id as asset.label for asset in assets" multiple>
+    </select>
+    <select ng-change="loadAssets()"
+           ng-model="report.activity"
+           ng-options="activity.label for activity in site.activities">
+    </select>
+    <span ng-repeat="tab in report.activity.tabs">
+        <h3>{{tab.label}}</h3>
+        <span ng-repeat="field in tab.fields">
+            <h4>{{field.label}}</h4>
+            <div class="animate-switch-container" ng-switch on="field.type">
+                <div ng-switch-when="D">
+                    <input type="date" ng-model = "report.fields[field.id]"></input>
+                </div>
+                <div ng-switch-when="T">
+                    <input type="time" ng-model = "report.fields[field.id]"></input>
+                </div>
+                <div ng-switch-when="L">
+                    <select
+                        ng-model = "report.fields[field.id]"
+                        ng-options = "option.value as option.label for option in field.options">
+                    </select>
+                </div>
+                <div ng-switch-when="O">
+                    <input type="checkbox"
+                        ng-model="report.fields[field.id]"
+                        ng-true-value="Y"
+                        ng-false-value="N"></input>
+                </div>
+                <div ng-switch-default>
+                    <input type="text" ng-model="report.fields[field.id]"></input>
+                </div>
+            </div>
+        </span>
+    </span>
+    <input type="button"  ng-click="sendReport($event)"  value="enregistrer"></input>
+</form>

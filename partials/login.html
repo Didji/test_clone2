@@ -1,0 +1,6 @@
+<form ng-submit="login()"  ng-controller="authController">
+    <input id='username' type='text' ng-model="username" name='username' placeholder='Utilisateur' />
+    <input id='password' type='password' ng-model="pwd" name='password' placeholder='Mot de passe'/>
+    <input type="submit" value="Connexion"></input>
+    <a ng-click="setGimapUrl()">changer url ({{gimapUrl}})</a>
+</form>
