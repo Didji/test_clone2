@@ -53,16 +53,19 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
                     $scope.createZones();
                     $scope.createZonesDatabases(function(){
-                        $scope.installAssets(stats, function(){
-                            $scope.site.installed = true ;
-                            var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
-                                toBeStoredSites[$routeParams.site] = $scope.site;
-                            localStorage.sites = JSON.stringify(toBeStoredSites);
-                            $location.path('/map/'+$routeParams.site);
-                        });
+                        $scope.installAssets(stats,$scope.endInstall);
                     });
                 });
     });
+
+    $scope.endInstall = function(){
+        $scope.site.installed = true ;
+        var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
+            toBeStoredSites[$routeParams.site] = $scope.site;
+        localStorage.sites = JSON.stringify(toBeStoredSites);
+        $location.path('/map/'+$routeParams.site);
+        $scope.$apply();
+    };
 
     $scope.installAssets = function(stats, callback){
         if(!stats.length){

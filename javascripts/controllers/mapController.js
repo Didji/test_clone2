@@ -146,7 +146,6 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
         $scope.unHighlightAsset(asset);
     });
-
     $scope.$on("ZOOM_ON_ASSET", function(event, asset){
         $scope.zoomOnAsset(asset);
     });
@@ -160,7 +159,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
-        customClickHandler = customClickHandler || function(){};
+        customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
 
         if($scope.assetsMarkers[asset.guid]){
             $scope.leafletMap.removeLayer($scope.assetsMarkers[asset.guid]);
