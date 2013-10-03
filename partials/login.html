@@ -1,6 +1,25 @@
-<form ng-submit="login()"  ng-controller="authController">
-    <input id='username' type='text' ng-model="username" name='username' placeholder='Utilisateur' />
-    <input id='password' type='password' ng-model="pwd" name='password' placeholder='Mot de passe'/>
-    <input type="submit" value="Connexion"></input>
-    <a ng-click="setGimapUrl()">changer url ({{gimapUrl}})</a>
-</form>
+<div ng-controller="authController">
+    <form id="login" ng-submit="login()"  >
+        <p>
+            <input id='username' type='text' ng-model="username" name='username' placeholder='Utilisateur' />
+        </p>
+        <p>
+        <input id='password' type='password' ng-model="pwd" name='password' placeholder='Mot de passe'/>
+        </p>
+        <p>
+        <button ng-disabled="!readyToLog">{{logMessage}}</button>
+        </p>
+    </form>
+    <span class="icon icon-settings" ng-click="showParameters()">Paramètres</span>
+    <div ng-show="parametersVisible">
+        <p>
+            <a ng-click="setGimapUrl()">Changer de serveur ({{gimapUrl}})</a>
+        </p>
+        <p>
+            <a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a>
+        </p>
+        <p>
+            <button ng-click="hideParameters()">Fermer</button>
+        </p>
+    </div>
+</div>

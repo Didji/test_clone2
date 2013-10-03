@@ -342,7 +342,7 @@ angular.module('smartgeomobile', ['ngRoute'])
                 }, Smartgeo.log);
             },
 
-            // GETTER AND SETTED
+            // GETTER AND SETTER
             get: function(parameter){
                 return this[parameter] || localStorage[parameter];
             },
