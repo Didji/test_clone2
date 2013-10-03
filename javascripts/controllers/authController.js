@@ -71,6 +71,9 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     $scope.setGimapUrl = function(){
         $scope.gimapUrl = Smartgeo.setGimapUrl();
         $scope.ping();
+        
+        localStorage.sites = '{}';
+        localStorage.knownUsers = '{}';
     };
     $scope.parametersVisible = false;
     
