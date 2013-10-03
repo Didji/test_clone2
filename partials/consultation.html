@@ -1,5 +1,5 @@
 <div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
-    <p><a href="#" id="trigger2">Menu</a></p>
+    <span id="trigger2" ng-click='toggleConsultationPanel()'>Menu</span>
     <h3>Consultation <span ng-click="close()">[x]</span></h3>
     <ul>
         <li ng-repeat='asset in assets'>

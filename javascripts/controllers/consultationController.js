@@ -14,4 +14,8 @@ function consultationController($scope, $rootScope){
         $rootScope.$broadcast("LOCATE_ASSET", asset);
     };
 
+    $scope.toggleConsultationPanel = function(){
+        $scope.state = $scope.state === 'open' ? 'close' : 'open' ;
+    };
+
 }
