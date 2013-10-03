@@ -30,7 +30,8 @@ html, body {
     right: -300px;
     z-index: 1000;
     top: 0;
-    color: white;
+    color: gray;
+    padding: 0 20px 0;
     -webkit-transition:  -webkit-transform 0.1s 0.3s;
     transition:  transform 0.1s 0.3s;
 }

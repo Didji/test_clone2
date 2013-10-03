@@ -4,6 +4,11 @@ function consultationController($scope, $rootScope){
         $scope.assets = assets;
         $scope.state  = 'open';
         $scope.$apply();
+
+        $(".collapse").collapse({
+            toggle: false
+        });
+
     });
 
     $scope.close = function(){
@@ -16,6 +21,12 @@ function consultationController($scope, $rootScope){
 
     $scope.toggleConsultationPanel = function(){
         $scope.state = $scope.state === 'open' ? 'close' : 'open' ;
+    };
+
+    $scope.toggleCollapse = function(event){
+        // console.log($(event.currentTarget));
+        event.preventDefault();
+        // $(event.currentTarget).collapse('toggle');
     };
 
 }

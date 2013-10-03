@@ -1,6 +1,36 @@
 <div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
-    <span id="trigger2" ng-click='toggleConsultationPanel()'>Menu</span>
+    <!-- <span id="trigger2" ng-click='toggleConsultationPanel()'>Menu</span> -->
     <h3>Consultation <span ng-click="close()">[x]</span></h3>
+
+
+
+    <div ng-repeat='asset in assets' class="panel-group" id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{$index}}"  ng-click="toggleCollapse($event)">
+              {{site.metamodel[asset.okey].label}} {{asset.label}}
+            </a>
+          </h4>
+        </div>
+        <div id="collapse-{{$index}}" class="panel-collapse collapse">
+          <div class="panel-body">
+              <ul>
+                <li ng-repeat='tab in site.metamodel[asset.okey].tabs'>
+                    {{tab.label}}
+                    <ul>
+                        <li ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
+                            {{field.label}} : {{asset.attributes[field.key]}}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!--
     <ul>
         <li ng-repeat='asset in assets'>
             <p>{{site.metamodel[asset.okey].label}} {{asset.label}}</p>
@@ -25,5 +55,6 @@
             <button ng-click="locateAsset(asset)">Localiser</button>
             <button ng-click="gotoAsset(asset)">S'y rendre</button>
         </li>
-    </ul>
+    </ul> -->
 </div>
+
