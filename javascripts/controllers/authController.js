@@ -2,19 +2,18 @@
  * Controlleur d'authentification
  */
 function authController($scope, $http, $location, Smartgeo, SQLite){
-    var lastuser = JSON.parse(localStorage.user || '{"username":"","pwd":"",savePwd:true}');
+    var lastuser = JSON.parse(localStorage.user || '{"username":"","pwd":"","savePwd":true}');
     $scope.username = lastuser.username;
     $scope.pwd = lastuser.pwd;
     $scope.readyToLog = false;
     $scope.logMessage = "Vérification du serveur";
-   
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
     $scope.ping = function() {
         $scope.readyToLog = false;
         $scope.logMessage = "Vérification du serveur";
-        
+
         var url  = Smartgeo.get('url')+"global.dcnx.json";
         $http.post(url)
             .success(function(data){
@@ -41,7 +40,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 var knownUsers = JSON.parse(localStorage.knownUsers || '{}');
                 knownUsers[$scope.username] = $scope.pwd;
                 localStorage.knownUsers = JSON.stringify(knownUsers);
-                
+
                 if(lastuser.pwd !== $scope.pwd) {
                     var savePwd  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
                     lastuser = {
@@ -51,7 +50,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 }
                 lastuser.username = $scope.username;
                 localStorage.user = JSON.stringify(lastuser);
-                
+
         $location.path('sites');
             }).error(loginFailed);
     }
@@ -63,8 +62,8 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
             loginFailed();
         }
     }
-    
-    
+
+
     $scope.login = function(){
         Smartgeo.get('online') === 'true' ? remoteLogin() : localLogin();
     };
@@ -76,7 +75,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
         localStorage.knownUsers = '{}';
     };
     $scope.parametersVisible = false;
-    
+
     $scope.showParameters = function() {
         $scope.parametersVisible = true;
     };
@@ -87,7 +86,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
         $scope.username = $scope.pwd = '';
         localStorage.user = '{"username":"","pwd":"",savePwd:true}';
     };
-    
-    
+
+
     $scope.gimapUrl = Smartgeo.get('url') ;
 }
