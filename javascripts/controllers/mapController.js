@@ -97,13 +97,13 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             return false;
         }
 
-        request += "SELECT asset, label FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
+        request += "SELECT asset, label, geometry FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
         request += "AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
         request += "OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
 
         var okeysFilter = [];
 
-        request += "LIMIT 0,10 ";
+        request += " LIMIT 0,10 ";
 
         $(circle._path).fadeOut(1500, function() {
             $scope.leafletMap.removeLayer(circle);
@@ -125,10 +125,12 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                         return false;
                     }
 
-                    var assets = [], asset;
+                    var assets = [], asset, asset_;
                     for (var i = 0; i < results.rows.length; i++) {
-                        asset = JSON.parse(results.rows.item(i).asset);
-                        asset.label = results.rows.item(i).label ;
+                        asset_ = results.rows.item(i)
+                        asset  = JSON.parse(asset_.asset);
+                        asset.label = asset_.label ;
+                        asset.geometry = JSON.parse(asset_.geometry) ;
                         assets.push(asset);
                     }
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
@@ -138,5 +140,46 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         return false;
     }, $scope);
 
-}
+    $scope.$on("LOCATE_ASSET", function(event, asset){
+        $scope.highlightAsset(asset);
+    });
 
+    $scope.invalidateMapSize = function(){
+        setTimeout(function() {
+            $scope.leafletMap.invalidateSize();
+        }, 10);
+    };
+
+    $scope.highlightAsset = function(asset, customMarker, customClickHandler){
+
+        customClickHandler = customClickHandler || function(){};
+
+        if($scope.consultationMarker){
+            $scope.leafletMap.removeLayer($scope.consultationMarker);
+        }
+
+        var center ;
+
+        switch (asset.geometry.type) {
+            case "Point":
+                var coords = asset.geometry.coordinates ;
+                $scope.consultationMarker = customMarker || L.marker([coords[1], coords[0]]);
+                center = $scope.consultationMarker.getLatLng();
+                break;
+            case "LineString":
+                $scope.consultationMarker = customMarker || L.geoJson(asset.geometry,  {
+                        style : { color: '#fc9e49', opacity:0.9, weight: 7 }
+                    });
+                center = $scope.consultationMarker.getBounds().getCenter();
+                break;
+            default:
+                console.log('Geometrie non supportée');
+        }
+
+        $scope.consultationMarker.on('click', customClickHandler);
+        $scope.consultationMarker.addTo($scope.leafletMap);
+        $scope.leafletMap.panTo(center).setZoom(18);
+        $scope.invalidateMapSize();
+
+    };
+}

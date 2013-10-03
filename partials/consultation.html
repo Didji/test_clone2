@@ -14,7 +14,7 @@
                     </ul>
                 </li>
             </ul>
-            <button ng-click="asset.showActivities = !asset.showActivities">Compte rendu {{asset.showActivities}}</button>
+            <button ng-click="asset.showActivities = !asset.showActivities">Compte rendu</button>
             <div ng-show='asset.showActivities'>
                 <ul>
                     <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey'>

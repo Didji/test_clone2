@@ -9,4 +9,9 @@ function consultationController($scope, $rootScope){
     $scope.close = function(){
         $scope.state = 'close' ;
     };
+
+    $scope.locateAsset = function(asset){
+        $rootScope.$broadcast("LOCATE_ASSET", asset);
+    };
+
 }
