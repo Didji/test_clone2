@@ -2,6 +2,9 @@
  * Controlleur d'authentification
  */
 function authController($scope, $http, $location, Smartgeo, SQLite){
+
+    $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+
     var lastuser = JSON.parse(localStorage.user || '{"username":"","pwd":"","savePwd":true}');
     $scope.username = lastuser.username;
     $scope.pwd = lastuser.pwd;
@@ -50,6 +53,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 }
                 lastuser.username = $scope.username;
                 localStorage.user = JSON.stringify(lastuser);
+                console.log(localStorage.user);
 
         $location.path('sites');
             }).error(loginFailed);
@@ -84,9 +88,8 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     };
     $scope.forgetPassword = function() {
         $scope.username = $scope.pwd = '';
-        localStorage.user = '{"username":"","pwd":"",savePwd:true}';
+        localStorage.user = '{"username":"","pwd":"","savePwd":true}';
     };
-
 
     $scope.gimapUrl = Smartgeo.get('url') ;
 }
