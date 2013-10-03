@@ -2,10 +2,9 @@
     <!-- <span id="trigger2" ng-click='toggleConsultationPanel()'>Menu</span> -->
     <h3>Consultation <span ng-click="close()">[x]</span></h3>
 
+    <div class="panel-group" id="accordion">
+      <div ng-repeat='asset in assets' class="panel panel-default">
 
-
-    <div ng-repeat='asset in assets' class="panel-group" id="accordion">
-      <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{$index}}"  ng-click="toggleCollapse($event)">
@@ -13,48 +12,45 @@
             </a>
           </h4>
         </div>
-        <div id="collapse-{{$index}}" class="panel-collapse collapse">
-          <div class="panel-body">
-              <ul>
-                <li ng-repeat='tab in site.metamodel[asset.okey].tabs'>
-                    {{tab.label}}
-                    <ul>
-                        <li ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
-                            {{field.label}} : {{asset.attributes[field.key]}}
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
 
-<!--
-    <ul>
-        <li ng-repeat='asset in assets'>
-            <p>{{site.metamodel[asset.okey].label}} {{asset.label}}</p>
-            <ul>
-                <li ng-repeat='tab in site.metamodel[asset.okey].tabs'>
-                    {{tab.label}}
-                    <ul>
-                        <li ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
-                            {{field.label}} : {{asset.attributes[field.key]}}
+        <div id="collapse-{{$index}}" class="panel-collapse collapse">
+            <div class="panel-body">
+                <span ng-repeat='tab in site.metamodel[asset.okey].tabs'>
+                <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
+                    <h5>{{tab.label}}</h5>
+                    <table style="font-size: 0.8em;" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
+                                <td >{{field.label}}</td>
+                                <td>{{asset.attributes[field.key]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </span>
+
+                <hr/>
+
+                <div class="btn-group" style="width:100%" >
+                  <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    Compte rendu <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey'>
+                            <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
                         </li>
-                    </ul>
-                </li>
-            </ul>
-            <button ng-click="asset.showActivities = !asset.showActivities">Compte rendu</button>
-            <div ng-show='asset.showActivities'>
-                <ul>
-                    <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey'>
-                        <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
-                    </li>
-                </ul>
+                  </ul>
+                </div>
+                <hr/>
+                <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)">Localiser</button>
+                <button class="btn btn-primary btn-block" ng-click="gotoAsset(asset)">S'y rendre</button>
             </div>
-            <button ng-click="locateAsset(asset)">Localiser</button>
-            <button ng-click="gotoAsset(asset)">S'y rendre</button>
-        </li>
-    </ul> -->
+        </div>
+    </div>
 </div>
 
