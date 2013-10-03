@@ -5,14 +5,12 @@
         <p></p>
         <input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/>
         <p></p>
-<!--        <label class="checkbox">
+       <label class="checkbox">
             <input type="checkbox" value="remember-me"> Se souvenir de moi
-        </label> -->
+        </label>
         <button  class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">{{logMessage}}</button>
     </form>
-
     <hr/>
-
     <div  class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             Paramètres GLO <span class="caret"></span>
@@ -22,20 +20,4 @@
             <li><a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a></li>
         </ul>
     </div>
-
-    <hr/>
-
-    <button class="btn btn-block" ng-click="showParameters()"><i class="icon icon-settings"></i>Paramètres FSI</button>
-
-    <div ng-show="parametersVisible">
-        <p>
-            <a ng-click="setGimapUrl()">Changer de serveur ({{gimapUrl}})</a>
-        </p>
-        <p>
-            <a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a>
-        </p>
-        <p>
-            <button  class="btn btn-primary btn-block" ng-click="hideParameters()">Fermer</button>
-        </p>
-    </div>
-</div
+</div>
