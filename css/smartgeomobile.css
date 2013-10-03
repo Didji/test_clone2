@@ -2,9 +2,14 @@ html, body {
     height: 100%;
 }
 
-a {
+.mp-menu ul li > a, .mp-menu h2 {
     text-decoration: none;
-    /*color: #f7f7f7;*/
+    color: #f7f7f7;
+    outline: none;
+}
+.mp-menu ul li > a span.icon{
+    text-decoration: none;
+    color: #d36c0a;
     outline: none;
 }
 

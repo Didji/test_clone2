@@ -6,26 +6,59 @@
                 <h2><img class="logo_gi" src="images/logo.png" alt="">Smartgeo Mobile</h2>
                 <ul>
                     <li>
-                        <a class="icon icon-location" href="#">Consultation</a>
+                        <a href="#">
+                            <span class="icon icon-info-sign"></span>
+                            Consultation
+                        </a>
                     </li>
                     <li>
-                        <a href="#">Compte rendu</a>
+                        <a href="#">
+                            <span class="icon icon-edit"></span>
+                            Compte rendu
+                        </a>
                         <div class="mp-level">
                             <a class="mp-back" href="#">retour</a>
                             <ul>
                                 <li ng-repeat='activity in site.activities'>
-                                    <a class="icon icon-location" style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">{{activity.label}}</a>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
+                                        <span class="icon icon-chevron-right" ></span>
+                                        {{activity.label}}
+                                    </a>
                                 </li>
                             </ul>
                         </div>
                     </li>
 
-                    <li class="icon icon-arrow-left">
-                        <a class="icon icon-calendar" href="#">Planning</a>
+                    <li >
+                        <a href="#">
+                            <span class="icon icon-calendar"></span>
+                            Planning
+                        </a>
                     </li>
 
-                    <li><a class="icon icon-cloud" href="#">Synchronisation</a></li>
-                    <li><a class="icon icon-settings" href="#">Paramètres</a></li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-cloud"></span>
+                            Synchronisation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-gears"></span>
+                            Paramètres
+                        </a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#">retour</a>
+                            <ul>
+                                <li>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/reinstall/{{site.id}}">Forcer la réinstallation de {{site.label}}</a>
+                                </li>
+                                <li>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">Désinstaller {{site.label}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </nav>
