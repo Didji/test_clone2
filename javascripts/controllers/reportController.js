@@ -32,12 +32,18 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     }
 
     $scope.sendReport = function (event) {
+        // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < $scope.report.assets.length; i++) {
             $scope.report.assets[i] = $scope.report.assets[i].id ;
         }
 
-        // TODO: que faire si la liste des champs est vide ? ie $scope.report.field === {}
+        // TODO : remplacer par de la verification de formulaire
+        if(!$scope.report.fields.length){
+            return window.alert("Aucun champs n'a été renseigné");
+        }
+
         $scope.report.activity = $scope.report.activity.id ;
+
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
             .success(function(){
                 $location.path('map/'+$scope.site.id);
