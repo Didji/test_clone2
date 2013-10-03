@@ -247,6 +247,8 @@ angular.module('smartgeomobile', ['ngRoute'])
             _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   : 60,
             _INSTALL_MAX_ZONES_MATRIX_LENGTH         : 4,
 
+            _SMARTGEO_MOBILE_VERSION    : "0.9.0",
+            _G3ME_VERSION               : "0.1.0",
 
             // METHODS
             setGimapUrl : function(){
