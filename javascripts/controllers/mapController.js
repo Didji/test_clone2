@@ -1,6 +1,6 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
     $rootScope.site = $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
-
+    $scope.assetsMarkers = [];
     $scope.mapDiv = document.getElementById('smartgeo-map') ;
     $scope.mapDiv.style.height = window.innerHeight+"px";
     $scope.mapDiv.style.width  = "100%";
@@ -140,8 +140,14 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         return false;
     }, $scope);
 
-    $scope.$on("LOCATE_ASSET", function(event, asset){
+    $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
+    });
+    $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
+        $scope.unHighlightAsset(asset);
+    });
+    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
+        $scope.zoomOnAsset(asset);
     });
 
     $scope.invalidateMapSize = function(){
@@ -150,36 +156,60 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         }, 10);
     };
 
+
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
-        customClickHandler = customClickHandler || function(){};
+        customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
 
-        if($scope.consultationMarker){
-            $scope.leafletMap.removeLayer($scope.consultationMarker);
+        if($scope.assetsMarkers[asset.guid]){
+            $scope.leafletMap.removeLayer($scope.assetsMarkers[asset.guid]);
         }
-
-        var center ;
 
         switch (asset.geometry.type) {
             case "Point":
                 var coords = asset.geometry.coordinates ;
-                $scope.consultationMarker = customMarker || L.marker([coords[1], coords[0]]);
-                center = $scope.consultationMarker.getLatLng();
+                $scope.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]]);
                 break;
             case "LineString":
-                $scope.consultationMarker = customMarker || L.geoJson(asset.geometry,  {
+                $scope.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
                         style : { color: '#fc9e49', opacity:0.9, weight: 7 }
                     });
-                center = $scope.consultationMarker.getBounds().getCenter();
                 break;
             default:
                 console.log('Geometrie non supportée');
         }
 
-        $scope.consultationMarker.on('click', customClickHandler);
-        $scope.consultationMarker.addTo($scope.leafletMap);
-        $scope.leafletMap.panTo(center).setZoom(18);
+        $scope.assetsMarkers[asset.guid].on('click', customClickHandler);
+        $scope.assetsMarkers[asset.guid].addTo($scope.leafletMap);
         $scope.invalidateMapSize();
-
     };
+
+    $scope.unHighlightAsset = function(asset){
+
+        if($scope.assetsMarkers[asset.guid]){
+            $scope.leafletMap.removeLayer($scope.assetsMarkers[asset.guid]);
+        }
+
+        $scope.invalidateMapSize();
+    };
+
+    $scope.zoomOnAsset = function(asset){
+        var coords = asset.geometry.coordinates , center ;
+        switch (asset.geometry.type) {
+            case "Point":
+                center = [coords[1], coords[0]] ;
+                break;
+            case "LineString":
+                center = [coords[0][1], coords[0][0]] ;
+                break;
+            case "MultiLineString":
+                center = [coords[0][0][1], coords[0][0][0]] ;
+                break;
+            default:
+                console.log('Geometrie non supportée');
+        }
+
+        $scope.leafletMap.panTo(center).setZoom(18);
+    };
+
 }

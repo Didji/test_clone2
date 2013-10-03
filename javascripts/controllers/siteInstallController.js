@@ -46,9 +46,9 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                     site.lists = lists ;
                     $scope.steps[0].progress = 80;
 
-                    for (id in site.symbology) {
-                        var symbolId = site.symbology[id].okey + '' + site.symbology[id].classindex + '' ;
-                        symbology[symbolId] = site.symbology[id];
+                    for (i = 0; i < site.symbology.length; i++) {
+                        var symbolId = site.symbology[i].okey + '' + site.symbology[i].classindex + '' ;
+                        symbology[symbolId] = site.symbology[i];
                     }
                     site.symbology = symbology ;
                     $scope.steps[0].progress = 100;
@@ -81,17 +81,19 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
                     $scope.createZones();
                     $scope.createZonesDatabases(function(){
-                        $scope.installAssets(stats, function(){
-                            $scope.site.installed = true ;
-                            var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
-                                toBeStoredSites[$routeParams.site] = $scope.site;
-                            localStorage.sites = JSON.stringify(toBeStoredSites);
-                            $location.path('/map/'+$routeParams.site);
-                            $scope.$apply();
-                        });
+                        $scope.installAssets(stats,$scope.endInstall);
                     });
                 });
     });
+
+    $scope.endInstall = function(){
+        $scope.site.installed = true ;
+        var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
+            toBeStoredSites[$routeParams.site] = $scope.site;
+        localStorage.sites = JSON.stringify(toBeStoredSites);
+        $location.path('/map/'+$routeParams.site);
+        $scope.$apply();
+    };
 
     $scope.installAssets = function(stats, callback){
         if(!stats.length){

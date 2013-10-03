@@ -28,11 +28,12 @@ html, body {
     height: 100%;
     position: absolute;
     right: -300px;
-    z-index: 10;
+    z-index: 1000;
     top: 0;
-    color: white;
-    -webkit-transition: opacity 0.3s, -webkit-transform 0.1s 0.3s;
-    transition: opacity 0.3s, transform 0.1s 0.3s;
+    color: gray;
+    padding: 20px;
+    -webkit-transition:  -webkit-transform 0.1s 0.3s;
+    transition:  transform 0.1s 0.3s;
 }
 
 .consultation-panel.open {
