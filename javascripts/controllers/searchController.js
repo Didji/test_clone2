@@ -3,7 +3,13 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
     // TODO : trouver mieux
     new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
-    console.log($scope.site.metamodel);
+    $scope.metamodel = {};
+
+    for (var i = 0; i < $scope.site.metamodel.length; i++) {
+        if($scope.site.metamodel[i]){
+            $scope.metamodel[$scope.site.metamodel[i].okey] = $scope.site.metamodel[i];
+        }
+    }
 
     $scope.search = function(event) {
         event.preventDefault();

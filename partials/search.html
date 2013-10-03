@@ -13,9 +13,11 @@
             <div class="mp-level">
                 <a class="mp-back" href="#">retour</a>
                 <ul>
-                    <!-- <li ng-repeat="asset as asset.label for asset in assets track by asset.id">{{family}}</li> -->
                     <li>
-                        <select ng-options="family as family.label for family in site.metamodel track by family.id"></select>
+                        <select ng-model   = "selectedFamily"
+                                ng-options = " family.label for (okey, family) in metamodel">
+                                <!-- ng-options = "family as family.label group by family.group for family  in site.metamodel track by family.okey"> -->
+                        </select>
                     </li>
                 </ul>
             </div>
