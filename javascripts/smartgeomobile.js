@@ -6,7 +6,7 @@ angular.module('smartgeomobile', ['ngRoute'])
 
             when('/report/:site',                           {templateUrl: 'partials/report.html'}).
             when('/report/:site/:activity',                 {templateUrl: 'partials/report.html'}).
-            when('/report/:site/:activity/:assets',      {templateUrl: 'partials/report.html'}).
+            when('/report/:site/:activity/:assets',         {templateUrl: 'partials/report.html'}).
 
             when('/sites/install/:site',                    {templateUrl: 'partials/installation.html'}).
             when('/map/:site',                              {templateUrl: 'partials/map.html'}).
@@ -340,6 +340,33 @@ angular.module('smartgeomobile', ['ngRoute'])
                                 partial_response.push(asset);
                             }
                             _this.findAssetsByOkey(site,okey, callback, zones.slice(1), partial_response);
+                        }, Smartgeo.log, Smartgeo.log);
+                }, Smartgeo.log);
+            },
+
+            findAssetsByLabel: function(site, label, callback, zones, partial_response){
+                if (!zones) {
+                    zones = site.zones;
+                    partial_response = [];
+                }
+
+                if (!zones.length) {
+                    return callback(partial_response);
+                }
+
+                var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ?',  _this = this;
+
+                SQLite.openDatabase({
+                    name: zones[0].database_name
+                }).transaction(function(t) {
+                    t.executeSql(request, [label + "%", label + "%"],
+                        function(t, results) {
+                            for (var i = 0; i < results.rows.length; i++) {
+                                var asset = results.rows.item(i);
+                                asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                                partial_response.push(asset);
+                            }
+                            _this.findAssetsByLabel(site,label, callback, zones.slice(1), partial_response);
                         }, Smartgeo.log, Smartgeo.log);
                 }, Smartgeo.log);
             },

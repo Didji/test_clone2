@@ -1,0 +1,24 @@
+<div class="mp-level" ng-controller="searchController">
+    <a class="mp-back" href="#">retour</a>
+    <ul>
+        <li>
+            <input type="text" ng-model="searchTerms" placeholder="Code metier"></input>
+            <button ng-click="search($event)">Rechercher</button>
+        </li>
+        <li>
+            <a href="#">
+                <span class="icon icon-search"></span>
+                Recherche Avancée
+            </a>
+            <div class="mp-level">
+                <a class="mp-back" href="#">retour</a>
+                <ul>
+                    <!-- <li ng-repeat="asset as asset.label for asset in assets track by asset.id">{{family}}</li> -->
+                    <li>
+                        <select ng-options="family as family.label for family in site.metamodel track by family.id"></select>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>

@@ -40,6 +40,10 @@ html, body {
     -webkit-transform: translateX(-100%);
     transform: translateX(-100%);
 }
+.consultation-panel.double-open {
+    -webkit-transform: translateX(-200%);
+    transform: translateX(-200%);
+}
 
 #trigger, #trigger2{
     display: block;

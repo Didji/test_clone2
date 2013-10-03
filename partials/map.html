@@ -31,17 +31,19 @@
 
                     <li >
                         <a href="#">
+                            <span class="icon icon-search"></span>
+                            Recherche
+                            <div ng-include="'partials/search.html'"></div>
+                        </a>
+                    </li>
+
+                    <li >
+                        <a href="#">
                             <span class="icon icon-calendar"></span>
                             Planning
                         </a>
                     </li>
 
-                    <li>
-                        <a href="#">
-                            <span class="icon icon-cloud"></span>
-                            Synchronisation
-                        </a>
-                    </li>
                     <li>
                         <a href="#">
                             <span class="icon icon-gears"></span>
@@ -70,7 +72,6 @@
             </div>
 
         </div>
-        <div ng-include="'partials/consultation.html'">
-        </div>
+        <div ng-include="'partials/consultation.html'"></div>
     </div>
 </div>

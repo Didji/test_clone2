@@ -41,6 +41,6 @@ function consultationController($scope, $rootScope){
     $scope.definedFilter = function(value){
         console.log(value);
         return true;
-    }
+    };
 
 }
