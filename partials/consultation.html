@@ -1,13 +1,15 @@
 <div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
-    <!-- <span id="trigger2" ng-click='toggleConsultationPanel()'>Menu</span> -->
-    <h3>Consultation <span ng-click="close()">[x]</span></h3>
+    <h3>Consultation
+          <button type="button" class="btn pull-right" ng-click="close()" style="padding: 1px 7px;">&times;</button>
+    </h3>
 
     <div class="panel-group" id="accordion">
       <div ng-repeat='asset in assets' class="panel panel-default">
 
         <div class="panel-heading">
           <h4 class="panel-title">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{$index}}"  ng-click="toggleCollapse($event)">
+            <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{$index}}"
+                ng-click="toggleCollapse($event)">
               {{site.metamodel[asset.okey].label}} {{asset.label}}
             </a>
           </h4>
@@ -16,7 +18,7 @@
         <div id="collapse-{{$index}}" class="panel-collapse collapse">
             <div class="panel-body">
                 <span ng-repeat='tab in site.metamodel[asset.okey].tabs'>
-                <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
+                    <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
                     <h5>{{tab.label}}</h5>
                     <table style="font-size: 0.8em;" class="table table-striped">
                         <thead>
