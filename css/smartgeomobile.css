@@ -2,6 +2,32 @@ html, body {
     height: 100%;
     background: #373f45;
 }
+#mp-menu {
+    overflow: scroll;
+}
+
+#mp-menu a{
+    font-family: 'Raleway Dots', cursive;
+}
+
+.mp-level > ul > li > a > .icon {
+    margin-right: 10px;
+}
+
+#mp-menu .form-control{
+width: 90%;
+margin: 5%;
+}
+
+#toggleConsultationPanelButton{
+    background-color :red ;
+    z-index: 10000;
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}
 
 .floating-form {
     margin: 100px auto 10px auto;
@@ -92,7 +118,7 @@ fieldset[disabled] .btn-primary.active {
 .logo_gi {
     width: 70%;
     margin-right: 15px;
-    margin-bottom: -10px;
+    margin-bottom: -20px;
     border-bottom: 1px solid #fd9122;
     padding: 10px 30px 20px;
 }
