@@ -156,7 +156,7 @@ fieldset[disabled] .btn-primary.active {
     z-index: 10;
     color: white;
     font-size: 20px;
-    border: 1px solid rgb(173, 173, 173);
+    border: 1px solid #858585;
 }
 
 #trigger, #trigger:hover {
@@ -174,10 +174,17 @@ fieldset[disabled] .btn-primary.active {
 }
 
 /**
- * Saisie de compte-rendu 
+ * Saisie de compte-rendu
  */
 .report label {
     display: inline;
+}
+
+.reportForm {
+    padding: 15px  ;
+}
+.reportForm h3{
+    color: white;
 }
 
 label.prettycheckbox input{
