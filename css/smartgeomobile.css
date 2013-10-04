@@ -1,6 +1,6 @@
 html, body {
     height: 100%;
-    background: #3A3A3A;
+    background: #373f45;
 }
 
 .floating-form {
@@ -12,9 +12,21 @@ html, body {
 .floating-form  small{
     float: right;
 }
-
+.container_s {
+    font-weight: normal!important;
+}
 .floating-form img {
     max-width: 250px;
+}
+.floating-form a.btn {
+    width: 278px;
+}
+.floating-form .has-carret a.btn {
+    width: 253px
+}
+
+.floating-form .dropdown-menu {
+    text-align: left;
 }
 
 .bottom-right {
@@ -23,17 +35,21 @@ html, body {
     right: 10px;
 }
 
+.big-button {
+    width: 100%;
+}
+
 /*Customization des boutons */
 .btn-primary {
     color: #FFF;
-    background-color: #FFC32A;
-    border-color: #EBA800;
+    background-color: #fd9122;
+    border-color: #fd9122;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     color: #FFF;
     background-color: #FAB400;
-    border-color: #C99000;
+    border-color: #fd9122;
 }
 .btn-primary.disabled,
 .btn-primary[disabled],
@@ -60,9 +76,12 @@ fieldset[disabled] .btn-primary.active {
     color: #f7f7f7;
     outline: none;
 }
+.mp-menu h2 {
+    text-align: center;
+}
 .mp-menu ul li > a span.icon{
     text-decoration: none;
-    color: #d36c0a;
+    color: #fd9122;
     outline: none;
 }
 
@@ -70,16 +89,17 @@ fieldset[disabled] .btn-primary.active {
     color:white;
 }
 
-.logo_gi{
-    width: 32px;
+.logo_gi {
+    width: 70%;
     margin-right: 15px;
     margin-bottom: -10px;
+    border-bottom: 1px solid #fd9122;
+    padding: 10px 30px 20px;
 }
-
 .consultation-panel {
     overflow-y: scroll;
     overflow-x: hidden;
-    background-color: #3A3A3A;
+    background-color: #373f45;
     width: 300px;
     display: block;
     height: 100%;

@@ -1,6 +1,8 @@
 function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http){
 
-    $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
+    $scope.site = JSON.parse(localStorage.sites)[$routeParams.site];
+    $scope.step = "assets";
+    
     $scope.report = {
         assets: [],
         fields: {},
@@ -9,7 +11,8 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     if($routeParams.assets){
         Smartgeo.findAssetsByGuids($scope.site, $routeParams.assets.split(','), function(assets){
-            $scope.report.assets = assets ;
+            $scope.report.assets = assets;
+            $scope.step = "form";
             $scope.$apply();
         });
     }
@@ -31,6 +34,18 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         $scope.loadAssets();
     }
 
+    $scope.toForm = function() {
+        $scope.step = 'form';
+    };
+    
+    $scope.toAssets = function() {
+        $scope.step = 'assets';
+    };
+    
+    $scope.cancel = function() {
+        $window.history.back();
+    }
+    
     $scope.sendReport = function (event) {
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < $scope.report.assets.length; i++) {

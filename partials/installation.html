@@ -1,19 +1,18 @@
 <div class="content" ng-controller="siteInstallController">
-    <h1>Installation de {{siteId}}</h1>
-    <hr>
-    <p ng-show='!site.installed && currentInstalledOkey'>
-        Installation de {{site.metamodel[currentInstalledOkey].label}} en cours
-    </p>
-    <div class="progress">
-      <div ng-repeat="step in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}" aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
-        <span class="sr-only">{{Math.round(100 * step.progress / totalProgress)}}%</span>
-      </div>
+    <div class="panel floating-form">
+        <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
+        <p><b>Installation de {{site.label}}</b></p>
+        <hr>
+        <p ng-show='!site.installed && currentInstalledOkey'>
+            Installation de {{site.metamodel[currentInstalledOkey].label}} en cours
+        </p>
+        <p ng-show='site.installed'>
+            <a href="#/map/{{site.id}}">Installation terminée !</a>
+        </p>
+        <div class="progress">
+          <div ng-repeat="step in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}" aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
+            <span class="sr-only">{{Math.round(100 * step.progress / totalProgress)}}%</span>
+          </div>
+        </div>
     </div>
-    <p ng-repeat="step in steps">
-        {{step.name}} : {{Math.round(100 * step.progress / step.target)}}%
-    </p>
-    <hr>
-    <span ng-show='site.installed'>
-        <a href="#/map/{{site.id}}">Installation terminée !</a>
-    </span>
 </div>

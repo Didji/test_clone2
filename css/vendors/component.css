@@ -14,7 +14,7 @@
 .container_s {
 	position: relative;
 	overflow: hidden;
-	background: #3A3A3A;
+	background: #373f45;
 }
 
 .menu-trigger {
@@ -57,7 +57,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: #3A3A3A;
+	background: #373f45;
 	-webkit-transform: translate3d(-100%, 0, 0);
 	transform: translate3d(-100%, 0, 0);
 }
