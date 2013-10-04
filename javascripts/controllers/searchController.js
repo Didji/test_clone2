@@ -3,11 +3,16 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
     // TODO : trouver mieux
     new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
-    $scope.metamodel = {};
+    $scope.selectedCriteriaValues = {};
 
-    for (var i = 0; i < $scope.site.metamodel.length; i++) {
-        if($scope.site.metamodel[i]){
-            $scope.metamodel[$scope.site.metamodel[i].okey] = $scope.site.metamodel[i];
+    // On index les critères en fonction des okeys, en les sortant des "tabs", pour faire un joli ng-repeat/ng-options
+    $scope.criteria = {};
+    for (var i in $scope.site.metamodel) {
+        $scope.criteria[i] = [];
+        for (var j = 0; j < $scope.site.metamodel[i].tabs.length; j++) {
+            for (var k = 0; k < $scope.site.metamodel[i].tabs[j].fields.length; k++) {
+                $scope.criteria[i].push($scope.site.metamodel[i].tabs[j].fields[k]);
+            }
         }
     }
 
