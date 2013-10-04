@@ -1,5 +1,5 @@
 function consultationController($scope, $rootScope){
-    $scope.state  = 'close';
+    $scope.state  = 'closed';
 
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
 
@@ -19,7 +19,7 @@ function consultationController($scope, $rootScope){
     });
 
     $scope.close = function(){
-        $scope.state = 'close' ;
+        $scope.state = 'closed' ;
     };
 
     $scope.locateAsset = function(asset){
@@ -31,7 +31,7 @@ function consultationController($scope, $rootScope){
     };
 
     $scope.toggleConsultationPanel = function(){
-        $scope.state = $scope.state === 'open' ? 'close' : 'open' ;
+        $scope.state = $scope.state === 'open' ? 'closed' : 'open' ;
     };
 
     $scope.toggleCollapse = function(event){
