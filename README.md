@@ -1,2 +1,2 @@
-smartgeomobile
+Smartgeo Mobile
 ==============
