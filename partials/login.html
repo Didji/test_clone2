@@ -1,21 +1,20 @@
 <div class="container" ng-controller="authController">
-    <form ng-submit="login()">
-        <h2>Smartgeo mobile <small>{{version}}</small></h2>
-        <input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' />
-        <p></p>
-        <input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/>
-        <p></p>
-       <label class="checkbox">
-            <input type="checkbox" value="remember-me"> Se souvenir de moi
-        </label>
-        <button  class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">{{logMessage}}</button>
-    </form>
-    <hr/>
-    <div  class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            Paramètres <span class="caret"></span>
+    <form ng-submit="login()" class="panel floating-form">
+        <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
+        <hr />
+        <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
+        <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
+        <hr>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">
+            <span class="icon-spinner" ng-show="!readyToLog"></span>
+            {{logMessage}}
         </button>
-        <ul class="dropdown-menu" role="menu">
+    </form>
+    <div  class="btn-group bottom-right dropup">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="icon icon-gears"></span> Paramètres <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu pull-right" role="menu">
             <li><a ng-click="setGimapUrl()">Changer de serveur ({{gimapUrl}})</a></li>
             <li><a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a></li>
         </ul>

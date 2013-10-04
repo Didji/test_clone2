@@ -1,5 +1,26 @@
 html, body {
     height: 100%;
+    background: #3A3A3A;
+}
+
+.floating-form {
+    margin: 100px auto 10px auto;
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+}
+.floating-form  small{
+    float: right;
+}
+
+.floating-form img {
+    max-width: 250px;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 /*Customization des boutons */
@@ -14,7 +35,25 @@ html, body {
     background-color: #FAB400;
     border-color: #C99000;
 }
-
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+    color: #FFF;
+    background-color: #FFC32A;
+    border-color: #EBA800;
+}
 
 .mp-menu ul li > a, .mp-menu h2 {
     text-decoration: none;
