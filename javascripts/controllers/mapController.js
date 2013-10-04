@@ -170,6 +170,10 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
         $scope.unHighlightAsset(asset);
     });
+    $scope.$on("UNHIGHALLLIGHT_ASSET", function(event){
+        $scope.unHighlightAllAsset();
+    });
+
     $scope.$on("ZOOM_ON_ASSET", function(event, asset){
         $scope.zoomOnAsset(asset);
     });
@@ -236,6 +240,16 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             $scope.leafletMap.removeLayer($scope.assetsMarkers[asset.guid]);
         }
 
+        $scope.invalidateMapSize();
+    };
+
+    $scope.unHighlightAllAsset = function(){
+
+        for (var i = 0; i < $scope.assetsMarkers.length; i++) {
+            if($scope.assetsMarkers[i]){
+                $scope.leafletMap.removeLayer($scope.assetsMarkers[i]);
+            }
+        };
         $scope.invalidateMapSize();
     };
 
