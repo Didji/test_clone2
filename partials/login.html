@@ -1,9 +1,14 @@
 <div class="container" ng-controller="authController">
     <form ng-submit="login()" class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
+        <hr />
         <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
         <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
-        <button  class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">{{logMessage}}</button>
+        <hr>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">
+            <span class="icon-spinner" ng-show="!readyToLog"></span>
+            {{logMessage}}
+        </button>
     </form>
     <div  class="btn-group bottom-right dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
