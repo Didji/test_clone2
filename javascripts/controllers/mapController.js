@@ -6,6 +6,12 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.mapDiv.style.height = window.innerHeight+"px";
     $scope.mapDiv.style.width  = "100%";
 
+    $scope.invalidateMapSize = function(){
+        setTimeout(function() {
+            $scope.leafletMap.invalidateSize();
+        }, 10);
+    };
+
     $scope.leafletMap = new L.map($scope.mapDiv, {
         attributionControl: false,
         zoomControl: false
@@ -35,6 +41,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         G3ME.drawTile($scope.leafletMap, $scope.site, canvas, tilePoint);
     };
 
+
+
     for(var symbol in $scope.site.symbology){
         if (!$scope.site.symbology[symbol] || !$scope.site.symbology[symbol].style) {
             continue;
@@ -44,14 +52,26 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         $scope.site.symbology[symbol].style.image = image;
     }
 
-    $scope.leafletMap.fitBounds([
-        [$scope.site.extent.ymin, $scope.site.extent.xmin],
-        [$scope.site.extent.ymax, $scope.site.extent.xmax]
-    ]);
+    var extent = JSON.parse(Smartgeo.get("lastLeafletMapExtent") || '{}') ;
 
-    setTimeout(function() {
-        $scope.leafletMap.invalidateSize();
-    }, 10);
+    if(!extent._northEast){
+        extent = [
+            [$scope.site.extent.ymin, $scope.site.extent.xmin],
+            [$scope.site.extent.ymax, $scope.site.extent.xmax]
+        ]
+    } else {
+        extent = [
+            [extent._northEast.lat, extent._northEast.lng],
+            [extent._southWest.lat, extent._southWest.lng]
+        ]
+    }
+
+    $scope.leafletMap.fitBounds(extent);
+    $scope.invalidateMapSize();
+
+    $scope.leafletMap.on('moveend', function(e) {
+        Smartgeo.set("lastLeafletMapExtent", JSON.stringify($scope.leafletMap.getBounds()));
+    });
 
     $scope.leafletMap.on('click', function(e) {
 
@@ -180,11 +200,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         }
     };
 
-    $scope.invalidateMapSize = function(){
-        setTimeout(function() {
-            $scope.leafletMap.invalidateSize();
-        }, 10);
-    };
+
 
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
