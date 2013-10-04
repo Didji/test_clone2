@@ -54,7 +54,7 @@
                 </a>
               </h4>
             </div>
-            <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: !tab.opened}">
+            <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: $index != 0}">
                 <div class="panel-body">
                     <div ng-repeat="field in tab.fields">
                         <p>
