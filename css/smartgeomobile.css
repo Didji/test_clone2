@@ -3,7 +3,7 @@ html, body {
     background: #373f45;
 }
 #mp-menu {
-    overflow: scroll;
+    overflow: auto;
 }
 
 #mp-menu a{
@@ -123,8 +123,7 @@ fieldset[disabled] .btn-primary.active {
     padding: 10px 30px 20px;
 }
 .consultation-panel {
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: auto;
     background-color: #373f45;
     width: 300px;
     display: block;
@@ -148,31 +147,30 @@ fieldset[disabled] .btn-primary.active {
     transform: translateX(-200%);
 }
 
-#trigger, #trigger2{
+#trigger{
     display: block;
     position: fixed;
     bottom: 10px;
     width: 20px;
     height: 40px;
     z-index: 10;
-    color: transparent;
+    color: white;
+    font-size: 20px;
     border: 1px solid rgb(173, 173, 173);
 }
 
-#trigger{
-    box-shadow: -1px 0px 5px 1px rgba(0, 0, 0, 0.43);
+#trigger, #trigger:hover {
+    box-shadow: 1px 0px 5px 1px rgba(0, 0, 0, 0.10);
     left : 0px;
     border-left : none;
+    text-decoration: none;
     border-radius: 0 8px 8px 0;
-    background: linear-gradient(to right, rgba(204,204,204,1) 0%,rgba(238,238,238,1) 100%);
+    background: #373f45;
 }
-
-#trigger2{
-    box-shadow: 1px 0px 5px 1px rgba(0, 0, 0, 0.43);
-    border-right : none;
-    right : 0px;
-    border-radius:  8px 0 0 8px ;
-    background: linear-gradient(to right, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
+#trigger  span {
+    margin-top: 10px;
+    display: inline-block;
+    margin-left: 5px;
 }
 
 /**
