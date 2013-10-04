@@ -6,7 +6,7 @@ html, body {
     overflow: auto;
 }
 
-#mp-menu a{
+#mp-menu a, #mp-menu  label{
     font-family: 'Raleway Dots', cursive;
 }
 
@@ -14,9 +14,12 @@ html, body {
     margin-right: 10px;
 }
 
-#mp-menu .form-control{
-width: 90%;
-margin: 5%;
+#mp-menu .form-control , #mp-menu button{
+    width: 90%;
+    margin: 5%;
+}
+#mp-menu  label{
+    margin: 0 5%;
 }
 
 #toggleConsultationPanelButton{
