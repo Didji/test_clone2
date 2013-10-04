@@ -1,6 +1,7 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
     $rootScope.site = $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
     $scope.assetsMarkers = [];
+    $scope.consultationIsEnabled = false ;
     $scope.mapDiv = document.getElementById('smartgeo-map') ;
     $scope.mapDiv.style.height = window.innerHeight+"px";
     $scope.mapDiv.style.width  = "100%";
@@ -54,9 +55,9 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
 
     $scope.leafletMap.on('click', function(e) {
 
-        // if (!$scope.consultationIsEnable) {
-        //     return false;
-        // }
+        if (!$scope.consultationIsEnabled) {
+            return false;
+        }
 
         var coords = e.latlng,
             mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, ($scope.leafletMap.getZoom() + 8)),
@@ -140,6 +141,9 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         return false;
     }, $scope);
 
+    $scope.$on("TOGGLE_CONSULTATION", function(event, asset){
+        $scope.consultationIsEnabled = !$scope.consultationIsEnabled
+    });
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
     });
