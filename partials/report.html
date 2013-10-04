@@ -1,12 +1,14 @@
-<form ng-controller="reportController">
+<form ng-controller="reportController" class="reportForm">
     <h3>Compte rendu</h3>
     <div ng-show="step==='assets'">
         <p>
-            <select  class="form-control"
-                     ng-model   = "report.assets"
-                     ng-options = "asset as asset.label for asset in assets track by asset.id" 
-                     multiple>
-            </select>
+            <button class="btn btn-default" ng-click="cancel()">
+                Annuler
+            </button>
+
+            <button class="btn btn-primary" ng-click="step='form'" ng-disabled="!report.assets.length">
+                Suivant
+            </button>
         </p>
         <p>
             <select class="form-control"
@@ -16,16 +18,33 @@
             </select>
         </p>
         <p>
+            <select  class="form-control"
+                     ng-model   = "report.assets"
+                     ng-options = "asset as asset.label for asset in assets track by asset.id"
+                     multiple>
+            </select>
+        </p>
+        <p>
             <button class="btn btn-default" ng-click="cancel()">
                 Annuler
             </button>
-        
+
             <button class="btn btn-primary" ng-click="step='form'" ng-disabled="!report.assets.length">
                 Suivant
             </button>
         </p>
     </div>
     <div ng-show="step==='form'">
+        <p>
+            <button class="btn btn-default" ng-click="cancel()">
+                Annuler
+            </button>
+
+            <button class="btn btn-default" ng-click="step='assets'">
+                Précédent
+            </button>
+            <button class="btn btn-primary" ng-click="sendReport($event)" >Enregistrer</button>
+        </p>
         <div ng-repeat="tab in report.activity.tabs" class="panel panel-default report">
             <div class="panel-heading">
               <h4 class="panel-title">
@@ -51,9 +70,9 @@
                                     <span ng-switch-when="O">
                                         <span class="icon-check pull-left yes" ></span>
                                         <span class="icon-check-empty pull-left no" ></span>
-                                        <input  
+                                        <input
                                                 type="checkbox"
-                                                class="form-control" 
+                                                class="form-control"
                                                 ng-model="report.fields[field.id]"
                                                 ng-true-value="Y"
                                                 ng-false-value="N"></input>
@@ -66,20 +85,20 @@
                 </div>
             </div>
         </div>
-        
+
         <p>
             <button class="btn btn-default" ng-click="cancel()">
                 Annuler
             </button>
-        
+
             <button class="btn btn-default" ng-click="step='assets'">
                 Précédent
             </button>
             <button class="btn btn-primary" ng-click="sendReport($event)" >Enregistrer</button>
         </p>
     </div>
-    
-    
-    
-    
+
+
+
+
 </form>
