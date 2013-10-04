@@ -288,7 +288,7 @@ if ( typeof define === 'function' && define.amd ) {
 			this.level = 0;
 			// remove class mp-pushed from main wrapper
 			classie.remove( this.wrapper, 'mp-pushed' );
-			this._toggleLevels();
+			// this._toggleLevels();
 			this.open = false;
 		},
 		// close sub menus
