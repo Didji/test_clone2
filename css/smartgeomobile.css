@@ -3,12 +3,12 @@ html, body {
 }
 
 /*Customization des boutons */
-
 .btn-primary {
     color: #FFF;
     background-color: #FFC32A;
     border-color: #EBA800;
 }
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     color: #FFF;
     background-color: #FAB400;
