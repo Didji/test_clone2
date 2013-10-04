@@ -73,6 +73,13 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         Smartgeo.set("lastLeafletMapExtent", JSON.stringify($scope.leafletMap.getBounds()));
     });
 
+    // TODO : make it angular way
+    $(window).on('resize', function(){
+        $scope.mapDiv.style.height = window.innerHeight+"px";
+        $scope.mapDiv.style.width  = "100%";
+        $scope.invalidateMapSize();
+    });
+
     $scope.leafletMap.on('click', function(e) {
 
         if (!$scope.consultationIsEnabled) {
