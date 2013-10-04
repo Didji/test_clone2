@@ -2,6 +2,20 @@ html, body {
     height: 100%;
 }
 
+/*Customization des boutons */
+
+.btn-primary {
+    color: #FFF;
+    background-color: #FFC32A;
+    border-color: #EBA800;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    color: #FFF;
+    background-color: #FAB400;
+    border-color: #C99000;
+}
+
+
 .mp-menu ul li > a, .mp-menu h2 {
     text-decoration: none;
     color: #f7f7f7;
