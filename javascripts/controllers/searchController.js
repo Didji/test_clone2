@@ -18,7 +18,35 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
 
     $scope.search = function(event) {
         event.preventDefault();
+
+        $scope.searchMessage = 'Recherche en cours' ;
+
         Smartgeo.findAssetsByLabel($scope.site, $scope.searchTerms, function(results){
+
+            if(!results.length){
+                $scope.searchMessage = 'Aucun résultat' ;
+                $scope.$apply();
+                return ;
+            } else {
+                $scope.searchMessage = '';
+            }
+
+            var assets = [], asset, asset_;
+            for (var i = 0; i < results.length; i++) {
+                asset_ = results[i];
+                asset  = JSON.parse(asset_.asset);
+                asset.label = asset_.label ;
+                asset.geometry = JSON.parse(asset_.geometry) ;
+                assets.push(asset);
+            }
+            $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+            $scope.mlPushMenu._resetMenu();
+        });
+    };
+
+    $scope.advancedSearch = function(event) {
+        event.preventDefault();
+        Smartgeo.findAssetsByCriteria($scope.site, $scope.selectedCriteriaValues, function(results){
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];

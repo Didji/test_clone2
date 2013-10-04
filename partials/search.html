@@ -2,9 +2,10 @@
     <a class="mp-back" href="#">retour</a>
     <ul>
         <li>
-            <input type="text" ng-model="searchTerms" placeholder="Code metier"></input>
-            <button ng-click="search($event)">Rechercher</button>
+            <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
+            <button class="btn btn-default btn-block" ng-click="search($event)">Rechercher</button>
         </li>
+        <li><label>{{searchMessage}}</label></li>
         <li>
             <a href="#">
                 <span class="icon icon-search"></span>
@@ -13,9 +14,6 @@
             <div class="mp-level">
                 <a class="mp-back" href="#">retour</a>
                 <ul>
-                    <li>
-                        <label for="">{{selectedCriteriaValues}}</label>
-                    </li>
                     <li>
                         <select class="form-control" ng-model   = "selectedFamily"
                                 ng-options = " family.label for (okey, family) in site.metamodel">
@@ -51,6 +49,9 @@
                                 </div>
                             </div>
                         </div>
+                    </li>
+                    <li>
+                        <button class="btn btn-default btn-block" ng-click="advancedSearch($event)">Rechercher</button>
                     </li>
                 </ul>
             </div>
