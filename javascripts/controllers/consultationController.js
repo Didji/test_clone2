@@ -16,6 +16,8 @@ function consultationController($scope, $rootScope){
         $scope.state  = 'open';
         $scope.$apply();
 
+        $rootScope.$broadcast("UNHIGHALLLIGHT_ASSET");
+
         // Ferme les onglets ouverts
         // $(".in").collapse('toggle');
         $(".collapse").collapse({
