@@ -1,7 +1,7 @@
 function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite){
 
     // TODO : trouver mieux
-    new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+    $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
     $scope.selectedCriteriaValues = {};
 
@@ -28,6 +28,7 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+            $scope.mlPushMenu._resetMenu();
         });
     };
 
