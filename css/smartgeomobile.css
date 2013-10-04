@@ -1,5 +1,21 @@
 html, body {
     height: 100%;
+    background: #3A3A3A;
+}
+
+.floating-form {
+    margin: 100px auto 10px auto;
+    padding: 5px;
+    width: 300px;
+}
+.floating-form img {
+    max-width: 250px;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .mp-menu ul li > a, .mp-menu h2 {
