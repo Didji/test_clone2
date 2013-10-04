@@ -174,3 +174,45 @@ fieldset[disabled] .btn-primary.active {
     border-radius:  8px 0 0 8px ;
     background: linear-gradient(to right, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
 }
+
+/**
+ * Saisie de compte-rendu 
+ */
+.report label {
+    display: inline;
+}
+
+label.prettycheckbox input{
+    display: none;
+}
+
+label.prettycheckbox {
+    border: 1px solid #cccccc;
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555555;
+    vertical-align: middle;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+label.prettycheckbox.checked {
+    border-radius: 3px;
+}
+label.prettycheckbox.checked .yes, label.prettycheckbox .no {
+    display: inline;
+    margin-top: 3px;
+    margin-right: 10px;
+}
+label.prettycheckbox.checked .yes {
+    margin-right: 8px;
+}
+label.prettycheckbox.checked .no, label.prettycheckbox .yes {
+    display: none;
+}
