@@ -141,8 +141,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         return false;
     }, $scope);
 
-    $scope.$on("TOGGLE_CONSULTATION", function(event, asset){
-        $scope.consultationIsEnabled = !$scope.consultationIsEnabled
+    $scope.$on("TOGGLE_CONSULTATION", function(event){
+        $scope.toggleConsultation();
     });
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
@@ -153,6 +153,32 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.$on("ZOOM_ON_ASSET", function(event, asset){
         $scope.zoomOnAsset(asset);
     });
+
+    $scope.toggleConsultation = function (event){
+        if(event){
+            event.preventDefault();
+        }
+        $scope.consultationIsEnabled = !$scope.consultationIsEnabled
+        if(!$scope.consultationIndicatorCustomControl){
+            $scope.consultationIndicatorCustomControl = L.Control.extend({
+                options: {  position: 'topright' },
+                onAdd: function (map) {
+                    var container = L.DomUtil.create('div', 'leaflet-bar');
+                    $(container)
+                        .html('<a href="#" ng-click="toggleConsultation($event)" title="Consultation"><span class="icon icon-info-sign"></span></a>')
+                        .on('click',$scope.toggleConsultation);
+                    return container;
+                }
+            });
+            $scope.consultationIndicatorCustomControl = new $scope.consultationIndicatorCustomControl();
+        }
+
+        if($scope.consultationIsEnabled){
+            $scope.leafletMap.addControl($scope.consultationIndicatorCustomControl);
+        } else {
+            $scope.leafletMap.removeControl($scope.consultationIndicatorCustomControl);
+        }
+    };
 
     $scope.invalidateMapSize = function(){
         setTimeout(function() {
