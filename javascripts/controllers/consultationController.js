@@ -3,6 +3,15 @@ function consultationController($scope, $rootScope){
 
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
 
+        $scope.groups = {};
+
+        for (var i = 0; i < assets.length; i++) {
+            if(!$scope.groups[assets[i].okey]){
+                $scope.groups[assets[i].okey] = {};
+            }
+            $scope.groups[assets[i].okey][assets[i].guid] = assets[i]  ;
+        };
+
         $scope.assets = assets;
         $scope.state  = 'open';
         $scope.$apply();
