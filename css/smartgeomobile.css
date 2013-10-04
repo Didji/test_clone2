@@ -1,8 +1,13 @@
 html, body {
-    font-family: 'Raleway Dots', cursive;
     height: 100%;
     background: #373f45;
 }
+
+#mp-menu a{
+    font-family: 'Raleway Dots', cursive;
+
+}
+
 .mp-level > ul > li > a > .icon {
     margin-right: 10px;
 }
