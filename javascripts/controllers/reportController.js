@@ -68,4 +68,9 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 console.log(arguments);
             });
     };
+    
+    $scope.toggleCollapse = function(event){
+        event.preventDefault();
+    };
+
 }
