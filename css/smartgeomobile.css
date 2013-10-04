@@ -2,26 +2,31 @@ html, body {
     height: 100%;
     background: #373f45;
 }
+#mp-menu {
+    overflow: scroll;
+}
 
 #mp-menu a{
     font-family: 'Raleway Dots', cursive;
-
 }
 
 .mp-level > ul > li > a > .icon {
     margin-right: 10px;
 }
-.mp-level > ul > li:first-child > a {
-    /*box-shadow:  inset 0 -1px rgba(0, 0, 0, 0.2), inset 0 1px rgba(0, 0, 0, 0);;*/
+
+#mp-menu .form-control{
+width: 90%;
+margin: 5%;
 }
+
 #toggleConsultationPanelButton{
     background-color :red ;
-z-index: 10000;
-width: 100px;
-height: 100px;
-position: fixed;
-bottom: 0;
-right: 0;
+    z-index: 10000;
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }
 
 .floating-form {
