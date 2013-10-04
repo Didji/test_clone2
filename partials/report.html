@@ -1,41 +1,85 @@
 <form ng-controller="reportController">
     <h3>Compte rendu</h3>
-
-    <select ng-model   = "report.assets"
-            ng-options = "asset as asset.label for asset in assets track by asset.id" multiple>
-    </select>
-    <select ng-change  = "loadAssets()"
-            ng-model   = "report.activity"
-            ng-options = "activity.label for activity in site.activities">
-    </select>
-    <span ng-repeat="tab in report.activity.tabs">
-        <h3>{{tab.label}}</h3>
-        <span ng-repeat="field in tab.fields">
-            <h4>{{field.label}}</h4>
-            <div class="animate-switch-container" ng-switch on="field.type">
-                <div ng-switch-when="D">
-                    <input type="date" ng-model = "report.fields[field.id]"></input>
-                </div>
-                <div ng-switch-when="T">
-                    <input type="time" ng-model = "report.fields[field.id]"></input>
-                </div>
-                <div ng-switch-when="L">
-                    <select
-                        ng-model = "report.fields[field.id]"
-                        ng-options = "option.value as option.label for option in field.options">
-                    </select>
-                </div>
-                <div ng-switch-when="O">
-                    <input type="checkbox"
-                        ng-model="report.fields[field.id]"
-                        ng-true-value="Y"
-                        ng-false-value="N"></input>
-                </div>
-                <div ng-switch-default>
-                    <input type="text" ng-model="report.fields[field.id]"></input>
+    <div ng-show="step==='assets'">
+        <p>
+            <select  class="form-control"
+                     ng-model   = "report.assets"
+                     ng-options = "asset as asset.label for asset in assets track by asset.id" 
+                     multiple>
+            </select>
+        </p>
+        <p>
+            <select class="form-control"
+                    ng-change  = "loadAssets()"
+                    ng-model   = "report.activity"
+                    ng-options = "activity.label for activity in site.activities">
+            </select>
+        </p>
+        <p>
+            <button class="btn btn-default" ng-click="cancel()">
+                Annuler
+            </button>
+        
+            <button class="btn btn-primary" ng-click="step='form'" ng-disabled="!report.assets.length">
+                Suivant
+            </button>
+        </p>
+    </div>
+    <div ng-show="step==='form'">
+        <div ng-repeat="tab in report.activity.tabs" class="panel panel-default report">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#report-collapse-{{$index}}"
+                    ng-click="toggleCollapse($event)">
+                  {{tab.label}}
+                </a>
+              </h4>
+            </div>
+            <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: !tab.opened}">
+                <div class="panel-body">
+                    <div ng-repeat="field in tab.fields">
+                        <p>
+                            <label ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}" >
+                                {{field.label}}
+                                <span class="animate-switch-container" ng-switch on="field.type">
+                                    <input class="form-control" ng-switch-when="D" type="date" ng-model = "report.fields[field.id]"></input>
+                                    <input class="form-control" ng-switch-when="T" type="time" ng-model = "report.fields[field.id]"></input>
+                                    <select class="form-control" ng-switch-when="L"
+                                        ng-model = "report.fields[field.id]"
+                                        ng-options = "option.value as option.label for option in field.options">
+                                    </select>
+                                    <span ng-switch-when="O">
+                                        <span class="icon-check pull-left yes" ></span>
+                                        <span class="icon-check-empty pull-left no" ></span>
+                                        <input  
+                                                type="checkbox"
+                                                class="form-control" 
+                                                ng-model="report.fields[field.id]"
+                                                ng-true-value="Y"
+                                                ng-false-value="N"></input>
+                                    </span>
+                                    <input ng-switch-default class="form-control"  type="text" ng-model="report.fields[field.id]"></input>
+                                </span>
+                            </label>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </span>
-    </span>
-    <input type="button"  ng-click="sendReport($event)"  value="enregistrer"></input>
+        </div>
+        
+        <p>
+            <button class="btn btn-default" ng-click="cancel()">
+                Annuler
+            </button>
+        
+            <button class="btn btn-default" ng-click="step='assets'">
+                Précédent
+            </button>
+            <button class="btn btn-primary" ng-click="sendReport($event)" >Enregistrer</button>
+        </p>
+    </div>
+    
+    
+    
+    
 </form>
