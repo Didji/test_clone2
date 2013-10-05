@@ -4,28 +4,26 @@ function consultationController($scope, $rootScope){
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
 
         $scope.groups = {};
-
+        $scope.assets = assets;
+        $scope.assets._byGuid = [];
         for (var i = 0; i < assets.length; i++) {
             if(!$scope.groups[assets[i].okey]){
                 $scope.groups[assets[i].okey] = {};
             }
+            $scope.assets._byGuid[assets[i].guid] = assets[i];
             $scope.groups[assets[i].okey][assets[i].guid] = assets[i]  ;
         };
-
-        $scope.assets = assets;
         $scope.state  = 'open';
         $scope.$apply();
 
         $rootScope.$broadcast("UNHIGHALLLIGHT_ASSET");
 
-        // Ferme les onglets ouverts
-        // $(".in").collapse('toggle');
         $(".collapse").collapse({
             toggle: false
         }).on('show.bs.collapse', function () {
-            $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-.*-(.*)/)[1]]);
+            $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
         }).on('hide.bs.collapse', function () {
-            $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-.*-(.*)/)[1]]);
+            $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
         });
     });
 
