@@ -33,6 +33,10 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                     
                     site.activities._byId = [];
                     for (i = 0; i < site.activities.length; i++) {
+                        if(!metamodel[site.activities[i].okey]) {
+                            continue;
+                        }
+                    
                         site.activities._byId[site.activities[i].id] = site.activities[i];
                     }
                     $scope.steps[0].progress = 50;
@@ -92,7 +96,9 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             toBeStoredSites[$routeParams.site] = $scope.site;
         localStorage.sites = JSON.stringify(toBeStoredSites);
         $location.path('/map/'+$routeParams.site);
-        $scope.$apply();
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
     };
 
     $scope.installAssets = function(stats, callback){
