@@ -23,9 +23,9 @@ function consultationController($scope, $rootScope){
         $(".collapse").collapse({
             toggle: false
         }).on('show.bs.collapse', function () {
-            $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-(.*)/)[1]]);
+            $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-.*-(.*)/)[1]]);
         }).on('hide.bs.collapse', function () {
-            $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-(.*)/)[1]]);
+            $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets[this.id.match(/collapse-.*-(.*)/)[1]]);
         });
     });
 
