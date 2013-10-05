@@ -1,4 +1,4 @@
-<form ng-controller="reportController" class="reportForm">
+<form ng-controller="reportController" name="reportForm" class="reportForm">
     <h3>Compte rendu</h3>
     <div ng-show="step==='assets'">
         <p>
@@ -43,7 +43,9 @@
             <button class="btn btn-default" ng-click="step='assets'">
                 Précédent
             </button>
-            <button class="btn btn-primary" ng-click="sendReport($event)" >Enregistrer</button>
+            <button ng-disabled="!reportForm.$valid" class="btn btn-primary" ng-click="sendReport($event)" >
+                Enregistrer
+            </button>
         </p>
         <div ng-repeat="tab in report.activity.tabs" class="panel panel-default report">
             <div class="panel-heading">
@@ -57,27 +59,46 @@
             <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: $index != 0}">
                 <div class="panel-body">
                     <div ng-repeat="field in tab.fields">
-                        <p>
-                            <label ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}" >
-                                {{field.label}}
+                        <p ng-form="validatorForm" ng-show="field.visible !== false" ng-class="{'has-error': !validatorForm.f.$valid}">
+                            <label class="control-label" ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}">
+                                {{field.label}} <span class="required-marker icon-asterisk" ng-show="field.required"></span>
                                 <span class="animate-switch-container" ng-switch on="field.type">
-                                    <input class="form-control" ng-switch-when="D" type="date" ng-model = "report.fields[field.id]"></input>
-                                    <input class="form-control" ng-switch-when="T" type="time" ng-model = "report.fields[field.id]"></input>
-                                    <select class="form-control" ng-switch-when="L"
-                                        ng-model = "report.fields[field.id]"
-                                        ng-options = "option.value as option.label for option in field.options">
+                                    <input class="form-control" 
+                                           ng-required="field.required" 
+                                           ng-switch-when="D" 
+                                           type="date"
+                                           name="f"                                           
+                                           ng-model = "report.fields[field.id]"></input>
+                                    <input class="form-control" 
+                                           ng-required="field.required" 
+                                           ng-switch-when="T" 
+                                           type="time" 
+                                           name="f"                                           
+                                           ng-model = "report.fields[field.id]"></input>
+                                    <select class="form-control" 
+                                            name="f"                                           
+                                            ng-required="field.required" 
+                                            ng-switch-when="L"
+                                            ng-model = "report.fields[field.id]"
+                                            ng-options = "option.value as option.label for option in field.options">
                                     </select>
                                     <span ng-switch-when="O">
                                         <span class="icon-check pull-left yes" ></span>
                                         <span class="icon-check-empty pull-left no" ></span>
                                         <input
                                                 type="checkbox"
+                                                name="f"                                           
                                                 class="form-control"
                                                 ng-model="report.fields[field.id]"
                                                 ng-true-value="Y"
                                                 ng-false-value="N"></input>
                                     </span>
-                                    <input ng-switch-default class="form-control"  type="text" ng-model="report.fields[field.id]"></input>
+                                    <input ng-switch-default 
+                                           ng-required="field.required" 
+                                           class="form-control" 
+                                           type="text" 
+                                           name="f"                                           
+                                           ng-model="report.fields[field.id]"></input>
                                 </span>
                             </label>
                         </p>
@@ -85,7 +106,10 @@
                 </div>
             </div>
         </div>
-
+        <div ng-show="!reportForm.$valid" class="container panel text-danger">
+            <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> Certains champs obligatoires ne sont pas renseignés.</p>
+        </div>
+        
         <p>
             <button class="btn btn-default" ng-click="cancel()">
                 Annuler
@@ -94,11 +118,7 @@
             <button class="btn btn-default" ng-click="step='assets'">
                 Précédent
             </button>
-            <button class="btn btn-primary" ng-click="sendReport($event)" >Enregistrer</button>
+            <button class="btn btn-primary" ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >Enregistrer</button>
         </p>
     </div>
-
-
-
-
 </form>
