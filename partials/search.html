@@ -35,9 +35,13 @@
                                     <input class="form-control" type="time" ></input>
                                 </div>
                                 <div ng-switch-when="L">
-                                    <select class="form-control" id="adSearchField-{{field.key}}"
+<!--                                     <select class="form-control" id="adSearchField-{{field.key}}"
                                         ng-model="selectedCriteriaValues[field.key]"
                                         ng-options="value as label for (value, label) in site.lists[field.options]">
+                                    </select> -->
+                                    <select ui-select2 ng-model="selectedCriteriaValues[field.key]">
+                                        <option value=""></option>
+                                        <option ng-repeat="(value, label) in site.lists[field.options]" value="{{value}}">{{label}}</option>
                                     </select>
                                 </div>
                                 <div ng-switch-when="O">
@@ -53,6 +57,7 @@
                     <li>
                         <button class="btn btn-default btn-block" ng-click="advancedSearch($event)">Rechercher</button>
                     </li>
+                    <li><label>{{advancedSearchMessage}}</label></li>
                 </ul>
             </div>
         </li>

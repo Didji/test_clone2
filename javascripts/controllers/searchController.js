@@ -3,6 +3,10 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
     // TODO : trouver mieux
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    $scope.select2Options = {
+        allowClear:true
+    };
+
     $scope.selectedCriteriaValues = {};
 
     // On index les critères en fonction des okeys, en les sortant des "tabs", pour faire un joli ng-repeat/ng-options
@@ -46,7 +50,17 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
 
     $scope.advancedSearch = function(event) {
         event.preventDefault();
+
         Smartgeo.findAssetsByCriteria($scope.site, $scope.selectedCriteriaValues, function(results){
+
+            if(!results.length){
+                $scope.advancedSearchMessage = 'Aucun résultat' ;
+                $scope.$apply();
+                return ;
+            } else {
+                $scope.advancedSearchMessage = '';
+            }
+
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
