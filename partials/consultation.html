@@ -10,14 +10,14 @@
 
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{$index}}"
+                <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{asset.okey}}-{{$index}}"
                     ng-click="toggleCollapse($event)">
                   {{asset.label}}
                 </a>
               </h4>
             </div>
 
-            <div id="collapse-{{$index}}" class="panel-collapse collapse">
+            <div id="collapse-{{asset.okey}}-{{$index}}" class="panel-collapse collapse">
                 <div class="panel-body">
                     <span ng-repeat='tab in site.metamodel[asset.okey].tabs'>
                         <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
