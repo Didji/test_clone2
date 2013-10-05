@@ -175,6 +175,7 @@ fieldset[disabled] .btn-primary.active {
     border-radius: 0 8px 8px 0;
     background: #373f45;
 }
+
 #trigger  span {
     margin-top: 10px;
     display: inline-block;
