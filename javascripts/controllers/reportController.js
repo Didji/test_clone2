@@ -13,6 +13,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         Smartgeo.findAssetsByGuids($scope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
             $scope.step = "form";
+            applyDefaultValues();
             $scope.$apply();
         });
     }
@@ -34,12 +35,61 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         $scope.loadAssets();
     }
 
+    
+    function applyDefaultValues() {
+        var report = $scope.report,
+            act = report.activity,
+            fields = report.fields,
+            assets = report.assets,
+            tid, fid, def,
+            i, numTabs, j, numFields,
+            tab, field,
+            date;
+        function pad(number) {
+            if ( number < 10 ) {
+                return '0' + number;
+            }
+            return number;
+        }
+        
+        function getValueFromAssets(pkey) {
+            var rv = [];
+            for(var i = 0, lim = assets.length; i < lim; i++) {
+                var a = JSON.parse(assets[0].asset).attributes;
+                rv.push(a[pkey]);
+            }
+            return rv;
+        }
+        
+        for(i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
+            tab = act.tabs[i];
+            for(j = 0, numFields = tab.fields.length; j < numFields; j++) {
+                field = tab.fields[j];
+                def = field['default'];
+                
+                if(!def) {
+                    continue;
+                }
+                if('string' === typeof def) {
+                    if(field.type === 'D' && def === '#TODAY#') {
+                        date = new Date;
+                        def = date.getUTCFullYear() 
+                                + '-' + pad( date.getUTCMonth() + 1 )
+                                + '-' + pad( date.getUTCDate() )
+                    }
+                    fields[field.id] = def;
+                } else {
+                    fields[field.id] = getValueFromAssets(def.pkey);
+                }
+            }
+        }
+    }
+    
+    
+    
     $scope.toForm = function() {
         $scope.step = 'form';
-    };
-    
-    $scope.toAssets = function() {
-        $scope.step = 'assets';
+        applyDefaultValues();
     };
     
     $scope.cancel = function() {
