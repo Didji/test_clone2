@@ -6,7 +6,7 @@ html, body {
     overflow: auto;
 }
 
-#mp-menu a, #mp-menu  label{
+#mp-menu li > a, #mp-menu  label{
     font-family: 'Raleway Dots', cursive;
 }
 
@@ -20,6 +20,11 @@ html, body {
 }
 #mp-menu  label{
     margin: 0 5%;
+}
+
+.select2-container {
+    width: 90%;
+margin: 0 5%;
 }
 
 #toggleConsultationPanelButton{

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile', ['ngRoute'])
+angular.module('smartgeomobile', ['ngRoute','ui.select2'])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.
             when('/',                                       {templateUrl: 'partials/login.html'}).
@@ -367,6 +367,35 @@ angular.module('smartgeomobile', ['ngRoute'])
                                 partial_response.push(asset);
                             }
                             _this.findAssetsByLabel(site,label, callback, zones.slice(1), partial_response);
+                        }, Smartgeo.log, Smartgeo.log);
+                }, Smartgeo.log);
+            },
+
+            findAssetsByCriteria: function(site, criteria, callback, zones, partial_response){
+                if (!zones) {
+                    zones = site.zones;
+                    partial_response = [];
+                }
+
+                if (!zones.length) {
+                    return callback(partial_response);
+                }
+
+                console.log(criteria);
+
+                var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ?',  _this = this;
+
+                SQLite.openDatabase({
+                    name: zones[0].database_name
+                }).transaction(function(t) {
+                    t.executeSql(request, [criteria + "%", criteria + "%"],
+                        function(t, results) {
+                            for (var i = 0; i < results.rows.length; i++) {
+                                var asset = results.rows.item(i);
+                                asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                                partial_response.push(asset);
+                            }
+                            _this.findAssetsByLabel(site,criteria, callback, zones.slice(1), partial_response);
                         }, Smartgeo.log, Smartgeo.log);
                 }, Smartgeo.log);
             },
