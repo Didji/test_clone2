@@ -50,16 +50,28 @@
                             Paramètres
                         </a>
                         <div class="mp-level">
-                            <a class="mp-back" href="#">retour</a>
+                            <a class="mp-back" href="#">RETOUR</a>
                             <ul>
                                 <li>
-                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/reinstall/{{site.id}}">Forcer la réinstallation de {{site.label}}</a>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/install/{{site.id}}">
+                                        <span class="icon-refresh"></span> 
+                                        Mettre à jour {{site.label}}
+                                    </a>
                                 </li>
                                 <li>
-                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">Désinstaller {{site.label}}</a>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">
+                                        <span class="icon-trash"></span> 
+                                        Désinstaller {{site.label}}
+                                    </a>
                                 </li>
                             </ul>
                         </div>
+                    </li>
+                    <li>
+                        <a href="#/">
+                            <span class="icon icon-power-off"></span>
+                            Déconnexion
+                        </a>
                     </li>
                 </ul>
             </div>
