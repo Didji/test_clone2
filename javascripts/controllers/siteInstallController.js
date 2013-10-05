@@ -19,7 +19,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             }];
             $scope.totalProgress = 10000000;
             $scope.Math = Math;
-            
+
             $http.get(Smartgeo.get('url')+'gi.maintenance.mobility.installation.json&site='+$routeParams.site)
                 .success(function(site) {
 
@@ -30,7 +30,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                     }
                     site.metamodel = metamodel ;
                     $scope.steps[0].progress = 30;
-                    
+
                     site.activities._byId = [];
                     for (i = 0; i < site.activities.length; i++) {
                         if(!metamodel[site.activities[i].okey]) {
@@ -40,8 +40,8 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                         site.activities._byId[site.activities[i].id] = site.activities[i];
                     }
                     $scope.steps[0].progress = 50;
-                    
-                    
+
+
                     for (var key in site.lists) {
                         if (site.lists.hasOwnProperty(key)) {
                             lists[key] = site.lists[key];
@@ -79,8 +79,8 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                     }
                     $scope.totalProgress = total;
                     site.stats = stats;
-                    
-                    
+
+
                     angular.extend($scope.site, site);
 
                     $scope.createZones();
