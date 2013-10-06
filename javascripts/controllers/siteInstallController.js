@@ -36,7 +36,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                         if(!metamodel[site.activities[i].okey]) {
                             continue;
                         }
-                    
+
                         site.activities._byId[site.activities[i].id] = site.activities[i];
                     }
                     $scope.steps[0].progress = 50;

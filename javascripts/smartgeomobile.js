@@ -372,7 +372,7 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                 }, Smartgeo.log);
             },
 
-            findAssetsByCriteria: function(site, criteria, callback, zones, partial_response){
+            findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
                 if (!zones) {
                     zones = site.zones;
                     partial_response = [];
@@ -381,22 +381,32 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                 if (!zones.length) {
                     return callback(partial_response);
                 }
-
-                console.log(criteria);
-
-                var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ?',  _this = this;
+                if(!request){
+                    request = 'SELECT * FROM ASSETS WHERE '; //symbolId like \'' +search.okey+ '%\' ';
+                    for(var criter in search.criteria){
+                        if(search.criteria.hasOwnProperty(criter) && search.criteria[criter]){
+                            if(typeof search.criteria[criter] === "string"){
+                                search.criteria[criter] = '"'+search.criteria[criter]+'"';
+                            }
+                            request += " (     asset like '%\"" + criter + "\":" + search.criteria[criter] + ",%'       ";
+                            request += "   OR  asset like '%\"" + criter + "\":" + search.criteria[criter] + "}%' ) AND ";
+                        }
+                    }
+                    request += ' 1 LIMIT 0, 10';
+                }
+                console.log(request);
 
                 SQLite.openDatabase({
                     name: zones[0].database_name
                 }).transaction(function(t) {
-                    t.executeSql(request, [criteria + "%", criteria + "%"],
+                    t.executeSql(request, [],
                         function(t, results) {
                             for (var i = 0; i < results.rows.length; i++) {
                                 var asset = results.rows.item(i);
                                 asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
                                 partial_response.push(asset);
                             }
-                            _this.findAssetsByLabel(site,criteria, callback, zones.slice(1), partial_response);
+                            Smartgeo.findAssetsByCriteria(site,search, callback, zones.slice(1), partial_response, request);
                         }, Smartgeo.log, Smartgeo.log);
                 }, Smartgeo.log);
             },
