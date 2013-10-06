@@ -18,13 +18,23 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
         $httpProvider.defaults.useXDomain = true;
         // delete $httpProvider.defaults.headers.common['X-Requested-With'];
     }])
-    .factory('G3ME', function(SQLite){
+    .factory('G3ME', function(SQLite, $rootScope){
         var G3ME = {
+            active_layers : false,
             extents_match : function(extent1, extent2){
                 return extent1.xmax > extent2.xmin &&
                     extent2.xmax > extent1.xmin &&
                     extent1.ymax > extent2.ymin &&
                     extent2.ymax > extent1.ymin;
+            },
+            setVisibility: function(layers) {
+                this.active_layers = [];
+                for(var i in layers) {
+                    if(layers[i].status) {
+                        this.active_layers.push(i);
+                    }
+                }
+                $rootScope.$broadcast('G3ME_VISIBILITY_CHANGED');
             },
             drawTile : function(map, site, canvas, tilePoint) {
                 var ctx = canvas.getContext('2d');
@@ -107,17 +117,6 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                     });
                 }
 
-                // var activeLayer = [];
-
-                // var select = this.$el.find('#layerchoose')[0],
-                //     options = select && select.options;
-
-                // for (var i = 0, iLen = options.length; i < iLen; i++) {
-                //     if (options[i].selected) {
-                //         activeLayer.push(options[i].getAttribute('data-okey').split(' ')[0]);
-                //     }
-                // }
-
                 var zones = [],
                     initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                     finalargs = [],
@@ -133,7 +132,9 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                 var request = "SELECT * FROM ASSETS ";
                 request += "WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
                 request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
-                // request += activeLayer.length ? ' and (symbolId like "' + activeLayer.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
+                if(this.active_layers) {
+                    request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
+                }
                 for (i = 0; i < site.zones.length; i++) {
                     if (this.extents_match(site.zones[i].extent, tileExtent)) {
                         SQLite.openDatabase({

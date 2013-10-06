@@ -36,6 +36,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         minZoom: Smartgeo.MIN_ZOOM
     }).addTo($scope.leafletMap);
 
+    $scope.$on("G3ME_VISIBILITY_CHANGED", function() {
+        $scope.canvasTile.redraw();
+    });
+    
+    
     $scope.canvasTile.drawTile = function(canvas, tilePoint) {
         canvas.width = canvas.width;
         G3ME.drawTile($scope.leafletMap, $scope.site, canvas, tilePoint);
