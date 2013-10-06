@@ -80,6 +80,16 @@ margin: 0 5%;
     border-color: #fd9122;
 }
 
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+z-index: 2;
+color: #ffffff;
+background-color: #fd9122;
+border-color: #fd9122;
+}
+.list-group-item.active label {
+color: #ffffff;
+}
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     color: #FFF;
     background-color: #FAB400;
@@ -206,10 +216,14 @@ fieldset[disabled] .btn-primary.active {
 }
 
 
-label.prettycheckbox input{
+label.prettycheckbox input, .list-group-item input{
     display: none;
 }
-
+label.prettycheckbox, .list-group-item  label {
+    color: #555555;
+    padding: 6px 12px;
+    vertical-align: middle;
+}
 label.prettycheckbox {
     border: 1px solid #cccccc;
     display: block;
@@ -229,14 +243,14 @@ label.prettycheckbox {
 label.prettycheckbox.checked {
     border-radius: 3px;
 }
-label.prettycheckbox.checked .yes, label.prettycheckbox .no {
+label.prettycheckbox.checked .yes, label.prettycheckbox .no, .list-group-item  .checked .yes, .list-group-item  .no {
     display: inline;
     margin-top: 3px;
     margin-right: 10px;
 }
-label.prettycheckbox.checked .yes {
+label.prettycheckbox.checked .yes, .list-group-item .checked .yes {
     margin-right: 8px;
 }
-label.prettycheckbox.checked .no, label.prettycheckbox .yes {
+label.prettycheckbox.checked .no, label.prettycheckbox .yes, .list-group-item .checked .no,.list-group-item .yes {
     display: none;
 }

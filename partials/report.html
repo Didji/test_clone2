@@ -70,7 +70,6 @@
                             <label class="control-label" ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}">
                                 {{field.label}} 
                                 <span class="required-marker icon-asterisk" ng-show="field.required"></span>
-                                
                                 <span class="animate-switch-container" ng-switch on="field.type">
                                     <input class="form-control" 
                                            ng-required="field.required" 
