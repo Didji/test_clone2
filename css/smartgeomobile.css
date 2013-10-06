@@ -200,6 +200,11 @@ fieldset[disabled] .btn-primary.active {
     padding-left: 1em;
     border-left: 1px solid gray;
 }
+.reportForm b.ro-label {
+    display: inline-block;
+    min-width: 300px;
+}
+
 
 label.prettycheckbox input{
     display: none;
