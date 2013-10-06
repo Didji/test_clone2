@@ -7,7 +7,7 @@
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant
+                Suivant <span class="icon-chevron-right"></span> 
             </button>
         </p>
         <p>
@@ -30,7 +30,7 @@
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant
+                Suivant <span class="icon-chevron-right"></span> 
             </button>
         </p>
     </div>
@@ -41,10 +41,10 @@
             </button>
 
             <button class="btn btn-default" ng-click="step='assets'">
-                Précédent
+                <span class="icon-chevron-left"></span> Précédent
             </button>
             <button ng-disabled="!reportForm.$valid" class="btn btn-primary" ng-click="sendReport($event)" >
-                Enregistrer
+                Enregistrer <span class="icon-save"></span> 
             </button>
         </p>
         <div ng-repeat="tab in report.activity.tabs" class="panel panel-default report">
@@ -59,11 +59,18 @@
             <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: $index != 0}">
                 <div class="panel-body">
                     <div ng-repeat="field in tab.fields">
-                        <p ng-form="validatorForm" 
+                        <p ng-if="field.readonly">
+                            <b class="ro-label">{{field.label}}</b>
+                            <span class="ro-value">{{report.fields[field.id]}}</span>
+                        </p>
+                        <p ng-if="!field.readonly"
+                           ng-form="validatorForm" 
                            ng-show="field.visible !== false" 
                            ng-class="{'has-error': !validatorForm.f.$valid,isconsequence: field.isconsequence}">
                             <label class="control-label" ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}">
-                                {{field.label}} <span class="required-marker icon-asterisk" ng-show="field.required"></span>
+                                {{field.label}} 
+                                <span class="required-marker icon-asterisk" ng-show="field.required"></span>
+                                
                                 <span class="animate-switch-container" ng-switch on="field.type">
                                     <input class="form-control" 
                                            ng-required="field.required" 
@@ -77,6 +84,16 @@
                                            type="time" 
                                            name="f"                                           
                                            ng-model = "report.fields[field.id]"></input>
+                                    <input class="form-control" 
+                                           ng-required="field.required" 
+                                           ng-switch-when="N" 
+                                           ng-pattern="numberPattern"
+                                           type="number" 
+                                           name="f"                                           
+                                           ng-model = "report.fields[field.id]"></input>
+                                    <small class="helper-text" ng-show="validatorForm.f.$error.number">
+                                        Cette valeur doit être un nombre.
+                                    </small>
                                     <select class="form-control" 
                                             name="f"                                           
                                             ng-required="field.required" 
@@ -119,9 +136,9 @@
             </button>
 
             <button class="btn btn-default" ng-click="step='assets'">
-                Précédent
+                <span class="icon-chevron-left"></span> Précédent
             </button>
-            <button class="btn btn-primary" ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >Enregistrer</button>
+            <button class="btn btn-primary" ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" ><span class="icon-save"></span> Enregistrer</button>
         </p>
     </div>
 </form>

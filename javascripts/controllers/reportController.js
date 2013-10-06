@@ -45,6 +45,9 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         $scope.loadAssets();
     }
 
+    // Used for field validation
+    $scope.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
+    
     function fieldById(id) {
         var report = $scope.report,
             act = report.activity,
@@ -105,7 +108,11 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                     }
                     fields[field.id] = def;
                 } else {
-                    fields[field.id] = getValueFromAssets(def.pkey);
+                    def = getValueFromAssets(def.pkey);
+                    if(field.readonly) {
+                        def = def.join(', ');
+                    }
+                    fields[field.id] = def;
                 }
             }
         }
