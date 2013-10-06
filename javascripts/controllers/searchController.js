@@ -51,7 +51,12 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
     $scope.advancedSearch = function(event) {
         event.preventDefault();
 
-        Smartgeo.findAssetsByCriteria($scope.site, $scope.selectedCriteriaValues, function(results){
+        var advancedSearch = {
+            criteria : $scope.selectedCriteriaValues,
+            okey : $scope.selectedFamily.okey
+        };
+
+        Smartgeo.findAssetsByCriteria($scope.site, advancedSearch, function(results){
 
             if(!results.length){
                 $scope.advancedSearchMessage = 'Aucun résultat' ;

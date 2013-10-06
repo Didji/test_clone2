@@ -29,27 +29,26 @@
                             <label for="adSearchField-{{field.key}}">{{field.label}}</label>
                             <div class="animate-switch-container" ng-switch on="field.type">
                                 <div ng-switch-when="D">
-                                    <input type="date" class="form-control" id="adSearchField-{{field.key}}">
+                                    <input type="date" ng-model="selectedCriteriaValues[field.key]" class="form-control" id="adSearchField-{{field.key}}">
                                 </div>
                                 <div ng-switch-when="T">
-                                    <input class="form-control" type="time" ></input>
+                                    <input class="form-control" type="time" ng-model="selectedCriteriaValues[field.key]" ></input>
                                 </div>
                                 <div ng-switch-when="L">
-<!--                                     <select class="form-control" id="adSearchField-{{field.key}}"
-                                        ng-model="selectedCriteriaValues[field.key]"
-                                        ng-options="value as label for (value, label) in site.lists[field.options]">
-                                    </select> -->
                                     <select ui-select2 ng-model="selectedCriteriaValues[field.key]">
                                         <option value=""></option>
                                         <option ng-repeat="(value, label) in site.lists[field.options]" value="{{value}}">{{label}}</option>
                                     </select>
                                 </div>
                                 <div ng-switch-when="O">
-                                    <input class="form-control" id="adSearchField-{{field.key}}" type="checkbox"
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="checkbox"
                                         ng-true-value="Y" ng-false-value="N"></input>
                                 </div>
+                                <div ng-switch-when="N">
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="number"></input>
+                                </div>
                                 <div ng-switch-default>
-                                    <input class="form-control" id="adSearchField-{{field.key}}" type="text"></input>
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="text"></input>
                                 </div>
                             </div>
                         </div>
