@@ -29,19 +29,45 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         for (var i = 0; i < $scope.site.activities.length; i++) {
             if($scope.site.activities[i].id == $routeParams.activity) {
                 $scope.report.activity = $scope.site.activities[i];
+                var act = $scope.report.activity;
+                // We have to flag fields witch have visibility consequences
+                // to enable a correct layout.
+                for(var i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
+                    tab = act.tabs[i];
+                    for(var j = 0, numFields = tab.fields.length; j < numFields; j++) {
+                        tab.fields[j].isconsequence = (tab.fields[j].visible === false);
+                    }
+                }
+                
                 break;
             }
         }
         $scope.loadAssets();
     }
 
+    function fieldById(id) {
+        var report = $scope.report,
+            act = report.activity,
+            i, numTabs, j, numFields,
+            tab;
+        
+        for(i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
+            tab = act.tabs[i];
+            for(j = 0, numFields = tab.fields.length; j < numFields; j++) {
+                if(tab.fields[j].id == id) {
+                    return tab.fields[j];
+                }
+            }
+        }
+        return false;
+    }
     
     function applyDefaultValues() {
         var report = $scope.report,
             act = report.activity,
             fields = report.fields,
-            assets = report.assets,
-            tid, fid, def,
+            assets = report.assets, 
+            def,
             i, numTabs, j, numFields,
             tab, field,
             date;
@@ -85,7 +111,34 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         }
     }
     
-    
+    $scope.applyConsequences = function(srcId) {
+        // Search for src field.
+        var field = fieldById(srcId),
+            targetField, i, lim, act,
+            cond;
+        
+        if(!field.actions) {
+            return false;
+        }
+        
+        for(i = 0, lim = field.actions.length; i < lim; i++) {
+            act = field.actions[i];
+            targetField = fieldById(act.target);
+            if(!targetField) {
+                continue;
+            }
+            
+            cond = ($scope.report.fields[srcId] == act.condition);
+            switch(act.type) {
+                case "show":
+                    targetField.visible = cond;
+                    break;
+                case "require":
+                    targetField.required = cond;
+                    break;
+            }
+        }
+    };
     
     $scope.toForm = function() {
         $scope.step = 'form';
@@ -94,17 +147,12 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     
     $scope.cancel = function() {
         $window.history.back();
-    }
+    };
     
     $scope.sendReport = function (event) {
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < $scope.report.assets.length; i++) {
             $scope.report.assets[i] = $scope.report.assets[i].id ;
-        }
-
-        // TODO : remplacer par de la verification de formulaire
-        if(!$scope.report.fields.length){
-            return window.alert("Aucun champs n'a été renseigné");
         }
 
         $scope.report.activity = $scope.report.activity.id ;

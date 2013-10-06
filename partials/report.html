@@ -59,7 +59,9 @@
             <div id="report-collapse-{{$index}}" class="panel-collapse" ng-class="{collapse: $index != 0}">
                 <div class="panel-body">
                     <div ng-repeat="field in tab.fields">
-                        <p ng-form="validatorForm" ng-show="field.visible !== false" ng-class="{'has-error': !validatorForm.f.$valid}">
+                        <p ng-form="validatorForm" 
+                           ng-show="field.visible !== false" 
+                           ng-class="{'has-error': !validatorForm.f.$valid,isconsequence: field.isconsequence}">
                             <label class="control-label" ng-class="{prettycheckbox: field.type=='O',checked: report.fields[field.id] == 'Y'}">
                                 {{field.label}} <span class="required-marker icon-asterisk" ng-show="field.required"></span>
                                 <span class="animate-switch-container" ng-switch on="field.type">
@@ -90,6 +92,7 @@
                                                 name="f"                                           
                                                 class="form-control"
                                                 ng-model="report.fields[field.id]"
+                                                ng-click="applyConsequences(field.id)"
                                                 ng-true-value="Y"
                                                 ng-false-value="N"></input>
                                     </span>
