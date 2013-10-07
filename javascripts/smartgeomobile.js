@@ -138,9 +138,64 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
         };
         return GiReportBuilder;
     })
-    .factory('G3ME', function(SQLite, $rootScope){
+    .factory('G3ME', function(SQLite, Smartgeo){
         var G3ME = {
+
             active_layers : false,
+            assetsMarkers : [],
+
+            mapDiv : null,
+            mapDivId: null,
+
+            initialize : function(mapDivId, site){
+
+                this.site    = site;
+                this.tileUrl = this.site.EXTERNAL_TILEURL;
+                this.mapDiv  = document.getElementById(mapDivId) ;
+                this.map     = new L.map(this.mapDiv, {
+                    attributionControl: false,
+                    zoomControl: false
+                }).addControl(L.control.zoom({
+                    position: 'topright'
+                }));
+
+                if(!this.tileUrl){
+                    this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');
+                    this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
+                }
+
+                this.backgroundTile = new L.TileLayer(this.tileUrl, {
+                    maxZoom: Smartgeo.MAX_ZOOM,
+                    minZoom: Smartgeo.MIN_ZOOM
+                }).addTo(this.map);
+
+                this.canvasTile = new L.TileLayer.Canvas({
+                    maxZoom: Smartgeo.MAX_ZOOM,
+                    minZoom: Smartgeo.MIN_ZOOM
+                }).addTo(this.map);
+
+                this.canvasTile.drawTile = function(canvas, tilePoint) {
+                    G3ME.drawTile(canvas, tilePoint);
+                };
+
+                for(var symbol in this.site.symbology){
+                    if (!this.site.symbology[symbol] || !this.site.symbology[symbol].style) {
+                        continue;
+                    }
+                    var image = new Image();
+                    image.src = this.site.symbology[symbol].style.symbol.icon;
+                    this.site.symbology[symbol].style.image = image;
+                }
+
+            },
+
+            invalidateMapSize : function(timeout){
+                timeout = timeout || 10;
+                setTimeout(function() {
+                    G3ME.map.invalidateSize();
+                }, 10);
+            },
+
             extents_match : function(extent1, extent2){
                 return extent1.xmax > extent2.xmin &&
                     extent2.xmax > extent1.xmin &&
@@ -154,17 +209,17 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                         this.active_layers.push(i);
                     }
                 }
-                $rootScope.$broadcast('G3ME_VISIBILITY_CHANGED');
+                this.canvasTile.redraw();
             },
-            drawTile : function(map, site, canvas, tilePoint) {
+            drawTile : function(canvas, tilePoint) {
                 var ctx = canvas.getContext('2d');
-                var zoom = map.getZoom(),
+                var zoom = this.map.getZoom(),
                     crs = L.CRS.EPSG4326,
                     nwPoint = tilePoint.multiplyBy(256),
                     sePoint = nwPoint.add(new L.Point(256, 256)),
-                    nw = crs.project(map.unproject(nwPoint, zoom)),
-                    se = crs.project(map.unproject(sePoint, zoom)),
-                    nwmerc = map.latLngToLayerPoint({
+                    nw = crs.project(this.map.unproject(nwPoint, zoom)),
+                    se = crs.project(this.map.unproject(sePoint, zoom)),
+                    nwmerc = this.map.latLngToLayerPoint({
                         lat: nw.y,
                         lng: nw.x
                     }),
@@ -177,14 +232,14 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                     _pi4 = Math.PI / 4,
                     dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
                     parse = window.JSON.parse,
-                    symbology = site.symbology,
+                    symbology = this.site.symbology,
                     imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                     imageFactor_2 = imageFactor / 2,
                     scale = 256 * Math.pow(2, zoom),
                     xscale = canvas.width / Math.abs(xmax - xmin),
                     yscale = canvas.height / Math.abs(ymax - ymin),
-                    initialTopLeftPointX = map._initialTopLeftPoint.x,
-                    initialTopLeftPointY = map._initialTopLeftPoint.y,
+                    initialTopLeftPointX = this.map._initialTopLeftPoint.x,
+                    initialTopLeftPointY = this.map._initialTopLeftPoint.y,
                     delta_x = initialTopLeftPointX - nwmerc.x,
                     delta_y = initialTopLeftPointY - nwmerc.y,
                     DEG_TO_RAD = Math.PI / 180,
@@ -255,10 +310,10 @@ angular.module('smartgeomobile', ['ngRoute','ui.select2'])
                 if(this.active_layers) {
                     request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
                 }
-                for (i = 0; i < site.zones.length; i++) {
-                    if (this.extents_match(site.zones[i].extent, tileExtent)) {
+                for (i = 0; i < this.site.zones.length; i++) {
+                    if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
                         SQLite.openDatabase({
-                            name: site.zones[i].database_name,
+                            name: this.site.zones[i].database_name,
                             bgType: 1
                         })
                             .transaction(function(tx) {

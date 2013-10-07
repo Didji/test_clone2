@@ -268,7 +268,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
         for (i=0; i < assets_length; i++) {
             asset = assets[i];
-            asset_ = angular.copy(asset);
+            asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS --- > asset_ = angular.copy(asset);
             guid = asset.guid;
             bounds = asset.bounds;
 
@@ -277,9 +277,9 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             for (j = 0; j < fields_in_request.length; j++){
                 request += ' , ? as ' + fields_in_request[j];
             }
-            for (k = 0; k < fields_to_delete.length; k++){
-                delete asset_[fields_to_delete[k]];
-            }
+            // for (k = 0; k < fields_to_delete.length; k++){
+            //     delete asset_[fields_to_delete[k]];
+            // }
             args.push(guid,
                 bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
                 JSON.stringify(asset.geometry), ("" + asset.okey + asset.classindex), (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
