@@ -36,10 +36,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 var act = $scope.report.activity;
                 // We have to flag fields which have visibility consequences
                 // to enable a correct layout.
-                for(var i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
-                    tab = act.tabs[i];
-                    for(var j = 0, numFields = tab.fields.length; j < numFields; j++) {
-                        tab.fields[j].isconsequence = (tab.fields[j].visible === false);
+                for(var j = 0, numTabs = act.tabs.length; j < numTabs; j++) {
+                    tab = act.tabs[j];
+                    for(var k = 0, numFields = tab.fields.length; k < numFields; k++) {
+                        tab.fields[k].isconsequence = (tab.fields[k].visible === false);
                     }
                 }
 
