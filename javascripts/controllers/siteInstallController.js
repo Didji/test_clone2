@@ -298,6 +298,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         };
     };
 
+    // TODO: use G3ME function
     $scope.extents_match = function(extent1, extent2) {
         return extent1.xmax > extent2.xmin &&
             extent2.xmax > extent1.xmin &&
