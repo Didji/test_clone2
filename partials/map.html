@@ -1,5 +1,4 @@
-
-<div class="container_s" ng-controller="menuController">
+<div id="mainmenu" class="container_s" ng-controller="menuController">
     <div class="mp-pusher" id="mp-pusher">
         <nav id="mp-menu" class="mp-menu">
             <div class="mp-level">
@@ -86,18 +85,18 @@
                 </ul>
             </div>
         </nav>
-
         <div class="scroller">
             <div class="scroller-inner">
-                <p>
-                    <a href="#" id="trigger">
-                        <span class="icon-ellipsis-vertical"></span>
-                    </a>
-                </p>
-                <span ng-controller="mapController"><div id="smartgeo-map" ></div></span>
+                
             </div>
-
+            <p>
+                <a href="#" id="trigger">
+                    <span class="icon-ellipsis-vertical"></span>
+                </a>
+            </p>
         </div>
-        <div ng-include="'partials/consultation.html'"></div>
+
     </div>
 </div>
+<span id="mainmap" ng-controller="mapController"><div id="smartgeo-map" ></div></span>
+<div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
