@@ -3,7 +3,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.assetsMarkers = [];
     $scope.consultationIsEnabled = false ;
     $scope.mapDiv = document.getElementById('smartgeo-map') ;
-    $scope.mapDiv.style.height = window.innerHeight+"px";
+    $scope.mapDiv.style.height = "100%";//window.innerHeight+"px";
     $scope.mapDiv.style.width  = "100%";
 
     $scope.invalidateMapSize = function(){
