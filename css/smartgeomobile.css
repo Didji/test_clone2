@@ -27,8 +27,122 @@
 html, body {
     height: 100%;
     background: #373f45;
+    overflow: hidden;
     /*font-family: 'robotoregular', sans-serif;*/
 }
+
+/** Vue principale */
+#mainview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#mainmap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/** Panneaux de droite */
+.consultation-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #373f45;
+    height: 100%;
+    width: 0;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    color: gray;
+    -webkit-transition:  width 0.1s 0.3s;
+    transition:  width 0.1s 0.3s;
+}
+.consultation-panel h4.family-title {
+    color: white;
+}
+
+.consultation-content {
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    left: 0; 
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    display: none;
+}
+.consultation-content button.closer {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    border: 1px solid #373f45;
+}
+.consultation-panel.open .consultation-content{
+    display: block;
+}
+.consultation-panel.open {
+    width: 300px;
+}
+.consultation-panel.double-open {
+    -webkit-transform: translateX(-200%);
+    transform: translateX(-200%);
+}
+
+#toggleConsultationPanelButton{
+    position: absolute;
+    left: -20px;
+    z-index: 100000;
+    right: 0;
+    display: block;
+    bottom: 10px;
+    width: 20px;
+    height: 40px;
+    color: white;
+    font-size: 15px;
+    border: 1px solid #858585;
+    box-shadow: 1px 0px 5px 1px rgba(0, 0, 0, 0.10);
+    border-right : none;
+    text-decoration: none;
+    border-radius: 8px 0 0 8px;
+    background: #373f45;
+}
+
+#toggleConsultationPanelButton  span {
+    margin-top: 12px;
+    display: inline-block;
+    margin-left: 7px;
+}
+
+
+/** Menu */
+#mp-pusher {
+    z-index: 10000;
+}
+/* On doit donner une largeur nulle au menu quand il est fermé,
+ * sinon, il masque les événements qui doivent arriver à la carte.
+ */
+#mp-pusher {
+    width: 0;
+}
+#mp-pusher.mp-pushed {
+    width: 100%;
+}
+/* La classe mp-pusher a un transition: all. A cause de ce qui précède,
+ * cela donne un effet assez laid où l'ombre du menu "avance" vers la 
+ * droite et mange la carte. On désactive ça.
+ */
+#mp-pusher {
+-webkit-transition: width 0s;
+transition: width 0s;
+}
+
 #mp-menu {
     overflow: auto;
 }
@@ -54,15 +168,6 @@ html, body {
 margin: 0 5%;
 }
 
-#toggleConsultationPanelButton{
-    background-color :red ;
-    z-index: 10000;
-    width: 100px;
-    height: 100px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}
 
 .floating-form {
     margin: 100px auto 10px auto;
@@ -167,32 +272,8 @@ fieldset[disabled] .btn-primary.active {
     border-bottom: 1px solid #fd9122;
     padding: 10px 30px 20px;
 }
-.consultation-panel {
-    overflow: auto;
-    background-color: #373f45;
-    width: 300px;
-    display: block;
-    height: 100%;
-    position: absolute;
-    right: -300px;
-    z-index: 1000;
-    top: 0;
-    color: gray;
-    padding: 20px;
-    -webkit-transition:  -webkit-transform 0.1s 0.3s;
-    transition:  transform 0.1s 0.3s;
-}
 
-.consultation-panel.open {
-    -webkit-transform: translateX(-100%);
-    transform: translateX(-100%);
-}
-.consultation-panel.double-open {
-    -webkit-transform: translateX(-200%);
-    transform: translateX(-200%);
-}
-
-#trigger{
+#trigger, #trigger:hover  {
     display: block;
     position: fixed;
     bottom: 10px;
@@ -202,9 +283,6 @@ fieldset[disabled] .btn-primary.active {
     color: white;
     font-size: 20px;
     border: 1px solid #858585;
-}
-
-#trigger, #trigger:hover {
     box-shadow: 1px 0px 5px 1px rgba(0, 0, 0, 0.10);
     left : 0px;
     border-left : none;
@@ -227,7 +305,8 @@ fieldset[disabled] .btn-primary.active {
 }
 
 .reportForm {
-    padding: 15px  ;
+    padding: 15px;
+    overflow: auto;
 }
 .reportForm h3{
     color: white;
