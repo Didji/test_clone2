@@ -1,6 +1,6 @@
 function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http){
 
-    $scope.site = JSON.parse(localStorage.sites)[$routeParams.site];
+    $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site];
     $scope.step = "assets";
 
     $scope.report = {
@@ -10,27 +10,31 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     };
 
     if($routeParams.assets){
-        Smartgeo.findAssetsByGuids($scope.site, $routeParams.assets.split(','), function(assets){
+        Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
             $scope.step = "form";
             applyDefaultValues();
-            $scope.$apply(); // TODO: WRAP IT
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
         });
     }
 
     $scope.loadAssets = function(){
-        Smartgeo.findAssetsByOkey($scope.site, $scope.report.activity.okeys[0], function(assets){
+        Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets){
             $scope.assets = assets ;
-            $scope.$apply(); // TODO: WRAP IT
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
         });
     };
 
     if($routeParams.activity){
-        for (var i = 0; i < $scope.site.activities.length; i++) {
-            if($scope.site.activities[i].id == $routeParams.activity) {
-                $scope.report.activity = $scope.site.activities[i];
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            if($rootScope.site.activities[i].id == $routeParams.activity) {
+                $scope.report.activity = $rootScope.site.activities[i];
                 var act = $scope.report.activity;
-                // We have to flag fields witch have visibility consequences
+                // We have to flag fields which have visibility consequences
                 // to enable a correct layout.
                 for(var i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
                     tab = act.tabs[i];
@@ -166,10 +170,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
             .success(function(){
-                $location.path('map/'+$scope.site.id);
+                $location.path('map/'+$rootScope.site.id);
             })
             .error(function(){
-                $location.path('map/'+$scope.site.id);
+                $location.path('map/'+$rootScope.site.id);
                 console.log(arguments);
             });
     };
