@@ -26,13 +26,6 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         Smartgeo.set("lastLeafletMapExtent", JSON.stringify(G3ME.map.getBounds()));
     });
 
-    // TODO : make it angular way
-    $(window).on('resize', function(){
-        $scope.mapDiv.style.height = window.innerHeight+"px";
-        $scope.mapDiv.style.width  = "100%";
-        G3ME.invalidateMapSize();
-    });
-
     G3ME.map.on('click', function(e) {
 
         if (!$scope.consultationIsEnabled) {
@@ -79,11 +72,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         }
 
         request += "SELECT asset, label, geometry FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
-        request += "AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
-        request += "OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
-
-        var okeysFilter = [];
-
+        request += " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
+        request += " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
         request += " LIMIT 0,10 ";
 
         $(circle._path).fadeOut(1500, function() {
@@ -97,18 +87,18 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax],
                 function(t, results) {
                     if (results.rows.length === 0 ) {
-                        G3ME.mapPopup = L.popup().setLatLng(coords)
+                        var mapPopup = L.popup().setLatLng(coords)
                             .setContent('<p style="color:black">Aucun patrimoine dans cette zone.</p>')
                             .openOn(G3ME.map);
                         setTimeout(function() {
-                            $(G3ME.mapPopup._container).fadeOut();
+                            $(mapPopup._container).fadeOut();
                         }, 3000);
                         return false;
                     }
 
                     var assets = [], asset, asset_;
                     for (var i = 0; i < results.rows.length; i++) {
-                        asset_ = results.rows.item(i)
+                        asset_ = results.rows.item(i);
                         asset  = JSON.parse(asset_.asset);
                         asset.label = asset_.label ;
                         asset.geometry = JSON.parse(asset_.geometry) ;
@@ -119,7 +109,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                 }, Smartgeo.log);
         });
         return false;
-    }, $scope);
+    });
 
     $scope.$on("TOGGLE_CONSULTATION", function(event){
         $scope.toggleConsultation();
