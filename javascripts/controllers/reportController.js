@@ -1,7 +1,9 @@
-function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http){
+function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder){
 
     $scope.site = JSON.parse(localStorage.sites)[$routeParams.site];
     $scope.step = "assets";
+    
+    GiReportBuilder.buildAllTemplates($scope.site.activities);
     
     $scope.report = {
         assets: [],
@@ -26,6 +28,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     };
 
     if($routeParams.activity){
+        $scope.reportTemplate = 'report-'+$routeParams.activity+'.html';
         for (var i = 0; i < $scope.site.activities.length; i++) {
             if($scope.site.activities[i].id == $routeParams.activity) {
                 $scope.report.activity = $scope.site.activities[i];

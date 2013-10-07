@@ -365,3 +365,18 @@ label.prettycheckbox.checked .yes, .list-group-item .checked .yes {
 label.prettycheckbox.checked .no, label.prettycheckbox .yes, .list-group-item .checked .no,.list-group-item .yes {
     display: none;
 }
+
+.ng-invalid > .help-block,
+.ng-invalid > .control-label {
+  color: #b94a48;
+}
+.ng-invalid > .form-control {
+  border-color: #b94a48;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.ng-invalid > .form-control:focus {
+  border-color: #953b39;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+}
