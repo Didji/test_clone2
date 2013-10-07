@@ -10,7 +10,7 @@
                             Consultation
                         </a>
                     </li>
-                    
+
                     <li>
                         <a href="#">
                             <span class="icon icon-search"></span>
@@ -26,7 +26,7 @@
                         </a>
                         <div ng-include="'partials/layers.html'"></div>
                     </li>
-                    
+
                     <li>
                         <a href="#">
                             <span class="icon icon-edit"></span>
@@ -45,14 +45,6 @@
                         </div>
                     </li>
 
-
-<!--                     <li >
-                        <a href="#">
-                            <span class="icon icon-calendar"></span>
-                            Planning
-                        </a>
-                    </li>
- -->
                     <li>
                         <a href="#">
                             <span class="icon icon-gears"></span>
@@ -63,13 +55,13 @@
                             <ul>
                                 <li>
                                     <a style='padding-left: 1em;font-size:1em;' href="#/sites/install/{{site.id}}">
-                                        <span class="icon-refresh"></span> 
+                                        <span class="icon-refresh"></span>
                                         Mettre à jour {{site.label}}
                                     </a>
                                 </li>
                                 <li>
                                     <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">
-                                        <span class="icon-trash"></span> 
+                                        <span class="icon-trash"></span>
                                         Désinstaller {{site.label}}
                                     </a>
                                 </li>
@@ -87,7 +79,7 @@
         </nav>
         <div class="scroller">
             <div class="scroller-inner">
-                
+
             </div>
             <p>
                 <a href="#" id="trigger">
@@ -98,5 +90,5 @@
 
     </div>
 </div>
-<span id="mainmap" ng-controller="mapController"><div id="smartgeo-map" ></div></span>
+<span id="mainmap" ng-controller="mapController"><div id="smartgeo-map"></div></span>
 <div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
