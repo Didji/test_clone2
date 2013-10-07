@@ -145,6 +145,7 @@ transition: width 0s;
 
 #mp-menu {
     overflow: auto;
+    background: #373f45;
 }
 
 #mp-menu li > a, #mp-menu  label{
@@ -167,7 +168,6 @@ transition: width 0s;
     width: 90%;
 margin: 0 5%;
 }
-
 
 .floating-form {
     margin: 100px auto 10px auto;
@@ -307,6 +307,11 @@ fieldset[disabled] .btn-primary.active {
 .reportForm {
     padding: 15px;
     overflow: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 .reportForm h3{
     color: white;
