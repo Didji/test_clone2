@@ -58,7 +58,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 image.src = this.site.symbology[symbol].style.symbol.icon;
                 this.site.symbology[symbol].style.image = image;
             }
-
+            this.canvasTile.redraw();
         },
 
         invalidateMapSize : function(timeout){
