@@ -179,11 +179,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
 
         // GETTER AND SETTER
         get: function(parameter){
-            return this[parameter] || localStorage[parameter];
+            return this[parameter] || localStorage.getItem(parameter);
         },
         set: function(parameter, value){
             localStorage[parameter] = value ;
-            return localStorage[parameter];
+            return localStorage.setItem(parameter, value);
         }
     };
 

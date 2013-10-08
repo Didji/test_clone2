@@ -1,2 +1,1 @@
-Smartgeo Mobile
-==============
+!["Logo"](images/logo-smartgeo.png "Logo")
