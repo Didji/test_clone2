@@ -8,11 +8,14 @@ function consultationController($scope, $rootScope){
         $scope.assets = assets;
         $scope.assets._byGuid = [];
         for (var i = 0; i < assets.length; i++) {
-            if(!$scope.groups[assets[i].okey]){
-                $scope.groups[assets[i].okey] = {};
+            if(!$scope.groups[assets[i].priority]){
+                $scope.groups[assets[i].priority] = {};
+            }
+            if(!$scope.groups[assets[i].priority][assets[i].okey]){
+                $scope.groups[assets[i].priority][assets[i].okey] = {};
             }
             $scope.assets._byGuid[assets[i].guid] = assets[i];
-            $scope.groups[assets[i].okey][assets[i].guid] = assets[i]  ;
+            $scope.groups[assets[i].priority][assets[i].okey][assets[i].guid] = assets[i]  ;
         };
         $scope.state  = 'open';
         $scope.$apply();

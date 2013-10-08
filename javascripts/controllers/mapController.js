@@ -64,11 +64,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             return false;
         }
 
-        request += "SELECT asset, label, geometry FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
+        request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
         request += " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
         request += " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
-        request += " LIMIT 0,10 ";
-
+        request += " order by priority LIMIT 0,10 ";
+console.log(request);
         $(circle._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(circle);
         });
@@ -95,8 +95,10 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                         asset  = JSON.parse(asset_.asset);
                         asset.label = asset_.label ;
                         asset.geometry = JSON.parse(asset_.geometry) ;
+                        asset.priority = asset_.priority ;
                         assets.push(asset);
                     }
+                    console.log(assets);
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
 
                 }, Smartgeo.log);
