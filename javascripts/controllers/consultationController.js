@@ -1,4 +1,5 @@
 function consultationController($scope, $rootScope){
+
     $scope.state  = 'closed';
 
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
