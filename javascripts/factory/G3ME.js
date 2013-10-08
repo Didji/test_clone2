@@ -7,17 +7,29 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
         mapDiv : null,
         mapDivId: null,
 
-        initialize : function(mapDivId, site){
+        initialize : function(mapDivId, site, extent){
 
             this.site    = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
             this.mapDiv  = document.getElementById(mapDivId) ;
             this.map     = new L.map(this.mapDiv, {
                 attributionControl: false,
-                zoomControl: false
+                zoomControl: false,
+                maxZoom: Smartgeo.MAX_ZOOM,
+                minZoom: Smartgeo.MIN_ZOOM
             }).addControl(L.control.zoom({
                 position: 'topright'
             }));
+
+            if(!extent){
+                extent = [
+                    [this.site.extent.ymin, this.site.extent.xmin],
+                    [this.site.extent.ymax, this.site.extent.xmax]
+                ];
+            }
+
+            G3ME.map.fitBounds(extent);
+            G3ME.invalidateMapSize();
 
             if(!this.tileUrl){
                 this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');

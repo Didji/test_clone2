@@ -1,29 +1,22 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
 
     $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site] ;
+
     $scope.consultationIsEnabled = false ;
 
-    G3ME.initialize('smartgeo-map', $rootScope.site);
+    var extent = JSON.parse(Smartgeo.get("lastLeafletMapExtent") || '[]') ;
 
-    var extent = JSON.parse(Smartgeo.get("lastLeafletMapExtent") || '{}') ;
-
-    if(!extent._northEast){
-        extent = [
-            [$rootScope.site.extent.ymin, $rootScope.site.extent.xmin],
-            [$rootScope.site.extent.ymax, $rootScope.site.extent.xmax]
-        ];
-    } else {
-        extent = [
-            [extent._northEast.lat, extent._northEast.lng],
-            [extent._southWest.lat, extent._southWest.lng]
-        ];
-    }
-
-    G3ME.map.fitBounds(extent);
-    G3ME.invalidateMapSize();
+    G3ME.initialize('smartgeo-map', $rootScope.site, extent.length ? extent : null);
 
     G3ME.map.on('moveend', function(e) {
-        Smartgeo.set("lastLeafletMapExtent", JSON.stringify(G3ME.map.getBounds()));
+        var extent = G3ME.map.getBounds();
+        if(    extent._northEast.lat != extent._southWest.lat
+            || extent._northEast.lng != extent._southWest.lng ){
+                Smartgeo.set("lastLeafletMapExtent", JSON.stringify([
+                    [extent._northEast.lat, extent._northEast.lng],
+                    [extent._southWest.lat, extent._southWest.lng]
+                ]));
+        }
     });
 
     G3ME.map.on('click', function(e) {
