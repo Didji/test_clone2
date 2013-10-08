@@ -188,7 +188,6 @@ if ( typeof define === 'function' && define.amd ) {
 
 			// the menu should close if clicking somewhere on the body
 			var bodyClickFn = function( el ) {
-				console.log('ici');
 				self._resetMenu();
 				el.removeEventListener( self.eventtype, bodyClickFn );
 			};
@@ -208,16 +207,13 @@ if ( typeof define === 'function' && define.amd ) {
 
 			// opening a sub level menu
 			this.menuItems.forEach( function( el, i ) {
-				console.log('ici');
 				// check if it has a sub level
 				var subLevel = el.querySelector( 'div.mp-level' );
 				if( subLevel ) {
 					el.querySelector( 'a' ).addEventListener( self.eventtype, function( ev ) {
-				console.log('ici');
 						ev.preventDefault();
 						var level = closest( el, 'mp-level' ).getAttribute( 'data-level' );
 						if( self.level <= level ) {
-				console.log('ici');
 							ev.stopPropagation();
 							classie.add( closest( el, 'mp-level' ), 'mp-level-overlay' );
 							self._openMenu( subLevel );
@@ -229,9 +225,7 @@ if ( typeof define === 'function' && define.amd ) {
 			// closing the sub levels :
 			// by clicking on the visible part of the level element
 			this.levels.forEach( function( el, i ) {
-				console.log('ici');
 				el.addEventListener( self.eventtype, function( ev ) {
-				console.log('ici');
 					ev.stopPropagation();
 					var level = el.getAttribute( 'data-level' );
 					if( self.level > level ) {
@@ -242,16 +236,12 @@ if ( typeof define === 'function' && define.amd ) {
 			} );
 
 			// by clicking on a specific element
-				console.log('ici');
 			this.levelBack.forEach( function( el, i ) {
-				console.log('ici');
 				el.addEventListener( self.eventtype, function( ev ) {
 					ev.preventDefault();
 					var level = closest( el, 'mp-level' ).getAttribute( 'data-level' );
 					if( self.level <= level ) {
-				console.log('ici');
 						ev.stopPropagation();
-				console.log('ici');
 						self.level = closest( el, 'mp-level' ).getAttribute( 'data-level' ) - 1;
 						self.level === 0 ? self._resetMenu() : self._closeMenu();
 					}
