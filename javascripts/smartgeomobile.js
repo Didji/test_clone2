@@ -9,6 +9,7 @@ angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2'])
                 when('/report/:site/:activity/:assets',         {templateUrl: 'partials/report.html'}).
 
                 when('/sites/install/:site',                    {templateUrl: 'partials/installation.html'}).
+                when('/sites/uninstall/:site',                  {templateUrl: 'partials/uninstall.html'}).
                 when('/map/:site',                              {templateUrl: 'partials/map.html'}).
                 otherwise({redirectTo: '/'});
     }]).config(['$httpProvider', function($httpProvider) {
