@@ -68,7 +68,6 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         request += " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
         request += " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
         request += " order by priority LIMIT 0,10 ";
-console.log(request);
         $(circle._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(circle);
         });
@@ -98,7 +97,6 @@ console.log(request);
                         asset.priority = asset_.priority ;
                         assets.push(asset);
                     }
-                    console.log(assets);
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
 
                 }, Smartgeo.log);
