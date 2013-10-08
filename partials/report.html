@@ -1,5 +1,5 @@
 <form ng-controller="reportController" name="reportForm" class="reportForm">
-    <h3>Compte rendu</h3>
+    <h3>Compte rendu {{report.activity.label}}</h3>
     <div ng-show="step==='assets'">
         <p>
             <button class="btn btn-default" ng-click="cancel()">
@@ -10,7 +10,7 @@
                 Suivant <span class="icon-chevron-right"></span> 
             </button>
         </p>
-        <p>
+        <p ng-show="!report.activity">
             <select class="form-control"
                     ng-change  = "loadAssets()"
                     ng-model   = "report.activity"
