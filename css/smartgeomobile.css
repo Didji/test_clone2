@@ -67,9 +67,18 @@ html, body {
     z-index: 1000;
     top: 0;
     color: gray;
-    -webkit-transition:  width 0.1s 0.3s;
-    transition:  width 0.1s 0.3s;
+    width: 300px;
+
+    -webkit-transition: -webkit-transform 0.5s;
+    transition:  transform 0.5s;
+        -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
 }
+.consultation-panel.open {
+        -webkit-transform: translate3d(-0%, 0, 0);
+    transform: translate3d(0%, 0, 0);
+}
+
 .consultation-panel h4.family-title {
     color: white;
 }
@@ -93,13 +102,7 @@ html, body {
 .consultation-panel.open .consultation-content{
     display: block;
 }
-.consultation-panel.open {
-    width: 300px;
-}
-.consultation-panel.double-open {
-    -webkit-transform: translateX(-200%);
-    transform: translateX(-200%);
-}
+
 
 #toggleConsultationPanelButton{
     position: absolute;
