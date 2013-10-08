@@ -204,7 +204,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             default:
                 console.log('Geometrie non supportée');
         }
-        G3ME.map.panTo(center).setZoom(18);
+        G3ME.map.setView(center,18);
         G3ME.invalidateMapSize();
     };
 
