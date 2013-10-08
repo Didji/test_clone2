@@ -93,5 +93,5 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     };
 
     $scope.gimapUrl = Smartgeo.get('url') ;
-    $scope.smallUrl = $scope.gimapUrl.replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+    $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
 }
