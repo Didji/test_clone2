@@ -8,6 +8,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     $scope.report = {
         assets: [],
         fields: {},
+        ged:[],
         activity: null,
         uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -173,6 +174,12 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             $scope.report.assets[i] = $scope.report.assets[i].id ;
         }
 
+        for (i = 0; i < $scope.report.ged.length; i++) {
+            $scope.report.ged[i] = {
+                    'content': getBase64Image($scope.report.ged[i].content)
+            };
+        }
+
         $scope.report.activity  = $scope.report.activity.id ;
         $scope.report.timestamp = new Date().getTime();
 
@@ -190,6 +197,46 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     $scope.toggleCollapse = function(event){
         event.preventDefault();
+    };
+
+    $scope.addPicture = function(){
+
+        if (!navigator.camera || !Camera){
+            $scope.report.ged.push({
+                content:'http://placehold.it/350x150'
+            });
+            return ;
+        }
+
+        navigator.camera.getPicture(function(ImageData) {
+            $scope.report.ged.push({
+                content:ImageData
+            });
+            $scope.$apply();
+        }, function(CameraError) {
+            console.error(CameraError);
+        }, {
+            quality: 100,
+            sourceType: navigator.camera.PictureSourceType.CAMERA,
+            mediaType: navigator.camera.MediaType.PICTURE,
+            destinationType: Camera.DestinationType.FILE_URI,
+            correctOrientation: false,
+            saveToPhotoAlbum: true
+        });
+
+    };
+
+    getBase64Image = function(src) {
+        var img = document.createElement("img");
+        img.src = src ;
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        return dataURL ;
+        // return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     };
 
 }

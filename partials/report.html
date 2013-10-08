@@ -7,7 +7,7 @@
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant <span class="icon-chevron-right"></span> 
+                Suivant <span class="icon-chevron-right"></span>
             </button>
         </p>
         <p ng-show="!report.activity">
@@ -30,7 +30,7 @@
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant <span class="icon-chevron-right"></span> 
+                Suivant <span class="icon-chevron-right"></span>
             </button>
         </p>
     </div>
@@ -44,14 +44,28 @@
                 <span class="icon-chevron-left"></span> Précédent
             </button>
             <button ng-disabled="!reportForm.$valid" class="btn btn-primary" ng-click="sendReport($event)" >
-                Enregistrer <span class="icon-save"></span> 
+                Enregistrer <span class="icon-save"></span>
             </button>
         </p>
         <div ng-if="report.activity" ng-include="reportTemplate"></div>
         <div ng-show="!reportForm.$valid" class="container panel text-danger">
             <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> Certains champs obligatoires ne sont pas renseignés.</p>
         </div>
-        
+        <div class="panel panel-default report">
+            <div class="panel-heading">
+                <h4 class="panel-title">Média</h4>
+            </div>
+            <div class="panel-body">
+                <div id="images">
+                    <ul>
+                        <li ng-repeat='image in report.ged'>
+                            <img ng-src="{{image.content}}" alt=""/>
+                        </li>
+                    </ul>
+                </div>
+                <button class='btn btn-default btn-block' ng-click='addPicture();'>Ajouter photo</button>
+            </div>
+        </div>
         <p>
             <button class="btn btn-default" ng-click="cancel()">
                 Annuler
