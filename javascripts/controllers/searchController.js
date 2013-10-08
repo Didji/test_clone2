@@ -1,7 +1,5 @@
 function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite){
 
-    console.log( $rootScope.site);
-
     // TODO : trouver mieux
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
