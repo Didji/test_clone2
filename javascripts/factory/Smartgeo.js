@@ -29,7 +29,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
             if( url.indexOf('index.php?service=') === -1 ) {
                 url = url + '/index.php?service=';
             }
+            Smartgeo.reset();
             return this.set('url', url);
+        },
+
+        reset: function(){
+            localStorage.clear();
         },
 
         log: function(){
