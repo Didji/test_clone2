@@ -72,9 +72,10 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
         Smartgeo.get('online') === 'true' ? remoteLogin() : localLogin();
     };
     $scope.setGimapUrl = function(){
-        $scope.gimapUrl = Smartgeo.setGimapUrl();
+        Smartgeo.setGimapUrl();
+        $scope.gimapUrl = Smartgeo.get('url') ;
         $scope.ping();
-        $scope.smallUrl = $scope.gimapUrl.replace(/^https?:..(.+).index.php.*$/, '\1');
+        $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
         
         localStorage.sites = '{}';
         localStorage.knownUsers = '{}';
