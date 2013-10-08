@@ -180,8 +180,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 $location.path('map/'+$rootScope.site.id);
             })
             .error(function(){
+                var reports = JSON.parse( Smartgeo.get('reports') || '[]');
+                reports.push($scope.report);
+                Smartgeo.set('reports', JSON.stringify(reports));
                 $location.path('map/'+$rootScope.site.id);
-                console.log(arguments);
             });
     };
 
