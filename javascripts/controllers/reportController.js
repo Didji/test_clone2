@@ -2,13 +2,17 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site];
     $scope.step = "assets";
-    
+
     GiReportBuilder.buildAllTemplates($scope.site.activities);
 
     $scope.report = {
         assets: [],
         fields: {},
-        activity: null
+        activity: null,
+        uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            })
     };
 
     if($routeParams.assets){
