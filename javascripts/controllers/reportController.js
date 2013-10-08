@@ -173,16 +173,17 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             $scope.report.assets[i] = $scope.report.assets[i].id ;
         }
 
-        $scope.report.activity = $scope.report.activity.id ;
+        $scope.report.activity  = $scope.report.activity.id ;
+        $scope.report.timestamp = new Date().getTime();
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
             .success(function(){
-                $location.path('map/'+$rootScope.site.id);
             })
             .error(function(){
                 var reports = JSON.parse( Smartgeo.get('reports') || '[]');
                 reports.push($scope.report);
                 Smartgeo.set('reports', JSON.stringify(reports));
+            }).then(function(){
                 $location.path('map/'+$rootScope.site.id);
             });
     };

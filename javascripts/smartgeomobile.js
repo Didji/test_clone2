@@ -1,4 +1,4 @@
-angular.module('smartgeomobile', ['ngRoute','ui.select2'])
+angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2'])
        .config(['$routeProvider', function($routeProvider) {
             $routeProvider.
                 when('/',                                       {templateUrl: 'partials/login.html'}).
