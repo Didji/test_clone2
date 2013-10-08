@@ -148,19 +148,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
                 return callback(partial_response);
             }
             if(!request){
-                request = 'SELECT * FROM ASSETS WHERE '; //symbolId like \'' +search.okey+ '%\' ';
+                request = 'SELECT * FROM ASSETS WHERE ';
+                var g = '';
                 for(var criter in search.criteria){
                     if(search.criteria.hasOwnProperty(criter) && search.criteria[criter]){
-                        if(typeof search.criteria[criter] === "string"){
-                            search.criteria[criter] = '"'+search.criteria[criter]+'"';
+                        if(isNaN(1*search.criteria[criter])){
+                            g = '"';
+                        } else {
+                            g = '' ;
                         }
-                        request += " (     asset like '%\"" + criter + "\":" + search.criteria[criter] + ",%'       ";
-                        request += "   OR  asset like '%\"" + criter + "\":" + search.criteria[criter] + "}%' ) AND ";
+                        request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g + ",%'       ";
+                        request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g + "}%' ) AND ";
                     }
                 }
                 request += ' 1 LIMIT 0, 10';
             }
-            console.log(request);
 
             SQLite.openDatabase({
                 name: zones[0].database_name
