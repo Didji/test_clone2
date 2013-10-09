@@ -56,8 +56,6 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 }
                 lastuser.username = $scope.username;
                 localStorage.user = JSON.stringify(lastuser);
-                console.log(localStorage.user);
-
                 $location.path('sites');
             }).error(loginFailed);
     }
