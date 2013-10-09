@@ -9,6 +9,8 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     $scope.report = {
         assets: [],
         fields: {},
+        roFields: {},
+        overrides: {},
         ged:[],
         activity: null,
         uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -108,9 +110,9 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         }
         
         function getValueFromAssets(pkey, okey) {
-            var rv = [], val;
+            var rv = {}, val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
-                var a = JSON.parse(assets[0].asset).attributes,
+                var a = JSON.parse(assets[i].asset).attributes,
                     list = getList(pkey, okey);
                 
                 val = a[pkey];
@@ -118,7 +120,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                     val = $rootScope.site.lists[list][val];
                 }
                 
-                rv.push(val);
+                rv[assets[i].id] = val;
             }
             return rv;
         }
@@ -142,15 +144,27 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                     fields[field.id] = def;
                 } else {
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
-                    if(field.readonly) {
-                        def = def.join(', ');
-                    }
+                    $scope.report.roFields[field.id] = $scope.formatFieldEntry(def);
+                    $scope.report.overrides[field.id] = '';
                     fields[field.id] = def;
                 }
             }
         }
     }
 
+    $scope.formatFieldEntry = function(val) {
+        if('string' === typeof val) {
+            return val;
+        }
+        var str = [];
+        for(var a in val) {
+            if(val[a]) {
+                str.push(val[a]);
+            }
+        }
+        return str.join(', ');
+    };
+    
     $scope.applyConsequences = function(srcId) {
         // Search for src field.
         var field = fieldById(srcId),
@@ -202,6 +216,15 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             };
         }
 
+        for(i in $scope.report.overrides) {
+            if($scope.report.overrides[i]) {
+                $scope.report.fields[i] = $scope.report.overrides[i];
+            }
+        }
+        
+        delete $scope.report.overrides;
+        delete $scope.report.roFields;
+        
         $scope.report.activity  = $scope.report.activity.id ;
         $scope.report.timestamp = new Date().getTime();
 
