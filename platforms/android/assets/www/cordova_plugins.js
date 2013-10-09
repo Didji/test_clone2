@@ -3,7 +3,7 @@ module.exports = [
     {
         "file": "plugins/org.pgsqlite/www/SQLitePlugin.js",
         "id": "org.pgsqlite.SQLitePlugin",
-        "clobbers": [
+        "clobbers": [xsd
             "SQLitePlugin"
         ]
     }
