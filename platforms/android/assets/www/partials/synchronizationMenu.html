@@ -1,0 +1,42 @@
+<div class="mp-level" ng-controller="synchronizationMenuController">
+    <a class="mp-back" href="#">RETOUR</a>
+    <ul>
+        <li ng-show="reports.length">
+            <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='syncAll()'>
+                <button class="btn btn-primary">
+                    <span class="icon-refresh"></span>
+                    Tout synchroniser
+                </button>
+            </h2>
+        </li>
+
+        <li class="container">
+            <div class="list-group">
+                <div class="list-group-item" ng-repeat="report in reports">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default  btn-s dropdown-toggle" data-toggle="dropdown">
+                            <span class="icon icon-gears"></span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='sync($index)'><span class="icon icon-gears"></span> Synchroniser</button>
+                            </li>
+                            <li>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='delete($index)'><span class="icon icon-remove"></span> Supprimer</button>
+                            </li>
+                        </ul>
+                    </div>
+                    {{site.activities._byId[report.activity].label}}<br/>
+                    <small>{{report.timestamp | date:'HH:mm dd/MM'}}</small>
+                </div>
+            </div>
+        </li>
+
+        <li ng-show="!reports.length">
+            <a style='padding-left: 1em;font-size:1em;'>
+                Tout est synchronisé !
+            </a>
+        </li>
+
+    </ul>
+</div>

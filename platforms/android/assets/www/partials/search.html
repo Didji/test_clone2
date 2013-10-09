@@ -1,0 +1,71 @@
+<div class="mp-level" ng-controller="searchController">
+    <a class="mp-back" href="#">retour</a>
+    <ul>
+        <li>
+            <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
+            <button class="btn btn-default btn-block has-spinner" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
+                <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+                    Rechercher
+            </button>
+        </li>
+        <li><label>{{searchMessage}}</label></li>
+        <li>
+            <a href="#">
+                <span class="icon icon-search"></span>
+                Recherche Avancée
+            </a>
+            <div class="mp-level">
+                <a class="mp-back" href="#">retour</a>
+                <ul>
+                    <li>
+                        <select class="form-control" ng-model="selectedFamily"
+                                ng-options = " family.label for (okey, family) in site.metamodel">
+                        </select>
+                    </li>
+                    <li>
+                        <select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()"
+                                ng-options = "criter.label for criter in criteria[selectedFamily.okey]" multiple>
+                        </select>
+                    </li>
+                    <li ng-repeat='field in selectedCriteria'>
+                        <div class="form-group">
+                            <label for="adSearchField-{{field.key}}">{{field.label}}</label>
+                            <div class="animate-switch-container" ng-switch on="field.type">
+                                <div ng-switch-when="D">
+                                    <input type="date" ng-model="selectedCriteriaValues[field.key]" class="form-control" id="adSearchField-{{field.key}}">
+                                </div>
+                                <div ng-switch-when="T">
+                                    <input class="form-control" type="time" ng-model="selectedCriteriaValues[field.key]" ></input>
+                                </div>
+                                <div ng-switch-when="L">
+                                    <select ui-select2 ng-model="selectedCriteriaValues[field.key]">
+                                        <option value=""></option>
+                                        <option ng-repeat="(value, label) in site.lists[field.options]" value="{{value}}">{{label}}</option>
+                                    </select>
+                                </div>
+                                <div ng-switch-when="O">
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="checkbox"
+                                        ng-true-value="Y" ng-false-value="N"></input>
+                                </div>
+                                <div ng-switch-when="N">
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="number"></input>
+                                </div>
+                                <div ng-switch-default>
+                                    <input class="form-control" ng-model="selectedCriteriaValues[field.key]" id="adSearchField-{{field.key}}" type="text"></input>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <button class="btn btn-default btn-block has-spinner" ng-class='{active:searchIsPerforming}' ng-click="advancedSearch($event)">
+                            <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+                                Rechercher
+                        </button>
+                        <button class="btn btn-default btn-block" ng-click="resetCriteria()">Effacer les critères</button>
+                    </li>
+                    <li><label>{{advancedSearchMessage}}</label></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
