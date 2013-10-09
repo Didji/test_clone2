@@ -95,7 +95,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                 });
     });
 
-    endInstall = function(){
+    function endInstall(){
         $scope.site.installed = true ;
         var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
             toBeStoredSites[$routeParams.site] = $scope.site;
@@ -106,7 +106,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    installAssets = function(stats, callback){
+    function installAssets(stats, callback){
         if(!stats.length){
             return callback() ;
         }
@@ -116,7 +116,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         });
     };
 
-    installOkey = function (objectType, callback){
+    function installOkey(objectType, callback){
         $scope.currentInstalledOkey = objectType.okey ;
         console.log(objectType);
         objectType.step.progress = 0;
@@ -136,7 +136,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    installOkeyPerSlice = function(objectType, lastFetched, callback){
+    function installOkeyPerSlice(objectType, lastFetched, callback){
         if(lastFetched >= objectType.amount){
             objectType.step.progress = Math.min(objectType.amount, lastFetched);
             return callback();
@@ -161,7 +161,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             });
     };
 
-    save = function(assets, callback) {
+    function save(assets, callback) {
         distribute_assets_in_zones(assets);
         save_zones_to_database(function() {
             clean_zones();
@@ -169,7 +169,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         });
     };
 
-    clean_zones = function() {
+    function clean_zones() {
         for (var i = 0; i < $scope.site.zones.length; i++){
             if ($scope.site.zones[i].assets) {
                 $scope.site.zones[i].assets_count = ($scope.site.zones[i].assets_count || 0) + $scope.site.zones[i].assets.length;
@@ -179,7 +179,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    distribute_assets_in_zones = function(assets) {
+    function distribute_assets_in_zones(assets) {
 
         if (!assets){
             return false;
@@ -207,7 +207,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    save_zones_to_database = function(callback) {
+    function save_zones_to_database(callback) {
 
         for (var i = 0; i < $scope.site.zones.length; i++) {
             (function(i) {
@@ -229,7 +229,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    execute_requests_for_zone = function(zone, callback) {
+    function execute_requests_for_zone(zone, callback) {
 
         if (zone.insert_requests.length === 0) {
             return i_just_save_myself("rqst" + zone.table_name, zone.insert_requests.length, callback);
@@ -251,7 +251,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     };
 
 
-    i_just_save_myself  =  function(attribute, treeshold, callback) {
+    function i_just_save_myself(attribute, treeshold, callback) {
         $scope[attribute] = 1 * ($scope[attribute] || 0) + 1;
         if ($scope[attribute] >= treeshold) {
             $scope[attribute] = 0;
@@ -261,13 +261,13 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
     };
 
-    build_binded_insert_request = function(assets) {
+    function build_binded_insert_request(assets) {
         var request = '',
             asset, asset_, guid, check = /\'/g,
             metamodel = $scope.site.metamodel,
             symbology = $scope.site.symbology,
             bounds, geometry, symbolId, angle, label, args = [],
-            fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'minzoom', 'maxzoom', 'asset'],
+            fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
             fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
             assets_length = assets.length,
             i ,j, k;
@@ -289,6 +289,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             args.push(guid,
                 bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
                 JSON.stringify(asset.geometry), ("" + asset.okey + asset.classindex), (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
+                asset.maplabel || '',
                 1 * symbology[("" + asset.okey + asset.classindex)].minzoom,
                 1 * symbology[("" + asset.okey + asset.classindex)].maxzoom,
                 JSON.stringify(asset_)
@@ -304,7 +305,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         };
     };
 
-    createZones = function(){
+    function createZones(){
         var zones = [];
 
         var zones_matrix_length = Math.ceil(Math.sqrt(Math.pow(2, Math.ceil(Math.log($scope.site.number.total / Smartgeo._INSTALL_MAX_ASSETS_PER_ZONE) / Math.LN2))));
@@ -333,11 +334,11 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         $scope.site.zones = zones;
     };
 
-    createZonesDatabases = function(callback){
+    function createZonesDatabases(callback){
         for (var i = 0; i < $scope.site.zones.length; i++) {
             SQLite.openDatabase({name: $scope.site.zones[i].database_name}).transaction(function(transaction){
                 transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
-                transaction.executeSql('CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, minzoom integer, maxzoom integer, asset)');
+                transaction.executeSql('CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, maplabel, minzoom integer, maxzoom integer, asset)');
                 transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function(){
                     i_just_save_myself("create_zones_databases_", $scope.site.zones.length, callback);
                 });
