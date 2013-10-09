@@ -83,6 +83,16 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
             }
             this.canvasTile.redraw();
         },
+        getVisibility: function() {
+            if(this.active_layers === false) {
+                return false;
+            }
+            var rv = {};
+            for(var i in this.active_layers) {
+                rv[this.active_layers[i]] = true;
+            }
+            return rv;
+        },
         drawTile : function(canvas, tilePoint) {
             var ctx = canvas.getContext('2d');
             var zoom = this.map.getZoom(),
@@ -254,15 +264,15 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                                                     image.width * imageFactor,
                                                     image.height * imageFactor);
                                                 ctx.restore();
-                                                if (zoom > 16 && asset.label) {
-                                                    addLabel(asset.label, image.width, coord_.x, coord_.y);
+                                                if (zoom > 16 && asset.maplabel) {
+                                                    addLabel(asset.maplabel, image.width, coord_.x, coord_.y);
                                                 }
                                             } else {
                                                 ctx.beginPath();
                                                 ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
                                                 ctx.fillStyle = symbology[asset.symbolId].style.fillcolor;
                                                 ctx.fill();
-                                                ctx.fillText(asset.label, coord_.x + 1, coord_.y + 1);
+                                                ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
                                             }
                                         } else {
                                             console.log("géometrie inconnue");
