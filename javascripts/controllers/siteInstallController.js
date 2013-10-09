@@ -118,7 +118,6 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
     function installOkey(objectType, callback){
         $scope.currentInstalledOkey = objectType.okey ;
-        console.log(objectType);
         objectType.step.progress = 0;
         if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
             installOkeyPerSlice(objectType, 0, callback);
