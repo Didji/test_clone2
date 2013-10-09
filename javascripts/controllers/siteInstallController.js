@@ -32,10 +32,8 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                     }
                     site.metamodel = metamodel ;
                     $scope.steps[0].progress = 30;
-                    console.log(site.activities);
 
                     activities._byId = [];
-
                     for (i = 0; i < site.activities.length; i++) {
                         if(site.number[site.activities[i].okeys[0]] != 0 ){
                             activities.push(site.activities[i]);
@@ -118,7 +116,6 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
     function installOkey(objectType, callback){
         $scope.currentInstalledOkey = objectType.okey ;
-        console.log(objectType);
         objectType.step.progress = 0;
         if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
             installOkeyPerSlice(objectType, 0, callback);

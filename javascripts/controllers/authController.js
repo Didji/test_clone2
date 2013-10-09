@@ -56,8 +56,6 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 }
                 lastuser.username = $scope.username;
                 localStorage.user = JSON.stringify(lastuser);
-                console.log(localStorage.user);
-
                 $location.path('sites');
             }).error(loginFailed);
     }
@@ -76,7 +74,10 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     };
     $scope.setGimapUrl = function(){
 
-        Smartgeo.setGimapUrl();
+        if(Smartgeo.setGimapUrl() === null){
+            // L'utilisateur a annulé
+            return ;
+        }
         $scope.username = '';
         $scope.pwd = '';
         $scope.gimapUrl = Smartgeo.get('url') ;
