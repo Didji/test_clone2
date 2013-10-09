@@ -32,12 +32,15 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     $scope.ping();
 
     function loginFailed() {
+        $scope.ping();
         window.alert('Identifiants incorrects');
     }
     function remoteLogin() {
         var url  = Smartgeo.get('url')+"global.auth.json";
             url += "&login="+encodeURIComponent($scope.username);
             url += "&pwd="+encodeURIComponent($scope.pwd);
+        $scope.readyToLog = false;
+        $scope.logMessage = "Veuillez patienter...";
         $http.post(url)
             .success(function(){
                 var knownUsers = JSON.parse(localStorage.knownUsers || '{}');
@@ -55,7 +58,7 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                 localStorage.user = JSON.stringify(lastuser);
                 console.log(localStorage.user);
 
-        $location.path('sites');
+                $location.path('sites');
             }).error(loginFailed);
     }
     function localLogin() {
