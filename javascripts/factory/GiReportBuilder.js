@@ -4,7 +4,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               var str, myField = 'report.activity.tabs['+i+'].fields['+j+']';
               if(field.readonly) {
                   str = '<p><b class="ro-label">'+field.label+'</b>';
-                  str += '<span class="ro-value">{{report.fields['+field.id+']}}</span></p>';
+                  str += '<span class="ro-value">{{report.roFields['+field.id+']}}</span></p>';
                   return str;
               }
               str = '<p ng-form="validatorForm" \
@@ -19,20 +19,24 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               str += '>';
               str += field.label;
               str += '<span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
+              var model = (field['default'] && field['default'].pkey) ? 'report.overrides['+field.id+']' : 'report.fields['+field.id+']',
+                  placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields['+field.id+']}}' : '';
               switch(field.type) {
                   case 'D':
                       str += '<input class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          type="date" \
                                          name="f" \
-                                         ng-model = "report.fields['+field.id+']"></input>';
+                                         placeholder="'+placeholder+'" \
+                                         ng-model = "'+model+'"></input>';
                       break;
                   case 'T':
                       str += '<input class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          type="time" \
                                          name="f"     \
-                                         ng-model = "report.fields[field.id]"></input>';
+                                         placeholder="'+placeholder+'" \
+                                         ng-model = "'+model+'"></input>';
                       break;
                   case 'N':
                       str += '<input class="form-control" \
@@ -40,7 +44,8 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-pattern="numberPattern"\
                                          type="number" \
                                          name="f" \
-                                         ng-model = "report.fields['+field.id+']"></input>\
+                                         placeholder="'+placeholder+'" \
+                                         ng-model = "'+model+'"></input>\
                                   <small class="helper-text" ng-show="validatorForm.f.$error.number">\
                                       Cette valeur doit être un nombre.\
                                   </small>';
@@ -71,7 +76,8 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                      class="form-control" \
                                      type="text" \
                                      name="f" \
-                                     ng-model="report.fields['+field.id+']"></input>';
+                                     placeholder="'+placeholder+'" \
+                                     ng-model = "'+model+'"></input>';
                       break;
               }
 
@@ -100,6 +106,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               for(var i in activity.tabs) {
                   str += this._buildTab(i, activity.tabs[i]);
               }
+              console.log(str);
               return str;
           },
 
