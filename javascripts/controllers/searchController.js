@@ -48,6 +48,11 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
         });
     };
 
+    $scope.resetCriteria = function(){
+        $scope.selectedFamily = null;
+        $scope.selectedCriteria = null;
+    };
+
     $scope.advancedSearch = function(event) {
         event.preventDefault();
 
