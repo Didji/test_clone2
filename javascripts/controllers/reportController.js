@@ -2,6 +2,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site];
     $scope.step = "assets";
+    $scope.fromConsult = false;
 
     GiReportBuilder.buildAllTemplates($scope.site.activities);
 
@@ -17,9 +18,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     };
 
     if($routeParams.assets){
+        $scope.fromConsult = true;
+        $scope.step = "form";
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
-            $scope.step = "form";
             applyDefaultValues();
             if(!$scope.$$phase) {
                 $scope.$apply();
