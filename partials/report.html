@@ -40,7 +40,7 @@
                 Annuler
             </button>
 
-            <button class="btn btn-default" ng-click="step='assets'">
+            <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> Précédent
             </button>
             <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >
@@ -73,7 +73,7 @@
                 Annuler
             </button>
 
-            <button class="btn btn-default" ng-click="step='assets'">
+            <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> Précédent
             </button>
 
