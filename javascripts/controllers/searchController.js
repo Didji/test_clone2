@@ -53,6 +53,16 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
         $scope.selectedCriteria = null;
     };
 
+    $scope.selectedCriteriaChangeHandler = function(){
+        var newSelectedCriteriaValues = {};
+        for (var i = 0; i < $scope.selectedCriteria.length; i++) {
+            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i].key]){
+                newSelectedCriteriaValues[$scope.selectedCriteria[i].key] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i].key];
+            }
+        }
+        $scope.selectedCriteriaValues = newSelectedCriteriaValues ;
+    };
+
     $scope.advancedSearch = function(event) {
         event.preventDefault();
 
