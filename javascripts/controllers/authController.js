@@ -74,7 +74,10 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
     };
     $scope.setGimapUrl = function(){
 
-        Smartgeo.setGimapUrl();
+        if(Smartgeo.setGimapUrl() === null){
+            // L'utilisateur a annulé
+            return ;
+        }
         $scope.username = '';
         $scope.pwd = '';
         $scope.gimapUrl = Smartgeo.get('url') ;

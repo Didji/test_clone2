@@ -23,7 +23,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
             if(!url && url !== null) {
                 return this.setGimapUrl();
             } else if (url === null){
-                return ;
+                return null;
             }
             if( url.indexOf('http') === -1 ) {
                 url = 'http://'+url;
