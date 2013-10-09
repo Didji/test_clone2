@@ -5,8 +5,9 @@
         <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
         <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
         <hr>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!readyToLog">
-            <span class="icon-spinner" ng-show="!readyToLog"></span>
+
+        <button class="btn btn-lg btn-primary btn-block  has-spinner " ng-class='{active:!readyToLog}' type="submit" ng-disabled="!readyToLog">
+            <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
             {{logMessage}}
         </button>
     </form>
