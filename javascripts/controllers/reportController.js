@@ -188,6 +188,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     };
 
     $scope.sendReport = function (event) {
+        $scope.sendingReport = true ;
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < $scope.report.assets.length; i++) {
             $scope.report.assets[i] = $scope.report.assets[i].id ;
@@ -203,13 +204,12 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         $scope.report.timestamp = new Date().getTime();
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
-            .success(function(){
-            })
             .error(function(){
                 var reports = JSON.parse( Smartgeo.get('reports') || '[]');
                 reports.push($scope.report);
                 Smartgeo.set('reports', JSON.stringify(reports));
             }).then(function(){
+                $scope.sendingReport = false ;
                 $location.path('map/'+$rootScope.site.id);
             });
     };

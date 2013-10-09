@@ -2,7 +2,7 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
 
     // TODO : trouver mieux
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
-
+    $scope.searchIsPerforming = false ;
     $scope.select2Options = {
         allowClear:true
     };
@@ -22,10 +22,10 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
 
     $scope.search = function(event) {
         event.preventDefault();
-
         $scope.searchMessage = 'Recherche en cours' ;
-
+        $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function(results){
+            $scope.searchIsPerforming = false ;
 
             if(!results.length){
                 $scope.searchMessage = 'Aucun résultat' ;
@@ -71,7 +71,9 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
             okey : $scope.selectedFamily.okey
         };
 
+        $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function(results){
+            $scope.searchIsPerforming = false ;
 
             if(!results.length){
                 $scope.advancedSearchMessage = 'Aucun résultat' ;

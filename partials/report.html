@@ -43,8 +43,10 @@
             <button class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> Précédent
             </button>
-            <button ng-disabled="!reportForm.$valid" class="btn btn-primary" ng-click="sendReport($event)" >
-                Enregistrer <span class="icon-save"></span>
+            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >
+                <span class="icon-save"></span>
+                Enregistrer
+                <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
             </button>
         </p>
         <div ng-if="report.activity" ng-include="reportTemplate"></div>
@@ -74,7 +76,13 @@
             <button class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> Précédent
             </button>
-            <button class="btn btn-primary" ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" ><span class="icon-save"></span> Enregistrer</button>
+
+            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >
+                <span class="icon-save"></span>
+                Enregistrer
+                <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+            </button>
+
         </p>
     </div>
 </form>
