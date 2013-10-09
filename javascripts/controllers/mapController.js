@@ -1,6 +1,6 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
 
-    $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site] ;
+    window.site = $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site] ;
 
     $scope.consultationIsEnabled = false ;
 

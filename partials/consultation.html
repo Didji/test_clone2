@@ -1,4 +1,8 @@
 <div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
+    <div id="toggleConsultationPanelButton" ng-show="assets.length" ng-click="toggleConsultationPanel()">
+        <span class="icon-info"></span>
+    </div>
+
     <div class="consultation-content">
         <button type="button" class="closer btn pull-right" ng-click="close()" style="padding: 1px 7px;">&times;</button>
 
@@ -63,8 +67,6 @@
                 </div>
             </div>
     </div>
-    <div id="toggleConsultationPanelButton" ng-click="toggleConsultationPanel()">
-        <span class="icon-info"></span>
-    </div>
+
 </div>
 

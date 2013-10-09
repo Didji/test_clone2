@@ -23,20 +23,27 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             $http.get(Smartgeo.get('url')+'gi.maintenance.mobility.installation.json&site='+$routeParams.site)
                 .success(function(site) {
 
-                    var metamodel = {}, lists = {}, symbology = {}, stats =[], i = 0, id;
+                    var metamodel = {}, lists = {}, symbology = {}, stats =[], i = 0, id, activities = [];
 
                     for (i = 0; i < site.metamodel.length; i++) {
-                        metamodel[site.metamodel[i].okey] = site.metamodel[i];
+                        if(site.number[site.metamodel[i].okey] != 0 ){
+                            metamodel[site.metamodel[i].okey] = site.metamodel[i];
+                        }
                     }
                     site.metamodel = metamodel ;
                     $scope.steps[0].progress = 30;
+                    console.log(site.activities);
 
-                    site.activities._byId = [];
+                    activities._byId = [];
+
                     for (i = 0; i < site.activities.length; i++) {
-                        site.activities._byId[site.activities[i].id] = site.activities[i];
+                        if(site.number[site.activities[i].okeys[0]] != 0 ){
+                            activities.push(site.activities[i]);
+                            activities._byId[site.activities[i].id] = site.activities[i];
+                        }
                     }
+                    site.activities = activities;
                     $scope.steps[0].progress = 50;
-
 
                     for (var key in site.lists) {
                         if (site.lists.hasOwnProperty(key)) {
@@ -55,7 +62,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
                     var total = 100, i = 0;
                     for(var okey in site.number){
-                        if (site.number.hasOwnProperty(okey) && okey !== 'total') {
+                        if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] != 0) {
                             stats.push({
                                 'okey'   : okey,
                                 'amount' : site.number[okey],
@@ -64,6 +71,9 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                         }
                     }
                     for(i = 0, lim = stats.length; i < lim; i++) {
+                        if(!metamodel[stats[i].okey] || !site.number[stats[i].okey]){
+                            continue ;
+                        }
                         var step = {
                             color: 'hsl('+(Math.round((i + 1) * 280 / lim))+', 75%, 75%)',
                             progress: 0,
@@ -108,6 +118,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
     installOkey = function (objectType, callback){
         $scope.currentInstalledOkey = objectType.okey ;
+        console.log(objectType);
         objectType.step.progress = 0;
         if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
             installOkeyPerSlice(objectType, 0, callback);
