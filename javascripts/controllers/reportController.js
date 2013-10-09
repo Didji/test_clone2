@@ -93,11 +93,30 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             return number;
         }
 
-        function getValueFromAssets(pkey) {
-            var rv = [];
+        function getList(pkey, okey) {
+            var mm = $rootScope.site.metamodel[okey];
+            for(var i in mm.tabs) {
+                for(var j in mm.tabs[i].fields) {
+                    if(mm.tabs[i].fields[j].key == pkey) {
+                        return mm.tabs[i].fields[j].options;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function getValueFromAssets(pkey, okey) {
+            var rv = [], val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
-                var a = JSON.parse(assets[0].asset).attributes;
-                rv.push(a[pkey]);
+                var a = JSON.parse(assets[0].asset).attributes,
+                    list = getList(pkey, okey);
+                
+                val = a[pkey];
+                if(list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
+                    val = $rootScope.site.lists[list][val];
+                }
+                
+                rv.push(val);
             }
             return rv;
         }
@@ -120,7 +139,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                     }
                     fields[field.id] = def;
                 } else {
-                    def = getValueFromAssets(def.pkey);
+                    def = getValueFromAssets(def.pkey, act.okeys[0]);
                     if(field.readonly) {
                         def = def.join(', ');
                     }
