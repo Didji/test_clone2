@@ -1,0 +1,104 @@
+<div id="mainmenu" class="container_s" ng-controller="menuController">
+    <div class="mp-pusher" id="mp-pusher">
+        <nav id="mp-menu" class="mp-menu">
+            <div class="mp-level">
+                <h2><img class="logo_gi" src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></h2>
+                <ul>
+                    <li>
+                        <a href="#" ng-click='toggleConsultation($event)'>
+                            <span class="icon icon-info-sign"></span>
+                            Consultation
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-search"></span>
+                            Recherche
+                        </a>
+                        <div ng-include="'partials/search.html'"></div>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-list-ul"></span>
+                            Visibilité des couches
+                        </a>
+                        <div ng-include="'partials/layers.html'"></div>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-edit"></span>
+                            Compte rendu
+                        </a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#">retour</a>
+                            <ul>
+                                <li ng-repeat='activity in site.activities'>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
+                                        <span class="icon icon-chevron-right" ></span>
+                                        {{activity.label}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-gears"></span>
+                            Paramètres
+                        </a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#">RETOUR</a>
+                            <ul>
+                                <li>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/install/{{site.id}}">
+                                        <span class="icon-refresh"></span>
+                                        Mettre à jour {{site.label}}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">
+                                        <span class="icon-trash"></span>
+                                        Désinstaller {{site.label}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-refresh"></span>
+                            Synchronisation
+                        </a>
+                        <div ng-include="'partials/synchronizationMenu.html'"></div>
+                    </li>
+                    <li>
+                        <a href="#/">
+                            <span class="icon icon-power-off"></span>
+                            Déconnexion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="scroller">
+            <div class="scroller-inner">
+
+            </div>
+            <p>
+                <a href="#" id="trigger">
+                    <span class="icon-ellipsis-vertical"></span>
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+<span id="mainmap" ng-controller="mapController"><div id="smartgeo-map"></div></span>
+<div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
+
+<!-- <span id="mainmap"  data-ng-controller="mapController"><div id="smartgeo-map"></div></span> -->
+
