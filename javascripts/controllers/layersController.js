@@ -3,7 +3,8 @@ function layersController($scope, G3ME) {
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
     // Initialisation du scope.
-    var groups = {}, o, layers = {}, layer;
+    var groups = {}, o, layers = {}, layer,
+        vis = G3ME.getVisibility();
     for (var i in $scope.site.metamodel) {
         o = $scope.site.metamodel[i];
         if(! (o.group in groups)) {
@@ -14,12 +15,15 @@ function layersController($scope, G3ME) {
             };
         }
         layer = {
-            status: true,
+            status: (vis === false) || !!vis[o.okey],
             label: o.label,
             okey: o.okey
         };
         groups[o.group].layers.push(layer);
         layers[o.okey] = layer;
+    }
+    for(i in groups) {
+        checkGroup(groups[i]);
     }
     
     $scope.groups = groups;
