@@ -15,12 +15,12 @@
                 <a class="mp-back" href="#">retour</a>
                 <ul>
                     <li>
-                        <select class="form-control" ng-model   = "selectedFamily"
+                        <select class="form-control" ng-model="selectedFamily"
                                 ng-options = " family.label for (okey, family) in site.metamodel">
                         </select>
                     </li>
                     <li>
-                        <select class="form-control" ng-model   = "selectedCriteria"
+                        <select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()"
                                 ng-options = "criter.label for criter in criteria[selectedFamily.okey]" multiple>
                         </select>
                     </li>
