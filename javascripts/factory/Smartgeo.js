@@ -20,8 +20,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
         // METHODS
         setGimapUrl : function(){
             var url = prompt('URL GiMAP', localStorage.url||'');
-            if(!url || url === 'null') {
+            if(!url && url !== null) {
                 return this.setGimapUrl();
+            } else if (url === null){
+                return ;
             }
             if( url.indexOf('http') === -1 ) {
                 url = 'http://'+url;
