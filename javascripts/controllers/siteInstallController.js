@@ -13,7 +13,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             }
         }
 
-        Installer.getInstallJSON($scope.siteId, function(site){
+        Installer.getInstallJSON($scope.site, function(site){
             var formatedSite = Installer.formatSiteMetadata(site)
             angular.extend($scope.site, formatedSite);
             Installer.createZones($scope.site, function(){

@@ -69,8 +69,24 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             return site ;
         },
 
-        getInstallJSON: function(siteId, callback){
-            $http.get(Smartgeo.get('url')+'gi.maintenance.mobility.installation.json&site='+siteId)
+        getInstallJSON: function(site, callback){
+            var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
+                'site' : site.id
+            });
+
+            $http
+                .get(url)
+                .success(callback);
+        },
+
+        getUpdateJSON: function(site, callback){
+            var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
+                'site'      : site.id,
+                'timestamp' : site.timestamp
+            });
+
+            $http
+                .get(url)
                 .success(callback);
         },
 
