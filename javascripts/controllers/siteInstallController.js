@@ -1,5 +1,4 @@
 function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
-    $scope.siteId = $routeParams.site;
 
     $http.get(Smartgeo.get('url')+"gi.maintenance.mobility.site.json").success(function(sites){
 
@@ -8,7 +7,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         angular.extend($scope.sites, sites);
 
         for (var i = 0; i < sites.length; i++) {
-            if(sites[i].id === $scope.siteId){
+            if(sites[i].id === $routeParams.site){
                 $scope.site = sites[i];
             }
         }
@@ -27,7 +26,5 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
                 });
             });
         });
-
     });
 }
-

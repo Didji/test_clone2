@@ -3,7 +3,9 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
     var Installer = {
 
         deleteAssets: function(site, assets, callback){
-            if(assets.lenght > _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST){
+            if(assets.length <= 0){
+                callback();
+            } else if(assets.lenght > _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST) {
                 // TODO :
             } else {
                 var request = " DELETE FROM ASSETS WHERE id in ( '"+assets.join("','")+"' ) ";
@@ -74,9 +76,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 'site' : site.id
             });
 
-            $http
-                .get(url)
-                .success(callback);
+            $http.get(url)
+                 .success(callback);
         },
 
         getUpdateJSON: function(site, callback){
@@ -85,9 +86,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 'timestamp' : site.timestamp
             });
 
-            $http
-                .get(url)
-                .success(callback);
+            $http.get(url)
+                 .success(callback);
         },
 
         saveSite: function(site){
@@ -158,6 +158,16 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
         },
 
+        update: function(site, stats, callback){
+            console.log(stats.modified);
+            console.log(stats.obsolate);
+            // TODO : delete ids in stats.delta
+            var assets = [];
+            Installer.deleteAssets(site, assets, function(){
+                Installer.install(site, stats, callback);
+            });
+        },
+
         installOkey : function (site, objectType, callback){
 
             if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
@@ -175,7 +185,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                     });
             }
         },
-
 
         installOkeyPerSlice: function (site, objectType, lastFetched, callback){
             if(lastFetched >= objectType.amount){
@@ -198,7 +207,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                     Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
                 });
         },
-
 
         save: function (site, assets, callback) {
             Installer.distribute_assets_in_zones(site, assets);
@@ -246,7 +254,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
         },
 
-
         save_zones_to_database: function (site, callback) {
 
             for (var i = 0; i < site.zones.length; i++) {
@@ -289,7 +296,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 })(zone, zone.insert_requests[i]);
             }
         },
-
 
         build_binded_insert_request: function (site, assets) {
             var request = '',
@@ -341,16 +347,3 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
     return Installer ;
 
 });
-
-//     function endInstall(){
-//         site.installed = true ;
-//         var toBeStoredSites =  JSON.parse(localStorage.sites || '{}') ;
-//             toBeStoredSites[$routeParams.site] = site;
-//         localStorage.sites = JSON.stringify(toBeStoredSites);
-//         $location.path('/map/'+$routeParams.site);
-//         if(!$scope.$$phase) {
-//             $scope.$apply();
-//         }
-//     };
-
-
