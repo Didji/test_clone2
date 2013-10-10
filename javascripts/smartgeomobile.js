@@ -22,7 +22,57 @@ angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2'])
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
                 elm.on('click', function() {
-                    if(! navigator.camera){
+                    navigator.getMedia = ( navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia ||
+                         navigator.msGetUserMedia);
+
+                    if(navigator.getMedia){
+                        var streaming = false,
+                            video     = document.createElement("video");
+                            canvas    = document.createElement("canvas");
+                            width     = 320,
+                            height    = 0;
+
+                        navigator.getMedia({
+                                video: true,
+                                audio: false
+                            }, function(stream) {
+                                if (navigator.mozGetUserMedia) {
+                                    video.mozSrcObject = stream;
+                                } else {
+                                    var vendorURL = window.URL || window.webkitURL;
+                                    video.src = vendorURL.createObjectURL(stream);
+                                }
+                                video.play();
+                            }, function(err) {
+                                console.log("An error occured! " + err);
+                            }
+                        );
+
+                        video.addEventListener('canplay', function(ev){
+                            if (!streaming) {
+                                height = video.videoHeight / (video.videoWidth/width);
+                                video.setAttribute('width', width);
+                                video.setAttribute('height', height);
+                                canvas.setAttribute('width', width);
+                                canvas.setAttribute('height', height);
+                                streaming = true;
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+
+                            scope.$apply(function(){
+                                ctrl.$viewValue=ctrl.$viewValue||[];
+                                ctrl.$viewValue.push({
+                                    content:canvas.toDataURL("image/png")
+                                });
+                            });
+
+                        }, false);
+
+                    } else if(!navigator.camera && !navigator.getMedia){
                         var img = document.createElement("img");
                         img.src = 'http://placehold.it/350x150';
                         img.onload = function(){
