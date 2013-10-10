@@ -58,14 +58,14 @@
                 <h4 class="panel-title">Média</h4>
             </div>
             <div class="panel-body">
+                <button camera class='btn btn-default btn-block'  ng-model='report.ged'>Ajouter photo</button>
                 <div id="images">
-                    <ul>
+                    <ul class='ged-gallery' >
                         <li ng-repeat='image in report.ged'>
                             <img ng-src="{{image.content}}" alt=""/>
                         </li>
                     </ul>
                 </div>
-                <button class='btn btn-default btn-block' ng-click='addPicture();'>Ajouter photo</button>
             </div>
         </div>
         <p>
