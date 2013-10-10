@@ -9,7 +9,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 // TODO :
             } else {
                 var request = " DELETE FROM ASSETS WHERE id in ( '"+assets.join("','")+"' ) ";
-
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                         transaction.executeSql(request , [], function(){
@@ -339,9 +338,17 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 request: ((request !== '') ? request : 'SELECT 1'),
                 args: args
             };
+        },
+
+        uninstallSite : function(site, callback){
+            for (var i = 0; i < site.zones.length; i++) {
+                SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                    transaction.executeSql('DROP TABLE IF EXISTS ASSETS', [], function(){
+                        Installer.checkpoint("destroy_zones_databases", site.zones.length, callback);
+                    }, Smartgeo.log);
+                });
+            }
         }
-
-
     };
 
     return Installer ;
