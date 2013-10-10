@@ -157,12 +157,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
 
             function drawLabels(ctx) {
                 var cur;
+                var lineWidth = ctx.lineWidth;
                 ctx.strokeStyle = 'white';
                 ctx.lineWidth = 4;
                 for (var i = 0, lim = labelCache.length; i < lim; i++) {
                     cur = labelCache[i];
                     drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y);
                 }
+                ctx.lineWidth = lineWidth;
             }
 
             function addLabel(txt, size, x, y) {
