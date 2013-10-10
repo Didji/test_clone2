@@ -196,10 +196,20 @@ if ( typeof define === 'function' && define.amd ) {
 			this.trigger.addEventListener( this.eventtype, function( ev ) {
 				ev.stopPropagation();
 				ev.preventDefault();
-				self._openMenu();
+				self.menuState = self.menuState || 'closed';
+
+				if(self.menuState  === 'closed'){
+					self._openMenu();
+					self.menuState = 'opened';
+				} else {
+					self._resetMenu();
+					self.menuState = 'closed';
+				}
 				// the menu should close if clicking somewhere on the body (excluding clicks on the menu)
 				document.addEventListener( self.eventtype, function( ev ) {
-					if( self.open && !hasParent( ev.target, self.el.id ) ) {
+					if(  self.open &&
+						!hasParent( ev.target, self.el.id ) &&
+						!ev.currentTarget.classList.contains("select2-offscreen") ) {
 						bodyClickFn( this );
 					}
 				} );
