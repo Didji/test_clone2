@@ -14,7 +14,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
 
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.0",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.1",
         _G3ME_VERSION               : "0.1.0",
 
         // METHODS
