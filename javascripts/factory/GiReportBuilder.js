@@ -106,7 +106,6 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               for(var i in activity.tabs) {
                   str += this._buildTab(i, activity.tabs[i]);
               }
-              console.log(str);
               return str;
           },
 
