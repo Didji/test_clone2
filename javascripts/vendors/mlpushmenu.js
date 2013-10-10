@@ -203,13 +203,12 @@ if ( typeof define === 'function' && define.amd ) {
 					self.menuState = 'opened';
 				} else {
 					self._resetMenu();
-					self.menuState = 'closed';
 				}
 				// the menu should close if clicking somewhere on the body (excluding clicks on the menu)
 				document.addEventListener( self.eventtype, function( ev ) {
 					if(  self.open &&
 						!hasParent( ev.target, self.el.id ) &&
-						!ev.currentTarget.classList.contains("select2-offscreen") ) {
+						!( ev.currentTarget.classList && ev.currentTarget.classList.contains("select2-offscreen"))) {
 						bodyClickFn( this );
 					}
 				} );
@@ -260,6 +259,7 @@ if ( typeof define === 'function' && define.amd ) {
 		},
 		_openMenu : function( subLevel ) {
 			// increment level depth
+			this.menuState = 'opened';
 			++this.level;
 
 			// move the main wrapper
@@ -289,6 +289,7 @@ if ( typeof define === 'function' && define.amd ) {
 		},
 		// close the menu
 		_resetMenu : function() {
+			this.menuState = 'closed';
 			this._setTransform('translate3d(0,0,0)');
 			this.level = 0;
 			// remove class mp-pushed from main wrapper
