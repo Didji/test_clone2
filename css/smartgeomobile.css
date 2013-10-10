@@ -403,6 +403,29 @@ label.prettycheckbox.checked .no, label.prettycheckbox .yes, .list-group-item .c
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
 }
 
+ul.ged-gallery{
+    padding:0;
+}
+
+ul.ged-gallery li {
+    list-style: none;
+    float: left;
+    margin-right: 0.33%;
+    padding: 0;
+    width: 33%;
+    margin-bottom: 3px;
+}
+
+ul.ged-gallery li img {
+    width : 100%;
+}
+
+
+
+
+
+
+
 .white {
     color : white ! important ; /* Désolé, pris par le temps */
 }
@@ -442,3 +465,4 @@ label.prettycheckbox.checked .no, label.prettycheckbox .yes, .list-group-item .c
 .has-spinner.btn-large.active .spinner {
     width: 19px;
 }
+

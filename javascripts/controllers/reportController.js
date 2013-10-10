@@ -108,18 +108,18 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             }
             return false;
         }
-        
+
         function getValueFromAssets(pkey, okey) {
             var rv = {}, val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
                 var a = JSON.parse(assets[i].asset).attributes,
                     list = getList(pkey, okey);
-                
+
                 val = a[pkey];
                 if(list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
                     val = $rootScope.site.lists[list][val];
                 }
-                
+
                 rv[assets[i].id] = val;
             }
             return rv;
@@ -164,7 +164,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         }
         return str.join(', ');
     };
-    
+
     $scope.applyConsequences = function(srcId) {
         // Search for src field.
         var field = fieldById(srcId),
@@ -221,10 +221,10 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 $scope.report.fields[i] = $scope.report.overrides[i];
             }
         }
-        
+
         delete $scope.report.overrides;
         delete $scope.report.roFields;
-        
+
         $scope.report.activity  = $scope.report.activity.id ;
         $scope.report.timestamp = new Date().getTime();
 
@@ -245,28 +245,28 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     $scope.addPicture = function(){
 
-        if (!navigator.camera || !Camera){
-            $scope.report.ged.push({
-                content:'http://placehold.it/350x150'
-            });
-            return ;
-        }
+        // if (!navigator.camera || !Camera){
+        //     $scope.report.ged.push({
+        //         content:'http://placehold.it/350x150'
+        //     });
+        //     return ;
+        // }
 
-        navigator.camera.getPicture(function(ImageData) {
-            $scope.report.ged.push({
-                content:ImageData
-            });
-            $scope.$apply();
-        }, function(CameraError) {
-            console.error(CameraError);
-        }, {
-            quality: 100,
-            sourceType: navigator.camera.PictureSourceType.CAMERA,
-            mediaType: navigator.camera.MediaType.PICTURE,
-            destinationType: Camera.DestinationType.FILE_URI,
-            correctOrientation: false,
-            saveToPhotoAlbum: true
-        });
+        // navigator.camera.getPicture(function(ImageData) {
+        //     $scope.report.ged.push({
+        //         content:ImageData
+        //     });
+        //     $scope.$apply();
+        // }, function(CameraError) {
+        //     console.error(CameraError);
+        // }, {
+        //     quality: 100,
+        //     sourceType: navigator.camera.PictureSourceType.CAMERA,
+        //     mediaType: navigator.camera.MediaType.PICTURE,
+        //     destinationType: Camera.DestinationType.FILE_URI,
+        //     correctOrientation: false,
+        //     saveToPhotoAlbum: true
+        // });
 
     };
 
