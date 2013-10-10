@@ -27,4 +27,10 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             });
         });
     });
+
+    $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
+        console.log(action);
+    });
+
+
 }

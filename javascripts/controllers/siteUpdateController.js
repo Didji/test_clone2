@@ -27,4 +27,3 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
         });
     });
 }
-

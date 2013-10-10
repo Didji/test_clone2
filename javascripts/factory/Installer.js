@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http){
+angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope){
 
     var Installer = {
 
@@ -168,6 +168,12 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         },
 
         installOkey : function (site, objectType, callback){
+
+            $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
+                okey: objectType.okey,
+                progress: 0
+            });
+
 
             if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback);
