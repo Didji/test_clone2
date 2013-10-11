@@ -6,11 +6,8 @@
         <p ng-show='!site.installed && currentInstalledOkey'>
             Installation de {{site.metamodel[currentInstalledOkey].label}} en cours
         </p>
-        <p ng-show='site.installed'>
-            <a href="#/map/{{site.id}}">Installation terminée !</a>
-        </p>
         <div class="progress">
-          <div ng-repeat="step in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}" aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
+          <div ng-repeat="(key, step) in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}" aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
             <span class="sr-only">{{Math.round(100 * step.progress / totalProgress)}}%</span>
           </div>
         </div>
