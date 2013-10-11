@@ -13,10 +13,12 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
     $scope.gimapUrl     = Smartgeo.get('url') ;
     $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
     
+    ping();
+
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
-    $scope.ping = function() {
+    function ping() {
         $scope.readyToLog = false;
         $scope.logMessage = "Vérification du serveur";
 
@@ -26,11 +28,12 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
         });
     };
 
-    $scope.ping();
 
     function loginFailed(response, status) {
-        // TODO: find a smart way to detect X-Orginin errors 
-        //       (they looks like no connection)
+        /**
+         * TODO: find a smart way to detect X-Orginin errors
+         *       (they looks like no connection)
+         */ 
         if(status === 403){
             $window.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
         } else if (status === ''){
@@ -38,7 +41,7 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
         } else {
             $window.alert("Connexion au serveur impossible ("+status+")");
         }
-        $scope.ping();
+        ping();
     }
 
     function remoteLogin() {
@@ -102,7 +105,7 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
         $scope.gimapUrl = Smartgeo.get('url') ;
         $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
         
-        $scope.ping();
+        ping();
 
         Smartgeo.set('sites', '{}');
         Smartgeo.set('knownUsers', '{}');
