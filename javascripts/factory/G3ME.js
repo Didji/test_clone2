@@ -7,6 +7,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
         mapDiv : null,
         mapDivId: null,
 
+        filecacheIsEnable: true,
+
         initialize : function(mapDivId, site, extent){
 
             this.site    = site;
@@ -35,8 +37,12 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-
-            this.backgroundTile = new L.TileLayer(this.tileUrl, {
+            if(this.filecacheIsEnable){
+                backgroundTile = L.TileLayer.FileCache ;
+            } else {
+                backgroundTile = L.TileLayer ;
+            }
+            this.backgroundTile = new backgroundTile(this.tileUrl, {
                 maxZoom: Smartgeo.MAX_ZOOM,
                 minZoom: Smartgeo.MIN_ZOOM
             }).addTo(this.map);
