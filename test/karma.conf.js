@@ -1,5 +1,6 @@
 module.exports = function (config) {
   config.set({
+   
     basePath: '../',
 
     files: [
@@ -36,8 +37,10 @@ module.exports = function (config) {
       'javascripts/controllers/layersController.js',
       'javascripts/controllers/synchronizationMenuController.js',
 
-      'test/**/*.js'
+      'test/controllersSpec.js'
     ],
+
+    exclude : ['test/coverage/**/*.js'],
 
     frameworks: ['jasmine'],
 
@@ -45,9 +48,16 @@ module.exports = function (config) {
 
     browsers: ['Chrome'],
 
-    junitReporter: {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
+    reporters : ['progress', 'coverage'],
+
+    preprocessors : {
+      '**/javascripts/controllers/*.js' : 'coverage',
+      '**/javascripts/factory/*.js'     : 'coverage'
+    },
+
+    coverageReporter : {
+        type  : 'html',
+        dir   : 'test/coverage/'
     }
   });
 };
