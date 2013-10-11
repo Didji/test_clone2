@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
+angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
 
     var Smartgeo = {
 
@@ -54,6 +54,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite){
             }
 
             return url ;
+        },
+
+        ping : function(callback) {
+            callback = callback || function(){};
+            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
+                .success(function(data){
+                    Smartgeo.set('online', true);
+                    callback(true);
+                }).error(function(){
+                    Smartgeo.set('online', false);
+                    callback(false);
+                });
         },
 
         isRunningOnMobile: function() {
