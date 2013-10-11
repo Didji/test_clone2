@@ -79,7 +79,9 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
         $scope.currentInstalledOkey = action.okey;
         stepsByOkey[action.okey].progress = 1 * action.progress;
-        $scope.$apply();
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
     });
 
 
