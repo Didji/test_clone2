@@ -1,15 +1,18 @@
 /**
  * Controlleur d'authentification
  */
-function authController($scope, $http, $location, Smartgeo, SQLite){
+function authController($scope, $http, $location, $window, Smartgeo, SQLite){
 
-    $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
 
-    var lastuser = JSON.parse(localStorage.user || '{"username":"","pwd":"","savePwd":true}');
-    $scope.username = lastuser.username;
-    $scope.pwd = lastuser.pwd;
-    $scope.readyToLog = false;
-    $scope.logMessage = "Vérification du serveur";
+    var lastuser = JSON.parse( Smartgeo.get('user') || '{"username":"","pwd":"","savePwd":true}');
+    $scope.version      = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+    $scope.username     = lastuser.username;
+    $scope.pwd          = lastuser.pwd;
+    $scope.readyToLog   = false;
+    $scope.logMessage   = "Vérification du serveur";
+    $scope.gimapUrl     = Smartgeo.get('url') ;
+    $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+    
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
@@ -17,35 +20,50 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
         $scope.readyToLog = false;
         $scope.logMessage = "Vérification du serveur";
 
-        var url  = Smartgeo.get('url')+"global.dcnx.json";
-        $http.post(url)
-            .success(function(data){
-                $scope.readyToLog = true;
-                $scope.logMessage = "Connexion distante";
-                Smartgeo.set('online', true);
-            }).error(function(){
-                $scope.readyToLog = true;
-                $scope.logMessage = "Connexion locale";
-                Smartgeo.set('online', false);
-            });
+        Smartgeo.ping(function(serverIsReachable){
+            $scope.logMessage = "Connexion " + (serverIsReachable ? 'distante' : 'locale'); 
+            $scope.readyToLog = true;
+        });
     };
+
     $scope.ping();
 
-    function loginFailed() {
+    function loginFailed(response, status) {
+        // TODO: find a smart way to detect X-Orginin errors 
+        //       (they looks like no connection)
+        if(status === 403){
+            $window.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
+        } else if (status === ''){
+            $window.alert("L'application n'est pas parvenue à joindre le serveur.");
+        } else {
+            $window.alert("Connexion au serveur impossible ("+status+")");
+        }
         $scope.ping();
-        window.alert('Identifiants incorrects');
     }
+
     function remoteLogin() {
-        var url  = Smartgeo.get('url')+"global.auth.json";
-            url += "&login="+encodeURIComponent($scope.username);
-            url += "&pwd="+encodeURIComponent($scope.pwd);
+
+        $scope.username = $scope.username.trim()
+        $scope.pwd      = $scope.pwd.trim()
+
+        if(!$scope.username.length || !$scope.pwd.length){
+            $window.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
+            return false ;
+        }
+
+        var url  = Smartgeo.getServiceUrl('global.auth.json', {
+            'login' : encodeURIComponent($scope.username),
+            'pwd'   : encodeURIComponent($scope.pwd)
+        });
+
         $scope.readyToLog = false;
         $scope.logMessage = "Veuillez patienter...";
+        
         $http.post(url)
             .success(function(){
-                var knownUsers = JSON.parse(localStorage.knownUsers || '{}');
+                var knownUsers = JSON.parse( Smartgeo.get('knownUsers') || '{}');
                 knownUsers[$scope.username] = $scope.pwd;
-                localStorage.knownUsers = JSON.stringify(knownUsers);
+                Smartgeo.set('knownUsers', JSON.stringify(knownUsers));
 
                 if(lastuser.pwd !== $scope.pwd) {
                     var savePwd  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
@@ -55,12 +73,13 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
                     };
                 }
                 lastuser.username = $scope.username;
-                localStorage.user = JSON.stringify(lastuser);
+                Smartgeo.set('user', JSON.stringify(lastuser));
                 $location.path('sites');
             }).error(loginFailed);
     }
+
     function localLogin() {
-        var knownUsers = JSON.parse(localStorage.knownUsers || '{}');
+        var knownUsers = JSON.parse( Smartgeo.get('knownUsers') || '{}');
         if(knownUsers[$scope.username] === $scope.pwd) {
             $location.path('sites');
         } else {
@@ -68,10 +87,10 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
         }
     }
 
-
     $scope.login = function(){
         Smartgeo.get('online') === 'true' ? remoteLogin() : localLogin();
     };
+
     $scope.setGimapUrl = function(){
 
         if(Smartgeo.setGimapUrl() === null){
@@ -79,27 +98,20 @@ function authController($scope, $http, $location, Smartgeo, SQLite){
             return ;
         }
         $scope.username = '';
-        $scope.pwd = '';
+        $scope.pwd      = '';
         $scope.gimapUrl = Smartgeo.get('url') ;
-        $scope.ping();
         $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+        
+        $scope.ping();
 
-        localStorage.sites = '{}';
-        localStorage.knownUsers = '{}';
-    };
-    $scope.parametersVisible = false;
+        Smartgeo.set('sites', '{}');
+        Smartgeo.set('knownUsers', '{}');
 
-    $scope.showParameters = function() {
-        $scope.parametersVisible = true;
     };
-    $scope.hideParameters = function() {
-        $scope.parametersVisible = false;
-    };
+
     $scope.forgetPassword = function() {
         $scope.username = $scope.pwd = '';
-        localStorage.user = '{"username":"","pwd":"","savePwd":true}';
+        Smartgeo.set('user','{"username":"","pwd":"","savePwd":true}');
     };
 
-    $scope.gimapUrl = Smartgeo.get('url') ;
-    $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
 }
