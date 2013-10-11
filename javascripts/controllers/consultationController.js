@@ -1,4 +1,4 @@
-function consultationController($scope, $rootScope){
+function consultationController($scope, $rootScope, $window){
 
     $scope.state  = 'closed';
 
@@ -32,7 +32,7 @@ function consultationController($scope, $rootScope){
     });
 
     $scope.close = function(){
-        $scope.state = 'closed' ;
+        $scope.state = 'closed';
     };
 
     $scope.locateAsset = function(asset){
@@ -41,6 +41,9 @@ function consultationController($scope, $rootScope){
 
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
+        if($window.document.width < 400) {
+            $scope.state = 'closed';
+        }
     };
 
     $scope.toggleConsultationPanel = function(){
