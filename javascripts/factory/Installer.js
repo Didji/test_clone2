@@ -145,7 +145,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
         },
 
-        install: function(site, stats, callback){
+        install: function(site, stats, callback, update){
 
             if(!stats.length){
                 return callback() ;
@@ -153,7 +153,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
             Installer.installOkey(site, stats[0], function(){
                 Installer.install(site, stats.slice(1), callback);
-            });
+            }, update);
 
         },
 
@@ -162,12 +162,13 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             console.log(stats.obsolate);
             // TODO : delete ids in stats.delta
             var assets = [];
+            var update = true ;
             Installer.deleteAssets(site, assets, function(){
-                Installer.install(site, stats, callback);
+                Installer.install(site, stats, callback, update);
             });
         },
 
-        installOkey : function (site, objectType, callback){
+        installOkey : function (site, objectType, callback, update){
 
             $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                 okey: objectType.okey,
@@ -176,10 +177,16 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
 
             if(objectType.amount > Smartgeo._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
-                Installer.installOkeyPerSlice(site, objectType, 0, callback);
+                Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
             } else {
+                var url = Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey ;
+
+                if(update){
+                    url += '&timestamp=' + site.timestamp ;
+                }
+
                 $http
-                    .get(Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey)
+                    .get(url)
                     .success(function(data){
                         Installer.save(site, data.assets, function(){
                             callback();
@@ -191,7 +198,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
         },
 
-        installOkeyPerSlice: function (site, objectType, lastFetched, callback){
+        installOkeyPerSlice: function (site, objectType, lastFetched, callback, update){
             if(lastFetched >= objectType.amount){
                 return callback();
             }
@@ -201,6 +208,10 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             url += '&okey=' + objectType.okey;
             url += '&min='  + (lastFetched+1);
             url += '&max='  + newlastFetched;
+
+            if(update){
+                url += '&timestamp=' + site.timestamp ;
+            }
 
             $http
                 .get(url)
