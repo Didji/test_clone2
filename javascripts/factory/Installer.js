@@ -182,6 +182,11 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                     .get(Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey)
                     .success(function(data){
                         Installer.save(site, data.assets, function(){
+                            $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
+                                okey: objectType.okey,
+                                progress: objectType.amount
+                            });
+
                             callback();
                         });
                     })
@@ -206,6 +211,11 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 .get(url)
                 .success(function(data){
                     Installer.save(site, data.assets, function(){
+                        $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
+                            okey: objectType.okey,
+                            progress: Math.min(newlastFetched, objectType.amount)
+                        });
+
                         Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
                     });
                 }).error(function(){
