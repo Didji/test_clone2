@@ -183,7 +183,7 @@ html, body {
 
 .select2-container {
     width: 90%;
-margin: 0 5%;
+    margin: 0 5%;
 }
 
 .floating-form {
@@ -191,6 +191,31 @@ margin: 0 5%;
     padding: 10px;
     width: 300px;
     text-align: center;
+}
+
+@media (max-height: 444px) {
+    .floating-form {
+        margin-top: 10px;
+    }
+    
+}
+@media (max-height: 350px) {
+    .floating-form img {
+        max-height: 20px;
+    }
+    .floating-form h2 {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .floating-form small,.floating-form hr {
+        display:none;
+    }
+}
+@media (max-height: 250px) {
+    .bottom-right {
+        display: none;
+    }
 }
 .floating-form  small{
     float: right;
@@ -216,11 +241,6 @@ margin: 0 5%;
     position: absolute;
     bottom: 10px;
     right: 10px;
-}
-@media (max-height: 444px) {
-  .bottom-right {
-    display: none;
-  }
 }
 
 .big-button {
