@@ -8,7 +8,7 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
     $scope.totalProgress = 100;
     $scope.Math = Math;
     var stepsByOkey = {};
-            
+
     function buildSteps(site) {
         var steps = [],
             step,
@@ -16,7 +16,7 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
             stepid = 0,
             numsteps = 0,
             i;
-        
+
         $scope.totalProgress =  1 * n.total;
         for(i in n) if(i !== 'number') {
             step = stepsByOkey[i] = {
@@ -27,7 +27,7 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
             steps.push(step);
         }
         rainbow(steps);
-        
+
         $scope.steps = steps;
     }
 
@@ -44,13 +44,13 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
             steps[i].color = 'rgb('+[red, green, blue]+')';
         }
     }
-    
+
 
     $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
 
     $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json')).success(function(sites){
         $scope.steps[0].progress = 50;
-        
+
         $scope.sites = JSON.parse(Smartgeo.get('sites') || '{}') ;
 
         angular.extend($scope.sites, sites);
@@ -63,9 +63,9 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
 
         Installer.getUpdateJSON($scope.site, function(site){
             var formatedSite = Installer.formatSiteMetadata(site);
-            
             $scope.steps[0].progress = 100;
             buildSteps(formatedSite);
+            $scope.site.oldTimestamp = $scope.site.timestamp ;
             angular.extend($scope.site, formatedSite);
             Installer.update($scope.site, $scope.site.stats, function(){
                 Installer.saveSite($scope.site);
@@ -76,7 +76,7 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
             });
         });
     });
-    
+
     $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
         $scope.currentInstalledOkey = action.okey;
         stepsByOkey[action.okey].progress = 1 * action.progress;

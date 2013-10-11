@@ -182,7 +182,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 var url = Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey ;
 
                 if(update){
-                    url += '&timestamp=' + site.timestamp ;
+                    url += '&timestamp=' + site.oldTimestamp ;
                 }
 
                 $http
@@ -215,7 +215,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             url += '&max='  + newlastFetched;
 
             if(update){
-                url += '&timestamp=' + site.timestamp ;
+                url += '&timestamp=' + site.oldTimestamp ;
             }
 
             $http
