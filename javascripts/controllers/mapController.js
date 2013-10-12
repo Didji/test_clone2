@@ -1,10 +1,10 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
 
-    window.site = $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site] ;
+    window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
     $scope.consultationIsEnabled = false ;
 
-    var extent = JSON.parse(Smartgeo.get("lastLeafletMapExtent") || '[]') ;
+    var extent = Smartgeo.get('lastLeafletMapExtent') || [] ;
 
     G3ME.initialize('smartgeo-map', $rootScope.site, extent.length ? extent : null);
 
@@ -12,10 +12,10 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         var extent = G3ME.map.getBounds();
         if(    extent._northEast.lat != extent._southWest.lat
             || extent._northEast.lng != extent._southWest.lng ){
-                Smartgeo.set("lastLeafletMapExtent", JSON.stringify([
+                Smartgeo.set('lastLeafletMapExtent', [
                     [extent._northEast.lat, extent._northEast.lng],
                     [extent._southWest.lat, extent._southWest.lng]
-                ]));
+                ]);
         }
     });
 

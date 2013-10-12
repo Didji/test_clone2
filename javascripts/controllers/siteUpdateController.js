@@ -46,12 +46,14 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
     }
 
 
-    $scope.site = JSON.parse(localStorage.sites)[$routeParams.site] ;
+    $scope.site = Smartgeo.get('sites')[$routeParams.site] ;
 
-    $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json')).success(function(sites){
+    var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json'); 
+
+    $http.get(url).success(function(sites){
         $scope.steps[0].progress = 50;
 
-        $scope.sites = JSON.parse(Smartgeo.get('sites') || '{}') ;
+        $scope.sites = Smartgeo.get('sites') || {} ;
 
         angular.extend($scope.sites, sites);
 

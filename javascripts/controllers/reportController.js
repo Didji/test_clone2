@@ -1,6 +1,6 @@
 function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder){
 
-    $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site];
+    $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
 
@@ -230,9 +230,9 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
             .error(function(){
-                var reports = JSON.parse( Smartgeo.get('reports') || '[]');
+                var reports = Smartgeo.get('reports') || [];
                 reports.push($scope.report);
-                Smartgeo.set('reports', JSON.stringify(reports));
+                Smartgeo.set('reports', reports);
             }).then(function(){
                 $scope.sendingReport = false ;
                 $location.path('map/'+$rootScope.site.id);
@@ -241,33 +241,6 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
     $scope.toggleCollapse = function(event){
         event.preventDefault();
-    };
-
-    $scope.addPicture = function(){
-
-        // if (!navigator.camera || !Camera){
-        //     $scope.report.ged.push({
-        //         content:'http://placehold.it/350x150'
-        //     });
-        //     return ;
-        // }
-
-        // navigator.camera.getPicture(function(ImageData) {
-        //     $scope.report.ged.push({
-        //         content:ImageData
-        //     });
-        //     $scope.$apply();
-        // }, function(CameraError) {
-        //     console.error(CameraError);
-        // }, {
-        //     quality: 100,
-        //     sourceType: navigator.camera.PictureSourceType.CAMERA,
-        //     mediaType: navigator.camera.MediaType.PICTURE,
-        //     destinationType: Camera.DestinationType.FILE_URI,
-        //     correctOrientation: false,
-        //     saveToPhotoAlbum: true
-        // });
-
     };
 
     getBase64Image = function(src) {
