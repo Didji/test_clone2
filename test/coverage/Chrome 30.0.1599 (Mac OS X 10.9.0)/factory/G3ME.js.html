@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for factory/G3ME.js</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="../prettify.css">
+
+    <style>
+        body, html {
+            margin:0; padding: 0;
+        }
+        body {
+            font-family: Helvetica Neue, Helvetica,Arial;
+            font-size: 10pt;
+        }
+        div.header, div.footer {
+            background: #eee;
+            padding: 1em;
+        }
+        div.header {
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            border-bottom: 1px solid #666;
+            width: 100%;
+        }
+        div.footer {
+            border-top: 1px solid #666;
+        }
+        div.body {
+            margin-top: 10em;
+        }
+        div.meta {
+            font-size: 90%;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            font-weight: normal;
+        }
+        h1 {
+            font-size: 12pt;
+        }
+        h2 {
+            font-size: 10pt;
+        }
+        pre {
+            font-family: Consolas, Menlo, Monaco, monospace;
+            margin: 0;
+            padding: 0;
+            line-height: 14px;
+            font-size: 14px;
+            -moz-tab-size: 2;
+            -o-tab-size:  2;
+            tab-size: 2;
+        }
+
+        div.path { font-size: 110%; }
+        div.path a:link, div.path a:visited { color: #000; }
+        table.coverage { border-collapse: collapse; margin:0; padding: 0 }
+
+        table.coverage td {
+            margin: 0;
+            padding: 0;
+            color: #111;
+            vertical-align: top;
+        }
+        table.coverage td.line-count {
+            width: 50px;
+            text-align: right;
+            padding-right: 5px;
+        }
+        table.coverage td.line-coverage {
+            color: #777 !important;
+            text-align: right;
+            border-left: 1px solid #666;
+            border-right: 1px solid #666;
+        }
+
+        table.coverage td.text {
+        }
+
+        table.coverage td span.cline-any {
+            display: inline-block;
+            padding: 0 5px;
+            width: 40px;
+        }
+        table.coverage td span.cline-neutral {
+            background: #eee;
+        }
+        table.coverage td span.cline-yes {
+            background: #b5d592;
+            color: #999;
+        }
+        table.coverage td span.cline-no {
+            background: #fc8c84;
+        }
+
+        .cstat-yes { color: #111; }
+        .cstat-no { background: #fc8c84; color: #111; }
+        .fstat-no { background: #ffc520; color: #111 !important; }
+        .cbranch-no { background:  yellow !important; color: #111; }
+        .missing-if-branch {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+            padding: 0 4px;
+            background: black;
+            color: yellow;
+            xtext-decoration: line-through;
+        }
+        .missing-if-branch .typ {
+            color: inherit !important;
+        }
+
+        .entity, .metric { font-weight: bold; }
+        .metric { display: inline-block; border: 1px solid #333; padding: 0.3em; background: white; }
+        .metric small { font-size: 80%; font-weight: normal; color: #666; }
+
+        div.coverage-summary table { border-collapse: collapse; margin: 3em; font-size: 110%; }
+        div.coverage-summary td, div.coverage-summary table  th { margin: 0; padding: 0.25em 1em; border-top: 1px solid #666; border-bottom: 1px solid #666; }
+        div.coverage-summary th { text-align: left; border: 1px solid #666; background: #eee; font-weight: normal; }
+        div.coverage-summary th.file { border-right: none !important; }
+        div.coverage-summary th.pic { border-left: none !important; text-align: right; }
+        div.coverage-summary th.pct { border-right: none !important; }
+        div.coverage-summary th.abs { border-left: none !important; text-align: right; }
+        div.coverage-summary td.pct { text-align: right; border-left: 1px solid #666; }
+        div.coverage-summary td.abs { text-align: right; font-size: 90%; color: #444; border-right: 1px solid #666; }
+        div.coverage-summary td.file { text-align: right; border-left: 1px solid #666; white-space: nowrap;  }
+        div.coverage-summary td.pic { min-width: 120px !important;  }
+        div.coverage-summary a:link { text-decoration: none; color: #000; }
+        div.coverage-summary a:visited { text-decoration: none; color: #333; }
+        div.coverage-summary a:hover { text-decoration: underline; }
+        div.coverage-summary tfoot td { border-top: 1px solid #666; }
+
+        div.coverage-summary .yui3-datatable-sort-indicator, div.coverage-summary .dummy-sort-indicator {
+            height: 10px;
+            width: 7px;
+            display: inline-block;
+            margin-left: 0.5em;
+        }
+        div.coverage-summary .yui3-datatable-sort-indicator {
+            background: url("http://yui.yahooapis.com/3.6.0/build/datatable-sort/assets/skins/sam/sort-arrow-sprite.png") no-repeat scroll 0 0 transparent;
+        }
+        div.coverage-summary .yui3-datatable-sorted .yui3-datatable-sort-indicator {
+            background-position: 0 -20px;
+        }
+        div.coverage-summary .yui3-datatable-sorted-desc .yui3-datatable-sort-indicator {
+            background-position: 0 -10px;
+        }
+
+        .high { background: #b5d592 !important; }
+        .medium { background: #ffe87c !important; }
+        .low { background: #fc8c84 !important; }
+
+        span.cover-fill, span.cover-empty {
+            display:inline-block;
+            border:1px solid #444;
+            background: white;
+            height: 12px;
+        }
+        span.cover-fill {
+            background: #ccc;
+            border-right: 1px solid #444;
+        }
+        span.cover-empty {
+            background: white;
+            border-left: none;
+        }
+        span.cover-full {
+            border-right: none !important;
+        }
+        pre.prettyprint {
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .com { color: #999 !important; }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">factory/G3ME.js</span></h1>
+    <h2>
+        
+        Statements: <span class="metric">3.13% <small>(4 / 128)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Branches: <span class="metric">0% <small>(0 / 54)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Functions: <span class="metric">0% <small>(0 / 15)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Lines: <span class="metric">3.13% <small>(4 / 128)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">factory/</a> &#187; G3ME.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">angular.module('smartgeomobile').factory('G3ME', <span class="fstat-no" title="function not covered" >function(SQLite, Smartgeo){</span>
+<span class="cstat-no" title="statement not covered" >    var G3ME = {</span>
+&nbsp;
+        active_layers : false,
+        assetsMarkers : [],
+&nbsp;
+        mapDiv : null,
+        mapDivId: null,
+&nbsp;
+        filecacheIsEnable: true,
+&nbsp;
+        initialize : <span class="fstat-no" title="function not covered" >function(mapDivId, site, extent){</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            this.site    = site;</span>
+<span class="cstat-no" title="statement not covered" >            this.tileUrl = this.site.EXTERNAL_TILEURL;</span>
+<span class="cstat-no" title="statement not covered" >            this.mapDiv  = document.getElementById(mapDivId) ;</span>
+<span class="cstat-no" title="statement not covered" >            this.map     = new L.map(this.mapDiv, {</span>
+                attributionControl: false,
+                zoomControl: false,
+                maxZoom: Smartgeo.MAX_ZOOM,
+                minZoom: Smartgeo.MIN_ZOOM
+            }).addControl(L.control.zoom({
+                position: 'topright'
+            }));
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if(!extent){</span>
+<span class="cstat-no" title="statement not covered" >                extent = [</span>
+                    [this.site.extent.ymin, this.site.extent.xmin],
+                    [this.site.extent.ymax, this.site.extent.xmax]
+                ];
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            G3ME.map.fitBounds(extent);</span>
+<span class="cstat-no" title="statement not covered" >            G3ME.invalidateMapSize();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if(!this.tileUrl){</span>
+<span class="cstat-no" title="statement not covered" >                this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');</span>
+<span class="cstat-no" title="statement not covered" >                this.tileUrl += 'getTuileTMS.php?z={z}&amp;x={x}&amp;y={y}';</span>
+            }
+<span class="cstat-no" title="statement not covered" >            if(this.filecacheIsEnable){</span>
+<span class="cstat-no" title="statement not covered" >                backgroundTile = L.TileLayer.FileCache ;</span>
+            } else {
+<span class="cstat-no" title="statement not covered" >                backgroundTile = L.TileLayer ;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            this.backgroundTile = new backgroundTile(this.tileUrl, {</span>
+                maxZoom: Smartgeo.MAX_ZOOM,
+                minZoom: Smartgeo.MIN_ZOOM
+            }).addTo(this.map);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            this.canvasTile = new L.TileLayer.Canvas({</span>
+                maxZoom: Smartgeo.MAX_ZOOM,
+                minZoom: Smartgeo.MIN_ZOOM
+            }).addTo(this.map);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            this.canvasTile.drawTile = <span class="fstat-no" title="function not covered" >function(canvas, tilePoint) {</span></span>
+<span class="cstat-no" title="statement not covered" >                G3ME.drawTile(canvas, tilePoint);</span>
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            for(var symbol in this.site.symbology){</span>
+<span class="cstat-no" title="statement not covered" >                if (!this.site.symbology[symbol] || !this.site.symbology[symbol].style) {</span>
+<span class="cstat-no" title="statement not covered" >                    continue;</span>
+                }
+<span class="cstat-no" title="statement not covered" >                var image = new Image();</span>
+<span class="cstat-no" title="statement not covered" >                image.src = this.site.symbology[symbol].style.symbol.icon;</span>
+<span class="cstat-no" title="statement not covered" >                this.site.symbology[symbol].style.image = image;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            this.canvasTile.redraw();</span>
+        },
+&nbsp;
+        invalidateMapSize : <span class="fstat-no" title="function not covered" >function(timeout){</span>
+<span class="cstat-no" title="statement not covered" >            timeout = timeout || 10;</span>
+<span class="cstat-no" title="statement not covered" >            setTimeout(<span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >                G3ME.map.invalidateSize();</span>
+            }, 10);
+        },
+&nbsp;
+        extents_match : <span class="fstat-no" title="function not covered" >function(extent1, extent2){</span>
+<span class="cstat-no" title="statement not covered" >            return extent1.xmax &gt; extent2.xmin &amp;&amp;</span>
+                extent2.xmax &gt; extent1.xmin &amp;&amp;
+                extent1.ymax &gt; extent2.ymin &amp;&amp;
+                extent2.ymax &gt; extent1.ymin;
+        },
+        setVisibility: <span class="fstat-no" title="function not covered" >function(layers) {</span>
+<span class="cstat-no" title="statement not covered" >            this.active_layers = [];</span>
+<span class="cstat-no" title="statement not covered" >            for(var i in layers) {</span>
+<span class="cstat-no" title="statement not covered" >                if(layers[i].status) {</span>
+<span class="cstat-no" title="statement not covered" >                    this.active_layers.push(i);</span>
+                }
+            }
+<span class="cstat-no" title="statement not covered" >            this.canvasTile.redraw();</span>
+        },
+        getVisibility: <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >            if(this.active_layers === false) {</span>
+<span class="cstat-no" title="statement not covered" >                return false;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            var rv = {};</span>
+<span class="cstat-no" title="statement not covered" >            for(var i in this.active_layers) {</span>
+<span class="cstat-no" title="statement not covered" >                rv[this.active_layers[i]] = true;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            return rv;</span>
+        },
+        drawTile : <span class="fstat-no" title="function not covered" >function(canvas, tilePoint) {</span>
+<span class="cstat-no" title="statement not covered" >            var ctx = canvas.getContext('2d');</span>
+<span class="cstat-no" title="statement not covered" >            var zoom = this.map.getZoom(),</span>
+                crs = L.CRS.EPSG4326,
+                nwPoint = tilePoint.multiplyBy(256),
+                sePoint = nwPoint.add(new L.Point(256, 256)),
+                nw = crs.project(this.map.unproject(nwPoint, zoom)),
+                se = crs.project(this.map.unproject(sePoint, zoom)),
+                nwmerc = this.map.latLngToLayerPoint({
+                    lat: nw.y,
+                    lng: nw.x
+                }),
+                margin = 0.00005,
+                ymin = se.y - margin,
+                ymax = nw.y + margin,
+                xmin = nw.x - margin,
+                xmax = se.x + margin,
+                _2pi = 2 * Math.PI,
+                _pi4 = Math.PI / 4,
+                dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
+                parse = window.JSON.parse,
+                symbology = this.site.symbology,
+                imageFactor = Math.floor(30 / (22 - zoom)) / 10,
+                imageFactor_2 = imageFactor / 2,
+                scale = 256 * Math.pow(2, zoom),
+                xscale = canvas.width / Math.abs(xmax - xmin),
+                yscale = canvas.height / Math.abs(ymax - ymin),
+                initialTopLeftPointX = this.map._initialTopLeftPoint.x,
+                initialTopLeftPointY = this.map._initialTopLeftPoint.y,
+                delta_x = initialTopLeftPointX - nwmerc.x,
+                delta_y = initialTopLeftPointY - nwmerc.y,
+                DEG_TO_RAD = Math.PI / 180,
+                buffer = 100 / xscale,
+                drawnLabels = [],
+                labelCache = [],
+                minDistanceToALabel = 15;
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >            function drawLabel(ctx, txt, size, x, y) {</span>
+                // Anticollision primaire.
+<span class="cstat-no" title="statement not covered" >                var cur;</span>
+<span class="cstat-no" title="statement not covered" >                for (var i = 0, lim = drawnLabels.length; i &lt; lim; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                    cur = drawnLabels[i];</span>
+<span class="cstat-no" title="statement not covered" >                    if ((x &lt; (cur.x + cur.width + minDistanceToALabel)) &amp;&amp;</span>
+                        (x &gt; (cur.x - minDistanceToALabel)) &amp;&amp;
+                        (y &lt; (cur.y + minDistanceToALabel)) &amp;&amp;
+                        (y &gt; (cur.y - minDistanceToALabel))) {
+<span class="cstat-no" title="statement not covered" >                        return;</span>
+                    }
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                drawnLabels.push({</span>
+                    x: x,
+                    y: y,
+                    width: ctx.measureText(txt).width
+                });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                ctx.font = (size / 2) + 'px Arial';</span>
+<span class="cstat-no" title="statement not covered" >                ctx.strokeText(txt, x + size * imageFactor_2 + 1, y);</span>
+<span class="cstat-no" title="statement not covered" >                ctx.fillText(txt, x + size * imageFactor_2 + 1, y);</span>
+            }
+&nbsp;
+<span class="fstat-no" title="function not covered" >            function drawLabels(ctx) {</span>
+<span class="cstat-no" title="statement not covered" >                var cur;</span>
+<span class="cstat-no" title="statement not covered" >                var lineWidth = ctx.lineWidth;</span>
+<span class="cstat-no" title="statement not covered" >                ctx.strokeStyle = 'white';</span>
+<span class="cstat-no" title="statement not covered" >                ctx.lineWidth = 4;</span>
+<span class="cstat-no" title="statement not covered" >                for (var i = 0, lim = labelCache.length; i &lt; lim; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                    cur = labelCache[i];</span>
+<span class="cstat-no" title="statement not covered" >                    drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y);</span>
+                }
+<span class="cstat-no" title="statement not covered" >                ctx.lineWidth = lineWidth;</span>
+            }
+&nbsp;
+<span class="fstat-no" title="function not covered" >            function addLabel(txt, size, x, y) {</span>
+<span class="cstat-no" title="statement not covered" >                labelCache.push({</span>
+                    txt: txt,
+                    x: x,
+                    y: y,
+                    size: size
+                });
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            var zones = [],</span>
+                initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
+                finalargs = [],
+                subrequests = [],
+                tileExtent = {
+                    ymin: ymin,
+                    ymax: ymax,
+                    xmin: xmin,
+                    xmax: xmax
+                };
+&nbsp;
+            // var request = "SELECT angle, geometry, symbolId, minzoom, maxzoom FROM ASSETS ";
+<span class="cstat-no" title="statement not covered" >            var request = "SELECT * FROM ASSETS ";</span>
+<span class="cstat-no" title="statement not covered" >            request += "WHERE ( xmax &gt; ? AND ? &gt; xmin AND ymax &gt; ? AND ? &gt; ymin) ";</span>
+<span class="cstat-no" title="statement not covered" >            request += "      AND ( (minzoom &lt;= 1*? and maxzoom &gt;= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";</span>
+<span class="cstat-no" title="statement not covered" >            if(this.active_layers) {</span>
+<span class="cstat-no" title="statement not covered" >                request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';</span>
+            }
+<span class="cstat-no" title="statement not covered" >            for (i = 0; i &lt; this.site.zones.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                if (this.extents_match(this.site.zones[i].extent, tileExtent)) {</span>
+<span class="cstat-no" title="statement not covered" >                    SQLite.openDatabase({</span>
+                        name: this.site.zones[i].database_name,
+                        bgType: 1
+                    })
+                        .transaction(<span class="fstat-no" title="function not covered" >function(tx) {</span>
+<span class="cstat-no" title="statement not covered" >                            tx.executeSql(request, initargs,</span>
+<span class="fstat-no" title="function not covered" >                                function(tx, results) {</span>
+<span class="cstat-no" title="statement not covered" >                                    var rows = results.rows;</span>
+<span class="cstat-no" title="statement not covered" >                                    for (var i = 0, length = rows.length; i &lt; length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                                        var prevX = false,</span>
+                                            prevY = false,
+                                            asset = rows.item(i),
+                                            geom = parse(asset.geometry),
+                                            assetSymbology = symbology[asset.symbolId],
+                                            coord, coord_ = {}, x, y, image;
+<span class="cstat-no" title="statement not covered" >                                        if (geom.type === "MultiLineString") {</span>
+<span class="cstat-no" title="statement not covered" >                                            geom.coordinates = geom.coordinates[0];</span>
+                                        }
+<span class="cstat-no" title="statement not covered" >                                        if (geom.type === "LineString") {</span>
+<span class="cstat-no" title="statement not covered" >                                            ctx.beginPath();</span>
+<span class="cstat-no" title="statement not covered" >                                            for (var j = 0, l = geom.coordinates.length; j &lt; l; j++) {</span>
+<span class="cstat-no" title="statement not covered" >                                                coord = geom.coordinates[j];</span>
+<span class="cstat-no" title="statement not covered" >                                                if (zoom &lt; 15) {</span>
+<span class="cstat-no" title="statement not covered" >                                                    coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));</span>
+<span class="cstat-no" title="statement not covered" >                                                    coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));</span>
+                                                } else {
+<span class="cstat-no" title="statement not covered" >                                                    coord_.x = coord[0] * 0.017453292519943295;</span>
+<span class="cstat-no" title="statement not covered" >                                                    coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                                    coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);</span>
+<span class="cstat-no" title="statement not covered" >                                                    coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                                    coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;</span>
+<span class="cstat-no" title="statement not covered" >                                                    coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;</span>
+                                                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                                if (prevX === false) {</span>
+<span class="cstat-no" title="statement not covered" >                                                    ctx.moveTo(coord_.x, coord_.y);</span>
+                                                } else <span class="cstat-no" title="statement not covered" >if (coord_.x === prevX &amp;&amp; coord_.y === prevY) {</span>
+<span class="cstat-no" title="statement not covered" >                                                    continue;</span>
+                                                } else {
+<span class="cstat-no" title="statement not covered" >                                                    ctx.lineTo(coord_.x, coord_.y);</span>
+                                                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                                prevX = coord_.x;</span>
+<span class="cstat-no" title="statement not covered" >                                                prevY = coord_.y;</span>
+                                            }
+<span class="cstat-no" title="statement not covered" >                                            ctx.strokeStyle = assetSymbology.style.strokecolor;</span>
+<span class="cstat-no" title="statement not covered" >                                            ctx.stroke();</span>
+                                        } else <span class="cstat-no" title="statement not covered" >if (geom.type === "Point") {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                            coord_.x = geom.coordinates[0] * 0.017453292519943295;</span>
+<span class="cstat-no" title="statement not covered" >                                            coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                            coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);</span>
+<span class="cstat-no" title="statement not covered" >                                            coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                            coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;</span>
+<span class="cstat-no" title="statement not covered" >                                            coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                            image = symbology[asset.symbolId.toString()].style.image;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                                            if (image) {</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.save();</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.translate(coord_.x, coord_.y);</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.rotate(-asset.angle * DEG_TO_RAD);</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,</span>
+                                                    image.width * imageFactor,
+                                                    image.height * imageFactor);
+<span class="cstat-no" title="statement not covered" >                                                ctx.restore();</span>
+<span class="cstat-no" title="statement not covered" >                                                if (zoom &gt; 16 &amp;&amp; asset.maplabel) {</span>
+<span class="cstat-no" title="statement not covered" >                                                    addLabel(asset.maplabel, image.width, coord_.x, coord_.y);</span>
+                                                }
+                                            } else {
+<span class="cstat-no" title="statement not covered" >                                                ctx.beginPath();</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.fillStyle = symbology[asset.symbolId].style.fillcolor;</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.fill();</span>
+<span class="cstat-no" title="statement not covered" >                                                ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);</span>
+                                            }
+                                        } else {
+<span class="cstat-no" title="statement not covered" >                                            console.log("géometrie inconnue");</span>
+                                        }
+                                    }
+<span class="cstat-no" title="statement not covered" >                                    if (zoom &gt; 16) {</span>
+<span class="cstat-no" title="statement not covered" >                                        drawLabels(ctx);</span>
+                                    }
+&nbsp;
+                                }, <span class="fstat-no" title="function not covered" >function(SqlError) {</span>
+<span class="cstat-no" title="statement not covered" >                                    console.log(JSON.stringify(SqlError));</span>
+                                });
+                        });
+                }
+            }
+        }
+    };
+<span class="cstat-no" title="statement not covered" >    return G3ME ;</span>
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Oct 12 2013 01:40:03 GMT+0200 (CEST)</div>
+</div>
+
+<script src="../prettify.js"></script>
+
+<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+<script>
+
+    YUI().use('datatable', function (Y) {
+
+        var formatters = {
+          pct: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              try {
+                  return o.value.toFixed(2) + '%';
+              } catch (ex) { return o.value + '%'; }
+          },
+          html: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.record.get(o.column.key + '_html');
+          }
+        },
+          defaultFormatter = function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.value;
+          };
+
+        function getColumns(theadNode) {
+            var colNodes = theadNode.all('tr th'),
+                cols = [],
+                col;
+            colNodes.each(function (colNode) {
+                col = {
+                    key: colNode.getAttribute('data-col'),
+                    label: colNode.get('innerHTML') || ' ',
+                    sortable: !colNode.getAttribute('data-nosort'),
+                    className: colNode.getAttribute('class'),
+                    type: colNode.getAttribute('data-type'),
+                    allowHTML: colNode.getAttribute('data-html') === 'true' || colNode.getAttribute('data-fmt') === 'html'
+                };
+                col.formatter = formatters[colNode.getAttribute('data-fmt')] || defaultFormatter;
+                cols.push(col);
+            });
+            return cols;
+        }
+
+        function getRowData(trNode, cols) {
+            var tdNodes = trNode.all('td'),
+                    i,
+                    row = { classes: {} },
+                    node,
+                    name;
+            for (i = 0; i < cols.length; i += 1) {
+                name = cols[i].key;
+                node = tdNodes.item(i);
+                row[name] = node.getAttribute('data-value') || node.get('innerHTML');
+                row[name + '_html'] = node.get('innerHTML');
+                row.classes[name] = node.getAttribute('class');
+                //Y.log('Name: ' + name + '; Value: ' + row[name]);
+                if (cols[i].type === 'number') { row[name] = row[name] * 1; }
+            }
+            //Y.log(row);
+            return row;
+        }
+
+        function getData(tbodyNode, cols) {
+            var data = [];
+            tbodyNode.all('tr').each(function (trNode) {
+                data.push(getRowData(trNode, cols));
+            });
+            return data;
+        }
+
+        function replaceTable(node) {
+            if (!node) { return; }
+            var cols = getColumns(node.one('thead')),
+                data = getData(node.one('tbody'), cols),
+                table,
+                parent = node.get('parentNode');
+
+            table = new Y.DataTable({
+                columns: cols,
+                data: data,
+                sortBy: 'file'
+            });
+            parent.set('innerHTML', '');
+            table.render(parent);
+        }
+
+        Y.on('domready', function () {
+            replaceTable(Y.one('div.coverage-summary table'));
+            if (typeof prettyPrint === 'function') {
+                prettyPrint();
+            }
+        });
+    });
+</script>
+</body>
+</html>
