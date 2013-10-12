@@ -3,15 +3,18 @@ function siteListController($scope, $http, $location, Smartgeo) {
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
     function getRemoteSites() {
-        $http.get(Smartgeo.get('url')+"gi.maintenance.mobility.site.json")
+        var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
+        $http.get(url)
             .success(function(sites){
                 var sitesById = {},
-                    knownSites = JSON.parse(localStorage.sites ||'{}'),
+                    knownSites = Smartgeo.get('sites') || {},
                     site, tmpsites = {};
                 for(var i = 0, lim = sites.length; i < lim; i++) {
                     site = sites[i];
                     tmpsites[site.id] = site;
                 }
+
+                // Cette ligne pose problème  
                 angular.extend(tmpsites, sitesById, knownSites);
 
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
@@ -26,7 +29,7 @@ function siteListController($scope, $http, $location, Smartgeo) {
             });
     }
     function getLocalSites() {
-        $scope.sites = JSON.parse(localStorage.sites) ;
+        $scope.sites = Smartgeo.get('sites') ;
         $scope.ready = true;
     }
 
@@ -57,6 +60,6 @@ function siteListController($scope, $http, $location, Smartgeo) {
     };
 
     $scope.online = Smartgeo.get('online');
-    $scope.online === 'true' ? getRemoteSites() : getLocalSites();
+    $scope.online === true ? getRemoteSites() : getLocalSites();
 
 }

@@ -193,13 +193,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                     xmax: xmax
                 };
 
-            // var request = "SELECT angle, geometry, symbolId, minzoom, maxzoom FROM ASSETS ";
-            var request = "SELECT * FROM ASSETS ";
-            request += "WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
-            request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+            var request  = " SELECT * FROM ASSETS ";
+                request += " WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
+                request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+
             if(this.active_layers) {
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
             }
+            
             for (i = 0; i < this.site.zones.length; i++) {
                 if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
                     SQLite.openDatabase({

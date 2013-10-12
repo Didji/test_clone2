@@ -19,7 +19,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
 
         // METHODS
         setGimapUrl : function(){
-            var url = prompt('URL GiMAP', localStorage.url||'');
+            var url = prompt('URL GiMAP', Smartgeo.get('url') || '');
             if(!url && url !== null) {
                 return this.setGimapUrl();
             } else if (url === null){
@@ -219,11 +219,25 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
 
         // GETTER AND SETTER
         get: function(parameter){
-            return this[parameter] || localStorage.getItem(parameter);
+            // var value = localStorage.getItem(parameter), parsedValue;
+            // try{
+                // parsedValue = JSON.parse(value);
+            // } catch (e){
+                /* Value is not a stringified object */ 
+            // }
+            // return parsedValue || value;
+            return JSON.parse(localStorage.getItem(parameter));
         },
         set: function(parameter, value){
-            localStorage[parameter] = value ;
-            return localStorage.setItem(parameter, value);
+            // var stringifiedValue ;
+
+            // try{
+            //     stringifiedValue = JSON.stringify 
+            // }
+            // localStorage[parameter] = value ;
+            // return localStorage.setItem(parameter, value);
+
+            return localStorage.setItem(parameter, JSON.stringify(value));
         }
     };
 

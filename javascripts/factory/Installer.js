@@ -90,9 +90,9 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         },
 
         saveSite: function(site){
-            var sites = JSON.parse( Smartgeo.get('sites') || '{}' ) ;
+            var sites = Smartgeo.get('sites') || {};
             sites[site.id] = site ;
-            Smartgeo.set('sites', JSON.stringify(sites));
+            Smartgeo.set('sites', sites);
         },
 
         createZones: function(site, callback){
