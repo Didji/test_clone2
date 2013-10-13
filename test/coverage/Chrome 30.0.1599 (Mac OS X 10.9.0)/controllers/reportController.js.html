@@ -183,16 +183,16 @@
     <h1>Code coverage report for <span class="entity">controllers/reportController.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">4.29% <small>(6 / 140)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">4.32% <small>(6 / 139)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
         Branches: <span class="metric">0% <small>(0 / 47)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">0% <small>(0 / 20)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 19)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">4.29% <small>(6 / 140)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">4.32% <small>(6 / 139)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
     <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">controllers/</a> &#187; reportController.js</div>
@@ -458,34 +458,7 @@
 257
 258
 259
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269
-270
-271
-272
-273
-274
-275
-276
-277
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+260</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -728,33 +701,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -773,7 +719,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="fstat-no" title="function not covered" >function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder){</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    $rootScope.site = $rootScope.site || JSON.parse(localStorage.sites)[$routeParams.site];</span>
+<span class="cstat-no" title="statement not covered" >    $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];</span>
 <span class="cstat-no" title="statement not covered" >    $scope.step = "assets";</span>
 <span class="cstat-no" title="statement not covered" >    $scope.fromConsult = false;</span>
 &nbsp;
@@ -1003,9 +949,9 @@
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)</span>
             .error(<span class="fstat-no" title="function not covered" >function(){</span>
-<span class="cstat-no" title="statement not covered" >                var reports = JSON.parse( Smartgeo.get('reports') || '[]');</span>
+<span class="cstat-no" title="statement not covered" >                var reports = Smartgeo.get('reports') || [];</span>
 <span class="cstat-no" title="statement not covered" >                reports.push($scope.report);</span>
-<span class="cstat-no" title="statement not covered" >                Smartgeo.set('reports', JSON.stringify(reports));</span>
+<span class="cstat-no" title="statement not covered" >                Smartgeo.set('reports', reports);</span>
             }).then(<span class="fstat-no" title="function not covered" >function(){</span>
 <span class="cstat-no" title="statement not covered" >                $scope.sendingReport = false ;</span>
 <span class="cstat-no" title="statement not covered" >                $location.path('map/'+$rootScope.site.id);</span>
@@ -1014,33 +960,6 @@
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    $scope.toggleCollapse = <span class="fstat-no" title="function not covered" >function(event){</span></span>
 <span class="cstat-no" title="statement not covered" >        event.preventDefault();</span>
-    };
-&nbsp;
-<span class="cstat-no" title="statement not covered" >    $scope.addPicture = <span class="fstat-no" title="function not covered" >function(){</span></span>
-&nbsp;
-        // if (!navigator.camera || !Camera){
-        //     $scope.report.ged.push({
-        //         content:'http://placehold.it/350x150'
-        //     });
-        //     return ;
-        // }
-&nbsp;
-        // navigator.camera.getPicture(function(ImageData) {
-        //     $scope.report.ged.push({
-        //         content:ImageData
-        //     });
-        //     $scope.$apply();
-        // }, function(CameraError) {
-        //     console.error(CameraError);
-        // }, {
-        //     quality: 100,
-        //     sourceType: navigator.camera.PictureSourceType.CAMERA,
-        //     mediaType: navigator.camera.MediaType.PICTURE,
-        //     destinationType: Camera.DestinationType.FILE_URI,
-        //     correctOrientation: false,
-        //     saveToPhotoAlbum: true
-        // });
-&nbsp;
     };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    getBase64Image = <span class="fstat-no" title="function not covered" >function(src) {</span></span>
@@ -1062,7 +981,7 @@
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Oct 12 2013 01:40:03 GMT+0200 (CEST)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Oct 12 2013 19:56:44 GMT+0200 (CEST)</div>
 </div>
 
 <script src="../prettify.js"></script>

@@ -37,7 +37,8 @@ module.exports = function (config) {
       'javascripts/controllers/layersController.js',
       'javascripts/controllers/synchronizationMenuController.js',
 
-      'test/controllersSpec.js'
+      'test/controllersSpec.js',
+      'test/factoriesSpec.js'
     ],
 
     exclude : ['test/coverage/**/*.js'],

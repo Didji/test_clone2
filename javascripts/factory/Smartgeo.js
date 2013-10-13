@@ -219,24 +219,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
 
         // GETTER AND SETTER
         get: function(parameter){
-            // var value = localStorage.getItem(parameter), parsedValue;
-            // try{
-                // parsedValue = JSON.parse(value);
-            // } catch (e){
-                /* Value is not a stringified object */ 
-            // }
-            // return parsedValue || value;
             return JSON.parse(localStorage.getItem(parameter));
         },
+
         set: function(parameter, value){
-            // var stringifiedValue ;
-
-            // try{
-            //     stringifiedValue = JSON.stringify 
-            // }
-            // localStorage[parameter] = value ;
-            // return localStorage.setItem(parameter, value);
-
             return localStorage.setItem(parameter, JSON.stringify(value));
         }
     };
