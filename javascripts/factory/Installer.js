@@ -336,7 +336,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
             for (i=0; i < assets_length; i++) {
                 asset = assets[i];
-                asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS --- > asset_ = angular.copy(asset);
+                asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
                 guid = asset.guid;
                 bounds = asset.bounds;
 
