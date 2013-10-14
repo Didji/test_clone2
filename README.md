@@ -1,5 +1,4 @@
 
-
 ![GI](http://gismartware.com/images/logo.png)
 ====================================================================
 
@@ -17,7 +16,7 @@ If your SDK Manager doesn't work you can launch it from :
 * Eclipse plugin (if it's installed)
 * Android Custom Eclipse (downloaded with Android SDK Manager, you can find it in `sdk-android/eclipse/eclipse`
 
-PS: don't forget to set environment variables (**ANDROID_HOME**, **ANDROID_BIN**) (not sure for the last one)
+PS: don't forget to set environment variables (**ANDROID_HOME**, **ANDROID_BIN**)
 
 ### Install nodejs
 
