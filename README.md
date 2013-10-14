@@ -1,4 +1,3 @@
-
 ![GI](http://gismartware.com/images/logo.png)
 ====================================================================
 
@@ -10,13 +9,13 @@ Then you need to install a hardware specific target :
 * For Samsung galaxy S3 : API 17 (for Android 4.2)
 * For others, complete this list.
 
-You can download and install it from Android SDK manager
+You can download and install it from Android SDK manager by executing `sdk-android/tools/android`
 
 If your SDK Manager doesn't work you can launch it from :
 * Eclipse plugin (if it's installed)
 * Android Custom Eclipse (downloaded with Android SDK Manager, you can find it in `sdk-android/eclipse/eclipse`
 
-PS: don't forget to set environment variables (**ANDROID_HOME**, **ANDROID_BIN**)
+PS: don't forget to set environment variables (**ANDROID_HOME**=`sdk-android/`, **ANDROID_BIN**=`sdk-android/tools/`)
 
 ### Install nodejs
 
