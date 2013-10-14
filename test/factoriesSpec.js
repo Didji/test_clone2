@@ -85,4 +85,4 @@ describe('Smartgeomobile factories', function() {
 
     });
 
-});  
+});
