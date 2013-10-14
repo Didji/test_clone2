@@ -1,5 +1,7 @@
-smartgeomobile-cordova
-======================
+
+
+![GI](http://gismartware.com/images/logo.png)
+====================================================================
 
 ### Install android sdk 
 
