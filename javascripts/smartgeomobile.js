@@ -1,5 +1,6 @@
 var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2'])
        .config(['$routeProvider', function($routeProvider) {
+
             $routeProvider.
                 when('/',                                       {templateUrl: 'partials/login.html'}).
                 when('/sites/',                                 {templateUrl: 'partials/sites.html'}).
@@ -12,7 +13,9 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                 when('/sites/uninstall/:site',                  {templateUrl: 'partials/uninstall.html'}).
                 when('/sites/update/:site',                     {templateUrl: 'partials/update.html'}).
                 when('/map/:site',                              {templateUrl: 'partials/map.html'}).
+                when('/intent/:args/:controller/1/:token',      {template: " ",  controller: intentController}).
                 otherwise({redirectTo: '/'});
+
     }]).config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.withCredentials = true;
         $httpProvider.defaults.useXDomain = true;

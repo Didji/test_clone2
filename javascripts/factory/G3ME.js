@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
 
         filecacheIsEnable: true,
 
-        initialize : function(mapDivId, site, extent){
+        initialize : function(mapDivId, site, target){
 
             this.site    = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
@@ -23,14 +23,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 position: 'topright'
             }));
 
-            if(!extent){
-                extent = [
+            if(!target){
+                target = [
                     [this.site.extent.ymin, this.site.extent.xmin],
                     [this.site.extent.ymax, this.site.extent.xmax]
                 ];
             }
 
-            G3ME.map.fitBounds(extent);
+            G3ME.map.fitBounds(target);
             G3ME.invalidateMapSize();
 
             if(!this.tileUrl){
@@ -200,7 +200,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
             if(this.active_layers) {
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
             }
-            
+
             for (i = 0; i < this.site.zones.length; i++) {
                 if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
                     SQLite.openDatabase({
