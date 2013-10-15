@@ -1,4 +1,4 @@
-function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
+function siteUpdateController($scope,$rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
 
     $scope.steps = [{
         color: '#fd9122',
@@ -64,13 +64,15 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
         }
 
         Installer.getUpdateJSON($scope.site, function(site){
-            var formatedSite = Installer.formatSiteMetadata(site);
+            var update = true;
+            var formatedSite = Installer.formatSiteMetadata(site, update);
             $scope.steps[0].progress = 100;
             buildSteps(formatedSite);
             $scope.site.oldTimestamp = $scope.site.timestamp ;
             angular.extend($scope.site, formatedSite);
             Installer.update($scope.site, $scope.site.stats, function(){
                 Installer.saveSite($scope.site);
+                $rootScope.site = $scope.site ;
                 $location.path('/map/'+$routeParams.site);
                 if(!$scope.$$phase) {
                     $scope.$apply();
