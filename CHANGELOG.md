@@ -1,3 +1,43 @@
+`git log v0.9.0..v0.9.1 --no-merges --date=short --format=" * [%h - %ad] : %s" >> CHANGELOG.md`
+
+0.9.1 / 2013-10-15
+==================
+
+ * [8de75a2 - 2013-10-14] : Intents factory bootstrap
+ * [838aa3e - 2013-10-14] : Update README.md
+ * [74e1d13 - 2013-10-14] : Create README.md
+ * [0655a80 - 2013-10-13] : Test: unit test structure enhancement and some tests on Smartgeo factory
+ * [c27a765 - 2013-10-12] : Kernel getter and setter refactoring (closes #125, closes #124, closes #123)
+ * [26917b4 - 2013-10-12] : Kernel getter and setter refactoring (closes #125, closes #124)
+ * [3d1d2c1 - 2013-10-12] : Introducing e2e testing
+ * [574d6ee - 2013-10-12] : Introducing code coverage
+ * [5039ca2 - 2013-10-12] : Introducing unit tests with karma
+ * [8fbeb9b - 2013-10-12] : Trying to avoid to use  too much
+ * [fe8dfbb - 2013-10-11] : Auth controller refactoring
+ * [b8221e7 - 2013-10-11] : Check if  is not already in progress at the end of installation
+ * [5aade2c - 2013-10-11] : Closes #121
+ * [fb10980 - 2013-10-11] : Closes #119
+ * [3d163cd - 2013-10-11] : Send correct timestamp to update service
+ * [b279957 - 2013-10-11] : Restore zoom animation on G3ME FileCache Layer
+ * [fd34d04 - 2013-10-11] : Closes #118
+ * [fba4ff3 - 2013-10-11] : Update beginning
+ * [82253a7 - 2013-10-11] : The rainbow is probably ther during update too.
+ * [aeba248 - 2013-10-11] : The rainbow is back during installation.
+ * [b5cac3c - 2013-10-11] : G3ME eTag support for dynamic tile cache update (closes #10) #changelog
+ * [2505583 - 2013-10-10] : Fixes zone's edge 4pixels line width
+ * [98342d7 - 2013-10-10] : Webcam images can be added to report
+ * [ecb86a2 - 2013-10-10] : Webcam images can be added to report
+ * [fb72ce0 - 2013-10-10] : Add Camera directive for Cordova
+ * [a6fe6d9 - 2013-10-10] : Remove useless @fabriceds console.log
+ * [ae33935 - 2013-10-10] : Fixes brand new left menu bug
+ * [ede1409 - 2013-10-10] : Add beggining of solution for fixing UI progress during installation
+ * [608b4ff - 2013-10-10] : Left tirette now close panel (closes #116, maybe #115)
+ * [dff83ac - 2013-10-10] : Use installer function in siteUninstallController
+ * [ca78a20 - 2013-10-10] : Preparing code for partial update
+ * [fc889b6 - 2013-10-10] : add getServiceUrl(serviceName, GETParameters) to Smartgeo object
+ * [6d814a9 - 2013-10-10] : Installer is now in a factory
+ * [11ec944 - 2013-10-10] : add v0.9.1 changelog
+
 
 0.9.0 / 2013-10-10
 ==================
@@ -106,3 +146,5 @@
 * detail du patrimoine dans le panneau de consultation
 * menu consultation sur la droite sur l'evenement de consultation(click)
 * Utilisation du css de leaflet contenu dans le dépôt au lieu du CDN
+
+
