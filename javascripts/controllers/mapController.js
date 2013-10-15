@@ -1,12 +1,11 @@
 function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
-
     $scope.consultationIsEnabled = false ;
 
-    var extent = Smartgeo.get('lastLeafletMapExtent') || [] ;
+    var target = $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [] ;
 
-    G3ME.initialize('smartgeo-map', $rootScope.site, extent.length ? extent : null);
+    G3ME.initialize('smartgeo-map', $rootScope.site, target);
 
     G3ME.map.on('moveend', function(e) {
         var extent = G3ME.map.getBounds();
