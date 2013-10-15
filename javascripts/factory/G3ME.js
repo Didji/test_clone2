@@ -23,7 +23,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 position: 'topright'
             }));
 
-            if(!target){
+            if(!target || !target.length){
                 target = [
                     [this.site.extent.ymin, this.site.extent.xmin],
                     [this.site.extent.ymax, this.site.extent.xmax]
