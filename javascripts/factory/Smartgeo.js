@@ -224,6 +224,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
 
         set: function(parameter, value){
             return localStorage.setItem(parameter, JSON.stringify(value));
+        },
+
+        unset: function(parameter){
+            return localStorage.removeItem(parameter);
         }
     };
 

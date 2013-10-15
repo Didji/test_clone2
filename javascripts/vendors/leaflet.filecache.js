@@ -474,8 +474,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             x: tilePoint.x,
             y: tilePoint.y
         }, this.options));
-        // console.log(tilePoint);
-        return test ;
     },
 
     _getWrapTileNum: function () {
@@ -655,7 +653,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
 
     writeTileToCache: function(tileObject, dataUrl, callback){
-
+        console.log("writeTileToCache");
         var this_ = this ;
         var path  = this.getTilePath(tileObject);
 

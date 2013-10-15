@@ -2,13 +2,21 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
     var Installer = {
 
-        deleteAssets: function(site, assets, callback){
+        deleteAssets: function(site, obsoletes, callback){
+            var assets = [] ;
+            for(var okey in obsoletes){
+                if(obsoletes.hasOwnProperty(okey)){
+                    assets = assets.concat(obsoletes[okey]);
+                }
+            }
+
             if(assets.length <= 0){
                 callback();
-            } else if(assets.lenght > _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST) {
-                // TODO :
+            // } else if(assets.lenght > Smartgeo._INSTALL_MAX_ASSETS_PER_DELETE_REQUEST) {
+            //     // TODO :
             } else {
-                var request = " DELETE FROM ASSETS WHERE id in ( '"+assets.join("','")+"' ) ";
+                var request = " DELETE FROM ASSETS WHERE id in ( "+assets.join(",")+" ) ";
+                console.log(request);
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                         transaction.executeSql(request , [], function(){
@@ -158,12 +166,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         },
 
         update: function(site, stats, callback){
-            console.log(stats.modified);
-            console.log(stats.obsolate);
-            // TODO : delete ids in stats.delta
-            var assets = [];
             var update = true ;
-            Installer.deleteAssets(site, assets, function(){
+            Installer.deleteAssets(site, site.obsoletes, function(){
                 Installer.install(site, stats, callback, update);
             });
         },

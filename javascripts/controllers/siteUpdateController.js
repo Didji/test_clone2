@@ -48,7 +48,7 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
 
     $scope.site = Smartgeo.get('sites')[$routeParams.site] ;
 
-    var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json'); 
+    var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
     $http.get(url).success(function(sites){
         $scope.steps[0].progress = 50;
@@ -82,7 +82,9 @@ function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $lo
     $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
         $scope.currentInstalledOkey = action.okey;
         stepsByOkey[action.okey].progress = 1 * action.progress;
-        $scope.$apply();
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
     });
 
 
