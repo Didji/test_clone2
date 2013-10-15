@@ -16,6 +16,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
     }]).config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.withCredentials = true;
         $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.cache = false;
     }]).directive('camera', function() {
         return {
             restrict: 'A',

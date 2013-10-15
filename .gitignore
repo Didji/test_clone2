@@ -2,3 +2,4 @@
 .project
 .settings
 nohup.out
+test/coverage/*.json
