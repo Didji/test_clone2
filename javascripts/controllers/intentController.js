@@ -1,10 +1,27 @@
-function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http){
+function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window){
 
 
-    $http.get('http://canopee.m-ve.com/index.php?service=global.auth.json&token=ya29.AHES6ZSMM-11Vvbs6hOjAeHn5v-vTufIBrpimaMWwVB-mTkhzeahng')
-        .success(function(){console.log(arguments)}).error(function(){console.log(arguments)});
+    // #/intent/void/map
+    // #/intent//map//
+    // #/intent/?map_target=2479408&report_target=2479408&map_marker=true&report_activity=56550253&report_fields[###145656###]=250mm&report_mission=56555111NCA12&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
+    // #/intent/?map_target=48.15303870674,-1.6148&report_target=48.15303870674,-1.6148&map_marker=false&report_activity=56550253&report_mission=56555111NCA12&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
+    // #/intent/?map_target=48.15303870674,-1.6148&report_target=48.15303870674,-1.6148&report_activity=56550253&report_url_redirect=https://recette.m-ve.com/feuillederoute//map/sdfijksbgfdjhgdsfkjhsdfih
+    // #/intent/?map_target=2479408&report_target=2479408&report_activity=56550253&report_fields[Code%20contrat]=541E41&report_fields[Diametre]=200&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
+    // #/intent/?report_activity=44407263&report_target=1323836/report
+    // #/intent/?report_activity=44407263&report_target=1323836/report
+    // #/intent/?report_activity=44407263&report_target=1323836&report_mission=13/report
+    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13/report
+    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13&report_url_redirect=http%3A%2F%2Fdomain.com%2F%3F%5BLABEL_INDEXED_FIELDS%5D/report
+    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13&report_url_redirect=http%3A%2F%2Fdomain.com%2F%3F%5BKEY_INDEXED_FIELDS%5D/report
+     
+     
+ 
 
-    return ;
+
+    // $http.get('http://canopee.m-ve.com/index.php?service=global.auth.json&token=ya29.AHES6ZSMM-11Vvbs6hOjAeHn5v-vTufIBrpimaMWwVB-mTkhzeahng')
+    //     .success(function(){console.log(arguments)}).error(function(){console.log(arguments)});
+
+    // return ;
 
     if($rootScope.site){
 
@@ -22,6 +39,7 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
 
     if(!$rootScope.site){
         $window.alert("Aucun site n'est disponible.");
+        $location.path("#");
         return false ;
     }
 
