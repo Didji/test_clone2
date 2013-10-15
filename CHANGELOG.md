@@ -1,150 +1,227 @@
-`git log v0.9.0..v0.9.1 --no-merges --date=short --format=" * [%h - %ad] : %s" >> CHANGELOG.md`
+### changelog v0.9.0 - 15/10/2013
 
-0.9.1 / 2013-10-15
-==================
+`git log v0.9.0..v0.9.1 --no-merges --date=short --format=" * [%h](https://github.com/gismartwaredev/smartgeomobile/commit/%h) - %s [%an](https://github.com/%an)" >> CHANGELOG.md`
 
- * [8de75a2 - 2013-10-14] : Intents factory bootstrap
- * [838aa3e - 2013-10-14] : Update README.md
- * [74e1d13 - 2013-10-14] : Create README.md
- * [0655a80 - 2013-10-13] : Test: unit test structure enhancement and some tests on Smartgeo factory
- * [c27a765 - 2013-10-12] : Kernel getter and setter refactoring (closes #125, closes #124, closes #123)
- * [26917b4 - 2013-10-12] : Kernel getter and setter refactoring (closes #125, closes #124)
- * [3d1d2c1 - 2013-10-12] : Introducing e2e testing
- * [574d6ee - 2013-10-12] : Introducing code coverage
- * [5039ca2 - 2013-10-12] : Introducing unit tests with karma
- * [8fbeb9b - 2013-10-12] : Trying to avoid to use  too much
- * [fe8dfbb - 2013-10-11] : Auth controller refactoring
- * [b8221e7 - 2013-10-11] : Check if  is not already in progress at the end of installation
- * [5aade2c - 2013-10-11] : Closes #121
- * [fb10980 - 2013-10-11] : Closes #119
- * [3d163cd - 2013-10-11] : Send correct timestamp to update service
- * [b279957 - 2013-10-11] : Restore zoom animation on G3ME FileCache Layer
- * [fd34d04 - 2013-10-11] : Closes #118
- * [fba4ff3 - 2013-10-11] : Update beginning
- * [82253a7 - 2013-10-11] : The rainbow is probably ther during update too.
- * [aeba248 - 2013-10-11] : The rainbow is back during installation.
- * [b5cac3c - 2013-10-11] : G3ME eTag support for dynamic tile cache update (closes #10) #changelog
- * [2505583 - 2013-10-10] : Fixes zone's edge 4pixels line width
- * [98342d7 - 2013-10-10] : Webcam images can be added to report
- * [ecb86a2 - 2013-10-10] : Webcam images can be added to report
- * [fb72ce0 - 2013-10-10] : Add Camera directive for Cordova
- * [a6fe6d9 - 2013-10-10] : Remove useless @fabriceds console.log
- * [ae33935 - 2013-10-10] : Fixes brand new left menu bug
- * [ede1409 - 2013-10-10] : Add beggining of solution for fixing UI progress during installation
- * [608b4ff - 2013-10-10] : Left tirette now close panel (closes #116, maybe #115)
- * [dff83ac - 2013-10-10] : Use installer function in siteUninstallController
- * [ca78a20 - 2013-10-10] : Preparing code for partial update
- * [fc889b6 - 2013-10-10] : add getServiceUrl(serviceName, GETParameters) to Smartgeo object
- * [6d814a9 - 2013-10-10] : Installer is now in a factory
- * [11ec944 - 2013-10-10] : add v0.9.1 changelog
+ * [8de75a2](https://github.com/gismartwaredev/smartgeomobile/commit/8de75a2) - Intents factory bootstrap [gulian](https://github.com/gulian)
+ * [838aa3e](https://github.com/gismartwaredev/smartgeomobile/commit/838aa3e) - Update README.md [Gulian](https://github.com/Gulian)
+ * [74e1d13](https://github.com/gismartwaredev/smartgeomobile/commit/74e1d13) - Create README.md [Gulian](https://github.com/Gulian)
+ * [0655a80](https://github.com/gismartwaredev/smartgeomobile/commit/0655a80) - Test: unit test structure enhancement and some tests on Smartgeo factory [gulian](https://github.com/gulian)
+ * [c27a765](https://github.com/gismartwaredev/smartgeomobile/commit/c27a765) - Kernel getter and setter refactoring (closes #125, closes #124, closes #123) [gulian](https://github.com/gulian)
+ * [26917b4](https://github.com/gismartwaredev/smartgeomobile/commit/26917b4) - Kernel getter and setter refactoring (closes #125, closes #124) [gulian](https://github.com/gulian)
+ * [3d1d2c1](https://github.com/gismartwaredev/smartgeomobile/commit/3d1d2c1) - Introducing e2e testing [gulian](https://github.com/gulian)
+ * [574d6ee](https://github.com/gismartwaredev/smartgeomobile/commit/574d6ee) - Introducing code coverage [gulian](https://github.com/gulian)
+ * [5039ca2](https://github.com/gismartwaredev/smartgeomobile/commit/5039ca2) - Introducing unit tests with karma [gulian](https://github.com/gulian)
+ * [8fbeb9b](https://github.com/gismartwaredev/smartgeomobile/commit/8fbeb9b) - Trying to avoid to use  too much [gulian](https://github.com/gulian)
+ * [fe8dfbb](https://github.com/gismartwaredev/smartgeomobile/commit/fe8dfbb) - Auth controller refactoring [gulian](https://github.com/gulian)
+ * [b8221e7](https://github.com/gismartwaredev/smartgeomobile/commit/b8221e7) - Check if  is not already in progress at the end of installation [gulian](https://github.com/gulian)
+ * [5aade2c](https://github.com/gismartwaredev/smartgeomobile/commit/5aade2c) - Closes #121 [fabriceds](https://github.com/fabriceds)
+ * [fb10980](https://github.com/gismartwaredev/smartgeomobile/commit/fb10980) - Closes #119 [fabriceds](https://github.com/fabriceds)
+ * [3d163cd](https://github.com/gismartwaredev/smartgeomobile/commit/3d163cd) - Send correct timestamp to update service [gulian](https://github.com/gulian)
+ * [b279957](https://github.com/gismartwaredev/smartgeomobile/commit/b279957) - Restore zoom animation on G3ME FileCache Layer [gulian](https://github.com/gulian)
+ * [fd34d04](https://github.com/gismartwaredev/smartgeomobile/commit/fd34d04) - Closes #118 [fabriceds](https://github.com/fabriceds)
+ * [fba4ff3](https://github.com/gismartwaredev/smartgeomobile/commit/fba4ff3) - Update beginning [gulian](https://github.com/gulian)
+ * [82253a7](https://github.com/gismartwaredev/smartgeomobile/commit/82253a7) - The rainbow is probably ther during update too. [fabriceds](https://github.com/fabriceds)
+ * [aeba248](https://github.com/gismartwaredev/smartgeomobile/commit/aeba248) - The rainbow is back during installation. [fabriceds](https://github.com/fabriceds)
+ * [b5cac3c](https://github.com/gismartwaredev/smartgeomobile/commit/b5cac3c) - G3ME eTag support for dynamic tile cache update (closes #10) #changelog [gulian](https://github.com/gulian)
+ * [2505583](https://github.com/gismartwaredev/smartgeomobile/commit/2505583) - Fixes zone's edge 4pixels line width [gulian](https://github.com/gulian)
+ * [98342d7](https://github.com/gismartwaredev/smartgeomobile/commit/98342d7) - Webcam images can be added to report [gulian](https://github.com/gulian)
+ * [ecb86a2](https://github.com/gismartwaredev/smartgeomobile/commit/ecb86a2) - Webcam images can be added to report [gulian](https://github.com/gulian)
+ * [fb72ce0](https://github.com/gismartwaredev/smartgeomobile/commit/fb72ce0) - Add Camera directive for Cordova [gulian](https://github.com/gulian)
+ * [a6fe6d9](https://github.com/gismartwaredev/smartgeomobile/commit/a6fe6d9) - Remove useless @fabriceds console.log [gulian](https://github.com/gulian)
+ * [ae33935](https://github.com/gismartwaredev/smartgeomobile/commit/ae33935) - Fixes brand new left menu bug [gulian](https://github.com/gulian)
+ * [ede1409](https://github.com/gismartwaredev/smartgeomobile/commit/ede1409) - Add beggining of solution for fixing UI progress during installation [gulian](https://github.com/gulian)
+ * [608b4ff](https://github.com/gismartwaredev/smartgeomobile/commit/608b4ff) - Left tirette now close panel (closes #116, maybe #115) [gulian](https://github.com/gulian)
+ * [dff83ac](https://github.com/gismartwaredev/smartgeomobile/commit/dff83ac) - Use installer function in siteUninstallController [gulian](https://github.com/gulian)
+ * [ca78a20](https://github.com/gismartwaredev/smartgeomobile/commit/ca78a20) - Preparing code for partial update [gulian](https://github.com/gulian)
+ * [fc889b6](https://github.com/gismartwaredev/smartgeomobile/commit/fc889b6) - add getServiceUrl(serviceName, GETParameters) to Smartgeo object [gulian](https://github.com/gulian)
+ * [6d814a9](https://github.com/gismartwaredev/smartgeomobile/commit/6d814a9) - Installer is now in a factory [gulian](https://github.com/gulian)
+ * [11ec944](https://github.com/gismartwaredev/smartgeomobile/commit/11ec944) - add v0.9.1 changelog [gulian](https://github.com/gulian)
+ * [8de75a2](https://github.com/gismartwaredev/smartgeomobile/commit/8de75a2) - Intents factory bootstrap [gulian](https://github.com/gulian)
+ * [838aa3e](https://github.com/gismartwaredev/smartgeomobile/commit/838aa3e) - Update README.md [Gulian](https://github.com/Gulian)
+ * [74e1d13](https://github.com/gismartwaredev/smartgeomobile/commit/74e1d13) - Create README.md [Gulian](https://github.com/Gulian)
+ * [0655a80](https://github.com/gismartwaredev/smartgeomobile/commit/0655a80) - Test: unit test structure enhancement and some tests on Smartgeo factory [gulian](https://github.com/gulian)
+ * [c27a765](https://github.com/gismartwaredev/smartgeomobile/commit/c27a765) - Kernel getter and setter refactoring (closes #125, closes #124, closes #123) [gulian](https://github.com/gulian)
+ * [26917b4](https://github.com/gismartwaredev/smartgeomobile/commit/26917b4) - Kernel getter and setter refactoring (closes #125, closes #124) [gulian](https://github.com/gulian)
+ * [3d1d2c1](https://github.com/gismartwaredev/smartgeomobile/commit/3d1d2c1) - Introducing e2e testing [gulian](https://github.com/gulian)
+ * [574d6ee](https://github.com/gismartwaredev/smartgeomobile/commit/574d6ee) - Introducing code coverage [gulian](https://github.com/gulian)
+ * [5039ca2](https://github.com/gismartwaredev/smartgeomobile/commit/5039ca2) - Introducing unit tests with karma [gulian](https://github.com/gulian)
+ * [8fbeb9b](https://github.com/gismartwaredev/smartgeomobile/commit/8fbeb9b) - Trying to avoid to use  too much [gulian](https://github.com/gulian)
+ * [fe8dfbb](https://github.com/gismartwaredev/smartgeomobile/commit/fe8dfbb) - Auth controller refactoring [gulian](https://github.com/gulian)
+ * [b8221e7](https://github.com/gismartwaredev/smartgeomobile/commit/b8221e7) - Check if  is not already in progress at the end of installation [gulian](https://github.com/gulian)
+ * [5aade2c](https://github.com/gismartwaredev/smartgeomobile/commit/5aade2c) - Closes #121 [fabriceds](https://github.com/fabriceds)
+ * [fb10980](https://github.com/gismartwaredev/smartgeomobile/commit/fb10980) - Closes #119 [fabriceds](https://github.com/fabriceds)
+ * [3d163cd](https://github.com/gismartwaredev/smartgeomobile/commit/3d163cd) - Send correct timestamp to update service [gulian](https://github.com/gulian)
+ * [b279957](https://github.com/gismartwaredev/smartgeomobile/commit/b279957) - Restore zoom animation on G3ME FileCache Layer [gulian](https://github.com/gulian)
+ * [fd34d04](https://github.com/gismartwaredev/smartgeomobile/commit/fd34d04) - Closes #118 [fabriceds](https://github.com/fabriceds)
+ * [fba4ff3](https://github.com/gismartwaredev/smartgeomobile/commit/fba4ff3) - Update beginning [gulian](https://github.com/gulian)
+ * [82253a7](https://github.com/gismartwaredev/smartgeomobile/commit/82253a7) - The rainbow is probably ther during update too. [fabriceds](https://github.com/fabriceds)
+ * [aeba248](https://github.com/gismartwaredev/smartgeomobile/commit/aeba248) - The rainbow is back during installation. [fabriceds](https://github.com/fabriceds)
+ * [b5cac3c](https://github.com/gismartwaredev/smartgeomobile/commit/b5cac3c) - G3ME eTag support for dynamic tile cache update (closes #10) #changelog [gulian](https://github.com/gulian)
+ * [2505583](https://github.com/gismartwaredev/smartgeomobile/commit/2505583) - Fixes zone's edge 4pixels line width [gulian](https://github.com/gulian)
+ * [98342d7](https://github.com/gismartwaredev/smartgeomobile/commit/98342d7) - Webcam images can be added to report [gulian](https://github.com/gulian)
+ * [ecb86a2](https://github.com/gismartwaredev/smartgeomobile/commit/ecb86a2) - Webcam images can be added to report [gulian](https://github.com/gulian)
+ * [fb72ce0](https://github.com/gismartwaredev/smartgeomobile/commit/fb72ce0) - Add Camera directive for Cordova [gulian](https://github.com/gulian)
+ * [a6fe6d9](https://github.com/gismartwaredev/smartgeomobile/commit/a6fe6d9) - Remove useless @fabriceds console.log [gulian](https://github.com/gulian)
+ * [ae33935](https://github.com/gismartwaredev/smartgeomobile/commit/ae33935) - Fixes brand new left menu bug [gulian](https://github.com/gulian)
+ * [ede1409](https://github.com/gismartwaredev/smartgeomobile/commit/ede1409) - Add beggining of solution for fixing UI progress during installation [gulian](https://github.com/gulian)
+ * [608b4ff](https://github.com/gismartwaredev/smartgeomobile/commit/608b4ff) - Left tirette now close panel (closes #116, maybe #115) [gulian](https://github.com/gulian)
+ * [dff83ac](https://github.com/gismartwaredev/smartgeomobile/commit/dff83ac) - Use installer function in siteUninstallController [gulian](https://github.com/gulian)
+ * [ca78a20](https://github.com/gismartwaredev/smartgeomobile/commit/ca78a20) - Preparing code for partial update [gulian](https://github.com/gulian)
+ * [fc889b6](https://github.com/gismartwaredev/smartgeomobile/commit/fc889b6) - add getServiceUrl(serviceName, GETParameters) to Smartgeo object [gulian](https://github.com/gulian)
+ * [6d814a9](https://github.com/gismartwaredev/smartgeomobile/commit/6d814a9) - Installer is now in a factory [gulian](https://github.com/gulian)
+ * [11ec944](https://github.com/gismartwaredev/smartgeomobile/commit/11ec944) - add v0.9.1 changelog [gulian](https://github.com/gulian)
 
+### changelog v0.9.0 - 10/10/2013
 
-0.9.0 / 2013-10-10
-==================
+`git log v0.9.0 --no-merges --date=short --format=" * [%h](https://github.com/gismartwaredev/smartgeomobile/commit/%h) - %s [%an](https://github.com/%an)" >> CHANGELOG.md`
 
-* Closes #70.
-* cordova polyfill
-* add cordova related config.xml
-* cordova deps
-* Closes #117
-* Closes #74.
-* add spinner to report (closes #90)
-* cancel url change does not uninstall site
-* closes #114
-* add spinner in search button (closes #91)
-* Closes #95
-* reset criteria value on criteria unselect (closes #83)
-* Closes #3
-* add 'Erase criteria' button in advanced search (closes #82)
-* Closes #105
-* consultation tirette do not appears when consultation panel is empty (closes #101)
-* metamodels and activities binded to absent object are not installed (closes #62)
-* points are now prioritary on linestrings (closes #68)
-* closes #26
-* closes #85
-* site uninstall controller (closes #65)
-* closes #96
-* convert dropdown to dropup ! (closes #84)
-* closes #109
-* add media feature (closes #78)
-* local saved report sync UI (closes #61)
-* put install functions out of scope for better performances (closes #77)
-* jointure on consultation attributes (closes #108)
-* Advanced search mode (closes #52)
-* Closes #107
-* select2 results are visible (closes #106)
-* Closes #93
-* report are now saved locally if POST request fail (closes #60)
-* report are now UUID'ed (close #73)
-* Closes #102
-* use setItem and getItem for localStorage
-* resolve map freezing (closes #86)
-* add unminified version of leaflet
-* add weinre (pronounce weinery)
-* Closes #100. Closes #99
-* Attemps to solve consultation issue on Android.
-* Closes #103
-* split smartgeomobile.js file into multiple factory/*.js file
-* Attemps to mitigate #86
-* comment angular.copy() for testing (related to #77)
-* extract DOM storage and DOM manipulation from mapController to G3ME object to avoid memory leak, this may cause some trouble
-* add cordova
-* Closes #87. Closes #88.
-* Add a thingy to open consultation panel. Closes #40.
-* Proposition de police Roboto (celle utilisée par Android pour s'approcher d'une appli native), à valider +@fabriceds)
-* Closes #1.
-* Closes #71
-* Closes #80. Closes #58.
-* fixes #76
-* select2 message are now in french (closes #75)
-* Closes #55
-* Closes #69. Closes #59. Closes #56.
-* consultation item should display a label, family or asset label) (closes #67)
-* good collapse happening when resultset contains cables (closes #66)
-* Closes #63. Closes #64.
-* Search: advanced search ui with autocomplete (closes #36) and select2 (angular version) integration
-* Search: display message when no item found (closes #53)
-* window resize trigger map div resize (closes #41)
-* Consultation: all marker are removed on dataset change (closes #51)
-* Map: map state is save (on movend event), and restored each mapController load (closes #33)
-* Search: simple search mode (closes #7)
-* Report: only first tab is opened (close #5). This code part will change when configuration will be transmitted from GiMAP
-* Consultation: assets are now grouped by okey (close #47)
-* Enable/Disable consultation in menu closes left panel
-* closing panel doesn't reset context (closes #46)
-* ajout des boutons en haut du compte-rendu
-* Closes #45
-* Prettify report form. Closes #32.
-* UI: allow user to scroll in left panel (close #44)
-* Bring some beauty to the world. Closes #43, #42, #34
-* map is now fullheight (closes #39)
-* ajout d'un indicateur de consultation (close #31)
-* Prettify login form. Closes #38.
-* consultation close button is now pretty (close #30)
-* les boutons btn-primary sont maintenants orange
-* le bouton consultation active la consultation (refers #31), reste à mettre un voyant pour savoir si on est en constulation
-* interface de la recherche avancée
-* Pretify the installation page. Closes #28, #27
-* consultation avec positionement des marqueurs sur le patrimoine
-* fiche patrimoine dans des elements collapse
-* vérification qu'au moins un champ a été rempli dans le formulaire
-* debut du fonctionnement de la tirette
-* Add font-awesome icons
-* When the user can only access one site, autoload or autoinstall said site. Closes #2.
-* Closes #25
-* ajout de twitter bootstrap 3
-* rajout de guillemets manquants (le JSON.parse() échouait)
-* Authentification. Closes #23, #22, #21.
-* fonction de localisation dans la consultation
-* l'envoi des CR est maintenant fonctionnel
-* récupération des objets entiers lors d'un CR avec objets prédéfinis (en prévision du remplissage des valeurs par défaut)
-* les id des objets passés dans l'url sont automatiquement selectionnés dans le formulaire de compte-rendu (reportController)
-* update angular 1.0.7 -> 1.2.0-rc.2
-* Closes #4
-* ajout du lien entre la consultation et le compte-rendu
-* Ignore local Eclipse files
-* detail du patrimoine dans le panneau de consultation
-* menu consultation sur la droite sur l'evenement de consultation(click)
-* Utilisation du css de leaflet contenu dans le dépôt au lieu du CDN
-
-
+ * [d3ed05a](https://github.com/gismartwaredev/smartgeomobile/commit/d3ed05a) - Closes #70. [fabriceds](https://github.com/fabriceds)
+ * [a5aa403](https://github.com/gismartwaredev/smartgeomobile/commit/a5aa403) - cordova polyfill [gulian](https://github.com/gulian)
+ * [021660d](https://github.com/gismartwaredev/smartgeomobile/commit/021660d) - add cordova related config.xml [gulian](https://github.com/gulian)
+ * [a0f934d](https://github.com/gismartwaredev/smartgeomobile/commit/a0f934d) - cordova deps [gulian](https://github.com/gulian)
+ * [07d9049](https://github.com/gismartwaredev/smartgeomobile/commit/07d9049) - Closes #117 [fabriceds](https://github.com/fabriceds)
+ * [e8ea76a](https://github.com/gismartwaredev/smartgeomobile/commit/e8ea76a) - Closes #74. [fabriceds](https://github.com/fabriceds)
+ * [cbe7e24](https://github.com/gismartwaredev/smartgeomobile/commit/cbe7e24) - add spinner to report (closes #90) [gulian](https://github.com/gulian)
+ * [8188205](https://github.com/gismartwaredev/smartgeomobile/commit/8188205) - cancel url change does not uninstall site [gulian](https://github.com/gulian)
+ * [ef6c753](https://github.com/gismartwaredev/smartgeomobile/commit/ef6c753) - closes #114 [gulian](https://github.com/gulian)
+ * [95c554c](https://github.com/gismartwaredev/smartgeomobile/commit/95c554c) - remove useless log [gulian](https://github.com/gulian)
+ * [54dd984](https://github.com/gismartwaredev/smartgeomobile/commit/54dd984) - add spinner in search button (closes #91) [gulian](https://github.com/gulian)
+ * [8ddeeda](https://github.com/gismartwaredev/smartgeomobile/commit/8ddeeda) - Closes #95 [fabriceds](https://github.com/fabriceds)
+ * [1503532](https://github.com/gismartwaredev/smartgeomobile/commit/1503532) - reset criteria value on criteria unselect (closes #83) [gulian](https://github.com/gulian)
+ * [96222d4](https://github.com/gismartwaredev/smartgeomobile/commit/96222d4) - Closes #3 [fabriceds](https://github.com/fabriceds)
+ * [f6d8706](https://github.com/gismartwaredev/smartgeomobile/commit/f6d8706) - add 'Erase criteria' button in advanced search (closes #82) [gulian](https://github.com/gulian)
+ * [5a6e300](https://github.com/gismartwaredev/smartgeomobile/commit/5a6e300) - Closes #105 [fabriceds](https://github.com/fabriceds)
+ * [7c22cb4](https://github.com/gismartwaredev/smartgeomobile/commit/7c22cb4) - consultation tirette do not appears when consultation panel is empty (closes #101) [gulian](https://github.com/gulian)
+ * [01fa13d](https://github.com/gismartwaredev/smartgeomobile/commit/01fa13d) - metamodels and activities binded to absent object are not installed (closes #62) [gulian](https://github.com/gulian)
+ * [7d08779](https://github.com/gismartwaredev/smartgeomobile/commit/7d08779) - reshow righttirette, my bad [gulian](https://github.com/gulian)
+ * [ed50228](https://github.com/gismartwaredev/smartgeomobile/commit/ed50228) - remove useless log [gulian](https://github.com/gulian)
+ * [2f65dbd](https://github.com/gismartwaredev/smartgeomobile/commit/2f65dbd) - points are now prioritary on linestrings (closes #68) [gulian](https://github.com/gulian)
+ * [44d1b6f](https://github.com/gismartwaredev/smartgeomobile/commit/44d1b6f) - closes #26 [gulian](https://github.com/gulian)
+ * [37e660f](https://github.com/gismartwaredev/smartgeomobile/commit/37e660f) - remove useless log [gulian](https://github.com/gulian)
+ * [e81bd5e](https://github.com/gismartwaredev/smartgeomobile/commit/e81bd5e) - closes #85 [gulian](https://github.com/gulian)
+ * [67736b0](https://github.com/gismartwaredev/smartgeomobile/commit/67736b0) - site uninstall controller (closes #65) [gulian](https://github.com/gulian)
+ * [25d2793](https://github.com/gismartwaredev/smartgeomobile/commit/25d2793) - closes #96 [gulian](https://github.com/gulian)
+ * [32f9c69](https://github.com/gismartwaredev/smartgeomobile/commit/32f9c69) - convert dropdown to dropup ! (closes #84) [gulian](https://github.com/gulian)
+ * [86eb2d3](https://github.com/gismartwaredev/smartgeomobile/commit/86eb2d3) - closes #109 [gulian](https://github.com/gulian)
+ * [977abc2](https://github.com/gismartwaredev/smartgeomobile/commit/977abc2) - add media feature (closes #78) [gulian](https://github.com/gulian)
+ * [da6e059](https://github.com/gismartwaredev/smartgeomobile/commit/da6e059) - local saved report sync UI (closes #61) [gulian](https://github.com/gulian)
+ * [88386c8](https://github.com/gismartwaredev/smartgeomobile/commit/88386c8) - put install functions out of scope for better performances (closes #77) [gulian](https://github.com/gulian)
+ * [5e1064d](https://github.com/gismartwaredev/smartgeomobile/commit/5e1064d) - Exception when changing server URL. [fabriceds](https://github.com/fabriceds)
+ * [0b6d38f](https://github.com/gismartwaredev/smartgeomobile/commit/0b6d38f) - Exception when changing server URL. [fabriceds](https://github.com/fabriceds)
+ * [90a8950](https://github.com/gismartwaredev/smartgeomobile/commit/90a8950) - jointure on consultation attributes (closes #108) [gulian](https://github.com/gulian)
+ * [4649863](https://github.com/gismartwaredev/smartgeomobile/commit/4649863) - Advanced search mode (closes #52) [gulian](https://github.com/gulian)
+ * [6cd07c2](https://github.com/gismartwaredev/smartgeomobile/commit/6cd07c2) - Closes #107 [gulian](https://github.com/gulian)
+ * [3af8305](https://github.com/gismartwaredev/smartgeomobile/commit/3af8305) - select2 results are visible (closes #106) [gulian](https://github.com/gulian)
+ * [0da0147](https://github.com/gismartwaredev/smartgeomobile/commit/0da0147) - Closes #93 [fabriceds](https://github.com/fabriceds)
+ * [1ea9768](https://github.com/gismartwaredev/smartgeomobile/commit/1ea9768) - report are now saved locally if POST request fail (closes #60) [gulian](https://github.com/gulian)
+ * [0437e84](https://github.com/gismartwaredev/smartgeomobile/commit/0437e84) - report are now UUID'ed (close #73) [gulian](https://github.com/gulian)
+ * [8bc136c](https://github.com/gismartwaredev/smartgeomobile/commit/8bc136c) - Closes #102 [fabriceds](https://github.com/fabriceds)
+ * [c6311e1](https://github.com/gismartwaredev/smartgeomobile/commit/c6311e1) - use setItem and getItem for localStorage [gulian](https://github.com/gulian)
+ * [44b15fa](https://github.com/gismartwaredev/smartgeomobile/commit/44b15fa) - Update README.md [Gulian](https://github.com/Gulian)
+ * [2652295](https://github.com/gismartwaredev/smartgeomobile/commit/2652295) - resolve map freezing bug or freezing map bug, I don't know. :+1: (closes #86) [gulian](https://github.com/gulian)
+ * [c6bf0af](https://github.com/gismartwaredev/smartgeomobile/commit/c6bf0af) - add unminified version of leaflet [gulian](https://github.com/gulian)
+ * [dccd7f3](https://github.com/gismartwaredev/smartgeomobile/commit/dccd7f3) - add weinre (pronounce weinery) [gulian](https://github.com/gulian)
+ * [57e0da1](https://github.com/gismartwaredev/smartgeomobile/commit/57e0da1) - Closes #100. Closes #99 [fabriceds](https://github.com/fabriceds)
+ * [86ec249](https://github.com/gismartwaredev/smartgeomobile/commit/86ec249) - Attemps to solve consultation issue on Android. [fabriceds](https://github.com/fabriceds)
+ * [b3815de](https://github.com/gismartwaredev/smartgeomobile/commit/b3815de) - Closes #103 [fabriceds](https://github.com/fabriceds)
+ * [a772ff6](https://github.com/gismartwaredev/smartgeomobile/commit/a772ff6) - split smartgeomobile.js file into multiple factory/*.js file [gulian](https://github.com/gulian)
+ * [20685ee](https://github.com/gismartwaredev/smartgeomobile/commit/20685ee) - Attemps to mitigate #86 [fabriceds](https://github.com/fabriceds)
+ * [f4db062](https://github.com/gismartwaredev/smartgeomobile/commit/f4db062) - Create mapLoadingInfiniteLoop.cpuprofile [Gulian](https://github.com/Gulian)
+ * [e4cc3cd](https://github.com/gismartwaredev/smartgeomobile/commit/e4cc3cd) - comment angular.copy() for testing (related to #77) [gulian](https://github.com/gulian)
+ * [b0da2c0](https://github.com/gismartwaredev/smartgeomobile/commit/b0da2c0) - cleaning some code [gulian](https://github.com/gulian)
+ * [04ecc9d](https://github.com/gismartwaredev/smartgeomobile/commit/04ecc9d) - remove nohup.out from repo [gulian](https://github.com/gulian)
+ * [c6d6631](https://github.com/gismartwaredev/smartgeomobile/commit/c6d6631) - caus' I don't like it [gulian](https://github.com/gulian)
+ * [6f20523](https://github.com/gismartwaredev/smartgeomobile/commit/6f20523) - extract DOM storage and DOM manipulation from mapController to G3ME object to avoid memory leak, this may cause some trouble [gulian](https://github.com/gulian)
+ * [9102f0f](https://github.com/gismartwaredev/smartgeomobile/commit/9102f0f) - add cordova [gulian](https://github.com/gulian)
+ * [f564d5f](https://github.com/gismartwaredev/smartgeomobile/commit/f564d5f) - Closes #87. Closes #88. [fabriceds](https://github.com/fabriceds)
+ * [e6d7796](https://github.com/gismartwaredev/smartgeomobile/commit/e6d7796) - Add a thingy to open consultation panel. Closes #40. [fabriceds](https://github.com/fabriceds)
+ * [acc7e33](https://github.com/gismartwaredev/smartgeomobile/commit/acc7e33) - debut de la recherche avancée [gulian](https://github.com/gulian)
+ * [6d79761](https://github.com/gismartwaredev/smartgeomobile/commit/6d79761) - la nouvelle font plante l'appli on dirait, étrange [gulian](https://github.com/gulian)
+ * [ab3fcdb](https://github.com/gismartwaredev/smartgeomobile/commit/ab3fcdb) - Proposition de police Roboto (celle utilisée par Android pour s'approcher d'une appli native), à valider +@fabriceds) [gulian](https://github.com/gulian)
+ * [2c78be5](https://github.com/gismartwaredev/smartgeomobile/commit/2c78be5) - Closes #1. [fabriceds](https://github.com/fabriceds)
+ * [29c41ae](https://github.com/gismartwaredev/smartgeomobile/commit/29c41ae) - Closes #1. [fabriceds](https://github.com/fabriceds)
+ * [02d6316](https://github.com/gismartwaredev/smartgeomobile/commit/02d6316) - Closes #71 [fabriceds](https://github.com/fabriceds)
+ * [1027983](https://github.com/gismartwaredev/smartgeomobile/commit/1027983) - Closes #80. Closes #58. [fabriceds](https://github.com/fabriceds)
+ * [6c54d7c](https://github.com/gismartwaredev/smartgeomobile/commit/6c54d7c) - test [gulian](https://github.com/gulian)
+ * [1206a58](https://github.com/gismartwaredev/smartgeomobile/commit/1206a58) - fixes #76 [gulian](https://github.com/gulian)
+ * [a996dda](https://github.com/gismartwaredev/smartgeomobile/commit/a996dda) - select2 message are now in french! COCORICO :fr: (closes #75) [gulian](https://github.com/gulian)
+ * [7665b1f](https://github.com/gismartwaredev/smartgeomobile/commit/7665b1f) - Closes #55 [fabriceds](https://github.com/fabriceds)
+ * [beffdca](https://github.com/gismartwaredev/smartgeomobile/commit/beffdca) - empty commit [gulian](https://github.com/gulian)
+ * [d7062cc](https://github.com/gismartwaredev/smartgeomobile/commit/d7062cc) - Closes #69. Closes #59. Closes #56. [fabriceds](https://github.com/fabriceds)
+ * [f7204c0](https://github.com/gismartwaredev/smartgeomobile/commit/f7204c0) - consultation item should display a label, family or asset label) (closes #67) [gulian](https://github.com/gulian)
+ * [7784e36](https://github.com/gismartwaredev/smartgeomobile/commit/7784e36) - good collapse happening when resultset contains cables (closes #66) [gulian](https://github.com/gulian)
+ * [69c03c0](https://github.com/gismartwaredev/smartgeomobile/commit/69c03c0) - good collapse happening when resultset contains cables (closes #66) [gulian](https://github.com/gulian)
+ * [3ab3d27](https://github.com/gismartwaredev/smartgeomobile/commit/3ab3d27) - Closes #63. Closes #64. [fabriceds](https://github.com/fabriceds)
+ * [fc7b305](https://github.com/gismartwaredev/smartgeomobile/commit/fc7b305) - Search: advanced search ui with autocomplete (closes #36) and select2 (angular version) integration [gulian](https://github.com/gulian)
+ * [f8501b4](https://github.com/gismartwaredev/smartgeomobile/commit/f8501b4) - Search: display message when no item found (closes #53) [gulian](https://github.com/gulian)
+ * [fe0ff34](https://github.com/gismartwaredev/smartgeomobile/commit/fe0ff34) - window resize trigger map div resize (closes #41) [gulian](https://github.com/gulian)
+ * [bc2908c](https://github.com/gismartwaredev/smartgeomobile/commit/bc2908c) - Consultation: all marker are removed on dataset change (closes #51) [gulian](https://github.com/gulian)
+ * [3bcabb4](https://github.com/gismartwaredev/smartgeomobile/commit/3bcabb4) - Map: map state is save (on movend event), and restored each mapController load (closes #33) [gulian](https://github.com/gulian)
+ * [0a2992b](https://github.com/gismartwaredev/smartgeomobile/commit/0a2992b) - Search: simple search mode (closes #7) [gulian](https://github.com/gulian)
+ * [730eadd](https://github.com/gismartwaredev/smartgeomobile/commit/730eadd) - Report: only first tab is opened (close #5). This code part will change when configuration will be transmitted from GiMAP [gulian](https://github.com/gulian)
+ * [dc9d0e2](https://github.com/gismartwaredev/smartgeomobile/commit/dc9d0e2) - Consultation: assets are now grouped by okey (close #47) [gulian](https://github.com/gulian)
+ * [ad8d0de](https://github.com/gismartwaredev/smartgeomobile/commit/ad8d0de) - Enable/Disable consultation in menu closes left panel [gulian](https://github.com/gulian)
+ * [4a52d69](https://github.com/gismartwaredev/smartgeomobile/commit/4a52d69) - closing panel doesn't reset context (closes #46) [gulian](https://github.com/gulian)
+ * [c60892d](https://github.com/gismartwaredev/smartgeomobile/commit/c60892d) - commit du vendredi soir [gulian](https://github.com/gulian)
+ * [d73c018](https://github.com/gismartwaredev/smartgeomobile/commit/d73c018) - ajout des boutons en haut du compte-rendu [gulian](https://github.com/gulian)
+ * [03d00fb](https://github.com/gismartwaredev/smartgeomobile/commit/03d00fb) - add screenshots [gulian](https://github.com/gulian)
+ * [3e1f169](https://github.com/gismartwaredev/smartgeomobile/commit/3e1f169) - Update README.md [Gulian](https://github.com/Gulian)
+ * [94fa6f8](https://github.com/gismartwaredev/smartgeomobile/commit/94fa6f8) - Update README.md [Gulian](https://github.com/Gulian)
+ * [c36c822](https://github.com/gismartwaredev/smartgeomobile/commit/c36c822) - add screenshots [gulian](https://github.com/gulian)
+ * [00aea99](https://github.com/gismartwaredev/smartgeomobile/commit/00aea99) - Create README.md [Gulian](https://github.com/Gulian)
+ * [d4ebf59](https://github.com/gismartwaredev/smartgeomobile/commit/d4ebf59) - Closes #45 [fabriceds](https://github.com/fabriceds)
+ * [033b85c](https://github.com/gismartwaredev/smartgeomobile/commit/033b85c) - documentations [gulian](https://github.com/gulian)
+ * [afe33be](https://github.com/gismartwaredev/smartgeomobile/commit/afe33be) - revert smartgeo from smartgelol [gulian](https://github.com/gulian)
+ * [2a2240e](https://github.com/gismartwaredev/smartgeomobile/commit/2a2240e) - Update README.md [Gulian](https://github.com/Gulian)
+ * [be95274](https://github.com/gismartwaredev/smartgeomobile/commit/be95274) - Create README.md [Gulian](https://github.com/Gulian)
+ * [cbacb11](https://github.com/gismartwaredev/smartgeomobile/commit/cbacb11) - Prettify report form. Closes #32. [fabriceds](https://github.com/fabriceds)
+ * [ea28919](https://github.com/gismartwaredev/smartgeomobile/commit/ea28919) - UI: allow user to scroll in left panel (close #44) [gulian](https://github.com/gulian)
+ * [604f5dc](https://github.com/gismartwaredev/smartgeomobile/commit/604f5dc) - remove new police from entire app (sorry) [gulian](https://github.com/gulian)
+ * [3c59f52](https://github.com/gismartwaredev/smartgeomobile/commit/3c59f52) - UI: rettapage du menu [gulian](https://github.com/gulian)
+ * [d6ea030](https://github.com/gismartwaredev/smartgeomobile/commit/d6ea030) - Bring some beauty to the world. Closes #43, #42, #34 [fabriceds](https://github.com/fabriceds)
+ * [0127398](https://github.com/gismartwaredev/smartgeomobile/commit/0127398) - fix a font bug [gulian](https://github.com/gulian)
+ * [8740435](https://github.com/gismartwaredev/smartgeomobile/commit/8740435) - map is now fullheight (closes #39) [gulian](https://github.com/gulian)
+ * [77b02b0](https://github.com/gismartwaredev/smartgeomobile/commit/77b02b0) - ajout d'un indicateur de consultation (close #31) [gulian](https://github.com/gulian)
+ * [ae501a9](https://github.com/gismartwaredev/smartgeomobile/commit/ae501a9) - Prettify login form. Closes #38. [fabriceds](https://github.com/fabriceds)
+ * [3771dc0](https://github.com/gismartwaredev/smartgeomobile/commit/3771dc0) - consultation close button is now pretty (close #30) [gulian](https://github.com/gulian)
+ * [cff8883](https://github.com/gismartwaredev/smartgeomobile/commit/cff8883) - Prettify login form [fabriceds](https://github.com/fabriceds)
+ * [c4a5234](https://github.com/gismartwaredev/smartgeomobile/commit/c4a5234) - les boutons btn-primary sont maintenants orange [gulian](https://github.com/gulian)
+ * [7e6bc99](https://github.com/gismartwaredev/smartgeomobile/commit/7e6bc99) - le bouton consultation active la consultation (refers #31), reste à mettre un voyant pour savoir si on est en constulation [gulian](https://github.com/gulian)
+ * [e4fe029](https://github.com/gismartwaredev/smartgeomobile/commit/e4fe029) - interface de la recherche avancée [gulian](https://github.com/gulian)
+ * [8654c1f](https://github.com/gismartwaredev/smartgeomobile/commit/8654c1f) - ça fera l'affaire dans un premier temps [gulian](https://github.com/gulian)
+ * [9234617](https://github.com/gismartwaredev/smartgeomobile/commit/9234617) - recherche simple et début de recherche avancée [gulian](https://github.com/gulian)
+ * [a946de7](https://github.com/gismartwaredev/smartgeomobile/commit/a946de7) - Pretify the installation page. Closes #28, #27 [fabriceds](https://github.com/fabriceds)
+ * [03794a2](https://github.com/gismartwaredev/smartgeomobile/commit/03794a2) - empty commit [gulian](https://github.com/gulian)
+ * [2cfff3b](https://github.com/gismartwaredev/smartgeomobile/commit/2cfff3b) - consultation avec positionement des marqueurs sur le patrimoine [gulian](https://github.com/gulian)
+ * [9b4cd54](https://github.com/gismartwaredev/smartgeomobile/commit/9b4cd54) - fiche patrimoine dans des elements collapse [gulian](https://github.com/gulian)
+ * [57245a9](https://github.com/gismartwaredev/smartgeomobile/commit/57245a9) - vérification qu'au moins un champ a été rempli dans le formulaire [gulian](https://github.com/gulian)
+ * [00fa47b](https://github.com/gismartwaredev/smartgeomobile/commit/00fa47b) - debut du fonctionnement de la tirette [gulian](https://github.com/gulian)
+ * [98c4d17](https://github.com/gismartwaredev/smartgeomobile/commit/98c4d17) - Add font-awesome icons [fabriceds](https://github.com/fabriceds)
+ * [08bd7c0](https://github.com/gismartwaredev/smartgeomobile/commit/08bd7c0) - Add font-awesome icons [fabriceds](https://github.com/fabriceds)
+ * [9f28789](https://github.com/gismartwaredev/smartgeomobile/commit/9f28789) - Remove GLO from the UI... [fabriceds](https://github.com/fabriceds)
+ * [5c2a64d](https://github.com/gismartwaredev/smartgeomobile/commit/5c2a64d) - When the user can only access one site, autoload or autoinstall said site. Closes #2. [fabriceds](https://github.com/fabriceds)
+ * [8307544](https://github.com/gismartwaredev/smartgeomobile/commit/8307544) - suppression des fichiers inutiles [gulian](https://github.com/gulian)
+ * [0dd446c](https://github.com/gismartwaredev/smartgeomobile/commit/0dd446c) - suppression du bouton 'Paramètre FSI' [gulian](https://github.com/gulian)
+ * [4227b21](https://github.com/gismartwaredev/smartgeomobile/commit/4227b21) - design de base de la page d'authentification + 2 propositions pour le bouton 'Paramètres' [gulian](https://github.com/gulian)
+ * [af09d8f](https://github.com/gismartwaredev/smartgeomobile/commit/af09d8f) - rajout de guillemets manquants (le JSON.parse() échouait) [gulian](https://github.com/gulian)
+ * [84ff58b](https://github.com/gismartwaredev/smartgeomobile/commit/84ff58b) - Closes #25 [fabriceds](https://github.com/fabriceds)
+ * [30a6a36](https://github.com/gismartwaredev/smartgeomobile/commit/30a6a36) - nettoyage du dépôt et ajout de twitter bootstrap 3 [gulian](https://github.com/gulian)
+ * [fca9ee4](https://github.com/gismartwaredev/smartgeomobile/commit/fca9ee4) - rajout de guillemets manquants (le JSON.parse() échouait) [gulian](https://github.com/gulian)
+ * [b9baf9f](https://github.com/gismartwaredev/smartgeomobile/commit/b9baf9f) - Authentification. Closes #23, #22, #21. [fabriceds](https://github.com/fabriceds)
+ * [d0d5a89](https://github.com/gismartwaredev/smartgeomobile/commit/d0d5a89) - fonction de localisation dans la consultation [gulian](https://github.com/gulian)
+ * [1cfd588](https://github.com/gismartwaredev/smartgeomobile/commit/1cfd588) - nettoyage du code [gulian](https://github.com/gulian)
+ * [96ddc9e](https://github.com/gismartwaredev/smartgeomobile/commit/96ddc9e) - l'envoi des CR est maintenant fonctionnel [gulian](https://github.com/gulian)
+ * [3c60b96](https://github.com/gismartwaredev/smartgeomobile/commit/3c60b96) - récupération des objets entiers lors d'un CR avec objets prédéfinis (en prévision du remplissage des valeurs par défaut) [gulian](https://github.com/gulian)
+ * [bcefdfe](https://github.com/gismartwaredev/smartgeomobile/commit/bcefdfe) - les id des objets passés dans l'url sont automatiquement selectionnés dans le formulaire de compte-rendu (reportController) [gulian](https://github.com/gulian)
+ * [e93ba3c](https://github.com/gismartwaredev/smartgeomobile/commit/e93ba3c) - update angular 1.0.7 -> 1.2.0-rc.2 [gulian](https://github.com/gulian)
+ * [27477be](https://github.com/gismartwaredev/smartgeomobile/commit/27477be) - Corrects one error during first install. Is it sufficient? We'll know tomorrow. [fabriceds](https://github.com/fabriceds)
+ * [6ac4091](https://github.com/gismartwaredev/smartgeomobile/commit/6ac4091) - Closes #4 [fabriceds](https://github.com/fabriceds)
+ * [acea3ea](https://github.com/gismartwaredev/smartgeomobile/commit/acea3ea) - ajout du lien entre la consultation et le compte-rendu [gulian](https://github.com/gulian)
+ * [70640ae](https://github.com/gismartwaredev/smartgeomobile/commit/70640ae) - Ignore local Eclipse files [hahtreyou](https://github.com/hahtreyou)
+ * [79bf4ba](https://github.com/gismartwaredev/smartgeomobile/commit/79bf4ba) - detail du patrimoine dans le panneau de consultation [gulian](https://github.com/gulian)
+ * [e46efd8](https://github.com/gismartwaredev/smartgeomobile/commit/e46efd8) - menu consultation sur la droite sur l'evenement de consultation(click) [gulian](https://github.com/gulian)
+ * [eda45b0](https://github.com/gismartwaredev/smartgeomobile/commit/eda45b0) - Utilisation du css de leaflet contenu dans le dépôt au lieu du CDN [gulian](https://github.com/gulian)
+ * [25096af](https://github.com/gismartwaredev/smartgeomobile/commit/25096af) - suppression de fichiers inutiles (README etc.) [gulian](https://github.com/gulian)
+ * [b424572](https://github.com/gismartwaredev/smartgeomobile/commit/b424572) - commit initial [gulian](https://github.com/gulian)
+ * [3897470](https://github.com/gismartwaredev/smartgeomobile/commit/3897470) - Initial commit [gismartwaredev](https://github.com/gismartwaredev)
+ 
