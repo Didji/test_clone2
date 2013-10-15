@@ -788,8 +788,13 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             fileEntry.file(function(file) {
             var reader = new FileReader();
             reader.onloadend = function(){
-                var metadata = JSON.parse(reader.result || '{}');
-                callback(metadata);
+                var metadata ;
+                try {
+                    metadata = JSON.parse(reader.result || '{}');
+                    callback(metadata);
+                } catch (e){
+                    console.log(reader.result, e);
+                }
             };
             reader.readAsText(file);
             });
