@@ -317,7 +317,7 @@ fieldset[disabled] .btn-primary.active {
 
 #trigger, #trigger:hover  {
     display: block;
-    position: fixed;
+    position: absolute;
     bottom: 10px;
     width: 20px;
     height: 40px;
