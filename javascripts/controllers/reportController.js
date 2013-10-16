@@ -3,7 +3,6 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
-
     GiReportBuilder.buildAllTemplates($scope.site.activities);
 
     $scope.report = {

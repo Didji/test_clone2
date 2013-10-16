@@ -27,7 +27,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
         },
 
-        formatSiteMetadata: function(site){
+        formatSiteMetadata: function(site, update){
 
             var metamodel   = {},
                 lists       = {},
@@ -37,7 +37,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 i = 0;
 
             for (i = 0; i < site.metamodel.length; i++) {
-                if(site.number[site.metamodel[i].okey] != 0 ){
+                if(update || site.number[site.metamodel[i].okey] != 0 ){
                     metamodel[site.metamodel[i].okey] = site.metamodel[i];
                 }
             }
@@ -45,7 +45,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
             activities._byId = [];
             for (i = 0; i < site.activities.length; i++) {
-                if(site.number[site.activities[i].okeys[0]] != 0 ){
+                if(update || site.number[site.activities[i].okeys[0]] != 0 ){
                     activities.push(site.activities[i]);
                     activities._byId[site.activities[i].id] = site.activities[i];
                 }
