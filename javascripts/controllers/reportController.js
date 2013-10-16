@@ -199,42 +199,52 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
     };
 
     $scope.cancel = function() {
-        $window.history.back();
+        $location.path('map/'+$rootScope.site.id);
     };
 
     $scope.sendReport = function (event) {
-        $scope.sendingReport = true ;
+
+        var report = angular.copy($scope.report);
+
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
-        for (var i = 0; i < $scope.report.assets.length; i++) {
-            $scope.report.assets[i] = $scope.report.assets[i].id ;
+        for (var i = 0; i < report.assets.length; i++) {
+            report.assets[i] = report.assets[i].id ;
         }
 
-        for (i = 0; i < $scope.report.ged.length; i++) {
-            $scope.report.ged[i] = {
-                    'content': getBase64Image($scope.report.ged[i].content)
+        for (i = 0; i < report.ged.length; i++) {
+            report.ged[i] = {
+                    'content': getBase64Image(report.ged[i].content)
             };
         }
 
-        for(i in $scope.report.overrides) {
-            if($scope.report.overrides[i]) {
-                $scope.report.fields[i] = $scope.report.overrides[i];
+        for(i in report.overrides) {
+            if(report.overrides[i]) {
+                report.fields[i] = report.overrides[i];
             }
         }
 
-        delete $scope.report.overrides;
-        delete $scope.report.roFields;
+        delete report.overrides;
+        delete report.roFields;
 
-        $scope.report.activity  = $scope.report.activity.id ;
-        $scope.report.timestamp = new Date().getTime();
+        report.activity  = report.activity.id ;
+        report.timestamp = new Date().getTime();
 
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.report)
+        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
             .error(function(){
                 var reports = Smartgeo.get('reports') || [];
-                reports.push($scope.report);
+                reports.push(report);
                 Smartgeo.set('reports', reports);
+                if($rootScope.report_url_redirect){
+                    document.location = $rootScope.report_url_redirect ;
+                } else {
+                    $location.path('map/'+$rootScope.site.id);
+                }
             }).then(function(){
-                $scope.sendingReport = false ;
-                $location.path('map/'+$rootScope.site.id);
+                if($rootScope.report_url_redirect){
+                    document.location = $rootScope.report_url_redirect ;
+                } else {
+                    $location.path('map/'+$rootScope.site.id);
+                }
             });
     };
 
