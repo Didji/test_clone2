@@ -38,6 +38,7 @@ html, body {
     left: 0;
     bottom: 0;
     right: 0;
+    overflow: hidden;
 }
 
 #mainmap {
@@ -197,7 +198,7 @@ html, body {
     .floating-form {
         margin-top: 10px;
     }
-    
+
 }
 @media (max-height: 350px) {
     .floating-form img {
@@ -207,7 +208,7 @@ html, body {
         margin: 0;
         padding: 0;
     }
-    
+
     .floating-form small,.floating-form hr {
         display:none;
     }

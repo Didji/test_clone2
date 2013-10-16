@@ -4,14 +4,17 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
 
     $scope.consultationIsEnabled = false ;
 
-    var extent = Smartgeo.get('lastLeafletMapExtent') || [] ;
+    G3ME.initialize( 'smartgeo-map',
+                     $rootScope.site,
+                     $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
+                     $rootScope.map_marker );
 
-    G3ME.initialize('smartgeo-map', $rootScope.site, extent.length ? extent : null);
+
 
     G3ME.map.on('moveend', function(e) {
         var extent = G3ME.map.getBounds();
-        if(    extent._northEast.lat != extent._southWest.lat
-            || extent._northEast.lng != extent._southWest.lng ){
+        if( extent._northEast.lat != extent._southWest.lat ||
+            extent._northEast.lng != extent._southWest.lng    ){
                 Smartgeo.set('lastLeafletMapExtent', [
                     [extent._northEast.lat, extent._northEast.lng],
                     [extent._southWest.lat, extent._southWest.lng]

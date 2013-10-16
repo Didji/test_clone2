@@ -653,10 +653,8 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
 
     writeTileToCache: function(tileObject, dataUrl, callback){
-        console.log("writeTileToCache");
         var this_ = this ;
         var path  = this.getTilePath(tileObject);
-
         var data = this.convertDataURIToBinary(dataUrl);
 
         this.createDirectory(path, function(){
@@ -788,8 +786,13 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             fileEntry.file(function(file) {
             var reader = new FileReader();
             reader.onloadend = function(){
-                var metadata = JSON.parse(reader.result || '{}');
-                callback(metadata);
+                var metadata ;
+                try {
+                    metadata = JSON.parse(reader.result || '{}');
+                    callback(metadata);
+                } catch (e){
+                    callback({etag:undefined});
+                }
             };
             reader.readAsText(file);
             });
@@ -798,38 +801,26 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
     writeMetadataTileFile: function(tileObject, metadata, callback){
         var _this = this ;
-        this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png.metadata', {create: false}, function(fileEntry) {
+        this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png.metadata', {create: true}, function(fileEntry) {
             fileEntry.createWriter(function(writer) {
-                writer.onwriteend = (callback || function(){});
-                writer.onerror = function(e) {
-                    console.log('Write failed: ' + e.toString());
-                };
-                var blob , datatype ='text/plain';
-                try {
-                    // Chrome browser
-                    blob = new Blob([JSON.stringify(metadata)], {type: datatype});
-                    writer.write(blob);
-                } catch (e) {
-                    window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
-                    if (e.name == 'TypeError' && window.BlobBuilder) {
-                        // Android browser
-                        // cordova.exec(
-                        //     function() {
-                        //         console.log('Fichier écrit avec succes');
-                        //     },
-                        //     function(error) {
-                        //         console.log(JSON.stringify(error));
-                        //     },
-                        //     "WriteFilePlugin",
-                        //     "writeBase64toPNG", [dataUrl.split(',')[1],path+'/'+tileObject.x+'_'+tileObject.y+'.png' ]
-                        // );
-
-                    } else if (e.name == "InvalidStateError") {
+                writer.onwriteend = function(){
+                    writer.onwriteend = (callback || function(){});
+                    var blob , datatype ='text/plain';
+                    try {
+                        // Chrome browser
                         blob = new Blob([JSON.stringify(metadata)], {type: datatype});
                         writer.write(blob);
-                    } else {
-                        console.log("Error when building blob");
+                    } catch (e) {
+                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
+                        if (e.name == "InvalidStateError") {
+                            blob = new Blob([JSON.stringify(metadata)], {type: datatype});
+                            writer.write(blob);
+                        } 
                     }
+                }
+                writer.truncate(0);
+                writer.onerror = function(e) {
+                    console.log('Write failed: ' + e.toString());
                 }
             }, _this.log_fs_error);
         });
