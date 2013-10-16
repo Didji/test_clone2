@@ -70,7 +70,7 @@ public class Smartgeo extends CordovaActivity {
 		//url de démarrage?
 		String url = Config.getStartUrl(); //url de base de l'appli
 		if (getIntent().getData() != null) { //lance depuis un intent ?
-			url = getIntentUrl(getIntent());
+			url += getIntentUrl(getIntent());
 		}
 		super.loadUrl(url);
 	}
@@ -154,10 +154,7 @@ public class Smartgeo extends CordovaActivity {
 			}
 			url.append(token);
 		}
-		String res = url.toString();
-		Log.d(this.getClass().getSimpleName(), "Intent data " + intent.getDataString());
-		Log.d(this.getClass().getSimpleName(), "Mapped to " + res);
-		return res;
+		return url.toString();
 	}
 	
 	@Override
