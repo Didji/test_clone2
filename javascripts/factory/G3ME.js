@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
+angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope){
     var G3ME = {
 
         active_layers : false,
@@ -37,12 +37,9 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 // target is a point
                 G3ME.map.setView(target,18);
                 if(marker){
-                    console.log(marker);
+                    marker._map && marker._map.removeLayer(marker);
                     marker.addTo(G3ME.map);
                 }
-                // if(marker && marker === 'true'){
-                //     G3ME.initializationMarker = L.marker(target).addTo(G3ME.map);
-                // }
             }
 
             G3ME.invalidateMapSize();

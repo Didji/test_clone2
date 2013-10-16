@@ -44,7 +44,7 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
                 $rootScope.map_marker = L.marker($rootScope.map_target);
                 if($rootScope.report_target && $rootScope.report_activity){
                     $rootScope.map_marker.on('click',function(){
-                        $location.path('/report/'+$rootScope.site.id);
+                        $location.path('/report/'+$rootScope.site.id+"/"+$rootScope.report_activity+"/"+$rootScope.report_target);
                         $scope.$apply();
                     });
                 }
