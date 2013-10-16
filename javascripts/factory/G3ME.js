@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
 
         filecacheIsEnable: true,
 
-        initialize : function(mapDivId, site, target){
+        initialize : function(mapDivId, site, target, marker){
 
             this.site    = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
@@ -30,7 +30,21 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 ];
             }
 
-            G3ME.map.fitBounds(target);
+            if(target[0] instanceof Array) {
+                // target is an extend
+                G3ME.map.fitBounds(target);
+            } else if(!isNaN(target[0])){
+                // target is a point
+                G3ME.map.setView(target,18);
+                if(marker){
+                    console.log(marker);
+                    marker.addTo(G3ME.map);
+                }
+                // if(marker && marker === 'true'){
+                //     G3ME.initializationMarker = L.marker(target).addTo(G3ME.map);
+                // }
+            }
+
             G3ME.invalidateMapSize();
 
             if(!this.tileUrl){
@@ -65,6 +79,23 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo){
                 this.site.symbology[symbol].style.image = image;
             }
             this.canvasTile.redraw();
+        },
+
+        parseTarget: function(site, target, callback){
+            if(G3ME.isLatLngString(target)){
+                // it's a position ! returning [lat, lng]
+                callback(target.split(','));
+            } else {
+                // so maybe it's an asset id ?
+                Smartgeo.findAssetsByGuids(site, target, function(assets){
+                    // TODO: return barycenter of ALL assets
+                    callback([assets[0].ymin,assets[0].xmin]);
+                });
+            }
+        },
+
+        isLatLngString: function(str){
+            return ((str || "").match(/^-?\d+[.]\d*,-?\d+[.]\d*$/) !== null );
         },
 
         invalidateMapSize : function(timeout){
