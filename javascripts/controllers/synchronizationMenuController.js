@@ -7,7 +7,7 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
     }
 
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
-    $scope.reports = JSON.parse(Smartgeo.get('reports') || '[]');
+    $scope.reports = Smartgeo.get('reports') || [] ;
 
     $scope.syncAll = function(){
         for (var i = 0; i < $scope.reports.length; i++) {
@@ -19,7 +19,7 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
             .success(function(){
                 $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
-                Smartgeo.set('reports', JSON.stringify($scope.reports));
+                Smartgeo.set('reports', $scope.reports);
                 $window.alert('CR Synchronisé');
             }).error(function(error){
                 $window.alert('CR Non synchronisé : ' + error.error.text);
@@ -28,6 +28,6 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
 
     $scope.delete = function($index){
         $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
-        Smartgeo.set('reports', JSON.stringify($scope.reports));
+        Smartgeo.set('reports',$scope.reports);
     };
 }
