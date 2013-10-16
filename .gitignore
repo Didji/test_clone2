@@ -1,6 +1,5 @@
-platforms/android/assets/www/*
-platforms/android/bin/*
-platforms/android/gen/*
-platforms/android/assets/.git/
-platforms/android/assets/www/.git/
-platforms/android/assets/www/../.git/modules/www
+platforms/android/.settings
+platforms/android/bin
+platforms/android/gen
+.metadata
+.cordova/hooks
