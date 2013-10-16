@@ -1,28 +1,15 @@
-function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window){
+function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
 
-
-    // #/intent/void/map
-    // #/intent//map//
-    // #/intent/?map_target=2479408&report_target=2479408&map_marker=true&report_activity=56550253&report_fields[###145656###]=250mm&report_mission=56555111NCA12&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
-    // #/intent/?map_target=48.15303870674,-1.6148&report_target=48.15303870674,-1.6148&map_marker=false&report_activity=56550253&report_mission=56555111NCA12&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
-    // #/intent/?map_target=48.15303870674,-1.6148&report_target=48.15303870674,-1.6148&report_activity=56550253&report_url_redirect=https://recette.m-ve.com/feuillederoute//map/sdfijksbgfdjhgdsfkjhsdfih
-    // #/intent/?map_target=2479408&report_target=2479408&report_activity=56550253&report_fields[Code%20contrat]=541E41&report_fields[Diametre]=200&report_url_redirect=https://recette.m-ve.com/feuillederoute//map
-    // #/intent/?report_activity=44407263&report_target=1323836/report
-    // #/intent/?report_activity=44407263&report_target=1323836/report
-    // #/intent/?report_activity=44407263&report_target=1323836&report_mission=13/report
-    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13/report
-    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13&report_url_redirect=http%3A%2F%2Fdomain.com%2F%3F%5BLABEL_INDEXED_FIELDS%5D/report
-    // #/intent/?report_activity=44407263&report_target=1323836,1323837,1323838&report_mission=13&report_url_redirect=http%3A%2F%2Fdomain.com%2F%3F%5BKEY_INDEXED_FIELDS%5D/report
-     
-     
- 
-
-
-    // $http.get('http://canopee.m-ve.com/index.php?service=global.auth.json&token=ya29.AHES6ZSMM-11Vvbs6hOjAeHn5v-vTufIBrpimaMWwVB-mTkhzeahng')
-    //     .success(function(){console.log(arguments)}).error(function(){console.log(arguments)});
-
-    // return ;
-
+    // #/map/Smartgeo?map_target=172227&report_target=172227&map_marker=true&report_activity=3&report_mission=12772&report_url_redirect=http:%2F%2Fgoogle.fr&token=ya29.AHES6ZSVgG-vwMR93LjzanANfB6c1dArOoa75eh1CR0JHfA
+    /*
+        #/map/Smartgeo? map_target=172227&
+                        map_marker=true&
+                        report_target=172227&
+                        report_activity=3&
+                        report_mission=12772&
+                        report_url_redirect=http:%2F%2Fgoogle.fr&
+                        token=ya29.AHES6ZSVgG-vwMR93LjzanANfB6c1dArOoa75eh1CR0JHfA
+    */
     if($rootScope.site){
 
     } else if($routeParams.site){
@@ -43,14 +30,32 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
         return false ;
     }
 
-    var tmp = $routeParams.args.split('&'), arg ;
-
-    for (var i = 0; i < tmp.length; i++) {
-        arg = tmp[i].split('=');
-        $rootScope[arg[0]] = arg[1];
+    for(var arg in $routeParams){
+        if($routeParams.hasOwnProperty(arg) && arg !== "controller" && arg !== "token"){
+            $rootScope[arg] = $routeParams[arg];
+        }
     }
 
-    tokenAuth($routeParams.token, redirect);
+    if($rootScope.map_target){
+        // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
+        G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
+            $rootScope.map_target = assets ;
+            if( $rootScope.map_marker === 'true' || $rootScope.map_marker === true){
+                $rootScope.map_marker = L.marker($rootScope.map_target);
+                if($rootScope.report_target && $rootScope.report_activity){
+                    $rootScope.map_marker.on('click',function(){
+                        $location.path('/report/'+$rootScope.site.id);
+                        $scope.$apply();
+                    });
+                }
+            } else {
+                $rootScope.map_marker = undefined;
+            }
+            tokenAuth($routeParams.token, redirect);
+        });
+    } else {
+        tokenAuth($routeParams.token, redirect);
+    }
 
     function tokenAuth(token, callback){
 
@@ -58,17 +63,21 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
             token:token
         });
 
-        $http.get(url).success(callback).error(function(response, status){
-            if(status === 403){
-                $window.alert("Le token fournit n'est pas valide");
-            } else if(status === 0){
-                $window.alert("L'application n'est pas connectée et ne peut pas vérifier le token. \
-                               Il sera vérifié à la prochaine connexion");
-                callback();
-            } else {
-                $window.alert("L'authentification a échoué ("+status+")");
-            }
-        });
+        $http.get(url).then(callback);
+        // $http.get(url).then(function(response){
+        //     if(response.status === 403 || response.data.auth === false){
+        //         $window.alert("Le token fournit n'est pas valide");
+        //         $location.path('#');
+        //     } else if(response.status === 0){
+        //         $window.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
+        //         callback();
+        //     } else if(response.status === 200) {
+        //         callback();
+        //     } else {
+        //         $window.alert("L'authentification a échoué ("+status+")");
+        //         $location.path('#');
+        //     }
+        // });
 
     }
 

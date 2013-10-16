@@ -13,8 +13,12 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                 when('/sites/uninstall/:site',                  {templateUrl: 'partials/uninstall.html'}).
                 when('/sites/update/:site',                     {templateUrl: 'partials/update.html'}).
                 when('/map/:site',                              {templateUrl: 'partials/map.html'}).
-                when('/intent/:args/:controller/:token',      {template: " ",  controller: intentController}).
-                otherwise({redirectTo: '/'});
+                when('/intent/:controller?:args',        {template: " ",  controller: intentController}).
+
+                otherwise({template: " ",  controller: function($location){
+                    console.log($location.url());
+                    $location.path("/");
+                }});
 
     }]).config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.withCredentials = true;
