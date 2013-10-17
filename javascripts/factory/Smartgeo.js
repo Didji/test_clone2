@@ -100,12 +100,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
                 request += ' (id like ? or id = ? ) ';
                 arguments_.push(1 * guids[j], 1 * guids[j]);
             }
-
+            console.log("Attention, j'ouvre la base !")
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
+                console.log("C'est bon c'est ouvert. Je transactionne ...");
                 t.executeSql(request, arguments_,
                     function(tx, rslt) {
+                        console.log("C'est bon j'ai "+rslt.rows.length+" resultat(s)");
                         for (var i = 0; i < rslt.rows.length; i++) {
                             var ast = rslt.rows.item(i);
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
