@@ -78,7 +78,7 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
                 break;
 
             case 'report':
-                $location.path('report/'+$rootScope.site.id);
+                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+$rootScope.target+'/');
                 break;
 
             default:
