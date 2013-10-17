@@ -6,3 +6,4 @@ platforms/android/gen
 platforms/android/assets/www
 .metadata
 .cordova/hooks
+platforms/android/.classpath
