@@ -1,15 +1,5 @@
 function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
 
-    // #/map/Smartgeo?map_target=172227&report_target=172227&map_marker=true&report_activity=3&report_mission=12772&report_url_redirect=http:%2F%2Fgoogle.fr&token=ya29.AHES6ZSVgG-vwMR93LjzanANfB6c1dArOoa75eh1CR0JHfA
-    /*
-        #/map/Smartgeo? map_target=172227&
-                        map_marker=true&
-                        report_target=172227&
-                        report_activity=3&
-                        report_mission=12772&
-                        report_url_redirect=http:%2F%2Fgoogle.fr&
-                        token=ya29.AHES6ZSVgG-vwMR93LjzanANfB6c1dArOoa75eh1CR0JHfA
-    */
     if($rootScope.site){
 
     } else if($routeParams.site){
