@@ -1,5 +1,5 @@
 var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2'])
-       .config(['$routeProvider', function($routeProvider) {
+       .config(['$routeProvider', function($routeProvider, $rootScope) {
 
             $routeProvider.
                 when('/',                                       {templateUrl: 'partials/login.html'}).
@@ -19,6 +19,8 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                     console.log($location.url());
                     $location.path("/");
                 }});
+
+;
 
     }]).config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.withCredentials = true;

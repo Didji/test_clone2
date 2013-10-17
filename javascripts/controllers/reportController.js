@@ -242,19 +242,59 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 var reports = Smartgeo.get('reports') || [];
                 reports.push(report);
                 Smartgeo.set('reports', reports);
-                if($rootScope.report_url_redirect){
-                    document.location = $rootScope.report_url_redirect ;
-                } else {
-                    $location.path('map/'+$rootScope.site.id);
-                }
+                endOfReport();
             }).then(function(){
-                if($rootScope.report_url_redirect){
-                    document.location = $rootScope.report_url_redirect ;
-                } else {
-                    $location.path('map/'+$rootScope.site.id);
-                }
+                endOfReport();
             });
     };
+
+    function endOfReport(){
+        if($rootScope.report_url_redirect){
+            $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) ;
+            document.location = $rootScope.report_url_redirect;
+        } else {
+            console.log($rootScope);
+            $location.path('map/'+$rootScope.site.id);
+        }
+    }
+
+    function injectCallbackValues(url){
+        if(url.indexOf('[LABEL_INDEXED_FIELDS]') != -1){
+            var injectedValues = '' ;
+            for(var field in $scope.report.fields){
+                if($scope.report.fields.hasOwnProperty(field)){
+                    injectedValues += 'fields['+getLabelWithFieldId(field)+']='+$scope.report.fields[field]+'&' ;
+                }
+            }
+            injectedValues = injectedValues.slice(0, injectedValues.length-1);
+            url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
+            return url;
+        }
+
+        if(url.indexOf('[KEY_INDEXED_FIELDS]') != -1){
+            var injectedValues = '' ;
+            for(var field in $scope.report.fields){
+                if($scope.report.fields.hasOwnProperty(field)){
+                    injectedValues += 'fields['+field+']='+$scope.report.fields[field]+'&' ;
+                }
+            }
+            injectedValues = injectedValues.slice(0, injectedValues.length-1);
+            url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+            return url;
+        }
+    }
+
+    function getLabelWithFieldId(id){
+        var activity = $scope.report.activity;  // UGLY, need to pass activity in parameters and extract this function
+                                                // in something like Smartgeo.utils.getLabelWithFieldId()
+        for (var i = 0; i < activity.tabs.length; i++) {
+            for (var j = 0; j < activity.tabs[i].fields.length; j++) {
+                if(activity.tabs[i].fields[j].id == id){
+                    return activity.tabs[i].fields[j].label;
+                }
+            }
+        }
+    }
 
     $scope.toggleCollapse = function(event){
         event.preventDefault();
