@@ -1,7 +1,0 @@
-.DS_Store
-.project
-.settings
-nohup.out
-test/coverage/*.json
-web.config
-aspnet_client

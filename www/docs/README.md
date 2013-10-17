@@ -1,2 +1,0 @@
-Stockage des documents
-======================
