@@ -64,7 +64,9 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 break;
             }
         }
-        $scope.loadAssets();
+        if(!$scope.fromConsult){
+            $scope.loadAssets();
+        }
     }
 
     // Used for field validation
