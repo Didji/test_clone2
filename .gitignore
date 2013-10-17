@@ -2,6 +2,6 @@
 .project
 .settings
 nohup.out
-test/coverage/*.json
+test/coverage/*
 web.config
 aspnet_client

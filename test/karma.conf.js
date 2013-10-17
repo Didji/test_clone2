@@ -1,6 +1,6 @@
 module.exports = function (config) {
   config.set({
-   
+
     basePath: '../',
 
     files: [
@@ -23,7 +23,7 @@ module.exports = function (config) {
       'javascripts/factory/G3ME.js',
       'javascripts/factory/GiReportBuilder.js',
       'javascripts/factory/Installer.js',
-      'javascripts/controllers/authController.js',
+      'javascripts/controllers/*.js',
       'javascripts/controllers/consultationController.js',
       'javascripts/controllers/mapController.js',
       'javascripts/controllers/menuController.js',
@@ -36,6 +36,7 @@ module.exports = function (config) {
       'javascripts/controllers/searchController.js',
       'javascripts/controllers/layersController.js',
       'javascripts/controllers/synchronizationMenuController.js',
+      'javascripts/controllers/intentController.js',
 
       'test/controllersSpec.js',
       'test/factoriesSpec.js'

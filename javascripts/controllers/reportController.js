@@ -138,7 +138,14 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             for(j = 0, numFields = tab.fields.length; j < numFields; j++) {
                 field = tab.fields[j];
                 def = field['default'];
-
+                // Par priorité sur les valeurs par défaut, on applique les valeurs
+                // fixées dans le scope par les intents.
+                if($scope['report_fields['+field.label+']']) {
+                    def = $scope['report_fields['+field.label+']'];
+                }
+                if($scope['report_fields[$'+field.id+']']) {
+                    def = $scope['report_fields[$'+field.id+']'];
+                }
                 if(!def) {
                     continue;
                 }
