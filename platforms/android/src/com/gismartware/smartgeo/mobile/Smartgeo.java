@@ -18,17 +18,17 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 
 /**
- * <p>Classe de gestion de l'activit� correspondant � l'application SmartGeo Mobile.</p>
+ * <p>Classe de gestion de l'activité correspondant à l'application SmartGeo Mobile.</p>
  * 
  * <p>
- * Celle-ci permet de g�rer l'authentification oauth et la gestion des urls de type "gimap://".<br/>
- * Ces Urls sont r��crites pour correspondre au format attendu par l'application cliente, c'est-�-dire :
+ * Celle-ci permet de gérer l'authentification oauth et la gestion des urls de type "gimap://".<br/>
+ * Ces Urls sont réécrites pour correspondre au format attendu par l'application cliente, c'est-à-dire :
  * 
- * #/intent/controler?param�tres
+ * #/intent/controler?paramètres
  * 
  * <p>Exemple : #/intent/map?report_activity=12&report_mission=13&token=24g524ct4cqe7e</p>
  * 
- * Le token oauth est pass� dans le param�tre token s'il existe.
+ * Le token oauth est passé dans le paramètre token s'il existe.
  * </p>
  * 
  * @see <a href="https://github.com/gismartwaredev/smartgeomobile/wiki/Intents">https://github.com/gismartwaredev/smartgeomobile/wiki/Intents</a>
@@ -66,7 +66,7 @@ public class Smartgeo extends CordovaActivity {
 			startActivityForResult(intent, ACCOUNT_CODE);
 		}
 		
-		//url de d�marrage?
+		//url de démarrage?
 		String url = Config.getStartUrl(); //url de base de l'appli
 		if (getIntent().getData() != null) { //lance depuis un intent ?
 			url += getIntentUrl(getIntent());
@@ -86,14 +86,14 @@ public class Smartgeo extends CordovaActivity {
 		//controler en premier..
 		url.append(intent.getData().getHost());
 		
-		//ATTENTION!! R�cup�rer dataString sinon des caract�res sautent avec getData().getQuery() car les valeurs dans l'URL peuvent 
+		//ATTENTION!! Récupérer dataString sinon des caractères sautent avec getData().getQuery() car les valeurs dans l'URL peuvent 
 		//contenir des #, ce qui fait partie des "fragments" dans la spec de la classe Uri, et non de la query...
 		String[] urlParts = intent.getDataString().split("\\?");
 		
 		boolean appendedParams = false;
 		
 		if (urlParts.length > 1) {
-			//on recupere la query "� la main" (split), cad apres le "?"
+			//on recupere la query "à la main" (split), cad apres le "?"
 			//il peut y avoir plusieurs parties (du au url redirect dans les parametres qui peuvent contenir des "?")
 			StringBuffer intentUrl = new StringBuffer(urlParts[1]);
 			for (int i = 2; i < urlParts.length; i++) {
@@ -112,7 +112,7 @@ public class Smartgeo extends CordovaActivity {
 					
 					String paramName = param[0];
 					
-					//Est ce un champ compos�? (exemple : fields[###564654###]=250
+					//Est ce un champ composé? (exemple : fields[###564654###]=250
 					boolean composite = false;
 					Matcher matcher = hook.matcher(paramName);
 					if (matcher.matches()) {
@@ -120,7 +120,7 @@ public class Smartgeo extends CordovaActivity {
 						paramName = matcher.group(1);
 					}
 					
-					//un parametre source peut etre positionn� dans plusieurs parametres cible :
+					//un paramètre source peut etre positionné dans plusieurs paramètres cible :
 					String[] destParams = MESSAGES.getString(paramName).split(",");
 					for (int j = 0; j < destParams.length; j++) {
 						url.append(destParams[j]);
@@ -129,13 +129,13 @@ public class Smartgeo extends CordovaActivity {
 						}
 						url.append("=").append(param[1]);
 						
-						//ajout du "&" si plusieurs parametres cible pour le parametre source courant
+						//ajout du "&" si plusieurs paramètres cible pour le paramètre source courant
 						if (j < (destParams.length - 1)) {
 							url.append("&");
 						}
 					}
 					
-					//ajout du "&" s'il reste des parametres dans la query principale
+					//ajout du "&" s'il reste des paramètres dans la query principale
 					if (i < (params.length - 1)) {
 						url.append("&");
 					}
@@ -143,7 +143,7 @@ public class Smartgeo extends CordovaActivity {
 			}
 		}
 		
-		//ajout du token � la fin, rien si inexistant
+		//ajout du token à la fin, rien si inexistant
 		String token = preferences.getString(KEY_TOKEN, null);
 		if (token != null) {
 			if (appendedParams) {
