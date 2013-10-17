@@ -2,6 +2,10 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
 
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    $window.document.addEventListener('menubutton', function() {
+        $scope.mlPushMenu._openMenu();
+    }, false);
+    
     $scope.close = function (){
         $scope.mlPushMenu._resetMenu();
     };
