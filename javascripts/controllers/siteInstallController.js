@@ -6,6 +6,13 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     }];
     $scope.totalProgress = 100;
     $scope.Math = Math;
+    $scope.sites = Smartgeo.get('sites') || {} ;
+
+    /* Si le site est déjà installé, on ne le reinstalle pas (#132) */
+    if($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true){
+        $location.path('/map/'+$routeParams.site);
+    }
+
     var stepsByOkey = {};
             
     function buildSteps(site) {
@@ -48,8 +55,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     
     $http.get(url).success(function(sites){
         $scope.steps[0].progress = 50;
-        $scope.sites = Smartgeo.get('sites') || {} ;
-
+       
         angular.extend($scope.sites, sites);
 
         for (var i = 0; i < sites.length; i++) {
