@@ -10,6 +10,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
 
     /* Si le site est déjà installé, on ne le reinstalle pas (#132) */
     if($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true){
+        /* On retourne sur la carte */
         $location.path('/map/'+$routeParams.site);
     }
 
