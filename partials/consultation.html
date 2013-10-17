@@ -53,7 +53,7 @@
                                     Compte rendu <span class="caret"></span>
                                   </button>
                                   <ul class="dropdown-menu" role="menu">
-                                        <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey'>
+                                        <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey && (activity.id == report_activity || !report_activity)'>
                                             <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
                                         </li>
                                   </ul>

@@ -74,12 +74,10 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
     function redirect(){
         switch($routeParams.controller){
             case 'map':
-                console.log('map/'+$rootScope.site.id);
                 $location.path('map/'+$rootScope.site.id);
                 break;
 
             case 'report':
-                console.log('report/'+$rootScope.site.id);
                 $location.path('report/'+$rootScope.site.id);
                 break;
 
