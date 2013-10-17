@@ -590,7 +590,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         this.requestQuota(function(){
             (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT,grantedBytes, function(fs){
-                console.log('Opened file system: ' + fs.name);
                 this_.filesystem = fs ;
             }, this_.log_fs_error);
         });
@@ -815,7 +814,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                         if (e.name == "InvalidStateError") {
                             blob = new Blob([JSON.stringify(metadata)], {type: datatype});
                             writer.write(blob);
-                        } 
+                        }
                     }
                 }
                 writer.truncate(0);
