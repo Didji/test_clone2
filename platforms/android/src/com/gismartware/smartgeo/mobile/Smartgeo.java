@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * <p>Classe de gestion de l'activité correspondant à l'application SmartGeo Mobile.</p>
@@ -71,6 +72,7 @@ public class Smartgeo extends CordovaActivity {
 		if (getIntent().getData() != null) { //lance depuis un intent ?
 			url += getIntentUrl(getIntent());
 		}
+		Log.d(this.getClass().getSimpleName(), "[onCreate] Load url " + url);
 		super.loadUrl(url);
 	}
 	
@@ -158,7 +160,9 @@ public class Smartgeo extends CordovaActivity {
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
-		super.loadUrl(getIntentUrl(intent));
+		String url = getIntentUrl(intent);
+		Log.d(this.getClass().getSimpleName(), "[onNewIntent] Load url " + url);
+		super.loadUrl(url);
 		super.onNewIntent(intent);
 	}
 	
