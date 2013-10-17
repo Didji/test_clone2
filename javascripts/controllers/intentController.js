@@ -46,6 +46,9 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
                     $rootScope.map_marker.on('click',function(){
                         $location.path('/report/'+$rootScope.site.id+"/"+$rootScope.report_activity+"/"+$rootScope.report_target);
                         $scope.$apply();
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
                     });
                 }
             } else {
@@ -84,12 +87,16 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
         switch($scope.controller){
             case 'map':
                 $location.path('map/'+$rootScope.site.id);
-                $rootScope.$apply();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
                 break;
 
             case 'report':
                 $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+$rootScope.target+'/');
-                $rootScope.$apply();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
                 break;
 
             default:
