@@ -75,7 +75,7 @@ public class Smartgeo extends CordovaActivity {
 	}
 	
 	/**
-	 * M�thode de mapping des urls des intents.
+	 * Méthode de mapping des urls des intents.
 	 * 
 	 * @param intent l'intent dont on veut mapper l'url
 	 * @return l'url cible
