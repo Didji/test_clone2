@@ -80,7 +80,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
                 partial_response = [];
             }
 
-            if (!zones.length) {
+            if (!zones || !zones.length) {
                 return callback(partial_response);
             }
             if (typeof guids !== 'object') {

@@ -85,8 +85,13 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             } else {
                 // so maybe it's an asset id ?
                 Smartgeo.findAssetsByGuids(site, target, function(assets){
-                    // TODO: return barycenter of ALL assets
-                    callback([assets[0].ymin,assets[0].xmin]);
+                    if(!assets.length){
+                        callback([]);
+                    } else if(assets.length === 1){
+                        callback([assets[0].ymin,assets[0].xmin]);
+                    } else {
+                        // TODO: return barycenter of ALL assets
+                    }
                 });
             }
         },

@@ -1,5 +1,11 @@
 function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
 
+    $scope.controller = $routeParams.controller ;
+
+    if(!$scope.controller){
+        return false ;
+    }
+
     if($rootScope.site){
 
     } else if($routeParams.site){
@@ -29,6 +35,10 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
     if($rootScope.map_target){
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
         G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
+            if(!assets.length){
+                $window.alert("L'objet n'a pas été trouvé dans la base de données du terminal.")
+                return tokenAuth($routeParams.token, redirect);
+            }
             $rootScope.map_target = assets ;
             if( $rootScope.map_marker === 'true' || $rootScope.map_marker === true){
                 $rootScope.map_marker = L.marker($rootScope.map_target);
@@ -53,7 +63,6 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
             token:token
         });
         return callback();
-        $http.get(url).then(callback);
         // $http.get(url).then(function(response){
         //     if(response.status === 403 || response.data.auth === false){
         //         $window.alert("Le token fournit n'est pas valide");
@@ -72,7 +81,7 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
     }
 
     function redirect(){
-        switch($routeParams.controller){
+        switch($scope.controller){
             case 'map':
                 $location.path('map/'+$rootScope.site.id);
                 $rootScope.$apply();
