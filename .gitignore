@@ -3,7 +3,6 @@ platforms/android/.classpath
 platforms/android/.project
 platforms/android/bin
 platforms/android/gen
-platforms/android/assets/www
 .metadata
 .cordova/hooks
 platforms/android/.classpath

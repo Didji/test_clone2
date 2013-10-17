@@ -4,3 +4,6 @@
 [submodule "platforms/ios/www"]
 	path = platforms/ios/www
 	url = https://github.com/gismartwaredev/smartgeomobile.git
+[submodule "platforms/android/assets/www"]
+	path = platforms/android/assets/www
+	url = https://github.com/gismartwaredev/smartgeomobile.git
