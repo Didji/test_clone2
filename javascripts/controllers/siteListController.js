@@ -14,7 +14,6 @@ function siteListController($scope, $http, $location, Smartgeo) {
                     tmpsites[site.id] = site;
                 }
 
-                // Cette ligne pose problème  
                 angular.extend(tmpsites, sitesById, knownSites);
 
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
@@ -29,8 +28,25 @@ function siteListController($scope, $http, $location, Smartgeo) {
             });
     }
     function getLocalSites() {
-        $scope.sites = Smartgeo.get('sites') ;
+
+
+        var sitesById = {},
+            knownSites = Smartgeo.get('sites') || {},
+            site, tmpsites = {};
+
+        // Pour que les filtres fonctionnent, il nous faut un simple tableau.
+        $scope.sites = [];
+        for(var id in knownSites) {
+            $scope.sites.push(knownSites[id]);
+        }
+
+        autoLoadOrNot();
+
+
+        // $scope.sites = Smartgeo.get('sites') ;
         $scope.ready = true;
+                // autoLoadOrNot();
+        console.log($scope.sites);
     }
 
     function autoLoadOrNot() {
@@ -45,7 +61,7 @@ function siteListController($scope, $http, $location, Smartgeo) {
         // Il n'y a qu'un seul site.
         // S'il est installé, on le charge. Sinon, on l'installe.
         var site = $scope.sites[0];
-        if(site.installed) {
+        if(site && site.installed) {
             $location.path('/map/'+site.id);
         } else {
             $location.path('/sites/install/'+site.id);
