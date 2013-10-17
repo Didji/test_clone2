@@ -183,16 +183,16 @@
     <h1>Code coverage report for <span class="entity">factory/Smartgeo.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">11.01% <small>(12 / 109)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">10.91% <small>(12 / 110)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
         Branches: <span class="metric">3.64% <small>(2 / 55)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">18.52% <small>(5 / 27)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">14.29% <small>(4 / 28)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">11.21% <small>(12 / 107)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">11.11% <small>(12 / 108)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
     <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">factory/</a> &#187; Smartgeo.js</div>
@@ -435,9 +435,13 @@
 234
 235
 236
-237</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+237
+238
+239
+240
+241</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12</span>
+<span class="cline-any cline-yes">10</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -481,21 +485,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3</span>
-<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3</span>
-<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -656,7 +660,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">27</span>
+<span class="cline-any cline-yes">15</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -664,11 +668,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http){
@@ -687,7 +695,7 @@
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
 &nbsp;
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.1",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.2",
         _G3ME_VERSION               : "0.1.0",
 &nbsp;
         // METHODS
@@ -721,17 +729,17 @@
                 url += serviceName ;
 &nbsp;
             for (var parameter in GETParameters){
-<span class="cstat-no" title="statement not covered" >                if(GETParameters.hasOwnProperty(parameter)){</span>
-<span class="cstat-no" title="statement not covered" >                    url += '&amp;'+parameter+'='+GETParameters[parameter];</span>
+                <span class="missing-if-branch" title="else path not taken"" >E</span>if(GETParameters.hasOwnProperty(parameter)){
+                    url += '&amp;'+parameter+'='+GETParameters[parameter];
                 }
             }
 &nbsp;
             return url ;
         },
 &nbsp;
-        ping : function(callback) {
-            callback = callback || <span class="fstat-no" title="function not covered" ><span class="branch-1 cbranch-no" title="branch not covered" >function(){</span>};</span>
-            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
+        ping : <span class="fstat-no" title="function not covered" >function(callback) {</span>
+<span class="cstat-no" title="statement not covered" >            callback = callback || <span class="fstat-no" title="function not covered" >function(){</span>};</span>
+<span class="cstat-no" title="statement not covered" >            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))</span>
                 .success(<span class="fstat-no" title="function not covered" >function(data){</span>
 <span class="cstat-no" title="statement not covered" >                    Smartgeo.set('online', true);</span>
 <span class="cstat-no" title="statement not covered" >                    callback(true);</span>
@@ -897,6 +905,10 @@
 &nbsp;
         set: function(parameter, value){
             return localStorage.setItem(parameter, JSON.stringify(value));
+        },
+&nbsp;
+        unset: <span class="fstat-no" title="function not covered" >function(parameter){</span>
+<span class="cstat-no" title="statement not covered" >            return localStorage.removeItem(parameter);</span>
         }
     };
 &nbsp;
@@ -912,7 +924,7 @@
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 14 2013 11:01:11 GMT+0200 (CEST)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 17 2013 14:25:48 GMT+0200 (CEST)</div>
 </div>
 
 <script src="../prettify.js"></script>

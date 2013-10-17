@@ -52,7 +52,7 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
         var url = Smartgeo.getServiceUrl('global.auth.json', {
             token:token
         });
-
+        return callback();
         $http.get(url).then(callback);
         // $http.get(url).then(function(response){
         //     if(response.status === 403 || response.data.auth === false){
@@ -75,10 +75,12 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
         switch($routeParams.controller){
             case 'map':
                 $location.path('map/'+$rootScope.site.id);
+                $rootScope.$apply();
                 break;
 
             case 'report':
                 $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+$rootScope.target+'/');
+                $rootScope.$apply();
                 break;
 
             default:

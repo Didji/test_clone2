@@ -183,16 +183,16 @@
     <h1>Code coverage report for <span class="entity">controllers/siteUpdateController.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">6.67% <small>(3 / 45)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">6.25% <small>(3 / 48)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">0% <small>(0 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
         Functions: <span class="metric">0% <small>(0 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">6.82% <small>(3 / 44)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">6.38% <small>(3 / 47)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
     <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">controllers/</a> &#187; siteUpdateController.js</div>
@@ -288,7 +288,11 @@
 87
 88
 89
-90</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+90
+91
+92
+93
+94</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -364,6 +368,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -373,11 +379,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="fstat-no" title="function not covered" >function siteUpdateController($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="fstat-no" title="function not covered" >function siteUpdateController($scope,$rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    $scope.steps = [{</span>
         color: '#fd9122',
@@ -427,7 +435,7 @@
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    $scope.site = Smartgeo.get('sites')[$routeParams.site] ;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json'); </span>
+<span class="cstat-no" title="statement not covered" >    var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    $http.get(url).success(<span class="fstat-no" title="function not covered" >function(sites){</span></span>
 <span class="cstat-no" title="statement not covered" >        $scope.steps[0].progress = 50;</span>
@@ -443,13 +451,15 @@
         }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        Installer.getUpdateJSON($scope.site, <span class="fstat-no" title="function not covered" >function(site){</span></span>
-<span class="cstat-no" title="statement not covered" >            var formatedSite = Installer.formatSiteMetadata(site);</span>
+<span class="cstat-no" title="statement not covered" >            var update = true;</span>
+<span class="cstat-no" title="statement not covered" >            var formatedSite = Installer.formatSiteMetadata(site, update);</span>
 <span class="cstat-no" title="statement not covered" >            $scope.steps[0].progress = 100;</span>
 <span class="cstat-no" title="statement not covered" >            buildSteps(formatedSite);</span>
 <span class="cstat-no" title="statement not covered" >            $scope.site.oldTimestamp = $scope.site.timestamp ;</span>
 <span class="cstat-no" title="statement not covered" >            angular.extend($scope.site, formatedSite);</span>
 <span class="cstat-no" title="statement not covered" >            Installer.update($scope.site, $scope.site.stats, <span class="fstat-no" title="function not covered" >function(){</span></span>
 <span class="cstat-no" title="statement not covered" >                Installer.saveSite($scope.site);</span>
+<span class="cstat-no" title="statement not covered" >                $rootScope.site = $scope.site ;</span>
 <span class="cstat-no" title="statement not covered" >                $location.path('/map/'+$routeParams.site);</span>
 <span class="cstat-no" title="statement not covered" >                if(!$scope.$$phase) {</span>
 <span class="cstat-no" title="statement not covered" >                    $scope.$apply();</span>
@@ -461,7 +471,9 @@
 <span class="cstat-no" title="statement not covered" >    $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", <span class="fstat-no" title="function not covered" >function(event, action){</span></span>
 <span class="cstat-no" title="statement not covered" >        $scope.currentInstalledOkey = action.okey;</span>
 <span class="cstat-no" title="statement not covered" >        stepsByOkey[action.okey].progress = 1 * action.progress;</span>
-<span class="cstat-no" title="statement not covered" >        $scope.$apply();</span>
+<span class="cstat-no" title="statement not covered" >        if(!$scope.$$phase) {</span>
+<span class="cstat-no" title="statement not covered" >            $scope.$apply();</span>
+        }
     });
 &nbsp;
 &nbsp;
@@ -471,7 +483,7 @@
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Oct 14 2013 11:01:11 GMT+0200 (CEST)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 17 2013 14:25:48 GMT+0200 (CEST)</div>
 </div>
 
 <script src="../prettify.js"></script>
