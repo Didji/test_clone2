@@ -1,4 +1,4 @@
-function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder){
+function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME){
 
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
@@ -18,7 +18,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             })
     };
 
-    if($routeParams.assets){
+    if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         $scope.fromConsult = true;
         $scope.step = "form";
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
@@ -28,9 +28,16 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
                 $scope.$apply();
             }
         });
+    } else if ($routeParams.assets && G3ME.isLatLngString($routeParams.assets)){
+        $scope.fromConsult = true;
+        $scope.report.latlng = $routeParams.assets ;
+        $scope.step = 'form';
+    } else {
+        // ERROR
     }
 
     $scope.loadAssets = function(){
+        // TODO: optimize
         Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets){
             $scope.assets = assets ;
             if(!$scope.$$phase) {
@@ -228,6 +235,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
 
         report.activity  = report.activity.id ;
         report.timestamp = new Date().getTime();
+        report.mission   = 1*$rootScope.report_mission || report.mission ;
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
             .error(function(){
