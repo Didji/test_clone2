@@ -6,10 +6,15 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
         $scope.mlPushMenu._openMenu();
     }, false);
     
-    $window.document.addEventListener('backbutton', function() {
+    $window.document.addEventListener('backbutton', function(e) {
         var self = $scope.mlPushMenu;
+        if(!self.level) {
+            return;
+        }
+        
         self.level--;
         self.level === 0 ? self._resetMenu() : self._closeMenu();
+        e.preventDefault();
     }, false);
     
     $scope.close = function (){
