@@ -847,7 +847,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             url  = this.getTileUrl({x:tileObject.x, y:tileObject.y},tileObject.z);
         http.open('HEAD', url);
         http.onreadystatechange = function() {
-            if (this.readyState == this.DONE) {
+            if (this.readyState == this.DONE && this.status === 200) {
                 callback(this.getResponseHeader("etag"));
             }
         };
