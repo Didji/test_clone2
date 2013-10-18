@@ -65,6 +65,12 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
         var url = Smartgeo.getServiceUrl('global.auth.json', {
             token:token
         });
+
+        // On sauvegarde le token pour faire une authentification silencieuse
+        var currentUser = Smartgeo.get('user') || {};
+        currentUser.token = token ;
+        Smartgeo.set('user',currentUser) ;
+
         return callback();
         // $http.get(url).then(function(response){
         //     if(response.status === 403 || response.data.auth === false){
