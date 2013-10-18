@@ -116,6 +116,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.$on("TOGGLE_CONSULTATION", function(event){
         $scope.toggleConsultation();
     });
+    
+    $scope.$on("ACTIVATE_POSITION", function(event){
+        $scope.activatePosition();
+    });
+    
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
     });
@@ -129,6 +134,56 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         $scope.zoomOnAsset(asset);
     });
 
+    var POSITION_MARKER;
+    $scope.activatePosition = function(event) {
+        if(event){
+            event.preventDefault();
+        }
+        $scope.stopPosition();
+        if(!$scope.positionIndicatorCustomControl){
+            $scope.positionIndicatorCustomControl = L.Control.extend({
+                options: {  position: 'topright' },
+                onAdd: function (map) {
+                    var container = L.DomUtil.create('div', 'leaflet-bar');
+                    $(container)
+                        .html('<a href="#" ng-click="stopPosition($event)" title="Ma position"><span class="icon icon-compass"></span></a>')
+                        .on('click',$scope.stopPosition);
+                    return container;
+                }
+            });
+            $scope.positionIndicatorCustomControl = new $scope.positionIndicatorCustomControl();
+        }
+        G3ME.map.locate({watch: true, setView: true});
+        G3ME.map.on('locationfound', setLocationMarker);
+        G3ME.map.addControl($scope.positionIndicatorCustomControl);
+    };
+    $scope.stopPosition = function() {
+        G3ME.map.stopLocate();
+        if($scope.positionIndicatorCustomControl) {
+            G3ME.map.removeControl($scope.positionIndicatorCustomControl);
+        }
+        removePositionMarker();
+        return false;
+    };
+    
+    function removePositionMarker() {
+        if(POSITION_MARKER) {
+            G3ME.map.removeLayer(POSITION_MARKER);
+        }
+    }
+    
+    function setLocationMarker(event) {
+        POSITION_MARKER = new L.Circle(event.latlng, 
+                                  event.accuracy, {
+                                    clickable: false,
+                                    color: '#fd9122',
+                                    opacity: .2,
+                                    fillOpacity: .1
+                                  });
+        POSITION_MARKER.addTo(G3ME.map);
+    }
+    
+    
     $scope.toggleConsultation = function (event){
         if(event){
             event.preventDefault();
