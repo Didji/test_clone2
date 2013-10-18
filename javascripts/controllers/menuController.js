@@ -22,7 +22,9 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
     
     function updateSyncNumber() {
         $scope.toSyncNumber = (Smartgeo.get('reports') || []).length;
-        $scope.$apply();
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
     }
     updateSyncNumber();
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
