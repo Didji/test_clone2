@@ -1,6 +1,12 @@
-function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo){
+function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location){
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
+
+    if(!$rootScope.site){
+        $window.alert("Aucun site n'est disponible.");
+        $location.path("#");
+        return false ;
+    }
 
     $scope.consultationIsEnabled = false ;
 

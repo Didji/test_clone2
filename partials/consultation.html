@@ -46,9 +46,14 @@
                                     </table>
                                 </span>
 
-                                <hr/>
+                                <hr ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
 
-                                <div class="btn-group  dropup" style="width:100%" >
+                                <a class="btn btn-primary btn-block" 
+                                    ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'>
+                                    {{site.activities._byId[map_activity||report_activity].label}}
+                                </a>
+
+                                <div class="btn-group dropup" style="width:100%" ng-show='!report_activity && !map_activity'>
                                   <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                     Compte rendu <span class="caret"></span>
                                   </button>

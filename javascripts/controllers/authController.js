@@ -1,7 +1,7 @@
 /**
  * Controlleur d'authentification
  */
-function authController($scope, $http, $location, $window, Smartgeo, SQLite){
+function authController($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite){
 
 
     var lastuser = Smartgeo.get('user') || {"username":"","pwd":"","savePwd":true};
@@ -14,6 +14,18 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
     $scope.gimapUrl     = Smartgeo.get('url') ;
     $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
     
+
+    $rootScope.$on("DEVICE_IS_ONLINE", function(){
+        // Un timeout est nécessaire cas à cet instant, la connectivité n'est pas réélement revenue. 
+        // TODO: réfléchir à la nécessité de mettre ce timeout dans le broadcast directement.
+        setTimeout(function(){
+            ping();
+        },1000); 
+    });
+    $rootScope.$on("DEVICE_IS_OFFLINE", function(){
+        ping();
+    });
+
     ping();
 
     /**
@@ -46,15 +58,6 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
     }
 
     function remoteLogin() {
-
-        $scope.username = $scope.username.trim()
-        $scope.pwd      = $scope.pwd.trim()
-
-        if(!$scope.username.length || !$scope.pwd.length){
-            $window.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
-            return false ;
-        }
-
         var url  = Smartgeo.getServiceUrl('global.auth.json', {
             'login' : encodeURIComponent($scope.username),
             'pwd'   : encodeURIComponent($scope.pwd)
@@ -87,11 +90,19 @@ function authController($scope, $http, $location, $window, Smartgeo, SQLite){
         if(knownUsers[$scope.username] === $scope.pwd) {
             $location.path('sites');
         } else {
-            loginFailed();
+            $window.alert("Le mode déconnecté n'est pas disponible pour cet utilisateur car il ne s'est jamais authentifié en mode connecté.");
         }
     }
 
     $scope.login = function(){
+
+        $scope.username = $scope.username.trim()
+        $scope.pwd      = $scope.pwd.trim()
+
+        if(!$scope.username.length || !$scope.pwd.length){
+            $window.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
+            return false ;
+        }
         Smartgeo.get('online') === true ? remoteLogin() : localLogin();
     };
 
