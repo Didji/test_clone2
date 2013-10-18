@@ -222,9 +222,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _initializeGlobalEvents: function(){
 
             window.addEventListener('online', function(e) {
-                Smartgeo.set('online', true);
-                $rootScope.$broadcast("DEVICE_IS_ONLINE");
-                console.log("broadcasting DEVICE_IS_ONLINE");
+                setTimeout(function() {
+                    Smartgeo.set('online', true);
+                    $rootScope.$broadcast("DEVICE_IS_ONLINE");
+                    console.log("broadcasting DEVICE_IS_ONLINE");
+                    Smartgeo.silentLogin();
+                }, 1000);
             }, false);
 
             window.addEventListener('offline', function(e) {
@@ -235,12 +238,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         },
 
+        silentLogin: function(){
+            var user = Smartgeo.get('user') || {};
+            if(user.token){
+                Smartgeo.login(token);
+            } else if(user.username && user.password){
+                Smartgeo.login(user.username, user.password);
+            }
+        },
+
         login: function(login, password, success, error){
             var token , url ;
             if(typeof password ===  'function'){
                 token   = login;
-                error   = success  || function(){};
-                success = password || function(){};
+                error   = success ;
+                success = password;
             }
             if(token){
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
@@ -252,7 +264,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     'pwd'   : encodeURIComponent(password)
                 });
             }
-            $http.post(url).success(success).error(error);
+            $http.post(url).success(success || function(){}).error(error || function(){});
         },
 
         // GETTER AND SETTER
