@@ -20,6 +20,8 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
             .success(function(){
                 $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
                 Smartgeo.set('reports', $scope.reports);
+                
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                 $window.alert('CR Synchronisé');
             }).error(function(error){
                 $window.alert('CR Non synchronisé : ' + error.error.text);
@@ -29,5 +31,6 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
     $scope.delete = function($index){
         $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
         Smartgeo.set('reports',$scope.reports);
+        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
     };
 }
