@@ -19,7 +19,14 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
     $scope.close = function (){
         $scope.mlPushMenu._resetMenu();
     };
-
+    
+    function updateSyncNumber() {
+        $scope.toSyncNumber = (Smartgeo.get('reports') || []).length;
+        $scope.$apply();
+    }
+    updateSyncNumber();
+    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
+    
     $scope.toggleConsultation = function(event){
         event.preventDefault();
         $rootScope.$broadcast("TOGGLE_CONSULTATION");

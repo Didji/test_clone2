@@ -250,6 +250,7 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
             .error(function(){
                 var reports = Smartgeo.get('reports') || [];
                 reports.push(report);
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                 Smartgeo.set('reports', reports);
                 endOfReport();
             }).then(function(){
