@@ -7,6 +7,16 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         mapDiv : null,
         mapDivId: null,
 
+        benchMe : false,
+        benchmarks: {},
+        benchmarkResults: [],
+        benchmarkGlobalResultPerSQL:  0,
+        benchmarkGlobalResultPerTile: 0,
+        benchmarkElapsedBenchmarks:0,
+        benchmarksLimit: 10 ,
+        benchmarkGeneralStatistics: [],
+
+
         filecacheIsEnable: true,
 
         initialize : function(mapDivId, site, target, marker){
@@ -23,14 +33,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 position: 'topright'
             }));
 
-            if(!target || !target.length){
+            if(!target || !target.length  || G3ME.benchMe){
                 target = [
                     [this.site.extent.ymin, this.site.extent.xmin],
                     [this.site.extent.ymax, this.site.extent.xmax]
                 ];
             }
 
-            if(target[0] instanceof Array) {
+            if(target[0] instanceof Array || G3ME.benchMe) {
                 // target is an extend
                 G3ME.map.fitBounds(target);
             } else if(!isNaN(target[0])){
@@ -64,7 +74,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             }).addTo(this.map);
 
             this.canvasTile.drawTile = function(canvas, tilePoint) {
-                G3ME.drawTile(canvas, tilePoint);
+                G3ME.drawTile(canvas, tilePoint, G3ME.benchMe);
             };
 
             for(var symbol in this.site.symbology){
@@ -76,6 +86,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 this.site.symbology[symbol].style.image = image;
             }
             this.canvasTile.redraw();
+
+
+            $(window).on('resize', function(){
+                G3ME.tilesOnScreen = ~~( (window.innerHeight/256) * (window.innerWidth/256) ) + 1 ;
+            });
+
+            G3ME.tilesOnScreen = ~~( (window.innerHeight/256) * (window.innerWidth/256) ) + 1 ;
+
         },
 
         parseTarget: function(site, target, callback){
@@ -100,10 +118,11 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             return ((str || "").match(/^-?\d+[.]\d*,-?\d+[.]\d*$/) !== null );
         },
 
-        invalidateMapSize : function(timeout){
+        invalidateMapSize : function(timeout, callback){
             timeout = timeout || 10;
             setTimeout(function() {
                 G3ME.map.invalidateSize();
+                callback && callback();
             }, 10);
         },
 
@@ -132,7 +151,54 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             }
             return rv;
         },
-        drawTile : function(canvas, tilePoint) {
+
+        benchStart: function(id){
+            G3ME.benchmarks[id] = (new Date()).getTime();
+        },
+
+        benchStop: function(id){
+            var end     = (new Date()).getTime(),
+                result  = end - G3ME.benchmarks[id];
+
+            G3ME.benchmarkResults.push(result) ;
+
+            var oldLength = G3ME.benchmarkResults.length
+
+            setTimeout(function() {
+                if(oldLength === G3ME.benchmarkResults.length){
+                    G3ME.benchProcessResults();
+                }
+            }, 500);
+        },
+
+        benchProcessResults : function(){
+            var sum = 0;
+
+            for (var i = 0; i < G3ME.benchmarkResults.length; i++) {
+                sum += G3ME.benchmarkResults[i];
+            }
+
+            G3ME.benchmarkGeneralStatistics.push({
+                tile: sum/G3ME.tilesOnScreen,
+                request: sum/G3ME.benchmarkResults.length
+            });
+            G3ME.benchmarkGlobalResultPerSQL  += sum/G3ME.tilesOnScreen;
+            G3ME.benchmarkGlobalResultPerTile += sum/G3ME.benchmarkResults.length;
+            G3ME.benchmarkResults = [];
+            G3ME.benchmarks = {};
+            G3ME.benchmarkElapsedBenchmarks++ ;
+
+            if(G3ME.benchmarkElapsedBenchmarks < G3ME.benchmarksLimit){
+                this.canvasTile.redraw();
+            } else {
+                G3ME.benchmarkGeneralStatistics.benchmarkGlobalResultPerSQL  = G3ME.benchmarkGlobalResultPerSQL  / G3ME.benchmarksLimit ;
+                G3ME.benchmarkGeneralStatistics.benchmarkGlobalResultPerTile = G3ME.benchmarkGlobalResultPerTile / G3ME.benchmarksLimit ;
+                console.log(G3ME.benchmarkGeneralStatistics);
+                G3ME.benchmarkElapsedBenchmarks = 0;
+            }
+        },
+
+        drawTile : function(canvas, tilePoint, performBench) {
             var ctx = canvas.getContext('2d');
             var zoom = this.map.getZoom(),
                 crs = L.CRS.EPSG4326,
@@ -236,98 +302,105 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
             for (i = 0; i < this.site.zones.length; i++) {
                 if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
-                    SQLite.openDatabase({
-                        name: this.site.zones[i].database_name,
-                        bgType: 1
-                    })
-                        .transaction(function(tx) {
-                            tx.executeSql(request, initargs,
-                                function(tx, results) {
-                                    var rows = results.rows;
-                                    for (var i = 0, length = rows.length; i < length; i++) {
-                                        var prevX = false,
-                                            prevY = false,
-                                            asset = rows.item(i),
-                                            geom = parse(asset.geometry),
-                                            assetSymbology = symbology[asset.symbolId],
-                                            coord, coord_ = {}, x, y, image;
-                                        if (geom.type === "MultiLineString") {
-                                            geom.coordinates = geom.coordinates[0];
-                                        }
-                                        if (geom.type === "LineString") {
-                                            ctx.beginPath();
-                                            for (var j = 0, l = geom.coordinates.length; j < l; j++) {
-                                                coord = geom.coordinates[j];
-                                                if (zoom < 15) {
-                                                    coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));
-                                                    coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));
-                                                } else {
-                                                    coord_.x = coord[0] * 0.017453292519943295;
-                                                    coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));
-
-                                                    coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                                                    coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                                                    coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
-                                                    coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
-                                                }
-
-                                                if (prevX === false) {
-                                                    ctx.moveTo(coord_.x, coord_.y);
-                                                } else if (coord_.x === prevX && coord_.y === prevY) {
-                                                    continue;
-                                                } else {
-                                                    ctx.lineTo(coord_.x, coord_.y);
-                                                }
-
-                                                prevX = coord_.x;
-                                                prevY = coord_.y;
+                    if(performBench){
+                        G3ME.benchStart(this.site.zones[i].database_name);
+                    }
+                    (function(zone){
+                        SQLite.openDatabase({
+                            name: zone.database_name,
+                            bgType: 1
+                        }).transaction(function(tx) {
+                                tx.executeSql(request, initargs,
+                                    function(tx, results) {
+                                        var rows = results.rows;
+                                        for (var i = 0, length = rows.length; i < length; i++) {
+                                            var prevX = false,
+                                                prevY = false,
+                                                asset = rows.item(i),
+                                                geom = parse(asset.geometry),
+                                                assetSymbology = symbology[asset.symbolId],
+                                                coord, coord_ = {}, x, y, image;
+                                            if (geom.type === "MultiLineString") {
+                                                geom.coordinates = geom.coordinates[0];
                                             }
-                                            ctx.strokeStyle = assetSymbology.style.strokecolor;
-                                            ctx.stroke();
-                                        } else if (geom.type === "Point") {
+                                            if (geom.type === "LineString") {
+                                                ctx.beginPath();
+                                                for (var j = 0, l = geom.coordinates.length; j < l; j++) {
+                                                    coord = geom.coordinates[j];
+                                                    if (zoom < 15) {
+                                                        coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));
+                                                        coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));
+                                                    } else {
+                                                        coord_.x = coord[0] * 0.017453292519943295;
+                                                        coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));
 
-                                            coord_.x = geom.coordinates[0] * 0.017453292519943295;
-                                            coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));
+                                                        coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                                                        coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
 
-                                            coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                                            coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+                                                        coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                                                        coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+                                                    }
 
-                                            coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
-                                            coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+                                                    if (prevX === false) {
+                                                        ctx.moveTo(coord_.x, coord_.y);
+                                                    } else if (coord_.x === prevX && coord_.y === prevY) {
+                                                        continue;
+                                                    } else {
+                                                        ctx.lineTo(coord_.x, coord_.y);
+                                                    }
 
-                                            image = symbology[asset.symbolId.toString()].style.image;
+                                                    prevX = coord_.x;
+                                                    prevY = coord_.y;
+                                                }
+                                                ctx.strokeStyle = assetSymbology.style.strokecolor;
+                                                ctx.stroke();
+                                            } else if (geom.type === "Point") {
 
-                                            if (image) {
-                                                ctx.save();
-                                                ctx.translate(coord_.x, coord_.y);
-                                                ctx.rotate(-asset.angle * DEG_TO_RAD);
-                                                ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,
-                                                    image.width * imageFactor,
-                                                    image.height * imageFactor);
-                                                ctx.restore();
-                                                if (zoom > 16 && asset.maplabel) {
-                                                    addLabel(asset.maplabel, image.width, coord_.x, coord_.y);
+                                                coord_.x = geom.coordinates[0] * 0.017453292519943295;
+                                                coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));
+
+                                                coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                                                coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+
+                                                coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                                                coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+
+                                                image = symbology[asset.symbolId.toString()].style.image;
+
+                                                if (image) {
+                                                    ctx.save();
+                                                    ctx.translate(coord_.x, coord_.y);
+                                                    ctx.rotate(-asset.angle * DEG_TO_RAD);
+                                                    ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,
+                                                        image.width * imageFactor,
+                                                        image.height * imageFactor);
+                                                    ctx.restore();
+                                                    if (zoom > 16 && asset.maplabel) {
+                                                        addLabel(asset.maplabel, image.width, coord_.x, coord_.y);
+                                                    }
+                                                } else {
+                                                    ctx.beginPath();
+                                                    ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
+                                                    ctx.fillStyle = symbology[asset.symbolId].style.fillcolor;
+                                                    ctx.fill();
+                                                    ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
                                                 }
                                             } else {
-                                                ctx.beginPath();
-                                                ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
-                                                ctx.fillStyle = symbology[asset.symbolId].style.fillcolor;
-                                                ctx.fill();
-                                                ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
+                                                console.log("géometrie inconnue");
                                             }
-                                        } else {
-                                            console.log("géometrie inconnue");
                                         }
-                                    }
-                                    if (zoom > 16) {
-                                        drawLabels(ctx);
-                                    }
+                                        if (zoom > 16) {
+                                            drawLabels(ctx);
+                                        }
 
-                                }, function(SqlError) {
-                                    console.log(JSON.stringify(SqlError));
-                                });
+                                        if(performBench){
+                                            G3ME.benchStop(zone.database_name);
+                                        }
+                                    }, function(SqlError) {
+                                        console.log(JSON.stringify(SqlError));
+                                    });
                         });
+                    })(this.site.zones[i])
                 }
             }
         }
