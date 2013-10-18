@@ -235,6 +235,26 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         },
 
+        login: function(login, password, success, error){
+            var token , url ;
+            if(typeof password ===  'function'){
+                token   = login;
+                error   = success  || function(){};
+                success = password || function(){};
+            }
+            if(token){
+                url  = Smartgeo.getServiceUrl('global.auth.json', {
+                    'token'   : encodeURIComponent(token)
+                });
+            } else {
+                url  = Smartgeo.getServiceUrl('global.auth.json', {
+                    'login' : encodeURIComponent(login),
+                    'pwd'   : encodeURIComponent(password)
+                });
+            }
+            $http.post(url).success(success).error(error);
+        },
+
         // GETTER AND SETTER
         get: function(parameter){
             return JSON.parse(localStorage.getItem(parameter));
