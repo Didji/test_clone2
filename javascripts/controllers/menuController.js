@@ -34,4 +34,10 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
         $rootScope.$broadcast("TOGGLE_CONSULTATION");
         $scope.close();
     };
+    
+    $scope.activatePosition = function(event){
+        event.preventDefault();
+        $rootScope.$broadcast("ACTIVATE_POSITION");
+        $scope.close();
+    };
 }
