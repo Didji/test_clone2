@@ -22,6 +22,8 @@
 
 }
 
+
+
 html, body {
     height: 100%;
     background: #373f45;
@@ -36,7 +38,6 @@ html, body {
     left: 0;
     bottom: 0;
     right: 0;
-    overflow: hidden;
 }
 
 #mainmap {
@@ -196,7 +197,7 @@ html, body {
     .floating-form {
         margin-top: 10px;
     }
-
+    
 }
 @media (max-height: 350px) {
     .floating-form img {
@@ -206,7 +207,7 @@ html, body {
         margin: 0;
         padding: 0;
     }
-
+    
     .floating-form small,.floating-form hr {
         display:none;
     }
@@ -485,3 +486,15 @@ ul.ged-gallery li img {
     width: 19px;
 }
 
+/** Eléments de carte */
+.gi-compass {
+    height: 32px!important;
+    width:  32px!important;
+    margin-top: -16px!important;
+    margin-left: -16px!important;
+}
+.gi-compass > div {
+	background: url(../images/compass.png);
+    height: 32px;
+    width:  32px;
+}
