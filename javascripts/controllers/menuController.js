@@ -29,9 +29,9 @@ function menuController($scope, $routeParams, $window, $rootScope, Smartgeo, SQL
     updateSyncNumber();
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
     
-    $scope.toggleConsultation = function(event){
+    $scope.activateConsultation = function(event){
         event.preventDefault();
-        $rootScope.$broadcast("TOGGLE_CONSULTATION");
+        $rootScope.$broadcast("ACTIVATE_CONSULTATION");
         $scope.close();
     };
     

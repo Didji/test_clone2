@@ -511,6 +511,7 @@ ul.ged-gallery li img {
 	background: url(../images/compass.png);
     height: 32px;
     width:  32px;
+}
 
 .select2-search-choice-close{
     padding : 0 !important; /* Désolé, pris par le temps */
@@ -525,4 +526,11 @@ transition:none!important; /* Désolé, pris par le temps */
     background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 50%) !important; /* Désolé, pris par le temps */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0) !important; /* Désolé, pris par le temps */
     background-image: linear-gradient(top, #fff 0%, #eee 50%) !important; /* Désolé, pris par le temps */
+}
+
+.leaflet-control .icon {
+    font-size: 19px;
+    margin-top: 4px;
+    display: inline-block;
+    color: #fd9122;
 }
