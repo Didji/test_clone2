@@ -113,13 +113,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         return false;
     });
 
-    $scope.$on("TOGGLE_CONSULTATION", function(event){
-        $scope.toggleConsultation();
+    $scope.$on("ACTIVATE_CONSULTATION", function(event){
+        activateConsultation();
     });
     
-    $scope.$on("ACTIVATE_POSITION", function(event){
-        $scope.activatePosition();
-    });
+    $scope.$on("ACTIVATE_POSITION", activatePosition);
     
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
@@ -134,47 +132,55 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         $scope.zoomOnAsset(asset);
     });
 
+    // Fonction utilitaire créant un contrôle Leaflet.
+    function makeControl(title, icon, onclick) {
+        var constr = L.Control.extend({
+            options: {  position: 'topright' },
+            onAdd: function (map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar');
+                $(container)
+                    .html('<a href="#" title="'+title+'"><span class="icon '+icon+'"></span></a>')
+                    .on('click', onclick);
+                return container;
+            }
+        });
+        return new constr();
+    }
+    
+    
+    //
+    // Gestion du mode de suivi de la position GPS.
+    //
     var POSITION_MARKER, 
-        ANGLE_MARKER;
-    $scope.activatePosition = function(event) {
+        ANGLE_MARKER,
+        POSITION_CONTROL;
+    function activatePosition(event) {
         if(event){
             event.preventDefault();
         }
-        $scope.stopPosition();
-        if(!$scope.positionIndicatorCustomControl){
-            $scope.positionIndicatorCustomControl = L.Control.extend({
-                options: {  position: 'topright' },
-                onAdd: function (map) {
-                    var container = L.DomUtil.create('div', 'leaflet-bar');
-                    $(container)
-                        .html('<a href="#" ng-click="stopPosition($event)" title="Ma position"><span class="icon icon-compass"></span></a>')
-                        .on('click',$scope.stopPosition);
-                    return container;
-                }
-            });
-            $scope.positionIndicatorCustomControl = new $scope.positionIndicatorCustomControl();
+        stopPosition();
+        if(!POSITION_CONTROL){
+            POSITION_CONTROL = makeControl("Ma position", "icon-compass", stopPosition);
         }
-        G3ME.map.addControl($scope.positionIndicatorCustomControl);
+        G3ME.map.addControl(POSITION_CONTROL);
         G3ME.map.on('locationfound', setLocationMarker);
         G3ME.map.locate({watch: true, setView: true});
     };
     
-    $window.testPosition = function() {};
-    
-    $scope.stopPosition = function() {
+    function stopPosition() {
         G3ME.map.stopLocate();
-        if($scope.positionIndicatorCustomControl) {
-            G3ME.map.removeControl($scope.positionIndicatorCustomControl);
+        if(POSITION_CONTROL) {
+            G3ME.map.removeControl(POSITION_CONTROL);
         }
         removePositionMarker();
         return false;
     };
     
     function removePositionMarker() {
-        if(POSITION_MARKER) {
+        if(POSITION_MARKER && POSITION_MARKER._map) {
             G3ME.map.removeLayer(POSITION_MARKER);
         }
-        if(ANGLE_MARKER) {
+        if(ANGLE_MARKER && ANGLE_MARKER._map) {
             G3ME.map.removeLayer(ANGLE_MARKER);
         }
     }
@@ -182,7 +188,6 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     function setLocationMarker(event) {
         G3ME.map.off('locationfound', setLocationMarker);
         removePositionMarker();
-        console.log(event);
         POSITION_MARKER = new L.Circle(event.latlng, 
                                   event.accuracy, {
                                     clickable: false,
@@ -191,7 +196,10 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                                     fillOpacity: .05
                                   });
         POSITION_MARKER.addTo(G3ME.map);
-        
+        $(POSITION_MARKER._path).fadeOut(1500, function() {
+            G3ME.map.removeLayer(POSITION_MARKER);
+        });
+
         if('heading' in event) {
             ANGLE_MARKER = new L.Marker(event.latlng, {icon: L.divIcon({className: 'gi-compass'})});
             ANGLE_MARKER.addTo(G3ME.map);
@@ -201,31 +209,30 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     }
     
     
-    $scope.toggleConsultation = function (event){
+    //
+    // Gestion de la consultation.
+    //
+    var CONSULTATION_CONTROL;
+    function activateConsultation(event){
         if(event){
             event.preventDefault();
         }
-        $scope.consultationIsEnabled = !$scope.consultationIsEnabled;
-        if(!$scope.consultationIndicatorCustomControl){
-            $scope.consultationIndicatorCustomControl = L.Control.extend({
-                options: {  position: 'topright' },
-                onAdd: function (map) {
-                    var container = L.DomUtil.create('div', 'leaflet-bar');
-                    $(container)
-                        .html('<a href="#" ng-click="toggleConsultation($event)" title="Consultation"><span class="icon icon-info-sign"></span></a>')
-                        .on('click',$scope.toggleConsultation);
-                    return container;
-                }
-            });
-            $scope.consultationIndicatorCustomControl = new $scope.consultationIndicatorCustomControl();
+        stopConsultation();
+        $scope.consultationIsEnabled = true;
+        if(!CONSULTATION_CONTROL){
+            CONSULTATION_CONTROL = makeControl("Consultation", "icon-info-sign", stopConsultation);
         }
 
-        if($scope.consultationIsEnabled){
-            G3ME.map.addControl($scope.consultationIndicatorCustomControl);
-        } else {
-            G3ME.map.removeControl($scope.consultationIndicatorCustomControl);
-        }
+        G3ME.map.addControl(CONSULTATION_CONTROL);
     };
+    
+    function stopConsultation() {
+        $scope.consultationIsEnabled = false;
+        if(CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
+            G3ME.map.removeControl(CONSULTATION_CONTROL);
+        }
+        return false;
+    }
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
