@@ -13,12 +13,15 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
     $scope.criteria = {};
     for (var i in $rootScope.site.metamodel) {
         $scope.criteria[i] = [];
+        $scope.criteria[i]._byKey = [];
         for (var j = 0; j < $rootScope.site.metamodel[i].tabs.length; j++) {
             for (var k = 0; k < $rootScope.site.metamodel[i].tabs[j].fields.length; k++) {
                 $scope.criteria[i].push($rootScope.site.metamodel[i].tabs[j].fields[k]);
+                $scope.criteria[i]._byKey[$rootScope.site.metamodel[i].tabs[j].fields[k].key] = $rootScope.site.metamodel[i].tabs[j].fields[k];
             }
         }
     }
+
 
     $scope.search = function(event) {
         event.preventDefault();
