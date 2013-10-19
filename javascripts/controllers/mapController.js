@@ -28,12 +28,24 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         }
     });
 
+    function noConsultableAssets() {
+        var popup = L.popup().setLatLng(coords)
+                .setContent('<p>Aucun patrimoine dans cette zone.</p>')
+                .openOn(G3ME.map);
+        setTimeout(function() {
+            $(popup._container).fadeOut();
+        }, 3000);
+        $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
+        return false;
+    }
+    
     G3ME.map.on('click', function(e) {
 
         if (!$scope.consultationIsEnabled) {
             return false;
         }
 
+        $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED");
         var coords = e.latlng,
             mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
             radius = 40 * mpp,
@@ -64,13 +76,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         }
 
         if (!zone) {
-            var popup = L.popup().setLatLng(coords)
-                .setContent('<p>Aucun patrimoine dans cette zone.</p>')
-                .openOn(G3ME.map);
-            setTimeout(function() {
-                $(popup._container).fadeOut();
-            }, 3000);
-            return false;
+            return noConsultableAssets();
         }
 
         request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
@@ -88,13 +94,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax],
                 function(t, results) {
                     if (results.rows.length === 0 ) {
-                        var mapPopup = L.popup().setLatLng(coords)
-                            .setContent('<p style="color:black">Aucun patrimoine dans cette zone.</p>')
-                            .openOn(G3ME.map);
-                        setTimeout(function() {
-                            $(mapPopup._container).fadeOut();
-                        }, 3000);
-                        return false;
+                        return noConsultableAssets();
                     }
 
                     var assets = [], asset, asset_;
@@ -106,8 +106,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                         asset.priority = asset_.priority ;
                         assets.push(asset);
                     }
+                    
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-
                 }, Smartgeo.log);
         });
         return false;

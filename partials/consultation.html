@@ -34,12 +34,6 @@
                                         <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
                                         <h5>{{tab.label}}</h5>
                                         <table style="font-size: 0.8em;" class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
                                             <tbody>
                                                 <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
                                                     <td>{{field.label}}</td>
