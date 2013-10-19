@@ -98,6 +98,13 @@ html, body {
     overflow: auto;
     display: none;
 }
+
+.consultation-content h5 {
+    border-bottom: 1px solid gray;
+    margin-bottom: 0;
+    padding-bottom: 0.5em;
+    color: black;
+}
 .consultation-content button.closer {
     position: fixed;
     top: 5px;
