@@ -134,7 +134,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         $scope.zoomOnAsset(asset);
     });
 
-    var POSITION_MARKER;
+    var POSITION_MARKER, 
+        ANGLE_MARKER;
     $scope.activatePosition = function(event) {
         if(event){
             event.preventDefault();
@@ -153,10 +154,13 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             });
             $scope.positionIndicatorCustomControl = new $scope.positionIndicatorCustomControl();
         }
-        G3ME.map.locate({watch: true, setView: true});
-        G3ME.map.on('locationfound', setLocationMarker);
         G3ME.map.addControl($scope.positionIndicatorCustomControl);
+        G3ME.map.on('locationfound', setLocationMarker);
+        G3ME.map.locate({watch: true, setView: true});
     };
+    
+    $window.testPosition = function() {};
+    
     $scope.stopPosition = function() {
         G3ME.map.stopLocate();
         if($scope.positionIndicatorCustomControl) {
@@ -170,17 +174,30 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         if(POSITION_MARKER) {
             G3ME.map.removeLayer(POSITION_MARKER);
         }
+        if(ANGLE_MARKER) {
+            G3ME.map.removeLayer(ANGLE_MARKER);
+        }
     }
     
     function setLocationMarker(event) {
+        G3ME.map.off('locationfound', setLocationMarker);
+        removePositionMarker();
+        console.log(event);
         POSITION_MARKER = new L.Circle(event.latlng, 
                                   event.accuracy, {
                                     clickable: false,
                                     color: '#fd9122',
-                                    opacity: .2,
-                                    fillOpacity: .1
+                                    opacity: .1,
+                                    fillOpacity: .05
                                   });
         POSITION_MARKER.addTo(G3ME.map);
+        
+        if('heading' in event) {
+            ANGLE_MARKER = new L.Marker(event.latlng, {icon: L.divIcon({className: 'gi-compass'})});
+            ANGLE_MARKER.addTo(G3ME.map);
+            ANGLE_MARKER._icon.innerHTML = '<div></div>';
+            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)'
+        }
     }
     
     
