@@ -373,7 +373,10 @@ fieldset[disabled] .btn-primary.active {
     min-width: 300px;
 }
 
-
+label.fullwidth {
+    display: inline-block;
+    width: 100%;
+}
 label.prettycheckbox input, .list-group-item input{
     display: none;
 }

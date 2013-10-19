@@ -3,7 +3,7 @@
         <div class="list-group">
             <div ng-repeat="group in groups">
                 <h4 class="list-group-item active">
-                    <label ng-class="{checked: !!group.status}">
+                    <label class="fullwidth" ng-class="{checked: !!group.status}">
                         <span class="icon-check pull-left yes" ></span>
                         <span class="icon-check-empty pull-left no" ></span>
                         <input
@@ -15,7 +15,7 @@
                 </h4>
                 <div>
                     <p class="list-group-item" ng-repeat="layer in group.layers">
-                        <label ng-class="{checked: !!layers[layer.okey].status}">
+                        <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}">
                             <span class="icon-check pull-left yes" ></span>
                             <span class="icon-check-empty pull-left no" ></span>
                             <input
