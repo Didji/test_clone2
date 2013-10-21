@@ -1,4 +1,4 @@
-function intentController($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
+angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
 
     $scope.controller = $routeParams.controller ;
 
@@ -110,4 +110,4 @@ function intentController($scope, $routeParams, $location, $rootScope, Smartgeo,
                 break;
         }
     }
-}
+});

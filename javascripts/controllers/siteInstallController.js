@@ -1,4 +1,4 @@
-function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
+angular.module('smartgeomobile').controller('siteInstallController', function ($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
     $scope.steps = [{
         color: '#fd9122',
         progress: 0,
@@ -15,7 +15,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     }
 
     var stepsByOkey = {};
-            
+
     function buildSteps(site) {
         var steps = [],
             step,
@@ -23,7 +23,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             stepid = 0,
             numsteps = 0,
             i;
-        
+
         $scope.totalProgress =  1 * n.total;
         for(i in n) if(i !== 'number') {
             step = stepsByOkey[i] = {
@@ -34,7 +34,7 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             steps.push(step);
         }
         rainbow(steps);
-        
+
         $scope.steps = steps;
     }
 
@@ -51,12 +51,12 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
             steps[i].color = 'rgb('+[red, green, blue]+')';
         }
     }
-    
+
     var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
-    
+
     $http.get(url).success(function(sites){
         $scope.steps[0].progress = 50;
-       
+
         angular.extend($scope.sites, sites);
 
         for (var i = 0; i < sites.length; i++) {
@@ -66,10 +66,10 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
         }
         Installer.getInstallJSON($scope.site, function(site){
             $scope.steps[0].progress = 100;
-        
+
             var formatedSite = Installer.formatSiteMetadata(site);
             buildSteps(formatedSite);
-            
+
             angular.extend($scope.site, formatedSite);
             Installer.createZones($scope.site, function(){
                 Installer.install($scope.site, $scope.site.stats, function(){
@@ -93,4 +93,4 @@ function siteInstallController($scope, $routeParams, $http, Smartgeo, SQLite, $l
     });
 
 
-}
+});

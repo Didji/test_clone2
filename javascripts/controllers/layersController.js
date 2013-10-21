@@ -1,4 +1,4 @@
-function layersController($scope, G3ME) {
+angular.module('smartgeomobile').controller('layersController', function ($scope, G3ME){
     // TODO : trouver mieux
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
@@ -25,37 +25,37 @@ function layersController($scope, G3ME) {
     for(i in groups) {
         checkGroup(groups[i]);
     }
-    
+
     $scope.groups = groups;
     $scope.layers = layers;
 
     function checkGroup(g) {
         var stat = false,
             lays = g.layers;
-        
+
         for(var i in lays) {
             stat = stat || lays[i].status;
         }
         g.status = stat;
     }
-    
+
     $scope.refreshView = function() {
         for(var i in $scope.groups) {
             checkGroup($scope.groups[i]);
         }
-        
+
         G3ME.setVisibility($scope.layers);
     };
-    
+
     $scope.updateGroups = function(gid) {
         var g = $scope.groups[gid],
             stat = g.status,
             lays = g.layers;
-        
+
         for(var i in lays) {
             lays[i].status = stat;
         }
         $scope.refreshView();
     };
-    
-}
+
+});

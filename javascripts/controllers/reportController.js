@@ -1,4 +1,4 @@
-function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME){
+angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME){
 
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
@@ -323,4 +323,4 @@ function reportController($scope, $routeParams, $window, $rootScope, Smartgeo,  
         // return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     };
 
-}
+});

@@ -1,8 +1,8 @@
-function consultationController($scope, $rootScope, $window){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window){
 
     $scope.state  = 'closed';
     $scope.loading = false;
-    
+
     var PREOPEN_TIMER;
     // Lorsque la carte nous informe qu'une consultation est demandée,
     // on prépare une ouverture du panneau de consultation. S'il n'y a
@@ -25,13 +25,13 @@ function consultationController($scope, $rootScope, $window){
         $scope.loading = false;
         $scope.$apply();
     });
-        
+
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
 
         if(PREOPEN_TIMER) {
             clearTimeout(PREOPEN_TIMER);
         }
-        
+
         $scope.groups = {};
         $scope.assets = assets;
         $scope.assets._byGuid = [];
@@ -59,7 +59,7 @@ function consultationController($scope, $rootScope, $window){
             $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
         });
     });
-    
+
     $scope.close = function(){
         $scope.state = 'closed';
     };
@@ -88,4 +88,4 @@ function consultationController($scope, $rootScope, $window){
         return true;
     };
 
-}
+});

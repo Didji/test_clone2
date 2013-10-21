@@ -1,4 +1,4 @@
-function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location){
+angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location){
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
@@ -38,7 +38,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
         return false;
     }
-    
+
     G3ME.map.on('click', function(e) {
 
         if (!$scope.consultationIsEnabled) {
@@ -106,7 +106,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
                         asset.priority = asset_.priority ;
                         assets.push(asset);
                     }
-                    
+
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 }, Smartgeo.log);
         });
@@ -116,9 +116,9 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
     $scope.$on("ACTIVATE_CONSULTATION", function(event){
         activateConsultation();
     });
-    
+
     $scope.$on("ACTIVATE_POSITION", activatePosition);
-    
+
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
     });
@@ -146,12 +146,12 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         });
         return new constr();
     }
-    
-    
+
+
     //
     // Gestion du mode de suivi de la position GPS.
     //
-    var POSITION_MARKER, 
+    var POSITION_MARKER,
         ANGLE_MARKER,
         POSITION_CONTROL;
     function activatePosition(event) {
@@ -166,7 +166,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         G3ME.map.on('locationfound', setLocationMarker);
         G3ME.map.locate({watch: true, setView: true});
     };
-    
+
     function stopPosition() {
         G3ME.map.stopLocate();
         if(POSITION_CONTROL) {
@@ -175,7 +175,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         removePositionMarker();
         return false;
     };
-    
+
     function removePositionMarker() {
         if(POSITION_MARKER && POSITION_MARKER._map) {
             G3ME.map.removeLayer(POSITION_MARKER);
@@ -184,11 +184,11 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             G3ME.map.removeLayer(ANGLE_MARKER);
         }
     }
-    
+
     function setLocationMarker(event) {
         G3ME.map.off('locationfound', setLocationMarker);
         removePositionMarker();
-        POSITION_MARKER = new L.Circle(event.latlng, 
+        POSITION_MARKER = new L.Circle(event.latlng,
                                   event.accuracy, {
                                     clickable: false,
                                     color: '#fd9122',
@@ -207,8 +207,8 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
             ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)'
         }
     }
-    
-    
+
+
     //
     // Gestion de la consultation.
     //
@@ -225,7 +225,7 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
 
         G3ME.map.addControl(CONSULTATION_CONTROL);
     };
-    
+
     function stopConsultation() {
         $scope.consultationIsEnabled = false;
         if(CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
@@ -296,4 +296,4 @@ function mapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, 
         G3ME.invalidateMapSize();
     };
 
-}
+});
