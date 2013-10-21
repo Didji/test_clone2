@@ -1,4 +1,4 @@
-function siteListController($scope, $http, $location, Smartgeo) {
+angular.module('smartgeomobile').controller('siteListController', function ($scope, $http, $location, Smartgeo) {
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
@@ -78,4 +78,4 @@ function siteListController($scope, $http, $location, Smartgeo) {
     $scope.online = Smartgeo.get('online');
     $scope.online === true ? getRemoteSites() : getLocalSites();
 
-}
+});

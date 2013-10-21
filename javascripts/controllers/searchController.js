@@ -1,4 +1,4 @@
-function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite){
+angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite){
 
     // TODO : trouver mieux
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
@@ -99,4 +99,4 @@ function searchController($scope, $routeParams, $window, $rootScope, Smartgeo, S
         });
     };
 
-}
+});

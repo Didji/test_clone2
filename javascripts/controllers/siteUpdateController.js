@@ -1,4 +1,4 @@
-function siteUpdateController($scope,$rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
+angular.module('smartgeomobile').controller('siteUpdateController', function ($scope,$rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer) {
 
     $scope.steps = [{
         color: '#fd9122',
@@ -90,4 +90,4 @@ function siteUpdateController($scope,$rootScope, $routeParams, $http, Smartgeo, 
     });
 
 
-}
+});

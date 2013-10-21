@@ -1,7 +1,7 @@
 /**
  * Controlleur d'authentification
  */
-function authController($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite){
+angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite){
 
 
     var lastuser = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
@@ -115,4 +115,4 @@ function authController($scope, $rootScope, $http, $location, $window, Smartgeo,
         Smartgeo.unset('user');
     };
 
-}
+});

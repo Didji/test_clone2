@@ -1,4 +1,4 @@
-function synchronizationMenuController($scope, $rootScope,$http, $location, Smartgeo, $window) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window) {
 
     // TODO : a faire dans l'installation (pour des raisons obscures, je n'y suis pas arrivé)
     $rootScope.site.activities._byId = [];
@@ -8,7 +8,7 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
 
     $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
     $scope.reports = Smartgeo.get('reports') || [] ;
-    
+
     $rootScope.$on("DEVICE_IS_ONLINE", function(){
         $scope.syncAll();
     });
@@ -37,4 +37,4 @@ function synchronizationMenuController($scope, $rootScope,$http, $location, Smar
         Smartgeo.set('reports',$scope.reports);
         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
     };
-}
+});
