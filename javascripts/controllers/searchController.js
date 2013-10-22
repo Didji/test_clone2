@@ -82,7 +82,9 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
             if(!results.length){
                 $scope.advancedSearchMessage = 'Aucun résultat' ;
-                $scope.$apply();
+                if(!$scope.$$phase) {
+                	$scope.$apply();
+                }
                 return ;
             } else {
                 $scope.advancedSearchMessage = '';
