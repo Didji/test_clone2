@@ -32,5 +32,5 @@ java -jar compiler.jar --js smartgeomobile.annotated.js --js_output_file dist/ja
 rm smartgeomobile.cat.js
 # rm smartgeomobile.cat.vendors.js
 rm smartgeomobile.annotated.js
-rm smartgeomobile.closure.js
+# rm smartgeomobile.closure.js
 
