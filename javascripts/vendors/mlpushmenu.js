@@ -206,13 +206,11 @@ if ( typeof define === 'function' && define.amd ) {
 				}
 				// the menu should close if clicking somewhere on the body (excluding clicks on the menu)
 				document.addEventListener( self.eventtype, function( ev ) {
-					if(  self.open &&
-						!hasParent( ev.target, self.el.id ) &&
-						!( ev.currentTarget.classList && ev.currentTarget.classList.contains("select2-offscreen"))) {
+					if( self.open && ev.target.classList.contains('mp-pusher') ){
 						bodyClickFn( this );
 					}
-				} );
-			} );
+				});
+			});
 
 			// opening a sub level menu
 			this.menuItems.forEach( function( el, i ) {
