@@ -1,0 +1,32 @@
+<ul ng-controller="layersController">
+    <li class="container">
+        <div class="list-group">
+            <div ng-repeat="group in groups">
+                <h4 class="list-group-item active">
+                    <label class="fullwidth" ng-class="{checked: !!group.status}">
+                        <span class="icon-check pull-left yes" ></span>
+                        <span class="icon-check-empty pull-left no" ></span>
+                        <input
+                                type="checkbox"
+                                ng-model="group.status"
+                                ng-click="updateGroups(group.label)"></input>
+                        {{group.label}}
+                    </label>
+                </h4>
+                <div>
+                    <p class="list-group-item" ng-repeat="layer in group.layers">
+                        <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}">
+                            <span class="icon-check pull-left yes" ></span>
+                            <span class="icon-check-empty pull-left no" ></span>
+                            <input
+                                    type="checkbox"
+                                    ng-model="layers[layer.okey].status"
+                                    ng-click="refreshView()"></input>
+                            {{layer.label}}
+                        </label>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
