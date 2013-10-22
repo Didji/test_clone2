@@ -161,7 +161,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 return callback(partial_response);
             }
 
-            var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ?',  _this = this;
+            var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ? limit 0, 10',  _this = this;
 
             SQLite.openDatabase({
                 name: zones[0].database_name
