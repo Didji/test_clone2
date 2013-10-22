@@ -69,7 +69,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
               if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] != 0) {
                   stats.push({
                       'okey'   : okey,
-                      'amount' : site.number[okey],
+                      'amount' : site.number[okey]
                   });
               }
             }
