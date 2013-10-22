@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope){
+angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
 
     var Installer = {
 
@@ -197,12 +197,15 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                                 okey: objectType.okey,
                                 progress: objectType.amount
                             });
-
-                            callback();
+                            $timeout(function(){
+                                callback();
+                            }, 100);
                         });
                     })
                     .error(function(){
-                        Installer.installOkey(site, objectType, callback);
+                        $timeout(function(){
+                            Installer.installOkey(site, objectType, callback);
+                        }, 100);
                     });
             }
         },
@@ -230,11 +233,14 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                             okey: objectType.okey,
                             progress: Math.min(newlastFetched, objectType.amount)
                         });
-
-                        Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
+                        $timeout(function(){
+                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
+                        }, 100);
                     });
                 }).error(function(){
-                    Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
+                    $timeout(function(){
+                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback);
+                    }, 100);
                 });
         },
 
