@@ -8,7 +8,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         mapDivId: null,
         databases: {},
 
-        benchMe : true,
+        benchMe : false,
         benchmarks: {},
         benchmarkResults: [],
         benchmarkGlobalResultPerSQL:  0,
