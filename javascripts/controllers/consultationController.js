@@ -17,7 +17,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
             $scope.$apply();
         }, 200);
     });
-    $scope.$on("CONSULTATION_CLICK_CANCELLED", function() {
+    $scope.$on("CONSULTATION_CLICK_CANCELED", function() {
         if(PREOPEN_TIMER) {
             clearTimeout(PREOPEN_TIMER);
         }
