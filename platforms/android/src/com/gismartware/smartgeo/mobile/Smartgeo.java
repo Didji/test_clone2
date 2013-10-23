@@ -52,11 +52,14 @@ public class Smartgeo extends CordovaActivity {
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
 	
+	private static final int SPLASH_DELAY = Integer.parseInt(MESSAGES.getString("splashscreen.duration"));
+	
 	private SharedPreferences preferences;
 	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.setIntegerProperty("splashscreen", R.drawable.splash);
 		super.onCreate(savedInstanceState);
 		super.init();
 		
@@ -73,7 +76,7 @@ public class Smartgeo extends CordovaActivity {
 			url += getIntentUrl(getIntent());
 		}
 		Log.d(this.getClass().getSimpleName(), "[onCreate] Load url " + url);
-		super.loadUrl(url);
+		super.loadUrl(url, SPLASH_DELAY);
 	}
 	
 	/**
