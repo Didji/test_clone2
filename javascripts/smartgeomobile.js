@@ -20,8 +20,6 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                     $location.path("/");
                 }});
 
-;
-
     }]).config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.withCredentials = true;
         $httpProvider.defaults.useXDomain = true;
@@ -32,12 +30,37 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
                 elm.on('click', function() {
+
                     navigator.getMedia = ( navigator.getUserMedia ||
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia ||
                          navigator.msGetUserMedia);
 
-                    if(navigator.getMedia){
+                    if (window.SmartgeoChromium && SmartgeoChromium.launchCamera){
+                        if(!window.ChromiumCallbacks){
+                            window.ChromiumCallbacks = [];
+                        }
+                        window.ChromiumCallbacks[1] = function(path){
+                            console.log(path);
+                            var img = document.createElement("img");
+                            img.src = path;
+                            img.onload = function(){
+                                var canvas = document.createElement("canvas");
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                canvas.getContext("2d").drawImage(img, 0, 0);
+                                scope.$apply(function(){
+                                    ctrl.$viewValue=ctrl.$viewValue||[];
+                                    ctrl.$viewValue.push({
+                                        content:canvas.toDataURL("image/png")
+                                    });
+                                });
+                            };
+                        };
+
+                        SmartgeoChromium.launchCamera(1);
+
+                    } else if(navigator.getMedia){
                         var streaming = false,
                             video     = document.createElement("video");
                             canvas    = document.createElement("canvas");
@@ -115,7 +138,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                     content:canvas.toDataURL("image/png")
                                 });
                             });
-                        }
+                        };
                     }
                 });
             }
