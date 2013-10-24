@@ -13,7 +13,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     $scope.firstAuth    = false;
     $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') ;
     $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
-
+    $scope.rememberme = lastuser.password.length ? true : false;
     $scope.$on("DEVICE_IS_ONLINE", ping);
     $scope.$on("DEVICE_IS_OFFLINE", ping);
 
@@ -66,13 +66,13 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
-                if(lastuser.password !== $scope.pwd) {
-                    var rememberme  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
+                // if(lastuser.password !== $scope.pwd) {
+                    // var $scope.rememberme  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
                     lastuser = {
-                        password:   rememberme ? $scope.pwd : '',
-                        rememberme: rememberme
+                        password:   $scope.rememberme ? $scope.pwd : '',
+                        rememberme: $scope.rememberme
                     };
-                }
+                // }
                 lastuser.username = $scope.username;
                 Smartgeo.set('user',lastuser);
                 $location.path('sites');
