@@ -5,7 +5,9 @@
         <p><input class="form-control" type='text' ng-model="gimapUrl" ng-show='firstAuth' placeholder='URL Backoffice' /></p>
         <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
         <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
+        <p>Se souvenir du mot de passe <input type="checkbox" ng-model="rememberme"></p>
         <hr>
+
 
         <button class="btn btn-lg btn-primary btn-block  has-spinner " ng-class='{active:!readyToLog && !firstAuth}' type="submit"
                 ng-disabled=" (!readyToLog && !firstAuth) || (firstAuth && !gimapUrl)">
