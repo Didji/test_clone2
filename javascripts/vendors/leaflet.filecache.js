@@ -845,7 +845,8 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     getRemoteETag: function(tileObject, callback){
         var http = new XMLHttpRequest(),
             url  = this.getTileUrl({x:tileObject.x, y:tileObject.y},tileObject.z);
-        http.open('HEAD', url);
+        http.withCredentials = true;
+        http.open('HEAD', url, true);
         http.onreadystatechange = function() {
             if (this.readyState == this.DONE && this.status === 200) {
                 callback(this.getResponseHeader("etag"));
