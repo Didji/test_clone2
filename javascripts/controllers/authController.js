@@ -47,11 +47,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          *       (they looks like no connection)
          */
         if(status === 403){
-            $window.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
+            alertify.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
         } else if (status === ''){
-            $window.alert("L'application n'est pas parvenue à joindre le serveur.");
+            alertify.alert("L'application n'est pas parvenue à joindre le serveur.");
         } else {
-            $window.alert("Connexion au serveur impossible ("+status+")");
+            alertify.alert("Connexion au serveur impossible ("+status+")");
         }
         ping();
     }
@@ -84,7 +84,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         if(knownUsers[$scope.username] === $scope.pwd) {
             $location.path('sites');
         } else {
-            $window.alert("Le mode déconnecté n'est pas disponible pour cet utilisateur car il ne s'est jamais authentifié en mode connecté.");
+            alertify.alert("Le mode déconnecté n'est pas disponible pour cet utilisateur car il ne s'est jamais authentifié en mode connecté.");
         }
     }
 
@@ -97,7 +97,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                     $scope.firstAuth = false ;
                     $scope.login();
                 } else {
-                    $window.alert("Le serveur n'est pas joignable.");
+                    alertify.alert("Le serveur n'est pas joignable.");
                 }
             });
         }
@@ -106,7 +106,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.pwd      = $scope.pwd.trim();
 
         if(!$scope.username.length || !$scope.pwd.length){
-            $window.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
+            alertify.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
             return false ;
         }
         Smartgeo.get('online') === true ? remoteLogin() : localLogin();
