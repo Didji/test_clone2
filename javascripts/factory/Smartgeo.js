@@ -6,13 +6,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _MAP_MAX_ZOOM : 20,
         _MAP_MIN_ZOOM : 13,
 
-        // INSTALLATION CONSTANTS
-        _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
-        _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
-        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :   50,
-        _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
-        _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
-
         // _OVERRIDE_GIMAP_URL: "54.217.119.16",
 
         // GLOBAL CONSTANTS
