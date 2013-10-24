@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope){
+angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location){
 
     var Smartgeo = {
 
@@ -13,11 +13,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _G3ME_VERSION               : "0.1.0",
 
         // METHODS
-        setGimapUrl : function(){
-            var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');
-            if(!url && url !== null) {
-                return this.setGimapUrl();
-            } else if (url === null){
+        setGimapUrl : function(url){
+            // // var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');
+            // if(!url && url !== null) {
+            //     return this.setGimapUrl();
+            // } else
+            if (url === null){
                 return null;
             }
             if( url.indexOf('http') === -1 ) {
@@ -27,7 +28,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 url = url + '/index.php?service=';
             }
             Smartgeo.reset();
-            return this.set('url', url);
+            this.set('url', url);
+            return url ;
         },
 
         reset: function(){
@@ -274,8 +276,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
     };
 
     // Initialization
-    if(!Smartgeo.get('url')){
-        Smartgeo.setGimapUrl();
+    if(!Smartgeo.get('url') && $location.path() !== '/'){
+        $location.path('/');
     }
 
     Smartgeo._initializeGlobalEvents();

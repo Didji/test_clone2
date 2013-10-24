@@ -10,28 +10,36 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     $scope.username     = lastuser.username;
     $scope.pwd          = lastuser.password;
     $scope.readyToLog   = false;
-    $scope.logMessage   = "Vérification du serveur";
-    $scope.gimapUrl     = Smartgeo.get('url') ;
+    $scope.firstAuth    = false;
+    $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') ;
     $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
 
     $scope.$on("DEVICE_IS_ONLINE", ping);
     $scope.$on("DEVICE_IS_OFFLINE", ping);
 
-    ping();
+    if($scope.gimapUrl){
+        ping();
+    } else {
+        $scope.firstAuth  = true ;
+        $scope.logMessage = "Initialisation";
+    }
+
 
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
-    function ping() {
+    function ping(callback) {
         $scope.readyToLog = false;
         $scope.logMessage = "Vérification du serveur";
 
         Smartgeo.ping(function(serverIsReachable){
             $scope.logMessage = "Connexion " + (serverIsReachable ? 'distante' : 'locale');
             $scope.readyToLog = true;
+            if(typeof callback === 'function'){
+                (callback || function(){})(serverIsReachable);
+            }
         });
     };
-
 
     function loginFailed(response, status) {
         /**
@@ -82,8 +90,20 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
 
     $scope.login = function(){
 
-        $scope.username = $scope.username.trim()
-        $scope.pwd      = $scope.pwd.trim()
+        if($scope.firstAuth){
+            $scope.gimapUrl = Smartgeo.setGimapUrl($scope.gimapUrl);
+            return ping(function(serverIsReachable){
+                if(serverIsReachable){
+                    $scope.firstAuth = false ;
+                    $scope.login();
+                } else {
+                    $window.alert("Le serveur n'est pas joignable.");
+                }
+            });
+        }
+
+        $scope.username = $scope.username.trim();
+        $scope.pwd      = $scope.pwd.trim();
 
         if(!$scope.username.length || !$scope.pwd.length){
             $window.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
@@ -93,21 +113,10 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     $scope.setGimapUrl = function(){
-
-        if(Smartgeo.setGimapUrl() === null){
-            // L'utilisateur a annulé
-            return ;
-        }
+        $scope.firstAuth = true ;
+        $scope.gimapUrl  = null ;
         $scope.username = '';
         $scope.pwd      = '';
-        $scope.gimapUrl = Smartgeo.get('url') ;
-        $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
-
-        ping();
-
-        Smartgeo.unset('sites');
-        Smartgeo.unset('knownUsers');
-
     };
 
     $scope.forgetPassword = function() {
