@@ -265,6 +265,18 @@ html, body {
     background-color: #fd9122;
     border-color: #fd9122;
 }
+/** Eléments actifs */
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #fd9122;
+}
+.select2-results .select2-highlighted {
+    background-color: #fd9122;
+    color: #fff;
+}
+select:hover option:hover {
+    background-color: #fd9122!important;
+    color: #fff;
+}
 
 .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
 z-index: 2;
