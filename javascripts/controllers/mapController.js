@@ -112,7 +112,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         });
         return false;
     });
-
+    
     $scope.$on("ACTIVATE_CONSULTATION", function(event){
         activateConsultation();
     });

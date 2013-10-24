@@ -88,4 +88,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         return true;
     };
 
+    $scope.pretifyField = function (s) {
+        return s.replace(/\\n/g, '\n');
+    };
 });
