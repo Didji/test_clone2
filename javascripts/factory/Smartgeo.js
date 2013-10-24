@@ -9,9 +9,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
         _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
-        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  400,
+        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :   50,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
+
+        // _OVERRIDE_GIMAP_URL: "54.217.119.16",
 
         // GLOBAL CONSTANTS
         _SMARTGEO_MOBILE_VERSION    : "0.9.2",
@@ -19,7 +21,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // METHODS
         setGimapUrl : function(){
-            var url = prompt('URL GiMAP', Smartgeo.get('url') || '');
+            var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');
             if(!url && url !== null) {
                 return this.setGimapUrl();
             } else if (url === null){
@@ -100,14 +102,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 request += ' (id like ? or id = ? ) ';
                 arguments_.push(1 * guids[j], 1 * guids[j]);
             }
-            console.log("Attention, j'ouvre la base !")
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
-                console.log("C'est bon c'est ouvert. Je transactionne ...");
                 t.executeSql(request, arguments_,
                     function(tx, rslt) {
-                        console.log("C'est bon j'ai "+rslt.rows.length+" resultat(s)");
                         for (var i = 0; i < rslt.rows.length; i++) {
                             var ast = rslt.rows.item(i);
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
