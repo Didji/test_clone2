@@ -6,6 +6,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
         mapDiv : null,
         mapDivId: null,
+        databases: {},
 
         benchMe : false,
         benchmarks: {},
@@ -306,10 +307,13 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                         G3ME.benchStart(this.site.zones[i].database_name);
                     }
                     (function(zone){
-                        SQLite.openDatabase({
-                            name: zone.database_name,
-                            bgType: 1
-                        }).transaction(function(tx) {
+                        if(!G3ME.databases[zone.database_name]) {
+                            G3ME.databases[zone.database_name] = SQLite.openDatabase({
+                                name: zone.database_name,
+                                bgType: 1
+                            });
+                        }
+                        G3ME.databases[zone.database_name].transaction(function(tx) {
                                 tx.executeSql(request, initargs,
                                     function(tx, results) {
                                         var rows = results.rows;
