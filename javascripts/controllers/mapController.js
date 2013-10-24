@@ -3,7 +3,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
     if(!$rootScope.site){
-        $window.alert("Aucun site n'est disponible.");
+        alertify.alert("Aucun site n'est disponible.");
         $location.path("#");
         return false ;
     }
