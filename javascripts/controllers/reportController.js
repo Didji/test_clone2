@@ -261,9 +261,12 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     function endOfReport(){
         if($rootScope.report_url_redirect){
             $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) ;
-            document.location = $rootScope.report_url_redirect;
+            if(window.SmartgeoChromium && SmartgeoChromium.redirect){
+                SmartgeoChromium.redirect($rootScope.report_url_redirect);
+            } else {
+                document.location = $rootScope.report_url_redirect;
+            }
         } else {
-            console.log($rootScope);
             $location.path('map/'+$rootScope.site.id);
         }
     }
