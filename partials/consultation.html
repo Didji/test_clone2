@@ -50,10 +50,12 @@
 
                                     <hr ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
 
-                                    <a class="btn btn-primary btn-block" 
+                                    <a class="btn btn-primary btn-block"
                                         ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'>
                                         {{site.activities._byId[map_activity||report_activity].label}}
                                     </a>
+
+
 
                                     <div class="btn-group dropup" style="width:100%" ng-show='!report_activity && !map_activity'>
                                       <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -74,6 +76,9 @@
                     </div>
                 </div>
             </div>
+
+                <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lng, coordinates.lat)">Compte rendu sur cette position</button>
+
     </div>
 
 </div>
