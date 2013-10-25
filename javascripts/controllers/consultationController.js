@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location){
 
     $scope.state  = 'closed';
     $scope.loading = false;
@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
             }
             $scope.assets._byGuid[assets[i].guid] = assets[i];
             $scope.groups[assets[i].priority][assets[i].okey][assets[i].guid] = assets[i]  ;
-        };
+        }
         $scope.state  = 'open';
         $scope.loading = false;
         $scope.$apply();
