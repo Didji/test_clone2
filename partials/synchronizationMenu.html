@@ -33,9 +33,21 @@
 
         <li ng-show="!reports.length">
             <a style='padding-left: 1em;font-size:1em;'>
-                Tout est synchronisé !
+                <span class="icon-check"></span>
+                Tous les comptes rendus sont synchronisés.
             </a>
         </li>
-
+        <li>
+            <a style='padding-left: 1em;font-size:1em;' href="#/sites/update/{{site.id}}">
+                <span class="icon-refresh"></span>
+                Mettre à jour {{site.label}}
+            </a>
+        </li>
+        <li>
+            <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">
+                <span class="icon-trash"></span>
+                Désinstaller {{site.label}}
+            </a>
+        </li>
     </ul>
 </div>

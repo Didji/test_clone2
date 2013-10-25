@@ -62,21 +62,21 @@ html, body {
     right: 0;
     background-color: #373f45;
     height: 100%;
-    width: 0;
+    width: 0px;
     position: absolute;
     z-index: 1000;
     top: 0;
     color: gray;
-    width: 300px;
-
-    -webkit-transition: -webkit-transform 0.5s;
-    transition:  transform 0.5s;
+/*
+    -webkit-transition: width  -webkit-transform 0.5s;
+    transition:  width transform 0.5s;
     -webkit-transform: translate3d(100%, 0, 0);
-    transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);*/
 }
 .consultation-panel.open {
-    -webkit-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+  /*  -webkit-transform: translate3d(0%, 0, 0);
+    transform: translate3d(0%, 0, 0);*/
+    width: 300px;
 }
 
 #toggleConsultationPanelButton{
@@ -209,7 +209,7 @@ html, body {
     .floating-form {
         margin-top: 10px;
     }
-    
+
 }
 @media (max-height: 350px) {
     .floating-form img {
@@ -219,7 +219,7 @@ html, body {
         margin: 0;
         padding: 0;
     }
-    
+
     .floating-form small,.floating-form hr {
         display:none;
     }
@@ -518,7 +518,7 @@ ul.ged-gallery li img {
     /* Quand @gulian ajoute des !importants, il met un commentaire
        disant qu'il est désolé. Pas moi : c'est leaflet qui m'y force
        en mettant des attributs styles sur les objets...
-       
+
        Signé: Fabrice.
     */
     height: 32px!important;
