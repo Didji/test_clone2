@@ -38,10 +38,10 @@
                                                 <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
                                                     <td>{{field.label}}</td>
                                                     <td ng-show='site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(site.lists[field.options][asset.attributes[field.key]])}}
+                                                        {{prettifyField(site.lists[field.options][asset.attributes[field.key]])}}
                                                     </td>
                                                     <td ng-show='!site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(asset.attributes[field.key])}}
+                                                        {{prettifyField(asset.attributes[field.key])}}
                                                     </td>
                                                 </tr>
                                             </tbody>
