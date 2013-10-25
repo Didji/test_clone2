@@ -111,9 +111,9 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.prettifyField = function (s) {
-        if('object' === typeof s) {
+        if('string' !== typeof s) {
             return s;
         }
-        return (s || '').replace(/\\n/g, '\n');
+        return ((s + '') || '').replace(/\\n/g, '\n');
     };
 });
