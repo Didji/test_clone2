@@ -115,7 +115,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
         return true;
     };
 
-    $scope.pretifyField = function (s) {
-        return s.replace(/\\n/g, '\n');
+    $scope.prettifyField = function (s) {
+        if('string' !== typeof s) {
+            return s;
+        }
+        return ((s + '') || '').replace(/\\n/g, '\n');
     };
 });

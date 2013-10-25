@@ -3,7 +3,7 @@
         <span class="icon-info"></span>
     </div>
 
-    <div class="consultation-content">
+    <div class="consultation-content" >
         <button type="button" class="closer btn pull-right" ng-click="close()" style="padding: 1px 7px;">&times;</button>
 
         <div ng-if="loading" class="alert alert-warning">
@@ -38,10 +38,10 @@
                                                 <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
                                                     <td>{{field.label}}</td>
                                                     <td ng-show='site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(site.lists[field.options][asset.attributes[field.key]])}}
+                                                        {{prettifyField(site.lists[field.options][asset.attributes[field.key]])}}
                                                     </td>
                                                     <td ng-show='!site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(asset.attributes[field.key])}}
+                                                        {{prettifyField(asset.attributes[field.key])}}
                                                     </td>
                                                 </tr>
                                             </tbody>
