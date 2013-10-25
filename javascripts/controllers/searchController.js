@@ -22,6 +22,20 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         }
     }
 
+    function closest( e, classname ) {
+        return classie.has( e, classname )? e  : e.parentNode && closest( e.parentNode, classname );
+    }
+
+    $scope.backToPreviousLevel = function(event){
+        event.preventDefault();
+        var level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' );
+        if( $scope.mlPushMenu.level <= level ) {
+            event.stopPropagation();
+            $scope.mlPushMenu.level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' ) - 1;
+            $scope.mlPushMenu.level === 0 ? $scope.mlPushMenu._resetMenu() : $scope.mlPushMenu._closeMenu();
+        }
+        return false;
+    };
 
     $scope.search = function(event) {
         event.preventDefault();

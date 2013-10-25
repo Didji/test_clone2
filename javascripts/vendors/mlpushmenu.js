@@ -152,69 +152,26 @@ if ( typeof define === 'function' && define.amd ) {
 
 	mlPushMenu.prototype = {
 		defaults : {
-			// overlap: there will be a gap between open levels
-			// cover: the open levels will be on top of any previous open level
 			type : 'overlap', // overlap || cover
-			// space between each overlaped level
 			levelSpacing : 40,
-			// classname for the element (if any) that when clicked closes the current level
 			backClass : 'mp-back'
 		},
 		_init : function() {
-			// if menu is open or not
-			this.open = false;
-			// level depth
-			this.level = 0;
-			// the moving wrapper
-			this.wrapper = document.getElementById( 'mp-pusher' );
-			// the mp-level elements
-			this.levels = Array.prototype.slice.call( this.el.querySelectorAll( 'div.mp-level' ) );
-			// save the depth of each of these mp-level elements
 			var self = this;
+			this.open = false;
+			this.level = 0;
+			this.wrapper = document.getElementById( 'mp-pusher' );
+			this.levels = Array.prototype.slice.call( this.el.querySelectorAll( 'div.mp-level' ) );
 			this.levels.forEach( function( el, i ) { el.setAttribute( 'data-level', getLevelDepth( el, self.el.id, 'mp-level' ) ); } );
-			// the menu items
 			this.menuItems = Array.prototype.slice.call( this.el.querySelectorAll( 'li' ) );
-			// if type == "cover" these will serve as hooks to move back to the previous level
 			this.levelBack = Array.prototype.slice.call( this.el.querySelectorAll( '.' + this.options.backClass ) );
-			// event type (if mobile use touch events)
 			this.eventtype = mobilecheck() ? 'touchstart' : 'click';
-			// add the class mp-overlap or mp-cover to the main element depending on options.type
 			classie.add( this.el, 'mp-' + this.options.type );
-			// initialize / bind the necessary events
 			this._initEvents();
 		},
 		_initEvents : function() {
 			var self = this;
-
-			// the menu should close if clicking somewhere on the body
-			var bodyClickFn = function( el ) {
-				self._resetMenu();
-				el.removeEventListener( self.eventtype, bodyClickFn );
-			};
-
-			// open (or close) the menu
-			this.trigger.addEventListener( this.eventtype, function( ev ) {
-				ev.stopPropagation();
-				ev.preventDefault();
-				self.menuState = self.menuState || 'closed';
-
-				if(self.menuState  === 'closed'){
-					self._openMenu();
-					self.menuState = 'opened';
-				} else {
-					self._resetMenu();
-				}
-				// the menu should close if clicking somewhere on the body (excluding clicks on the menu)
-				document.addEventListener( self.eventtype, function( ev ) {
-					if( self.open && ev.target.classList.contains('mp-pusher') ){
-						bodyClickFn( this );
-					}
-				});
-			});
-
-			// opening a sub level menu
 			this.menuItems.forEach( function( el, i ) {
-				// check if it has a sub level
 				var subLevel = el.querySelector( 'div.mp-level' );
 				if( subLevel ) {
 					el.querySelector( 'a' ).addEventListener( self.eventtype, function( ev ) {
@@ -228,9 +185,6 @@ if ( typeof define === 'function' && define.amd ) {
 					} );
 				}
 			} );
-
-			// closing the sub levels :
-			// by clicking on the visible part of the level element
 			this.levels.forEach( function( el, i ) {
 				el.addEventListener( self.eventtype, function( ev ) {
 					ev.stopPropagation();
@@ -241,20 +195,8 @@ if ( typeof define === 'function' && define.amd ) {
 					}
 				} );
 			} );
-
-			// by clicking on a specific element
-			this.levelBack.forEach( function( el, i ) {
-				el.addEventListener( self.eventtype, function( ev ) {
-					ev.preventDefault();
-					var level = closest( el, 'mp-level' ).getAttribute( 'data-level' );
-					if( self.level <= level ) {
-						ev.stopPropagation();
-						self.level = closest( el, 'mp-level' ).getAttribute( 'data-level' ) - 1;
-						self.level === 0 ? self._resetMenu() : self._closeMenu();
-					}
-				} );
-			} );
 		},
+
 		_openMenu : function( subLevel ) {
 			// increment level depth
 			this.menuState = 'opened';
