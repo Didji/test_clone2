@@ -50,7 +50,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     }
 
     function autoLoadOrNot() {
-        if($scope.sites.length > 1) {
+        if($scope.sites.length > 1 || !$scope.sites[0]) {
             // On a plus d'un site : on reste dans cette vue
             // pour afficher la liste des sites et laisser l'utilisateur
             // choisir.

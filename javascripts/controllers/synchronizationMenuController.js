@@ -27,7 +27,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
             }).error(function(error){
                 if(error.error){
-                    $window.alert('CR Non synchronisé : ' + error.error.text);
+                    alertify.error('CR Non synchronisé : ' + error.error.text);
                 }
             });
     };

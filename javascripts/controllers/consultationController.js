@@ -17,7 +17,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
             $scope.$apply();
         }, 200);
     });
-    $scope.$on("CONSULTATION_CLICK_CANCELLED", function() {
+    $scope.$on("CONSULTATION_CLICK_CANCELED", function() {
         if(PREOPEN_TIMER) {
             clearTimeout(PREOPEN_TIMER);
         }
@@ -60,6 +60,28 @@ angular.module('smartgeomobile').controller('consultationController', function (
         });
     });
 
+    $scope.gotoAsset = function(asset){
+
+        // NOT TESTED
+
+        // if(window.SmartgeoChromium && SmartgeoChromium.goTo && SmartgeoChromium.getLocation){
+
+        //     if(!window.ChromiumCallbacks){
+        //         window.ChromiumCallbacks = [] ;
+        //     }
+
+        //     ChromiumCallbacks[0] = function(lng, lat, alt){
+        //         SmartgeoChromium.goTo(lng, lat, asset.xmin, asset.ymax);
+        //     };
+
+        //     SmartgeoChromium.getLocation(0);
+
+        // } else {
+        //     console.log('Not implemented but going from here to', [asset.xmin, asset.xmax]);
+        // }
+
+    };
+
     $scope.close = function(){
         $scope.state = 'closed';
     };
@@ -88,4 +110,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         return true;
     };
 
+    $scope.pretifyField = function (s) {
+        return (s || '').replace(/\\n/g, '\n');
+    };
 });
