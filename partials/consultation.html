@@ -3,7 +3,7 @@
         <span class="icon-info"></span>
     </div>
 
-    <div class="consultation-content">
+    <div class="consultation-content" >
         <button type="button" class="closer btn pull-right" ng-click="close()" style="padding: 1px 7px;">&times;</button>
 
         <div ng-if="loading" class="alert alert-warning">
@@ -50,7 +50,7 @@
 
                                     <hr ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
 
-                                    <a class="btn btn-primary btn-block" 
+                                    <a class="btn btn-primary btn-block"
                                         ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'>
                                         {{site.activities._byId[map_activity||report_activity].label}}
                                     </a>
