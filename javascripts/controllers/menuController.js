@@ -18,6 +18,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $scope.close = function (){
         $scope.mlPushMenu._resetMenu();
+        return false;
     };
 
     function updateSyncNumber() {
