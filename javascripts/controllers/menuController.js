@@ -16,8 +16,12 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         return false;
     }, false);
 
-    $scope.close = function (){
+    $scope.close = function (event){
+        if(event && event.preventDefault){
+            event.preventDefault();
+        }
         $scope.mlPushMenu._resetMenu();
+        return false;
     };
 
     function updateSyncNumber() {
