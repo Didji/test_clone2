@@ -21,7 +21,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     }
 
     if(!$rootScope.site){
-        $window.alert("Aucun site n'est disponible.");
+        alertify.alert("Aucun site n'est disponible.");
         $location.path("#");
         return false ;
     }
@@ -36,7 +36,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
         G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
             if(!assets.length){
-                $window.alert("L'objet n'a pas été trouvé dans la base de données du terminal.")
+                alertify.alert("L'objet n'a pas été trouvé dans la base de données du terminal.")
                 return tokenAuth($routeParams.token, redirect);
             }
             $rootScope.map_target = assets ;
@@ -74,15 +74,15 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
         return callback();
         // $http.get(url).then(function(response){
         //     if(response.status === 403 || response.data.auth === false){
-        //         $window.alert("Le token fournit n'est pas valide");
+        //         alertify.alert("Le token fournit n'est pas valide");
         //         $location.path('#');
         //     } else if(response.status === 0){
-        //         $window.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
+        //         alertify.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
         //         callback();
         //     } else if(response.status === 200) {
         //         callback();
         //     } else {
-        //         $window.alert("L'authentification a échoué ("+status+")");
+        //         alertify.alert("L'authentification a échoué ("+status+")");
         //         $location.path('#');
         //     }
         // });
@@ -106,7 +106,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 break;
 
             default:
-                $window.alert("Controller introuvable ("+$routeParams.controller+")");
+                alertify.alert("Controller introuvable ("+$routeParams.controller+")");
                 break;
         }
     }

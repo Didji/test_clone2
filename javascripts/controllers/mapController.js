@@ -3,7 +3,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
     if(!$rootScope.site){
-        $window.alert("Aucun site n'est disponible.");
+        alertify.alert("Aucun site n'est disponible.");
         $location.path("#");
         return false ;
     }
@@ -28,7 +28,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
     });
 
-    function noConsultableAssets() {
+    function noConsultableAssets(coords) {
         var popup = L.popup().setLatLng(coords)
                 .setContent('<p>Aucun patrimoine dans cette zone.</p>')
                 .openOn(G3ME.map);
@@ -76,7 +76,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
 
         if (!zone) {
-            return noConsultableAssets();
+            return noConsultableAssets(coords);
         }
 
         request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
@@ -94,7 +94,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax],
                 function(t, results) {
                     if (results.rows.length === 0 ) {
-                        return noConsultableAssets();
+                        return noConsultableAssets(coords);
                     }
 
                     var assets = [], asset, asset_;
@@ -112,7 +112,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         });
         return false;
     });
-
+    
     $scope.$on("ACTIVATE_CONSULTATION", function(event){
         activateConsultation();
     });
