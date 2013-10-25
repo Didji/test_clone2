@@ -7,7 +7,8 @@ angular.module('smartgeomobile').controller('consultationController', function (
     // Lorsque la carte nous informe qu'une consultation est demandée,
     // on prépare une ouverture du panneau de consultation. S'il n'y a
     // pas de résultat, on annulera cette ouverture.
-    $scope.$on("CONSULTATION_CLICK_REQUESTED", function() {
+    $scope.$on("CONSULTATION_CLICK_REQUESTED", function(e, coordinates) {
+        $scope.coordinates = coordinates ;
         if(PREOPEN_TIMER) {
             clearTimeout(PREOPEN_TIMER);
         }
@@ -80,6 +81,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
         //     console.log('Not implemented but going from here to', [asset.xmin, asset.xmax]);
         // }
 
+    };
+
+    $scope.openLocatedReport = function(x, y){
+        $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+x+','+y+'/');
     };
 
     $scope.close = function(){

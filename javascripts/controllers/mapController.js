@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             return false;
         }
 
-        $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED");
+        $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
         var coords = e.latlng,
             mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
             radius = 40 * mpp,
@@ -112,7 +112,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         });
         return false;
     });
-    
+
     $scope.$on("ACTIVATE_CONSULTATION", function(event){
         activateConsultation();
     });
