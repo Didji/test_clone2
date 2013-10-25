@@ -37,6 +37,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         event.preventDefault();
         $rootScope.$broadcast("ACTIVATE_CONSULTATION");
         $scope.close();
+        return false;
     };
 
     $scope.activatePosition = function(event){
