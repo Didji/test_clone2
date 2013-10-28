@@ -30,16 +30,17 @@
 
                             <div id="collapse-{{asset.guid}}" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <span ng-repeat='tab in site.metamodel[asset.okey].tabs'>
+                                    <span ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
                                         <!-- TODO: Passer les valeurs dans un filter pour supprimer les champs et les onglets vides -->
                                         <h5>{{tab.label}}</h5>
                                         <table style="font-size: 0.8em;" class="table table-striped">
                                             <tbody>
-                                                <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
+                                                <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
+                                                 <!-- ng-show='asset.attributes[field.key]'> -->
                                                     <td>{{field.label}}</td>
                                                     <td ng-switch on="site.lists[field.options][asset.attributes[field.key]]">
-                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key]}}</span>
-                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]]}}</span>
+                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key] || prettifyField}}</span>
+                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]] || prettifyField}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
