@@ -171,6 +171,15 @@ if ( typeof define === 'function' && define.amd ) {
 		},
 		_initEvents : function() {
 			var self = this;
+
+			$('body').on( this.eventtype, '.mp-pushed', function(event) {
+				if(event.target.classList.contains('mp-pusher')){
+					event.preventDefault();
+					self._resetMenu();
+					return false ;
+				}
+			});
+
 			this.menuItems.forEach( function( el, i ) {
 				var subLevel = el.querySelector( 'div.mp-level' );
 				if( subLevel ) {
@@ -179,7 +188,7 @@ if ( typeof define === 'function' && define.amd ) {
 						var level = closest( el, 'mp-level' ).getAttribute( 'data-level' );
 						if( self.level <= level ) {
 							ev.stopPropagation();
-							classie.add( closest( el, 'mp-level' ), 'mp-level-overlay' );
+							// classie.add( closest( el, 'mp-level' ), 'mp-level-overlay' );
 							self._openMenu( subLevel );
 						}
 					} );
@@ -198,6 +207,7 @@ if ( typeof define === 'function' && define.amd ) {
 		},
 
 		_openMenu : function( subLevel ) {
+
 			// increment level depth
 			this.menuState = 'opened';
 			++this.level;
@@ -236,6 +246,7 @@ if ( typeof define === 'function' && define.amd ) {
 			classie.remove( this.wrapper, 'mp-pushed' );
 			// this._toggleLevels();
 			this.open = false;
+
 		},
 		// close sub menus
 		_closeMenu : function() {
@@ -258,10 +269,10 @@ if ( typeof define === 'function' && define.amd ) {
 				var levelEl = this.levels[i];
 				if( levelEl.getAttribute( 'data-level' ) >= this.level + 1 ) {
 					classie.remove( levelEl, 'mp-level-open' );
-					classie.remove( levelEl, 'mp-level-overlay' );
+					// classie.remove( levelEl, 'mp-level-overlay' );
 				}
 				else if( Number( levelEl.getAttribute( 'data-level' ) ) == this.level ) {
-					classie.remove( levelEl, 'mp-level-overlay' );
+					// classie.remove( levelEl, 'mp-level-overlay' );
 				}
 			}
 		}

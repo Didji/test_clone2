@@ -146,16 +146,15 @@ html, body {
 
 /** Menu */
 #mp-pusher {
-    z-index: 10000;
+    z-index: 1;
 }
 /* On doit donner une largeur nulle au menu quand il est fermé,
  * sinon, il masque les événements qui doivent arriver à la carte.
  */
 #mp-pusher {
-    width: 20px;
+    width: 35px;
 }
 #mp-pusher.mp-pushed {
-    width: 100%;
     overflow: visible;
 }
 /* La classe mp-pusher a un transition: all. A cause de ce qui précède,
