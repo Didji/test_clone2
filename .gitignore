@@ -13,6 +13,7 @@ local.properties
 content-shell/libs/native-libs.jar
 
 */.settings
+*/bin
 */.classpath
 */.project
 */gen
