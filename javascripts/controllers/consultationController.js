@@ -61,6 +61,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         });
     });
 
+
     $scope.gotoAsset = function(asset){
 
         // NOT TESTED
@@ -116,8 +117,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.prettifyField = function (s) {
         if('string' !== typeof s) {
+        console.log(s);
             return s;
         }
+        console.log((s + '') || '').replace(/\\n/g, '\n');
         return ((s + '') || '').replace(/\\n/g, '\n');
     };
 });

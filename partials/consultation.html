@@ -37,11 +37,9 @@
                                             <tbody>
                                                 <tr ng-repeat='field in tab.fields' ng-show='asset.attributes[field.key]'>
                                                     <td>{{field.label}}</td>
-                                                    <td ng-show='site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(site.lists[field.options][asset.attributes[field.key]])}}
-                                                    </td>
-                                                    <td ng-show='!site.lists[field.options][asset.attributes[field.key]]'>
-                                                        {{pretifyField(asset.attributes[field.key])}}
+                                                    <td ng-switch on="site.lists[field.options][asset.attributes[field.key]]">
+                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key]}}</span>
+                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]]}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
