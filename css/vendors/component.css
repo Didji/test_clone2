@@ -4,9 +4,6 @@
 .scroller,
 .scroller-inner {
 	position: relative;
-}
-
-.scroller-inner {
 	margin-top: -10px;
 }
 
@@ -77,9 +74,10 @@
 
 .mp-pusher::after,
 .mp-level::after {
-	background: rgba(0,0,0,0.3);
-	-webkit-transition: opacity 0.3s, width 0.1s 0.3s, height 0.1s 0.3s;
-	transition: opacity 0.3s, width 0.1s 0.3s, height 0.1s 0.3s;
+
+background: linear-gradient(to right,  rgba(0,0,0,0.45) 0%,rgba(0,0,0,0) 100%); /* W3C */
+
+
 }
 
 .mp-level::after {
