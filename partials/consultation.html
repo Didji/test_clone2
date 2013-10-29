@@ -39,8 +39,8 @@
                                                  <!-- ng-show='asset.attributes[field.key]'> -->
                                                     <td>{{field.label}}</td>
                                                     <td ng-switch on="site.lists[field.options][asset.attributes[field.key]]">
-                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key] || prettifyField}}</span>
-                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]] || prettifyField}}</span>
+                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key] | prettifyField}}</span>
+                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]] | prettifyField}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
