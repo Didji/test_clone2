@@ -257,6 +257,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
 
         G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
+        G3ME.assetsMarkers[asset.guid].on('dblclick', function(){
+            $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
+        });
         G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
         G3ME.invalidateMapSize();
     };
