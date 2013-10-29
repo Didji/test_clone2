@@ -36,7 +36,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     };
 
     $scope.close = function (event){
-        console.log('close');
         if(event && event.preventDefault){
             event.preventDefault();
         }
