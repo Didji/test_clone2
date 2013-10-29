@@ -27,6 +27,11 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope.$apply();
     });
 
+    $scope.$on("CONSULTATION_OPEN_PANEL", function(){
+        $scope.open();
+        $scope.$apply();
+    });
+
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
 
         if(PREOPEN_TIMER) {
@@ -97,13 +102,18 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
-        if($window.document.width < 400) {
+        // TODO : faire un paramètre AUTOCLOSECONSULTATIONPANEL
+        if($window.document.width <= 720) {
             $scope.state = 'closed';
         }
     };
 
     $scope.toggleConsultationPanel = function(){
         $scope.state = $scope.state === 'open' ? 'closed' : 'open' ;
+    };
+
+    $scope.open = function(){
+        $scope.state = 'open' ;
     };
 
     $scope.toggleCollapse = function(event){
