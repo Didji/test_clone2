@@ -353,10 +353,9 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 i ,j, k;
 
             for (i=0; i < assets_length; i++) {
-                asset = assets[i];
-                asset_ = JSON.parse(JSON.stringify(asset)) ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
-                // asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
-                guid = asset.guid;
+                asset  = assets[i];
+                asset_ = JSON.parse(JSON.stringify(asset)) ;
+                guid   = asset.guid;
                 bounds = asset.bounds;
 
                 request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " "+guid+" as id ";
