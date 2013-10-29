@@ -1,6 +1,6 @@
-angular.module('smartgeomobile').controller('layersController', function ($scope, G3ME){
-    // TODO : trouver mieux
-    $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+angular.module('smartgeomobile').controller('layersController', function ($scope, $rootScope, G3ME){
+
+    $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
     // Initialisation du scope.
     var groups = {}, o, layers = {}, layer,

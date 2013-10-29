@@ -6,7 +6,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
     }
 
-    $scope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+    $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
     $scope.reports = Smartgeo.get('reports') || [] ;
 
     $rootScope.$on("DEVICE_IS_ONLINE", function(){

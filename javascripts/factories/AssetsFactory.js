@@ -67,8 +67,7 @@ angular.module('smartgeomobile').factory('AssetsFactory', function(SQLite, Smart
 
             for (i=0; i < assets_length; i++) {
                 asset = assets[i];
-                asset_ = JSON.parse(JSON.stringify(asset)) ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
-                // asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
+                asset_ = JSON.parse(JSON.stringify(asset)) ;
                 guid = asset.guid;
                 bounds = asset.bounds;
 
