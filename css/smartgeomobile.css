@@ -184,7 +184,7 @@ html, body {
     right:0;
 }
 
-#mp-menu .form-control , #mp-menu button{
+#mp-menu .form-control, .btn-custom-block {
     width: 90%;
     margin: 5%;
 }

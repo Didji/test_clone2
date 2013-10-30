@@ -2,7 +2,7 @@
     <ul>
         <li>
             <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
-            <button class="btn btn-default btn-block has-spinner" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
+            <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
                     Rechercher
             </button>
@@ -61,11 +61,11 @@
                         </div>
                     </li>
                     <li>
-                        <button class="btn btn-default btn-block has-spinner" ng-class='{active:searchIsPerforming}' ng-click="advancedSearch($event)">
+                        <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="advancedSearch($event)">
                             <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
                                 Rechercher
                         </button>
-                        <button class="btn btn-default btn-block" ng-click="resetCriteria()">Effacer les critères</button>
+                        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()">Effacer les critères</button>
                     </li>
                     <li><label>{{advancedSearchMessage}}</label></li>
                 </ul>

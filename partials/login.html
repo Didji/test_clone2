@@ -9,7 +9,7 @@
         <hr>
 
 
-        <button class="btn btn-lg btn-primary btn-block  has-spinner " ng-class='{active:!readyToLog && !firstAuth}' type="submit"
+        <button class="btn btn-lg btn-primary btn-block has-spinner" ng-class='{active:!readyToLog && !firstAuth}' type="submit"
                 ng-disabled=" (!readyToLog && !firstAuth) || (firstAuth && !gimapUrl)">
             <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
             {{logMessage}}
@@ -20,7 +20,7 @@
             <span class="icon icon-gears"></span> Paramètres <span class="caret"></span>
         </button>
         <ul class="dropdown-menu pull-right" role="menu">
-            <li><a id="changeGiMapUrl" ng-click="setGimapUrl()">Changer de serveur <small>({{smallUrl}})</small></a></li>
+            <li ng-show="smallUrl.length > 0"><a id="changeGiMapUrl" ng-click="setGimapUrl()">Changer de serveur <small>({{smallUrl}})</small></a></li>
             <li><a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a></li>
         </ul>
     </div>
