@@ -5,7 +5,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
         _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
-        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  500,
+        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :   500,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
 
@@ -331,9 +331,9 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                         transaction.executeSql(request.request, request.args, function() {
                             Installer.checkpoint("rqst" + zone.table_name, zone.insert_requests.length, callback);
                             return ;
-                        }, function() {
+                        }, function(tx, sqlerror) {
+                            console.log(sqlerror.message);
                             Installer.checkpoint("rqst" + zone.table_name, zone.insert_requests.length, callback);
-                            return ;
                         });
                     });
                 })(zone, zone.insert_requests[i]);
@@ -375,7 +375,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 ];
 
                 for (j = 0; j < fields_in_request.length; j++){
-                    request += ' , \'' + JSON.stringify(values_in_request[j]).replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
+                    request += ' , \'' + (  (typeof values_in_request[j] === 'string' && values_in_request[j].length ) || typeof values_in_request[j] !== 'string' ? JSON.stringify(values_in_request[j]) : '' ).replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
                 }
 
                 if (assets[i]){
@@ -399,8 +399,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
             // for (i=0; i < assets_length; i++) {
             //     asset = assets[i];
-            //     asset_ = JSON.parse(JSON.stringify(asset)) ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
-            //     // asset_ = asset ; // THIS MAY CAUSE MEMORY LEAKS (was asset_ = angular.copy(asset)) ;
+            //     asset_ = JSON.parse(JSON.stringify(asset)) ;
             //     guid = asset.guid;
             //     bounds = asset.bounds;
 

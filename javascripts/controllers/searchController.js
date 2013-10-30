@@ -57,7 +57,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = JSON.parse(asset_.asset);
+                asset  = Smartgeo.sanitizeAsset(asset_.asset);
                 asset.label = asset_.label ;
                 asset.geometry = JSON.parse(asset_.geometry) ;
                 assets.push(asset);
@@ -84,7 +84,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
     $scope.advancedSearch = function(event) {
         event.preventDefault();
-
+        $scope.searchMessage = "";
         var advancedSearch = {
             criteria : $scope.selectedCriteriaValues,
             okey : $scope.selectedFamily.okey
@@ -97,7 +97,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             if(!results.length){
                 $scope.advancedSearchMessage = 'Aucun résultat' ;
                 if(!$scope.$$phase) {
-                	$scope.$apply();
+                    $scope.$apply();
                 }
                 return ;
             } else {
@@ -107,7 +107,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = JSON.parse(asset_.asset);
+                asset  = Smartgeo.sanitizeAsset(asset_.asset);
                 asset.label = asset_.label ;
                 asset.geometry = JSON.parse(asset_.geometry) ;
                 assets.push(asset);

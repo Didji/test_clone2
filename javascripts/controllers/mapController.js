@@ -100,7 +100,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                     var assets = [], asset, asset_;
                     for (var i = 0; i < results.rows.length; i++) {
                         asset_ = results.rows.item(i);
-                        asset  = JSON.parse(asset_.asset);
+                        asset  = Smartgeo.sanitizeAsset(asset_.asset);//JSON.parse(asset_.asset);
                         asset.label = asset_.label ;
                         asset.geometry = JSON.parse(asset_.geometry) ;
                         asset.priority = asset_.priority ;
