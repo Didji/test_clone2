@@ -19,16 +19,43 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         });
 
 
-    // function getExtentsFromAssetsList(assets){
-    //     var xmin = Infinity ,
-    //         xmax = - Infinity,
-    //         ymin = Infinity,
-    //         ymax = - Infinity
+    function getExtentsFromAssetsList(assets){
+        var xmin =   Infinity,
+            xmax = - Infinity,
+            ymin =   Infinity,
+            ymax = - Infinity;
 
-    // }
+        for (var i = 0; i < assets.length; i++) {
+            xmin = assets[i].xmin < xmin ? assets[i].xmin : xmin ;
+            ymin = assets[i].ymin < ymin ? assets[i].ymin : ymin ;
+            xmax = assets[i].xmax > xmax ? assets[i].xmax : xmax ;
+            ymax = assets[i].ymax > ymax ? assets[i].ymax : ymax ;
+        }
+
+        return { xmin: xmin, xmax:xmax, ymin:ymin, ymax:ymax };
+    }
 
     $scope.openMission = function($index){
-        $scope.missions[$index].openned = $scope.missions[$index].openned === true ? false : true ;
+        var mission = $scope.missions[$index] ;
+        mission.openned = mission.openned === true ? false : true ;
+
+        if(mission.openned){
+            if(!mission.pendingAssetsExtent || !mission.assetsCache ){
+                Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
+                    mission.assetsCache         = assets ;
+                    mission.pendingAssetsExtent = getExtentsFromAssetsList(assets);
+                    $rootScope.$broadcast('HIGHLIGHT_ASSETS', mission.assetsCache);
+                });
+            } else {
+                $rootScope.$broadcast('HIGHLIGHT_ASSETS', mission.assetsCache);
+            }
+        } else {
+            $rootScope.$broadcast('UNHIGHLIGHT_ASSETS', mission.assetsCache);
+        }
+    };
+
+    $scope.highlightMission = function($index){
+
     };
 
     $scope.changeVisibility = function($index){

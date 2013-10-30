@@ -552,3 +552,20 @@ transition:none!important; /* Désolé, pris par le temps */
     display: inline-block;
     color: #fd9122;
 }
+
+/** Planning */
+
+.mission-label{
+    width: 63%;
+    display: block;
+    font-size: 13px;
+}
+
+.custom-progress{
+    border: 1px solid rgb(255, 133, 0);
+}
+
+.mission-assets-count-badge{
+    margin-top: -15px;
+}
+

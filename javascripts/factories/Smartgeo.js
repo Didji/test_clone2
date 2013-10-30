@@ -103,8 +103,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 t.executeSql(request, arguments_,
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
-                            var ast = rslt.rows.item(i);
+                            var ast = angular.copy(rslt.rows.item(i));
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            ast.guid = ast.id;
+                            ast.geometry = JSON.parse(ast.geometry);
                             partial_response.push(ast);
                         }
                         _this.findAssetsByGuids(site,guids, callback, zones.slice(1), partial_response);
