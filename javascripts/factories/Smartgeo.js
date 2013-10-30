@@ -255,7 +255,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             } else {
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
                     'login' : encodeURIComponent(login),
-                    'pwd'   : encodeURIComponent(password)
+                    'pwd'   : encodeURIComponent(password),
+                    'forcegimaplogin' : true
                 });
             }
             $http.post(url).success(success || function(){}).error(error || function(){});
