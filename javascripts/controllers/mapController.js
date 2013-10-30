@@ -125,6 +125,18 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
         $scope.unHighlightAsset(asset);
     });
+
+    $scope.$on("HIGHLIGHT_ASSETS", function(event, assets){
+        for (var i = 0; i < assets.length; i++) {
+            $scope.highlightAsset(assets[i]);
+        }
+    });
+    $scope.$on("UNHIGHLIGHT_ASSETS", function(event, assets){
+        for (var i = 0; i < assets.length; i++) {
+            $scope.unHighlightAsset(assets[i]);
+        }
+    });
+
     $scope.$on("UNHIGHALLLIGHT_ASSET", function(event){
         $scope.unHighlightAllAsset();
     });
@@ -237,11 +249,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
         customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
-
         if(G3ME.assetsMarkers[asset.guid]){
             G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
         }
-
         switch (asset.geometry.type) {
             case "Point":
                 var coords = asset.geometry.coordinates ;
@@ -253,7 +263,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                     });
                 break;
             default:
-                console.log('Geometrie non supportée');
+                console.log('Geometrie non supportée : ' + asset.geometry.type);
         }
 
         G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
