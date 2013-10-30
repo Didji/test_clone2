@@ -37,7 +37,16 @@
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
-
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-list-ul"></span>
+                            Planning
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <div ng-include="'partials/planning.html'"></div>
+                        </div>
+                    </li>
                     <li>
                         <a href="#">
                             <span class="icon icon-edit"></span>
@@ -55,18 +64,6 @@
                             </ul>
                         </div>
                     </li>
-                    <!-- <li>
-                        <a href="#">
-                            <span class="icon icon-gears"></span>
-                            Paramètres
-                        </a>
-                        <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>RETOUR</a>
-                            <ul>
-
-                            </ul>
-                        </div>
-                    </li> -->
                     <li>
                         <a href="#">
                             <span class="icon icon-refresh"></span>
@@ -94,11 +91,11 @@
                 </a>
             </p>
         </div>
-
     </div>
 </div>
-<span id="mainmap" ng-controller="mapController"><div id="smartgeo-map"></div></span>
+
+<span id="mainmap" ng-controller="mapController">
+    <div id="smartgeo-map"></div>
+</span>
+
 <div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
-
-<!-- <span id="mainmap"  data-ng-controller="mapController"><div id="smartgeo-map"></div></span> -->
-
