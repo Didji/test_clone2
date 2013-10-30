@@ -9,7 +9,7 @@
       <button type="button" class="btn btn-lg btn-default"><span class="icon icon-arrow-right"></span></button>
     </div>
 
-    <div ng-repeat="mission in missions" class="panel panel-default" style='width: 90%;margin: 10px auto;'  ng-show='mission.assets.length > 0'>
+    <div ng-repeat="(key,mission) in missions" class="panel panel-default" style='width: 90%;margin: 10px auto;'  ng-show='mission.assets.length > 0'>
       <div class="panel-heading">
         <h3 class="panel-title" style='font-size:12px'>{{mission.activity.label}} n°{{mission.number}}
             <span class="badge pull-right" ng-show='mission.assets.length == 0'>terminé</span>
@@ -18,9 +18,20 @@
       </div>
       <div class="custom_progress" style='border: 1px solid rgb(255, 133, 0); width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
       <div class="panel-body" ng-show='mission.assets.length > 0'>
-        <p><i class="fa fa-clock-o"></i> </span> avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}</p>
-        <p ng-show='mission.city'><i class="fa fa-map-marker"></i> </span>{{mission.city}}</p>
-        <p ng-show='mission.address'><i class="fa fa-crosshairs"></i> </span>{{mission.address}}</p>
+
+        <p>
+          <i class="fa fa-clock-o"></i> avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+        </p>
+        <p ng-show='mission.city'>
+          <i class="fa fa-map-marker"></i> {{mission.city}}
+        </p>
+        <p ng-show='mission.address'>
+          <i class="fa fa-crosshairs"></i> {{mission.address}}
+        </p>
+        <p ng-click='changeVisibility(key)'>
+          <i class="fa" ng-class="mission.icon || 'fa-circle-o' " ></i> Afficher objets terminés
+        </p>
+
         <div class='pull-right'>
             <button class="btn btn-warning"> <span class="fa fa-search fa-3x"></span><br/>Localiser</button>
             <button class="btn btn-warning"> <span class="fa fa-pencil fa-3x"></span><span class="badge badge-primary">100</span><br/>Saisir</button>
