@@ -47,7 +47,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          *       (they looks like no connection)
          */
         if(status === 403){
-            alertify.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
+            alertify.alert("Mot de passe incorrect" + (response.login ? " pour l'utilisateur " + response.login : ""));
         } else if (status === ''){
             alertify.alert("L'application n'est pas parvenue à joindre le serveur.");
         } else {
