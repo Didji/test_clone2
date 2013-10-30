@@ -10,8 +10,8 @@ import android.provider.MediaStore;
 
 public class SmartGeoMobilePlugins {
 	
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	private static final int GEOLOCATE_ACTIVITY_REQUEST_CODE = 101;
+	public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	public static final int GEOLOCATE_ACTIVITY_REQUEST_CODE = 101;
 
 	private Context context;
 
@@ -46,20 +46,7 @@ public class SmartGeoMobilePlugins {
 	@JavascriptInterface
 	public void locate() {
 		Activity act = (Activity)context;
-		Intent intent = new Intent(context, GeoLocation.class);
+		Intent intent = new Intent(context, GeoLocation.class).setFlags(Intent.FLAG_FROM_BACKGROUND);
 		act.startActivityForResult(intent, GEOLOCATE_ACTIVITY_REQUEST_CODE);
 	}
-	
-	/*@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-	        if (resultCode == Activity.RESULT_OK) {
-	            core.evaluateJavaScript("ChromiumCallbacks[" + callbackId + "](" + data.getData() + ")", null);
-	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	            // User cancelled the image capture
-	        } else {
-	            // Image capture failed, advise user
-	        }
-	    }               
-	}*/
 }

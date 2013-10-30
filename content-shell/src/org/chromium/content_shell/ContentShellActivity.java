@@ -4,6 +4,9 @@
 
 package org.chromium.content_shell;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,20 +39,24 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.gismartware.mobile.Install;
+import com.gismartware.mobile.plugins.SmartGeoMobilePlugins;
+
 /**
  * Activity for managing the Content Shell.
  */
 public class ContentShellActivity extends ChromiumActivity {
-
+	
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
 	
-	private static final String INTENT_DEST_URL_PREFIX = MESSAGES.getString("intent.controler.url.prefix");
+	private static final String INTENT_DEST_URL_PREFIX = Install.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
 
 	/*
 	 * Constantes oauth
@@ -61,24 +68,18 @@ public class ContentShellActivity extends ChromiumActivity {
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
 	
-	
-	
-	
-	
-	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {"--allow-external-pages", "--allow-file-access", 
     	"--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process", 
     	"--remote-debugging-raw-usb"};
-    private static final String TAG = "ContentShellActivity";
+    private static final String TAG = "GimapMobile";
 
     private static final String ACTIVE_SHELL_URL_KEY = "activeUrl";
-    private static final String ACTION_START_TRACE =
-            "org.chromium.content_shell.action.PROFILE_START";
-    private static final String ACTION_STOP_TRACE =
-            "org.chromium.content_shell.action.PROFILE_STOP";
+    private static final String ACTION_START_TRACE = "org.chromium.content_shell.action.PROFILE_START";
+    private static final String ACTION_STOP_TRACE = "org.chromium.content_shell.action.PROFILE_STOP";
     public static final String COMMAND_LINE_ARGS_KEY = "commandLineArgs";
-
+    
+    
     /**
      * Sending an intent with this action will simulate a memory pressure signal at a critical
      * level.
@@ -98,12 +99,40 @@ public class ContentShellActivity extends ChromiumActivity {
     private WindowAndroid mWindowAndroid;
     private BroadcastReceiver mReceiver;
     private SharedPreferences preferences;
-
+    
+    
+    @Override
+	public void onDestroy() {
+    	//TODO : delete folder new File(Environment.getExternalStorageDirectory().toString() + File.separator + Install.LOCAL_INSTALL_DIR));
+    	//impossible to make it work...
+    	super.onDestroy();
+	}
+    
+    private void install() {
+        File zip = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + Install.INSTALL_ZIP_FILE);
+        if(zip.exists()) {
+        	zip.delete();
+        }
+        try {
+			InputStream is = this.getAssets().open(Install.INSTALL_ZIP_FILE);
+			Install.copyTo(is, zip);
+			Install.unzip(zip, new File(Environment.getExternalStorageDirectory().getPath() + File.separator + Install.LOCAL_INSTALL_DIR));
+        	Log.i(TAG, "SmartGeo has been successfully installed!");
+		} catch (IOException e) {
+			Log.e(TAG, "Error while installing... ");
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			zip.delete();
+		}
+    }
+    
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-    	Log.d(this.getClass().getName(), "on create");
         super.onCreate(savedInstanceState);
 
+        install();
+        
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
             /*CommandLine.initFromFile(COMMAND_LINE_FILE);
@@ -139,8 +168,9 @@ public class ContentShellActivity extends ChromiumActivity {
   		}
   		
         String startupUrl = getIntentUrl(getIntent());
-		Log.d(this.getClass().getName(), "Load url " + startupUrl);
-        
+        if (startupUrl != null) {
+        	Log.d(TAG, "Load intent url " + startupUrl);
+        }
         
         if (!TextUtils.isEmpty(startupUrl)) {
             mShellManager.setStartupUrl(Shell.sanitizeUrl(startupUrl));
@@ -168,7 +198,6 @@ public class ContentShellActivity extends ChromiumActivity {
     }
 
     private void finishInitialization(Bundle savedInstanceState) {
-    	Log.d(TAG, "finishInitialization");
         String shellUrl = mShellManager.getStartupUrl();
         if(shellUrl == null) {
         	shellUrl = ShellManager.DEFAULT_SHELL_URL;
@@ -187,7 +216,6 @@ public class ContentShellActivity extends ChromiumActivity {
     }
 
     private void initializationFailed() {
-        Log.e(TAG, "ContentView initialization failed.");
         Toast.makeText(ContentShellActivity.this, R.string.browser_process_initialization_failed, Toast.LENGTH_SHORT).show();
         finish();
     }
@@ -228,7 +256,6 @@ public class ContentShellActivity extends ChromiumActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-    	Log.d(TAG, "onNewIntent");
         if (getCommandLineParamsFromIntent(intent) != null) {
             Log.i(TAG, "Ignoring command line params: can only be set when creating the activity.");
         }
@@ -247,7 +274,6 @@ public class ContentShellActivity extends ChromiumActivity {
         } else {
         	url = getUrlFromIntent(intent);
         }
-        Log.d(this.getClass().getName(), "URL="+url);
         
         if (!TextUtils.isEmpty(url)) {
             Shell activeView = getActiveShell();
@@ -300,23 +326,27 @@ public class ContentShellActivity extends ChromiumActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    	String resultCodeMsg = "OK";
+    	if(resultCode != RESULT_OK) {
+    		resultCodeMsg = "CANCEL";
+    	}
+    	Log.d(TAG, "[onActivityResult] requestCode=" + requestCode + ", resultCode=" + resultCodeMsg);
     	
-    	Log.d(TAG, "[onActivityResult] requestCode=" + requestCode + ", resultCode" + resultCode);
     	if (resultCode == RESULT_OK) {
 			if (requestCode == AUTHORIZATION_CODE) {
 				requestToken();
 			} else if (requestCode == ACCOUNT_CODE) {
 				String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+				Log.d(TAG, "Token renewal for user " + accountName);
 				Editor editor = preferences.edit();
 				editor.putString(KEY_USER, accountName);
 				editor.commit();
 				invalidateToken();
 				requestToken();
-			} else if (requestCode == 100) {
+			} else if (requestCode == SmartGeoMobilePlugins.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 				String path = getRealPathFromURI(Uri.parse(intent.getData().toString()));
-				Log.d(TAG, "Path to photo=" + path);
 				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + path + "\");", null);
-			} else if (requestCode == 101) { //geolocation
+			} else if (requestCode == SmartGeoMobilePlugins.GEOLOCATE_ACTIVITY_REQUEST_CODE) {
 				Bundle extras = intent.getExtras();
 				Location location = (Location) extras.get("location");
 				Log.d(TAG, "geolocation@" + location.toString());
@@ -451,6 +481,7 @@ public class ContentShellActivity extends ChromiumActivity {
 		AccountManager accountManager = AccountManager.get(this);
 		Account userAccount = null;
 		String user = preferences.getString(KEY_USER, null);
+		Log.d(TAG, "Request token for user " + user);
 		for (Account account : accountManager.getAccountsByType(GOOGLE_ACCOUNT_TYPE)) {
 			if (account.name.equals(user)) {
 				userAccount = account;
@@ -461,8 +492,12 @@ public class ContentShellActivity extends ChromiumActivity {
 	}
 	
 	private void invalidateToken() {
+		String token = preferences.getString(KEY_TOKEN, null);
+		if( token != null) {
+			Log.d(TAG, "Invalidate token " + token);
+		}
 		AccountManager accountManager = AccountManager.get(this);
-		accountManager.invalidateAuthToken(GOOGLE_ACCOUNT_TYPE, preferences.getString(KEY_TOKEN, null));
+		accountManager.invalidateAuthToken(GOOGLE_ACCOUNT_TYPE, token);
 		Editor editor = preferences.edit();
 		editor.putString(KEY_TOKEN, null);
 		editor.commit();
@@ -479,7 +514,7 @@ public class ContentShellActivity extends ChromiumActivity {
 					startActivityForResult(launch, AUTHORIZATION_CODE);
 				} else {
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-
+					Log.d(TAG, "Token recu : " + token);
 					Editor editor = preferences.edit();
 					editor.putString(KEY_TOKEN, token);
 					editor.commit();
@@ -491,13 +526,12 @@ public class ContentShellActivity extends ChromiumActivity {
 	}
 	
 	public String getRealPathFromURI(Uri contentUri) {
-        // can post image
-        String [] proj= { MediaStore.Images.Media.DATA};
+        String[] proj= { MediaStore.Images.Media.DATA };
         Cursor cursor = this.getContentResolver().query(contentUri,
                         proj, // Which columns to return
-                        null,       // WHERE clause; which rows to return (all rows)
-                        null,       // WHERE clause selection arguments (none)
-                        null); // Order-by clause (ascending by name)
+                        null, // WHERE clause; which rows to return (all rows)
+                        null, // WHERE clause selection arguments (none)
+                        null);// Order-by clause (ascending by name)
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
 

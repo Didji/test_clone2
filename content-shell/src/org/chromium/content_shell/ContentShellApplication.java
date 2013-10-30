@@ -4,11 +4,10 @@
 
 package org.chromium.content_shell;
 
-import android.app.Application;
-
 import org.chromium.base.PathUtils;
-import org.chromium.content.app.LibraryLoader;
 import org.chromium.content.browser.ResourceExtractor;
+
+import android.app.Application;
 
 /**
  * Entry point for the content shell application.  Handles initialization of information that needs
@@ -29,5 +28,4 @@ public class ContentShellApplication extends Application {
         ResourceExtractor.setMandatoryPaksToExtract(MANDATORY_PAK_FILES);
         PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX);
     }
-
 }
