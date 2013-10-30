@@ -1,6 +1,6 @@
 <div ng-controller="planningController">
 
-    <button class="btn btn-default has-spinner btn-block btn-custom-block">Synchroniser</button>
+    <button class="btn btn-default has-spinner btn-block btn-custom-block">Actualiser</button>
 
     <div class="btn-group" style="margin-left: 45px;">
       <button type="button" class="btn btn-lg btn-default"><span class="icon icon-arrow-left"></span></button>
@@ -10,17 +10,17 @@
     </div>
 
     <div ng-repeat="(key,mission) in missions" class="panel panel-default" style='width: 90%;margin: 10px auto;'  ng-show='mission.assets.length > 0'>
-      <div class="panel-heading">
+      <div ng-click='openMission(key)' class="panel-heading">
         <h3 class="panel-title" style='font-size:12px'>{{mission.activity.label}} n°{{mission.number}}
             <span class="badge pull-right" ng-show='mission.assets.length == 0'>terminé</span>
             <span class="badge pull-right" ng-show='mission.assets.length > 0'>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
         </h3>
       </div>
       <div class="custom_progress" style='border: 1px solid rgb(255, 133, 0); width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
-      <div class="panel-body" ng-show='mission.assets.length > 0'>
+      <div class="panel-body"  ng-show='mission.openned || false'>
 
         <p>
-          <i class="fa fa-clock-o"></i> avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+          <i class="fa fa-clock-o"></i> Avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
         </p>
         <p ng-show='mission.city'>
           <i class="fa fa-map-marker"></i> {{mission.city}}

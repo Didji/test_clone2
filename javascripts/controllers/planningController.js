@@ -27,6 +27,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     // }
 
+    $scope.openMission = function($index){
+        $scope.missions[$index].openned = $scope.missions[$index].openned === true ? false : true ;
+    };
+
     $scope.changeVisibility = function($index){
         $scope.missions[$index].icon = $scope.missions[$index].icon === 'fa-check-circle-o' ? 'fa-circle-o' : 'fa-check-circle-o' ;
     };
