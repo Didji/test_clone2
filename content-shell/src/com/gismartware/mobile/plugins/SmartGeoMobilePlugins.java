@@ -46,7 +46,7 @@ public class SmartGeoMobilePlugins {
 	@JavascriptInterface
 	public void locate() {
 		Activity act = (Activity)context;
-		Intent intent = new Intent(context, GeoLocation.class).setFlags(Intent.FLAG_FROM_BACKGROUND);
+		Intent intent = new Intent(context, GeoLocation.class);
 		act.startActivityForResult(intent, GEOLOCATE_ACTIVITY_REQUEST_CODE);
 	}
 }
