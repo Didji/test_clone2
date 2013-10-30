@@ -117,6 +117,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.gimapUrl  = null ;
         $scope.username = '';
         $scope.pwd      = '';
+        $scope.logMessage = "Initialisation";
     };
 
     $scope.forgetPassword = function() {
