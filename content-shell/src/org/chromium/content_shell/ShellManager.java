@@ -4,17 +4,18 @@
 
 package org.chromium.content_shell;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.FrameLayout;
-
 import org.chromium.base.CalledByNative;
 import org.chromium.base.JNINamespace;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.ContentViewRenderView;
 import org.chromium.ui.WindowAndroid;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.widget.FrameLayout;
+
+import com.gismartware.mobile.Install;
 
 /**
  * Container and generator of ShellViews.
@@ -22,7 +23,7 @@ import org.chromium.ui.WindowAndroid;
 @JNINamespace("content")
 public class ShellManager extends FrameLayout {
 
-    public static final String DEFAULT_SHELL_URL = "file:///sdcard/smartgeo/index.html";
+    public static final String DEFAULT_SHELL_URL = "file://" + Install.DEFAULT_URL;
     private static boolean sStartup = true;
     private WindowAndroid mWindow;
     private Shell mActiveShell;
@@ -86,7 +87,6 @@ public class ShellManager extends FrameLayout {
      * @param url The URL the shell should load upon creation.
      */
     public void launchShell(String url) {
-    	Log.d(this.getClass().getName(), "launchShell url="+url);
         nativeLaunchShell(url);
     }
 
