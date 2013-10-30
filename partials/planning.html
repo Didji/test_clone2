@@ -16,16 +16,15 @@
             <span class="badge pull-right" ng-show='mission.assets.length > 0'>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
         </h3>
       </div>
-      <div class="custom_progress" style='border: 1px solid red'></div>
+      <div class="custom_progress" style='border: 1px solid rgb(255, 133, 0); width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
       <div class="panel-body" ng-show='mission.assets.length > 0'>
         <p><i class="fa fa-clock-o"></i> </span> avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}</p>
-        <p><i class="fa fa-map-marker"></i> </span>commune</p>
-        <p><i class="fa fa-crosshairs"></i> </span>adresse</p>
+        <p ng-show='mission.city'><i class="fa fa-map-marker"></i> </span>{{mission.city}}</p>
+        <p ng-show='mission.address'><i class="fa fa-crosshairs"></i> </span>{{mission.address}}</p>
         <div class='pull-right'>
             <button class="btn btn-warning"> <span class="fa fa-search fa-3x"></span><br/>Localiser</button>
             <button class="btn btn-warning"> <span class="fa fa-pencil fa-3x"></span><span class="badge badge-primary">100</span><br/>Saisir</button>
         </div>
       </div>
     </div>
-
 </div>
