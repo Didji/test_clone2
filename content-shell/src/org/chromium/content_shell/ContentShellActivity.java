@@ -46,8 +46,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.gismartware.mobile.Activities;
 import com.gismartware.mobile.Install;
-import com.gismartware.mobile.plugins.SmartGeoMobilePlugins;
 
 /**
  * Activity for managing the Content Shell.
@@ -61,8 +61,6 @@ public class ContentShellActivity extends ChromiumActivity {
 	/*
 	 * Constantes oauth
 	 */
-	private static final int AUTHORIZATION_CODE = 1993;
-	private static final int ACCOUNT_CODE = 1601;
 	private static final String KEY_USER = "user";
 	private static final String KEY_TOKEN = "token";
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
@@ -133,6 +131,19 @@ public class ContentShellActivity extends ChromiumActivity {
 
         install();
         
+        Log.i(TAG, "-------------------------------------------------------");
+        Log.i(TAG, "files dir="+this.getFilesDir().getAbsolutePath() + " contains " + this.getFilesDir().listFiles().length + " files");
+        for(File f : this.getFilesDir().listFiles()) {
+        	Log.i(TAG, "File " + f.getAbsolutePath());
+        }
+        Log.i(TAG, "-------------------------------------------------------");
+        File dir = this.getDir(Install.LOCAL_INSTALL_DIR, MODE_PRIVATE);
+        Log.i(TAG, "getDir="+ dir.getAbsolutePath() + " contains " + dir.listFiles().length + " files");
+        for(File f : dir.listFiles()) {
+        	Log.i(TAG, "File " + f.getAbsolutePath());
+        }
+        Log.i(TAG, "-------------------------------------------------------");
+        
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
             /*CommandLine.initFromFile(COMMAND_LINE_FILE);
@@ -164,7 +175,7 @@ public class ContentShellActivity extends ChromiumActivity {
   		preferences = this.getSharedPreferences("auth", Context.MODE_PRIVATE);
   		if (preferences.getString(KEY_TOKEN, null) == null) {
   			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-  			startActivityForResult(intent, ACCOUNT_CODE);
+  			startActivityForResult(intent, Activities.OAUTH_ACCOUNT.getValue());
   		}
   		
         String startupUrl = getIntentUrl(getIntent());
@@ -326,16 +337,12 @@ public class ContentShellActivity extends ChromiumActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-    	String resultCodeMsg = "OK";
-    	if(resultCode != RESULT_OK) {
-    		resultCodeMsg = "CANCEL";
-    	}
-    	Log.d(TAG, "[onActivityResult] requestCode=" + requestCode + ", resultCode=" + resultCodeMsg);
-    	
+    	Activities act = Activities.getActivitiesFromValue(requestCode);
+    	Log.d(TAG, "[onActivityResult] resultCode=" + resultCode + " on requestCode=" + act.name());
     	if (resultCode == RESULT_OK) {
-			if (requestCode == AUTHORIZATION_CODE) {
+			if (requestCode == Activities.OAUTH_AUTHORIZATION.getValue()) {
 				requestToken();
-			} else if (requestCode == ACCOUNT_CODE) {
+			} else if (requestCode == Activities.OAUTH_ACCOUNT.getValue()) {
 				String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 				Log.d(TAG, "Token renewal for user " + accountName);
 				Editor editor = preferences.edit();
@@ -343,15 +350,15 @@ public class ContentShellActivity extends ChromiumActivity {
 				editor.commit();
 				invalidateToken();
 				requestToken();
-			} else if (requestCode == SmartGeoMobilePlugins.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			} else if (requestCode == Activities.CAPTURE_IMAGE.getValue()) {
 				String path = getRealPathFromURI(Uri.parse(intent.getData().toString()));
 				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + path + "\");", null);
-			} else if (requestCode == SmartGeoMobilePlugins.GEOLOCATE_ACTIVITY_REQUEST_CODE) {
+			} else if (requestCode == Activities.GEOLOCATE.getValue()) {
 				Bundle extras = intent.getExtras();
 				Location location = (Location) extras.get("location");
-				Log.d(TAG, "geolocation@" + location.toString());
-				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](\"" + 
-						location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + "\");", null);
+				Log.d(TAG, location.toString());
+				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
+						location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");", null);
 			}
 		}
     	
@@ -511,7 +518,7 @@ public class ContentShellActivity extends ChromiumActivity {
 
 				Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
 				if (launch != null) {
-					startActivityForResult(launch, AUTHORIZATION_CODE);
+					startActivityForResult(launch, Activities.OAUTH_AUTHORIZATION.getValue());
 				} else {
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 					Log.d(TAG, "Token recu : " + token);

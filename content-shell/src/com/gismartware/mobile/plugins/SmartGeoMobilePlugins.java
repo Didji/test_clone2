@@ -2,6 +2,8 @@ package com.gismartware.mobile.plugins;
 
 import org.chromium.content.browser.JavascriptInterface;
 
+import com.gismartware.mobile.Activities;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +11,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 public class SmartGeoMobilePlugins {
-	
-	public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	public static final int GEOLOCATE_ACTIVITY_REQUEST_CODE = 101;
 
 	private Context context;
 
@@ -23,13 +22,13 @@ public class SmartGeoMobilePlugins {
 	public void launchCamera(int callbackId) {
 		Activity act = (Activity)context;
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		act.startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+		act.startActivityForResult(intent, Activities.CAPTURE_IMAGE.getValue());
 	}
 	
 	@JavascriptInterface
-	public void goTo(float xorig, float yorig, float xdest, float ydest) {
-		String to = "https://maps.google.com/maps?saddr=" + xorig + "," + yorig 
-				+ "&daddr=" + xdest + "," + ydest;
+	public void goTo(float longOrig, float latOrig, float longDest, float latDest) {
+		String to = "https://maps.google.com/maps?saddr=" + latOrig + "," + longOrig 
+				+ "&daddr=" + latDest + "," + longDest;
 		
 		Activity act = (Activity)context;
 		Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -47,6 +46,6 @@ public class SmartGeoMobilePlugins {
 	public void locate() {
 		Activity act = (Activity)context;
 		Intent intent = new Intent(context, GeoLocation.class);
-		act.startActivityForResult(intent, GEOLOCATE_ACTIVITY_REQUEST_CODE);
+		act.startActivityForResult(intent, Activities.GEOLOCATE.getValue());
 	}
 }
