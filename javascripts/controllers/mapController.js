@@ -1,5 +1,7 @@
 angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location){
 
+    'use strict' ;
+
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
     if(!$rootScope.site){
@@ -134,7 +136,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     // Fonction utilitaire créant un contrôle Leaflet.
     function makeControl(title, icon, onclick) {
-        var constr = L.Control.extend({
+        var Constr = L.Control.extend({
             options: {  position: 'topright' },
             onAdd: function (map) {
                 var container = L.DomUtil.create('div', 'leaflet-bar');
@@ -144,7 +146,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 return container;
             }
         });
-        return new constr();
+        return new Constr();
     }
 
 
@@ -169,10 +171,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 window.ChromiumCallbacks = [] ;
             }
             ChromiumCallbacks[0] = function(lng, lat, alt){
-
                 setLocationMarker(null,lng, lat);
-
-                // SmartgeoChromium.goTo(lng, lat, asset.xmin, asset.ymax);
             };
             SmartgeoChromium.locate();
         } else {
@@ -180,7 +179,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             G3ME.map.locate({watch: true, setView: true});
         }
 
-    };
+    }
 
     function stopPosition() {
         G3ME.map.stopLocate();
@@ -189,7 +188,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
         removePositionMarker();
         return false;
-    };
+    }
 
     function removePositionMarker() {
         if(POSITION_MARKER && POSITION_MARKER._map) {
@@ -204,21 +203,27 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
         if(event === null ) { /* CallbackChromium */
             event = {
-                latlng : [lat, lng],
-                accuracy : 1,
+                latlng : {lat: lat, lng: lng},
+                accuracy : 10,
             };
+            G3ME.map.setView({lat: lat, lng: lng},18);
+        } else {
+            G3ME.map.off('locationfound', setLocationMarker);
         }
 
-        G3ME.map.off('locationfound', setLocationMarker);
         removePositionMarker();
-        POSITION_MARKER = new L.Circle(event.latlng,
-                                  event.accuracy, {
-                                    clickable: false,
-                                    color: '#fd9122',
-                                    opacity: 0.1,
-                                    fillOpacity: 0.05
-                                  });
+
+        POSITION_MARKER = new L.Circle( event.latlng,
+                                        event.accuracy,
+                                        {
+                                            clickable   : false,
+                                            color       : '#fd9122',
+                                            opacity     : 0.1,
+                                            fillOpacity : 0.05
+                                        });
+
         POSITION_MARKER.addTo(G3ME.map);
+
         $(POSITION_MARKER._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(POSITION_MARKER);
         });
@@ -228,7 +233,14 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ANGLE_MARKER.addTo(G3ME.map);
             ANGLE_MARKER._icon.innerHTML = '<div></div>';
             ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)';
+        } else {
+            ANGLE_MARKER = new L.Marker(event.latlng);
+            ANGLE_MARKER.addTo(G3ME.map);
+            $(ANGLE_MARKER._path).fadeOut(5000, function() {
+                G3ME.map.removeLayer(ANGLE_MARKER);
+            });
         }
+
     }
 
 
@@ -247,7 +259,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
 
         G3ME.map.addControl(CONSULTATION_CONTROL);
-    };
+    }
 
     function stopConsultation() {
         $scope.consultationIsEnabled = false;
