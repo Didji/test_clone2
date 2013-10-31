@@ -67,15 +67,12 @@ public abstract class Install {
 	/**
 	 * Dézippe un fichier dans un répertoire donné.
 	 * @param zip le fichier zip à extraire
-	 * @param destDir répertoire destination d'extraction
+	 * @param destDir répertoire destination d'extraction, créé s'il n'existe pas
 	 * @throws IOException
 	 */
 	public static final void unzip(File zip, File destDir) throws IOException {
 		if (!zip.exists()) {
 			throw new IllegalArgumentException("Zip file " + zip.getAbsolutePath() + " must exist");
-		}
-		if (!destDir.exists() || !destDir.isDirectory()) {
-			throw new IllegalArgumentException(destDir.getAbsolutePath() + " must exist and be a directory");
 		}
 		
 		ZipFile zipFile = new ZipFile(zip);
