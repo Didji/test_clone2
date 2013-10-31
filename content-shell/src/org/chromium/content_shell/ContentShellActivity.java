@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.chromium.base.ChromiumActivity;
 import org.chromium.base.MemoryPressureListener;
+import org.chromium.base.PathUtils;
 import org.chromium.content.app.LibraryLoader;
 import org.chromium.content.browser.ActivityContentVideoViewClient;
 import org.chromium.content.browser.BrowserStartupController;
@@ -125,13 +126,21 @@ public class ContentShellActivity extends ChromiumActivity {
 		}
     }
     
+    void list(File f) {
+    	  if (f.isDirectory()) {
+    	    for (File c : f.listFiles())
+    	    	list(c);
+    	  }
+    	  Log.e(TAG, f.getAbsolutePath());
+    	}
+    
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         install();
         
-        Log.i(TAG, "-------------------------------------------------------");
+        /*Log.i(TAG, "-------------------------------------------------------");
         Log.i(TAG, "files dir="+this.getFilesDir().getAbsolutePath() + " contains " + this.getFilesDir().listFiles().length + " files");
         for(File f : this.getFilesDir().listFiles()) {
         	Log.i(TAG, "File " + f.getAbsolutePath());
@@ -143,6 +152,12 @@ public class ContentShellActivity extends ChromiumActivity {
         	Log.i(TAG, "File " + f.getAbsolutePath());
         }
         Log.i(TAG, "-------------------------------------------------------");
+        Log.i(TAG, "cache dir=" + getCacheDir());
+        list(getCacheDir());
+        Log.i(TAG, "-------------------------------------------------------");
+        Log.i(TAG, "PathsUtils data dir="+PathUtils.getDataDirectory(this));
+        list(new File(PathUtils.getDataDirectory(this)));
+        Log.i(TAG, "-------------------------------------------------------");*/
         
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
