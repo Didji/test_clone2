@@ -163,8 +163,23 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             POSITION_CONTROL = makeControl("Ma position", "icon-compass", stopPosition);
         }
         G3ME.map.addControl(POSITION_CONTROL);
-        G3ME.map.on('locationfound', setLocationMarker);
-        G3ME.map.locate({watch: true, setView: true});
+
+        if(window.SmartgeoChromium && SmartgeoChromium.locate){
+            if(!window.ChromiumCallbacks){
+                window.ChromiumCallbacks = [] ;
+            }
+            ChromiumCallbacks[0] = function(lng, lat, alt){
+
+                setLocationMarker(null,lng, lat);
+
+                // SmartgeoChromium.goTo(lng, lat, asset.xmin, asset.ymax);
+            };
+            SmartgeoChromium.locate();
+        } else {
+            G3ME.map.on('locationfound', setLocationMarker);
+            G3ME.map.locate({watch: true, setView: true});
+        }
+
     };
 
     function stopPosition() {
@@ -185,15 +200,23 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
     }
 
-    function setLocationMarker(event) {
+    function setLocationMarker(event, lng, lat) {
+
+        if(event === null ) { /* CallbackChromium */
+            event = {
+                latlng : [lat, lng],
+                accuracy : 1,
+            };
+        }
+
         G3ME.map.off('locationfound', setLocationMarker);
         removePositionMarker();
         POSITION_MARKER = new L.Circle(event.latlng,
                                   event.accuracy, {
                                     clickable: false,
                                     color: '#fd9122',
-                                    opacity: .1,
-                                    fillOpacity: .05
+                                    opacity: 0.1,
+                                    fillOpacity: 0.05
                                   });
         POSITION_MARKER.addTo(G3ME.map);
         $(POSITION_MARKER._path).fadeOut(1500, function() {
@@ -204,7 +227,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ANGLE_MARKER = new L.Marker(event.latlng, {icon: L.divIcon({className: 'gi-compass'})});
             ANGLE_MARKER.addTo(G3ME.map);
             ANGLE_MARKER._icon.innerHTML = '<div></div>';
-            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)'
+            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)';
         }
     }
 
