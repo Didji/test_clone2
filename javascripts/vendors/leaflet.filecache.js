@@ -754,7 +754,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
                     this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
                         if(yes){
+                            var oldTile = image.src;
                             image.src = this_.getTileUrl({x:x, y:y},z);
+                            image.onerror = function(event) {
+                                image.src = oldTile;
+                            };
                             image.onload = function(){
                                 image.className += " leaflet-tile-loaded";
                                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
@@ -771,8 +775,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             });
 
         }, function(fileError){
-            // image.style.border  = 'solid 1px red';
+            var oldTile = image.src ;
             image.src = this_.getTileUrl({x:x, y:y},z);
+            image.onerror = function(event) {
+                image.src = oldTile;
+            };
             image.onload = function(){
                 image.className += " leaflet-tile-loaded";
                 this_.writeTileToCache(tileObject, this_.getDataURL(image));
