@@ -69,7 +69,17 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.gotoAsset = function(asset){
 
-        // NOT TESTED
+        //   /!\ REFACTOR ALERT /!\
+        // TODO : make polyfill class
+
+        var coords = asset.geometry.type === "Point" ? {
+            x : asset.geometry.coordinates[0],
+            y : asset.geometry.coordinates[1]
+        } : {
+            x : asset.geometry.coordinates[0][0],
+            y : asset.geometry.coordinates[0][1]
+        } ;
+
         if(window.SmartgeoChromium && SmartgeoChromium.goTo && SmartgeoChromium.locate){
 
             if(!window.ChromiumCallbacks){
@@ -77,13 +87,13 @@ angular.module('smartgeomobile').controller('consultationController', function (
             }
 
             ChromiumCallbacks[0] = function(lng, lat, alt){
-                SmartgeoChromium.goTo(lng, lat, asset.xmin, asset.ymax);
+                SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
             };
 
             SmartgeoChromium.locate();
 
         } else {
-            console.log('Not implemented but going from here to', [asset.xmin, asset.xmax]);
+            console.log('Not implemented but going from here to', [coords.x, coords.y]);
         }
 
     };
