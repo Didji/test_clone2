@@ -29,6 +29,7 @@ html, body {
     background: #373f45;
     overflow: hidden;
     font-family: 'robotoregular', sans-serif;
+    user-select :none;
 }
 
 /** Vue principale */
