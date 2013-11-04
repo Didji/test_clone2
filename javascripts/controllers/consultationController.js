@@ -55,7 +55,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope.loading = false;
         $scope.$apply();
 
-        $rootScope.$broadcast("UNHIGHALLLIGHT_ASSET");
+        $rootScope.$broadcast("UNHIGHLIGHT_ALL_ASSET");
 
         $(".collapse").collapse({
             toggle: false

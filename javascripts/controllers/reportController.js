@@ -247,7 +247,12 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         report.mission   = 1*$rootScope.report_mission || report.mission ;
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
-            .error(function(){
+            .error(function(error){
+
+                if(error && error.error && error.error.text){
+                    alertify.alert(error.error.text);
+                }
+
                 var reports = Smartgeo.get('reports') || [];
                 reports.push(report);
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
@@ -264,7 +269,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
                 SmartgeoChromium.redirect($rootScope.report_url_redirect);
             } else {
-                document.location = $rootScope.report_url_redirect;
+                window.open($rootScope.report_url_redirect, "_blank");
             }
         } else {
             $location.path('map/'+$rootScope.site.id);
@@ -282,9 +287,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
             url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
             return url;
-        }
-
-        if(url.indexOf('[KEY_INDEXED_FIELDS]') != -1){
+        } else if(url.indexOf('[KEY_INDEXED_FIELDS]') != -1){
             var injectedValues = '' ;
             for(var field in $scope.report.fields){
                 if($scope.report.fields.hasOwnProperty(field)){
@@ -293,6 +296,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             }
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
             url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+            return url;
+        } else {
             return url;
         }
     }
