@@ -1,6 +1,6 @@
 <div ng-controller="planningController">
 
-    <button class="btn btn-default has-spinner btn-block btn-custom-block">Actualiser</button>
+    <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()">Actualiser</button>
 
     <div class="btn-group" style="margin-left: 45px;">
       <button type="button" class="btn btn-lg btn-default"><span class="icon icon-arrow-left"></span></button>
@@ -37,7 +37,7 @@
 
         <div class='pull-right'>
             <button class="btn btn-warning"> <span class="fa fa-search fa-3x"></span><br/>Localiser</button>
-            <button class="btn btn-warning"> <span class="fa fa-pencil fa-3x"></span><span class="badge badge-primary">100</span><br/>Saisir</button>
+            <button class="btn btn-warning"> <span class="fa fa-pencil fa-3x"></span><span class="badge badge-primary">{{mission.selectedAssets}}</span><br/>Saisir</button>
         </div>
       </div>
     </div>
