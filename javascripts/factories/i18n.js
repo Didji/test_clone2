@@ -11,7 +11,8 @@ angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
                 _AUTH_SETTINGS_                     : "Settings",
                 _AUTH_CHANGE_GIMAP_URL_             : "Change remote server",
                 _AUTH_REMEMBER_PASSWORD_            : "Remember password",
-                _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : "Offline mode is not available for %s."
+                _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : "Offline mode is not available for %s.",
+                _SYNC_UNKNOWN_ERROR_                : "Unknown error while synchronizing reports"
             },
             "fr" : {
                 _AUTH_LOG_MESSAGE_INIT_             : "Initialisation",
@@ -22,7 +23,8 @@ angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
                 _AUTH_SETTINGS_                     : "Paramètres",
                 _AUTH_CHANGE_GIMAP_URL_             : "Changer de serveur",
                 _AUTH_REMEMBER_PASSWORD_            : "Se souvenir du mot de passe",
-                _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : "Le mode déconnecté n'est pas disponible pour %s car il ne s'est jamais authentifié en mode connecté."
+                _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : "Le mode déconnecté n'est pas disponible pour %s car il ne s'est jamais authentifié en mode connecté.",
+                _SYNC_UNKNOWN_ERROR_                : "Erreur inconnue lors de la synchronisation."
             }
         },
         get : function(key, args){
