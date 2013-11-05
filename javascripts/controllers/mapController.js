@@ -136,6 +136,15 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         activateConsultation();
     });
 
+    $scope.$on("__MAP_SETVIEW__", function(event, extent){
+        if(extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax){
+            G3ME.map.fitBounds([[extent.ymin, extent.xmin] , [extent.ymax, extent.xmax]]);
+        } else {
+            alertify.error("Extent non valide");
+        }
+
+    });
+
     $scope.$on("ACTIVATE_POSITION", activatePosition);
 
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){

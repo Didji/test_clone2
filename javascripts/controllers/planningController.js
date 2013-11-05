@@ -45,19 +45,35 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.openned = mission.openned === true ? false : true ;
 
-        if(mission.openned || !mission.assetsCache){
+        if(mission.openned || !mission.assetsCache|| !mission.extent){
             if(!mission.pendingAssetsExtent || !mission.assetsCache ){
                 Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
+                    console.log(assets);
+                    if( assets.length === 0 ){
+                        alertify.log("Les objets de cette missions n'ont pas été trouvés.");
+                        return ;
+                    }
                     mission.assetsCache         = assets ;
                     mission.pendingAssetsExtent = getExtentsFromAssetsList(assets);
                     mission.selectedAssets      = 0;
                     $scope.highlightMission(mission);
+                    mission.extent = getExtentsFromAssetsList(mission.assetsCache);
+                    $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
                 });
             } else {
                 $scope.highlightMission(mission);
             }
         } else {
             $rootScope.$broadcast('UNHIGHLIGHT_ASSETS', mission.assetsCache);
+        }
+    };
+
+    $scope.locateMission = function($index){
+        var mission = $scope.missions[$index] ;
+        if(mission.extent){
+            $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
+        } else {
+            alertify.log("Les objets de cette missions n'ont pas été trouvés.");
         }
     };
 
