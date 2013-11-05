@@ -28,8 +28,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             this.map     = new L.map(this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
-                maxZoom: Smartgeo.MAX_ZOOM,
-                minZoom: Smartgeo.MIN_ZOOM
+                maxZoom: Smartgeo._MAP_MAX_ZOOM,
+                minZoom: Smartgeo._MAP_MIN_ZOOM
             }).addControl(L.control.zoom({
                 position: 'topright'
             }));

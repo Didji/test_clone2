@@ -3,7 +3,7 @@
 *  Planning controller
 */
 
-angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission){
+angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location){
 
     'use strict';
 
@@ -48,7 +48,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(mission.openned || !mission.assetsCache|| !mission.extent){
             if(!mission.pendingAssetsExtent || !mission.assetsCache ){
                 Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
-                    console.log(assets);
                     if( assets.length === 0 ){
                         alertify.log("Les objets de cette missions n'ont pas été trouvés.");
                         return ;
@@ -64,7 +63,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 $scope.highlightMission(mission);
             }
         } else {
-            $rootScope.$broadcast('UNHIGHLIGHT_ASSETS', mission.assetsCache);
+            $rootScope.$broadcast('UNHIGHLIGHT_ASSETS_FOR_MISSION', mission);
         }
     };
 
@@ -77,18 +76,25 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         }
     };
 
+    $scope.showReport = function($index){
+        var mission = $scope.missions[$index],
+            selectedAssets = [];
+        for (var i = 0; i < mission.assetsCache.length; i++) {
+            if(mission.assetsCache[i].selected){
+                selectedAssets.push(mission.assetsCache[i].id);
+            }
+        }
+        $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(','));
+    };
+
     $scope.highlightMission = function(mission){
         $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, null,
-            /** marker click handler */
-            function(mission, asset){
-                for (var i = 0; i < mission.assetsCache.length; i++) {
-                    if(mission.assetsCache[i].id === asset.id){
-                        mission.assetsCache[i].selected = !!!mission.assetsCache[i].selected ;
-                        mission.selectedAssets += mission.assetsCache[i].selected ? 1 : -1   ;
-                        $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', mission.assetsCache[i]);
-                        break;
-                    }
-                }
+            /* marker click handler */
+            function(mission, id){
+                var asset = mission.assetsCache[id] ;
+                asset.selected = !!!asset.selected ;
+                mission.selectedAssets += asset.selected ? 1 : -1   ;
+                $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
