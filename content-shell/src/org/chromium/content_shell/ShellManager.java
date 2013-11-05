@@ -15,15 +15,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
-import com.gismartware.mobile.Install;
-
 /**
  * Container and generator of ShellViews.
  */
 @JNINamespace("content")
 public class ShellManager extends FrameLayout {
 
-    public static final String DEFAULT_SHELL_URL = "file://" + Install.DEFAULT_URL;
+    public static final String DEFAULT_SHELL_URL = "file://" + ContentShellApplication.DEFAULT_URL;
     private static boolean sStartup = true;
     private WindowAndroid mWindow;
     private Shell mActiveShell;

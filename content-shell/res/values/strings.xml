@@ -12,5 +12,8 @@
     <!-- THESE ARE HAND MERGED UNTIL WE CAN AUTOMATE THIS PROCESS -->
     <string name="url_hint">Type URL Here</string>
     <string name="browser_process_initialization_failed">Initialization failed.</string>
-
+    
+    <string name="gps_disabled">Le GPS est inactif, voulez-vous l\'activer ?</string>
+    <string name="gps_disabled_opt_yes">Oui</string>
+    <string name="gps_disabled_opt_no">Non</string>
 </resources>
