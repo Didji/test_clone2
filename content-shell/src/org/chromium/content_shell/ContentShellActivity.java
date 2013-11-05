@@ -5,15 +5,16 @@
 package org.chromium.content_shell;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.chromium.base.ChromiumActivity;
 import org.chromium.base.MemoryPressureListener;
-import org.chromium.base.PathUtils;
 import org.chromium.content.app.LibraryLoader;
 import org.chromium.content.browser.ActivityContentVideoViewClient;
 import org.chromium.content.browser.BrowserStartupController;
@@ -37,6 +38,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,8 +49,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import com.gismartware.mobile.Activities;
-import com.gismartware.mobile.Install;
+import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.FileUtils;
+import com.gismartware.mobile.ImageUtils;
 
 /**
  * Activity for managing the Content Shell.
@@ -56,8 +59,8 @@ import com.gismartware.mobile.Install;
 public class ContentShellActivity extends ChromiumActivity {
 	
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
-	
-	private static final String INTENT_DEST_URL_PREFIX = Install.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
+	private static final String INSTALL_ZIP_FILE = MESSAGES.getString("install.zip.file");
+	private static final String INTENT_DEST_URL_PREFIX = ContentShellApplication.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
 
 	/*
 	 * Constantes oauth
@@ -102,21 +105,27 @@ public class ContentShellActivity extends ChromiumActivity {
     
     @Override
 	public void onDestroy() {
-    	//TODO : delete folder new File(Environment.getExternalStorageDirectory().toString() + File.separator + Install.LOCAL_INSTALL_DIR));
-    	//impossible to make it work...
+    	//TODO impossible to make deletion work...
+    	if(FileUtils.delete(new File(ContentShellApplication.WEB_ROOT))) {
+    		Log.d(TAG, "Smartgeo has been successfully uninstalled!");
+    	} else {
+    		Log.w(TAG, "Impossible to uninstall Smartgeo.");
+    	}
     	super.onDestroy();
 	}
     
-    private void install() {
-        File zip = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + Install.INSTALL_ZIP_FILE);
+    private void installIfNeeded() {
+    	//TODO: check it install needed (find a way)
+    	//TODO: delete folder before install?
+		File zip = new File(getCacheDir().getAbsolutePath() + File.separator + INSTALL_ZIP_FILE);
         if(zip.exists()) {
         	zip.delete();
         }
         try {
-			InputStream is = this.getAssets().open(Install.INSTALL_ZIP_FILE);
-			Install.copyTo(is, zip);
-			Install.unzip(zip, new File(Environment.getExternalStorageDirectory().getPath() + File.separator + Install.LOCAL_INSTALL_DIR));
-        	Log.i(TAG, "SmartGeo has been successfully installed!");
+			InputStream is = getAssets().open(INSTALL_ZIP_FILE);
+			FileUtils.copyTo(is, zip);
+			FileUtils.unzip(zip, new File(ContentShellApplication.WEB_ROOT));
+        	Log.i(TAG, "Smartgeo has been successfully installed!");
 		} catch (IOException e) {
 			Log.e(TAG, "Error while installing... ");
 			e.printStackTrace();
@@ -126,38 +135,12 @@ public class ContentShellActivity extends ChromiumActivity {
 		}
     }
     
-    void list(File f) {
-    	  if (f.isDirectory()) {
-    	    for (File c : f.listFiles())
-    	    	list(c);
-    	  }
-    	  Log.e(TAG, f.getAbsolutePath());
-    	}
-    
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        install();
-        
-        /*Log.i(TAG, "-------------------------------------------------------");
-        Log.i(TAG, "files dir="+this.getFilesDir().getAbsolutePath() + " contains " + this.getFilesDir().listFiles().length + " files");
-        for(File f : this.getFilesDir().listFiles()) {
-        	Log.i(TAG, "File " + f.getAbsolutePath());
-        }
-        Log.i(TAG, "-------------------------------------------------------");
-        File dir = this.getDir(Install.LOCAL_INSTALL_DIR, MODE_PRIVATE);
-        Log.i(TAG, "getDir="+ dir.getAbsolutePath() + " contains " + dir.listFiles().length + " files");
-        for(File f : dir.listFiles()) {
-        	Log.i(TAG, "File " + f.getAbsolutePath());
-        }
-        Log.i(TAG, "-------------------------------------------------------");
-        Log.i(TAG, "cache dir=" + getCacheDir());
-        list(getCacheDir());
-        Log.i(TAG, "-------------------------------------------------------");
-        Log.i(TAG, "PathsUtils data dir="+PathUtils.getDataDirectory(this));
-        list(new File(PathUtils.getDataDirectory(this)));
-        Log.i(TAG, "-------------------------------------------------------");*/
+        installIfNeeded();
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
@@ -190,7 +173,7 @@ public class ContentShellActivity extends ChromiumActivity {
   		preferences = this.getSharedPreferences("auth", Context.MODE_PRIVATE);
   		if (preferences.getString(KEY_TOKEN, null) == null) {
   			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-  			startActivityForResult(intent, Activities.OAUTH_ACCOUNT.getValue());
+  			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
   		}
   		
         String startupUrl = getIntentUrl(getIntent());
@@ -225,7 +208,7 @@ public class ContentShellActivity extends ChromiumActivity {
 
     private void finishInitialization(Bundle savedInstanceState) {
         String shellUrl = mShellManager.getStartupUrl();
-        if(shellUrl == null) {
+        if (shellUrl == null) {
         	shellUrl = ShellManager.DEFAULT_SHELL_URL;
         }
         
@@ -352,12 +335,17 @@ public class ContentShellActivity extends ChromiumActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-    	Activities act = Activities.getActivitiesFromValue(requestCode);
-    	Log.d(TAG, "[onActivityResult] resultCode=" + resultCode + " on requestCode=" + act.name());
+    	ActivityCode act = ActivityCode.getActivitiesFromValue(requestCode);
+    	if (act != null) {
+    		Log.d(TAG, "[onActivityResult] resultCode=" + resultCode + " on requestCode=" + act.name());
+    	} else {
+    		Log.d(TAG, "[onActivityResult] resultCode=" + resultCode + " on requestCode=" + requestCode);
+    	}
+    	
     	if (resultCode == RESULT_OK) {
-			if (requestCode == Activities.OAUTH_AUTHORIZATION.getValue()) {
+			if (requestCode == ActivityCode.OAUTH_AUTHORIZATION.getCode()) {
 				requestToken();
-			} else if (requestCode == Activities.OAUTH_ACCOUNT.getValue()) {
+			} else if (requestCode == ActivityCode.OAUTH_ACCOUNT.getCode()) {
 				String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 				Log.d(TAG, "Token renewal for user " + accountName);
 				Editor editor = preferences.edit();
@@ -365,15 +353,32 @@ public class ContentShellActivity extends ChromiumActivity {
 				editor.commit();
 				invalidateToken();
 				requestToken();
-			} else if (requestCode == Activities.CAPTURE_IMAGE.getValue()) {
+			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
 				String path = getRealPathFromURI(Uri.parse(intent.getData().toString()));
-				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + path + "\");", null);
-			} else if (requestCode == Activities.GEOLOCATE.getValue()) {
+				
+				//save a compressed file in temporary dir
+				try {
+					Bitmap pic = ImageUtils.decodeFile(new File(path), 600, 800);
+					File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "pic.jpg");
+					OutputStream out = new FileOutputStream(file);
+					pic.compress(Bitmap.CompressFormat.JPEG, 80, out);
+					out.flush();
+					out.close();
+					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + file.getAbsolutePath() + "\");", null);
+				} catch (IOException e) {
+					Log.e(TAG, "Erreur enregistrement photo");
+				}
+			} else if (requestCode == ActivityCode.GEOLOCATE.getCode()) {
 				Bundle extras = intent.getExtras();
 				Location location = (Location) extras.get("location");
-				Log.d(TAG, location.toString());
-				getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
-						location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");", null);
+				if (location == null) { // pas de position (gps désactivé par ex)
+					Log.e(TAG, "Pas de geolocalisation trouvee!");
+					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[2]();", null);
+				} else {
+					Log.d(TAG, location.toString());
+					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
+							location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");", null);
+				}
 			}
 		}
     	
@@ -533,7 +538,7 @@ public class ContentShellActivity extends ChromiumActivity {
 
 				Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
 				if (launch != null) {
-					startActivityForResult(launch, Activities.OAUTH_AUTHORIZATION.getValue());
+					startActivityForResult(launch, ActivityCode.OAUTH_AUTHORIZATION.getCode());
 				} else {
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 					Log.d(TAG, "Token recu : " + token);
