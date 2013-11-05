@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n ) {
 
     // TODO : a faire dans l'installation (pour des raisons obscures, je n'y suis pas arrivé)
     $rootScope.site.activities._byId = [];
@@ -27,7 +27,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
             }).error(function(error){
                 if(error.error){
-                    alertify.error('CR Non synchronisé : ' + error.error.text);
+                    alertify.error(error.error.text);
+                } else {
+                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
                 }
             });
     };
