@@ -147,29 +147,19 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("ACTIVATE_POSITION", activatePosition);
 
+
+    /*
+     *   General events
+     */
+    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
+        $scope.zoomOnAsset(asset);
+    });
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
     });
     $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
         $scope.unHighlightAsset(asset);
     });
-
-    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
-        for (var i = 0; i < mission.assetsCache.length; i++) {
-            var init = false ;
-            if(!mission.assetsCache[i].marker){
-                init = true ;
-                mission.assetsCache[i].marker = L.marker([mission.assetsCache[i].geometry.coordinates[1], mission.assetsCache[i].geometry.coordinates[0]]);
-            }
-            mission.assetsCache[i].marker.setIcon(mission.assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
-            $scope.highlightAsset(mission.assetsCache[i], mission.assetsCache[i].marker , init ? clickHandler : null , mission);
-        }
-    });
-
-    $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
-        asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
-    });
-
     $scope.$on("HIGHLIGHT_ASSETS", function(event, assets, marker, clickHandler){
         for (var i = 0; i < assets.length; i++) {
             $scope.highlightAsset(assets[i], marker, clickHandler);
@@ -180,13 +170,45 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             $scope.unHighlightAsset(assets[i]);
         }
     });
-
     $scope.$on("UNHIGHLIGHT_ALL_ASSET", function(event){
         $scope.unHighlightAllAsset();
     });
-    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
-        $scope.zoomOnAsset(asset);
+
+
+
+    /*
+     *   Planning related events
+     */
+    $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
+        G3ME.map.removeLayer(mission.cluster);
     });
+
+    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
+        mission.cluster = mission.cluster || L.markerClusterGroup();
+        for (var i = 0; i < mission.assetsCache.length; i++) {
+            var init = false ;
+            if(!mission.assetsCache[i].marker){
+                init = true ;
+                mission.assetsCache[i].marker = L.marker([mission.assetsCache[i].geometry.coordinates[1], mission.assetsCache[i].geometry.coordinates[0]]);
+            }
+            mission.assetsCache[i].marker.setIcon(mission.assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+            if(init){
+                (function(i,marker){
+                    marker.on('click', function(){
+                        clickHandler(mission, i);
+                    });
+                })(i, mission.assetsCache[i].marker);
+            }
+            mission.cluster.addLayer(mission.assetsCache[i].marker);
+        }
+        G3ME.map.addLayer(mission.cluster);
+    });
+
+    $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
+        asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+    });
+
+
 
     // Fonction utilitaire créant un contrôle Leaflet.
     function makeControl(title, icon, onclick) {
@@ -290,15 +312,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         return false;
     }
 
-    $scope.highlightAsset = function(asset, customMarker, customClickHandler, mission){
+    $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
-        /**
-         *  On fait la distingtion entre null et undefined.
-         *    - null      : l' handler a déjà été binder, on ne rebind pas quelque chose
-         *    - undefined : on ne passe pas d'handler, on bind l'handler par défaut (le zoom sur asset)
-         **/
-        customClickHandler = customClickHandler === null ? null : customClickHandler || function(){
-            /* handler par défaut */
+        customClickHandler = customClickHandler || function(){
             $scope.zoomOnAsset(asset);
         };
 
@@ -320,25 +336,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 console.log('Geometrie non supportée : ' + asset.geometry.type);
         }
 
-        if(customClickHandler !== null){
-            G3ME.assetsMarkers[asset.guid].on('click', function(){
-                if(mission){
-                    customClickHandler(mission, asset);
-                } else {
-                    customClickHandler();
-                }
-            });
-        }
-
-        G3ME.assetsMarkers[asset.guid].on('dblclick', function(){
-            if(!mission){
+        G3ME.assetsMarkers[asset.guid]
+            .on('click', function(){
+                customClickHandler();
+            })
+            .on('dblclick', function(){
                 $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
-            }
-        });
-
-        G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
-
-        G3ME.invalidateMapSize();
+            }).addTo(G3ME.map);
     };
 
     $scope.unHighlightAsset = function(asset){
