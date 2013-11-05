@@ -69,13 +69,10 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
-                // if(lastuser.password !== $scope.pwd) {
-                    // var $scope.rememberme  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
-                    lastuser = {
-                        password:   $scope.rememberme ? $scope.pwd : '',
-                        rememberme: $scope.rememberme
-                    };
-                // }
+                lastuser = {
+                    password:   $scope.rememberme ? $scope.pwd : '',
+                    rememberme: $scope.rememberme
+                };
                 lastuser.username = $scope.username;
                 Smartgeo.set('user',lastuser);
                 $location.path('sites');
