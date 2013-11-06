@@ -11,6 +11,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         roFields: {},
         overrides: {},
         ged:[],
+        mission : 1*$routeParams.mission,
         activity: null,
         uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -221,7 +222,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     $scope.sendReport = function (event) {
 
         var report = angular.copy($scope.report);
-
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
             report.assets[i] = report.assets[i].id ;
