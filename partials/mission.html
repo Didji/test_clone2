@@ -1,0 +1,33 @@
+
+      <div ng-click='openMission(key)' class="panel-heading">
+        <h3 class="panel-title">
+          <span class="mission-label">{{mission.activity.label}} n°{{mission.number}}</span>
+          <span class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
+              <span ng-switch-when="0">terminé</span>
+              <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
+          </span>
+        </h3>
+      </div>
+      <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
+      <div class="panel-body"  ng-show='mission.openned || false'>
+
+        <p>
+          <i class="fa fa-clock-o"></i> Avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+        </p>
+        <p ng-show='mission.city'>
+          <i class="fa fa-map-marker"></i> {{mission.city}}
+        </p>
+        <p ng-show='mission.address'>
+          <i class="fa fa-crosshairs"></i> {{mission.address}}
+        </p>
+        <p ng-click='changeVisibility(key)' ng-show='mission.assets.length > 0'>
+          <i class="fa" ng-class="mission.icon || 'fa-circle-o' " ></i> Afficher objets terminés
+        </p>
+
+        <button style='min-width: 110px' class="btn btn-warning" ng-click="locateMission(key)" ng-show='mission.assets.length > 0'>
+          <span class="fa fa-search fa-3x"></span><br/>Localiser
+        </button>
+        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(key)" ng-disabled="mission.selectedAssets == 0" ng-show='mission.assets.length > 0'>
+          <span class="fa fa-pencil fa-3x"></span><span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span><br/>Saisir
+        </button>
+      </div>
