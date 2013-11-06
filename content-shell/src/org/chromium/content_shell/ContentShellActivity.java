@@ -354,12 +354,10 @@ public class ContentShellActivity extends ChromiumActivity {
 				invalidateToken();
 				requestToken();
 			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
-				String path = getRealPathFromURI(Uri.parse(intent.getData().toString()));
-				
-				//save a compressed file in temporary dir
+				File origPic = new File(getRealPathFromURI(Uri.parse(intent.getData().toString())));
 				try {
-					Bitmap pic = ImageUtils.decodeFile(new File(path), 600, 800);
-					File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "pic.jpg");
+					Bitmap pic = ImageUtils.decodeFile(origPic, 600, 800);
+					File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), origPic.getName());
 					OutputStream out = new FileOutputStream(file);
 					pic.compress(Bitmap.CompressFormat.JPEG, 80, out);
 					out.flush();
