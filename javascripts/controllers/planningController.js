@@ -3,7 +3,7 @@
 *  Planning controller
 */
 
-angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location){
+angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $filter){
 
     'use strict';
 
@@ -14,16 +14,35 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     var DAY_TO_MS = 86400000 ;
 
     $scope.remove1day = function(){
+        $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
         $scope.dayToDisplay -= DAY_TO_MS ;
-        Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+        if( Object.keys($filter('todaysMissions')($scope.missions,$scope.dayToDisplay)).length +
+            Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions,$scope.dayToDisplay)).length === 0 &&
+            $scope.dayToDisplay > $scope.minimumTime ){
+            $scope.remove1day();
+        } else if($scope.dayToDisplay <= $scope.minimumTime) {
+        } else {
+            Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+        }
+
     };
+
     $scope.gototoday = function(){
         $scope.dayToDisplay = (new Date()).getTime();
-        // Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
-    };
-    $scope.add1day = function(){
-        $scope.dayToDisplay += DAY_TO_MS ;
         Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+    };
+
+    $scope.add1day = function(){
+        $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
+        $scope.dayToDisplay += DAY_TO_MS ;
+        if( Object.keys($filter('todaysMissions')($scope.missions,$scope.dayToDisplay)).length +
+            Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions,$scope.dayToDisplay)).length === 0 &&
+            $scope.dayToDisplay < $scope.maximumTime ){
+            $scope.add1day();
+        } else if($scope.dayToDisplay >= $scope.maximumTime) {
+        } else {
+            Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+        }
     };
 
     var reports  = Smartgeo.get('reports'), missions = Smartgeo.get('missions');
@@ -47,7 +66,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.synchronize = function(){
         Mission.queryAll()
                 .success( function(results){
+                    // calculer les extremums;
                     $scope.missions = results.results;
+                    setExtremum($scope.missions);
                     Smartgeo.set('missions', $scope.missions);
                 })
                 .error( function(){
@@ -58,6 +79,19 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /* TODO : il faut envoyer les CR en attente avant de recupérer les missions */
     $scope.synchronize();
+
+    function setExtremum(missions){
+        $scope.minimumTime =  Infinity;
+        $scope.maximumTime = -Infinity;
+        for(var i in missions){
+            if( $filter('customDateFilter')(missions[i].begin) < $scope.minimumTime ){
+                $scope.minimumTime = $filter('customDateFilter')(missions[i].begin);
+            }
+            if( $filter('customDateFilter')(missions[i].end) > $scope.maximumTime ){
+                $scope.maximumTime = $filter('customDateFilter')(missions[i].end);
+            }
+        }
+    }
 
     function getExtentsFromAssetsList(assets){
         var xmin =   Infinity,
