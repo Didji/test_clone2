@@ -9,6 +9,23 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    $scope.dayToDisplay = Smartgeo.get('lastUsedPlanningDate') || (new Date()).getTime(); // TODO : recuperer la derniere date utilisé ?
+
+    var DAY_TO_MS = 86400000 ;
+
+    $scope.remove1day = function(){
+        $scope.dayToDisplay -= DAY_TO_MS ;
+        Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+    };
+    $scope.gototoday = function(){
+        $scope.dayToDisplay = (new Date()).getTime();
+        // Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+    };
+    $scope.add1day = function(){
+        $scope.dayToDisplay += DAY_TO_MS ;
+        Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+    };
+
     var reports  = Smartgeo.get('reports'), missions = Smartgeo.get('missions');
 
     for(var i in reports){
@@ -27,15 +44,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     $scope.missions = missions;
 
-    /* TODO : il faut envoyer les CR en attente avant de recupérer les missions */
     $scope.synchronize = function(){
         Mission.queryAll()
                 .success( function(results){
                     $scope.missions = results.results;
                     Smartgeo.set('missions', $scope.missions);
-                    /* TODO : enlever transferer les assets de pendingReportForMissions (assets->done) */
-                    /* TODO : n'afficher le message qui s'il y a eu des modifications */
-                    alertify.log("Missions synchronisées");
                 })
                 .error( function(){
                     /* TODO : n'afficher le message que lorsque l'on est en ligne */
@@ -43,6 +56,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 });
     };
 
+    /* TODO : il faut envoyer les CR en attente avant de recupérer les missions */
     $scope.synchronize();
 
     function getExtentsFromAssetsList(assets){
@@ -67,18 +81,22 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
         if(mission.openned || !mission.assetsCache|| !mission.extent){
             if(!mission.pendingAssetsExtent || !mission.assetsCache ){
-                Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
-                    if( assets.length === 0 ){
-                        alertify.log("Les objets de cette missions n'ont pas été trouvés.");
-                        return ;
-                    }
-                    mission.assetsCache         = assets ;
-                    mission.pendingAssetsExtent = getExtentsFromAssetsList(assets);
-                    mission.selectedAssets      = 0;
-                    $scope.highlightMission(mission);
-                    mission.extent = getExtentsFromAssetsList(mission.assetsCache);
-                    $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
-                });
+                if(mission.assets.length){
+                    Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
+                        if( assets.length === 0 ){
+                            alertify.log("Les objets de cette missions n'ont pas été trouvés.");
+                            return ;
+                        }
+                        mission.assetsCache         = assets ;
+                        mission.pendingAssetsExtent = getExtentsFromAssetsList(assets);
+                        mission.selectedAssets      = 0;
+                        mission.extent = getExtentsFromAssetsList(mission.assetsCache);
+
+                        $scope.highlightMission(mission);
+                        $scope.$apply();
+                        $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
+                    });
+                }
             } else {
                 $scope.highlightMission(mission);
             }
@@ -135,20 +153,6 @@ angular.module('smartgeomobile').factory('Mission', function($http, Smartgeo, $q
         query    : angular.noop ,
         queryAll : function(){
             return $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.showOT.json'));
-        },
-        merge : function(array1, array2, priority){
-
-            var base , appender;
-            if(priority === 1){
-                base = array1 ;
-                appender = array2;
-            } else {
-                base = array2 ;
-                appender = array1;
-            }
-
-
-
         }
     };
 
