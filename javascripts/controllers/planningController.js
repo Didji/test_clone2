@@ -9,17 +9,37 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    var reports  = Smartgeo.get('reports'), missions = Smartgeo.get('missions');
+
+    for(var i in reports){
+        if(missions[reports[i].mission]){
+            var pendingAssets = reports[i].assets,
+                mission = missions[reports[i].mission] ;
+            for(var j = 0 , length = mission.assets.length; j < length ; j++){
+                if( pendingAssets.indexOf(mission.assets[j]) !== -1){
+                    mission.done.push(mission.assets[j]);
+                    mission.assets.splice(j--, 1);
+                    length--;
+                }
+            }
+        }
+    }
+
+    $scope.missions = missions;
+
+    /* TODO : il faut envoyer les CR en attente avant de recupérer les missions */
     $scope.synchronize = function(){
         Mission.queryAll()
                 .success( function(results){
-                    $scope.missions = Mission.merge(results.results, Smartgeo.get('missions') );
-                    /** TODO: n'afficher le message qui s'il y a eu des modifications */
+                    $scope.missions = results.results;
+                    Smartgeo.set('missions', $scope.missions);
+                    /* TODO : enlever transferer les assets de pendingReportForMissions (assets->done) */
+                    /* TODO : n'afficher le message qui s'il y a eu des modifications */
                     alertify.log("Missions synchronisées");
                 })
                 .error( function(){
-                    $scope.missions = Smartgeo.get('missions');
+                    /* TODO : n'afficher le message que lorsque l'on est en ligne */
                     alertify.error('Erreur lors de la mise à jour des missions');
-                    console.log(arguments);
                 });
     };
 
@@ -84,7 +104,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 selectedAssets.push(mission.assetsCache[i].id);
             }
         }
-        $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(','));
+        $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
     };
 
     $scope.highlightMission = function(mission){
@@ -116,8 +136,19 @@ angular.module('smartgeomobile').factory('Mission', function($http, Smartgeo, $q
         queryAll : function(){
             return $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.showOT.json'));
         },
-        merge : function(array1, array2){
-            return array1 ;
+        merge : function(array1, array2, priority){
+
+            var base , appender;
+            if(priority === 1){
+                base = array1 ;
+                appender = array2;
+            } else {
+                base = array2 ;
+                appender = array1;
+            }
+
+
+
         }
     };
 
