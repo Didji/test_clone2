@@ -2,6 +2,10 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    $scope.rights = {
+        report :  Smartgeo.getRight('report')
+    };
+
     $window.document.addEventListener('menubutton', function() {
         $scope.mlPushMenu._openMenu();
     }, false);
