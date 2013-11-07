@@ -106,7 +106,6 @@ public class ShellManager extends FrameLayout {
             mContentViewRenderView.setCurrentContentView(contentView);
             contentView.onShow();
         }
-
         return shellView;
     }
 
