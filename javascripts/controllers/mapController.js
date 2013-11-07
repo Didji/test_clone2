@@ -186,7 +186,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function stopPosition() {
         G3ME.map.stopLocate();
-        if(POSITION_CONTROL) {
+        console.log(POSITION_CONTROL);
+        if(POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
         }
         removePositionMarker();
