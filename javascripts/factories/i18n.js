@@ -1,6 +1,6 @@
 angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
     var i18n = {
-        // OVERRIDE_LANGUAGE : 'en',
+        OVERRIDE_LANGUAGE : 'fr',
         label: {
             "en" : {
                 _AUTH_LOG_MESSAGE_INIT_             : "Initialization",
