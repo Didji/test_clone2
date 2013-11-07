@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 public class GeoLocation extends Activity {
 
@@ -17,6 +16,9 @@ public class GeoLocation extends Activity {
 		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			if (location == null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			}
 			Intent resultData = new Intent();
 			resultData.putExtra("location", location);
 			setResult(Activity.RESULT_OK, resultData);
