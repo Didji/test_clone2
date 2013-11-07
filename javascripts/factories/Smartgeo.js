@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // _OVERRIDE_GIMAP_URL: "54.217.119.16",
 
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.2",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.3.0",
         _G3ME_VERSION               : "0.1.0",
 
         // TODO : put this in a RightsManager
