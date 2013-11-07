@@ -12,6 +12,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _SMARTGEO_MOBILE_VERSION    : "0.9.2",
         _G3ME_VERSION               : "0.1.0",
 
+        // TODO : put this in a RightsManager
+        getRight: function(module){
+            return this.smgeo_right[module];
+        },
+
+        smgeo_right : {
+            'report' : false
+        },
+
+
         // METHODS
         setGimapUrl : function(url){
             // // var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');

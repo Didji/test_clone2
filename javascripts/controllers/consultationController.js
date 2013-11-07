@@ -90,6 +90,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
                 SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
             };
 
+            ChromiumCallbacks[2] = function(){
+                alertify.error("Impossible de récupérer la position GPS");
+            };
+
             SmartgeoChromium.locate();
 
         } else {

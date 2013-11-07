@@ -173,6 +173,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ChromiumCallbacks[0] = function(lng, lat, alt){
                 setLocationMarker(null,lng, lat);
             };
+            ChromiumCallbacks[2] = function(){
+                alertify.error("Impossible de récupérer la position GPS");
+            };
             SmartgeoChromium.locate();
         } else {
             G3ME.map.on('locationfound', setLocationMarker);

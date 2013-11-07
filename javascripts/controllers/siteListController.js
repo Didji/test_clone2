@@ -1,7 +1,7 @@
 angular.module('smartgeomobile').controller('siteListController', function ($scope, $http, $location, Smartgeo) {
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
-
+    Smartgeo.unset('lastLeafletMapExtent'); // VEOLIA - QC 9427
     function getRemoteSites() {
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
         $http.get(url)
