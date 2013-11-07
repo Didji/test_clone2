@@ -400,7 +400,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                         if(performBench){
                                             G3ME.benchStop(zone.database_name);
                                         }
-                                    }, function(SqlError) {
+                                    }, function(tx, SqlError) {
                                         console.log(JSON.stringify(SqlError));
                                     });
                         });
