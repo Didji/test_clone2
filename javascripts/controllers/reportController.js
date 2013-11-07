@@ -17,12 +17,13 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 return v.toString(16);
             })
     };
-
+console.log($routeParams.assets);
     if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         $scope.fromConsult = true;
         $scope.step = "form";
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
+console.log($scope.report.assets);
             applyDefaultValues();
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -219,9 +220,9 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     $scope.sendReport = function (event) {
-
+        $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
-
+        console.log(report);
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
             report.assets[i] = report.assets[i].id ;
@@ -253,7 +254,9 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                 Smartgeo.set('reports', reports);
                 endOfReport();
+        $scope.sendingReport = false ;
             }).then(function(){
+        $scope.sendingReport = false ;
                 endOfReport();
             });
     };
