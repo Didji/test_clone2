@@ -1,27 +1,20 @@
 package com.gismartware.mobile.plugins;
 
-import org.chromium.content_shell.R;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
-
-import com.gismartware.mobile.ActivityCode;
 
 public class GeoLocation extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+		
+		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			Intent resultData = new Intent();
@@ -66,19 +59,4 @@ public class GeoLocation extends Activity {
 			finish();
 		}
 	}*/
-	
-	@Override
-	public void onResume() {
-		Log.d("GimapMobile", "onResume");
-	}
-	
-	@Override
-	public void onPause() {
-		Log.d("GimapMobile", "onPause");
-	}
-	
-	@Override
-	public void onStop() {
-		Log.d("GimapMobile", "onStop");
-	}
 }

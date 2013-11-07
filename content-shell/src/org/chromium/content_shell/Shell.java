@@ -15,6 +15,7 @@ import android.content.Context;
 import android.graphics.drawable.ClipDrawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -35,6 +36,7 @@ import com.gismartware.mobile.plugins.SmartGeoMobilePlugins;
 public class Shell extends LinearLayout {
 
     private static final long COMPLETED_PROGRESS_TIMEOUT_MS = 200;
+    private static final String TAG = "GimapMobile";
 
     private Runnable mClearProgressRunnable = new Runnable() {
         @Override
@@ -140,12 +142,15 @@ public class Shell extends LinearLayout {
      * @param url The URL to be loaded by the shell.
      */
     public void loadUrl(String url) {
-        if (url == null) return;
+    	Log.d(TAG, "[Shell] Load url=" + url);
+        
+    	if (url == null) return;
 
         if (TextUtils.equals(url, mContentView.getUrl())) {
             mContentView.reload();
         } else {
-            mContentView.loadUrl(new LoadUrlParams(sanitizeUrl(url)));
+            //mContentView.loadUrl(new LoadUrlParams(sanitizeUrl(url)));
+        	mContentView.loadUrl(new LoadUrlParams(url));
         }
         mUrlTextView.clearFocus();
         // TODO(aurimas): Remove this when crbug.com/174541 is fixed.
@@ -163,6 +168,7 @@ public class Shell extends LinearLayout {
     public static String sanitizeUrl(String url) {
         if (url == null) return url;
         if (url.startsWith("www.") || url.indexOf(":") == -1) url = "http://" + url;
+        Log.d(TAG, "[Shell] Sanitized url=" + url);
         return url;
     }
 
@@ -184,13 +190,11 @@ public class Shell extends LinearLayout {
         });
     }
 
-    @SuppressWarnings("unused")
     @CalledByNative
     private void onUpdateUrl(String url) {
         mUrlTextView.setText(url);
     }
 
-    @SuppressWarnings("unused")
     @CalledByNative
     private void onLoadProgressChanged(double progress) {
         removeCallbacks(mClearProgressRunnable);
@@ -207,7 +211,6 @@ public class Shell extends LinearLayout {
         return false;
     }
 
-    @SuppressWarnings("unused")
     @CalledByNative
     private void setIsLoading(boolean loading) {
         mLoading = loading;
@@ -217,7 +220,6 @@ public class Shell extends LinearLayout {
      * Initializes the ContentView based on the native tab contents pointer passed in.
      * @param nativeTabContents The pointer to the native tab contents object.
      */
-    @SuppressWarnings("unused")
     @CalledByNative
     private void initFromNativeTabContents(int nativeTabContents) {
         mContentView = ContentView.newInstance(getContext(), nativeTabContents, mWindow);

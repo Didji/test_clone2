@@ -86,15 +86,13 @@ public class ContentShellActivity extends ChromiumActivity {
      * Sending an intent with this action will simulate a memory pressure signal at a critical
      * level.
      */
-    private static final String ACTION_LOW_MEMORY =
-            "org.chromium.content_shell.action.ACTION_LOW_MEMORY";
+    private static final String ACTION_LOW_MEMORY = "org.chromium.content_shell.action.ACTION_LOW_MEMORY";
 
     /**
      * Sending an intent with this action will simulate a memory pressure signal at a moderate
      * level.
      */
-    private static final String ACTION_TRIM_MEMORY_MODERATE =
-            "org.chromium.content_shell.action.ACTION_TRIM_MEMORY_MODERATE";
+    private static final String ACTION_TRIM_MEMORY_MODERATE = "org.chromium.content_shell.action.ACTION_TRIM_MEMORY_MODERATE";
 
 
     private ShellManager mShellManager;
@@ -169,7 +167,7 @@ public class ContentShellActivity extends ChromiumActivity {
         mWindowAndroid.restoreInstanceState(savedInstanceState);
         mShellManager.setWindow(mWindowAndroid);
         
-      //gestion de l'authentification...
+        //gestion de l'authentification...
   		preferences = this.getSharedPreferences("auth", Context.MODE_PRIVATE);
   		if (preferences.getString(KEY_TOKEN, null) == null) {
   			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
@@ -179,11 +177,12 @@ public class ContentShellActivity extends ChromiumActivity {
         String startupUrl = getIntentUrl(getIntent());
         if (startupUrl != null) {
         	Log.d(TAG, "Load intent url " + startupUrl);
+        	mShellManager.setStartupUrl("file://" + startupUrl);
         }
         
-        if (!TextUtils.isEmpty(startupUrl)) {
+        /*if (!TextUtils.isEmpty(startupUrl)) {
             mShellManager.setStartupUrl(Shell.sanitizeUrl(startupUrl));
-        }
+        }*/
 
         if (CommandLine.getInstance().hasSwitch(CommandLine.DUMP_RENDER_TREE)) {
             if(BrowserStartupController.get(this).startBrowserProcessesSync(BrowserStartupController.MAX_RENDERERS_LIMIT)) {
@@ -279,7 +278,7 @@ public class ContentShellActivity extends ChromiumActivity {
 
         String url;
         if (intent.getData() != null) {
-        	url = getIntentUrl(intent);
+        	url = "file://" + getIntentUrl(intent);
         } else {
         	url = getUrlFromIntent(intent);
         }

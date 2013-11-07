@@ -17,11 +17,6 @@ public enum ActivityCode {
 	GEOLOCATE(101),
 	
 	/**
-	 * Lance le GPS si inactif.
-	 */
-	START_GPS(102),
-	
-	/**
 	 * Demande d'autorisation oauth.
 	 */
 	OAUTH_AUTHORIZATION(1993),

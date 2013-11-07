@@ -43,8 +43,7 @@
         </activity>
         
         <activity android:name="com.gismartware.mobile.plugins.GeoLocation"
-                  android:launchMode="singleTop"
-                  android:hardwareAccelerated="true" />
+                  android:launchMode="singleTop" />
         
         <!-- The following service entries exist in order to allow us to
              start more than one sandboxed process. -->
