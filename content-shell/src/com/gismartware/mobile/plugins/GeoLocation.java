@@ -23,7 +23,16 @@ public class GeoLocation extends Activity {
 			resultData.putExtra("location", location);
 			setResult(Activity.RESULT_OK, resultData);
 			finish();
-		} /*else {
+		} else {
+			Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			if (location == null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			}
+			Intent resultData = new Intent();
+			resultData.putExtra("location", location);
+			setResult(Activity.RESULT_OK, resultData);
+			finish();
+			/*
 			// demander l'activation GPS
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.gps_disabled)
@@ -45,8 +54,8 @@ public class GeoLocation extends Activity {
 									finish();
 								}
 							});
-			builder.create().show();
-		}*/
+			builder.create().show();*/
+		}
 	}
 	
 	/*@Override
