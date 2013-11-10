@@ -1,14 +1,15 @@
-package com.gismartware.mobile.plugins;
+ package com.gismartware.mobile.plugins;
 
 import org.chromium.content.browser.JavascriptInterface;
-
-import com.gismartware.mobile.ActivityCode;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import com.gismartware.mobile.ActivityCode;
 
 public class SmartGeoMobilePlugins {
 
@@ -36,6 +37,7 @@ public class SmartGeoMobilePlugins {
 	
 	@JavascriptInterface
 	public void redirect(String url) {
+		Log.d("GimapMobile", "Redirect to URL " + url);
 		Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 		Activity act = (Activity)context;
 		act.startActivity(intent);
