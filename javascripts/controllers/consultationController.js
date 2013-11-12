@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo){
 
     $scope.state  = 'closed';
     $scope.loading = false;
