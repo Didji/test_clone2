@@ -43,6 +43,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-required="'+myField+'.required" \
                                          ng-pattern="numberPattern"\
                                          type="number" \
+                                         step="any" \
                                          name="f" \
                                          placeholder="'+placeholder+'" \
                                          ng-model = "'+model+'"></input>\
