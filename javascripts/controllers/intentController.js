@@ -36,7 +36,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
         G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
             if(!assets.length){
-                alertify.alert("L'objet n'a pas été trouvé dans la base de données du terminal.")
+                alertify.alert("L'objet n'a pas été trouvé dans la base de données du terminal.");
                 return tokenAuth($routeParams.token, redirect);
             }
             $rootScope.map_target = assets ;
