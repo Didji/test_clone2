@@ -17,13 +17,12 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 return v.toString(16);
             })
     };
-console.log($routeParams.assets);
+
     if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         $scope.fromConsult = true;
         $scope.step = "form";
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
-console.log($scope.report.assets);
             applyDefaultValues();
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -222,7 +221,7 @@ console.log($scope.report.assets);
     $scope.sendReport = function (event) {
         $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
-        console.log(report);
+        
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
             report.assets[i] = report.assets[i].id ;
@@ -263,9 +262,9 @@ console.log($scope.report.assets);
 
     function endOfReport(){
         if($rootScope.report_url_redirect){
-            $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) ;
+            $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
-                SmartgeoChromium.redirect($rootScope.report_url_redirect);
+                SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
                 document.location = $rootScope.report_url_redirect;
             }
