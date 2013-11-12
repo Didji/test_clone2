@@ -6,11 +6,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _MAP_MAX_ZOOM : 20,
         _MAP_MIN_ZOOM : 13,
 
-        // _OVERRIDE_GIMAP_URL: "54.217.119.16",
-
         // GLOBAL CONSTANTS
         _SMARTGEO_MOBILE_VERSION    : "0.9.3.0",
-        _G3ME_VERSION               : "0.1.0",
+        _G3ME_VERSION               :   "0.1.0",
+        _BIG_SCREEN_THRESHOLD       :       721,
+
 
         // TODO : put this in a RightsManager
         getRight: function(module){
@@ -18,9 +18,17 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         smgeo_right : {
-            'report' : false
+            'report' : false,
+            'goto'   : false
         },
 
+        isRunningOnBigScreen : function(){
+            return (window.document.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
+        },
+
+        isRunningOnLittleScreen : function(){
+            return (window.document.width < Smartgeo._BIG_SCREEN_THRESHOLD);
+        },
 
         // METHODS
         setGimapUrl : function(url){

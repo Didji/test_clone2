@@ -221,7 +221,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     $scope.sendReport = function (event) {
         $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
-        
+
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
             report.assets[i] = report.assets[i].id ;
@@ -266,11 +266,10 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
                 SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
-                document.location = $rootScope.report_url_redirect;
+                open($rootScope.report_url_redirect, '_blank');
             }
-        } else {
-            $location.path('map/'+$rootScope.site.id);
         }
+        $location.path('map/'+$rootScope.site.id);
     }
 
     function injectCallbackValues(url){
