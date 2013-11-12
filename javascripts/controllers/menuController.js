@@ -51,7 +51,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             event.preventDefault();
         }
 
-        if(Smartgeo.isRunningOnSmallScreen()) {
+        if(Smartgeo.isRunningOnLittleScreen()) {
             $rootScope.$broadcast("CONSULTATION_CLOSE_PANEL");
         }
 
