@@ -20,6 +20,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         $location.path('/map/'+site.id);
     });
 
+    Smartgeo.silentLogin();
+
     G3ME.initialize( 'smartgeo-map',
                      $rootScope.site,
                      $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
