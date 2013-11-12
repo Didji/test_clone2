@@ -193,6 +193,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
+            console.log(search);
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
@@ -214,6 +215,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + ",%'       ";
                         request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + "}%' ) AND ";
                     }
+                }
+                if(search.okey){
+                    request += ' symbolId like "' + search.okey + '%" AND ' ;
                 }
                 request += ' 1 LIMIT 0, 10';
             }
