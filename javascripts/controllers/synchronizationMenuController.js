@@ -14,24 +14,34 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     });
 
     $scope.syncAll = function(){
-        for (var i = 0; i < $scope.reports.length; i++) {
-            $scope.sync(i);
-        }
+        //TODO: UGLY REFACTOR ALERT (doublon avec silentLogin)
+        // Smartgeo.login_o(Smartgeo.get('user'), function(){
+            for (var i = 0; i < $scope.reports.length; i++) {
+                $scope.sync(i);
+            }
+        // }, function(error){
+        //     alertify.error(error.error.text);
+        // });
     };
 
     $scope.sync = function($index){
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
-            .success(function(){
-                $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
-                Smartgeo.set('reports', $scope.reports);
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-            }).error(function(error){
-                if(error.error){
-                    alertify.error(error.error.text);
-                } else {
-                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
-                }
-            });
+        //TODO: UGLY REFACTOR ALERT
+        // Smartgeo.login_o(Smartgeo.get('user'), function(){
+            $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
+                .success(function(){
+                    $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
+                    Smartgeo.set('reports', $scope.reports);
+                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                }).error(function(error){
+                    if(error.error){
+                        alertify.error(error.error.text);
+                    } else {
+                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                    }
+                });
+        // }, function(error){
+        //     alertify.error(error.error.text);
+        // });
     };
 
     $scope.__delete = function($index){

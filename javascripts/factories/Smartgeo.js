@@ -290,7 +290,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 });
             $http.post(url).then(success || function(){},error || function(){});
         },
-
+        login_o : function(user, success, error){
+            // TODO : MERGE WITH LOGIN METHOD
+            if(user.token){
+                Smartgeo.login(user.token, success, error);
+            } else {
+                Smartgeo.login(user.username, user.password, success, error);
+            }
+        },
         login: function(login, password, success, error){
             var token , url ;
             if(typeof password ===  'function'){
@@ -338,6 +345,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
     }
 
     Smartgeo._initializeGlobalEvents();
+
+    window.Smartgeo = Smartgeo;
 
     return Smartgeo ;
 
