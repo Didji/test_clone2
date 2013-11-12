@@ -193,7 +193,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
-            console.log(search);
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
@@ -221,7 +220,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 }
                 request += ' 1 LIMIT 0, 10';
             }
-            console.log(request);
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
