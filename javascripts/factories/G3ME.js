@@ -327,7 +327,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                             if (geom.type === "MultiLineString") {
                                                 geom.coordinates = geom.coordinates[0];
                                             }
-                                            if (geom.type === "LineString") {
+                                            if (geom.type === "LineString" || geom.type === "MultiLineString") {
                                                 ctx.beginPath();
                                                 for (var j = 0, l = geom.coordinates.length; j < l; j++) {
                                                     coord = geom.coordinates[j];
