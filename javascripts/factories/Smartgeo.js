@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // GLOBAL CONSTANTS
         _SMARTGEO_MOBILE_VERSION    : "0.9.3.0",
         _G3ME_VERSION               :   "0.1.0",
-        _BIG_SCREEN_THRESHOLD       :       721,
+        _BIG_SCREEN_THRESHOLD       :       361,
 
 
         // TODO : put this in a RightsManager
@@ -23,11 +23,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         isRunningOnBigScreen : function(){
-            return (window.document.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
+            return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         isRunningOnLittleScreen : function(){
-            return (window.document.width < Smartgeo._BIG_SCREEN_THRESHOLD);
+            return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         // METHODS
@@ -272,10 +272,23 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         silentLogin: function(){
             var user = Smartgeo.get('user') || {};
             if(user.token){
-                Smartgeo.login(token);
+                Smartgeo.login(user.token);
             } else if(user.username && user.password){
                 Smartgeo.login(user.username, user.password);
             }
+        },
+
+        selectSiteRemotely: function(site, success, error){
+            if(!site){
+                console.log("Aucun site n'a été spécifié.");
+                return ;
+            }
+            var url = Smartgeo.getServiceUrl('global.auth.json', {
+                    'app'   : 'mapcite',
+                    'site'  : site,
+                    'auto_load_map' : true
+                });
+            $http.post(url).then(success || function(){},error || function(){});
         },
 
         login: function(login, password, success, error){
@@ -296,7 +309,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     'forcegimaplogin' : true
                 });
             }
-            $http.post(url).success(success || function(){}).error(error || function(){});
+            $http.post(url).success(function(){
+                if($rootScope.site){
+                    Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
+                } else {
+                    (success || function(){})();
+                }
+            }).error(error || function(){});
         },
 
         // GETTER AND SETTER
