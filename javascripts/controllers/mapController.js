@@ -12,6 +12,10 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.consultationIsEnabled = false ;
 
+    Smartgeo.selectSiteRemotely($rootScope.site.id, function(){
+        $location.path('/map/'+site.id);
+    });
+
     G3ME.initialize( 'smartgeo-map',
                      $rootScope.site,
                      $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],

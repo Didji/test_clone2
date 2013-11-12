@@ -62,30 +62,24 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     function tokenAuth(token, callback){
 
-        var url = Smartgeo.getServiceUrl('global.auth.json', {
-            token:token
-        });
-
-        // On sauvegarde le token pour faire une authentification silencieuse
         var currentUser = Smartgeo.get('user') || {};
         currentUser.token = token ;
         Smartgeo.set('user',currentUser) ;
 
-        return callback();
-        // $http.get(url).then(function(response){
-        //     if(response.status === 403 || response.data.auth === false){
-        //         alertify.alert("Le token fournit n'est pas valide");
-        //         $location.path('#');
-        //     } else if(response.status === 0){
-        //         alertify.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
-        //         callback();
-        //     } else if(response.status === 200) {
-        //         callback();
-        //     } else {
-        //         alertify.alert("L'authentification a échoué ("+status+")");
-        //         $location.path('#');
-        //     }
-        // });
+        Smartgeo.login(token, callback, function(response){
+            if(response.status === 403 || response.data.auth === false){
+                alertify.alert("Le token fournit n'est pas valide");
+                $location.path('#');
+            } else if(response.status === 0){
+                alertify.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
+                callback();
+            } else if(response.status === 200) {
+                callback();
+            } else {
+                alertify.alert("L'authentification a échoué ("+status+")");
+                $location.path('#');
+            }
+        });
 
     }
 

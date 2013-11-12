@@ -49,7 +49,7 @@
 
                                     <hr ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
 
-                                    <a class="btn btn-primary btn-block"
+                                    <a class="btn btn-primary btn-block"  href="#/report/{{site.id}}/{{site.activities._byId[map_activity||report_activity].id}}/{{asset.guid}}"
                                         ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'>
                                         {{site.activities._byId[map_activity||report_activity].label}}
                                     </a>
