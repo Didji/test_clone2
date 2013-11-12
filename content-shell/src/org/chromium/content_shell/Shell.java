@@ -156,8 +156,6 @@ public class Shell extends LinearLayout {
         // TODO(aurimas): Remove this when crbug.com/174541 is fixed.
         mContentView.clearFocus();
         mContentView.requestFocus();
-        
-        mContentView.getContentViewCore().addJavascriptInterface(new SmartGeoMobilePlugins(super.getContext()), "SmartgeoChromium");
     }
 
     /**
@@ -229,7 +227,11 @@ public class Shell extends LinearLayout {
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT));
         mContentView.requestFocus();
-        mContentViewRenderView.setCurrentContentView(mContentView);        
+        mContentViewRenderView.setCurrentContentView(mContentView);   
+        
+        //ATTENTION
+        //Doit etre ici sinon pas de photo sur un intent quand l appli existe deja... (inexplicable dans l'état actuel de mes connaissances)
+        mContentView.getContentViewCore().addJavascriptInterface(new SmartGeoMobilePlugins(super.getContext()), "SmartgeoChromium");
     }
 
     /**
