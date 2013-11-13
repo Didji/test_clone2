@@ -351,18 +351,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // GETTER AND SETTER
         get: function(parameter, callback){
-            // IndexedDB.get(parameter, callback);
-            return JSON.parse(localStorage.getItem(parameter));
+            IndexedDB.get(parameter, callback);
+            // return JSON.parse(localStorage.getItem(parameter));
         },
 
-        set: function(parameter, value){
-            // IndexedDB.set(parameter, value);
-            return localStorage.setItem(parameter, JSON.stringify(value));
+        set: function(parameter, value, callback){
+            IndexedDB.set(parameter, value, callback);
+            // return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
-        unset: function(parameter){
-            // IndexedDB.unset(parameter);
-            return localStorage.removeItem(parameter);
+        unset: function(parameter, callback){
+            IndexedDB.unset(parameter);
+            // return localStorage.removeItem(parameter);
         }
     };
 

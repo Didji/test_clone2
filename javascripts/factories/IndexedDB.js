@@ -48,7 +48,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
         },
 
         get: function(parameter, callback){
-            console.warn(parameter);
+            console.warn('get:'+parameter);
             this.open(function(){
                 var value = null;
                 var transaction = IndexedDB.database.transaction(["parameters"]);
@@ -57,7 +57,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                 getter.onsuccess = function(e) {
                     var match = e.target.result;
                     value = match ? match.value : null;
-                    console.log(value);
+                    console.log('get:'+parameter+'='+value);
                     (callback||function(){})(value);
                 };
                 getter.onerror = function(e){
@@ -67,7 +67,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
         },
 
         set: function(parameter, value, success, error){
-            console.warn(parameter);
+            console.warn('set:'+parameter);
             this.open(function(){
                 var transaction = IndexedDB.database.transaction(["parameters"], "readwrite");
                 transaction.oncomplete = (success || function(){})();
@@ -84,7 +84,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
         },
 
         unset: function(parameters){
-            console.warn(parameter);
+            console.warn('unset:'+parameter);
             this.open(function(){
                 var request = IndexedDB.database.transaction(["parameters"], "readwrite")
                                 .objectStore("parameters")
