@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location){
+angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
     var Smartgeo = {
 
@@ -299,6 +299,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
         },
         login: function(login, password, success, error){
+            if(Smartgeo._LOGIN_MUTEX){
+                return (error || function(){})();
+            }
+            Smartgeo._LOGIN_MUTEX = true ;
             var token , url ;
             if(typeof password ===  'function'){
                 token   = login;
@@ -317,24 +321,31 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 });
             }
             $http.post(url).success(function(){
+                Smartgeo._LOGIN_MUTEX = false ;
                 if($rootScope.site){
                     Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
                 } else {
                     (success || function(){})();
                 }
-            }).error(error || function(){});
+            }).error(function(){
+                Smartgeo._LOGIN_MUTEX = false ;
+                (error || function(){})();
+            });
         },
 
         // GETTER AND SETTER
-        get: function(parameter){
+        get: function(parameter, callback){
+            // IndexedDB.get(parameter, callback);
             return JSON.parse(localStorage.getItem(parameter));
         },
 
         set: function(parameter, value){
+            // IndexedDB.set(parameter, value);
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
         unset: function(parameter){
+            // IndexedDB.unset(parameter);
             return localStorage.removeItem(parameter);
         }
     };
