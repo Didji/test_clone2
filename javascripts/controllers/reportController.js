@@ -120,6 +120,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         function getValueFromAssets(pkey, okey) {
             var rv = {}, val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
+                console.log(assets[i].asset);
                 var a = JSON.parse(assets[i].asset).attributes,
                     list = getList(pkey, okey);
 
@@ -151,15 +152,17 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 }
                 if('string' === typeof def) {
                     if(field.type === 'D' && def === '#TODAY#') {
-                        date = new Date;
+                        date = new Date();
                         def = date.getUTCFullYear()
                                 + '-' + pad( date.getUTCMonth() + 1 )
-                                + '-' + pad( date.getUTCDate() )
+                                + '-' + pad( date.getUTCDate() );
                     }
                     fields[field.id] = def;
                 } else {
+                    console.log(def) ;
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
                     $scope.report.roFields[field.id] = $scope.formatFieldEntry(def);
+                    console.log($scope.report.roFields[field.id]);
                     $scope.report.overrides[field.id] = '';
                     fields[field.id] = def;
                 }
