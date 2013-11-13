@@ -568,19 +568,19 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     _tileOnError: function () {
-        var layer = this._layer;
+        // var layer = this._layer;
 
-        layer.fire('tileerror', {
-            tile: this,
-            url: this.src
-        });
+        // layer.fire('tileerror', {
+        //     tile: this,
+        //     url: this.src
+        // });
 
-        var newUrl = layer.options.errorTileUrl;
-        if (newUrl) {
-            this.src = newUrl;
-        }
+        // var newUrl = layer.options.errorTileUrl;
+        // if (newUrl) {
+        //     this.src = newUrl;
+        // }
 
-        layer._tileLoaded();
+        // layer._tileLoaded();
     },
 
 

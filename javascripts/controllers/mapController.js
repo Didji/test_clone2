@@ -16,9 +16,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         report :  Smartgeo.getRight('report')
     };
 
-    Smartgeo.selectSiteRemotely($rootScope.site.id, function(){
-        $location.path('/map/'+site.id);
-    });
+    // Smartgeo.selectSiteRemotely($rootScope.site.id, function(){
+    //     $location.path('/map/'+site.id);
+    // });
 
     Smartgeo.silentLogin(function(){
         G3ME.backgroundTile.redraw() ;
