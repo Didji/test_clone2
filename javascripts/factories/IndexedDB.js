@@ -57,7 +57,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                 getter.onsuccess = function(e) {
                     var match = e.target.result;
                     value = match ? match.value : null;
-                    console.log('get:'+parameter+'='+value);
+                    console.info('get:'+parameter+'='+value);
                     (callback||function(){})(value);
                 };
                 getter.onerror = function(e){
