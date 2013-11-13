@@ -281,8 +281,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         rustineVeolia: function(sites, success, error){
             for(var i in sites){
                 var site = sites[i];
-                if(site && site.id === $rootScope.site.id && site.url && site.url.indexOf('veoliagroup') !== -1){
-                    var url =  (Smartgeo.get('url') || '').replace(/^https?:\/\/(.+)index\.php.*$/, '$1') + site.url ;
+                if(site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1){
+                    var url =  (Smartgeo.get('url') || '').replace(/^(https?:\/\/.+)index\.php.*$/, '$1') + site.url ;
                     $http.get(url).then(success, error) ;
                 }
             }
@@ -299,8 +299,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     'auto_load_map' : true
                 });
             $http.post(url).then(function(response){
-                if(response && response.sites && response.sites.length > 1){
-                    Smartgeo.rustineVeolia(response.sites, success, error);
+                if(response.data && response.data.sites && response.data.sites.length > 1){
+                    Smartgeo.rustineVeolia(response.data.sites, success, error);
                 } else {
                     (success || function(){})();
                 }
@@ -351,18 +351,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // GETTER AND SETTER
         get: function(parameter, callback){
-            IndexedDB.get(parameter, callback);
-            // return JSON.parse(localStorage.getItem(parameter));
+            // IndexedDB.get(parameter, callback);
+            return JSON.parse(localStorage.getItem(parameter));
         },
 
         set: function(parameter, value, callback){
-            IndexedDB.set(parameter, value, callback);
-            // return localStorage.setItem(parameter, JSON.stringify(value));
+            // IndexedDB.set(parameter, value, callback);
+            return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
         unset: function(parameter, callback){
-            IndexedDB.unset(parameter);
-            // return localStorage.removeItem(parameter);
+            // IndexedDB.unset(parameter);
+            return localStorage.removeItem(parameter);
         }
     };
 
