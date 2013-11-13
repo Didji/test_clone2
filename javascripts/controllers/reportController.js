@@ -248,14 +248,20 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
             .error(function(){
-                var reports = Smartgeo.get('reports') || [];
-                reports.push(report);
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                Smartgeo.set('reports', reports);
-                endOfReport();
-        $scope.sendingReport = false ;
-            }).then(function(){
-        $scope.sendingReport = false ;
+                Smartgeo.get_('reports', function(reports){
+                    console.log(reports.length, reports);
+                    reports = reports || [] ;
+                    reports.push(report);
+                    console.log(reports.length, reports);
+                    Smartgeo.set_('reports', reports, function(){
+                        // console.log('calling REPORT_LOCAL_NUMBER_CHANGE with '+reports.length, reports);
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                        $scope.sendingReport = false ;
+                        endOfReport();
+                    });
+                });
+            }).success(function(){
+                $scope.sendingReport = false ;
                 endOfReport();
             });
     };
@@ -270,6 +276,9 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             }
         }
         $location.path('map/'+$rootScope.site.id);
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
     }
 
     function injectCallbackValues(url){

@@ -48,17 +48,13 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
         },
 
         get: function(parameter, callback){
-            console.warn('get:'+parameter);
             this.open(function(){
-                var value = null;
-                var transaction = IndexedDB.database.transaction(["parameters"]);
-                var objectStore = transaction.objectStore("parameters");
-                var getter = objectStore.get(parameter);
+                var transaction = IndexedDB.database.transaction(["parameters"]),
+                    objectStore = transaction.objectStore("parameters"),
+                    getter      = objectStore.get(parameter);
                 getter.onsuccess = function(e) {
-                    var match = e.target.result;
-                    value = match ? match.value : null;
-                    console.info('get:'+parameter+'='+value);
-                    (callback||function(){})(value);
+                    var result = e.target.result;
+                    (callback||function(){})(result ? result.value : null);
                 };
                 getter.onerror = function(e){
                     console.error(e);
@@ -67,24 +63,16 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
         },
 
         set: function(parameter, value, success, error){
-            console.warn('set:'+parameter);
             this.open(function(){
-                var transaction = IndexedDB.database.transaction(["parameters"], "readwrite");
-                transaction.oncomplete = (success || function(){})();
-                transaction.onerror    = (error   || function(){})();
-                var objectStore = transaction.objectStore("parameters");
-                var request = objectStore.add({key:parameter, value:value});
-                request.onsuccess = function(event) {
-                    console.log("set success pour "+parameter+"/"+value);
-                };
-                request.onerror = function(event) {
-                    console.error("set error pour "+parameter+"/"+value);
-                };
+                var transaction = IndexedDB.database.transaction(["parameters"], "readwrite"),
+                    objectStore = transaction.objectStore("parameters"),
+                    request     = objectStore.put({key:parameter, value:value});
+                transaction.onsuccess =  (success || function(){})();
+                transaction.onerror   =  (error   || function(){})();
             });
         },
 
         unset: function(parameters){
-            console.warn('unset:'+parameter);
             this.open(function(){
                 var request = IndexedDB.database.transaction(["parameters"], "readwrite")
                                 .objectStore("parameters")
@@ -95,78 +83,9 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
             });
         }
 
-        // getAssets : function(extent){
-        //     if(!IndexedDB.database){
-        //         return IndexedDB.open(function(){
-        //             IndexedDB.getAssets(extent);
-        //         });
-        //     }
-
-        //     // var range = IDBKeyRange.only("172525");
-        //     // var range = IDBKeyRange.bound([extent.xmin,extent.ymin],[extent.xmax,extent.ymax]);
-        //     var range = IDBKeyRange.upperBound([extent.xmin,extent.xmax,extent.ymin,extent.ymax]);
-        //     var transaction = IndexedDB.database.transaction(['assets'], "readwrite");
-        //     var store = transaction.objectStore("assets");
-        //     // var test =  store.get(172525);
-        //     var index = store.index("bounds");
-        //     var test = index.openCursor(range);
-        //         test.onsuccess = function(e) {
-        //         var match = e.target.result;
-        //             if(match) {
-        //                 // console.log(true);
-        //                 match.continue();
-        //                 // console.dir(match);
-        //             }
-        //         };
-        //         // store.openCursor(range).onsuccess = function(event) {
-        //         //     console.log(event);
-        //         //     var cursor = event.target.result;
-        //         //     if (cursor) {
-
-        //         //     var req = store.get(cursor.key);
-        //         //         req.onsuccess = function (evt) {
-        //         //           var value = evt.target.result;
-        //         //           console.log(value);
-        //         //         };
-        //         //         cursor.continue();
-        //         //     }
-        //         // };
-
-        // },
-
-
-        // storeAssets : function(assets) {
-
-        //     var transaction = IndexedDB.database.transaction(['assets'], "readwrite");
-        //     var store = transaction.objectStore("assets");
-        //     for(var i in assets){
-        //         if(assets[i].bounds){
-        //             assets[i].xmin = assets[i].bounds.sw.lng ;
-        //             assets[i].ymin = assets[i].bounds.sw.lat ;
-        //             assets[i].xmax = assets[i].bounds.ne.lng ;
-        //             assets[i].ymax = assets[i].bounds.ne.lat ;
-        //         }
-
-        //         var request = store.put(assets[i]);
-        //         request.onsuccess = function(e) {
-        //                 console.log(true);
-        //         };
-        //         request.onerror = function(e) {
-        //           console.error("Error Adding an item: ", e);
-        //         };
-        //     }
-
-
-
-        // }
-
-
     };
-
     window.indexedDB      = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
     window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-
     return IndexedDB ;
-
 });

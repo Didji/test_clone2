@@ -7,46 +7,48 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     }
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
-    $scope.reports = Smartgeo.get('reports') || [] ;
+
+    Smartgeo.get_('reports', function(reports){
+        $scope.reports = reports || [];
+        $scope.$apply() ;
+        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+    });
 
     $rootScope.$on("DEVICE_IS_ONLINE", function(){
         $scope.syncAll();
     });
 
     $scope.syncAll = function(){
-        //TODO: UGLY REFACTOR ALERT (doublon avec silentLogin)
-        // Smartgeo.login_o(Smartgeo.get('user'), function(){
-            for (var i = 0; i < $scope.reports.length; i++) {
-                $scope.sync(i);
-            }
-        // }, function(error){
-        //     alertify.error(error.error.text);
-        // });
+        if(!$scope.reports.length){
+            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", 0);
+            return ;
+        }
+        $scope.sync(0, function(){
+            $scope.syncAll();
+        });
     };
 
-    $scope.sync = function($index){
-        //TODO: UGLY REFACTOR ALERT
-        // Smartgeo.login_o(Smartgeo.get('user'), function(){
-            $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
-                .success(function(){
-                    $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
-                    Smartgeo.set('reports', $scope.reports);
-                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                }).error(function(error){
-                    if(error.error){
-                        alertify.error(error.error.text);
-                    } else {
-                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
-                    }
+    $scope.sync = function($index, callback){
+        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
+            .success(function(){
+                $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
+                Smartgeo.set_('reports', $scope.reports, function(){
+                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+                    (callback || function(){})();
                 });
-        // }, function(error){
-        //     alertify.error(error.error.text);
-        // });
+            }).error(function(error){
+                if(error.error){
+                    alertify.error(error.error.text);
+                } else {
+                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                }
+            });
     };
 
     $scope.__delete = function($index){
         $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
-        Smartgeo.set('reports',$scope.reports);
-        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+        Smartgeo.set_('reports',$scope.reports, function(){
+             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+        });
     };
 });
