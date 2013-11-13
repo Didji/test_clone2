@@ -279,6 +279,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         rustineVeolia: function(sites, success, error){
+            console.log('rustine');
             for(var i in sites){
                 var site = sites[i];
                 if(site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1){
@@ -299,6 +300,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     'auto_load_map' : true
                 });
             $http.post(url).then(function(response){
+                console.log('rustine');
                 if(response.data && response.data.sites && response.data.sites.length > 1){
                     Smartgeo.rustineVeolia(response.data.sites, success, error);
                 } else {
