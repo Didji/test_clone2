@@ -269,6 +269,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     function endOfReport(){
         if($rootScope.report_url_redirect){
             $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
+            console.log($rootScope.report_url_redirect);
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
                 SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
@@ -286,7 +287,15 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             var injectedValues = '' ;
             for(var field in $scope.report.fields){
                 if($scope.report.fields.hasOwnProperty(field)){
-                    injectedValues += 'fields['+getLabelWithFieldId(field)+']='+$scope.report.fields[field]+'&' ;
+                    var val = $scope.report.fields[field];
+                    // UGLY ALERT
+                    if(typeof val === 'object' ){
+                        for( var j in val){
+                            val = val[j];
+                            break;
+                        }
+                    }
+                    injectedValues += 'fields['+getLabelWithFieldId(field)+']='+val+'&' ;
                 }
             }
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
