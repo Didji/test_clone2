@@ -763,9 +763,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                                 image.className += " leaflet-tile-loaded";
                                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                                     this_.getRemoteETag(   tileObject, function(remoteETag){
-                                        this_.writeMetadataTileFile(tileObject,{
-                                            etag : remoteETag
-                                        });
+                                        if(remoteETag !== null){
+                                            this_.writeMetadataTileFile(tileObject,{
+                                                etag : remoteETag
+                                            });
+                                        }
                                     });
                                 });
                             };
@@ -839,7 +841,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                 callback(true);
             } else {
                 _this.getRemoteETag(tileObject, function(remoteETag){
-                    if(metadata.etag != remoteETag){
+                    if(metadata.etag != remoteETag && remoteETag !== null){
                         callback(true);
                     } else {
                         callback(false);
@@ -857,7 +859,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         http.onreadystatechange = function() {
             if (this.readyState == this.DONE && this.status === 200) {
                 callback(this.getResponseHeader("etag"));
+            } else if(this.readyState == this.DONE && this.status === 403){
+                Smartgeo.silentLogin();
+                callback(null);
             }
+
         };
         http.send();
     },
