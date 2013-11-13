@@ -350,19 +350,29 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         // GETTER AND SETTER
-        get: function(parameter, callback){
-            // IndexedDB.get(parameter, callback);
+        get: function(parameter){
             return JSON.parse(localStorage.getItem(parameter));
         },
 
-        set: function(parameter, value, callback){
-            // IndexedDB.set(parameter, value, callback);
+        set: function(parameter, value){
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
-        unset: function(parameter, callback){
-            // IndexedDB.unset(parameter);
+        unset: function(parameter){
             return localStorage.removeItem(parameter);
+        },
+
+        // ASYNC GETTER AND SETTER
+        get_: function(parameter, callback){
+            IndexedDB.get(parameter, callback);
+        },
+
+        set_: function(parameter, value, callback){
+            IndexedDB.set(parameter, value, callback);
+        },
+
+        unset_: function(parameter, callback){
+            IndexedDB.unset(parameter);
         }
     };
 
