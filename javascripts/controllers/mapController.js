@@ -20,7 +20,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         $location.path('/map/'+site.id);
     });
 
-    Smartgeo.silentLogin();
+    Smartgeo.silentLogin(function(){
+        G3ME.backgroundTile.redraw() ;
+    });
 
     G3ME.initialize( 'smartgeo-map',
                      $rootScope.site,

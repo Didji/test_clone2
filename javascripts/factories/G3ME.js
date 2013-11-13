@@ -92,6 +92,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             }
             this.canvasTile.redraw();
 
+            window.test = this.backgroundTile ;
 
             $(window).on('resize', function(){
                 G3ME.tilesOnScreen = ~~( (window.innerHeight/256) * (window.innerWidth/256) ) + 1 ;

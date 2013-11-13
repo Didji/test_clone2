@@ -269,12 +269,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         },
 
-        silentLogin: function(){
+        silentLogin: function(callback){
             var user = Smartgeo.get('user') || {};
             if(user.token){
-                Smartgeo.login(user.token);
+                Smartgeo.login(user.token, callback);
             } else if(user.username && user.password){
-                Smartgeo.login(user.username, user.password);
+                Smartgeo.login(user.username, user.password, callback);
             }
         },
 
