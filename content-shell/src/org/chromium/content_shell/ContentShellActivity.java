@@ -35,8 +35,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -50,6 +48,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.AuthPreferences;
 import com.gismartware.mobile.FileUtils;
 import com.gismartware.mobile.ImageUtils;
 
@@ -65,15 +64,15 @@ public class ContentShellActivity extends ChromiumActivity {
 	/*
 	 * Constantes oauth
 	 */
-	private static final String KEY_USER = "user";
-	private static final String KEY_TOKEN = "token";
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
+	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {"--allow-external-pages", "--allow-file-access", 
     	"--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process", 
     	"--remote-debugging-raw-usb"};
+    
     private static final String TAG = "GimapMobile";
 
     private static final String ACTIVE_SHELL_URL_KEY = "activeUrl";
@@ -98,7 +97,6 @@ public class ContentShellActivity extends ChromiumActivity {
     private ShellManager mShellManager;
     private WindowAndroid mWindowAndroid;
     private BroadcastReceiver mReceiver;
-    private SharedPreferences preferences;
     
     
     @Override
@@ -116,7 +114,7 @@ public class ContentShellActivity extends ChromiumActivity {
     	//TODO: check it install needed (find a way)
     	//TODO: delete folder before install?
 		File zip = new File(getCacheDir().getAbsolutePath() + File.separator + INSTALL_ZIP_FILE);
-        if(zip.exists()) {
+        if (zip.exists()) {
         	zip.delete();
         }
         try {
@@ -136,7 +134,7 @@ public class ContentShellActivity extends ChromiumActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         installIfNeeded();
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         
@@ -167,14 +165,23 @@ public class ContentShellActivity extends ChromiumActivity {
         mWindowAndroid.restoreInstanceState(savedInstanceState);
         mShellManager.setWindow(mWindowAndroid);
         
+        
         //gestion de l'authentification...
-  		preferences = this.getSharedPreferences("auth", Context.MODE_PRIVATE);
-  		if (preferences.getString(KEY_TOKEN, null) == null) {
-  			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+        authPreferences = new AuthPreferences(this);
+        invalidateToken();
+        if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
+        	Log.d(TAG, "[OAUTH] No token, no user...");
+        	//choose account :
+        	Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
   			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-  		}
-  		
-        String startupUrl = getIntentUrl(getIntent());
+        } else {
+        	Log.d(TAG, "[OAUTH] Using user " + authPreferences.getUser() + " with token " + authPreferences.getToken());
+        	finishActivityInit();
+        }
+    }
+    
+    private void finishActivityInit() {
+    	String startupUrl = getIntentUrl(getIntent());
         if (startupUrl != null) {
         	Log.d(TAG, "Load intent url " + startupUrl);
         	mShellManager.setStartupUrl("file://" + startupUrl);
@@ -186,7 +193,7 @@ public class ContentShellActivity extends ChromiumActivity {
 
         if (CommandLine.getInstance().hasSwitch(CommandLine.DUMP_RENDER_TREE)) {
             if(BrowserStartupController.get(this).startBrowserProcessesSync(BrowserStartupController.MAX_RENDERERS_LIMIT)) {
-                finishInitialization(savedInstanceState);
+                finishInitialization(/*savedInstanceState*/);
             } else {
                 initializationFailed();
             }
@@ -194,7 +201,7 @@ public class ContentShellActivity extends ChromiumActivity {
             BrowserStartupController.get(this).startBrowserProcessesAsync(new BrowserStartupController.StartupCallback() {
                 @Override
                 public void onSuccess(boolean alreadyStarted) {
-                    finishInitialization(savedInstanceState);
+                    finishInitialization(/*savedInstanceState*/);
                 }
 
                 @Override
@@ -205,15 +212,15 @@ public class ContentShellActivity extends ChromiumActivity {
         }
     }
 
-    private void finishInitialization(Bundle savedInstanceState) {
+    private void finishInitialization(/*Bundle savedInstanceState*/) {
         String shellUrl = mShellManager.getStartupUrl();
         if (shellUrl == null) {
         	shellUrl = ShellManager.DEFAULT_SHELL_URL;
         }
         
-        if (savedInstanceState != null && savedInstanceState.containsKey(ACTIVE_SHELL_URL_KEY)) {
+        /*if (savedInstanceState != null && savedInstanceState.containsKey(ACTIVE_SHELL_URL_KEY)) {
             shellUrl = savedInstanceState.getString(ACTIVE_SHELL_URL_KEY);
-        }
+        }*/
         mShellManager.launchShell(shellUrl);
         getActiveContentView().setContentViewClient(new ContentViewClient() {
             @Override
@@ -346,10 +353,8 @@ public class ContentShellActivity extends ChromiumActivity {
 				requestToken();
 			} else if (requestCode == ActivityCode.OAUTH_ACCOUNT.getCode()) {
 				String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-				Log.d(TAG, "Token renewal for user " + accountName);
-				Editor editor = preferences.edit();
-				editor.putString(KEY_USER, accountName);
-				editor.commit();
+				Log.d(TAG, "[OAUTH] Token renewal for user " + accountName);
+				authPreferences.setUser(accountName);
 				invalidateToken();
 				requestToken();
 			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
@@ -489,14 +494,13 @@ public class ContentShellActivity extends ChromiumActivity {
 		}
 		
 		//ajout du token à la fin, rien si inexistant
-		String token = preferences.getString(KEY_TOKEN, null);
-		if (token != null) {
+		if (authPreferences.getToken() != null) {
 			if (appendedParams) {
 				url.append("&token=");
 			} else {
 				url.append("?token=");
 			}
-			url.append(token);
+			url.append(authPreferences.getToken());
 		}
 		return url.toString();
 	}
@@ -504,8 +508,8 @@ public class ContentShellActivity extends ChromiumActivity {
 	private void requestToken() {
 		AccountManager accountManager = AccountManager.get(this);
 		Account userAccount = null;
-		String user = preferences.getString(KEY_USER, null);
-		Log.d(TAG, "Request token for user " + user);
+		String user = authPreferences.getUser();
+		Log.d(TAG, "[OAUTH] Request token for user " + user);
 		for (Account account : accountManager.getAccountsByType(GOOGLE_ACCOUNT_TYPE)) {
 			if (account.name.equals(user)) {
 				userAccount = account;
@@ -516,15 +520,16 @@ public class ContentShellActivity extends ChromiumActivity {
 	}
 	
 	private void invalidateToken() {
-		String token = preferences.getString(KEY_TOKEN, null);
-		if( token != null) {
-			Log.d(TAG, "Invalidate token " + token);
+		String user = authPreferences.getUser();
+		if (user != null) {
+			Log.d(TAG, "[OAUTH] Invalidate token " + authPreferences.getToken() + " for user " + user);
+		} else {
+			Log.d(TAG, "[OAUTH] Invalidate token " + authPreferences.getToken());
 		}
+		
 		AccountManager accountManager = AccountManager.get(this);
-		accountManager.invalidateAuthToken(GOOGLE_ACCOUNT_TYPE, token);
-		Editor editor = preferences.edit();
-		editor.putString(KEY_TOKEN, null);
-		editor.commit();
+		accountManager.invalidateAuthToken(GOOGLE_ACCOUNT_TYPE, authPreferences.getToken());
+		authPreferences.setToken(null);
 	}
 	
 	private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
@@ -538,13 +543,14 @@ public class ContentShellActivity extends ChromiumActivity {
 					startActivityForResult(launch, ActivityCode.OAUTH_AUTHORIZATION.getCode());
 				} else {
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-					Log.d(TAG, "Token recu : " + token);
-					Editor editor = preferences.edit();
-					editor.putString(KEY_TOKEN, token);
-					editor.commit();
+					Log.d(TAG, "[OAUTH] Token received : " + token);
+					authPreferences.setToken(token);
+					
+					finishActivityInit();
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				Log.e(TAG, "[OAUTH] Impossible to retreive token!");
+				finishActivityInit();
 			}
 		}
 	}
