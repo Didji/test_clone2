@@ -304,7 +304,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
             Smartgeo._LOGIN_MUTEX = true ;
             var token , url ;
-            if(typeof password ===  'function'){
+            if(typeof password ===  'function' || !password){
                 token   = login;
                 error   = success ;
                 success = password;

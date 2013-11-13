@@ -34,7 +34,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                         IndexedDB.database.deleteObjectStore("parameters");
                     }
                     var store = IndexedDB.database.createObjectStore("parameters");
-                    store.createIndex("parameter", "parameter", { unique: true });
+                    // store.createIndex("parameter", "parameter", { unique: true });
                 };
 
             } catch (e) {
@@ -86,9 +86,12 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                 };
 
                 var objectStore = transaction.objectStore("parameters");
-                var request = objectStore.add(customerData[i]);
+                var request = objectStore.add({key:parameter, value:value});
                 request.onsuccess = function(event) {
-                // event.target.result == customerData[i].ssn
+                    console.log("set success pour "+parameter+"/"+value);
+                };
+                request.onerror = function(event) {
+                    console.error("set error pour "+parameter+"/"+value);
                 };
             });
 
