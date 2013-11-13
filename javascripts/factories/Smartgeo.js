@@ -278,6 +278,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
         },
 
+        rustineVeolia: function(sites, success, error){
+            for(var i in sites){
+                var site = sites[i];
+                if(site && site.id === $rootScope.site.id && site.url && site.url.indexOf('veoliagroup') !== -1){
+                    var url =  (Smartgeo.get('url') || '').replace(/^https?:\/\/(.+)index\.php.*$/, '$1') + site.url ;
+                    $http.get(url).then(success, error) ;
+                }
+            }
+        },
+
         selectSiteRemotely: function(site, success, error){
             if(!site){
                 console.log("Aucun site n'a été spécifié.");
@@ -288,7 +298,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     'site'  : site,
                     'auto_load_map' : true
                 });
-            $http.post(url).then(success || function(){},error || function(){});
+            $http.post(url).then(function(response){
+                if(response && response.sites && response.sites.length > 1){
+                    Smartgeo.rustineVeolia(response.sites, success, error);
+                } else {
+                    (success || function(){})();
+                }
+            }, error || function(){});
         },
         login_o : function(user, success, error){
             // TODO : MERGE WITH LOGIN METHOD

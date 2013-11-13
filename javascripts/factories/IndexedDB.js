@@ -33,7 +33,7 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                     if(IndexedDB.database.objectStoreNames.contains("parameters")) {
                         IndexedDB.database.deleteObjectStore("parameters");
                     }
-                    var store = IndexedDB.database.createObjectStore("parameters");
+                    var store = IndexedDB.database.createObjectStore("parameters",  { keyPath: "key" });
                     // store.createIndex("parameter", "parameter", { unique: true });
                 };
 
@@ -56,13 +56,9 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                 var getter = objectStore.get(parameter);
                 getter.onsuccess = function(e) {
                     var match = e.target.result;
-                    console.log(match);
+                    value = match ? match.value : null;
+                    console.log(value);
                     (callback||function(){})(value);
-                    // if(match) {
-                    //     // console.log(true);
-                    //     match.continue();
-                    //     // console.dir(match);
-                    // }
                 };
                 getter.onerror = function(e){
                     console.error(e);
@@ -70,21 +66,12 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
             });
         },
 
-        set: function(parameter, value){
-
+        set: function(parameter, value, success, error){
             console.warn(parameter);
             this.open(function(){
-
                 var transaction = IndexedDB.database.transaction(["parameters"], "readwrite");
-
-                transaction.oncomplete = function(event) {
-                    alert("All done!");
-                };
-
-                transaction.onerror = function(event) {
-                    console.error(event);
-                };
-
+                transaction.oncomplete = (success || function(){})();
+                transaction.onerror    = (error   || function(){})();
                 var objectStore = transaction.objectStore("parameters");
                 var request = objectStore.add({key:parameter, value:value});
                 request.onsuccess = function(event) {
@@ -94,8 +81,6 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                     console.error("set error pour "+parameter+"/"+value);
                 };
             });
-
-
         },
 
         unset: function(parameters){
