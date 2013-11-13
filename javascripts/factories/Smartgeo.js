@@ -356,9 +356,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
     }
 
     Smartgeo._initializeGlobalEvents();
-
     window.Smartgeo = Smartgeo;
-
     return Smartgeo ;
 
 });
