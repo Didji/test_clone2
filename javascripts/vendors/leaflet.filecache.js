@@ -760,6 +760,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                         console.log("image.onload 3");
                         image.onerror = image.onload = null ;
                         image.className += " leaflet-tile-loaded";
+                        image.style.webkitTransform = "translate3d(0px, 0px, 0)";
                     };
                     this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
                         if(yes){
