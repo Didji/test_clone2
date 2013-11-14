@@ -111,7 +111,11 @@ public class Loader extends ChromiumActivity {
 				Log.e(TAG, "[OAUTH] Impossible to retreive token!");
 				//app will be in local mode
 			} finally {
-				//TODO: launch main activity (qd fini, fermer splash screen et cette activité)
+				Intent intent = new Intent();
+		        intent.setClass(Loader.this, MainActivity.class);
+		        startActivity(intent);
+		        
+		        Loader.this.finish();
 			}
 		}
 	}

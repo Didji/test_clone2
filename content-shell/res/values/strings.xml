@@ -12,4 +12,6 @@
     <!-- THESE ARE HAND MERGED UNTIL WE CAN AUTOMATE THIS PROCESS -->
     <string name="url_hint">Type URL Here</string>
     <string name="browser_process_initialization_failed">Initialization failed.</string>
+    
+    <string name="splash">GiSmartware</string>
 </resources>
