@@ -121,6 +121,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         function getValueFromAssets(pkey, okey) {
             var rv = {}, val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
+                console.log(assets[i].asset);
                 var a = JSON.parse(assets[i].asset).attributes,
                     list = getList(pkey, okey);
 
@@ -152,15 +153,17 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 }
                 if('string' === typeof def) {
                     if(field.type === 'D' && def === '#TODAY#') {
-                        date = new Date;
+                        date = new Date();
                         def = date.getUTCFullYear()
                                 + '-' + pad( date.getUTCMonth() + 1 )
-                                + '-' + pad( date.getUTCDate() )
+                                + '-' + pad( date.getUTCDate() );
                     }
                     fields[field.id] = def;
                 } else {
+                    console.log(def) ;
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
                     $scope.report.roFields[field.id] = $scope.formatFieldEntry(def);
+                    console.log($scope.report.roFields[field.id]);
                     $scope.report.overrides[field.id] = '';
                     fields[field.id] = def;
                 }
@@ -220,7 +223,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     $scope.sendReport = function (event) {
-
+        $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
@@ -247,32 +250,37 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         report.mission   = 1*$rootScope.report_mission || report.mission ;
 
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
-            .error(function(error){
-
-                if(error && error.error && error.error.text){
-                    alertify.alert(error.error.text);
-                }
-
-                var reports = Smartgeo.get('reports') || [];
-                reports.push(report);
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                Smartgeo.set('reports', reports);
-                endOfReport();
-            }).then(function(){
+            .error(function(){
+                Smartgeo.get_('reports', function(reports){
+                    console.log(reports.length, reports);
+                    reports = reports || [] ;
+                    reports.push(report);
+                    console.log(reports.length, reports);
+                    Smartgeo.set_('reports', reports, function(){
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                        $scope.sendingReport = false ;
+                        endOfReport();
+                    });
+                });
+            }).success(function(){
+                $scope.sendingReport = false ;
                 endOfReport();
             });
     };
 
     function endOfReport(){
         if($rootScope.report_url_redirect){
-            $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) ;
+            $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
+            console.log($rootScope.report_url_redirect);
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
-                SmartgeoChromium.redirect($rootScope.report_url_redirect);
+                SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
                 window.open($rootScope.report_url_redirect, "_blank");
             }
-        } else {
-            $location.path('map/'+$rootScope.site.id);
+        }
+        $location.path('map/'+$rootScope.site.id);
+        if(!$scope.$$phase) {
+            $scope.$apply();
         }
     }
 
@@ -281,7 +289,15 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             var injectedValues = '' ;
             for(var field in $scope.report.fields){
                 if($scope.report.fields.hasOwnProperty(field)){
-                    injectedValues += 'fields['+getLabelWithFieldId(field)+']='+$scope.report.fields[field]+'&' ;
+                    var val = $scope.report.fields[field];
+                    // /!\ UGLY ALERT WORKS WITH ONLY ONE ASSETS
+                    if(typeof val === 'object' ){
+                        for( var j in val){
+                            val = val[j];
+                            break;
+                        }
+                    }
+                    injectedValues += 'fields['+getLabelWithFieldId(field)+']='+val+'&' ;
                 }
             }
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
@@ -328,7 +344,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL("image/png");
         return dataURL ;
-        // return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     };
 
 });

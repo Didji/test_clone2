@@ -17,7 +17,7 @@
                             Recherche
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
                             <div ng-include="'partials/search.html'"></div>
                         </div>
                     </li>
@@ -33,7 +33,7 @@
                             Visibilité des couches
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
@@ -43,17 +43,17 @@
                             Planning
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
                             <div ng-include="'partials/planning.html'"></div>
                         </div>
                     </li>
-                    <li>
+                    <li ng-show="rigths.report">
                         <a href="#">
                             <span class="icon icon-edit"></span>
                             Compte rendu
                         </a>
                         <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
                             <ul>
                                 <li ng-repeat='activity in site.activities'>
                                     <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
@@ -71,7 +71,7 @@
                             <span ng-if="toSyncNumber" class="badge pull-right">{{toSyncNumber}}</span>
                         </a>
                         <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour au menu principal</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
                             <div ng-include="'partials/synchronizationMenu.html'"></div>
                         </div>
                     </li>

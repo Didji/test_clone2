@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location){
+angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
     var Smartgeo = {
 
@@ -6,18 +6,33 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _MAP_MAX_ZOOM : 20,
         _MAP_MIN_ZOOM : 13,
 
-        // _OVERRIDE_GIMAP_URL: "54.217.119.16",
-
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.2",
-        _G3ME_VERSION               : "0.1.0",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.3.3",
+        _G3ME_VERSION               :   "0.1.0",
+        _BIG_SCREEN_THRESHOLD       :       361,
+
+
+        // TODO : put this in a RightsManager
+        getRight: function(module){
+            return this.smgeo_right[module];
+        },
+
+        smgeo_right : {
+            'report' : false,
+            'goto'   : false
+        },
+
+        isRunningOnBigScreen : function(){
+            return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
+        },
+
+        isRunningOnLittleScreen : function(){
+            return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
+        },
 
         // METHODS
         setGimapUrl : function(url){
-            // // var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');
-            // if(!url && url !== null) {
-            //     return this.setGimapUrl();
-            // } else
+
             if (url === null){
                 return null;
             }
@@ -63,6 +78,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     Smartgeo.set('online', false);
                     callback(false);
                 });
+        },
+
+        sanitizeAsset: function(asset){
+            return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
 
         _isRunningOnMobile: function() {
@@ -159,12 +178,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
-                            asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey ;
                             partial_response.push(asset);
                         }
                         _this.findAssetsByOkey(site,okey, callback, zones.slice(1), partial_response);
-                    }, Smartgeo.log, Smartgeo.log);
-            }, Smartgeo.log);
+                    }, function(tx, SqlError){console.log(SqlError);}, function(tx, SqlError){console.log(SqlError);});
+            }, function(tx, SqlError){console.log(SqlError);});
         },
 
         findAssetsByLabel: function(site, label, callback, zones, partial_response){
@@ -186,12 +205,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
-                            asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            asset.okey =  Smartgeo.sanitizeAsset(asset.asset).okey;
                             partial_response.push(asset);
                         }
                         _this.findAssetsByLabel(site,label, callback, zones.slice(1), partial_response);
-                    }, Smartgeo.log, Smartgeo.log);
-            }, Smartgeo.log);
+                    }, function(tx, SqlError){
+                        console.log(SqlError, request);
+                    }, function(tx, SqlError){
+                        console.log(SqlError, request);
+                    });
+            }, function(tx, SqlError){
+                console.log(SqlError, request);
+            });
         },
 
         findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
@@ -209,17 +234,19 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 for(var criter in search.criteria){
                     if(search.criteria.hasOwnProperty(criter) && search.criteria[criter]){
                         if(isNaN(1*search.criteria[criter])){
-                            g = '"';
+                            g = '"%';
                         } else {
                             g = '' ;
                         }
-                        request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g + ",%'       ";
-                        request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g + "}%' ) AND ";
+                        request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + ",%'       ";
+                        request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + "}%' ) AND ";
                     }
+                }
+                if(search.okey){
+                    request += ' symbolId like "' + search.okey + '%" AND ' ;
                 }
                 request += ' 1 LIMIT 0, 10';
             }
-
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -227,12 +254,19 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
-                            asset.okey = JSON.parse(asset.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            try{
+                                asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey ; // .replace(/[\n\r]/g, ' ').replace(/&#039/g, "'").replace(/\\\\/g, "\\")).okey;
+                            } catch(e){
+                                console.log(e);
+                                console.log(asset.asset);
+                            }
                             partial_response.push(asset);
                         }
                         Smartgeo.findAssetsByCriteria(site,search, callback, zones.slice(1), partial_response, request);
-                    }, Smartgeo.log, Smartgeo.log);
-            }, Smartgeo.log);
+                    },
+                    function(tx, SqlError){console.log(SqlError);},
+                    function(tx, SqlError){console.log(SqlError);});
+            }, function(tx, SqlError){console.log(SqlError);});
         },
 
         _initializeGlobalEvents: function(){
@@ -254,18 +288,58 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         },
 
-        silentLogin: function(){
+        silentLogin: function(callback){
             var user = Smartgeo.get('user') || {};
             if(user.token){
-                Smartgeo.login(token);
+                Smartgeo.login(user.token, callback);
             } else if(user.username && user.password){
-                Smartgeo.login(user.username, user.password);
+                Smartgeo.login(user.username, user.password, callback);
             }
         },
 
+        rustineVeolia: function(sites, success, error){
+            for(var i in sites){
+                var site = sites[i];
+                if(site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1){
+                    var url =  (Smartgeo.get('url') || '').replace(/^(https?:\/\/.+)index\.php.*$/, '$1') + site.url ;
+                    $http.get(url).then(success, error) ;
+                }
+            }
+        },
+
+        selectSiteRemotely: function(site, success, error){
+            if(!site){
+                console.log("Aucun site n'a été spécifié.");
+                return ;
+            }
+            var url = Smartgeo.getServiceUrl('global.auth.json', {
+                    'app'   : 'mapcite',
+                    'site'  : site,
+                    'auto_load_map' : true
+                });
+            $http.post(url).then(function(response){
+                if(response.data && response.data.sites && response.data.sites.length > 1){
+                    Smartgeo.rustineVeolia(response.data.sites, success, error);
+                } else {
+                    (success || function(){})();
+                }
+            }, error || function(){});
+        },
+        login_o : function(user, success, error){
+            // TODO : MERGE WITH LOGIN METHOD
+            if(user.token){
+                Smartgeo.login(user.token, success, error);
+            } else {
+                Smartgeo.login(user.username, user.password, success, error);
+            }
+        },
         login: function(login, password, success, error){
+            if(Smartgeo._LOGIN_MUTEX){
+                return (error || function(){})();
+            }
+            Smartgeo._LOGIN_MUTEX = true ;
             var token , url ;
-            if(typeof password ===  'function'){
+            if(typeof password ===  'function' || !password){
                 token   = login;
                 error   = success ;
                 success = password;
@@ -277,10 +351,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             } else {
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
                     'login' : encodeURIComponent(login),
-                    'pwd'   : encodeURIComponent(password)
+                    'pwd'   : encodeURIComponent(password),
+                    'forcegimaplogin' : true
                 });
             }
-            $http.post(url).success(success || function(){}).error(error || function(){});
+            $http.post(url).success(function(){
+                Smartgeo._LOGIN_MUTEX = false ;
+                if($rootScope.site){
+                    Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
+                } else {
+                    (success || function(){})();
+                }
+            }).error(function(){
+                Smartgeo._LOGIN_MUTEX = false ;
+                (error || function(){})();
+            });
         },
 
         // GETTER AND SETTER
@@ -294,6 +379,19 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         unset: function(parameter){
             return localStorage.removeItem(parameter);
+        },
+
+        // ASYNC GETTER AND SETTER
+        get_: function(parameter, callback){
+            IndexedDB.get(parameter, callback);
+        },
+
+        set_: function(parameter, value, callback){
+            IndexedDB.set(parameter, value, callback);
+        },
+
+        unset_: function(parameter, callback){
+            IndexedDB.unset(parameter);
         }
     };
 
@@ -303,7 +401,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
     }
 
     Smartgeo._initializeGlobalEvents();
-
+    window.Smartgeo = Smartgeo;
     return Smartgeo ;
 
 });
