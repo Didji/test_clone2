@@ -84,11 +84,21 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
     $scope.advancedSearch = function(event) {
         event.preventDefault();
+
         $scope.searchMessage = "";
-        var advancedSearch = {
-            criteria : $scope.selectedCriteriaValues,
-            okey : $scope.selectedFamily.okey
-        };
+
+        var advancedSearch ;
+
+        if($scope.selectedFamily){
+            advancedSearch = {
+                criteria : $scope.selectedCriteriaValues,
+                okey : $scope.selectedFamily.okey
+            };
+            $scope.advancedSearchMessage = "Recherche en cours";
+        } else {
+            $scope.advancedSearchMessage = "Veuillez choisir un type d'objet";
+            return ;
+        }
 
         $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function(results){

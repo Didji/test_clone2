@@ -2,6 +2,8 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+
+
     $window.document.addEventListener('menubutton', function() {
         $scope.mlPushMenu._openMenu();
     }, false);
@@ -42,28 +44,44 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         $scope.mlPushMenu._resetMenu();
         return false;
     };
-
-    $scope.toggle = function(event){
-        event.stopPropagation();
-        event.preventDefault();
-        $scope.mlPushMenu.menuState = $scope.mlPushMenu.menuState || 'closed';
-
-        if($scope.mlPushMenu.menuState  === 'closed'){
-            $scope.mlPushMenu._openMenu();
-            $scope.mlPushMenu.menuState = 'opened';
-        } else {
-            $scope.mlPushMenu._resetMenu();
+    $scope.open = function (event){
+        if(event && event.preventDefault){
+            event.preventDefault();
         }
+
+        if(Smartgeo.isRunningOnLittleScreen()) {
+            $rootScope.$broadcast("CONSULTATION_CLOSE_PANEL");
+        }
+
+        $scope.mlPushMenu._openMenu();
+        $scope.mlPushMenu.menuState = 'opened';
+        return false;
     };
 
-    function updateSyncNumber() {
-        $scope.toSyncNumber = (Smartgeo.get('reports') || []).length;
-        if(!$scope.$$phase) {
-            $scope.$apply();
+    $scope.toggle = function(event){
+        if(event && event.preventDefault){
+            event.preventDefault();
+        }
+        $scope[$scope.mlPushMenu.menuState === 'opened' ? 'close' : 'open']();
+    };
+
+    function updateSyncNumber(event, number) {
+        if(number !== undefined && number !== null){
+            $scope.toSyncNumber = number ;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        } else {
+            Smartgeo.get_('reports', function(reports){
+                $scope.toSyncNumber = (reports||[]).length ;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
         }
     }
-    updateSyncNumber();
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
+    $scope.$on('_MENU_CLOSE_', $scope.close);
 
     $scope.activateConsultation = function(event){
         event.preventDefault();

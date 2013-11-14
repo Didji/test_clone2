@@ -375,7 +375,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 ];
 
                 for (j = 0; j < fields_in_request.length; j++){
-                    request += ' , \'' + (  (typeof values_in_request[j] === 'string' && values_in_request[j].length ) || typeof values_in_request[j] !== 'string' ? JSON.stringify(values_in_request[j]) : '' ).replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
+                    request += ' , \'' + (  (typeof values_in_request[j] === 'string' && values_in_request[j].length ) || typeof values_in_request[j] !== 'string' ? JSON.stringify(values_in_request[j]) : '' ).replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
                 }
 
                 if (assets[i]){
