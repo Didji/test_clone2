@@ -5,23 +5,21 @@
         <p><input class="form-control" type='text' ng-model="gimapUrl" ng-show='firstAuth' placeholder='Adresse du serveur' /></p>
         <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
         <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
-        <p>Se souvenir du mot de passe <input type="checkbox" ng-model="rememberme"></p>
+        <label><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="rememberme"></label>
         <hr>
-
-
         <button class="btn btn-lg btn-primary btn-block has-spinner" ng-class='{active:!readyToLog && !firstAuth}' type="submit"
                 ng-disabled=" (!readyToLog && !firstAuth) || (firstAuth && !gimapUrl)">
             <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-            {{logMessage}}
+            {{ logMessage | i18n }}
         </button>
     </form>
     <div  class="btn-group bottom-right dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            <span class="icon icon-gears"></span> Paramètres <span class="caret"></span>
+            <span class="icon icon-gears"></span> <i18n>_AUTH_SETTINGS_</i18n> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu pull-right" role="menu">
-            <li ng-show="smallUrl.length > 0"><a id="changeGiMapUrl" ng-click="setGimapUrl()">Changer de serveur <small>({{smallUrl}})</small></a></li>
-            <li><a ng-click="forgetPassword()">Oublier le mot de passe enregistré</a></li>
+            <li ng-show="smallUrl.length > 0"><a id="changeGiMapUrl" ng-click="setGimapUrl()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{smallUrl}})</small></a></li>
+            <li><a ng-click="forgetPassword()"><i18n>_AUTH_FORGET_PASSWORD_</i18n></a></li>
         </ul>
     </div>
 </div>

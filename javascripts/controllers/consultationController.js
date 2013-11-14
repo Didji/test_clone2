@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo){
 
     $scope.state  = 'closed';
     $scope.loading = false;
@@ -14,7 +14,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         }
         PREOPEN_TIMER = setTimeout(function() {
             $scope.loading = true;
-            $scope.state  = 'open';
+            $scope.open();
             $scope.$apply();
         }, 200);
     });
@@ -22,7 +22,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         if(PREOPEN_TIMER) {
             clearTimeout(PREOPEN_TIMER);
         }
-        $scope.state  = 'closed';
+        $scope.close();
         $scope.loading = false;
         $scope.$apply();
     });
@@ -30,6 +30,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
     $scope.$on("CONSULTATION_OPEN_PANEL", function(){
         $scope.open();
         $scope.$apply();
+    });
+
+    $scope.$on("CONSULTATION_CLOSE_PANEL", function(){
+        $scope.close();
     });
 
     $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets){
@@ -51,7 +55,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
             $scope.assets._byGuid[assets[i].guid] = assets[i];
             $scope.groups[assets[i].priority][assets[i].okey][assets[i].guid] = assets[i]  ;
         }
-        $scope.state  = 'open';
+        $scope.open();
         $scope.loading = false;
         $scope.$apply();
 
@@ -69,7 +73,17 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.gotoAsset = function(asset){
 
-        // NOT TESTED
+        //   /!\ REFACTOR ALERT /!\
+        // TODO : make polyfill class
+
+        var coords = asset.geometry.type === "Point" ? {
+            x : asset.geometry.coordinates[0],
+            y : asset.geometry.coordinates[1]
+        } : {
+            x : asset.geometry.coordinates[0][0],
+            y : asset.geometry.coordinates[0][1]
+        } ;
+
         if(window.SmartgeoChromium && SmartgeoChromium.goTo && SmartgeoChromium.locate){
 
             if(!window.ChromiumCallbacks){
@@ -77,13 +91,17 @@ angular.module('smartgeomobile').controller('consultationController', function (
             }
 
             ChromiumCallbacks[0] = function(lng, lat, alt){
-                SmartgeoChromium.goTo(lng, lat, asset.xmin, asset.ymax);
+                SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
+            };
+
+            ChromiumCallbacks[2] = function(){
+                alertify.error("Impossible de récupérer la position GPS");
             };
 
             SmartgeoChromium.locate();
 
         } else {
-            console.log('Not implemented but going from here to', [asset.xmin, asset.xmax]);
+            console.log('Not implemented but going from here to', [coords.x, coords.y]);
         }
 
     };
@@ -102,17 +120,20 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
-        // TODO : faire un paramètre AUTOCLOSECONSULTATIONPANEL
-        if($window.document.width <= 720) {
-            $scope.state = 'closed';
+
+        if(Smartgeo.isRunningOnLittleScreen()){
+            $scope.close();
         }
     };
 
     $scope.toggleConsultationPanel = function(){
-        $scope.state = $scope.state === 'open' ? 'closed' : 'open' ;
+        $scope[($scope.state === 'open' ? 'close' : 'open')]() ;
     };
 
     $scope.open = function(){
+        if(Smartgeo.isRunningOnLittleScreen()){
+            $rootScope.$broadcast('_MENU_CLOSE_');
+        }
         $scope.state = 'open' ;
     };
 
@@ -121,7 +142,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.definedFilter = function(value){
-        console.log(value);
         return true;
     };
 

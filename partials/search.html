@@ -52,7 +52,7 @@
                                         ng-true-value="Y" ng-false-value="N"></input>
                                 </div>
                                 <div ng-switch-when="N">
-                                    <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="number"></input>
+                                    <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="number" step="any"></input>
                                 </div>
                                 <div ng-switch-default>
                                     <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="text"></input>

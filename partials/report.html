@@ -43,7 +43,7 @@
             <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> Précédent
             </button>
-            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >
+            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
                 Enregistrer
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
@@ -66,10 +66,6 @@
                         </li>
                     </ul>
                 </div>
-                <!-- <video id="video"></video> -->
-<!-- <button id="startbutton">Take photo</button> -->
-<!-- <canvas id="canvas"></canvas> -->
-<!-- <img src="http://placekitten.com/g/320/261" id="photo" alt="photo"> -->
             </div>
         </div>
         <p>
@@ -81,7 +77,7 @@
                 <span class="icon-chevron-left"></span> Précédent
             </button>
 
-            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid" ng-click="sendReport($event)" >
+            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
                 Enregistrer
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>

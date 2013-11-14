@@ -22,7 +22,14 @@
 
 }
 
+.leaflet-control-scale{
+    padding-left: 30px;
+    padding-bottom: 6px;
+}
 
+html * {
+    user-select : none;
+}
 
 html, body {
     height: 100%;

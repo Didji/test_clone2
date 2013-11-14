@@ -57,7 +57,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = JSON.parse(asset_.asset);
+                asset  = Smartgeo.sanitizeAsset(asset_.asset);
                 asset.label = asset_.label ;
                 asset.geometry = JSON.parse(asset_.geometry) ;
                 assets.push(asset);
@@ -85,10 +85,20 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     $scope.advancedSearch = function(event) {
         event.preventDefault();
 
-        var advancedSearch = {
-            criteria : $scope.selectedCriteriaValues,
-            okey : $scope.selectedFamily.okey
-        };
+        $scope.searchMessage = "";
+
+        var advancedSearch ;
+
+        if($scope.selectedFamily){
+            advancedSearch = {
+                criteria : $scope.selectedCriteriaValues,
+                okey : $scope.selectedFamily.okey
+            };
+            $scope.advancedSearchMessage = "Recherche en cours";
+        } else {
+            $scope.advancedSearchMessage = "Veuillez choisir un type d'objet";
+            return ;
+        }
 
         $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function(results){
@@ -97,7 +107,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             if(!results.length){
                 $scope.advancedSearchMessage = 'Aucun résultat' ;
                 if(!$scope.$$phase) {
-                	$scope.$apply();
+                    $scope.$apply();
                 }
                 return ;
             } else {
@@ -107,7 +117,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             var assets = [], asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = JSON.parse(asset_.asset);
+                asset  = Smartgeo.sanitizeAsset(asset_.asset);
                 asset.label = asset_.label ;
                 asset.geometry = JSON.parse(asset_.geometry) ;
                 assets.push(asset);

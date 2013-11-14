@@ -1,7 +1,7 @@
 /**
  * Controlleur d'authentification
  */
-angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite){
+angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n){
 
 
     var lastuser = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
@@ -21,7 +21,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         ping();
     } else {
         $scope.firstAuth  = true ;
-        $scope.logMessage = "Initialisation";
+        $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
     }
 
 
@@ -30,16 +30,16 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
      */
     function ping(callback) {
         $scope.readyToLog = false;
-        $scope.logMessage = "Vérification du serveur";
+        $scope.logMessage = '_AUTH_LOG_MESSAGE_CHECK_';
 
         Smartgeo.ping(function(serverIsReachable){
-            $scope.logMessage = "Connexion " + (serverIsReachable ? 'distante' : 'locale');
+            $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (serverIsReachable ? 'REMOTE' : 'LOCAL') + '_' ;
             $scope.readyToLog = true;
             if(typeof callback === 'function'){
                 (callback || function(){})(serverIsReachable);
             }
         });
-    };
+    }
 
     function loginFailed(response, status) {
         /**
@@ -47,7 +47,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          *       (they looks like no connection)
          */
         if(status === 403){
-            alertify.alert("Mot de passe incorrecte pour l'utilisateur "+response.login);
+            alertify.alert("Mot de passe incorrect" + (response.login ? " pour l'utilisateur " + response.login : ""));
         } else if (status === ''){
             alertify.alert("L'application n'est pas parvenue à joindre le serveur.");
         } else {
@@ -66,13 +66,10 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
-                // if(lastuser.password !== $scope.pwd) {
-                    // var $scope.rememberme  = confirm("Souhaitez-vous que l'application retienne votre mot de passe ?");
-                    lastuser = {
-                        password:   $scope.rememberme ? $scope.pwd : '',
-                        rememberme: $scope.rememberme
-                    };
-                // }
+                lastuser = {
+                    password:   $scope.rememberme ? $scope.pwd : '',
+                    rememberme: $scope.rememberme
+                };
                 lastuser.username = $scope.username;
                 Smartgeo.set('user',lastuser);
                 $location.path('sites');
@@ -84,7 +81,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         if(knownUsers[$scope.username] === $scope.pwd) {
             $location.path('sites');
         } else {
-            alertify.alert("Le mode déconnecté n'est pas disponible pour cet utilisateur car il ne s'est jamais authentifié en mode connecté.");
+            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
         }
     }
 
@@ -117,6 +114,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.gimapUrl  = null ;
         $scope.username = '';
         $scope.pwd      = '';
+        $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
     };
 
     $scope.forgetPassword = function() {
