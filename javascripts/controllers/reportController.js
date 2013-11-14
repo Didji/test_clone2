@@ -257,7 +257,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                     reports.push(report);
                     console.log(reports.length, reports);
                     Smartgeo.set_('reports', reports, function(){
-                        // console.log('calling REPORT_LOCAL_NUMBER_CHANGE with '+reports.length, reports);
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                         $scope.sendingReport = false ;
                         endOfReport();
@@ -291,7 +290,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             for(var field in $scope.report.fields){
                 if($scope.report.fields.hasOwnProperty(field)){
                     var val = $scope.report.fields[field];
-                    // UGLY ALERT
+                    // /!\ UGLY ALERT WORKS WITH ONLY ONE ASSETS
                     if(typeof val === 'object' ){
                         for( var j in val){
                             val = val[j];
@@ -345,7 +344,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL("image/png");
         return dataURL ;
-        // return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     };
 
 });

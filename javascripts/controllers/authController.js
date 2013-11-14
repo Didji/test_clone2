@@ -38,9 +38,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
             if(typeof callback === 'function'){
                 (callback || function(){})(serverIsReachable);
             }
-            // if(!$scope.$$phase) {
-            //     $scope.$apply();
-            // }
         });
     }
 

@@ -2,8 +2,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
-
-
     $window.document.addEventListener('menubutton', function() {
         $scope.mlPushMenu._openMenu();
     }, false);
@@ -24,7 +22,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         }
         return e.parentNode && closest( e.parentNode, classname );
     }
-
 
     $scope.backToPreviousLevel = function(event){
         event.preventDefault();
