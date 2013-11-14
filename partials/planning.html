@@ -1,10 +1,14 @@
 <div ng-controller="planningController">
     <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()">Actualiser</button>
     <div class="btn-group" style="margin-left: 70px;">
-      <button type="button" ng-click="remove1day()" ng-disabled="minimumTime > (dayToDisplay-86400000)" class="btn btn-lg btn-default"><span class="icon icon-arrow-left"></span></button>
+      <button type="button" ng-click="remove1day()" ng-disabled="minimumTime > (dayToDisplay-86400000)" class="btn btn-lg btn-default">
+        <span class="icon icon-arrow-left"> </span> <span class="badge"> {{beforeToday}} </span>
+      </button>
       <button type="button" ng-click="gototoday()"  class="btn btn-lg btn-default"><span class="icon icon-circle"></span></button>
       <!-- <button type="button" ng-cli                        class="btn btn-lg btn-default"><span class="icon icon-calendar"></span></button> -->
-      <button type="button" ng-click="add1day()"    ng-disabled="maximumTime < (dayToDisplay+86400000)" class="btn btn-lg btn-default"><span class="icon icon-arrow-right"></span></button>
+      <button type="button" ng-click="add1day()"    ng-disabled="maximumTime < (dayToDisplay+86400000)" class="btn btn-lg btn-default">
+         <span class="badge"> {{afterToday}} </span> <span class="icon icon-arrow-right"> </span>
+      </button>
     </div>
 
     <h2>{{dayToDisplay |  date:"dd/MM/yy"}} <input style='width: 56px;' type="date" ng-model='dayToDisplay'></h2>
