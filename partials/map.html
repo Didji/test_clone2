@@ -10,7 +10,16 @@
                             Consultation
                         </a>
                     </li>
-
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-calendar"></span>
+                            Planning
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <div ng-include="'partials/planning.html'"></div>
+                        </div>
+                    </li>
                     <li>
                         <a href="#">
                             <span class="icon icon-search"></span>
@@ -37,16 +46,7 @@
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
-                    <li>
-                        <a href="#">
-                            <span class="icon icon-list-ul"></span>
-                            Planning
-                        </a>
-                        <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
-                            <div ng-include="'partials/planning.html'"></div>
-                        </div>
-                    </li>
+
                     <li ng-show="rigths.report">
                         <a href="#">
                             <span class="icon icon-edit"></span>
