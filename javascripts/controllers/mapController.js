@@ -16,10 +16,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         report :  Smartgeo.getRight('report')
     };
 
-    // Smartgeo.selectSiteRemotely($rootScope.site.id, function(){
-    //     $location.path('/map/'+site.id);
-    // });
-
     Smartgeo.silentLogin(function(){
         G3ME.backgroundTile.redraw() ;
     });
@@ -44,10 +40,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function noConsultableAssets(coords) {
         var popupContent ;
-// console.log(coords);
         if($rootScope.report_activity){
             popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
-            // popupContent = '<button class="btn btn-primary btn-block" href="#/report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lng+','+coords.lat+'/">Compte rendu sur cette position</button>';
         } else {
             popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
         }
@@ -136,7 +130,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                     var assets = [], asset, asset_;
                     for (var i = 0; i < results.rows.length; i++) {
                         asset_ = results.rows.item(i);
-                        asset  = Smartgeo.sanitizeAsset(asset_.asset);//JSON.parse(asset_.asset);
+                        asset  = Smartgeo.sanitizeAsset(asset_.asset);
                         asset.label = asset_.label ;
                         asset.geometry = JSON.parse(asset_.geometry) ;
                         asset.priority = asset_.priority ;

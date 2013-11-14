@@ -32,10 +32,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // METHODS
         setGimapUrl : function(url){
-            // // var url = Smartgeo._OVERRIDE_GIMAP_URL || prompt('URL GiMAP', Smartgeo.get('url') || '');
-            // if(!url && url !== null) {
-            //     return this.setGimapUrl();
-            // } else
+
             if (url === null){
                 return null;
             }

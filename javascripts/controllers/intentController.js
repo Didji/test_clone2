@@ -67,21 +67,13 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
         Smartgeo.set('user',currentUser) ;
 
         Smartgeo.login(token, callback, function(response){
-            console.log(response);
-            if(response && (response.status === 403 || response.data.auth === false)){
-                // alertify.alert("Le token fournit n'est pas valide");
-                // $location.path('#');
-            } else if(!response){
-                // alertify.alert("L'application n'est pas connectée et ne peut pas vérifier le token. Il sera vérifié à la prochaine connexion");
-                callback();
-            } else if(response && response.status === 200) {
+            if( (response && response.status === 200) || !response) {
                 callback();
             } else {
                 alertify.alert("L'authentification a échoué ("+status+")");
                 $location.path('#');
             }
         });
-
     }
 
     function redirect(){

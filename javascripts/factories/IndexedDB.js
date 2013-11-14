@@ -34,7 +34,6 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
                         IndexedDB.database.deleteObjectStore("parameters");
                     }
                     var store = IndexedDB.database.createObjectStore("parameters",  { keyPath: "key" });
-                    // store.createIndex("parameter", "parameter", { unique: true });
                 };
 
             } catch (e) {
