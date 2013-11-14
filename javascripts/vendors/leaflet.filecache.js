@@ -751,23 +751,39 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                     // image.style.border  = 'solid 1px blue';
                     window.URL = window.URL || window.webkitURL;
                     image.src           =   URL.createObjectURL(blob);
-
+                    console.log(URL.createObjectURL(blob));
+                    image.onerror = function(event) {
+                        console.log("image.onerror 3");
+                        image.onerror = image.onload = null ;
+                    };
+                    image.onload = function(event) {
+                        console.log("image.onload 3");
+                        image.onerror = image.onload = null ;
+                        image.className += " leaflet-tile-loaded";
+                        image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+                    };
                     this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
                         if(yes){
                             var oldTile = image.src;
                             image.src = this_.getTileUrl({x:x, y:y},z);
                             image.onerror = function(event) {
+                                console.log("image.onerror");
                                 image.src = oldTile;
+                                image.onerror = image.onload = null ;
                             };
                             image.onload = function(){
+                                console.log("image.onload");
                                 image.className += " leaflet-tile-loaded";
                                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                                     this_.getRemoteETag(   tileObject, function(remoteETag){
-                                        this_.writeMetadataTileFile(tileObject,{
-                                            etag : remoteETag
-                                        });
+                                        if(remoteETag !== null){
+                                            this_.writeMetadataTileFile(tileObject,{
+                                                etag : remoteETag
+                                            });
+                                        }
                                     });
                                 });
+                                image.onerror = image.onload = null ;
                             };
                         }
                     });
@@ -778,11 +794,15 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             var oldTile = image.src ;
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = function(event) {
+                                console.log("image.onerror 2");
                 image.src = oldTile;
+                image.onerror = image.onload = null ;
             };
             image.onload = function(){
+                                console.log("image.onload 2");
                 image.className += " leaflet-tile-loaded";
                 this_.writeTileToCache(tileObject, this_.getDataURL(image));
+                image.onerror = image.onload = null ;
             };
         });
     },
@@ -839,7 +859,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                 callback(true);
             } else {
                 _this.getRemoteETag(tileObject, function(remoteETag){
-                    if(metadata.etag != remoteETag){
+                    if(metadata.etag != remoteETag && remoteETag !== null){
                         callback(true);
                     } else {
                         callback(false);
@@ -857,7 +877,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         http.onreadystatechange = function() {
             if (this.readyState == this.DONE && this.status === 200) {
                 callback(this.getResponseHeader("etag"));
+            } else if(this.readyState == this.DONE && this.status === 403){
+                Smartgeo.silentLogin();
+                callback(null);
             }
+
         };
         http.send();
     },

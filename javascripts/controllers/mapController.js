@@ -12,6 +12,18 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.consultationIsEnabled = false ;
 
+    $rootScope.rights = {
+        report :  Smartgeo.getRight('report')
+    };
+
+    // Smartgeo.selectSiteRemotely($rootScope.site.id, function(){
+    //     $location.path('/map/'+site.id);
+    // });
+
+    Smartgeo.silentLogin(function(){
+        G3ME.backgroundTile.redraw() ;
+    });
+
     G3ME.initialize( 'smartgeo-map',
                      $rootScope.site,
                      $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
@@ -31,12 +43,25 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     });
 
     function noConsultableAssets(coords) {
+        var popupContent ;
+// console.log(coords);
+        if($rootScope.report_activity){
+            popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
+            // popupContent = '<button class="btn btn-primary btn-block" href="#/report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lng+','+coords.lat+'/">Compte rendu sur cette position</button>';
+        } else {
+            popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
+        }
+
         var popup = L.popup().setLatLng(coords)
-                .setContent('<p>Aucun patrimoine dans cette zone.</p>')
+                .setContent(popupContent)
                 .openOn(G3ME.map);
-        setTimeout(function() {
-            $(popup._container).fadeOut();
-        }, 3000);
+
+        if($rootScope.report_activity){
+            setTimeout(function() {
+                $(popup._container).fadeOut();
+            }, 3000);
+        }
+
         $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
         return false;
     }
@@ -63,6 +88,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ymin = se.lat,
             ymax = nw.lat,
             zone,
+            zoom = G3ME.map.getZoom(),
             request = "";
 
         for (var i = 0, length_ = $rootScope.site.zones.length; i < length_; i++) {
@@ -81,10 +107,18 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             return noConsultableAssets(coords);
         }
 
-        request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority FROM ASSETS WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
-        request += " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
-        request += " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
-        request += " order by priority LIMIT 0,10 ";
+        request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority ";
+        request +=     " FROM ASSETS ";
+        request +=     " WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
+        request +=             " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
+        request +=             " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
+        request +=             " AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+
+        if(G3ME.active_layers) {
+            request += G3ME.active_layers.length ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
+        }
+        request +=     " order by priority LIMIT 0,10 ";
+
         $(circle._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(circle);
         });
@@ -93,7 +127,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             name: zone.database_name,
             bgType: 1
         }).transaction(function(t) {
-            t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax],
+            t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax, zoom , zoom],
                 function(t, results) {
                     if (results.rows.length === 0 ) {
                         return noConsultableAssets(coords);
@@ -173,6 +207,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ChromiumCallbacks[0] = function(lng, lat, alt){
                 setLocationMarker(null,lng, lat);
             };
+            ChromiumCallbacks[2] = function(){
+                alertify.error("Impossible de récupérer la position GPS");
+            };
             SmartgeoChromium.locate();
         } else {
             G3ME.map.on('locationfound', setLocationMarker);
@@ -183,7 +220,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function stopPosition() {
         G3ME.map.stopLocate();
-        if(POSITION_CONTROL) {
+        console.log(POSITION_CONTROL);
+        if(POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
         }
         removePositionMarker();

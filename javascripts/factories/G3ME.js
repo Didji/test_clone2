@@ -34,6 +34,10 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 position: 'topright'
             }));
 
+            L.control.scale({
+                'imperial':false
+            }).addTo(this.map);
+
             if(!target || !target.length  || G3ME.benchMe){
                 target = [
                     [this.site.extent.ymin, this.site.extent.xmin],
@@ -88,6 +92,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             }
             this.canvasTile.redraw();
 
+            window.test = this.backgroundTile ;
 
             $(window).on('resize', function(){
                 G3ME.tilesOnScreen = ~~( (window.innerHeight/256) * (window.innerWidth/256) ) + 1 ;
@@ -221,7 +226,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
                 parse = window.JSON.parse,
                 symbology = this.site.symbology,
-                imageFactor = Math.floor(30 / (22 - zoom)) / 10,
+                imageFactor = 1,
+                // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                 imageFactor_2 = imageFactor / 2,
                 scale = 256 * Math.pow(2, zoom),
                 xscale = canvas.width / Math.abs(xmax - xmin),
@@ -327,7 +333,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                             if (geom.type === "MultiLineString") {
                                                 geom.coordinates = geom.coordinates[0];
                                             }
-                                            if (geom.type === "LineString") {
+                                            if (geom.type === "LineString" || geom.type === "MultiLineString") {
                                                 ctx.beginPath();
                                                 for (var j = 0, l = geom.coordinates.length; j < l; j++) {
                                                     coord = geom.coordinates[j];
@@ -400,7 +406,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                         if(performBench){
                                             G3ME.benchStop(zone.database_name);
                                         }
-                                    }, function(SqlError) {
+                                    }, function(tx, SqlError) {
                                         console.log(JSON.stringify(SqlError));
                                     });
                         });
