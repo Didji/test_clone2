@@ -7,7 +7,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _MAP_MIN_ZOOM : 13,
 
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.3.2",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.3.3",
         _G3ME_VERSION               :   "0.1.0",
         _BIG_SCREEN_THRESHOLD       :       361,
 
