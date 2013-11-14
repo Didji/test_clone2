@@ -23,13 +23,14 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         } else if($scope.dayToDisplay <= $scope.minimumTime) {
         } else {
             Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+            updateCount($scope.missions, $scope.dayToDisplay);
         }
-
     };
 
     $scope.gototoday = function(){
         $scope.dayToDisplay = (new Date()).getTime();
         Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+        updateCount($scope.missions, $scope.dayToDisplay);
     };
 
     $scope.add1day = function(){
@@ -42,6 +43,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         } else if($scope.dayToDisplay >= $scope.maximumTime) {
         } else {
             Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+            updateCount($scope.missions, $scope.dayToDisplay);
         }
     };
 
@@ -69,6 +71,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     // calculer les extremums;
                     $scope.missions = results.results;
                     setExtremum($scope.missions);
+                    updateCount($scope.missions);
                     Smartgeo.set('missions', $scope.missions);
                 })
                 .error( function(){
@@ -91,6 +94,20 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 $scope.maximumTime = $filter('customDateFilter')(missions[i].end);
             }
         }
+    }
+    function updateCount(missions, today){
+        today = today || $scope.dayToDisplay ;
+        $scope.beforeToday =  0 ;
+        $scope.afterToday  =  0 ;
+        for(var i in missions){
+            if( $filter('customDateFilter')(missions[i].begin) < today ){
+                $scope.beforeToday++ ;
+            }
+            if( $filter('customDateFilter')(missions[i].begin) > today ){
+                $scope.afterToday++ ;
+            }
+        }
+        console.log($scope.beforeToday, $scope.afterToday);
     }
 
     function getExtentsFromAssetsList(assets){

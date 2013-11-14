@@ -18,7 +18,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         smgeo_right : {
-            'report' : false,
+            'report' : true,
             'goto'   : false
         },
 
