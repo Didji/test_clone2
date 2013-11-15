@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location){
+angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n){
 
     'use strict' ;
 
@@ -23,8 +23,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                         });
 
     if(!$rootScope.site){
-        alertify.alert("Aucun site n'est disponible.");
-        return $location.path("#");
+        alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
+        $location.path("#");
+        return false ;
     }
 
     $scope.consultationIsEnabled = false ;
@@ -57,11 +58,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function noConsultableAssets(coords) {
         var popupContent ;
-        if($rootScope.report_activity){
-            popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
-        } else {
-            popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
-        }
+        // if($rootScope.report_activity){
+        //     // TODO: put a XY Report button inside
+        //     popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
+        // } else {
+        //     popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
+        // }
+        popupContent = '<p>'+i18n.get('_MAP_ZERO_OBJECT_FOUND')+'</p>';
 
         var popup = L.popup().setLatLng(coords)
                 .setContent(popupContent)
@@ -266,7 +269,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
         stopPosition();
         if(!POSITION_CONTROL){
-            POSITION_CONTROL = makeControl("Ma position", "icon-compass", stopPosition);
+            POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
         }
         G3ME.map.addControl(POSITION_CONTROL);
         G3ME.map.on('locationfound', setLocationMarker);
@@ -280,7 +283,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 setLocationMarker(null,lng, lat);
             };
             ChromiumCallbacks[2] = function(){
-                alertify.error("Impossible de récupérer la position GPS");
+                alertify.error(i18n.get('_MAP_GPS_FAIL'));
             };
             SmartgeoChromium.locate();
         } else {
@@ -292,7 +295,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function stopPosition() {
         G3ME.map.stopLocate();
-        console.log(POSITION_CONTROL);
         if(POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
         }
@@ -365,7 +367,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         stopConsultation();
         $scope.consultationIsEnabled = true;
         if(!CONSULTATION_CONTROL){
-            CONSULTATION_CONTROL = makeControl("Consultation", "icon-info-sign", stopConsultation);
+            CONSULTATION_CONTROL = makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "icon-info-sign", stopConsultation);
         }
 
         G3ME.map.addControl(CONSULTATION_CONTROL);
@@ -400,7 +402,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                     });
                 break;
             default:
-                console.log('Geometrie non supportée : ' + asset.geometry.type);
+                Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
 
         G3ME.assetsMarkers[asset.guid]
@@ -441,7 +443,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 center = [coords[0][0][1], coords[0][0][0]] ;
                 break;
             default:
-                console.log('Geometrie non supportée');
+                Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
         G3ME.map.setView(center,18);
         G3ME.invalidateMapSize();

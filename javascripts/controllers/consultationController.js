@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo, i18n){
 
     $scope.state  = 'closed';
     $scope.loading = false;
@@ -95,13 +95,11 @@ angular.module('smartgeomobile').controller('consultationController', function (
             };
 
             ChromiumCallbacks[2] = function(){
-                alertify.error("Impossible de récupérer la position GPS");
+                alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
             };
 
             SmartgeoChromium.locate();
 
-        } else {
-            console.log('Not implemented but going from here to', [coords.x, coords.y]);
         }
 
     };

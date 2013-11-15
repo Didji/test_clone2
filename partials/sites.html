@@ -4,7 +4,7 @@
         <div ng-hide="ready">
             <hr />
             <span class="icon-spinner"></span>
-            Chargement en cours...
+            <i18n>_SITE_LOADING</i18n>
         </div>
         <div ng-show="ready">
             <div ng-repeat="site in sites | filter:isInstalled">
@@ -19,20 +19,20 @@
                     <ul class="dropdown-menu pull-right">
                         <li>
                             <a href="#" ng-show="site.installed">
-                                <span class="icon-trash"></span> 
-                                Désinstaller
+                                <span class="icon-trash"></span>
+                                <i18n>_SITE_UNINSTALL</i18n>
                             </a>
                         </li>
                         <li>
                             <a href="#/sites/install/{{site.id}}" ng-show="site.installed">
-                                <span class="icon-refresh"></span> 
-                                Mettre à jour
+                                <span class="icon-refresh"></span>
+                                <i18n>_SITE_UPDATE</i18n>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
-            
+
             <div ng-repeat="site in sites | filter:isUnInstalled">
                 <hr ng-show="$index==0" />
                 <p >
