@@ -7,53 +7,53 @@
                     <li>
                         <a href="#" ng-click='activateConsultation($event)'>
                             <span class="icon icon-info-sign"></span>
-                            Consultation
+                            <i18n>_MENU_CONSULTATION</i18n>
                         </a>
                     </li>
 
                     <li>
                         <a href="#">
                             <span class="icon icon-search"></span>
-                            Recherche
+                            <i18n>_MENU_SEARCH</i18n>
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <div ng-include="'partials/search.html'"></div>
                         </div>
                     </li>
                     <li>
                         <a href="#" ng-click='activatePosition($event)'>
                             <span class="icon icon-compass"></span>
-                            Ma position
+                            <i18n>_MENU_MY_POSITION</i18n>
                         </a>
                     </li>
                     <li>
                         <a href="#">
                             <span class="icon icon-list-ul"></span>
-                            Visibilité des couches
+                            <i18n>_MENU_ACTIVE_LAYERS</i18n>
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
 <!--                     <li>
                         <a href="#">
                             <span class="icon icon-list-ul"></span>
-                            Planning
+                            <i18n>Planning</i18n>
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <div ng-include="'partials/planning.html'"></div>
                         </div>
                     </li> -->
                     <li ng-show="rigths.report">
                         <a href="#">
                             <span class="icon icon-edit"></span>
-                            Compte rendu
+                            <i18n>_MENU_REPORT</i18n>
                         </a>
                         <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <ul>
                                 <li ng-repeat='activity in site.activities'>
                                     <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
@@ -67,18 +67,18 @@
                     <li>
                         <a href="#">
                             <span class="icon icon-refresh"></span>
-                            Synchronisation
+                            <i18n>_MENU_SYNC</i18n>
                             <span ng-if="toSyncNumber" class="badge pull-right">{{toSyncNumber}}</span>
                         </a>
                         <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <div ng-include="'partials/synchronizationMenu.html'"></div>
                         </div>
                     </li>
                     <li>
                         <a href="#/">
                             <span class="icon icon-power-off"></span>
-                            Déconnexion
+                            <i18n>_MENU_LOGOUT</i18n>
                         </a>
                     </li>
                 </ul>

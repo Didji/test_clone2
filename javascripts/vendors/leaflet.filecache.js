@@ -751,13 +751,10 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                     // image.style.border  = 'solid 1px blue';
                     window.URL = window.URL || window.webkitURL;
                     image.src           =   URL.createObjectURL(blob);
-                    console.log(URL.createObjectURL(blob));
                     image.onerror = function(event) {
-                        console.log("image.onerror 3");
                         image.onerror = image.onload = null ;
                     };
                     image.onload = function(event) {
-                        console.log("image.onload 3");
                         image.onerror = image.onload = null ;
                         image.className += " leaflet-tile-loaded";
                         image.style.webkitTransform = "translate3d(0px, 0px, 0)";
@@ -767,12 +764,10 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                             var oldTile = image.src;
                             image.src = this_.getTileUrl({x:x, y:y},z);
                             image.onerror = function(event) {
-                                console.log("image.onerror");
                                 image.src = oldTile;
                                 image.onerror = image.onload = null ;
                             };
                             image.onload = function(){
-                                console.log("image.onload");
                                 image.className += " leaflet-tile-loaded";
                                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                                     this_.getRemoteETag(   tileObject, function(remoteETag){
@@ -794,12 +789,10 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             var oldTile = image.src ;
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = function(event) {
-                                console.log("image.onerror 2");
                 image.src = oldTile;
                 image.onerror = image.onload = null ;
             };
             image.onload = function(){
-                                console.log("image.onload 2");
                 image.className += " leaflet-tile-loaded";
                 this_.writeTileToCache(tileObject, this_.getDataURL(image));
                 image.onerror = image.onload = null ;

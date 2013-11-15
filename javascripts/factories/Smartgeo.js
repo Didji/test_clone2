@@ -233,7 +233,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
                             try{
-                                asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey ; // .replace(/[\n\r]/g, ' ').replace(/&#039/g, "'").replace(/\\\\/g, "\\")).okey;
+                                asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey ;
                             } catch(e){
                                 console.log(e);
                                 console.log(asset.asset);
@@ -253,7 +253,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 setTimeout(function() {
                     Smartgeo.set('online', true);
                     $rootScope.$broadcast("DEVICE_IS_ONLINE");
-                    console.log("broadcasting DEVICE_IS_ONLINE");
+                    Smartgeo.log(i18n.get("_SMARTGEO_ONLINE"));
                     Smartgeo.silentLogin();
                 }, 1000);
             }, false);
@@ -261,7 +261,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             window.addEventListener('offline', function(e) {
                 Smartgeo.set('online', false);
                 $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-                console.log("broadcasting DEVICE_IS_OFFLINE");
+                Smartgeo.log(i18n.get("_SMARTGEO_OFFLINE"));
             }, false);
 
         },
@@ -287,7 +287,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         selectSiteRemotely: function(site, success, error){
             if(!site){
-                console.log("Aucun site n'a été spécifié.");
+                Smartgeo.log(i18n.get("_SMARTGEO_ZERO_SITE_SELECTED"));
                 return ;
             }
             var url = Smartgeo.getServiceUrl('global.auth.json', {

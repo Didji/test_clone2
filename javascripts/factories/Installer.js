@@ -5,7 +5,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
         _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
-        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :   500,
+        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  500,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
 
@@ -42,7 +42,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 i = 0;
 
             for (i = 0; i < site.metamodel.length; i++) {
-                if(update || site.number[site.metamodel[i].okey] != 0 ){
+                if(update || site.number[site.metamodel[i].okey] !== 0 ){
                     metamodel[site.metamodel[i].okey] = site.metamodel[i];
                 }
             }
@@ -50,7 +50,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
             activities._byId = [];
             for (i = 0; i < site.activities.length; i++) {
-                if(update || site.number[site.activities[i].okeys[0]] != 0 ){
+                if(update || site.number[site.activities[i].okeys[0]] !== 0 ){
                     activities.push(site.activities[i]);
                     activities._byId[site.activities[i].id] = site.activities[i];
                 }
@@ -71,7 +71,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             site.symbology = symbology ;
 
             for(var okey in site.number){
-              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] != 0) {
+              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0) {
                   stats.push({
                       'okey'   : okey,
                       'amount' : site.number[okey]

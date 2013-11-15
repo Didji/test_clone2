@@ -1,13 +1,13 @@
 <form ng-controller="reportController" name="reportForm" class="reportForm">
-    <h3>Compte rendu {{report.activity.label}}</h3>
+    <h3><i18n>_REPORT_REPORT</i18n> {{report.activity.label}}</h3>
     <div ng-show="step==='assets'">
         <p>
             <button class="btn btn-default" ng-click="cancel()">
-                Annuler
+                <i18n>_REPORT_CANCEL</i18n>
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant <span class="icon-chevron-right"></span>
+                <i18n>_REPORT_NEXT</i18n> <span class="icon-chevron-right"></span>
             </button>
         </p>
         <p ng-show="!report.activity">
@@ -26,39 +26,39 @@
         </p>
         <p>
             <button class="btn btn-default" ng-click="cancel()">
-                Annuler
+                <i18n>_REPORT_CANCEL</i18n>
             </button>
 
             <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                Suivant <span class="icon-chevron-right"></span>
+                <i18n>_REPORT_NEXT</i18n> <span class="icon-chevron-right"></span>
             </button>
         </p>
     </div>
     <div ng-show="step==='form'">
         <p>
             <button class="btn btn-default" ng-click="cancel()">
-                Annuler
+                <i18n>_REPORT_CANCEL</i18n>
             </button>
 
             <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
-                <span class="icon-chevron-left"></span> Précédent
+                <span class="icon-chevron-left"></span> <i18n>_REPORT_PREVIOUS</i18n>
             </button>
             <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
-                Enregistrer
+                <i18n>_REPORT_SAVE</i18n>
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
             </button>
         </p>
         <div ng-if="report.activity" ng-include="reportTemplate"></div>
         <div ng-show="!reportForm.$valid" class="container panel text-danger">
-            <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> Certains champs obligatoires ne sont pas renseignés.</p>
+            <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> <i18n>_REPORT_REQUIRED_FIELDS</i18n></p>
         </div>
         <div class="panel panel-default report">
             <div class="panel-heading">
-                <h4 class="panel-title">Média</h4>
+                <h4 class="panel-title"><i18n>_REPORT_MEDIA</i18n></h4>
             </div>
             <div class="panel-body">
-                <button camera class='btn btn-default btn-block'  ng-model='report.ged'>Ajouter photo</button>
+                <button camera class='btn btn-default btn-block'  ng-model='report.ged'><i18n>_REPORT_ADD_PICTURES</i18n></button>
                 <div id="images">
                     <ul class='ged-gallery' >
                         <li ng-repeat='image in report.ged'>
@@ -70,16 +70,16 @@
         </div>
         <p>
             <button class="btn btn-default" ng-click="cancel()">
-                Annuler
+                <i18n>_REPORT_CANCEL</i18n>
             </button>
 
             <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
-                <span class="icon-chevron-left"></span> Précédent
+                <span class="icon-chevron-left"></span> <i18n>_REPORT_PREVIOUS</i18n>
             </button>
 
             <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
-                Enregistrer
+                <i18n>_REPORT_SAVE</i18n>
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
             </button>
 

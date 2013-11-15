@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope){
+angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
     var G3ME = {
 
         active_layers : false,
@@ -52,7 +52,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 // target is a point
                 G3ME.map.setView(target,18);
                 if(marker){
-                    marker._map && marker._map.removeLayer(marker);
+                    (marker._map && marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
             }
@@ -168,7 +168,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
             G3ME.benchmarkResults.push(result) ;
 
-            var oldLength = G3ME.benchmarkResults.length
+            var oldLength = G3ME.benchmarkResults.length;
 
             setTimeout(function() {
                 if(oldLength === G3ME.benchmarkResults.length){
@@ -396,7 +396,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                                     ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
                                                 }
                                             } else {
-                                                console.log("géometrie inconnue");
+                                                Smartgeo.log( i18n.get("_G3ME_UNKNOWN_GEOMETRY", geom.type) );
                                             }
                                         }
                                         if (zoom > 16) {
@@ -407,7 +407,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                                             G3ME.benchStop(zone.database_name);
                                         }
                                     }, function(tx, SqlError) {
-                                        console.log(JSON.stringify(SqlError));
+                                        Smartgeo.log(SqlError);
                                     });
                         });
                     })(this.site.zones[i])

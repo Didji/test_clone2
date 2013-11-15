@@ -4,7 +4,7 @@
             <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='syncAll()'>
                 <button class="btn btn-primary">
                     <span class="icon-refresh"></span>
-                    Tout synchroniser
+                    <i18n>_SYNC_SYNC_EVERYTHING</i18n>
                 </button>
             </h2>
         </li>
@@ -18,10 +18,10 @@
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='sync($index)'><span class="icon icon-gears"></span> Synchroniser</button>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='sync($index)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
                             </li>
                             <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='__delete($index)'><span class="icon icon-remove"></span> Supprimer</button>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='__delete($index)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button>
                             </li>
                         </ul>
                     </div>
@@ -34,19 +34,19 @@
         <li ng-show="!reports.length">
             <a style='padding-left: 1em;font-size:1em;'>
                 <span class="icon-check"></span>
-                Tous les comptes rendus sont synchronisés.
+                <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n>
             </a>
         </li>
         <li>
             <a style='padding-left: 1em;font-size:1em;' href="#/sites/update/{{site.id}}">
                 <span class="icon-refresh"></span>
-                Mettre à jour {{site.label}}
+                <i18n>_SYNC_UPDATE</i18n> {{site.label}}
             </a>
         </li>
         <li>
             <a style='padding-left: 1em;font-size:1em;' href="#/sites/uninstall/{{site.id}}">
                 <span class="icon-trash"></span>
-                Désinstaller {{site.label}}
+                <i18n>_SYNC_UNINSTALL</i18n> {{site.label}}
             </a>
         </li>
     </ul>
