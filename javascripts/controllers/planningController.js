@@ -90,8 +90,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             if( $filter('customDateFilter')(missions[i].begin) < $scope.minimumTime ){
                 $scope.minimumTime = $filter('customDateFilter')(missions[i].begin);
             }
-            if( $filter('customDateFilter')(missions[i].end) > $scope.maximumTime ){
-                $scope.maximumTime = $filter('customDateFilter')(missions[i].end);
+            if( $filter('customDateFilter')(missions[i].begin) > $scope.maximumTime ){
+                $scope.maximumTime = $filter('customDateFilter')(missions[i].begin);
             }
         }
     }
@@ -100,14 +100,14 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         $scope.beforeToday =  0 ;
         $scope.afterToday  =  0 ;
         for(var i in missions){
-            if( $filter('customDateFilter')(missions[i].begin) < today ){
+            if( $filter('customDateFilter')(missions[i].begin) < today && missions[i].assets.length){
                 $scope.beforeToday++ ;
+                console.log(missions[i]);
             }
-            if( $filter('customDateFilter')(missions[i].begin) > today ){
+            if( $filter('customDateFilter')(missions[i].begin) > today && missions[i].assets.length){
                 $scope.afterToday++ ;
             }
         }
-        console.log($scope.beforeToday, $scope.afterToday);
     }
 
     function getExtentsFromAssetsList(assets){
