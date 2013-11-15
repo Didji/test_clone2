@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('siteListController', function ($scope, $http, $location, Smartgeo) {
+angular.module('smartgeomobile').controller('siteListController', function ($scope, $http, $location, Smartgeo, i18n) {
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
     Smartgeo.unset('lastLeafletMapExtent'); // VEOLIA - QC 9427

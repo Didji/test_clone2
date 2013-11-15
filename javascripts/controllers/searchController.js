@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite){
+angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n){
 
     $rootScope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
@@ -39,13 +39,13 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
     $scope.search = function(event) {
         event.preventDefault();
-        $scope.searchMessage = 'Recherche en cours' ;
+        $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS' ;
         $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function(results){
             $scope.searchIsPerforming = false ;
 
             if(!results.length){
-                $scope.searchMessage = 'Aucun résultat' ;
+                $scope.searchMessage = '_SEARCH_SEARCH_NO_RESULT' ;
                 if(!$scope.$$phase) {
                 	$scope.$apply();
                 }
@@ -94,9 +94,9 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
                 criteria : $scope.selectedCriteriaValues,
                 okey : $scope.selectedFamily.okey
             };
-            $scope.advancedSearchMessage = "Recherche en cours";
+            $scope.advancedSearchMessage = "_SEARCH_SEARCH_IN_PROGRESS";
         } else {
-            $scope.advancedSearchMessage = "Veuillez choisir un type d'objet";
+            $scope.advancedSearchMessage = "_SEARCH_PICK_OBJECT_TYPE";
             return ;
         }
 
@@ -105,7 +105,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             $scope.searchIsPerforming = false ;
 
             if(!results.length){
-                $scope.advancedSearchMessage = 'Aucun résultat' ;
+                $scope.advancedSearchMessage = '_SEARCH_SEARCH_NO_RESULT' ;
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }

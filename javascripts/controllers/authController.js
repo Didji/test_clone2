@@ -47,11 +47,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          *       (they looks like no connection)
          */
         if(status === 403){
-            alertify.alert("Mot de passe incorrect" + (response.login ? " pour l'utilisateur " + response.login : ""));
+            alertify.alert( i18n.get("_AUTH_INCORRECT_PASSWORD") );
         } else if (status === ''){
-            alertify.alert("L'application n'est pas parvenue à joindre le serveur.");
+            alertify.alert( i18n.get("_AUTH_SERVER_UNREACHABLE") );
         } else {
-            alertify.alert("Connexion au serveur impossible ("+status+")");
+            alertify.alert( i18n.get("_AUTH_SERVER_ERROR", status) );
         }
         ping();
     }
@@ -59,7 +59,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     function remoteLogin() {
 
         $scope.readyToLog = false;
-        $scope.logMessage = "Veuillez patienter...";
+        $scope.logMessage = "_AUTH_PLEASE_WAIT";
 
         Smartgeo.login(encodeURIComponent($scope.username), encodeURIComponent($scope.pwd),
             function(){
@@ -94,7 +94,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                     $scope.firstAuth = false ;
                     $scope.login();
                 } else {
-                    alertify.alert("Le serveur n'est pas joignable.");
+                    alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
                 }
             });
         }
@@ -103,7 +103,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.pwd      = $scope.pwd.trim();
 
         if(!$scope.username.length || !$scope.pwd.length){
-            alertify.alert("Veuillez renseigner un nom d'utilisateur et un mot de passe.");
+            alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
             return false ;
         }
         Smartgeo.get('online') === true ? remoteLogin() : localLogin();

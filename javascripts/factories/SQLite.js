@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('SQLite', function(){
 
         openDatabase: function(args) {
             if(!SQLite.databases[args.name]){
-                SQLite.databases[args.name] = window.openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
+                SQLite.databases[args.name] = (window.sqlitePlugin || window).openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
             }
 
             return SQLite.databases[args.name];

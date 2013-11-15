@@ -4,32 +4,29 @@
             <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
             <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-                    Rechercher
+                    <i18n>_SEARCH_SEARCH</i18n>
             </button>
         </li>
-        <li><label>{{searchMessage}}</label></li>
+        <li><label>{{searchMessage | i18n}}</label></li>
         <li>
             <a href="#">
                 <span class="icon icon-search"></span>
-                Recherche Avancée
+                <i18n>_SEARCH_ADVANCED_SEARCH</i18n>
             </a>
             <div class="mp-level">
-                <a class="mp-back" ng-click='backToPreviousLevel($event)' href="#">retour</a>
+                <a class="mp-back" ng-click='backToPreviousLevel($event)' href="#"><i18n>_SEARCH_BACK</i18n></a>
                 <ul>
                     <li>
-                        <label>Type</label>
+                        <label><i18n>_SEARCH_TYPE</i18n></label>
                         <select class="form-control" ng-model="selectedFamily"
                                 ng-options = " family.label for (okey, family) in site.metamodel">
                         </select>
                     </li>
                     <li>
-                        <label>Critères de recherche</label>
+                        <label><i18n>_SEARCH_CRITERIA</i18n></label>
                         <select ui-select2   ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" multiple>
                             <option ng-repeat="(value, criter) in criteria[selectedFamily.okey]" value="{{criter.key}}">{{criter.label}}</option>
                         </select>
-<!--                         <select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()"
-                                ng-options = "criter.label for criter in criteria[selectedFamily.okey]" multiple>
-                        </select> -->
                     </li>
                     <li ng-repeat='fieldKey in selectedCriteria'>
                         <div class="form-group">
@@ -63,11 +60,11 @@
                     <li>
                         <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="advancedSearch($event)">
                             <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-                                Rechercher
+                                <i18n>_SEARCH_SEARCH</i18n>
                         </button>
-                        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()">Effacer les critères</button>
+                        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
                     </li>
-                    <li><label>{{advancedSearchMessage}}</label></li>
+                    <li><label>{{advancedSearchMessage | i18n}}</label></li>
                 </ul>
             </div>
         </li>

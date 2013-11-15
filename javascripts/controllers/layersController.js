@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('layersController', function ($scope, $rootScope, G3ME){
+angular.module('smartgeomobile').controller('layersController', function ($scope, $rootScope, G3ME, i18n){
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
