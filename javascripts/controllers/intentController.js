@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME){
+angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n){
 
     $scope.controller = $routeParams.controller ;
 
@@ -21,7 +21,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     }
 
     if(!$rootScope.site){
-        alertify.alert("Aucun site n'est disponible.");
+        alertify.alert(i18n.get("_INTENT_ZERO_SITE_SELECTED"));
         $location.path("#");
         return false ;
     }
@@ -36,7 +36,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
         G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
             if(!assets.length){
-                alertify.alert("L'objet n'a pas été trouvé dans la base de données du terminal.");
+                alertify.alert(i18n.get("_INTENT_OBJECT_NOT_FOUND"));
                 return tokenAuth($routeParams.token, redirect);
             }
             $rootScope.map_target = assets ;
@@ -70,7 +70,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
             if( (response && response.status === 200) || !response) {
                 callback();
             } else {
-                alertify.alert("L'authentification a échoué ("+status+")");
+                alertify.alert(i18n.get("_INTENT_AUTH_FAILED", status));
                 $location.path('#');
             }
         });
@@ -90,10 +90,6 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
-                break;
-
-            default:
-                alertify.alert("Controller introuvable ("+$routeParams.controller+")");
                 break;
         }
     }
