@@ -77,7 +77,7 @@ window.smartgeo_i18n_lang['en'] = {
         _INTENT_OBJECT_NOT_FOUND            : "Object not found in database" ,
         _INTENT_AUTH_FAILED                 : "%s", // status
 
-        _MAP_ZERO_SITE_SELECTED             : "No site found"" ,
+        _MAP_ZERO_SITE_SELECTED             : "No site found" ,
         _MAP_ZERO_OBJECT_FOUND              : "No asset in this area" ,
         _MAP_MY_POSITION_CONTROL            : "My position" ,
         _MAP_GPS_FAIL                       : "Error while retrieving GPS coordinates" ,
