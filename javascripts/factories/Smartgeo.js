@@ -96,8 +96,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones || !zones.length || window._SMARTGEO_STOP_SEARCH) {
+            if (window._SMARTGEO_STOP_SEARCH) {
                  window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
+            }
+            
+            if (!zones || !zones.length) {
                 return callback(partial_response);
             }
 
@@ -174,8 +178,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
-                window._SMARTGEO_STOP_SEARCH = false;
+            if (window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
+            }
+
+            if (!zones.length) {
                 return callback(partial_response);
             }
 
@@ -208,8 +216,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
-                window._SMARTGEO_STOP_SEARCH = false;
+            if (window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
+            }
+
+            if (!zones.length) {
                 return callback(partial_response);
             }
 
