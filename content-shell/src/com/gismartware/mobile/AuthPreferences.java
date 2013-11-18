@@ -21,9 +21,9 @@ public class AuthPreferences {
 		editor.commit();
 	}
 
-	public void setToken(String password) {
+	public void setToken(String token) {
 		Editor editor = preferences.edit();
-		editor.putString(KEY_TOKEN, password);
+		editor.putString(KEY_TOKEN, token);
 		editor.commit();
 	}
 

@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,12 +41,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.gismartware.mobile.ActivityCode;
@@ -66,12 +68,13 @@ public class ContentShellActivity extends ChromiumActivity {
 	 */
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
+	private static final boolean NEED_OAUTH = Boolean.valueOf(MESSAGES.getString("auth.needed"));
 	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {"--allow-external-pages", "--allow-file-access", 
-    	"--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process", 
-    	"--remote-debugging-raw-usb"};
+        "--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process", 
+        "--remote-debugging-raw-usb"};
     
     private static final String TAG = "GimapMobile";
 
@@ -167,15 +170,25 @@ public class ContentShellActivity extends ChromiumActivity {
         
         
         //gestion de l'authentification...
-        authPreferences = new AuthPreferences(this);
-        invalidateToken();
-        if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
-        	Log.d(TAG, "[OAUTH] No token, no user...");
-        	//choose account :
-        	Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-  			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+        if (NEED_OAUTH) {
+        	authPreferences = new AuthPreferences(this);
+        	if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
+            	Log.d(TAG, "[OAUTH] No token, no user...");
+            	//choose account :
+            	Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+      			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+            } else {
+            	if (isTokenValid(authPreferences.getToken())) {
+            		Log.d(TAG, "[OAUTH] Using user " + authPreferences.getUser() + " with token " + authPreferences.getToken());
+                	finishActivityInit();
+            	} else {
+            		Log.d(TAG, "Token " + authPreferences.getToken() + " for user " + authPreferences.getUser() + " is not valid");
+            		invalidateToken();
+            		Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+          			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+            	}
+            }
         } else {
-        	Log.d(TAG, "[OAUTH] Using user " + authPreferences.getUser() + " with token " + authPreferences.getToken());
         	finishActivityInit();
         }
     }
@@ -252,21 +265,6 @@ public class ContentShellActivity extends ChromiumActivity {
             android.os.Debug.waitForDebugger();
             Log.e(TAG, "Java debugger connected. Resuming execution.");
         }
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode != KeyEvent.KEYCODE_BACK) {
-        	return super.onKeyUp(keyCode, event);
-        }
-
-        Shell activeView = getActiveShell();
-        if (activeView != null && activeView.getContentView().canGoBack()) {
-            activeView.getContentView().goBack();
-            return true;
-        }
-
-        return super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -542,8 +540,9 @@ public class ContentShellActivity extends ChromiumActivity {
 				if (launch != null) {
 					startActivityForResult(launch, ActivityCode.OAUTH_AUTHORIZATION.getCode());
 				} else {
+					String name = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-					Log.d(TAG, "[OAUTH] Token received : " + token);
+					Log.d(TAG, "[OAUTH] Token received : " + token + " for user " + name);
 					authPreferences.setToken(token);
 					
 					finishActivityInit();
@@ -566,5 +565,31 @@ public class ContentShellActivity extends ChromiumActivity {
         cursor.moveToFirst();
 
         return cursor.getString(column_index);
+	}
+	
+	private class IsTokenValidTask extends AsyncTask<String, Void, Boolean> {
+		protected Boolean doInBackground(String... token) {
+			try {
+				URL url = new URL(MESSAGES.getString("auth.specific.url") + token[0]);
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				int serverCode = con.getResponseCode();
+				
+				if (serverCode != 200) { //token plus bon
+					return false;
+				}
+				return true;
+			} catch (IOException e) {
+				Log.e(TAG, "Erreur de verification de token", e);
+				return false;
+			}	
+		}
+	}
+	
+	private boolean isTokenValid(String token) {
+		try {
+			return new IsTokenValidTask().execute(token).get();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
