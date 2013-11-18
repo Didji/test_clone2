@@ -96,9 +96,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones || !zones.length) {
+            if (!zones || !zones.length || window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
                 return callback(partial_response);
             }
+
             if (typeof guids !== 'object') {
                 guids = [guids];
             }
@@ -143,7 +145,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones.length) {
+            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
                 return callback(partial_response);
             }
 
@@ -165,12 +168,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByLabel: function(site, label, callback, zones, partial_response){
+
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
             }
 
-            if (!zones.length) {
+            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
                 return callback(partial_response);
             }
 
@@ -203,9 +208,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones.length) {
+            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
                 return callback(partial_response);
             }
+
             if(!request){
                 request = 'SELECT * FROM ASSETS WHERE ';
                 var g = '';

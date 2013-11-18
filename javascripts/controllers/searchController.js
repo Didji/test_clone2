@@ -38,7 +38,16 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     };
 
     $scope.search = function(event) {
+
         event.preventDefault();
+
+        if($scope.searchIsPerforming){
+            window._SMARTGEO_STOP_SEARCH = true ;
+            $scope.searchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
+            $scope.searchIsPerforming = false ;
+            return ;
+        }
+
         $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS' ;
         $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function(results){
@@ -67,6 +76,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         });
     };
 
+
     $scope.resetCriteria = function(){
         $scope.selectedFamily = null;
         $scope.selectedCriteria = null;
@@ -86,6 +96,13 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         event.preventDefault();
 
         $scope.searchMessage = "";
+
+        if($scope.searchIsPerforming){
+            window._SMARTGEO_STOP_SEARCH = true ;
+            $scope.advancedSearchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
+            $scope.searchIsPerforming = false ;
+            return ;
+        }
 
         var advancedSearch ;
 
