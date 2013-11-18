@@ -3,7 +3,7 @@ window.smartgeo_i18n_lang = {};
 angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
     var i18n ;
     return i18n = {
-        OVERRIDE_LANGUAGE : null,
+        OVERRIDE_LANGUAGE : 'fr',
         SELECTED_LANGUAGE : null,
         SYSTEM_LANGUAGE   : navigator.language.slice(0,2),
         FALLBACK_LANGUAGE : 'fr',
