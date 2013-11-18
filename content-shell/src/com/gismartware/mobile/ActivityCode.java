@@ -19,12 +19,12 @@ public enum ActivityCode {
 	/**
 	 * Demande d'autorisation oauth.
 	 */
-	OAUTH_AUTHORIZATION(102),
+	OAUTH_AUTHORIZATION(1993),
 	
 	/**
 	 * Demande de compte oauth.
 	 */
-	OAUTH_ACCOUNT(103);
+	OAUTH_ACCOUNT(1601);
 	
 	private int code;
 	
