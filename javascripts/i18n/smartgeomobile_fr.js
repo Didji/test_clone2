@@ -60,6 +60,8 @@ window.smartgeo_i18n_lang['fr'] = {
         _SEARCH_SEARCH_IN_PROGRESS          : "Recherche en cours" ,
         _SEARCH_SEARCH_NO_RESULT            : "Aucun résultat" ,
         _SEARCH_PICK_OBJECT_TYPE            : "Veuillez sélectionner un type d'objet" ,
+        _SEARCH_SEARCH_HAS_BEEN_CANCELED    : "La recherche a été annulée",
+        _SEARCH_CANCEL_SEARCH               : "Annuler",
 
         _SITE_LOADING                       : "Chargement" ,
         _SITE_UNINSTALL                     : "Désinstallation de " ,
