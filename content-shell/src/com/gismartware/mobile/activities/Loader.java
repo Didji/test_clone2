@@ -1,4 +1,4 @@
-package com.gismartware.mobile;
+package com.gismartware.mobile.activities;
 
 import java.util.ResourceBundle;
 
