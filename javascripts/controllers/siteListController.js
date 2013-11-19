@@ -69,11 +69,10 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     $scope.isInstalled = function(site) {
         return !!site.installed;
     };
+
     $scope.isUnInstalled = function(site) {
         return !site.installed;
     };
-
     $scope.online = Smartgeo.get('online');
-    $scope.online === true ? getRemoteSites() : getLocalSites();
-
+    $scope.online === false ? getLocalSites() : getRemoteSites() ;
 });

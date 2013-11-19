@@ -3,10 +3,10 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     $scope.controller = $routeParams.controller ;
 
     if($scope.controller === "oauth"){
-    	Smartgeo.setGimapUrl($routeParams.url);
-    	return tokenAuth($routeParams.token, function(){
-    		$location.path('sites/');
-    	});
+        Smartgeo.setGimapUrl($routeParams.url);
+        return tokenAuth($routeParams.token, function(){
+            $location.path('sites/');
+        });
     }
 
     if(!$scope.controller){
