@@ -85,8 +85,8 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     $scope.selectedCriteriaChangeHandler = function(){
         var newSelectedCriteriaValues = {};
         for (var i = 0; i < $scope.selectedCriteria.length; i++) {
-            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i].key]){
-                newSelectedCriteriaValues[$scope.selectedCriteria[i].key] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i].key];
+            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]){
+                newSelectedCriteriaValues[$scope.selectedCriteria[i]] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i]];
             }
         }
         $scope.selectedCriteriaValues = newSelectedCriteriaValues ;
