@@ -79,7 +79,21 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 }
                                 video.play();
                             }, function(err) {
-                                console.log("An error occured! " + err);
+                                console.log("An error occured! " , err);
+                                 var img = document.createElement("img");
+                                img.src = 'http://placehold.it/350x150';
+                                img.onload = function(){
+                                    var canvas = document.createElement("canvas");
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    canvas.getContext("2d").drawImage(img, 0, 0);
+                                    scope.$apply(function(){
+                                        ctrl.$viewValue=ctrl.$viewValue||[];
+                                        ctrl.$viewValue.push({
+                                            content:canvas.toDataURL("image/png")
+                                        });
+                                    });
+                                };
                             }
                         );
 

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n){
+angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n, $q){
 
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
@@ -249,23 +249,24 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         report.timestamp = new Date().getTime();
         report.mission   = 1*$rootScope.report_mission || report.mission ;
 
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
+        var canceler = $q.defer();
+
+
+        $http
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 2500})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
-                    console.log(reports.length, reports);
                     reports = reports || [] ;
                     reports.push(report);
-                    console.log(reports.length, reports);
                     Smartgeo.set_('reports', reports, function(){
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                         $scope.sendingReport = false ;
-                        endOfReport();
                     });
                 });
             }).success(function(){
                 $scope.sendingReport = false ;
-                endOfReport();
             });
+        endOfReport();
     };
 
     function endOfReport(){
