@@ -11,6 +11,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _G3ME_VERSION               :   "0.1.0",
         _BIG_SCREEN_THRESHOLD       :       361,
 
+        _MAX_RESULTS_PER_SEARCH     :        10,
+
 
         // TODO : put this in a RightsManager
         getRight: function(module){
@@ -100,7 +102,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                  window._SMARTGEO_STOP_SEARCH = false ;
                 return callback([]);
             }
-            
+
             if (!zones || !zones.length) {
                 return callback(partial_response);
             }
@@ -211,48 +213,54 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
+
+
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
             }
 
+
             if (window._SMARTGEO_STOP_SEARCH) {
-                 window._SMARTGEO_STOP_SEARCH = false ;
+                window._SMARTGEO_STOP_SEARCH = false ;
                 return callback([]);
             }
 
-            if (!zones.length) {
+            if (!zones.length || partial_response.length >= Smartgeo._MAX_RESULTS_PER_SEARCH) {
                 return callback(partial_response);
             }
 
             if (!request) {
+
+                request = 'SELECT * FROM ' ;
+
                 if (search.okey) {
-                    request = 'SELECT * FROM (SELECT * FROM assets WHERE symbolId like "' + search.okey + '%") WHERE ';
-	                for (var criter in search.criteria) {
-	                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
-	                    	if (search.criteria[criter] == 1 * search.criteria[criter]) {
-	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter].toLowerCase() + "?[,\}].*') AND ";
-	                    	} else {
-	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*') AND ";
-	                    	}
-	                    }
-	                }
+                    request += ' (SELECT * FROM assets WHERE symbolId like "' + search.okey + '%") ';
                 } else {
-                	request = 'SELECT * FROM ASSETS WHERE ';
-	                for (var criter in search.criteria) {
-	                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
-	                    	if (search.criteria[criter] == 1 * search.criteria[criter]) {
-	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter].toLowerCase() + "?[,\}].*') AND ";
-	                    	} else {
-	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*') AND ";
-	                    	}
-	                    }
-	                }
+                    request += ' ASSETS ';
                 }
-                
-                request += ' 1 LIMIT 0, 10';
+
+                var criteria_length = Object.keys(search.criteria).length, i = 0 , regex ;
+
+                if(criteria_length > 0){
+                    request += ' WHERE ';
+                }
+
+                for (var criter in search.criteria) {
+                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
+                        if (search.criteria[criter] == 1 * search.criteria[criter]) {
+                            regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\}].*'";
+                        } else {
+                            regex = "'.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*'";
+                        }
+                        request += " LOWER(asset) REGEXP("+regex+") " + (++i !== criteria_length ? " AND " : "");
+                    }
+                }
+                request += ' LIMIT ' + (Smartgeo._MAX_RESULTS_PER_SEARCH - partial_response.length) ;
             }
-            
+
+            console.log(request);
+
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -272,7 +280,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     },
                     function(tx, SqlError){console.log(SqlError);},
                 function(tx, SqlError){console.log(SqlError);});
-            }, 
+            },
             function(tx, SqlError){console.log(SqlError);});
         },
 
