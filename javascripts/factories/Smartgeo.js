@@ -225,25 +225,34 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 return callback(partial_response);
             }
 
-            if(!request){
-                request = 'SELECT * FROM ASSETS WHERE ';
-                var g = '';
-                for(var criter in search.criteria){
-                    if(search.criteria.hasOwnProperty(criter) && search.criteria[criter]){
-                        if(isNaN(1*search.criteria[criter])){
-                            g = '"%';
-                        } else {
-                            g = '' ;
-                        }
-                        request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + ",%'       ";
-                        request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + "}%' ) AND ";
-                    }
+            if (!request) {
+                if (search.okey) {
+                    request = 'SELECT * FROM (SELECT * FROM assets WHERE symbolId like "' + search.okey + '%") WHERE ';
+	                for (var criter in search.criteria) {
+	                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
+	                    	if (search.criteria[criter] == 1 * search.criteria[criter]) {
+	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter].toLowerCase() + "?[,\}].*') AND ";
+	                    	} else {
+	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*') AND ";
+	                    	}
+	                    }
+	                }
+                } else {
+                	request = 'SELECT * FROM ASSETS WHERE ';
+	                for (var criter in search.criteria) {
+	                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
+	                    	if (search.criteria[criter] == 1 * search.criteria[criter]) {
+	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter].toLowerCase() + "?[,\}].*') AND ";
+	                    	} else {
+	                    		request += " LOWER(asset) REGEXP('.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*') AND ";
+	                    	}
+	                    }
+	                }
                 }
-                if(search.okey){
-                    request += ' symbolId like "' + search.okey + '%" AND ' ;
-                }
+                
                 request += ' 1 LIMIT 0, 10';
             }
+            
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -262,8 +271,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         Smartgeo.findAssetsByCriteria(site,search, callback, zones.slice(1), partial_response, request);
                     },
                     function(tx, SqlError){console.log(SqlError);},
-                    function(tx, SqlError){console.log(SqlError);});
-            }, function(tx, SqlError){console.log(SqlError);});
+                function(tx, SqlError){console.log(SqlError);});
+            }, 
+            function(tx, SqlError){console.log(SqlError);});
         },
 
         _initializeGlobalEvents: function(){
