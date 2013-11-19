@@ -361,7 +361,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
             if(token){
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
-                    'token'   : encodeURIComponent(token)
+                    'token'   : encodeURIComponent(token),
+                    'mobility' : true
                 });
             } else {
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
