@@ -26,11 +26,15 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 autoLoadOrNot();
 
                 $scope.ready = true;
+            }).error(function(error, errorCode){
+                alertify.alert(error.error.text, function(){
+                    $location.path('/');
+                    $scope.$apply();
+                });
             });
     }
 
     function getLocalSites() {
-
 
         var sitesById = {},
             knownSites = Smartgeo.get('sites') || {},
