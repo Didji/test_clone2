@@ -75,8 +75,7 @@ public class ContentShellActivity extends ChromiumActivity {
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {"--allow-external-pages", "--allow-file-access", 
-        "--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process", 
-        "--remote-debugging-raw-usb"};
+        "--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process"};
     
     private static final String TAG = "GimapMobile";
 
