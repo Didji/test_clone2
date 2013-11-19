@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -173,10 +175,23 @@ public class ContentShellActivity extends ChromiumActivity {
         if (NEED_OAUTH) {
         	authPreferences = new AuthPreferences(this);
         	if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
-            	Log.d(TAG, "[OAUTH] No token, no user...");
-            	//choose account :
-            	Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-      			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+        		
+        		AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        		Account[] list = manager.getAccounts();
+        		List<Account> accounts = new ArrayList<Account>();
+        		for (Account account : list) {
+        			if (account.name.contains(MESSAGES.getString("auth.account.filter"))) {
+        				accounts.add(account);
+        			}
+        		}
+        		if (accounts.size() > 1 || accounts.isEmpty()) {
+        			//plusieurs comptes, choisir...
+        			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+        			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+        		} else {
+        			authPreferences.setUser(accounts.get(0).name);
+    				requestToken();
+        		}
             } else {
             	if (isTokenValid(authPreferences.getToken())) {
             		Log.d(TAG, "[OAUTH] Using user " + authPreferences.getUser() + " with token " + authPreferences.getToken());
@@ -379,6 +394,10 @@ public class ContentShellActivity extends ChromiumActivity {
 					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
 							location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");", null);
 				}
+			}
+		} else {
+			if (requestCode == ActivityCode.OAUTH_ACCOUNT.getCode()) {
+				finishActivityInit();
 			}
 		}
     	
