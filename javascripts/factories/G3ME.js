@@ -52,7 +52,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 // target is a point
                 G3ME.map.setView(target,18);
                 if(marker){
-                    (marker._map && marker._map.removeLayer)(marker);
+                    marker._map && (marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
             }
