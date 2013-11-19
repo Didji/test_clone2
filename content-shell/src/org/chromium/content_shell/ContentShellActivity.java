@@ -175,22 +175,27 @@ public class ContentShellActivity extends ChromiumActivity {
         if (NEED_OAUTH) {
         	authPreferences = new AuthPreferences(this);
         	if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
-        		
-        		AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        		Account[] list = manager.getAccounts();
-        		List<Account> accounts = new ArrayList<Account>();
-        		for (Account account : list) {
-        			if (account.name.contains(MESSAGES.getString("auth.account.filter"))) {
-        				accounts.add(account);
-        			}
-        		}
-        		if (accounts.size() > 1 || accounts.isEmpty()) {
-        			//plusieurs comptes, choisir...
+        		//y a t il un filtrage de compte à effectuer?
+        		if (MESSAGES.containsKey("auth.account.domain")) {
+        			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+            		Account[] list = manager.getAccounts();
+            		List<Account> accounts = new ArrayList<Account>();
+            		for (Account account : list) {
+            			if (account.name.endsWith(MESSAGES.getString("auth.account.domain"))) {
+            				accounts.add(account);
+            			}
+            		}
+            		if (accounts.size() > 1 || accounts.isEmpty()) {
+            			//plusieurs comptes, choisir...
+            			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+            			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+            		} else {
+            			authPreferences.setUser(accounts.get(0).name);
+        				requestToken();
+            		}
+        		} else {
         			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
         			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-        		} else {
-        			authPreferences.setUser(accounts.get(0).name);
-    				requestToken();
         		}
             } else {
             	if (isTokenValid(authPreferences.getToken())) {
@@ -213,6 +218,13 @@ public class ContentShellActivity extends ChromiumActivity {
         if (startupUrl != null) {
         	Log.d(TAG, "Load intent url " + startupUrl);
         	mShellManager.setStartupUrl("file://" + startupUrl);
+        } else {
+        	//on ne vient pas d'un intent
+        	if (NEED_OAUTH) {
+        		StringBuffer url = new StringBuffer(INTENT_DEST_URL_PREFIX);
+            	url.append("oauth?token=").append(authPreferences.getToken()).append("&url=").append(MESSAGES.getString("auth.server"));
+        		mShellManager.setStartupUrl("file://" + url.toString());
+        	}
         }
         
         /*if (!TextUtils.isEmpty(startupUrl)) {
