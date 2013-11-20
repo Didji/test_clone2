@@ -27,6 +27,6 @@ module.exports = function (grunt) {
     clean: ['docs/ngdocs']
   });
 
-  grunt.registerTask('default', ['clean', 'ngdocs', 'connect']);
+  grunt.registerTask('default', ['clean', 'ngdocs']);
 
 };
