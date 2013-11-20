@@ -487,11 +487,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         }
     };
 
-    // Initialization
-    if(!Smartgeo.get('url') && $location.path() !== '/'){
-        $location.path('/');
-    }
-
     Smartgeo._initializeGlobalEvents();
     window.Smartgeo = Smartgeo;
     return Smartgeo ;
