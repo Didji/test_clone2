@@ -3,7 +3,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
           _buildField: function(i, j, field) {
               var str, myField = 'report.activity.tabs['+i+'].fields['+j+']';
               if(field.readonly) {
-                  str = '<p><b class="ro-label">'+field.label+'</b>';
+                  str = '<p ng-show="'+myField+'.visible !== false"><b class="ro-label">'+field.label+'</b>';
                   str += '<span class="ro-value">{{report.roFields['+field.id+']}}</span></p>';
                   return str;
               }

@@ -158,6 +158,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                                 + '-' + pad( date.getUTCDate() );
                     }
                     fields[field.id] = def;
+                    $scope.report.roFields[field.id] = def;
                 } else {
                     console.log(def) ;
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
