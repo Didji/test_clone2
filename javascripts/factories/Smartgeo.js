@@ -14,7 +14,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         _MAP_MIN_ZOOM : 13,
 
         // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.3.3",
+        _SMARTGEO_MOBILE_VERSION    : "0.9.3.4",
         _G3ME_VERSION               :   "0.1.0",
         _BIG_SCREEN_THRESHOLD       :       361,
 
@@ -389,7 +389,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
             if(token){
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
-                    'token'   : encodeURIComponent(token)
+                    'token'   : encodeURIComponent(token),
+                    'mobility' : true
                 });
             } else {
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
