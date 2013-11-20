@@ -5,3 +5,4 @@ nohup.out
 test/coverage/*
 web.config
 aspnet_client
+node_modules/
