@@ -1,3 +1,10 @@
+/**
+ * @ngdoc service
+ * @name smartgeomobile.Smartgeo
+ * @description
+ * Provides global methods
+ */
+
 angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
     var Smartgeo = {
@@ -24,15 +31,36 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             'goto'   : false
         },
 
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#isRunningOnBigScreen
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Return true if device width is >= to Smartgeo._BIG_SCREEN_THRESHOLD
+         */
         isRunningOnBigScreen : function(){
             return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#isRunningOnLittleScreen
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Return true if device width is < to Smartgeo._BIG_SCREEN_THRESHOLD
+         */
         isRunningOnLittleScreen : function(){
             return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
-        // METHODS
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#setGimapUrl
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Set Gimap serveur URL on localstorage, add 'http://' and '/index.php?service=' if needed and reset localStorage
+         */
         setGimapUrl : function(url){
 
             if (url === null){
