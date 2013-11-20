@@ -271,10 +271,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     function endOfReport(){
 
-        // TODO: Put all intents variables in something like $rootScope.intent.[map|report]_*
-        //       It will be easier to reset context ($rootScope.intent=undefined)
-        $rootScope.map_marker = undefined ;
-
         if($rootScope.report_url_redirect){
             $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
@@ -283,6 +279,18 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 open($rootScope.report_url_redirect, '_blank');
             }
         }
+
+        // TODO: Put all intents variables in something like $rootScope.intent.[map|report]_*
+        //       It will be easier to reset context ($rootScope.intent=undefined)
+        $rootScope.map_target           = undefined ;
+        $rootScope.map_marker           = undefined ;
+        $rootScope.map_activity         = undefined ;
+        $rootScope.report_activity      = undefined ;
+        $rootScope.report_mission       = undefined ;
+        $rootScope.report_target        = undefined ;
+        $rootScope.report_fields        = undefined ;
+        $rootScope.report_url_redirect  = undefined ;
+
         $location.path('map/'+$rootScope.site.id);
         if(!$scope.$$phase) {
             $scope.$apply();
