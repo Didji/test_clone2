@@ -13,17 +13,17 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_SMARTGEO_MOBILE_VERSION
          * @propertyOf smartgeomobile.Smartgeo
-         * @type {string}
+         * @returns {string}
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.4",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.5",
 
         /**
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
          * @propertyOf smartgeomobile.Smartgeo
-         * @type {integer}
+         * @returns {integer}
          * @const
          * @default 361
          * @description Width threshold which describes big screen
@@ -35,7 +35,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
          * @propertyOf smartgeomobile.Smartgeo
-         * @type {integer}
+         * @returns {integer}
          * @const
          * @default 10
          * @description Define max results per search (and advanced search)
@@ -114,8 +114,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @example
          * <pre>
          * Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
-         *   'site'      : site.id,
-         *   'timestamp' : site.timestamp
+         *     'site'      : site.id,
+         *     'timestamp' : site.timestamp
          * });
          * </pre>
          */
@@ -132,6 +132,23 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return url ;
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#ping
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {function} callback Called with boolean which depends on gimap reachability
+         * @description
+         * Call global.dcnx.json gimap service to know if it is reachable. So this method logout current user.
+         * It may be refactored when a real ping service will be available on gimap
+         * @example
+         * <pre>
+         * Smartgeo.ping(function(gimapIsReachable){
+         *     if(gimapIsReachable){
+         *         // do things
+         *     }
+         * });
+         * </pre>
+         */
         ping : function(callback) {
             callback = callback || function(){};
             $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
@@ -486,11 +503,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             IndexedDB.unset(parameter);
         }
     };
-
-    // Initialization
-    if(!Smartgeo.get('url') && $location.path() !== '/'){
-        $location.path('/');
-    }
 
     Smartgeo._initializeGlobalEvents();
     window.Smartgeo = Smartgeo;
