@@ -5,14 +5,61 @@
 <div><h2 id="Description">Description</h2>
 <div class="description"><p>Provides global methods</p></div>
 <div class="member method"><h2 id="Methods">Methods</h2>
-<ul class="methods"><li><h3 id="isRunningOnBigScreen">isRunningOnBigScreen()</h3>
-<div class="isrunningonbigscreen"><p>Return true if device width is >= to Smartgeo.<em>BIG</em>SCREEN_THRESHOLD</p></div>
+<ul class="methods"><li><h3 id="getServiceUrl">getServiceUrl(serviceName, GETParameters)</h3>
+<div class="getserviceurl"><p>Get ready to call URL with a service's name and list of parameters</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">serviceName – {string} – </code>
+<p>Name of called Service</p></li>
+<li><code ng:non-bindable="">GETParameters – {Object} – </code>
+<p>Associative array of get parameters name=>value</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>url Well formatted URL</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
+  'site'      : site.id,
+  'timestamp' : site.timestamp
+});
+</pre></div>
+</div>
+</li>
+<li><h3 id="isRunningOnBigScreen">isRunningOnBigScreen()</h3>
+<div class="isrunningonbigscreen"><p>Return true if device width is >= to <a href="#/api/smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD">Smartgeo._BIG_SCREEN_THRESHOLD</a></p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{boolean}</code>
+– <p>is smartgeo running on big screen</p></div>
+</div>
 </li>
 <li><h3 id="isRunningOnLittleScreen">isRunningOnLittleScreen()</h3>
-<div class="isrunningonlittlescreen"><p>Return true if device width is &lt; to Smartgeo.<em>BIG</em>SCREEN_THRESHOLD</p></div>
+<div class="isrunningonlittlescreen"><p>Return true if device width is &lt; to <a href="#/api/smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD">Smartgeo._BIG_SCREEN_THRESHOLD</a></p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{boolean}</code>
+– <p>is smartgeo running on little screen</p></div>
+</div>
 </li>
-<li><h3 id="setGimapUrl">setGimapUrl()</h3>
-<div class="setgimapurl"><p>Set Gimap serveur URL on localstorage, add 'http://' and '/index.php?service=' if needed and reset localStorage</p></div>
+<li><h3 id="reset">reset()</h3>
+<div class="reset"><p>Clear localStorage</p></div>
+</li>
+<li><h3 id="setGimapUrl">setGimapUrl(url)</h3>
+<div class="setgimapurl"><p>Set Gimap serveur URL on localstorage, add <strong><code>http://</code></strong> and <strong><code>/index.php?service=</code></strong> if needed and clear localStorage</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">url – {string} – </code>
+<p>gimap server url</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>url setted server url</p></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="Properties">Properties</h2>
+<ul class="properties"><li><h3 id="_BIG_SCREEN_THRESHOLD">_BIG_SCREEN_THRESHOLD</h3>
+<div class="-big-screen-threshold"><p>Width threshold which describes big screen</p></div>
+</li>
+<li><h3 id="_MAX_RESULTS_PER_SEARCH">_MAX_RESULTS_PER_SEARCH</h3>
+<div class="-max-results-per-search"><p>Define max results per search (and advanced search)</p></div>
+</li>
+<li><h3 id="_SMARTGEO_MOBILE_VERSION">_SMARTGEO_MOBILE_VERSION</h3>
+<div class="-smartgeo-mobile-version"><p>Smartgeo mobile version, displayed on home page</p></div>
 </li>
 </ul>
 </div>

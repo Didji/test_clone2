@@ -1,6 +1,9 @@
 angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
     var G3ME = {
 
+        _MAX_ZOOM : 20 ,
+        _MIN_ZOOM : 13 ,
+
         active_layers : false,
         assetsMarkers : [],
 
@@ -28,8 +31,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             this.map     = new L.map(this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
-                maxZoom: Smartgeo.MAX_ZOOM,
-                minZoom: Smartgeo.MIN_ZOOM
+                maxZoom: G3ME._MAX_ZOOM,
+                minZoom: G3ME._MIN_ZOOM
             }).addControl(L.control.zoom({
                 position: 'topright'
             }));
