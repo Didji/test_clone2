@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,6 +70,8 @@ public class ContentShellActivity extends ChromiumActivity {
 	private static final String SCOPE = MESSAGES.getString("auth.scope");
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
 	private static final boolean NEED_OAUTH = Boolean.valueOf(MESSAGES.getString("auth.needed"));
+	private static final boolean FILTER_ACCOUNT = Boolean.valueOf(MESSAGES.containsKey("auth.account.domain"));
+	private static final String OAUTH_EXCLUDE_DOMAIN = MESSAGES.getString("auth.account.domain");
 	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
@@ -175,18 +176,18 @@ public class ContentShellActivity extends ChromiumActivity {
         	authPreferences = new AuthPreferences(this);
         	if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
         		//y a t il un filtrage de compte à effectuer?
-        		if (MESSAGES.containsKey("auth.account.domain")) {
+        		if (FILTER_ACCOUNT) {
         			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
             		Account[] list = manager.getAccounts();
-            		List<Account> accounts = new ArrayList<Account>();
+            		ArrayList<Account> accounts = new ArrayList<Account>();
             		for (Account account : list) {
-            			if (account.name.endsWith(MESSAGES.getString("auth.account.domain"))) {
+            			if (account.name.endsWith(OAUTH_EXCLUDE_DOMAIN)) {
             				accounts.add(account);
             			}
             		}
             		if (accounts.size() > 1 || accounts.isEmpty()) {
             			//plusieurs comptes, choisir...
-            			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+            			Intent intent = AccountManager.newChooseAccountIntent(null, accounts, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
             			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
             		} else {
             			authPreferences.setUser(accounts.get(0).name);
