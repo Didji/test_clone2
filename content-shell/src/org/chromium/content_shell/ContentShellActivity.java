@@ -71,7 +71,7 @@ public class ContentShellActivity extends ChromiumActivity {
 	private static final String GOOGLE_ACCOUNT_TYPE = MESSAGES.getString("auth.google.account.type");
 	private static final boolean NEED_OAUTH = Boolean.valueOf(MESSAGES.getString("auth.needed"));
 	private static final boolean FILTER_ACCOUNT = Boolean.valueOf(MESSAGES.containsKey("auth.account.domain"));
-	private static final String OAUTH_EXCLUDE_DOMAIN = MESSAGES.getString("auth.account.domain");
+	private static final String OAUTH_INCLUDE_DOMAIN = MESSAGES.getString("auth.account.domain");
 	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
@@ -181,17 +181,20 @@ public class ContentShellActivity extends ChromiumActivity {
             		Account[] list = manager.getAccounts();
             		ArrayList<Account> accounts = new ArrayList<Account>();
             		for (Account account : list) {
-            			if (account.name.endsWith(OAUTH_EXCLUDE_DOMAIN)) {
+            			if (account.name.endsWith(OAUTH_INCLUDE_DOMAIN)) {
             				accounts.add(account);
             			}
             		}
-            		if (accounts.size() > 1 || accounts.isEmpty()) {
+            		if (accounts.size() > 1) {
             			//plusieurs comptes, choisir...
             			Intent intent = AccountManager.newChooseAccountIntent(null, accounts, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
             			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-            		} else {
+            		} else if (accounts.size() == 1) {
             			authPreferences.setUser(accounts.get(0).name);
         				requestToken();
+            		} else {
+            			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+            			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
             		}
         		} else {
         			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
