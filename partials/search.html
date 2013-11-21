@@ -25,7 +25,7 @@
                     </li>
                     <li>
                         <label><i18n>_SEARCH_CRITERIA</i18n></label>
-                        <select ui-select2   ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" multiple>
+                        <select ui-select2 ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" multiple>
                             <option ng-repeat="(value, criter) in criteria[selectedFamily.okey]" value="{{criter.key}}">{{criter.label}}</option>
                         </select>
                     </li>

@@ -4349,14 +4349,23 @@ jQuery.extend({
 				var optionSet, option,
 					options = elem.options,
 					values = jQuery.makeArray( value ),
-					i = options.length;
+					lim = options.length, i = 0;
 
-				while ( i-- ) {
+				$(options[0]).before(new Option('_____dummy', '_____dummy'));
+
+				for( ; i < lim; i++) {
 					option = options[ i ];
-					if ( (option.selected = jQuery.inArray( jQuery(option).val(), values ) >= 0) ) {
+					var pos = jQuery.inArray( option.value, values ),
+						selected = pos >= 0;
+
+					option.selected = selected;
+
+					if ( selected ) {
 						optionSet = true;
 					}
 				}
+
+				$(options[0]).remove();
 
 				// force browsers to behave consistently when non-matching value is set
 				if ( !optionSet ) {
