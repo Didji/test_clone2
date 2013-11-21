@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
+angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB, i18n){
 
     var Smartgeo = {
 
@@ -161,6 +161,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 });
         },
 
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#sanitizeAsset
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {string} asset serialized asset
+         * @returns {Object} Satitized parsed asset
+         * @description
+         * Sanitize asset eg. replace horrible characters
+         */
         sanitizeAsset: function(asset){
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
