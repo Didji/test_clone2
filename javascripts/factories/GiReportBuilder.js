@@ -31,7 +31,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-model = "'+model+'"></input>';
                       break;
                   case 'T':
-                      str += '<input class="form-control" \
+                      str += '<input  class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          type="time" \
                                          name="f"     \
@@ -73,7 +73,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                       str += '</span>';
                       break;
                   default:
-                      str += '<input ng-required="'+myField+'.required" \
+                      str += '<input  ng-click="bidouille($event)"  ng-required="'+myField+'.required" \
                                      class="form-control" \
                                      type="text" \
                                      name="f" \

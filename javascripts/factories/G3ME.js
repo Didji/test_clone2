@@ -1,8 +1,8 @@
 angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
     var G3ME = {
 
-        _MAX_ZOOM : 20 ,
-        _MIN_ZOOM : 13 ,
+        _MAX_ZOOM : 22 ,
+        _MIN_ZOOM : 0 ,
 
         active_layers : false,
         assetsMarkers : [],
@@ -72,13 +72,13 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 backgroundTile = L.TileLayer ;
             }
             this.backgroundTile = new backgroundTile(this.tileUrl, {
-                maxZoom: Smartgeo.MAX_ZOOM,
-                minZoom: Smartgeo.MIN_ZOOM
+                maxZoom: G3ME._MAX_ZOOM,
+                minZoom: G3ME._MIN_ZOOM
             }).addTo(this.map);
 
             this.canvasTile = new L.TileLayer.Canvas({
-                maxZoom: Smartgeo.MAX_ZOOM,
-                minZoom: Smartgeo.MIN_ZOOM
+                maxZoom: G3ME._MAX_ZOOM,
+                minZoom: G3ME._MIN_ZOOM
             }).addTo(this.map);
 
             this.canvasTile.drawTile = function(canvas, tilePoint) {

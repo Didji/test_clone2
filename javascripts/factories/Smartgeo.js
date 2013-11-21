@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.5",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.6",
 
         /**
          * @ngdoc property
@@ -161,6 +161,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 });
         },
 
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#sanitizeAsset
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {string} asset serialized asset
+         * @returns {Object} Satitized parsed asset
+         * @description
+         * Sanitize asset eg. replace horrible characters
+         */
         sanitizeAsset: function(asset){
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
@@ -180,7 +190,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         getRight: function(module){
             var smgeo_right = {
                 'report' : false,
-                'goto'   : false
+                'goto'   : false,
+                'logout'   : false
             };
             return smgeo_right[module];
         },
