@@ -175,45 +175,46 @@ public class ContentShellActivity extends ChromiumActivity {
         if (NEED_OAUTH) {
         	authPreferences = new AuthPreferences(this);
         	if (authPreferences.getUser() == null || authPreferences.getToken() == null) {
-        		//y a t il un filtrage de compte à effectuer?
-        		if (FILTER_ACCOUNT) {
-        			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-            		Account[] list = manager.getAccounts();
-            		ArrayList<Account> accounts = new ArrayList<Account>();
-            		for (Account account : list) {
-            			if (account.name.endsWith(OAUTH_INCLUDE_DOMAIN)) {
-            				accounts.add(account);
-            			}
-            		}
-            		if (accounts.size() > 1) {
-            			//plusieurs comptes, choisir...
-            			Intent intent = AccountManager.newChooseAccountIntent(null, accounts, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-            			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-            		} else if (accounts.size() == 1) {
-            			authPreferences.setUser(accounts.get(0).name);
-        				requestToken();
-            		} else {
-            			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-            			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-            		}
-        		} else {
-        			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-        			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
-        		}
+        		oauthRequestAccount();
             } else {
             	if (isTokenValid(authPreferences.getToken())) {
             		Log.d(TAG, "[OAUTH] Using user " + authPreferences.getUser() + " with token " + authPreferences.getToken());
                 	finishActivityInit();
             	} else {
-            		Log.d(TAG, "Token " + authPreferences.getToken() + " for user " + authPreferences.getUser() + " is not valid");
-            		invalidateToken();
-            		Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-          			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+            		oauthRequestAccount();
             	}
             }
         } else {
         	finishActivityInit();
         }
+    }
+    
+    private void oauthRequestAccount() {
+    	//y a t il un filtrage de compte à effectuer?
+    	if (FILTER_ACCOUNT) {
+			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+    		Account[] list = manager.getAccounts();
+    		ArrayList<Account> accounts = new ArrayList<Account>();
+    		for (Account account : list) {
+    			if (account.name.endsWith(OAUTH_INCLUDE_DOMAIN)) {
+    				accounts.add(account);
+    			}
+    		}
+    		if (accounts.size() > 1) {
+    			//plusieurs comptes, choisir...
+    			Intent intent = AccountManager.newChooseAccountIntent(null, accounts, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+    			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+    		} else if (accounts.size() == 1) {
+    			authPreferences.setUser(accounts.get(0).name);
+				requestToken();
+    		} else {
+    			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+    			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+    		}
+		} else {
+			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+		}
     }
     
     private void finishActivityInit() {
