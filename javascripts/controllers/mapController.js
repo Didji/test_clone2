@@ -35,7 +35,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     };
 
     Smartgeo.silentLogin(function(){
-        G3ME.backgroundTile.redraw() ;
+        G3ME.backgroundTile && G3ME.backgroundTile.redraw() ;
     });
 
     G3ME.initialize( 'smartgeo-map',

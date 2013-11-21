@@ -26,11 +26,15 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 autoLoadOrNot();
 
                 $scope.ready = true;
+            }).error(function(error, errorCode){
+                alertify.alert(error.error.text, function(){
+                    $location.path('/');
+                    $scope.$apply();
+                });
             });
     }
 
     function getLocalSites() {
-
 
         var sitesById = {},
             knownSites = Smartgeo.get('sites') || {},
@@ -69,11 +73,10 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     $scope.isInstalled = function(site) {
         return !!site.installed;
     };
+
     $scope.isUnInstalled = function(site) {
         return !site.installed;
     };
-
     $scope.online = Smartgeo.get('online');
-    $scope.online === true ? getRemoteSites() : getLocalSites();
-
+    $scope.online === false ? getLocalSites() : getRemoteSites() ;
 });

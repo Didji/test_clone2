@@ -4,7 +4,8 @@
             <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
             <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
                 <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-                    <i18n>_SEARCH_SEARCH</i18n>
+                    <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
+                    <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
             </button>
         </li>
         <li><label>{{searchMessage | i18n}}</label></li>
@@ -60,7 +61,8 @@
                     <li>
                         <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="advancedSearch($event)">
                             <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-                                <i18n>_SEARCH_SEARCH</i18n>
+                            <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
+                            <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
                         </button>
                         <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
                     </li>

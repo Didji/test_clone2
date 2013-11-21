@@ -1,38 +1,82 @@
+/**
+ * @ngdoc service
+ * @name smartgeomobile.Smartgeo
+ * @description
+ * Provides global methods
+ */
+
 angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
     var Smartgeo = {
 
-        // MAP CONSTANTS
-        _MAP_MAX_ZOOM : 20,
-        _MAP_MIN_ZOOM : 13,
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_SMARTGEO_MOBILE_VERSION
+         * @propertyOf smartgeomobile.Smartgeo
+         * @returns {string}
+         * @const
+         * @description Smartgeo mobile version, displayed on home page
+         */
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.5",
 
-        // GLOBAL CONSTANTS
-        _SMARTGEO_MOBILE_VERSION    : "0.9.3.3",
-        _G3ME_VERSION               :   "0.1.0",
-        _BIG_SCREEN_THRESHOLD       :       361,
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
+         * @propertyOf smartgeomobile.Smartgeo
+         * @returns {integer}
+         * @const
+         * @default 361
+         * @description Width threshold which describes big screen
+         */
+        _BIG_SCREEN_THRESHOLD : 361,
 
 
-        // TODO : put this in a RightsManager
-        getRight: function(module){
-            return this.smgeo_right[module];
-        },
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
+         * @propertyOf smartgeomobile.Smartgeo
+         * @returns {integer}
+         * @const
+         * @default 10
+         * @description Define max results per search (and advanced search)
+         */
+        _MAX_RESULTS_PER_SEARCH : 10,
 
-        smgeo_right : {
-            'report' : true,
-            'goto'   : false
-        },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#isRunningOnBigScreen
+         * @methodOf smartgeomobile.Smartgeo
+         * @returns {boolean} is smartgeo running on big screen
+         * @description
+         * Return true if device width is >= to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
+         */
         isRunningOnBigScreen : function(){
             return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#isRunningOnLittleScreen
+         * @methodOf smartgeomobile.Smartgeo
+         * @returns {boolean} is smartgeo running on little screen
+         * @description
+         * Return true if device width is < to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
+         */
         isRunningOnLittleScreen : function(){
             return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
-        // METHODS
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#setGimapUrl
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {string} url gimap server url
+         * @returns {string} url setted server url
+         * @description
+         * Set Gimap serveur URL on localstorage, add **`http://`** and **`/index.php?service=`** if needed and clear localStorage
+         */
         setGimapUrl : function(url){
-
             if (url === null){
                 return null;
             }
@@ -47,14 +91,34 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return url ;
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#reset
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Clear localStorage
+         */
         reset: function(){
             localStorage.clear();
         },
 
-        log: function(){
-            console.log(arguments);
-        },
-
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#getServiceUrl
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {string} serviceName Name of called Service
+         * @param {Object} GETParameters Associative array of get parameters name=>value
+         * @returns {string} url Well formatted URL
+         * @description
+         * Get ready to call URL with a service's name and list of parameters
+         * @example
+         * <pre>
+         * Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
+         *     'site'      : site.id,
+         *     'timestamp' : site.timestamp
+         * });
+         * </pre>
+         */
         getServiceUrl: function(serviceName, GETParameters){
             var url  = Smartgeo.get('url');
                 url += serviceName ;
@@ -68,6 +132,23 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return url ;
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#ping
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {function} callback Called with boolean which depends on gimap reachability
+         * @description
+         * Call global.dcnx.json gimap service to know if it is reachable. So this method logout current user.
+         * It may be refactored when a real ping service will be available on gimap
+         * @example
+         * <pre>
+         * Smartgeo.ping(function(gimapIsReachable){
+         *     if(gimapIsReachable){
+         *         // do things
+         *     }
+         * });
+         * </pre>
+         */
         ping : function(callback) {
             callback = callback || function(){};
             $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
@@ -82,6 +163,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         sanitizeAsset: function(asset){
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
+        },
+
+        log: function(){
+            console.log(arguments);
         },
 
         _isRunningOnMobile: function() {
@@ -101,6 +186,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
         },
 
+        // TODO : put this in a RightsManager
+        getRight: function(module){
+            var smgeo_right = {
+                'report' : false,
+                'goto'   : false
+            };
+            return smgeo_right[module];
+        },
+
         findAssetsByGuids: function(site, guids, callback, zones, partial_response){
 
             if(guids.length > 333){
@@ -110,6 +204,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             if (!zones) {
                 zones = site.zones ;
                 partial_response = [];
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
             }
 
             if (!zones || !zones.length) {
@@ -165,7 +264,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 partial_response = [];
             }
 
-            if (!zones.length) {
+            if (!zones.length || window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
                 return callback(partial_response);
             }
 
@@ -187,9 +287,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByLabel: function(site, label, callback, zones, partial_response){
+
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
             }
 
             if (!zones.length) {
@@ -220,33 +326,54 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByCriteria: function(site, search, callback, zones, partial_response, request){
+
+
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
             }
 
-            if (!zones.length) {
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
+            }
+
+            if (!zones.length || partial_response.length >= Smartgeo._MAX_RESULTS_PER_SEARCH) {
                 return callback(partial_response);
             }
-            if(!request){
-                request = 'SELECT * FROM ASSETS WHERE ';
-                var g = '';
-                for(var criter in search.criteria){
-                    if(search.criteria.hasOwnProperty(criter) && search.criteria[criter]){
-                        if(isNaN(1*search.criteria[criter])){
-                            g = '"%';
+
+            if (!request) {
+
+                request = 'SELECT * FROM ' ;
+
+                if (search.okey) {
+                    request += ' (SELECT * FROM assets WHERE symbolId like "' + search.okey + '%") ';
+                } else {
+                    request += ' ASSETS ';
+                }
+
+                var criteria_length = Object.keys(search.criteria).length, i = 0 , regex ;
+
+                if(criteria_length > 0){
+                    request += ' WHERE ';
+                }
+
+                for (var criter in search.criteria) {
+                    if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
+                        if (search.criteria[criter] == 1 * search.criteria[criter]) {
+                            regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\}].*'";
                         } else {
-                            g = '' ;
+                            regex = "'.*\"" + criter.toLowerCase() + "\":\"?[^\"]*" + search.criteria[criter].toLowerCase() + "[^\"]*\"?[,\}].*'";
                         }
-                        request += " (     asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + ",%'       ";
-                        request += "   OR  asset like '%\"" + criter + "\":" + g + search.criteria[criter] + g.split('').reverse().join('') + "}%' ) AND ";
+                        request += " LOWER(asset) REGEXP("+regex+") " + (++i !== criteria_length ? " AND " : "");
                     }
                 }
-                if(search.okey){
-                    request += ' symbolId like "' + search.okey + '%" AND ' ;
-                }
-                request += ' 1 LIMIT 0, 10';
+                request += ' LIMIT ' + (Smartgeo._MAX_RESULTS_PER_SEARCH - partial_response.length) ;
             }
+
+            console.log(request);
+
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -265,8 +392,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         Smartgeo.findAssetsByCriteria(site,search, callback, zones.slice(1), partial_response, request);
                     },
                     function(tx, SqlError){console.log(SqlError);},
-                    function(tx, SqlError){console.log(SqlError);});
-            }, function(tx, SqlError){console.log(SqlError);});
+                function(tx, SqlError){console.log(SqlError);});
+            },
+            function(tx, SqlError){console.log(SqlError);});
         },
 
         _initializeGlobalEvents: function(){
@@ -346,7 +474,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             }
             if(token){
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
-                    'token'   : encodeURIComponent(token)
+                    'token'   : encodeURIComponent(token),
+                    'mobility' : true
                 });
             } else {
                 url  = Smartgeo.getServiceUrl('global.auth.json', {
@@ -394,11 +523,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             IndexedDB.unset(parameter);
         }
     };
-
-    // Initialization
-    if(!Smartgeo.get('url') && $location.path() !== '/'){
-        $location.path('/');
-    }
 
     Smartgeo._initializeGlobalEvents();
     window.Smartgeo = Smartgeo;
