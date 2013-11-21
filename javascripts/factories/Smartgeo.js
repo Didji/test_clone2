@@ -190,7 +190,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         getRight: function(module){
             var smgeo_right = {
                 'report' : false,
-                'goto'   : false
+                'goto'   : false,
+                'logout'   : false
             };
             return smgeo_right[module];
         },
