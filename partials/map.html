@@ -75,7 +75,7 @@
                             <div ng-include="'partials/synchronizationMenu.html'"></div>
                         </div>
                     </li>
-                    <li>
+                    <li ng-show="rights.logout">
                         <a href="#/">
                             <span class="icon icon-power-off"></span>
                             <i18n>_MENU_LOGOUT</i18n>
