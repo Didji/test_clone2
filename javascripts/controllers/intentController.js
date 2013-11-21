@@ -2,6 +2,15 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     $scope.controller = $routeParams.controller ;
 
+    if ($scope.controller === "oauth") {
+    	if (!Smartgeo.get("url") || Smartgeo.get("url").indexOf($routeParams.url) === -1) {
+    		Smartgeo.setGimapUrl($routeParams.url);
+    	} 
+        return tokenAuth($routeParams.token, function(){
+            $location.path('sites/');
+        });
+    }
+
     if(!$scope.controller){
         return false ;
     }

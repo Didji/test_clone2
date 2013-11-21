@@ -1,0 +1,10 @@
+{
+  "name": "smartgeo-mobile",
+  "private" : true,
+  "dependencies": {
+    "grunt": "~0.4.1",
+    "grunt-ngdocs": "~0.1.1",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-clean": "0.4.1"
+  }
+}

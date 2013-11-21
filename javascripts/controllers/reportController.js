@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n){
+angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n, $q){
 
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
@@ -159,6 +159,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                                 + '-' + pad( date.getUTCDate() );
                     }
                     fields[field.id] = def;
+                    $scope.report.roFields[field.id] = def;
                 } else {
                     console.log(def) ;
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
@@ -249,35 +250,48 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         report.timestamp = new Date().getTime();
         report.mission   = 1*$rootScope.report_mission || report.mission ;
 
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', report)
+        var canceler = $q.defer();
+
+
+        $http
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 2500})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
-                    console.log(reports.length, reports);
                     reports = reports || [] ;
                     reports.push(report);
-                    console.log(reports.length, reports);
                     Smartgeo.set_('reports', reports, function(){
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                         $scope.sendingReport = false ;
-                        endOfReport();
                     });
                 });
             }).success(function(){
                 $scope.sendingReport = false ;
-                endOfReport();
             });
+        endOfReport();
     };
 
     function endOfReport(){
+
         if($rootScope.report_url_redirect){
             $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
-            console.log($rootScope.report_url_redirect);
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
                 SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
                 window.open($rootScope.report_url_redirect, "_blank");
             }
         }
+
+        // TODO: Put all intents variables in something like $rootScope.intent.[map|report]_*
+        //       It will be easier to reset context ($rootScope.intent=undefined)
+        $rootScope.map_target           = undefined ;
+        $rootScope.map_marker           = undefined ;
+        $rootScope.map_activity         = undefined ;
+        $rootScope.report_activity      = undefined ;
+        $rootScope.report_mission       = undefined ;
+        $rootScope.report_target        = undefined ;
+        $rootScope.report_fields        = undefined ;
+        $rootScope.report_url_redirect  = undefined ;
+
         $location.path('map/'+$rootScope.site.id);
         if(!$scope.$$phase) {
             $scope.$apply();

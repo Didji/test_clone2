@@ -13,7 +13,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     $scope.firstAuth    = false;
     $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') ;
     $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
-    $scope.rememberme = lastuser.password.length ? true : false;
+    $scope.rememberme = lastuser.password &&  lastuser.password.length ? true : false;
     $scope.$on("DEVICE_IS_ONLINE", ping);
     $scope.$on("DEVICE_IS_OFFLINE", ping);
 

@@ -38,7 +38,16 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     };
 
     $scope.search = function(event) {
+
         event.preventDefault();
+
+        if($scope.searchIsPerforming){
+            window._SMARTGEO_STOP_SEARCH = true ;
+            $scope.searchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
+            $scope.searchIsPerforming = false ;
+            return ;
+        }
+
         $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS' ;
         $scope.searchIsPerforming = true ;
         Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function(results){
@@ -67,6 +76,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         });
     };
 
+
     $scope.resetCriteria = function(){
         $scope.selectedFamily = null;
         $scope.selectedCriteria = null;
@@ -75,8 +85,8 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     $scope.selectedCriteriaChangeHandler = function(){
         var newSelectedCriteriaValues = {};
         for (var i = 0; i < $scope.selectedCriteria.length; i++) {
-            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i].key]){
-                newSelectedCriteriaValues[$scope.selectedCriteria[i].key] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i].key];
+            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]){
+                newSelectedCriteriaValues[$scope.selectedCriteria[i]] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i]];
             }
         }
         $scope.selectedCriteriaValues = newSelectedCriteriaValues ;
@@ -86,6 +96,13 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         event.preventDefault();
 
         $scope.searchMessage = "";
+
+        if($scope.searchIsPerforming){
+            window._SMARTGEO_STOP_SEARCH = true ;
+            $scope.advancedSearchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
+            $scope.searchIsPerforming = false ;
+            return ;
+        }
 
         var advancedSearch ;
 
