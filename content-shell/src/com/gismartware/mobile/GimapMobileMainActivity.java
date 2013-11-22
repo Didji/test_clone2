@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package org.chromium.content_shell;
+package com.gismartware.mobile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +28,8 @@ import org.chromium.content.browser.DeviceUtils;
 import org.chromium.content.browser.TracingIntentHandler;
 import org.chromium.content.common.CommandLine;
 import org.chromium.content.common.ProcessInitException;
+import org.chromium.content_shell.Shell;
+import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.WindowAndroid;
 
 import android.accounts.Account;
@@ -50,19 +52,15 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.gismartware.mobile.ActivityCode;
-import com.gismartware.mobile.AuthPreferences;
-import com.gismartware.mobile.FileUtils;
-import com.gismartware.mobile.ImageUtils;
 
 /**
  * Activity for managing the Content Shell.
  */
-public class ContentShellActivity extends ChromiumActivity {
+public class GimapMobileMainActivity extends ChromiumActivity {
 	
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
 	private static final String INSTALL_ZIP_FILE = MESSAGES.getString("install.zip.file");
-	private static final String INTENT_DEST_URL_PREFIX = ContentShellApplication.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
+	private static final String INTENT_DEST_URL_PREFIX = GimapMobileApplication.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
 
 	/*
 	 * Constantes oauth
@@ -107,7 +105,7 @@ public class ContentShellActivity extends ChromiumActivity {
     @Override
 	public void onDestroy() {
     	//TODO impossible to make deletion work...
-    	if(FileUtils.delete(new File(ContentShellApplication.WEB_ROOT))) {
+    	if(FileUtils.delete(new File(GimapMobileApplication.WEB_ROOT))) {
     		Log.d(TAG, "Smartgeo has been successfully uninstalled!");
     	} else {
     		Log.w(TAG, "Impossible to uninstall Smartgeo.");
@@ -125,7 +123,7 @@ public class ContentShellActivity extends ChromiumActivity {
         try {
 			InputStream is = getAssets().open(INSTALL_ZIP_FILE);
 			FileUtils.copyTo(is, zip);
-			FileUtils.unzip(zip, new File(ContentShellApplication.WEB_ROOT));
+			FileUtils.unzip(zip, new File(GimapMobileApplication.WEB_ROOT));
         	Log.i(TAG, "Smartgeo has been successfully installed!");
 		} catch (IOException e) {
 			Log.e(TAG, "Error while installing... ");
@@ -268,13 +266,13 @@ public class ContentShellActivity extends ChromiumActivity {
         getActiveContentView().setContentViewClient(new ContentViewClient() {
             @Override
             public ContentVideoViewClient getContentVideoViewClient() {
-                return new ActivityContentVideoViewClient(ContentShellActivity.this);
+                return new ActivityContentVideoViewClient(GimapMobileMainActivity.this);
             }
         });
     }
 
     private void initializationFailed() {
-        Toast.makeText(ContentShellActivity.this, R.string.browser_process_initialization_failed, Toast.LENGTH_SHORT).show();
+        Toast.makeText(GimapMobileMainActivity.this, R.string.browser_process_initialization_failed, Toast.LENGTH_SHORT).show();
         finish();
     }
 
@@ -394,7 +392,7 @@ public class ContentShellActivity extends ChromiumActivity {
 					pic.compress(Bitmap.CompressFormat.JPEG, 80, out);
 					out.flush();
 					out.close();
-					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + file.getAbsolutePath() + "\");", null);
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + file.getAbsolutePath() + "\");");
 				} catch (IOException e) {
 					Log.e(TAG, "Erreur enregistrement photo");
 				}
@@ -403,11 +401,11 @@ public class ContentShellActivity extends ChromiumActivity {
 				Location location = (Location) extras.get("location");
 				if (location == null) { // pas de position (gps désactivé par ex)
 					Log.e(TAG, "Pas de geolocalisation trouvee!");
-					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[2]();", null);
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[2]();");
 				} else {
 					Log.d(TAG, location.toString());
-					getActiveShell().getContentView().getContentViewCore().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
-							location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");", null);
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
+							location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");");
 				}
 			}
 		} else {

@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.gismartware.mobile.R;
 import com.gismartware.mobile.plugins.SmartGeoMobilePlugins;
 
 /**
@@ -231,7 +232,7 @@ public class Shell extends LinearLayout {
         
         //ATTENTION
         //Doit etre ici sinon pas de photo sur un intent quand l appli existe deja... (inexplicable dans l'état actuel de mes connaissances)
-        mContentView.getContentViewCore().addJavascriptInterface(new SmartGeoMobilePlugins(super.getContext()), "SmartgeoChromium");
+        mContentView.getContentViewCore().addJavascriptInterface(new SmartGeoMobilePlugins(super.getContext(), mContentView), "SmartgeoChromium");
     }
 
     /**

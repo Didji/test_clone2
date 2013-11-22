@@ -10,6 +10,9 @@ import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.ContentViewRenderView;
 import org.chromium.ui.WindowAndroid;
 
+import com.gismartware.mobile.GimapMobileApplication;
+import com.gismartware.mobile.R;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,7 +24,7 @@ import android.widget.FrameLayout;
 @JNINamespace("content")
 public class ShellManager extends FrameLayout {
 
-    public static final String DEFAULT_SHELL_URL = "file://" + ContentShellApplication.DEFAULT_URL;
+    public static final String DEFAULT_SHELL_URL = "file://" + GimapMobileApplication.DEFAULT_URL;
     private static boolean sStartup = true;
     private WindowAndroid mWindow;
     private Shell mActiveShell;

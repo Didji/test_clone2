@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
 import android.app.Activity;
@@ -22,9 +23,11 @@ public class SmartGeoMobilePlugins {
 	private static final String TAG = "GimapMobilePlugins";
 
 	private Context context;
+	private ContentView view;
 
-	public SmartGeoMobilePlugins(Context context) {
+	public SmartGeoMobilePlugins(Context context, ContentView view) {
 		this.context = context;
+		this.view = view;
 	}
 	
 	@JavascriptInterface
@@ -65,12 +68,13 @@ public class SmartGeoMobilePlugins {
 	}
 	
 	@JavascriptInterface
-	public String getExtApplicationDirectory() {
-		return context.getExternalFilesDir(null).getParent();
+	public void getExtApplicationDirectory() {
+		String tmp = context.getExternalFilesDir(null).getParent();
+		view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + tmp + "\");");
 	}
 	
 	@JavascriptInterface
-	public boolean eraseAllTiles() {
+	public void eraseAllTiles() {
 		File path = new File(context.getExternalFilesDir(null).getParent() + "/tiles/");
 		boolean ret = FileUtils.delete(path);
 		if (ret) {
@@ -78,24 +82,43 @@ public class SmartGeoMobilePlugins {
 		} else {
 			Log.d(TAG, "Impossible to delete " + path.getAbsolutePath());
 		}
-		return ret;
+		view.evaluateJavaScript("window.ChromiumCallbacks[12](\"" + ret + "\");");
 	}
 	
 	@JavascriptInterface
-	public boolean writeBase64ToPNG(String base64, String path) {
+	public void writeBase64ToPNG(String base64, String path) {
 		byte[] pngAsByte = Base64.decode(base64, 0);
 		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
-        filePath.mkdirs();
+        filePath.getParentFile().mkdirs();
         
+        boolean result = true;
 		try {
-			FileOutputStream os = new FileOutputStream(filePath, true);
+			FileOutputStream os = new FileOutputStream(filePath, false);
 			os.write(pngAsByte);
 	        os.flush();
 	        os.close();
-	        return true;
 		} catch (IOException e) {
 			Log.d(TAG, "Error when writing base64 data to " + path, e);
-			return false;
+			result = false;
 		}
+		view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result + "\");");
+	}
+	
+	@JavascriptInterface
+	public void writeJSON(String json, String path) {
+		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+        filePath.getParentFile().mkdirs();
+        
+        boolean result = true;
+		try {
+			FileOutputStream os = new FileOutputStream(filePath, false);
+			os.write(json.getBytes());
+	        os.flush();
+	        os.close();
+		} catch (IOException e) {
+			Log.d(TAG, "Error when writing base64 data to " + path, e);
+			result = false;
+		}
+		view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
 	}
 }
