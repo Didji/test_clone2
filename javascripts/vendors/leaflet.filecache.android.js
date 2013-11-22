@@ -636,7 +636,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         // var oldTile = image.src ;
 
-        image.src = 'file:///Storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
+        image.src = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
         // this_.getTileUrl({x:x, y:y},z);
 
         image.onerror = function(event) {
@@ -644,6 +644,15 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             image.style.border  = 'solid 1px red';
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = image.onload = null ;
+            image.onerror= function(){
+                console.log('nested image.onerror '+ image.src);
+                console.log(arguments);
+            image.onerror = image.onload = null ;
+            };
+            image.onload= function(){
+                console.log('nested image.onload '+ image.src);
+            image.onerror = image.onload = null ;
+            };
         };
 
         image.onload = function(){
@@ -664,7 +673,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     readMetadataTileFile: function(tileObject, callback){
-        var path  = 'file:///Storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject)+'.metadata';
+        var path  = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject)+'.metadata';
         console.log('readMetadataTileFile', path);
         $.getJSON(path, function(metadata) {
            (callback || function(){})(metadata);
