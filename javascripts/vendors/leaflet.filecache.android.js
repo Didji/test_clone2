@@ -584,7 +584,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
     getTilePath : function(tile){
         console.log('getTilePath');
-        return 'tiles/'+tile.z+'/'+tileObject.x+'_'+tileObject.y+'.png';
+        return 'tiles/'+tile.z+'/'+tile.x+'_'+tile.y+'.png';
     },
 
 
@@ -636,7 +636,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         // var oldTile = image.src ;
 
-        image.src = SmartgeoChromium.getExtApplicationDirectory() + this.getTilePath(tileObject);
+        image.src = 'file:///Storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
         // this_.getTileUrl({x:x, y:y},z);
 
         image.onerror = function(event) {
@@ -665,7 +665,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
     readMetadataTileFile: function(tileObject, callback){
         console.log('readMetadataTileFile');
-        var path  = SmartgeoChromium.getExtApplicationDirectory() + this.getTilePath(tileObject)+'.metadata';
+        var path  = 'file:///Storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject)+'.metadata';
         $.getJSON(path, function(metadata) {
            (callback || function(){})(metadata);
         }).fail(function() {
