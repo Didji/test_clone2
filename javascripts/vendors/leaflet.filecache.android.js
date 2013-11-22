@@ -620,10 +620,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     fetchTileFromCache: function(image,z,x,y){
-        console.log('fetchTileFromCache', z, x, y);
-
         var this_ = this ;
-
         var tileObject = {
             image : image,
             provider : this.id,
@@ -634,35 +631,28 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             tiles : this
         };
 
-        // var oldTile = image.src ;
-
         image.src = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
-        // this_.getTileUrl({x:x, y:y},z);
-
         image.onerror = function(event) {
-            console.log('image.onerror fetchTileFromCache ' + image.src);
             image.style.border  = 'solid 1px red';
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = image.onload = null ;
             image.onerror= function(){
-                console.log('nested image.onerror '+ image.src);
-                console.log(arguments);
-            image.onerror = image.onload = null ;
+                image.onerror = image.onload = null ;
             };
             image.onload= function(){
-                console.log('nested image.onload '+ image.src);
-            image.className += " leaflet-tile-loaded";
-
-            image.onerror = image.onload = null ;
-            this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                this_.getRemoteETag(   tileObject, function(remoteETag){
-                    if(remoteETag !== null){
-                        this_.writeMetadataTileFile(tileObject,{
-                            etag : remoteETag
-                        });
-                    }
+                image.className += " leaflet-tile-loaded";
+                image.onerror = image.onload = null ;
+                this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
+                    console.log("on writeTileToCache callback, about to call getRemoteETag");
+                    this_.getRemoteETag(   tileObject, function(remoteETag){
+                        console.log("on getRemoteETag callback, about to call writeMetadataTileFile", remoteETag);
+                        if(remoteETag !== null){
+                            this_.writeMetadataTileFile(tileObject,{
+                                etag : remoteETag
+                            });
+                        }
+                    });
                 });
-            });
             };
         };
 
@@ -703,9 +693,9 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             }
             ChromiumCallbacks[11] = function(success){
                 if(success){
-                    console.log(path+ " is on SDCARD");
+                    console.log(path+ " is on SDCARDwriteJSON");
                 } else {
-                    console.log("Error while writing " +path);
+                    console.log("writeJSONError while writing " +path);
                 }
                 (callback || function(){})();
             };
