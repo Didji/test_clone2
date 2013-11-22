@@ -583,7 +583,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
 
     getTilePath : function(tile){
-        console.log('getTilePath');
         return 'tiles/'+tile.z+'/'+tile.x+'_'+tile.y+'.png';
     },
 
@@ -645,7 +644,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                     console.log("on writeTileToCache callback, about to call getRemoteETag");
                     this_.getRemoteETag(   tileObject, function(remoteETag){
-                        console.log("on getRemoteETag callback, about to call writeMetadataTileFile", remoteETag);
+                        console.log("on getRemoteETag callback, about to call writeMetadataTileFile : " + remoteETag);
                         if(remoteETag !== null){
                             this_.writeMetadataTileFile(tileObject,{
                                 etag : remoteETag
@@ -729,8 +728,10 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         http.open('HEAD', url, true);
         http.onreadystatechange = function() {
             if (this.readyState == this.DONE && this.status === 200) {
+                console.log('getRemoteETag onreadystatechange DONE&&200='+this.getResponseHeader("etag"));
                 callback(this.getResponseHeader("etag"));
             } else if(this.readyState == this.DONE && this.status === 403){
+                console.log('getRemoteETag onreadystatechange DONE&&403');
                 Smartgeo.silentLogin();
                 callback(null);
             }
