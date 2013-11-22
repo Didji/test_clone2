@@ -636,7 +636,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         // var oldTile = image.src ;
 
-        image.src = SmartgeoChromium.getExtDirBase() + this.getTilePath(tileObject);
+        image.src = SmartgeoChromium.getExtApplicationDirectory() + this.getTilePath(tileObject);
         // this_.getTileUrl({x:x, y:y},z);
 
         image.onerror = function(event) {
@@ -665,7 +665,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
     readMetadataTileFile: function(tileObject, callback){
         console.log('readMetadataTileFile');
-        var path  = SmartgeoChromium.getExtDirBase() + this.getTilePath(tileObject)+'.metadata';
+        var path  = SmartgeoChromium.getExtApplicationDirectory() + this.getTilePath(tileObject)+'.metadata';
         $.getJSON(path, function(metadata) {
            (callback || function(){})(metadata);
         }).fail(function() {
