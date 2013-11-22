@@ -642,9 +642,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                 image.className += " leaflet-tile-loaded";
                 image.onerror = image.onload = null ;
                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                    console.log("on writeTileToCache callback, about to call getRemoteETag");
                     this_.getRemoteETag(   tileObject, function(remoteETag){
-                        console.log("on getRemoteETag callback, about to call writeMetadataTileFile : " + remoteETag);
                         if(remoteETag !== null){
                             this_.writeMetadataTileFile(tileObject,{
                                 etag : remoteETag
@@ -659,17 +657,57 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             console.log('image.onload fetchTileFromCache' + image.src);
             image.style.border  = 'solid 1px blue';
             image.className += " leaflet-tile-loaded";
-            // this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-            //     this_.getRemoteETag(   tileObject, function(remoteETag){
-            //         if(remoteETag !== null){
-            //             this_.writeMetadataTileFile(tileObject,{
-            //                 etag : remoteETag
-            //             });
-            //         }
-            //     });
-            // });
             image.onerror = image.onload = null ;
+
+            this_.doINeedToReCacheThisTile(tileObject, function(yes){
+                if(yes){
+                    var oldTile = image.src;
+                    image.src = this_.getTileUrl({x:x, y:y},z);
+                    image.onerror = function(event) {
+                        image.src = oldTile;
+                        image.onerror = image.onload = null ;
+                    };
+                    image.onload = function(){
+                        image.className += " leaflet-tile-loaded";
+                        this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
+                            this_.getRemoteETag(   tileObject, function(remoteETag){
+                                if(remoteETag !== null){
+                                    this_.writeMetadataTileFile(tileObject,{
+                                        etag : remoteETag
+                                    });
+                                }
+                            });
+                        });
+                        image.onerror = image.onload = null ;
+                    };
+                }
+            });
+
+
         };
+    },
+
+    doINeedToReCacheThisTile: function(tileObject, callback){
+        console.log('doINeedToReCacheThisTile');
+        var _this = this ;
+        this.readMetadataTileFile(tileObject, function(metadata){
+        console.log('readMetadataTileFile callback');
+            if(metadata && !metadata.etag){
+                console.log('readMetadataTileFile callback first case');
+                callback(true);
+            } else {
+                console.log('readMetadataTileFile callback second case');
+                _this.getRemoteETag(tileObject, function(remoteETag){
+                    if(metadata.etag != remoteETag && remoteETag !== null){
+                        console.log('getRemoteETag callback first case');
+                        callback(true);
+                    } else {
+                        console.log('getRemoteETag callback second case');
+                        callback(false);
+                    }
+                });
+            }
+        });
     },
 
     readMetadataTileFile: function(tileObject, callback){
@@ -700,24 +738,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             };
             SmartgeoChromium.writeJSON(JSON.stringify(metadata), path);
         }
-    },
-
-    doINeedToReCacheThisTile: function(tileObject, file, callback){
-        console.log('doINeedToReCacheThisTile');
-        var _this = this ;
-        this.readMetadataTileFile(tileObject, function(metadata){
-            if(!metadata.etag){
-                callback(true);
-            } else {
-                _this.getRemoteETag(tileObject, function(remoteETag){
-                    if(metadata.etag != remoteETag && remoteETag !== null){
-                        callback(true);
-                    } else {
-                        callback(false);
-                    }
-                });
-            }
-        });
     },
 
     getRemoteETag: function(tileObject, callback){
