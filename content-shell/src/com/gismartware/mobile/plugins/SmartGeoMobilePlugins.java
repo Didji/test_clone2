@@ -1,5 +1,9 @@
  package com.gismartware.mobile.plugins;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.chromium.content.browser.JavascriptInterface;
 
 import android.app.Activity;
@@ -7,9 +11,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.FileUtils;
 
 public class SmartGeoMobilePlugins {
 	
@@ -56,5 +62,40 @@ public class SmartGeoMobilePlugins {
 		Activity act = (Activity)context;
 		Intent intent = new Intent(context, GeoLocation.class);
 		act.startActivityForResult(intent, ActivityCode.GEOLOCATE.getCode());
+	}
+	
+	@JavascriptInterface
+	public String getExtApplicationDirectory() {
+		return context.getExternalFilesDir(null).getParent();
+	}
+	
+	@JavascriptInterface
+	public boolean eraseAllTiles() {
+		File path = new File(context.getExternalFilesDir(null).getParent() + "/tiles/");
+		boolean ret = FileUtils.delete(path);
+		if (ret) {
+			Log.d(TAG, path.getAbsolutePath() + " deleted!");
+		} else {
+			Log.d(TAG, "Impossible to delete " + path.getAbsolutePath());
+		}
+		return ret;
+	}
+	
+	@JavascriptInterface
+	public boolean writeBase64ToPNG(String base64, String path) {
+		byte[] pngAsByte = Base64.decode(base64, 0);
+		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+        filePath.mkdirs();
+        
+		try {
+			FileOutputStream os = new FileOutputStream(filePath, true);
+			os.write(pngAsByte);
+	        os.flush();
+	        os.close();
+	        return true;
+		} catch (IOException e) {
+			Log.d(TAG, "Error when writing base64 data to " + path, e);
+			return false;
+		}
 	}
 }
