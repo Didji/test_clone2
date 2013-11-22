@@ -143,11 +143,44 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         },
 
         extents_match : function(extent1, extent2){
-            return extent1.xmax > extent2.xmin &&
-                extent2.xmax > extent1.xmin &&
-                extent1.ymax > extent2.ymin &&
-                extent2.ymax > extent1.ymin;
+            return !(extent1.xmax < extent2.xmin ||
+                     extent1.xmin > extent2.xmax ||
+                     extent1.ymin > extent2.ymax ||
+                     extent1.ymax < extent2.ymin);
         },
+
+        segment_within_extent: function(segment, extent) {
+            return true;
+
+            // On commence par calculer les paramètres de la droite
+            // qui porte le segment.
+            // Ce qui implique un cas particulier : le segment vertical.
+            if(segment.x1 == segment.x2) {
+                // Dans le cas d'un segment vertical, il y a intersection
+                // si le segment est entre les deux bornes en x de l'emprise.
+                return extent.xmin <= segment.x1 && extent.xmax >= segment.x1;
+            }
+            if(segment.y1 == segment.y2) {
+                // Dans le cas d'un segment horizontal, il y a intersection
+                // si le segment est entre les deux bornes en y de l'emprise.
+                return extent.ymin <= segment.y1 && extent.ymax >= segment.y1;
+            }
+
+            // Et donc, revenons aux paramètres de la droite...
+            // La droite est de la forme y = ax + b.
+            var a = (segment.y1 - segment.y2) / (segment.x1 - segment.x2),
+                b = segment.y1 - segment.x1 * a;
+
+            // On calcul maintenant les coordonnées des points d'intersection
+            // de la droite avec les côtés de l'emprise. Si le segment est
+            // dans la boite, ces intersection sont obligatoirement sur les bords.
+            var y1 = a * extent.xmin + b,
+                y2 = a * extent.xmax + b;
+
+            return (y1 <= extent.ymax && y1 >= extent.ymin)
+                     || (y2 <= extent.ymax && y2 >= extent.ymin);
+        },
+
         setVisibility: function(layers) {
             this.active_layers = [];
             for(var i in layers) {

@@ -77,6 +77,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 weight: 1
             }).addTo(G3ME.map),
             bounds = circle.getBounds(),
+            // rect = L.rectangle(bounds, {color: "#0000ff", weight: 1}).addTo(G3ME.map),
             nw = bounds.getNorthWest(),
             se = bounds.getSouthEast(),
             xmin = nw.lng,
@@ -103,40 +104,96 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             return noConsultableAssets(coords);
         }
 
-        request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority ";
-        request +=     " FROM ASSETS ";
-        request +=     " WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
-        request +=             " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
-        request +=             " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
-        request +=             " AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+        // request += "SELECT asset, label, geometry, CASE WHEN geometry like '%Point%' THEN 1 WHEN geometry like '%LineString%' THEN 2 END as priority ";
+        // request +=     " FROM ASSETS ";
+        // request +=     " WHERE (((ymin <= ? AND ymin >= ?) OR (ymax <= ? AND ymax >= ?)) ";
+        // request +=             " AND ((xmin <= ? AND xmin >= ?) OR (xmax <= ? AND xmax >= ?)) ";
+        // request +=             " OR ( xmin <=  ? AND ymin <= ? AND xmax >= ? AND ymax >= ? )) ";
+        // request +=             " AND (minzoom <= 1*? AND maxzoom >= 1*? ) ";
+
+
+        request += " SELECT asset,";
+        request += "       label,";
+        request += "       geometry,";
+        request += "       CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2";
+        request += "       END AS priority";
+        request += " FROM ASSETS ";
+        request += " WHERE ";
+        request += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
+        request += "    AND ( minzoom <= 1*? AND maxzoom >= 1*?)";
 
         if(G3ME.active_layers) {
-            request += G3ME.active_layers.length ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
+            request += G3ME.active_layers.length
+                            ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )'
+                            : ' and 1=2 ';
         }
-        request +=     " order by priority LIMIT 0,10 ";
+        request +=     " order by priority LIMIT 0,100 ";
 
         $(circle._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(circle);
         });
+// $(rect._path).fadeOut(1500, function() {
+//             G3ME.map.removeLayer(rect);
+//         });
 
         SQLite.openDatabase({
             name: zone.database_name,
             bgType: 1
         }).transaction(function(t) {
-            t.executeSql(request, [ymax, ymin, ymax, ymin, xmax, xmin, xmax, xmin, xmin, ymin, xmax, ymax, zoom , zoom],
+            t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom],
                 function(t, results) {
                     if (results.rows.length === 0 ) {
                         return noConsultableAssets(coords);
                     }
+                    // TODO : use filter ?
 
                     var assets = [], asset, asset_;
-                    for (var i = 0; i < results.rows.length; i++) {
+
+                    for (var i = 0; i < results.rows.length && assets.length < 10 ; i++){
                         asset_ = results.rows.item(i);
                         asset  = Smartgeo.sanitizeAsset(asset_.asset);
                         asset.label = asset_.label ;
                         asset.geometry = JSON.parse(asset_.geometry) ;
                         asset.priority = asset_.priority ;
-                        assets.push(asset);
+
+                        if(asset.geometry.type === "LineString"){
+                            console.log('LineString');
+                            for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
+
+                                var segment = {
+                                    x1 : asset.geometry.coordinates[j][0],
+                                    x2 : asset.geometry.coordinates[j + 1][0],
+                                    y1 : asset.geometry.coordinates[j][1],
+                                    y2 : asset.geometry.coordinates[j + 1][1],
+                                }
+
+                                // console.log(segment_extent);
+
+                                if(G3ME.segment_within_extent(segment, {
+                                    xmin: xmin,
+                                    xmax: xmax,
+                                    ymin: ymin,
+                                    ymax: ymax
+                                })){
+                                    assets.push(asset);
+                                    break;
+                                }
+
+                                // if(    asset.geometry.coordinates[j][0] <= xmax
+                                //     && asset.geometry.coordinates[j][0] >= xmin
+                                //     && asset.geometry.coordinates[j][1] <= ymax
+                                //     && asset.geometry.coordinates[j][1] >= ymin ) {
+                                //     assets.push(asset);
+                                //     break;
+                                // }
+                            }
+                        } else {
+                            assets.push(asset);
+                        }
+                    }
+
+                    if (assets.length === 0 ) {
+                        return noConsultableAssets(coords);
                     }
 
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
