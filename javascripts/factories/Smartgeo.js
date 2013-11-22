@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.6",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.7",
 
         /**
          * @ngdoc property
