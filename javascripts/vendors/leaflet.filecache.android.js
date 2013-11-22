@@ -640,7 +640,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         // this_.getTileUrl({x:x, y:y},z);
 
         image.onerror = function(event) {
-            console.log('image.onerror fetchTileFromCache' + image.src);
+            console.log('image.onerror fetchTileFromCache ' + image.src);
             image.style.border  = 'solid 1px red';
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = image.onload = null ;
@@ -651,14 +651,9 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             };
             image.onload= function(){
                 console.log('nested image.onload '+ image.src);
-            image.onerror = image.onload = null ;
-            };
-        };
-
-        image.onload = function(){
-            console.log('image.onload fetchTileFromCache' + image.src);
-            image.style.border  = 'solid 1px blue';
             image.className += " leaflet-tile-loaded";
+
+            image.onerror = image.onload = null ;
             this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                 this_.getRemoteETag(   tileObject, function(remoteETag){
                     if(remoteETag !== null){
@@ -668,6 +663,22 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                     }
                 });
             });
+            };
+        };
+
+        image.onload = function(){
+            console.log('image.onload fetchTileFromCache' + image.src);
+            image.style.border  = 'solid 1px blue';
+            image.className += " leaflet-tile-loaded";
+            // this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
+            //     this_.getRemoteETag(   tileObject, function(remoteETag){
+            //         if(remoteETag !== null){
+            //             this_.writeMetadataTileFile(tileObject,{
+            //                 etag : remoteETag
+            //             });
+            //         }
+            //     });
+            // });
             image.onerror = image.onload = null ;
         };
     },
