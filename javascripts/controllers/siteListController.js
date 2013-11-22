@@ -14,23 +14,26 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                     site = sites[i];
                     tmpsites[site.id] = site;
                 }
-
                 angular.extend(tmpsites, sitesById, knownSites);
-
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                 $scope.sites = [];
                 for(var id in tmpsites) {
                     $scope.sites.push(tmpsites[id]);
                 }
-
                 autoLoadOrNot();
-
                 $scope.ready = true;
             }).error(function(error, errorCode){
-                alertify.alert(error.error.text, function(){
-                    $location.path('/');
-                    $scope.$apply();
-                });
+                var knownSites = Smartgeo.get('sites') || {};
+                // Pour que les filtres fonctionnent, il nous faut un simple tableau.
+                $scope.sites = [];
+                for(var id in knownSites) {
+                    $scope.sites.push(knownSites[id]);
+                }
+                if(!$scope.sites.length){
+                    return  $location.path('/');
+                }
+                autoLoadOrNot();
+                $scope.ready = true;
             });
     }
 
