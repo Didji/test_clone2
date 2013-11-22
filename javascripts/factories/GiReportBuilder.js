@@ -39,7 +39,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-model = "'+model+'"></input>';
                       break;
                   case 'N':
-                      str += '<input class="form-control" \
+                      str += '<input  ng-click="bidouille($event)"  class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          ng-pattern="numberPattern"\
                                          type="number" \
