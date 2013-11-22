@@ -115,7 +115,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                     if(!assets.length){
                         callback([]);
                     } else if(assets.length === 1){
-                        callback([assets[0].ymin,assets[0].xmin]);
+                        console.log(assets);
+                        var geometry = JSON.parse(assets[0].geometry) ;
+                        if(geometry.type === 'Point'){
+                            callback([assets[0].ymin,assets[0].xmin]);
+                        } else {
+                            callback([geometry.coordinates[0][1],geometry.coordinates[0][0]]);
+                        }
+
                     } else {
                         // TODO: return barycenter of ALL assets
                     }
