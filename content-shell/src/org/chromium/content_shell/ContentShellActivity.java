@@ -170,7 +170,6 @@ public class ContentShellActivity extends ChromiumActivity {
         mWindowAndroid.restoreInstanceState(savedInstanceState);
         mShellManager.setWindow(mWindowAndroid);
         
-        
         //gestion de l'authentification...
         if (NEED_OAUTH) {
         	authPreferences = new AuthPreferences(this);
