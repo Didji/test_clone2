@@ -636,6 +636,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             };
             image.onload= function(){
                 image.className += " leaflet-tile-loaded";
+                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
                 image.onerror = image.onload = null ;
                 this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                     this_.getRemoteETag(   tileObject, function(remoteETag){
@@ -651,6 +652,8 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         image.onload = function(){
             image.className += " leaflet-tile-loaded";
+                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+
             image.onerror = image.onload = null ;
 
             this_.doINeedToReCacheThisTile(tileObject, function(yes){
@@ -663,6 +666,8 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                     };
                     image.onload = function(){
                         image.className += " leaflet-tile-loaded";
+                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+
                         this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
                             this_.getRemoteETag(   tileObject, function(remoteETag){
                                 if(remoteETag !== null){
