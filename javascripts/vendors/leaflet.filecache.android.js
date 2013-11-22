@@ -590,7 +590,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     writeTileToCache: function(tileObject, dataUrl, callback){
         var this_ = this ;
         var path  = this.getTilePath(tileObject);
-        console.log('writeTileToCache', path);
 
         if(window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG){
             if(!window.ChromiumCallbacks){
@@ -598,7 +597,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             }
             ChromiumCallbacks[10] = function(success){
                 if(success){
-                    console.log(path+ " is on SDCARD");
                 } else {
                     console.log("Error while writing " +path);
                 }
@@ -609,7 +607,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     getDataURL: function (img) {
-        console.log('getDataURL');
         canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
@@ -632,7 +629,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
         image.src = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
         image.onerror = function(event) {
-            image.style.border  = 'solid 1px red';
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = image.onload = null ;
             image.onerror= function(){
@@ -654,8 +650,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         };
 
         image.onload = function(){
-            console.log('image.onload fetchTileFromCache' + image.src);
-            image.style.border  = 'solid 1px blue';
             image.className += " leaflet-tile-loaded";
             image.onerror = image.onload = null ;
 
@@ -688,21 +682,15 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     doINeedToReCacheThisTile: function(tileObject, callback){
-        console.log('doINeedToReCacheThisTile');
         var _this = this ;
         this.readMetadataTileFile(tileObject, function(metadata){
-        console.log('readMetadataTileFile callback');
             if(metadata && !metadata.etag){
-                console.log('readMetadataTileFile callback first case');
                 callback(true);
             } else {
-                console.log('readMetadataTileFile callback second case');
                 _this.getRemoteETag(tileObject, function(remoteETag){
                     if(metadata.etag != remoteETag && remoteETag !== null){
-                        console.log('getRemoteETag callback first case');
                         callback(true);
                     } else {
-                        console.log('getRemoteETag callback second case');
                         callback(false);
                     }
                 });
@@ -712,7 +700,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
 
     readMetadataTileFile: function(tileObject, callback){
         var path  = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject)+'.metadata';
-        console.log('readMetadataTileFile', path);
         $.getJSON(path, function(metadata) {
            (callback || function(){})(metadata);
         }).fail(function() {
@@ -723,14 +710,12 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     writeMetadataTileFile: function(tileObject, metadata, callback){
         var _this = this ;
         var path  = this.getTilePath(tileObject)+'.metadata';
-        console.log('writeMetadataTileFile '+ path);
         if(window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG){
             if(!window.ChromiumCallbacks){
                 window.ChromiumCallbacks = [] ;
             }
             ChromiumCallbacks[11] = function(success){
                 if(success){
-                    console.log(path+ " is on SDCARDwriteJSON");
                 } else {
                     console.log("writeJSONError while writing " +path);
                 }
@@ -743,15 +728,12 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     getRemoteETag: function(tileObject, callback){
         var http = new XMLHttpRequest(),
             url  = this.getTileUrl({x:tileObject.x, y:tileObject.y},tileObject.z);
-        console.log('getRemoteETag', url);
         http.withCredentials = true;
         http.open('HEAD', url, true);
         http.onreadystatechange = function() {
             if (this.readyState == this.DONE && this.status === 200) {
-                console.log('getRemoteETag onreadystatechange DONE&&200='+this.getResponseHeader("etag"));
                 callback(this.getResponseHeader("etag"));
             } else if(this.readyState == this.DONE && this.status === 403){
-                console.log('getRemoteETag onreadystatechange DONE&&403');
                 Smartgeo.silentLogin();
                 callback(null);
             }
@@ -760,7 +742,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
     },
 
     convertDataURIToBinary: function (dataURI) {
-        console.log('convertDataURIToBinary');
         var BASE64_MARKER = ';base64,';
         var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
         var base64 = dataURI.substring(base64Index);
