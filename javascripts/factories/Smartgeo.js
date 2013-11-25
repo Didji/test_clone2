@@ -189,7 +189,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : false,
+                'report' : true,
                 'goto'   : false,
                 'logout'   : false
             };
@@ -338,9 +338,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             if (!request) {
 
                 request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
-                
+
                 var criteria_length = Object.keys(search.criteria).length, i = 0 , regex ;
-                
+
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
                         if (search.criteria[criter] == 1 * search.criteria[criter]) {
@@ -361,7 +361,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 t.executeSql(request, [],
                     function(t, results) {
                         console.timeEnd(request);
-            
+
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
                             try{
@@ -386,7 +386,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 setTimeout(function() {
                     Smartgeo.set('online', true);
                     $rootScope.$broadcast("DEVICE_IS_ONLINE");
-                    Smartgeo.log(i18n.get("_SMARTGEO_ONLINE"));
+                    Smartgeo.log(("_SMARTGEO_ONLINE"));
                     Smartgeo.silentLogin();
                 }, 1000);
             }, false);
@@ -394,7 +394,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             window.addEventListener('offline', function(e) {
                 Smartgeo.set('online', false);
                 $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-                Smartgeo.log(i18n.get("_SMARTGEO_OFFLINE"));
+                Smartgeo.log(("_SMARTGEO_OFFLINE"));
             }, false);
 
         },
@@ -420,7 +420,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         selectSiteRemotely: function(site, success, error){
             if(!site){
-                Smartgeo.log(i18n.get("_SMARTGEO_ZERO_SITE_SELECTED"));
+                Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
                 return ;
             }
             var url = Smartgeo.getServiceUrl('global.auth.json', {
