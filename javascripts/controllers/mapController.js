@@ -62,6 +62,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         return false;
     }
 
+
     G3ME.map.on('click', function(e) {
 
         if (!$scope.consultationIsEnabled) {
