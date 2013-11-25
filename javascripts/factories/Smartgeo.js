@@ -185,6 +185,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return check;
         },
 
+        findAssetsByGuids_big : function(site, guids, callback, partial_response){
+            partial_response = partial_response || [];
+            if(guids.length === 0){
+                return callback(partial_response);
+            } else {
+                Smartgeo.findAssetsByGuids(site, guids.slice(0, 333), function(assets){
+                    Smartgeo.findAssetsByGuids_big(site, guids.slice(333), callback, partial_response.concat(assets));
+                });
+            }
+        },
 
         // TODO : put this in a RightsManager
         getRight: function(module){
@@ -197,7 +207,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         findAssetsByGuids: function(site, guids, callback, zones, partial_response){
-             if (!zones) {
+
+            if(guids.length > 333){
+                return Smartgeo.findAssetsByGuids_big(site, guids, callback);
+            }
+
+            if (!zones) {
                 zones = site.zones ;
                 partial_response = [];
             }
@@ -214,6 +229,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             if (typeof guids !== 'object') {
                 guids = [guids];
             }
+
             if (guids.length === 0) {
                 return callback([]);
             }
@@ -234,17 +250,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 t.executeSql(request, arguments_,
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
-                            var ast = rslt.rows.item(i);
+                            var ast = angular.copy(rslt.rows.item(i));
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            ast.guid = ast.id;
+                            ast.geometry = JSON.parse(ast.geometry);
                             partial_response.push(ast);
                         }
                         _this.findAssetsByGuids(site,guids, callback, zones.slice(1), partial_response);
                     },
-                    function(SqlError) {
-                        console.log(JSON.stringify(SqlError));
+                    function(tx, SqlError) {
+                        alertify.error(SqlError.message);
+                        console.log(arguments_.length);
                     });
-            }, function(SqlError) {
-                console.log(JSON.stringify(SqlError));
+            }, function(tx, SqlError) {
+                alertify.error(SqlError.message);
+                console.log(arguments_.length);
             });
 
         },

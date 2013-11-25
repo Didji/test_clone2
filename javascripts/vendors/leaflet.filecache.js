@@ -1515,7 +1515,6 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                             console.log("Error when building blob");
                         }
                     }
-                    // image.style.border  = 'solid 1px blue';
                     window.URL = window.URL || window.webkitURL;
                     image.src           =   URL.createObjectURL(blob);
                     image.onerror = function(event) {

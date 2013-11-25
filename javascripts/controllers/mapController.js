@@ -4,6 +4,24 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
+    var SELECTED_ASSET_ICON     = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/marker-icon-selected.png',
+                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
+                            iconSize        : [25,  41],
+                            iconAnchor      : [12,  41],
+                            popupAnchor     : [ 1, -34],
+                            shadowSize      : [41,  41]
+                        }),
+        NON_SELECTED_ASSET_ICON = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/marker-icon.png',
+                            iconRetinaUrl   : 'javascripts/vendors/images/marker-icon-2x.png',
+                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
+                            iconSize        : [25,  41],
+                            iconAnchor      : [12,  41],
+                            popupAnchor     : [ 1, -34],
+                            shadowSize      : [41,  41]
+                        });
+
     if(!$rootScope.site){
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
         $location.path("#");
@@ -64,7 +82,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
     G3ME.map.on('click', function(e) {
-
+        // TODO : put this method on a G3ME.findAssetInCircle or findAssetInExtent or findAssetByExtent or findAsset(array|string|object);
         if (!$scope.consultationIsEnabled) {
             return false;
         }
@@ -199,20 +217,79 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         activateConsultation();
     });
 
+    $scope.$on("__MAP_SETVIEW__", function(event, extent){
+        if(extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax){
+            G3ME.map.fitBounds([[extent.ymin, extent.xmin] , [extent.ymax, extent.xmax]]);
+        } else {
+            alertify.error("Extent non valide");
+        }
+
+    });
+
     $scope.$on("ACTIVATE_POSITION", activatePosition);
 
+
+    /*
+     *   General events
+     */
+    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
+        $scope.zoomOnAsset(asset);
+    });
     $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
         $scope.highlightAsset(asset);
     });
     $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
         $scope.unHighlightAsset(asset);
     });
-    $scope.$on("UNHIGHALLLIGHT_ASSET", function(event){
+    $scope.$on("HIGHLIGHT_ASSETS", function(event, assets, marker, clickHandler){
+        for (var i = 0; i < assets.length; i++) {
+            $scope.highlightAsset(assets[i], marker, clickHandler);
+        }
+    });
+    $scope.$on("UNHIGHLIGHT_ASSETS", function(event, assets){
+        for (var i = 0; i < assets.length; i++) {
+            $scope.unHighlightAsset(assets[i]);
+        }
+    });
+    $scope.$on("UNHIGHLIGHT_ALL_ASSET", function(event){
         $scope.unHighlightAllAsset();
     });
-    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
-        $scope.zoomOnAsset(asset);
+
+
+
+    /*
+     *   Planning related events
+     */
+    $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
+        G3ME.map.removeLayer(mission.cluster);
     });
+
+    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
+        mission.cluster = mission.cluster || L.markerClusterGroup();
+        for (var i = 0; i < mission.assetsCache.length; i++) {
+            var init = false ;
+            if(!mission.assetsCache[i].marker){
+                init = true ;
+                mission.assetsCache[i].marker = L.marker([mission.assetsCache[i].geometry.coordinates[1], mission.assetsCache[i].geometry.coordinates[0]]);
+            }
+            mission.assetsCache[i].marker.setIcon(mission.assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+            if(init){
+                (function(i,marker){
+                    marker.on('click', function(){
+                        clickHandler(mission, i);
+                    });
+                })(i, mission.assetsCache[i].marker);
+            }
+            mission.cluster.addLayer(mission.assetsCache[i].marker);
+        }
+        G3ME.map.addLayer(mission.cluster);
+    });
+
+    $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
+        asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+    });
+
+
 
     // Fonction utilitaire créant un contrôle Leaflet.
     function makeControl(title, icon, onclick) {
@@ -245,6 +322,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
         }
         G3ME.map.addControl(POSITION_CONTROL);
+        G3ME.map.on('locationfound', setLocationMarker);
+        G3ME.map.locate({watch: true, setView: true});
 
         if(window.SmartgeoChromium && SmartgeoChromium.locate){
             if(!window.ChromiumCallbacks){
@@ -354,7 +433,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
 
-        customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
+        customClickHandler = customClickHandler || function(){
+            $scope.zoomOnAsset(asset);
+        };
 
         if(G3ME.assetsMarkers[asset.guid]){
             G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
@@ -374,12 +455,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
 
-        G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
-        G3ME.assetsMarkers[asset.guid].on('dblclick', function(){
-            $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
-        });
-        G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
-        G3ME.invalidateMapSize();
+        G3ME.assetsMarkers[asset.guid]
+            .on('click', function(){
+                customClickHandler();
+            })
+            .on('dblclick', function(){
+                $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
+            }).addTo(G3ME.map);
     };
 
     $scope.unHighlightAsset = function(asset){
