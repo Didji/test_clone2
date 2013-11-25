@@ -88,6 +88,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             zoom = G3ME.map.getZoom(),
             request = "";
 
+            console.log(radius);
+
         for (var i = 0, length_ = $rootScope.site.zones.length; i < length_; i++) {
             zone = $rootScope.site.zones[i];
             if (G3ME.extents_match(zone.extent, {
@@ -132,9 +134,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         $(circle._path).fadeOut(1500, function() {
             G3ME.map.removeLayer(circle);
         });
-// $(rect._path).fadeOut(1500, function() {
-//             G3ME.map.removeLayer(rect);
-//         });
+
 
         SQLite.openDatabase({
             name: zone.database_name,
@@ -157,35 +157,27 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                         asset.priority = asset_.priority ;
 
                         if(asset.geometry.type === "LineString"){
-                            console.log('LineString');
+
                             for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
 
                                 var segment = {
-                                    x1 : asset.geometry.coordinates[j][0],
-                                    x2 : asset.geometry.coordinates[j + 1][0],
-                                    y1 : asset.geometry.coordinates[j][1],
-                                    y2 : asset.geometry.coordinates[j + 1][1],
-                                }
-
-                                // console.log(segment_extent);
-
-                                if(G3ME.segment_within_extent(segment, {
-                                    xmin: xmin,
-                                    xmax: xmax,
-                                    ymin: ymin,
-                                    ymax: ymax
+                                    a : {
+                                        x : asset.geometry.coordinates[j][0],
+                                        y : asset.geometry.coordinates[j][1]
+                                    } ,
+                                    b : {
+                                        x : asset.geometry.coordinates[j + 1][0],
+                                        y : asset.geometry.coordinates[j + 1][1]
+                                    }
+                                } ;
+                                if(G3ME.segmentCircleCollision(segment, {
+                                    x : coords.lng,
+                                    y : coords.lat,
+                                    r : (radius * 0.00001 ) / 1.1132
                                 })){
                                     assets.push(asset);
                                     break;
                                 }
-
-                                // if(    asset.geometry.coordinates[j][0] <= xmax
-                                //     && asset.geometry.coordinates[j][0] >= xmin
-                                //     && asset.geometry.coordinates[j][1] <= ymax
-                                //     && asset.geometry.coordinates[j][1] >= ymin ) {
-                                //     assets.push(asset);
-                                //     break;
-                                // }
                             }
                         } else {
                             assets.push(asset);
