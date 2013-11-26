@@ -1,5 +1,6 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n ) {
 
+
     // TODO : a faire dans l'installation (pour des raisons obscures, je n'y suis pas arrivé)
     $rootScope.site.activities._byId = [];
     for (i = 0; i < $rootScope.site.activities.length; i++) {
@@ -49,6 +50,17 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         $scope.reports = $scope.reports.slice(0,$index).concat($scope.reports.slice($index+1,$scope.reports.length));
         Smartgeo.set_('reports',$scope.reports, function(){
              $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+        });
+    };
+
+    $scope.uninstallCurrentSite = function(){
+        alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label), function (e) {
+            if (e) {
+                $location.path('sites/uninstall/'+ site.id);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
         });
     };
 });
