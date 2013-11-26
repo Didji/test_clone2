@@ -115,7 +115,14 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                     if(!assets.length){
                         callback([]);
                     } else if(assets.length === 1){
-                        callback([assets[0].ymin,assets[0].xmin]);
+                        console.log(assets);
+                        var geometry = JSON.parse(assets[0].geometry) ;
+                        if(geometry.type === 'Point'){
+                            callback([assets[0].ymin,assets[0].xmin]);
+                        } else {
+                            callback([geometry.coordinates[0][1],geometry.coordinates[0][0]]);
+                        }
+
                     } else {
                         // TODO: return barycenter of ALL assets
                     }
@@ -136,11 +143,108 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         },
 
         extents_match : function(extent1, extent2){
-            return extent1.xmax > extent2.xmin &&
-                extent2.xmax > extent1.xmin &&
-                extent1.ymax > extent2.ymin &&
-                extent2.ymax > extent1.ymin;
+            return !(extent1.xmax < extent2.xmin ||
+                     extent1.xmin > extent2.xmax ||
+                     extent1.ymin > extent2.ymax ||
+                     extent1.ymax < extent2.ymin);
         },
+
+        segment_within_extent: function(segment, extent) {
+            return true;
+
+            // On commence par calculer les paramètres de la droite
+            // qui porte le segment.
+            // Ce qui implique un cas particulier : le segment vertical.
+            // if(segment.x1 == segment.x2) {
+            //     // Dans le cas d'un segment vertical, il y a intersection
+            //     // si le segment est entre les deux bornes en x de l'emprise.
+            //     return extent.xmin <= segment.x1 && extent.xmax >= segment.x1;
+            // }
+            // if(segment.y1 == segment.y2) {
+            //     // Dans le cas d'un segment horizontal, il y a intersection
+            //     // si le segment est entre les deux bornes en y de l'emprise.
+            //     return extent.ymin <= segment.y1 && extent.ymax >= segment.y1;
+            // }
+
+            // // Et donc, revenons aux paramètres de la droite...
+            // // La droite est de la forme y = ax + b.
+            // var a = (segment.y1 - segment.y2) / (segment.x1 - segment.x2),
+            //     b = segment.y1 - segment.x1 * a;
+
+            // // On calcul maintenant les coordonnées des points d'intersection
+            // // de la droite avec les côtés de l'emprise. Si le segment est
+            // // dans la boite, ces intersection sont obligatoirement sur les bords.
+            // var y1 = a * extent.xmin + b,
+            //     y2 = a * extent.xmax + b;
+
+            // return (y1 <= extent.ymax && y1 >= extent.ymin)
+            //          || (y2 <= extent.ymax && y2 >= extent.ymin);
+        },
+
+        distanceBetweenPoints : function(a, b){
+            var R = 6371; // km
+            var dLat = L.LatLng.DEG_TO_RAD * (b.y-a.y);
+            var dLon = L.LatLng.DEG_TO_RAD * (b.x-a.x);
+            var aytorad = L.LatLng.DEG_TO_RAD * (a.y);
+            var bytorad = L.LatLng.DEG_TO_RAD * (b.y);
+
+            var a_ = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(aytorad) * Math.cos(bytorad);
+            var c = 2 * Math.atan2(Math.sqrt(a_), Math.sqrt(1-a_));
+            var d = R * c;
+            return d ;
+        },
+
+        lineCircleCollision : function(a, b, circle){
+            var u = {
+                x : b.x - a.x ,
+                y : b.y - a.y
+            },
+                ac = {
+                x : circle.x - a.x,
+                y : circle.y - a.y
+            },
+                num = u.x*ac.y - u.y*ac.x,
+                denom = Math.sqrt(u.x*u.x + u.y*u.y);
+
+
+            return (num = num < 0 ? -num : num / denom) < circle.r ? true : false ;
+
+        },
+
+        pointCircleCollision: function(a, circle){
+            // console.log((Math.pow(circle.x -  a.x, 2 ) + Math.pow(circle.y - a.y, 2 ))*111.325, Math.pow(circle.r, 2));
+            // console.log( Math.pow(G3ME.distanceBetweenPoints(a, circle),2), (Math.pow(circle.x - a.x, 2 ) + Math.pow(circle.y - a.y, 2 )) , Math.pow(circle.r, 2) ) ;
+            // console.log(G3ME.distanceBetweenPoints(a, circle) , circle.r , G3ME.distanceBetweenPoints(a, circle) <= circle.r );
+             return G3ME.distanceBetweenPoints(a, circle) <= circle.r ;
+        },
+
+        segmentCircleCollision : function(segment, circle){
+
+            if(!G3ME.lineCircleCollision(segment.a, segment.b, circle)){
+                return false;
+            }
+
+            var a  = segment.a,
+                b  = segment.b,
+                ab = {
+                x : b.x - a.x ,
+                y : b.y - a.y
+                }, ac = {
+                    x : circle.x - a.x ,
+                    y : circle.y - a.y
+                }, bc = {
+                    x : circle.x - b.x ,
+                    y : circle.y - b.y
+                },
+                scal1 =   ab.x  * ac.x +   ab.y  * ac.y ,
+                scal2 = -(ab.x) * bc.x + (-ab.y) * bc.y ;
+
+            return  (scal1 >= 0 && scal2 >= 0)            ||
+                    G3ME.pointCircleCollision(a, circle)  ||
+                    G3ME.pointCircleCollision(b, circle) ;
+        },
+
         setVisibility: function(layers) {
             this.active_layers = [];
             for(var i in layers) {
@@ -304,7 +408,9 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
             var request  = " SELECT * FROM ASSETS ";
                 request += " WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
-                request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+                request += "    AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ";
+
+                // request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
 
             if(this.active_layers) {
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';

@@ -37,6 +37,14 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         // ERROR
     }
 
+    $scope.bidouille = function(event ){
+        setTimeout(function(){
+            if(window.document.body.scrollHeight < $(event.currentTarget).closest('label').offset().top ){
+                document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).closest('label').offset().top - 10 ;
+            }
+        },500);
+    };
+
     $scope.loadAssets = function(){
         // TODO: optimize
         Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets){

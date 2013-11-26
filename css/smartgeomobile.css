@@ -539,6 +539,10 @@ ul.ged-gallery li img {
     width:  32px;
 }
 
+.leaflet-bottom.leaflet-left {
+    z-index:0;
+}
+
 .select2-search-choice-close{
     padding : 0 !important; /* Désolé, pris par le temps */
 box-shadow: none!important; /* Désolé, pris par le temps */

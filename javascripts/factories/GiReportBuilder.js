@@ -18,7 +18,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               }
               str += '>';
               str += field.label;
-              str += '<span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
+              str += ' <span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
               var model = (field['default'] && field['default'].pkey) ? 'report.overrides['+field.id+']' : 'report.fields['+field.id+']',
                   placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields['+field.id+']}}' : '';
               switch(field.type) {
@@ -31,7 +31,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-model = "'+model+'"></input>';
                       break;
                   case 'T':
-                      str += '<input class="form-control" \
+                      str += '<input  class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          type="time" \
                                          name="f"     \
@@ -39,7 +39,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-model = "'+model+'"></input>';
                       break;
                   case 'N':
-                      str += '<input class="form-control" \
+                      str += '<input  ng-click="bidouille($event)"  class="form-control" \
                                          ng-required="'+myField+'.required" \
                                          ng-pattern="numberPattern"\
                                          type="number" \
@@ -73,7 +73,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                       str += '</span>';
                       break;
                   default:
-                      str += '<input ng-required="'+myField+'.required" \
+                      str += '<input  ng-click="bidouille($event)"  ng-required="'+myField+'.required" \
                                      class="form-control" \
                                      type="text" \
                                      name="f" \

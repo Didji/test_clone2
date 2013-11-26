@@ -4,7 +4,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
 
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
-        _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
+        _INSTALL_MAX_ASSETS_PER_ZONE             : 128,
         _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  500,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
