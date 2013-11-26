@@ -77,7 +77,10 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             });
         }
     }
-    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
+    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE',
+        function(){
+            setTimeout(updateSyncNumber, 1000);
+        });
     $scope.$on('_MENU_CLOSE_', $scope.close);
 
     $scope.activateConsultation = function(event){

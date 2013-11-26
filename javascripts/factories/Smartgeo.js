@@ -199,7 +199,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : true,
+                'report' : false,
                 'goto'   : false,
                 'logout'   : false
             };
