@@ -16,9 +16,14 @@ angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
                  ( this.label[this.FALLBACK_LANGUAGE] && (this.CACHE = this.FALLBACK_LANGUAGE ) ) ;
         },
         label: window.smartgeo_i18n_lang,
-        get : function(key, args){
-            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key], i = 0;
-            while(args && s && s.indexOf('%s') !== -1 && i < args.length) s=s.replace('%s',args[i++]);
+        get : function(key){
+            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key], i = 0, args = [];
+            for (var j = 1; j < arguments.length; j++) {
+                args.push(arguments[j]);
+            }
+            while(args && s && s.indexOf('%s') !== -1 && i < args.length){
+                s=s.replace('%s',args[i++]);
+            }
             return (s === undefined && key !== undefined ? this.UNTRANSLATED_CHAR : s) ;
         },
         select: function(lang){
