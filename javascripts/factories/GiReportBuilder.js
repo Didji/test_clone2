@@ -18,7 +18,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
               }
               str += '>';
               str += field.label;
-              str += '<span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
+              str += ' <span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
               var model = (field['default'] && field['default'].pkey) ? 'report.overrides['+field.id+']' : 'report.fields['+field.id+']',
                   placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields['+field.id+']}}' : '';
               switch(field.type) {
