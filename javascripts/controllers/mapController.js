@@ -72,7 +72,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
         var coords = e.latlng,
             mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
-            radius = 40 * mpp,
+            radius_p = 40,
+            radius = radius_p * mpp,
             circle = new L.Circle(coords, radius, {
                 color: "#fc9e49",
                 weight: 1
@@ -88,8 +89,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             zone,
             zoom = G3ME.map.getZoom(),
             request = "";
-
-            console.log(radius);
 
         for (var i = 0, length_ = $rootScope.site.zones.length; i < length_; i++) {
             zone = $rootScope.site.zones[i];
@@ -160,23 +159,21 @@ console.log('test');
 
                         if(asset.geometry.type === "LineString"){
 
-                            for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
+                            var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
+                                p2,
+                                p3,
+                                distanceToCenter;
 
-                                var segment = {
-                                    a : {
-                                        x : asset.geometry.coordinates[j][0],
-                                        y : asset.geometry.coordinates[j][1]
-                                    } ,
-                                    b : {
-                                        x : asset.geometry.coordinates[j + 1][0],
-                                        y : asset.geometry.coordinates[j + 1][1]
-                                    }
-                                } ;
-                                if(G3ME.segmentCircleCollision(segment, {
-                                    x : coords.lng,
-                                    y : coords.lat,
-                                    r : (radius * 0.00001 ) / 1.1132
-                                })){
+                            for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
+                                if(j){
+                                    p2 = p3;
+                                } else {
+                                    p2 = G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j]);
+                                }
+                                p3 = G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j+1]);
+                                distanceToCenter = L.LineUtil.pointToSegmentDistance(p1,p2,p3);
+
+                                if(distanceToCenter <= radius_p ){
                                     assets.push(asset);
                                     break;
                                 }
