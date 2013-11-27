@@ -139,7 +139,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                     transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
                     transaction.executeSql('CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, maplabel, minzoom integer, maxzoom integer, asset)');
-                    transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (id, xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function(){
+                    transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)');
+                    transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function(){
                         Installer.checkpoint("create_zones_databases_", site.zones.length, callback);
                     });
                 });
