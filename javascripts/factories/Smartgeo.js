@@ -226,6 +226,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
+                t.executeSql('CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)');
                 t.executeSql(request, [],
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
