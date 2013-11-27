@@ -63,26 +63,18 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     };
 
     function updateSyncNumber(event, number) {
-        if(number !== undefined && number !== null){
-            $scope.toSyncNumber = number ;
+        Smartgeo.get_('reports', function(reports){
+            reports = reports || [] ;
+            $scope.toSyncNumber = 0 ;
+            for (var i = 0; i < reports.length; i++) {
+                if(!reports[i].synced){
+                    $scope.toSyncNumber++ ;
+                }
+            }
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
-        } else {
-            Smartgeo.get_('reports', function(reports){
-                reports = reports || [] ;
-                $scope.toSyncNumber = 0 ;
-                for (var i = 0; i < reports.length; i++) {
-                    if(!reports[i].synced){
-                        $scope.toSyncNumber++ ;
-                    }
-                }
-                // $scope.toSyncNumber = (reports||[]).length ;
-                if(!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            });
-        }
+        });
     }
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE',updateSyncNumber);
     $scope.$on('_MENU_CLOSE_', $scope.close);
