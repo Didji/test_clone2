@@ -1,6 +1,6 @@
 <div ng-controller="synchronizationMenuController">
     <ul>
-        <li ng-show="reports.length">
+        <li ng-show="toBeSyncLenght() > 0;">
             <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='syncAll()'>
                 <button class="btn btn-primary">
                     <span class="icon-refresh"></span>
@@ -33,7 +33,7 @@
             </div>
         </li>
 
-        <li ng-show="!reports.length">
+        <li ng-show="toBeSyncLenght() <= 0;">
             <a style='padding-left: 1em;font-size:1em;'>
                 <span class="icon-check"></span>
                 <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n>

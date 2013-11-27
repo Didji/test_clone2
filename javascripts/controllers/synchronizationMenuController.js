@@ -1,5 +1,5 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n, $timeout ) {
-
+    $scope.reports = [];
 
     // TODO : a faire dans l'installation (pour des raisons obscures, je n'y suis pas arrivé)
     $rootScope.site.activities._byId = [];
@@ -31,13 +31,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     });
 
     $scope.syncAll = function(){
-        if(!$scope.reports.length){
-            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", 0);
-            return ;
-        } else {
-            for (var i = 0; i < $scope.reports.length; i++) {
-               $scope.sync(i);
-            }
+        for (var i = 0; i < $scope.reports.length; i++) {
+           $scope.sync(i);
         }
     };
 
@@ -50,11 +45,12 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             .success(function(){
                 $scope.reports[$index].syncInProgress = false ;
                 $scope.reports[$index].synced = true ;
-                $timeout(function(){
-                    $scope.reports[$index].hide = true ;
-                },3000);
+
                 Smartgeo.set_('reports', $scope.reports, function(){
-                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                    $timeout(function(){
+                        $scope.reports[$index].hide = true ;
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                    },3000);
                 });
             }).error(function(error){
                 if(error.error){
@@ -93,6 +89,16 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 break;
             }
         }
+    };
+
+    $scope.toBeSyncLenght = function(){
+        var len = 0;
+        for (var i = 0; i < $scope.reports.length; i++) {
+            if(!$scope.reports[i].synced){
+                len++;
+            }
+        }
+        return len ;
     };
 
 });
