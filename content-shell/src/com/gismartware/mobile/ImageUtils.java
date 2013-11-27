@@ -28,11 +28,8 @@ public abstract class ImageUtils {
 		int inSampleSize = 1;
 
 		if (height > reqHeight || width > reqWidth) {
-
-			// Calculate ratios of height and width to requested height and
-			// width
-			final int heightRatio = Math.round((float) height
-					/ (float) reqHeight);
+			// Calculate ratios of height and width to requested height and width
+			final int heightRatio = Math.round((float) height / (float) reqHeight);
 			final int widthRatio = Math.round((float) width / (float) reqWidth);
 
 			// Choose the smallest ratio as inSampleSize value, this will guarantee
