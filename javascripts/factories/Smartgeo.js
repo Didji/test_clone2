@@ -220,18 +220,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
             var arguments_ = [],
                 _this = this,
-                request = 'SELECT * FROM ASSETS ',
+                request = 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
                 j;
 
-            for (j = 0; j < guids.length; j++) {
-                request += j === 0 ? ' WHERE ' : ' or ';
-                request += ' (id like ? or id = ? ) ';
-                arguments_.push(1 * guids[j], 1 * guids[j]);
-            }
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
-                t.executeSql(request, arguments_,
+                t.executeSql(request, [],
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
                             var ast = rslt.rows.item(i);
@@ -240,11 +235,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         }
                         _this.findAssetsByGuids(site,guids, callback, zones.slice(1), partial_response);
                     },
-                    function(SqlError) {
-                        console.log(JSON.stringify(SqlError));
+                    function(tx, SqlError) {
+                        console.log(SqlError.message);
+                        alertify.log(SqlError.message);
                     });
             }, function(SqlError) {
-                console.log(JSON.stringify(SqlError));
+                console.log(SqlError.message);
+                alertify.log(SqlError.message);
             });
 
         },
