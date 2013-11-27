@@ -51,13 +51,17 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             if(target[0] instanceof Array || G3ME.benchMe) {
                 // target is an extend
                 G3ME.map.fitBounds(target);
-            } else if(!isNaN(target[0])){
+            } else if( target[0] == 1*target[0] && (target instanceof Object) ){
                 // target is a point
+
+                console.log(target);
                 G3ME.map.setView(target,18);
                 if(marker){
                     marker._map && (marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
+            } else {
+                G3ME.map.fitBounds(Smartgeo.get('lastLeafletMapExtent'));
             }
 
             G3ME.invalidateMapSize();
