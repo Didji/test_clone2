@@ -106,16 +106,19 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         },
 
         parseTarget: function(site, target, callback){
+            console.log("Going to parse ", target);
             if(G3ME.isLatLngString(target)){
                 // it's a position ! returning [lat, lng]
+                console.log(target, "is Lat/Lng");
                 callback(target.split(','));
             } else {
                 // so maybe it's an asset id ?
+                console.log(target, "is a guid, looking for it in database");
                 Smartgeo.findAssetsByGuids(site, target, function(assets){
+                    console.log("findAssetsByGuids returns :", assets);
                     if(!assets.length){
                         callback([]);
                     } else if(assets.length === 1){
-                        console.log(assets);
                         var geometry = JSON.parse(assets[0].geometry) ;
                         if(geometry.type === 'Point'){
                             callback([assets[0].ymin,assets[0].xmin]);
