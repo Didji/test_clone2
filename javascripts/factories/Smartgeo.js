@@ -196,7 +196,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return smgeo_right[module];
         },
 
-        findAssetsByGuids: function(site, guids, callback, zones, partial_response){
+        findAssetsByGuids: function(site, guids, callback, zones, partial_response, error){
              if (!zones) {
                 zones = site.zones ;
                 partial_response = [];
@@ -238,10 +238,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                     function(tx, SqlError) {
                         console.log(SqlError.message);
                         alertify.log(SqlError.message);
+                        (error || function(){})();
                     });
             }, function(SqlError) {
                 console.log(SqlError.message);
                 alertify.log(SqlError.message);
+                (error || function(){})();
             });
 
         },
