@@ -105,7 +105,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
         },
 
-        parseTarget: function(site, target, callback){
+        parseTarget: function(site, target, callback, error){
             console.log("Going to parse ", target);
             if(G3ME.isLatLngString(target)){
                 // it's a position ! returning [lat, lng]
@@ -129,6 +129,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                     } else {
                         // TODO: return barycenter of ALL assets
                     }
+                }, null, null, function(){
+                    (error || function(){})();
                 });
             }
         },

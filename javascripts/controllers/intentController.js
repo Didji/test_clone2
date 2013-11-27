@@ -64,6 +64,8 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 $rootScope.map_marker = undefined;
             }
             tokenAuth($routeParams.token, redirect);
+        }, function(){
+            document.location.reload();
         });
     } else {
         tokenAuth($routeParams.token, redirect);
