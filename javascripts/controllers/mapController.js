@@ -55,10 +55,10 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 .setContent(popupContent)
                 .openOn(G3ME.map);
 
-        if($rootScope.report_activity){
+        if(!$rootScope.report_activity){
             setTimeout(function() {
                 $(popup._container).fadeOut();
-            }, 3000);
+            }, 4000);
         }
 
         $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
