@@ -3,7 +3,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
     Smartgeo.unset('lastLeafletMapExtent'); // VEOLIA - QC 9427
 
-    function getRemoteSites() {
+    function getRemoteSites(callback) {
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
         $http.get(url)
             .success(function(sites){
@@ -22,6 +22,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 }
                 autoLoadOrNot();
                 $scope.ready = true;
+                (callback || function(){})(true) ;
             }).error(function(error, errorCode){
                 var knownSites = Smartgeo.get('sites') || {};
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
@@ -29,11 +30,12 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 for(var id in knownSites) {
                     $scope.sites.push(knownSites[id]);
                 }
-                if(!$scope.sites.length){
-                    return  $location.path('/');
-                }
+                // if(!$scope.sites.length){
+                //     return  $location.path('/');
+                // }
                 autoLoadOrNot();
                 $scope.ready = true;
+                (callback || function(){})(false) ;
             });
     }
 
@@ -82,4 +84,19 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     };
     $scope.online = Smartgeo.get('online');
     $scope.online === false ? getLocalSites() : getRemoteSites() ;
+
+    $scope.reloadOnline = function(){
+        $scope.errorMessage = "";
+        // Smartgeo.set('online', true);
+        // $scope.online = Smartgeo.get('online');
+        // document.location.reload();
+        getRemoteSites(function(success){
+            if(success){
+                Smartgeo.set('online', true);
+                $scope.online = Smartgeo.get('online');
+            } else {
+                $scope.errorMessage = "La récupération des sites a échouée.";
+            }
+        });
+    };
 });
