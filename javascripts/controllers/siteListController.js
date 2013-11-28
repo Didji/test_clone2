@@ -53,6 +53,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
         autoLoadOrNot();
         // $scope.sites = Smartgeo.get('sites') ;
         $scope.ready = true;
+        Smartgeo.set('online', true);
     }
 
     function autoLoadOrNot() {
@@ -85,18 +86,4 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     $scope.online = Smartgeo.get('online');
     $scope.online === false ? getLocalSites() : getRemoteSites() ;
 
-    $scope.reloadOnline = function(){
-        $scope.errorMessage = "";
-        // Smartgeo.set('online', true);
-        // $scope.online = Smartgeo.get('online');
-        // document.location.reload();
-        getRemoteSites(function(success){
-            if(success){
-                Smartgeo.set('online', true);
-                $scope.online = Smartgeo.get('online');
-            } else {
-                $scope.errorMessage = "La récupération des sites a échouée.";
-            }
-        });
-    };
 });
