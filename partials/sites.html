@@ -7,6 +7,18 @@
             <i18n>_SITE_LOADING</i18n>
         </div>
         <div ng-show="ready">
+            <div ng-show='!online && !sites.length'>
+                <hr>
+                <p>Votre terminal n'est pas connecté au serveur et aucun site n'a été installé préalablement.</p>
+                <button class="btn btn-primary" ng-click='reloadOnline()'>Récuperer la liste des sites sur le serveur</button>
+                <hr>
+                <p  class="text-danger" ng-show='errorMessage.length' >{{errorMessage}}</p>
+            </div>
+            <div ng-show='online && !sites.length'>
+                <hr>
+                <p>Le serveur n'a retourné aucun site.</p>
+                <br>
+            </div>
             <div ng-repeat="site in sites | filter:isInstalled">
                 <hr ng-show="$index==0" />
                 <div class="btn-group has-carret" >
