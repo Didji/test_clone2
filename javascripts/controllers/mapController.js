@@ -365,13 +365,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
                         style : { color: '#fc9e49', opacity:0.9, weight: 7 }
                     });
-                window.LineString = asset.geometry ;
-                for(var i = 0; i< asset.geometry.coordinates.length -1 ; i++){
-                    var p1 = asset.geometry.coordinates[i] ;
-                    var p2 = asset.geometry.coordinates[i+1] ;
-                    var lenght = Math.sqrt(  Math.pow(p2[0] - p1[0], 2 ) +   Math.pow(p2[1] - p1[1], 2 ));
-                    console.log(length);
-                }
                 break;
             default:
                 Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
