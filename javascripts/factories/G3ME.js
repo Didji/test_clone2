@@ -109,6 +109,27 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
         },
 
+        getLineStringMiddle: function(lineString){
+                var lineStringLength = 0 ;
+                var coords = lineString.coordinates ;
+                for(var i = 0; i< coords.length -1 ; i++){
+                    var p1 = coords[i] ;
+                    var p2 = coords[i+1] ;
+                    p1[2] = lineStringLength;
+                    lineStringLength += Math.sqrt(  Math.pow(p2[0] - p1[0], 2 ) + Math.pow(p2[1] - p1[1], 2 ));
+                }
+                coords[coords.length-1][2] = lineStringLength ;
+                var lineStringMiddle = lineStringLength/2 ;
+                for(i = 0; i< coords.length -1 ; i++){
+                    var p1b = coords[i] ;
+                    var p2b = coords[i+1] ;
+                    if(p1b[2] <= lineStringMiddle  && lineStringMiddle <= p2b[2] ){
+                        var raptor = (lineStringMiddle - p1b[2]) / (p2b[2]-p1b[2]) ;
+                        return [ p1b[1] + raptor*(p2b[1]-p1b[1]) , p1b[0] + raptor*(p2b[0]-p1b[0]) ];
+                    }
+                }
+        },
+
         parseTarget: function(site, target, callback, error){
             console.log("Going to parse ", target);
             if(G3ME.isLatLngString(target)){
@@ -127,9 +148,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                         if(geometry.type === 'Point'){
                             callback([assets[0].ymin,assets[0].xmin]);
                         } else {
-                            callback([geometry.coordinates[0][1],geometry.coordinates[0][0]]);
+                            callback(G3ME.getLineStringMiddle(geometry));
                         }
-
                     } else {
                         // TODO: return barycenter of ALL assets
                     }
@@ -223,6 +243,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 G3ME.benchmarkElapsedBenchmarks = 0;
             }
         },
+
+
 
         drawTile : function(canvas, tilePoint, performBench) {
             var ctx = canvas.getContext('2d');
