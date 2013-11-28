@@ -51,13 +51,17 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             if(target[0] instanceof Array || G3ME.benchMe) {
                 // target is an extend
                 G3ME.map.fitBounds(target);
-            } else if(!isNaN(target[0])){
+            } else if( target[0] == 1*target[0] && (target instanceof Object) ){
                 // target is a point
+
+                console.log(target);
                 G3ME.map.setView(target,18);
                 if(marker){
                     marker._map && (marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
+            } else {
+                G3ME.map.fitBounds(Smartgeo.get('lastLeafletMapExtent'));
             }
 
             G3ME.invalidateMapSize();
@@ -105,27 +109,52 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
         },
 
-        parseTarget: function(site, target, callback){
+        getLineStringMiddle: function(lineString){
+                var lineStringLength = 0 ;
+                var coords = lineString.coordinates ;
+                for(var i = 0; i< coords.length -1 ; i++){
+                    var p1 = coords[i] ;
+                    var p2 = coords[i+1] ;
+                    p1[2] = lineStringLength;
+                    lineStringLength += Math.sqrt(  Math.pow(p2[0] - p1[0], 2 ) + Math.pow(p2[1] - p1[1], 2 ));
+                }
+                coords[coords.length-1][2] = lineStringLength ;
+                var lineStringMiddle = lineStringLength/2 ;
+                for(i = 0; i< coords.length -1 ; i++){
+                    var p1b = coords[i] ;
+                    var p2b = coords[i+1] ;
+                    if(p1b[2] <= lineStringMiddle  && lineStringMiddle <= p2b[2] ){
+                        var raptor = (lineStringMiddle - p1b[2]) / (p2b[2]-p1b[2]) ;
+                        return [ p1b[1] + raptor*(p2b[1]-p1b[1]) , p1b[0] + raptor*(p2b[0]-p1b[0]) ];
+                    }
+                }
+        },
+
+        parseTarget: function(site, target, callback, error){
+            console.log("Going to parse ", target);
             if(G3ME.isLatLngString(target)){
                 // it's a position ! returning [lat, lng]
+                console.log(target, "is Lat/Lng");
                 callback(target.split(','));
             } else {
                 // so maybe it's an asset id ?
+                console.log(target, "is a guid, looking for it in database");
                 Smartgeo.findAssetsByGuids(site, target, function(assets){
+                    console.log("findAssetsByGuids returns :", assets);
                     if(!assets.length){
                         callback([]);
                     } else if(assets.length === 1){
-                        console.log(assets);
                         var geometry = JSON.parse(assets[0].geometry) ;
                         if(geometry.type === 'Point'){
                             callback([assets[0].ymin,assets[0].xmin]);
                         } else {
-                            callback([geometry.coordinates[0][1],geometry.coordinates[0][0]]);
+                            callback(G3ME.getLineStringMiddle(geometry));
                         }
-
                     } else {
                         // TODO: return barycenter of ALL assets
                     }
+                }, null, null, function(){
+                    (error || function(){})();
                 });
             }
         },
@@ -214,6 +243,8 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 G3ME.benchmarkElapsedBenchmarks = 0;
             }
         },
+
+
 
         drawTile : function(canvas, tilePoint, performBench) {
             var ctx = canvas.getContext('2d');

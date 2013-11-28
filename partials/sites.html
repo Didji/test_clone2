@@ -7,6 +7,11 @@
             <i18n>_SITE_LOADING</i18n>
         </div>
         <div ng-show="ready">
+            <div ng-show='!sites.length'>
+                <hr>
+                <p class="text-danger">Erreur : Votre terminal n'est pas connecté au serveur et aucun site n'a été installé préalablement.</p>
+                <hr>
+            </div>
             <div ng-repeat="site in sites | filter:isInstalled">
                 <hr ng-show="$index==0" />
                 <div class="btn-group has-carret" >

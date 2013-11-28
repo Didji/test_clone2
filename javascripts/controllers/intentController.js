@@ -3,9 +3,9 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     $scope.controller = $routeParams.controller ;
 
     if ($scope.controller === "oauth") {
-    	if (!Smartgeo.get("url") || Smartgeo.get("url").indexOf($routeParams.url) === -1) {
-    		Smartgeo.setGimapUrl($routeParams.url);
-    	}
+        if (!Smartgeo.get("url") || Smartgeo.get("url").indexOf($routeParams.url) === -1) {
+            Smartgeo.setGimapUrl($routeParams.url);
+        }
         return tokenAuth($routeParams.token, function(){
             $location.path('sites/');
         });
@@ -64,6 +64,8 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 $rootScope.map_marker = undefined;
             }
             tokenAuth($routeParams.token, redirect);
+        }, function(){
+            document.location.reload();
         });
     } else {
         tokenAuth($routeParams.token, redirect);

@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.7",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.10",
 
         /**
          * @ngdoc property
@@ -199,7 +199,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : false,
+                'report' : true,
                 'goto'   : false,
                 'logout'   : false
             };
@@ -236,18 +236,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
             var arguments_ = [],
                 _this = this,
-                request = 'SELECT * FROM ASSETS ',
+                request = 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
                 j;
 
-            for (j = 0; j < guids.length; j++) {
-                request += j === 0 ? ' WHERE ' : ' or ';
-                request += ' (id like ? or id = ? ) ';
-                arguments_.push(1 * guids[j], 1 * guids[j]);
-            }
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
-                t.executeSql(request, arguments_,
+                t.executeSql('CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)');
+                t.executeSql(request, [],
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
                             var ast = angular.copy(rslt.rows.item(i));
@@ -259,14 +255,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                         _this.findAssetsByGuids(site,guids, callback, zones.slice(1), partial_response);
                     },
                     function(tx, SqlError) {
-                        alertify.error(SqlError.message);
-                        console.log(arguments_.length);
+                        console.log(SqlError.message);
+                        alertify.log(SqlError.message);
+                        (error || function(){})();
                     });
-            }, function(tx, SqlError) {
-                alertify.error(SqlError.message);
-                console.log(arguments_.length);
+            }, function(SqlError) {
+                console.log(SqlError.message);
+                alertify.log(SqlError.message);
+                (error || function(){})();
             });
-
         },
 
         findAssetsByOkey: function(site, okey, callback, zones, partial_response){
