@@ -38,16 +38,19 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
     });
 
-    function noConsultableAssets(coords) {
-        var popupContent ;
-        // if($rootScope.report_activity){
-        //     // TODO: put a XY Report button inside
-        //     popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
-        // } else {
-        //     popupContent = '<p>Aucun patrimoine dans cette zone.</p>';
-        // }
-        popupContent = '<p>'+i18n.get('_MAP_ZERO_OBJECT_FOUND')+'</p>';
 
+
+    function noConsultableAssets(coords) {
+        var popupContent = '<p>'+i18n.get('_MAP_ZERO_OBJECT_FOUND')+'</p>';
+        if($rootScope.report_activity){
+            popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
+            $(document).on('click', '.openLocateReportButton' , function(){
+                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lng+','+coords.lat+'/');
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+        }
         var popup = L.popup().setLatLng(coords)
                 .setContent(popupContent)
                 .openOn(G3ME.map);
@@ -225,8 +228,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         return new Constr();
     }
 
-
-    //
     // Gestion du mode de suivi de la position GPS.
     //
     var POSITION_MARKER,
