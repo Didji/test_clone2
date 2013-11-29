@@ -96,7 +96,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         $timeout(function() {
             $scope[Smartgeo.get('persitence.menu.open') ? 'open' : 'close']();
         }, 10);
-        var openLevels = Smartgeo.get('persitence.menu.open.level');
+        var openLevels = Smartgeo.get('persitence.menu.open.level') || [];
         $('.mp-level').each(function(i){
             if(openLevels.indexOf(i) !== -1){
                 $(this).addClass('mp-level-open');

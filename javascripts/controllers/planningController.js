@@ -78,6 +78,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             .query()
             .success( function(results){
                 $scope.missions = results.results;
+                console.log( $scope.missions);
                 $scope.updateCount();
                 Smartgeo.set('missions', $scope.missions);
             })
@@ -95,27 +96,35 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Controller initialization :
      * <ul>
      *     <li>Get local mission(s)</li>
-     *     <li>Reduce mission.assets array considering pending reports ({@link planningController#removeObsoleteMission $scope.removeObsoleteMission()})</li>
+     *     <li>Reduce mission.assets array considering pending reports ({@link planningController#removeObsoleteMission $scope.removeObsoleteMission})</li>
      *     <li>Send pending missions related reports (TODO)</li>
-     *     <li>Get remote mission(s) ({@link planningController#synchronize $scope.synchronize()}) </li>
-     *     <li>Set current day : today at midnight or last viewed day </li>
-     *     <li>Initialize counts ({@link planningController#updateCount $scope.updateCount()}) </li>
+     *     <li>Get remote mission(s) ({@link planningController#synchronize $scope.synchronize}) </li>
+     *     <li>Set current day : today at midnight or last viewed day ({@link planningController#getMidnightTimestamp $scope.getMidnightTimestamp})</li>
+     *     <li>Initialize counts ({@link planningController#updateCount $scope.updateCount}) </li>
      * </ul>
      */
     $scope.initialize = function(){
-
         $scope.missions = Smartgeo.get('missions');
-
         Smartgeo.get_('reports', function(reports){
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
             $scope.updateCount();
         });
-
-        var now = (new Date()) ;
-        $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || new Date( now - ( now.getMilliseconds() + now.getSeconds()*1000 + now.getMinutes()*60000 + now.getHours()*3600000)).getTime() ;
-
+        $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
     };
+
+    /**
+     * @ngdoc method
+     * @name planningController#getMidnightTimestamp
+     * @methodOf planningController
+     * @description
+     * @returns {Date} This morning midnight timestamp
+     */
+     $scope.getMidnightTimestamp = function(){
+        var n = (new Date()) ;
+        n -= (n.getMilliseconds()+n.getSeconds()*1000+n.getMinutes()*60000+n.getHours()*3600000).getTime();
+        return new Date(n) ;
+     };
 
     /**
      * @ngdoc method
@@ -125,10 +134,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Reduce mission.assets array considering pending reports
      */
     $scope.removeObsoleteMission = function(reports){
+        var missions = Smartgeo.get('missions');
         for(var i in reports){
-            if($scope.missions[reports[i].mission]){
+            if(missions[reports[i].mission]){
                 var pendingAssets = reports[i].assets,
-                    mission = $scope.missions[reports[i].mission] ;
+                    mission = missions[reports[i].mission] ;
                 for(var j = 0 , length = mission.assets.length; j < length ; j++){
                     if( pendingAssets.indexOf(mission.assets[j]) !== -1){
                         mission.done.push(mission.assets[j]);
@@ -138,6 +148,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 }
             }
         }
+        $scope.missions = missions;
     };
 
     /**
@@ -150,12 +161,12 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.updateCount = function(missions, today){
         $scope.beforeToday = $scope.afterToday = 0 ;
         for(var i in $scope.missions){
-            if( $filter('customDateFilter')($scope.missions[i].begin) < ($scope.dayToDisplay - $scope.DAY_TO_MS) && $scope.missions[i].assets.length){
-                $scope.beforeToday++ ;
+            var mission = $scope.missions[i], f = $filter('customDateFilter');
+            if(!mission.assets.length){
+                continue;
             }
-            if( $filter('customDateFilter')($scope.missions[i].end) > ($scope.dayToDisplay + $scope.DAY_TO_MS) && $scope.missions[i].assets.length){
-                $scope.afterToday++ ;
-            }
+            $scope.beforeToday += f(mission.begin) < ($scope.dayToDisplay - $scope.DAY_TO_MS) ? 1 : 0 ;
+            $scope.afterToday  += f(mission.end  ) > ($scope.dayToDisplay + $scope.DAY_TO_MS) ? 1 : 0 ;
         }
     };
 
