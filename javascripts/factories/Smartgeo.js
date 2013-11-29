@@ -7,6 +7,8 @@
 
 angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
+    'use strict' ;
+
     var Smartgeo = {
 
         /**
@@ -388,8 +390,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 window.ChromiumCallbacks = [] ;
             }
 
-            ChromiumCallbacks[20] = Smartgeo._onlineTask  ;
-            ChromiumCallbacks[21] = Smartgeo._offlineTask ;
+            window.ChromiumCallbacks[20] = function(){
+                Smartgeo._onlineTask();
+            };
+            window.ChromiumCallbacks[21] = function(){
+                Smartgeo._offlineTask() ;
+            };
         },
 
         _onlineTask : function() {
