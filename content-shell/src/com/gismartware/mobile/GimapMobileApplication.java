@@ -36,6 +36,7 @@ public class GimapMobileApplication extends Application {
 	 */
 	public static Context context;
 
+	private GimapMobileMainActivity mCurrentActivity = null;
 
     @Override
     public void onCreate() {
@@ -53,4 +54,12 @@ public class GimapMobileApplication extends Application {
         ResourceExtractor.setMandatoryPaksToExtract(MANDATORY_PAK_FILES);
         PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX);
     }
+    
+    public GimapMobileMainActivity getCurrentActivity( ){
+        return mCurrentActivity;
+  }
+  
+  public void setCurrentActivity(GimapMobileMainActivity mCurrentActivity) {
+        this.mCurrentActivity = mCurrentActivity;
+  }
 }
