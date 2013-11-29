@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.10",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.11",
 
         /**
          * @ngdoc property
@@ -189,7 +189,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : true,
+                'report' : false,
                 'goto'   : false,
                 'logout'   : false
             };
