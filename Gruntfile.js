@@ -14,6 +14,7 @@ module.exports = function (grunt) {
         // imageLink: "http://gismartware.com",
       },
       all: [
+      'javascripts/controllers/planningController.js',
       'javascripts/factories/Smartgeo.js',
       'javascripts/factories/G3ME.js',
       ]

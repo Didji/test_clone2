@@ -1,0 +1,45 @@
+<h1><code ng:non-bindable="">planningController</code>
+<span class="hint"></span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p>Planning controller</p></div>
+<div class="member method"><h2 id="Methods">Methods</h2>
+<ul class="methods"><li><h3 id="add1day">add1day()</h3>
+<div class="add1day"><p>Go to next day</p></div>
+</li>
+<li><h3 id="gototoday">gototoday()</h3>
+<div class="gototoday"><p>Go to current day</p></div>
+</li>
+<li><h3 id="initialize">initialize()</h3>
+<div class="initialize"><p>Controller initialization :</p>
+
+<ul>
+    <li>Get local mission(s)</li>
+    <li>Reduce mission.assets array considering pending reports (<a href="#/api/planningController#removeObsoleteMission">$scope.removeObsoleteMission()</a>)</li>
+    <li>Send pending missions related reports (TODO)</li>
+    <li>Get remote mission(s) (<a href="#/api/planningController#synchronize">$scope.synchronize()</a>) </li>
+    <li>Set current day : today at midnight or last viewed day </li>
+    <li>Initialize counts (<a href="#/api/planningController#updateCount">$scope.updateCount()</a>) </li>
+</ul></div>
+</li>
+<li><h3 id="remove1day">remove1day()</h3>
+<div class="remove1day"><p>Go to preview day with mission(s)</p></div>
+</li>
+<li><h3 id="removeObsoleteMission">removeObsoleteMission()</h3>
+<div class="removeobsoletemission"><p>Reduce mission.assets array considering pending reports</p></div>
+</li>
+<li><h3 id="synchronize">synchronize()</h3>
+<div class="synchronize"><p>Get mission from remote server</p></div>
+</li>
+<li><h3 id="updateCount">updateCount()</h3>
+<div class="updatecount"><p>Update number in left and right arrows</p></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="Properties">Properties</h2>
+<ul class="properties"><li><h3 id="DAY_TO_MS">DAY_TO_MS</h3>
+<div class="day-to-ms"><p>Day to milliseconds</p></div>
+</li>
+</ul>
+</div>
+</div>

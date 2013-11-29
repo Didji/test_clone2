@@ -1,20 +1,6 @@
-angular.module('smartgeomobile').controller('menuController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n){
+angular.module('smartgeomobile').controller('menuController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout){
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
-
-    $window.document.addEventListener('menubutton', function() {
-        $scope.mlPushMenu._openMenu();
-    }, false);
-
-    $window.document.addEventListener('backbutton', function(e) {
-        var self = $scope.mlPushMenu;
-
-        self.level--;
-        self.level === 0 ? self._resetMenu() : self._closeMenu();
-        e.preventDefault();
-
-        return false;
-    }, false);
 
     function closest( e, classname ) {
         if( classie.has( e, classname ) ) {
@@ -31,17 +17,29 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             $scope.mlPushMenu.level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' ) - 1;
             $scope.mlPushMenu.level === 0 ? $scope.mlPushMenu._resetMenu() : $scope.mlPushMenu._closeMenu();
         }
+        var openned = [];
+        $('.mp-level').each(function(i){
+            if( $(this).hasClass('mp-level-open')){
+                openned.push(i) ;
+            }
+        });
+        Smartgeo.set('persitence.menu.open.level', openned);
+
         return false;
     };
 
     $scope.close = function (event){
+        Smartgeo.set('persitence.menu.open', false);
+        console.log('close') ;
         if(event && event.preventDefault){
             event.preventDefault();
         }
         $scope.mlPushMenu._resetMenu();
         return false;
     };
+
     $scope.open = function (event){
+        Smartgeo.set('persitence.menu.open', true);
         if(event && event.preventDefault){
             event.preventDefault();
         }
@@ -55,11 +53,14 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         return false;
     };
 
-    $scope.toggle = function(event){
-        if(event && event.preventDefault){
-            event.preventDefault();
+    $scope.toggle = function($event){
+        if($event && $event.preventDefault){
+            $event.preventDefault();
+            $event.stopPropagation();
         }
         $scope[$scope.mlPushMenu.menuState === 'opened' ? 'close' : 'open']();
+
+        return false ;
     };
 
     function updateSyncNumber(event, number) {
@@ -76,8 +77,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             }
         });
     }
-    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE',updateSyncNumber);
-    $scope.$on('_MENU_CLOSE_', $scope.close);
 
     $scope.activateConsultation = function(event){
         event.preventDefault();
@@ -92,4 +91,22 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         $scope.close();
         return false;
     };
+
+    function restorePreviousState(){
+        $timeout(function() {
+            $scope[Smartgeo.get('persitence.menu.open') ? 'open' : 'close']();
+        }, 10);
+        var openLevels = Smartgeo.get('persitence.menu.open.level');
+        $('.mp-level').each(function(i){
+            if(openLevels.indexOf(i) !== -1){
+                $(this).addClass('mp-level-open');
+            }
+        });
+    }
+
+    restorePreviousState() ;
+
+    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE',updateSyncNumber);
+    $scope.$on('_MENU_CLOSE_', $scope.close);
+
 });
