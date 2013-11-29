@@ -150,6 +150,8 @@ if ( typeof define === 'function' && define.amd ) {
 		}
 	}
 
+	var classie = window.classie ;
+
 	mlPushMenu.prototype = {
 		defaults : {
 			type : 'overlap', // overlap || cover
@@ -172,14 +174,6 @@ if ( typeof define === 'function' && define.amd ) {
 		_initEvents : function() {
 			var self = this;
 
-			$('body').on( this.eventtype, '.mp-pushed', function(event) {
-				if(event.target.classList.contains('mp-pusher')){
-					event.preventDefault();
-					self._resetMenu();
-					return false ;
-				}
-			});
-
 			this.menuItems.forEach( function( el, i ) {
 				var subLevel = el.querySelector( 'div.mp-level' );
 				if( subLevel ) {
@@ -188,7 +182,6 @@ if ( typeof define === 'function' && define.amd ) {
 						var level = closest( el, 'mp-level' ).getAttribute( 'data-level' );
 						if( self.level <= level ) {
 							ev.stopPropagation();
-							// classie.add( closest( el, 'mp-level' ), 'mp-level-overlay' );
 							self._openMenu( subLevel );
 						}
 					} );
@@ -207,18 +200,22 @@ if ( typeof define === 'function' && define.amd ) {
 		},
 
 		_openMenu : function( subLevel ) {
-
 			// increment level depth
 			this.menuState = 'opened';
 			++this.level;
-
 			// move the main wrapper
 			var levelFactor = ( this.level - 1 ) * this.options.levelSpacing,
 				translateVal = this.options.type === 'overlap' ? this.el.offsetWidth + levelFactor : this.el.offsetWidth;
 
 			this._setTransform( 'translate3d(' + translateVal + 'px,0,0)' );
-
 			if( subLevel ) {
+				var openned = [];
+				$('.mp-level').each(function(i){
+					if( $(this).hasClass('mp-level-open')){
+						openned.push(i) ;
+					}
+				});
+				Smartgeo.set('persitence.menu.open.level', openned);
 				// reset transform for sublevel
 				this._setTransform( '', subLevel );
 				// need to reset the translate value for the level menus that have the same level depth and are not open
@@ -269,10 +266,6 @@ if ( typeof define === 'function' && define.amd ) {
 				var levelEl = this.levels[i];
 				if( levelEl.getAttribute( 'data-level' ) >= this.level + 1 ) {
 					classie.remove( levelEl, 'mp-level-open' );
-					// classie.remove( levelEl, 'mp-level-overlay' );
-				}
-				else if( Number( levelEl.getAttribute( 'data-level' ) ) == this.level ) {
-					// classie.remove( levelEl, 'mp-level-overlay' );
 				}
 			}
 		}

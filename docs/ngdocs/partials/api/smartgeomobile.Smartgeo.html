@@ -55,6 +55,16 @@ Smartgeo.ping(function(gimapIsReachable){
 <li><h3 id="reset">reset()</h3>
 <div class="reset"><p>Clear localStorage</p></div>
 </li>
+<li><h3 id="sanitizeAsset">sanitizeAsset(asset)</h3>
+<div class="sanitizeasset"><p>Sanitize asset eg. replace horrible characters</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">asset – {string} – </code>
+<p>serialized asset</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Object}</code>
+– <p>Satitized parsed asset</p></div>
+</div>
+</li>
 <li><h3 id="setGimapUrl">setGimapUrl(url)</h3>
 <div class="setgimapurl"><p>Set Gimap serveur URL on localstorage, add <strong><code>http://</code></strong> and <strong><code>/index.php?service=</code></strong> if needed and clear localStorage</p><h4 id="Parameters">Parameters</h4>
 <ul class="parameters"><li><code ng:non-bindable="">url – {string} – </code>

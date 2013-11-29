@@ -170,8 +170,8 @@ html, body {
  * droite et mange la carte. On désactive ça.
  */
 #mp-pusher {
-    -webkit-transition: -webkit-transform 0.5s;
-    transition:  transform 0.5s;
+/*    -webkit-transition: -webkit-transform 0.5s;
+    transition:  transform 0.5s;*/
 }
 
 #mp-menu {
@@ -424,8 +424,8 @@ label.prettycheckbox {
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+/*    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;*/
 }
 label.prettycheckbox.checked {
     border-radius: 3px;
@@ -489,10 +489,10 @@ ul.ged-gallery li img {
   opacity: 0;
   width: 0;
 
-  -webkit-transition: opacity 0.25s, width 0.25s;
+/*  -webkit-transition: opacity 0.25s, width 0.25s;
   -moz-transition: opacity 0.25s, width 0.25s;
   -o-transition: opacity 0.25s, width 0.25s;
-  transition: opacity 0.25s, width 0.25s;
+  transition: opacity 0.25s, width 0.25s;*/
 }
 
 .has-spinner.active {

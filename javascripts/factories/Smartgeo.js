@@ -13,7 +13,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_SMARTGEO_MOBILE_VERSION
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {string}
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
@@ -23,7 +22,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {integer}
          * @const
          * @default 361
          * @description Width threshold which describes big screen
@@ -35,8 +33,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {integer}
-         * @const
          * @default 10
          * @description Define max results per search (and advanced search)
          */
@@ -499,10 +495,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // GETTER AND SETTER
         get: function(parameter){
+            // TODO : best perf with cache
             return JSON.parse(localStorage.getItem(parameter));
         },
 
         set: function(parameter, value){
+            // TODO : best perf with cache
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 

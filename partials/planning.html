@@ -1,23 +1,24 @@
 <div ng-controller="planningController">
     <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()">Actualiser</button>
-    <div class="btn-group" style="margin-left: 70px;">
-      <button type="button" ng-click="remove1day()" ng-disabled="minimumTime > (dayToDisplay-86400000)" class="btn btn-lg btn-default">
-        <span class="icon icon-arrow-left"> </span> <span class="badge" ng-show="beforeToday > 0"> {{beforeToday}} </span>
+    <div class="btn-group btn-block btn-custom-block">
+      <button style='min-width: 80px;' type="button" ng-click="remove1day();updateCount();" ng-disabled="beforeToday <= 0" class="btn btn-default">
+        <span class="icon icon-arrow-left"/>
+        <span class="label label-warning" ng-show="beforeToday > 0">{{beforeToday}}</span>
       </button>
-      <button type="button" ng-click="gototoday()"  class="btn btn-lg btn-default"><span class="icon icon-circle"></span></button>
-      <!-- <button type="button" ng-cli                        class="btn btn-lg btn-default"><span class="icon icon-calendar"></span></button> -->
-      <button type="button" ng-click="add1day()"    ng-disabled="maximumTime < (dayToDisplay+86400000)" class="btn btn-lg btn-default">
-         <span class="badge" ng-show="afterToday > 0"> {{afterToday}} </span> <span class="icon icon-arrow-right"> </span>
+      <button type="button" ng-click="gototoday();updateCount();"  class="btn btn-default">Aujourd'hui</button>
+      <button style='min-width: 80px;' type="button" ng-click="add1day();updateCount();" ng-disabled="afterToday <= 0" class="btn btn-default">
+        <span class="label label-warning" style='margin-right: 3px;' ng-show="afterToday > 0">{{afterToday}}</span>
+        <span class="icon icon-arrow-right" />
       </button>
     </div>
 
-    <h2>{{dayToDisplay |  date:"dd/MM/yy"}} <input style='width: 56px;' type="date" ng-model='dayToDisplay'></h2>
+    <h2>{{dayToDisplay |  date:"dd/MM/yy"}} <input style='width: 56px;' type="date" ng-model='dayToDisplay' ng-change="updateCount();"></h2>
     <div ng-repeat="(key,mission) in (missions | moreThanOneDayButTodaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0">Missions transversales</h2>
+      <h2 ng-show="$index == 0">OT en cours</h2>
       <ng-include src="'partials/mission.html'"/>
     </div>
     <div ng-repeat="(key,mission) in (missions | todaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0">Missions du jour</h2>
+      <h2 ng-show="$index == 0">OT du jour</h2>
       <ng-include src="'partials/mission.html'"/>
     </div>
 </div>
