@@ -381,22 +381,30 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         _initializeGlobalEvents: function(){
+            window.addEventListener( 'online', Smartgeo._onlineTask, false);
+            window.addEventListener('offline', Smartgeo._offlineTask , false);
 
-            window.addEventListener('online', function(e) {
-                setTimeout(function() {
-                    Smartgeo.set('online', true);
-                    $rootScope.$broadcast("DEVICE_IS_ONLINE");
-                    Smartgeo.log(("_SMARTGEO_ONLINE"));
-                    Smartgeo.silentLogin();
-                }, 1000);
-            }, false);
+            if(!window.ChromiumCallbacks){
+                window.ChromiumCallbacks = [] ;
+            }
 
-            window.addEventListener('offline', function(e) {
-                Smartgeo.set('online', false);
-                $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-                Smartgeo.log(("_SMARTGEO_OFFLINE"));
-            }, false);
+            ChromiumCallbacks[20] = Smartgeo._onlineTask  ;
+            ChromiumCallbacks[21] = Smartgeo._offlineTask ;
+        },
 
+        _onlineTask : function() {
+            setTimeout(function() {
+                Smartgeo.set('online', true);
+                $rootScope.$broadcast("DEVICE_IS_ONLINE");
+                Smartgeo.log(("_SMARTGEO_ONLINE"));
+                Smartgeo.silentLogin();
+            }, 1000);
+        },
+
+        _offlineTask : function() {
+            Smartgeo.set('online', false);
+            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
+            Smartgeo.log(("_SMARTGEO_OFFLINE"));
         },
 
         silentLogin: function(callback){
