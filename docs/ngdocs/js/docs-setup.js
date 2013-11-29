@@ -8,7 +8,7 @@ NG_DOCS={
       "id": "planningController",
       "shortName": "planningController",
       "type": "object",
-      "keywords": "$scope add1day and api array arrows assets at considering controller counts current day day_to_ms from get go gototoday in initialization initialize last left local method midnight milliseconds mission missions next number object or pending planning planningcontroller preview property reduce related remote remove1day removeobsoletemission reports right server synchronize to today update updatecount viewed with"
+      "keywords": "$scope add1day and api array arrows assets at considering controller counts current day day_to_ms from get getmidnighttimestamp go gototoday in initialization initialize last left local method midnight milliseconds mission missions morning next number object or pending planning planningcontroller preview property reduce related remote remove1day removeobsoletemission reports right server synchronize this timestamp to today update updatecount viewed with"
     },
     {
       "section": "api",

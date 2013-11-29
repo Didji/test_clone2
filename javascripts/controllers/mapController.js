@@ -22,6 +22,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                             shadowSize      : [41,  41]
                         });
 
+        $scope.missionsClusters = [];
 
     if(!$rootScope.site){
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
@@ -253,28 +254,30 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
      *   Planning related events
      */
     $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
-        G3ME.map.removeLayer(mission.cluster);
+        G3ME.map.removeLayer($scope.missionsClusters[mission.id]);
     });
 
-    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
-        mission.cluster = mission.cluster || L.markerClusterGroup();
-        for (var i = 0; i < mission.assetsCache.length; i++) {
+    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
+
+        $scope.missionsClusters[mission.id] = $scope.missionsClusters[mission.id] ||  L.markerClusterGroup();
+
+        for (var i = 0; i < assetsCache.length; i++) {
             var init = false ;
-            if(!mission.assetsCache[i].marker){
+            if(!assetsCache[i].marker){
                 init = true ;
-                mission.assetsCache[i].marker = L.marker([mission.assetsCache[i].geometry.coordinates[1], mission.assetsCache[i].geometry.coordinates[0]]);
+                assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
             }
-            mission.assetsCache[i].marker.setIcon(mission.assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+            assetsCache[i].marker.setIcon(assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
             if(init){
                 (function(i,marker){
                     marker.on('click', function(){
                         clickHandler(mission, i);
                     });
-                })(i, mission.assetsCache[i].marker);
+                })(i, assetsCache[i].marker);
             }
-            mission.cluster.addLayer(mission.assetsCache[i].marker);
+            $scope.missionsClusters[mission.id].addLayer(assetsCache[i].marker);
         }
-        G3ME.map.addLayer(mission.cluster);
+        G3ME.map.addLayer($scope.missionsClusters[mission.id]);
     });
 
     $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){

@@ -18,6 +18,16 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.DAY_TO_MS = 86400000 ;
 
+
+    /**
+     * @ngdoc property
+     * @name planningController#assetsCache
+     * @propertyOf planningController
+     * @const
+     * @description Assets cache for conversion id->asset
+     */
+     $scope.assetsCache = [] ;
+
     /**
      * @ngdoc method
      * @name planningController#remove1day
@@ -71,19 +81,29 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @name planningController#synchronize
      * @methodOf planningController
      * @description
-     * Get mission from remote server
+     * Get mission from remote server but keep 'openned' attribute from local version
      */
     $scope.synchronize = function(){
         Mission
             .query()
             .success( function(results){
+                var openedMission = [], i;
+                for (i in $scope.missions) {
+                    if($scope.missions[i].openned){
+                        openedMission.push($scope.missions[i].id);
+                    }
+                }
+                for (i in results.results) {
+                    results.results[i].openned = (openedMission.indexOf(results.results[i].id) >= 0) ;
+                }
                 $scope.missions = results.results;
                 $scope.updateCount();
                 Smartgeo.set('missions', $scope.missions);
             })
             .error( function(){
-                /* TODO : n'afficher le message que lorsque l'on est en ligne */
-                alertify.error('Erreur lors de la mise à jour des missions');
+                if(Smartgeo.get('online')){
+                    alertify.error('Erreur lors de la mise à jour des missions');
+                }
             });
     };
 
@@ -172,23 +192,22 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.openMission = function($index){
         var mission = $scope.missions[$index] ;
         mission.openned = !mission.openned ;
+        console.log($scope.missions);
         Smartgeo.set('missions', $scope.missions);
 
-        if(mission.openned || !mission.assetsCache|| !mission.extent){
+        if(mission.openned || !$scope.assetsCache[mission.id]|| !mission.extent){
 
-
-
-            if(!mission.pendingAssetsExtent || !mission.assetsCache ){
+            if(!mission.pendingAssetsExtent || !$scope.assetsCache[mission.id] ){
                 if(mission.assets.length){
                     Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                         if( assets.length === 0 ){
                             alertify.log("Les objets de cette missions n'ont pas été trouvés.");
                             return ;
                         }
-                        mission.assetsCache         = assets ;
-                        mission.pendingAssetsExtent = G3ME.getExtentsFromAssetsList(assets);
+                        $scope.assetsCache[mission.id] = assets ;
+                        mission.pendingAssetsExtent = G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]);
                         mission.selectedAssets      = 0;
-                        mission.extent = G3ME.getExtentsFromAssetsList(mission.assetsCache);
+                        mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]);
 
                         $scope.highlightMission(mission);
                         $scope.$apply();
@@ -199,7 +218,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 $scope.highlightMission(mission);
             }
         } else {
-            G3ME.map.removeLayer($scope.fakeGeoJSONLayer);
             $rootScope.$broadcast('UNHIGHLIGHT_ASSETS_FOR_MISSION', mission);
         }
     };
@@ -216,19 +234,19 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.showReport = function($index){
         var mission = $scope.missions[$index],
             selectedAssets = [];
-        for (var i = 0; i < mission.assetsCache.length; i++) {
-            if(mission.assetsCache[i].selected){
-                selectedAssets.push(mission.assetsCache[i].id);
+        for (var i = 0; i < $scope.assetsCache[mission.id].length; i++) {
+            if($scope.assetsCache[mission.id][i].selected){
+                selectedAssets.push($scope.assetsCache[mission.id][i].id);
             }
         }
         $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
     };
 
     $scope.highlightMission = function(mission){
-        $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, null,
+        $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, $scope.assetsCache[mission.id], null,
             /* marker click handler */
             function(mission, id){
-                var asset = mission.assetsCache[id] ;
+                var asset = $scope.assetsCache[mission.id][id] ;
                 asset.selected = !!!asset.selected ;
                 mission.selectedAssets += asset.selected ? 1 : -1   ;
                 $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
