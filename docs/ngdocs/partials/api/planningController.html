@@ -7,6 +7,12 @@
 <ul class="methods"><li><h3 id="add1day">add1day()</h3>
 <div class="add1day"><p>Go to next day</p></div>
 </li>
+<li><h3 id="getMidnightTimestamp">getMidnightTimestamp()</h3>
+<div class="getmidnighttimestamp"><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Date}</code>
+– <p>This morning midnight timestamp</p></div>
+</div>
+</li>
 <li><h3 id="gototoday">gototoday()</h3>
 <div class="gototoday"><p>Go to current day</p></div>
 </li>
@@ -15,11 +21,11 @@
 
 <ul>
     <li>Get local mission(s)</li>
-    <li>Reduce mission.assets array considering pending reports (<a href="#/api/planningController#removeObsoleteMission">$scope.removeObsoleteMission()</a>)</li>
+    <li>Reduce mission.assets array considering pending reports (<a href="#/api/planningController#removeObsoleteMission">$scope.removeObsoleteMission</a>)</li>
     <li>Send pending missions related reports (TODO)</li>
-    <li>Get remote mission(s) (<a href="#/api/planningController#synchronize">$scope.synchronize()</a>) </li>
-    <li>Set current day : today at midnight or last viewed day </li>
-    <li>Initialize counts (<a href="#/api/planningController#updateCount">$scope.updateCount()</a>) </li>
+    <li>Get remote mission(s) (<a href="#/api/planningController#synchronize">$scope.synchronize</a>) </li>
+    <li>Set current day : today at midnight or last viewed day (<a href="#/api/planningController#getMidnightTimestamp">$scope.getMidnightTimestamp</a>)</li>
+    <li>Initialize counts (<a href="#/api/planningController#updateCount">$scope.updateCount</a>) </li>
 </ul></div>
 </li>
 <li><h3 id="remove1day">remove1day()</h3>
