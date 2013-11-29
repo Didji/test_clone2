@@ -43,6 +43,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -101,6 +103,10 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     private WindowAndroid mWindowAndroid;
     private BroadcastReceiver mReceiver;
     
+    /*
+     * COnnectivité
+     */
+    private boolean isConnected;
     
     @Override
 	public void onDestroy() {
@@ -227,6 +233,11 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         		mShellManager.setStartupUrl("file://" + url.toString());
         	}
         }
+        
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNw = cm.getActiveNetworkInfo ();
+        isConnected = (activeNw != null && activeNw.isConnected());
+        registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         
         /*if (!TextUtils.isEmpty(startupUrl)) {
             mShellManager.setStartupUrl(Shell.sanitizeUrl(startupUrl));
@@ -624,4 +635,26 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			return false;
 		}
 	}
+	
+	private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+    		final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    		
+			NetworkInfo activeNw = connMgr.getActiveNetworkInfo();
+			
+			if ((activeNw != null && activeNw.isConnected()) && !isConnected) {
+				isConnected = true;
+
+				if(getActiveShell() != null) {
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[20]();");
+				}
+			} else if((activeNw == null || !activeNw.isConnected()) && isConnected) {
+				isConnected = false;
+				if(getActiveShell() != null) {
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[21]();");
+				}
+			}
+    	}
+	};
 }
