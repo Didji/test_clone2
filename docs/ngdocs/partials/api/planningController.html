@@ -4,17 +4,26 @@
 <div><h2 id="Description">Description</h2>
 <div class="description"><p>Planning controller</p></div>
 <div class="member method"><h2 id="Methods">Methods</h2>
-<ul class="methods"><li><h3 id="add1day">add1day()</h3>
-<div class="add1day"><p>Go to next day</p></div>
-</li>
-<li><h3 id="getMidnightTimestamp">getMidnightTimestamp()</h3>
+<ul class="methods"><li><h3 id="getMidnightTimestamp">getMidnightTimestamp()</h3>
 <div class="getmidnighttimestamp"><h4 id="Returns">Returns</h4>
 <div class="returns"><code ng:non-bindable="">{Date}</code>
 – <p>This morning midnight timestamp</p></div>
 </div>
 </li>
-<li><h3 id="gototoday">gototoday()</h3>
-<div class="gototoday"><p>Go to current day</p></div>
+<li><h3 id="hideDoneAssets">hideDoneAssets($index)</h3>
+<div class="hidedoneassets"><p>hide done assets</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">$index – {integer} – </code>
+<p>index of concerned mission in $scope.missions attribute</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="highlightMission">highlightMission(mission)</h3>
+<div class="highlightmission"><p>Send <a href="#/api/mapController#HIGHLIGHT_ASSETS_FOR_MISSION">HIGHLIGHT_ASSETS_FOR_MISSION</a> event to
+the <a href="#/api/mapController">mapController</a> with concerned mission and set a callback method on marker click</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">mission – {Object} – </code>
+<p>concerned mission</p></li>
+</ul>
+</div>
 </li>
 <li><h3 id="initialize">initialize()</h3>
 <div class="initialize"><p>Controller initialization :</p>
@@ -28,23 +37,95 @@
     <li>Initialize counts (<a href="#/api/planningController#updateCount">$scope.updateCount</a>) </li>
 </ul></div>
 </li>
-<li><h3 id="remove1day">remove1day()</h3>
-<div class="remove1day"><p>Go to preview day with mission(s)</p></div>
+<li><h3 id="locateMission">locateMission($index)</h3>
+<div class="locatemission"><p>Set map view to the mission's extent. If mission has no extent yet, it set it.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">$index – {integer} – </code>
+<p>index of concerned mission in $scope.missions attribute</p></li>
+</ul>
+</div>
 </li>
-<li><h3 id="removeObsoleteMission">removeObsoleteMission()</h3>
-<div class="removeobsoletemission"><p>Reduce mission.assets array considering pending reports</p></div>
+<li><h3 id="openMission">openMission($index, locate)</h3>
+<div class="openmission"><p>Opens mission in planning, fetch list of related assets in database, and put it in cache (if cache does not exist).</p>
+
+<p>Then :</p>
+
+<ul>
+ <li>if it's open : displays clusters on map by calling <a href="#/api/planningController#highlightMission">$scope.highlightMission</a></li>
+ <li>if it's not : displays clusters on map by sending <a href="#/api/mapController#UNHIGHLIGHT_ASSETS_FOR_MISSION">UNHIGHLIGHT\_ASSETS\_FOR\_MISSION</a> event to the <a href="#/api/mapController">mapController</a> </li>
+</ul><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">$index – {integer} – </code>
+<p>index of concerned mission in $scope.missions attribute</p></li>
+<li><code ng:non-bindable="">locate – {boolean} – </code>
+<p>if true, set view to mission extent</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="removeObsoleteMission">removeObsoleteMission(reports)</h3>
+<div class="removeobsoletemission"><p>Reduce mission.assets array considering pending reports</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">reports – {array} – </code>
+<p>list of pending reports</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="showDoneAssets">showDoneAssets($index)</h3>
+<div class="showdoneassets"><p>Show done assets</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">$index – {integer} – </code>
+<p>index of concerned mission in $scope.missions attribute</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="showReport">showReport(mission)</h3>
+<div class="showreport"><p>Set map view to the mission's extent. If mission has no extent yet, it set it.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">mission – {Object} – </code>
+<p>concerned mission</p></li>
+</ul>
+</div>
 </li>
 <li><h3 id="synchronize">synchronize()</h3>
-<div class="synchronize"><p>Get mission from remote server</p></div>
+<div class="synchronize"><p>Get mission from remote server but keep 'openned' and 'displayDone' attributes from local version</p></div>
+</li>
+<li><h3 id="today">today()</h3>
+<div class="today"><p>Go to current day</p></div>
+</li>
+<li><h3 id="toggleDoneAssetsVisibility">toggleDoneAssetsVisibility($index)</h3>
+<div class="toggledoneassetsvisibility"><p>Toggle done assets visibility</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">$index – {integer} – </code>
+<p>index of concerned mission in $scope.missions attribute</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="tomorrow">tomorrow()</h3>
+<div class="tomorrow"><p>Go to next day</p></div>
 </li>
 <li><h3 id="updateCount">updateCount()</h3>
 <div class="updatecount"><p>Update number in left and right arrows</p></div>
+</li>
+<li><h3 id="yesterday">yesterday()</h3>
+<div class="yesterday"><p>Go to preview day with mission(s)</p></div>
 </li>
 </ul>
 </div>
 <div class="member property"><h2 id="Properties">Properties</h2>
 <ul class="properties"><li><h3 id="DAY_TO_MS">DAY_TO_MS</h3>
-<div class="day-to-ms"><p>Day to milliseconds</p></div>
+<div class="day-to-ms"><p>Day to milliseconds : 86400000</p></div>
+</li>
+<li><h3 id="afterToday">afterToday</h3>
+<div class="aftertoday"><p>Amount of mission after <a href="#/api/planningController#dayToDisplay">$scope.dayToDisplay</a></p></div>
+</li>
+<li><h3 id="assetsCache">assetsCache</h3>
+<div class="assetscache"><p>Assets cache for conversion id->asset</p></div>
+</li>
+<li><h3 id="beforeToday">beforeToday</h3>
+<div class="beforetoday"><p>Amount of mission before <a href="#/api/planningController#dayToDisplay">$scope.dayToDisplay</a></p></div>
+</li>
+<li><h3 id="dayToDisplay">dayToDisplay</h3>
+<div class="daytodisplay"><p>Current displayed day on planning</p></div>
+</li>
+<li><h3 id="doneAssetsCache">doneAssetsCache</h3>
+<div class="doneassetscache"><p>Done assets cache for conversion id->asset</p></div>
+</li>
+<li><h3 id="missions">missions</h3>
+<div class="missions"><p>List of missions, displayed on planning</p></div>
 </li>
 </ul>
 </div>
