@@ -271,7 +271,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
 
         $http
-            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 2500})
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 5000})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
                     reports = reports || [] ;
