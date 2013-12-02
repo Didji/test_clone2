@@ -54,7 +54,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             return false;
         }
         $scope.reports[$index].syncInProgress = true ;
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
+        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index], {timeout: 55000})
             .success(function(){
                 $scope.reports[$index].syncInProgress = false ;
                 $scope.reports[$index].synced = true ;
