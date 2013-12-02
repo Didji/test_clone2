@@ -9,8 +9,8 @@ module.exports = function (grunt) {
       options: {
         dest: 'docs/ngdocs',
         html5Mode: false,
-        title: "Smartgeo Mobile Documentation",
-        // image: "images/logo.png",
+        title: "Smartgeo Mobile",
+        image: "images/logo.png",
         // imageLink: "http://gismartware.com",
       },
       all: [
