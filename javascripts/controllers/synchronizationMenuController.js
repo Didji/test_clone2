@@ -16,7 +16,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         $scope.updateReportList();
         $scope.updateReportListInterval = setInterval(function(){
             $scope.updateReportList();
-        },15000);
+        },5000);
 
         $scope.syncAllInterval = setInterval(function(){
             $scope.syncAll();
