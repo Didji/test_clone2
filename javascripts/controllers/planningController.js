@@ -251,7 +251,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length ){
             return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
-                    return alertify.log("Les objets de cette missions n'ont pas été trouvés.");
+                    return alertify.log("Les objets de cette mission n'ont pas été trouvés.");
                 }
 
                 $scope.assetsCache[mission.id] = assets ;
