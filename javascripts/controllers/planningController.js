@@ -130,7 +130,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     }
                 }
                 $scope.updateCount();
-                // Smartgeo.set('missions', $scope.missions);
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -160,10 +159,14 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
         });
-        $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
         $scope.$watch('missions', function() {
-           Smartgeo.set('missions', $scope.missions);
+            Smartgeo.set('missions', $scope.missions);
         }, true);
+        $scope.$watch('dayToDisplay', function() {
+            $scope.updateCount();
+        }, true);
+        $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
+
     };
 
     /**
@@ -251,7 +254,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length ){
             return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
-                    return alertify.log("Les objets de cette missions n'ont pas été trouvés.");
+                    mission.isLoading = false ;
+                    $scope.$apply();
+                    return alertify.log("Les objets de cette mission n'ont pas été trouvés.");
                 }
 
                 $scope.assetsCache[mission.id] = assets ;
@@ -366,8 +371,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.showDoneAssets = function($index){
         var mission = $scope.missions[$index] ;
 
-        mission.isLoading   = true ;
-        mission.displayDone = true ;
+        mission.isLoading = mission.displayDone = true ;
 
         if(!$scope.doneAssetsCache[mission.id]){
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function(assets){
@@ -383,7 +387,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(!$scope.$$phase) {
             $scope.$apply();
         }
-        // Smartgeo.set('missions', $scope.missions);
     };
 
     /**
@@ -397,7 +400,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.displayDone = false ;
         $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
-        // Smartgeo.set('missions', $scope.missions);
     };
 
 });

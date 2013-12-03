@@ -40,6 +40,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          */
         _MAX_RESULTS_PER_SEARCH : 10,
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#localStorageCache
+         * @propertyOf smartgeomobile.Smartgeo
+         * @description Used for setter and getter best perf
+         */
+         localStorageCache : {},
+
 
         /**
          * @ngdoc method
@@ -159,7 +167,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 });
         },
 
-
         /**
          * @ngdoc method
          * @name smartgeomobile.Smartgeo#sanitizeAsset
@@ -173,6 +180,94 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
 
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#get
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @returns {*} Parameter's value
+         * @description
+         * Local storage getter
+         */
+        get: function(parameter){
+            return Smartgeo.localStorageCache[parameter] || JSON.parse(localStorage.getItem(parameter));
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#set
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {*} value Parameter's value
+         * @description
+         * Local storage setter
+         */
+        set: function(parameter, value){
+            localStorage.setItem(parameter, JSON.stringify(value));
+            Smartgeo.localStorageCache[parameter] = value;
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#unset
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @description
+         * Clear localStorage's value
+         */
+        unset: function(parameter){
+            Smartgeo.localStorageCache[parameter] = undefined;
+            localStorage.removeItem(parameter);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#get_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called with parameter's value
+         * @returns {*} Parameter's value
+         * @description
+         * IndexedDB getter
+         */
+        get_: function(parameter, callback){
+            IndexedDB.get(parameter, callback);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#set_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called when value is setted
+         * @returns {*} Parameter's value
+         * @description
+         * IndexedDB setter
+         */
+        set_: function(parameter, value, callback){
+            IndexedDB.set(parameter, value, callback);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#unset_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called when value is unsetted
+         * @description
+         * Clear IndexedDB's value
+         */
+        unset_: function(parameter, callback){
+            IndexedDB.unset(parameter);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#log
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Useless log wrapper
+         */
         log: function(){
             console.log(arguments);
         },
@@ -507,33 +602,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             });
         },
 
-        // GETTER AND SETTER
-        get: function(parameter){
-            // TODO : best perf with cache
-            return JSON.parse(localStorage.getItem(parameter));
-        },
-
-        set: function(parameter, value){
-            // TODO : best perf with cache
-            return localStorage.setItem(parameter, JSON.stringify(value));
-        },
-
-        unset: function(parameter){
-            return localStorage.removeItem(parameter);
-        },
-
-        // ASYNC GETTER AND SETTER
-        get_: function(parameter, callback){
-            IndexedDB.get(parameter, callback);
-        },
-
-        set_: function(parameter, value, callback){
-            IndexedDB.set(parameter, value, callback);
-        },
-
-        unset_: function(parameter, callback){
-            IndexedDB.unset(parameter);
-        }
     };
 
     Smartgeo._initializeGlobalEvents();
