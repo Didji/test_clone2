@@ -70,24 +70,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc method
-     * @name planningController#yesterday
-     * @methodOf planningController
-     * @description
-     * Go to preview day with mission(s)
-     */
-    $scope.yesterday = function(){
-        $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
-        $scope.dayToDisplay -= $scope.DAY_TO_MS ;
-        if( Object.keys($filter('todaysMissions')($scope.missions,$scope.dayToDisplay)).length +
-            Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions,$scope.dayToDisplay)).length === 0){
-            $scope.yesterday();
-        } else {
-            Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
-        }
-    };
-
-    /**
-     * @ngdoc method
      * @name planningController#today
      * @methodOf planningController
      * @description
@@ -100,17 +82,18 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc method
-     * @name planningController#tomorrow
+     * @name planningController#move
      * @methodOf planningController
+     * @param {integer} delta Amount of day to move. Negative or positive number.
      * @description
-     * Go to next day
+     * Move to other day
      */
-    $scope.tomorrow = function(){
+    $scope.move = function(delta){
         $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
-        $scope.dayToDisplay += $scope.DAY_TO_MS ;
+        $scope.dayToDisplay += delta*$scope.DAY_TO_MS ;
         if( Object.keys($filter('todaysMissions')($scope.missions,$scope.dayToDisplay)).length +
             Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions,$scope.dayToDisplay)).length === 0 ){
-            $scope.tomorrow();
+            $scope.move(delta);
         } else {
             Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
         }
@@ -147,7 +130,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     }
                 }
                 $scope.updateCount();
-                Smartgeo.set('missions', $scope.missions);
+                // Smartgeo.set('missions', $scope.missions);
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -178,6 +161,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.synchronize();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
+        $scope.$watch('missions', function() {
+           Smartgeo.set('missions', $scope.missions);
+        }, true);
     };
 
     /**
@@ -224,20 +210,21 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @name planningController#updateCount
      * @methodOf planningController
      * @description
-     * Update number in left and right arrows
+     * <ul>
+     *  <li>Format date to the right format, if it's comes from datepicker, it should be not weel formatted</li>
+     *  <li>Process and update number in left and right arrows </li>
+     * </ul>
      */
     $scope.updateCount = function(){
+        $scope.dayToDisplay = (new Date($scope.dayToDisplay).getTime());
         $scope.beforeToday = $scope.afterToday = 0 ;
         for(var i in $scope.missions){
             var mission = $scope.missions[i], f = $filter('customDateFilter');
             if(!mission.assets.length){
                 continue;
             }
-            // console.log( f(mission.begin) < ($scope.dayToDisplay - $scope.DAY_TO_MS), mission.begin , ($scope.dayToDisplay - $scope.DAY_TO_MS));
-            // console.log( f(mission.end  ) > ($scope.dayToDisplay + $scope.DAY_TO_MS), mission.end   , ($scope.dayToDisplay + $scope.DAY_TO_MS));
             $scope.beforeToday += f(mission.begin) < ($scope.dayToDisplay - $scope.DAY_TO_MS) ? 1 : 0 ;
             $scope.afterToday  += f(mission.end  ) > ($scope.dayToDisplay + $scope.DAY_TO_MS) ? 1 : 0 ;
-            // console.log($scope.beforeToday, $scope.afterToday );
         }
     };
 
@@ -260,7 +247,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.isLoading = true ;
         mission.openned = !mission.openned ;
-        Smartgeo.set('missions', $scope.missions);
+
         if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length ){
             return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
@@ -396,7 +383,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(!$scope.$$phase) {
             $scope.$apply();
         }
-        Smartgeo.set('missions', $scope.missions);
+        // Smartgeo.set('missions', $scope.missions);
     };
 
     /**
@@ -410,7 +397,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.displayDone = false ;
         $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
-        Smartgeo.set('missions', $scope.missions);
+        // Smartgeo.set('missions', $scope.missions);
     };
 
 });
