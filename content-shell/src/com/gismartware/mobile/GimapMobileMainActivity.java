@@ -11,7 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,6 +146,22 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        /*Date now = new Date();
+		try {
+			Date last = new SimpleDateFormat("dd/MM/yyyy").parse("02/12/2013");
+			Log.d(TAG, "last="+last.toString());
+			Log.d(TAG, "now="+now.toString());
+			if(now.after(last)) {
+	        	Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_LONG).show();
+	        	this.finish();
+	        	return;
+	        }
+		} catch (ParseException e1) {
+			Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_SHORT).show();
+			this.finish();
+			return;
+		}*/
         
         installIfNeeded();
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
