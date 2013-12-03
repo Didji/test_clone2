@@ -5,7 +5,17 @@
 <div><h2 id="Description">Description</h2>
 <div class="description"><p>Provides global methods</p></div>
 <div class="member method"><h2 id="Methods">Methods</h2>
-<ul class="methods"><li><h3 id="getServiceUrl">getServiceUrl(serviceName, GETParameters)</h3>
+<ul class="methods"><li><h3 id="get">get(parameter)</h3>
+<div class="get"><p>Local storage getter</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{*}</code>
+– <p>Parameter's value</p></div>
+</div>
+</li>
+<li><h3 id="getServiceUrl">getServiceUrl(serviceName, GETParameters)</h3>
 <div class="getserviceurl"><p>Get ready to call URL with a service's name and list of parameters</p><h4 id="Parameters">Parameters</h4>
 <ul class="parameters"><li><code ng:non-bindable="">serviceName – {string} – </code>
 <p>Name of called Service</p></li>
@@ -24,6 +34,16 @@ Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
 </pre></div>
 </div>
 </li>
+<li><h3 id="get_">get_(parameter)</h3>
+<div class="get-"><p>IndexedDB getter</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{*}</code>
+– <p>Parameter's value</p></div>
+</div>
+</li>
 <li><h3 id="isRunningOnBigScreen">isRunningOnBigScreen()</h3>
 <div class="isrunningonbigscreen"><p>Return true if device width is >= to <a href="#/api/smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD">Smartgeo._BIG_SCREEN_THRESHOLD</a></p><h4 id="Returns">Returns</h4>
 <div class="returns"><code ng:non-bindable="">{boolean}</code>
@@ -35,6 +55,9 @@ Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
 <div class="returns"><code ng:non-bindable="">{boolean}</code>
 – <p>is smartgeo running on little screen</p></div>
 </div>
+</li>
+<li><h3 id="log">log()</h3>
+<div class="log"><p>Useless log wrapper</p></div>
 </li>
 <li><h3 id="ping">ping(callback)</h3>
 <div class="ping"><p>Call global.dcnx.json gimap service to know if it is reachable. So this method logout current user.
@@ -65,6 +88,15 @@ Smartgeo.ping(function(gimapIsReachable){
 – <p>Satitized parsed asset</p></div>
 </div>
 </li>
+<li><h3 id="set">set(parameter, value)</h3>
+<div class="set"><p>Local storage setter</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+<li><code ng:non-bindable="">value – {*} – </code>
+<p>Parameter's value</p></li>
+</ul>
+</div>
+</li>
 <li><h3 id="setGimapUrl">setGimapUrl(url)</h3>
 <div class="setgimapurl"><p>Set Gimap serveur URL on localstorage, add <strong><code>http://</code></strong> and <strong><code>/index.php?service=</code></strong> if needed and clear localStorage</p><h4 id="Parameters">Parameters</h4>
 <ul class="parameters"><li><code ng:non-bindable="">url – {string} – </code>
@@ -73,6 +105,30 @@ Smartgeo.ping(function(gimapIsReachable){
 <h4 id="Returns">Returns</h4>
 <div class="returns"><code ng:non-bindable="">{string}</code>
 – <p>url setted server url</p></div>
+</div>
+</li>
+<li><h3 id="set_">set_(parameter)</h3>
+<div class="set-"><p>IndexedDB setter</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{*}</code>
+– <p>Parameter's value</p></div>
+</div>
+</li>
+<li><h3 id="unset">unset(parameter)</h3>
+<div class="unset"><p>Clear localStorage's value</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="unset_">unset_(parameter)</h3>
+<div class="unset-"><p>Clear IndexedDB's value</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">parameter – {String} – </code>
+<p>Parameter's name</p></li>
+</ul>
 </div>
 </li>
 </ul>
@@ -86,6 +142,9 @@ Smartgeo.ping(function(gimapIsReachable){
 </li>
 <li><h3 id="_SMARTGEO_MOBILE_VERSION">_SMARTGEO_MOBILE_VERSION</h3>
 <div class="-smartgeo-mobile-version"><p>Smartgeo mobile version, displayed on home page</p></div>
+</li>
+<li><h3 id="localStorageCache">localStorageCache</h3>
+<div class="localstoragecache"><p>Used for setter and getter best perf</p></div>
 </li>
 </ul>
 </div>

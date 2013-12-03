@@ -44,6 +44,13 @@ the <a href="#/api/mapController">mapController</a> with concerned mission and s
 </ul>
 </div>
 </li>
+<li><h3 id="move">move(delta)</h3>
+<div class="move"><p>Move to other day</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">delta – {integer} – </code>
+<p>Amount of day to move. Negative or positive number.</p></li>
+</ul>
+</div>
+</li>
 <li><h3 id="openMission">openMission($index, locate)</h3>
 <div class="openmission"><p>Opens mission in planning, fetch list of related assets in database, and put it in cache (if cache does not exist).</p>
 
@@ -94,14 +101,11 @@ the <a href="#/api/mapController">mapController</a> with concerned mission and s
 </ul>
 </div>
 </li>
-<li><h3 id="tomorrow">tomorrow()</h3>
-<div class="tomorrow"><p>Go to next day</p></div>
-</li>
 <li><h3 id="updateCount">updateCount()</h3>
-<div class="updatecount"><p>Update number in left and right arrows</p></div>
-</li>
-<li><h3 id="yesterday">yesterday()</h3>
-<div class="yesterday"><p>Go to preview day with mission(s)</p></div>
+<div class="updatecount"><ul>
+<li>Format date to the right format, if it's comes from datepicker, it should be not weel formatted</li>
+<li>Process and update number in left and right arrows </li>
+</ul></div>
 </li>
 </ul>
 </div>

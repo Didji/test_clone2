@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
+angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout, $location){
 
     var Installer = {
 
@@ -105,7 +105,15 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
         saveSite: function(site){
             var sites = Smartgeo.get('sites') || {};
             sites[site.id] = site ;
-            Smartgeo.set('sites', sites);
+            try{
+                Smartgeo.set('sites', sites);
+            } catch (e){
+                if(e.code === 22){
+                    alertify.alert(e.message);
+                }
+                $location.path("/");
+                throw e ;
+            }
         },
 
         createZones: function(site, callback){
