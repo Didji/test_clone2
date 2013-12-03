@@ -1,4 +1,4 @@
-<div ng-controller="synchronizationMenuController">
+<div ng-controller="synchronizationMenuController" ng-init="initialize()">
     <ul>
         <li ng-show="toBeSyncLenght() > 0;">
             <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='syncAll()'>

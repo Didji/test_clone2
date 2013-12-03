@@ -1,15 +1,31 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n, $timeout ) {
+
     $scope.reports = [];
 
-    // TODO : a faire dans l'installation (pour des raisons obscures, je n'y suis pas arrivé)
-    $rootScope.site.activities._byId = [];
-    for (i = 0; i < $rootScope.site.activities.length; i++) {
-        $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
-    }
+    $scope.initialize = function(){
 
-    $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+        $rootScope.site.activities._byId = [];
+        for (i = 0; i < $rootScope.site.activities.length; i++) {
+            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+        }
 
-    $timeout(function() {
+        $rootScope.$on("DEVICE_IS_ONLINE", function(){
+            $scope.syncAll();
+        });
+
+        $scope.updateReportList();
+        $scope.updateReportListInterval = setInterval(function(){
+            $scope.updateReportList();
+        },5000);
+
+        $scope.syncAllInterval = setInterval(function(){
+            $scope.syncAll();
+        },60000);
+
+    };
+
+    $scope.updateReportList = function(){
+        console.log("updateReportList");
         Smartgeo.get_('reports', function(reports){
             reports = reports || [] ;
             $scope.reports = [];
@@ -24,13 +40,10 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             $scope.$apply() ;
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
         });
-    }, 500);
-
-    $rootScope.$on("DEVICE_IS_ONLINE", function(){
-        $scope.syncAll();
-    });
+    };
 
     $scope.syncAll = function(){
+        console.log("syncAll");
         for (var i = 0; i < $scope.reports.length; i++) {
            $scope.sync(i);
         }
@@ -41,7 +54,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             return false;
         }
         $scope.reports[$index].syncInProgress = true ;
-        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index])
+        $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index], {timeout: 55000})
             .success(function(){
                 $scope.reports[$index].syncInProgress = false ;
                 $scope.reports[$index].synced = true ;

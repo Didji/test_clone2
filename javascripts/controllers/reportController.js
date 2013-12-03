@@ -214,6 +214,15 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             switch(act.type) {
                 case "show":
                     targetField.visible = cond;
+
+                    // Si targetField est une case à cocher, elle a peut-être
+                    // aussi des conséquences. Si une case à cocher devient invisible,
+                    // il faut qu'on la décoche et qu'on applique ses conséquences.
+                    if(cond === false && targetField.type === 'O') {
+                        $scope.report.fields[act.target] = 'N';
+                        $scope.applyConsequences(act.target);
+                    }
+
                     break;
                 case "require":
                     targetField.required = cond;
@@ -262,7 +271,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
 
         $http
-            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 2500})
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 5000})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
                     reports = reports || [] ;
