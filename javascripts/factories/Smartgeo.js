@@ -7,6 +7,8 @@
 
 angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
 
+    'use strict' ;
+
     var Smartgeo = {
 
         /**
@@ -16,7 +18,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.10",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.13",
 
         /**
          * @ngdoc property
@@ -195,7 +197,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : true,
+                'report' : false,
                 'goto'   : false,
                 'logout'   : false
             };
@@ -394,22 +396,34 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         _initializeGlobalEvents: function(){
+            window.addEventListener( 'online', Smartgeo._onlineTask, false);
+            window.addEventListener('offline', Smartgeo._offlineTask , false);
 
-            window.addEventListener('online', function(e) {
-                setTimeout(function() {
-                    Smartgeo.set('online', true);
-                    $rootScope.$broadcast("DEVICE_IS_ONLINE");
-                    Smartgeo.log(("_SMARTGEO_ONLINE"));
-                    Smartgeo.silentLogin();
-                }, 1000);
-            }, false);
+            if(!window.ChromiumCallbacks){
+                window.ChromiumCallbacks = [] ;
+            }
 
-            window.addEventListener('offline', function(e) {
-                Smartgeo.set('online', false);
-                $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-                Smartgeo.log(("_SMARTGEO_OFFLINE"));
-            }, false);
+            window.ChromiumCallbacks[20] = function(){
+                Smartgeo._onlineTask();
+            };
+            window.ChromiumCallbacks[21] = function(){
+                Smartgeo._offlineTask() ;
+            };
+        },
 
+        _onlineTask : function() {
+            setTimeout(function() {
+                Smartgeo.set('online', true);
+                $rootScope.$broadcast("DEVICE_IS_ONLINE");
+                Smartgeo.log(("_SMARTGEO_ONLINE"));
+                Smartgeo.silentLogin();
+            }, 1000);
+        },
+
+        _offlineTask : function() {
+            Smartgeo.set('online', false);
+            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
+            Smartgeo.log(("_SMARTGEO_OFFLINE"));
         },
 
         silentLogin: function(callback){
