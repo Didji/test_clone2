@@ -1,12 +1,12 @@
 <div ng-controller="planningController" ng-init="initialize();">
-    <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()">Actualiser</button>
+    <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()"><i18n>_PLANNING_REFRESH_</i18n></button>
     <div class="btn-group btn-block btn-custom-block">
-      <button style='min-width: 80px;' type="button" ng-click="move(-1)" ng-disabled="beforeToday <= 0" class="btn btn-default">
+      <button style='min-width: 70px;' type="button" ng-click="move(-1)" ng-disabled="beforeToday <= 0" class="btn btn-default">
         <span class="icon icon-arrow-left"/>
         <span class="label label-warning" ng-show="beforeToday > 0">{{beforeToday}}</span>
       </button>
-      <button type="button" ng-click="today()"  class="btn btn-default">Aujourd'hui</button>
-      <button style='min-width: 80px;' type="button" ng-click="move(1)" ng-disabled="afterToday <= 0" class="btn btn-default">
+      <button type="button" ng-click="today()"  class="btn btn-default"><i18n>_PLANNING_TODAY_</i18n></button>
+      <button style='min-width: 70px;' type="button" ng-click="move(1)" ng-disabled="afterToday <= 0" class="btn btn-default">
         <span class="label label-warning" style='margin-right: 3px;' ng-show="afterToday > 0">{{afterToday}}</span>
         <span class="icon icon-arrow-right" />
       </button>
@@ -14,11 +14,11 @@
 
     <h2>{{dayToDisplay |  date:"dd/MM/yy"}} <input style='width: 56px;' type="date" ng-model='dayToDisplay' ng-change="updateCount();"></h2>
     <div ng-repeat="(key,mission) in (missions | moreThanOneDayButTodaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0">OT en cours</h2>
+      <h2 ng-show="$index == 0"><i18n>_PLANNING_CURRENT_MISSION_</i18n></h2>
       <ng-include src="'partials/mission.html'"/>
     </div>
     <div ng-repeat="(key,mission) in (missions | todaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0">OT du jour</h2>
+      <h2 ng-show="$index == 0"><i18n>_PLANNING_TODAY_MISSION_</i18n></h2>
       <ng-include src="'partials/mission.html'"/>
     </div>
 </div>

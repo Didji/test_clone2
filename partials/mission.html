@@ -3,7 +3,7 @@
         <h3 class="panel-title">
           <span class="mission-label">{{mission.activity.label}} n°{{mission.number}}</span>
           <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
-              <span ng-switch-when="0">terminé</span>
+              <span ng-switch-when="0"><i18n>_PLANNING_FINISH_</i18n></span>
               <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
           </span>
           <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
@@ -13,7 +13,7 @@
       <div class="panel-body"  ng-show='mission.openned || false'>
 
         <p>
-          <i class="fa fa-clock-o"></i> Avant {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+          <i class="fa fa-clock-o"></i> <i18n>_PLANNING_BEFORE_</i18n> {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
         </p>
         <p ng-show='mission.city'>
           <i class="fa fa-map-marker"></i> {{mission.city}}
@@ -22,14 +22,16 @@
           <i class="fa fa-crosshairs"></i> {{mission.address}}
         </p>
         <p ng-click='toggleDoneAssetsVisibility(key)' ng-show='mission.assets.length > 0'>
-          <i class="fa" ng-class=" mission.displayDone ? 'fa-check-circle-o' : 'fa-circle-o' " ></i> Afficher objets terminés
+          <i class="fa" ng-class=" mission.displayDone ? 'fa-check-circle-o' : 'fa-circle-o' " ></i> <i18n>_PLANNING_DISPLAY_DONE_ASSETS_</i18n>
         </p>
-
+        <p class="text-danger" ng-show='mission.objectNotFound'>
+          <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
+        </p>
         <button style='min-width: 110px' class="btn btn-warning" ng-click="locateMission(key)" ng-show='mission.assets.length > 0'>
-          <span class="fa fa-search fa-3x"></span><br/>Localiser
+          <span class="fa fa-search fa-3x"></span><br/><i18n>_PLANNING_LOCATE_</i18n>
         </button>
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="mission.selectedAssets == 0" ng-show='mission.assets.length > 0'>
-          <span class="fa fa-pencil fa-3x"></span><span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span><br/>Saisir
+        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets" ng-show='mission.assets.length > 0'>
+          <span class="fa fa-pencil fa-3x"></span><span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span><br/><i18n>_PLANNING_WRITE_</i18n>
         </button>
       </div>
 </div>

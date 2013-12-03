@@ -5,7 +5,7 @@
  * Planning controller
  */
 
-angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $filter, G3ME){
+angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $filter, G3ME, i18n){
 
     'use strict';
 
@@ -133,7 +133,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             })
             .error( function(){
                 if(Smartgeo.get('online')){
-                    alertify.error('Erreur lors de la mise à jour des missions');
+                    alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
                 }
             });
     };
@@ -255,8 +255,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
                     mission.isLoading = false ;
+                    mission.objectNotFound = true;
                     $scope.$apply();
-                    return alertify.log("Les objets de cette mission n'ont pas été trouvés.");
+                    return ;
+                    // return alertify.log(i18n.get("_PLANNING_OBJECT_NOT_FOUND_"));
                 }
 
                 $scope.assetsCache[mission.id] = assets ;
