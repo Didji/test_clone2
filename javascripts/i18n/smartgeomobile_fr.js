@@ -84,5 +84,17 @@ window.smartgeo_i18n_lang['fr'] = {
         _MAP_ZERO_OBJECT_FOUND              : "Aucun patrimoine dans cette zone" ,
         _MAP_MY_POSITION_CONTROL            : "Ma position" ,
         _MAP_GPS_FAIL                       : "Erreur lors de la récupération des coordonnées GPS" ,
-        _MAP_CONSULTATION_CONTROL           : "Consultation"
-    }
+        _MAP_CONSULTATION_CONTROL           : "Consultation",
+
+        _PLANNING_SYNC_FAIL_                : "Erreur lors de la mise à jour des missions",
+        _PLANNING_OBJECT_NOT_FOUND_         : "Les objets de cette mission n'ont pas été trouvés.",
+        _PLANNING_REFRESH_                  : "Actualiser",
+        _PLANNING_TODAY_                    : "Aujourd'hui",
+        _PLANNING_CURRENT_MISSION_          : "OT en cours",
+        _PLANNING_TODAY_MISSION_            : "OT du jour",
+        _PLANNING_BEFORE_                   : "Avant",
+        _PLANNING_DISPLAY_DONE_ASSETS_      : "Afficher objets terminés",
+        _PLANNING_LOCATE_                   : "Localiser",
+        _PLANNING_WRITE_                    : "Saisir",
+        _PLANNING_FINISH_                   : "terminé"
+    };
