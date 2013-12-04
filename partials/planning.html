@@ -1,29 +1,32 @@
 <div ng-controller="planningController" ng-init="initialize();">
-    <button class="btn btn-default has-spinner btn-block btn-custom-block" ng-click="synchronize()"><i18n>_PLANNING_REFRESH_</i18n></button>
-    <div class="btn-group btn-block btn-custom-block" style="margin-left:25px">
+
+    <p style="color: rgb(138, 138, 138);font-size: 12px;margin-left: 15px;margin-bottom: -8px;margin-top: 6px;width: 265px;">
+         <i18n>_PLANNING_REFRESHED_</i18n> {{lastUpdate | timeago}} <button class="btn btn-link"  style="margin:-10px; color:orange" ng-click="synchronize()"><i class="fa fa-refresh" style="margin:0"></i></button></p>
+
+    <div class="btn-group btn-block btn-custom-block" style="margin-left:15px">
       <button style='min-width: 70px;' type="button" ng-click="move(-1)" ng-disabled="beforeToday <= 0" class="btn btn-default">
         <span class="icon icon-arrow-left"/>
         <span class="label label-warning" ng-show="beforeToday > 0">{{beforeToday}}</span>
       </button>
-      <button type="button" ng-click="today()"  class="btn btn-default"><i18n>_PLANNING_TODAY_</i18n></button>
+      <button type="button" class="btn btn-default" style="padding: 1px;width: 115px;">
+        <span style="margin-right: -40px;position: relative;top: -4px;">{{dayToDisplay |  date:"dd/MM/yy"}}<i style="position: relative;left: 7px;" class="fa fa-calendar"></i></span>
+        <input
+          style='width: 50px;border: none;background: transparent;padding-left: 150px;height: 30px;padding-top: 11px;margin-left: -100px;outline: none;'
+          id="dayToDisplay" type="date" ng-model='dayToDisplay' ng-change="updateCount();">
+      </button>
       <button style='min-width: 70px;' type="button" ng-click="move(1)" ng-disabled="afterToday <= 0" class="btn btn-default">
         <span class="label label-warning" style='margin-right: 3px;' ng-show="afterToday > 0">{{afterToday}}</span>
         <span class="icon icon-arrow-right" />
       </button>
     </div>
-
-    <h2>
-      <span style="font-size: 2em;margin-left: 15px;margin-right: -40px;">{{dayToDisplay |  date:"dd/MM/yy"}}<i style="font-size: 20px;position: relative;top: -3px;left: 3px;" class="fa fa-calendar"></i></span>
-      <input
-        style='width: 50px;border: none;background: transparent;padding-left: 150px;height: 30px;padding-top: 11px;margin-left: -100px;outline: none;'
-        id="dayToDisplay" type="date" ng-model='dayToDisplay' ng-change="updateCount();">
-    </h2>
     <div ng-repeat="(key,mission) in (missions | moreThanOneDayButTodaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0"><i18n>_PLANNING_CURRENT_MISSION_</i18n></h2>
+      <!-- <h2 ng-show="$index == 0"><i18n>_PLANNING_CURRENT_MISSION_</i18n></h2> -->
       <ng-include src="'partials/mission.html'"/>
     </div>
     <div ng-repeat="(key,mission) in (missions | todaysMissions:dayToDisplay)">
-      <h2 ng-show="$index == 0"><i18n>_PLANNING_TODAY_MISSION_</i18n></h2>
+      <!-- <h2 ng-show="$index == 0"><i18n>_PLANNING_TODAY_MISSION_</i18n></h2> -->
       <ng-include src="'partials/mission.html'"/>
     </div>
 </div>
+
+

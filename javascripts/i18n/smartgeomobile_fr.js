@@ -96,5 +96,6 @@ window.smartgeo_i18n_lang['fr'] = {
         _PLANNING_DISPLAY_DONE_ASSETS_      : "Afficher objets terminés",
         _PLANNING_LOCATE_                   : "Localiser",
         _PLANNING_WRITE_                    : "Saisir",
-        _PLANNING_FINISH_                   : "terminé"
+        _PLANNING_FINISH_                   : "terminé",
+        _PLANNING_REFRESHED_                : "Actualisé",
     };
