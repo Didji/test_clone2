@@ -30,10 +30,12 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $scope.close = function (event){
         Smartgeo.set('persitence.menu.open', false);
-        if(event && event.preventDefault){
+        if(event && event.preventDefault && $(event.target).attr('id') === "mp-pusher"){
             event.preventDefault();
+            $scope.mlPushMenu._resetMenu();
+        } else if(!event){
+            $scope.mlPushMenu._resetMenu();
         }
-        $scope.mlPushMenu._resetMenu();
         return false;
     };
 

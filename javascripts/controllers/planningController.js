@@ -104,14 +104,18 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @name planningController#synchronize
      * @methodOf planningController
      * @description
-     * Get mission from remote server but keep 'openned' and 'displayDone' attributes from local version
+     * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
      */
     $scope.synchronize = function(){
         Mission
             .query()
             .success( function(results){
+
                 var openedMission       = [],
-                    displayDoneMission  = [], i;
+                    displayDoneMission  = [],
+                    selectedAssets      = {},
+                    i;
+
                 for (i in $scope.missions) {
                     if($scope.missions[i].openned){
                         openedMission.push($scope.missions[i].id);
@@ -119,8 +123,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     if($scope.missions[i].displayDone){
                         displayDoneMission.push($scope.missions[i].id);
                     }
+                    selectedAssets[$scope.missions[i].id] = $scope.missions[i].selectedAssets ;
                 }
+
                 $scope.missions = results.results;
+
                 for (i in $scope.missions) {
                     if(openedMission.indexOf($scope.missions[i].id) >= 0){
                         $scope.openMission(i, false);
@@ -128,8 +135,12 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                             $scope.showDoneAssets(i);
                         }
                     }
+                    $scope.missions[i].selectedAssets = selectedAssets[$scope.missions[i].id];
+
                 }
+
                 $scope.updateCount();
+
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -258,7 +269,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     mission.objectNotFound = true;
                     $scope.$apply();
                     return ;
-                    // return alertify.log(i18n.get("_PLANNING_OBJECT_NOT_FOUND_"));
                 }
 
                 $scope.assetsCache[mission.id] = assets ;
@@ -339,8 +349,15 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.highlightMission = function(mission){
         $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, $scope.assetsCache[mission.id], null,
             /* marker click handler */
-            function(mission, id){
-                var asset = $scope.assetsCache[mission.id][id] ;
+            function(missionId, assetId){
+                var mission ;
+                for(var i in $scope.missions){
+                    if($scope.missions[i].id === missionId){
+                        mission = $scope.missions[i];
+                        break;
+                    }
+                }
+                var asset = $scope.assetsCache[missionId][assetId] ;
                 asset.selected = !!!asset.selected ;
                 mission.selectedAssets += asset.selected ? 1 : -1   ;
                 $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
