@@ -5,6 +5,7 @@
 <string name="accessibility_content_view">"Vue Web"</string>
 <string name="date_picker_dialog_set">"Choisir"</string>
 <string name="date_picker_dialog_clear">"Vider"</string>
+<string name="date_picker_dialog_today">"Aujourd'hui"</string>
 <string name="date_picker_dialog_title">"Choisir une date"</string>
 <string name="date_time_picker_dialog_title">"Choisir date et heure"</string>
 <string name="time_picker_dialog_title">"Choisir l'heure"</string>

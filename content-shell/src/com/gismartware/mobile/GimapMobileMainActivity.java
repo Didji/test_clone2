@@ -11,10 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,6 +110,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     
     @Override
 	public void onDestroy() {
+    	unregisterReceiver(networkChangeReceiver);
     	//TODO impossible to make deletion work...
     	if(FileUtils.delete(new File(GimapMobileApplication.WEB_ROOT))) {
     		Log.d(TAG, "Smartgeo has been successfully uninstalled!");

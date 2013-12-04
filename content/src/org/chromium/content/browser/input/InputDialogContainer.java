@@ -172,15 +172,17 @@ public class InputDialogContainer {
                     }
                 });
 
-        /*mDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-                mContext.getText(R.string.date_picker_dialog_clear),
+        mDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+                mContext.getText(R.string.date_picker_dialog_today),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDialogAlreadyDismissed = true;
-                        mInputActionDelegate.replaceDateTime(dialogType, 0, 0, 0, 0, 0, 0, 0, 0);
+                        Calendar cal = Calendar.getInstance();
+                        mInputActionDelegate.replaceDateTime(dialogType, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 
+                        		cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.MILLISECOND), cal.get(Calendar.WEEK_OF_YEAR));
                     }
-                });*/
+                });
         
         //MBN: BUGFIX: lorsqu'on ferme la fenetre de choix autrement qu'en l'annulant (touch ailleurs sur l'écran apr ex), on ne peut plus la réouvrir
         mDialog.setOnCancelListener(new OnCancelListener() {
