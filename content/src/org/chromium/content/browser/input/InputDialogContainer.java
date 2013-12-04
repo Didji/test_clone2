@@ -182,7 +182,7 @@ public class InputDialogContainer {
                     }
                 });*/
         
-      //MBN: BUGFIX: lorsqu'on ferme la fenetre de choix autrement qu'en l'annulant (touch ailleurs sur l'écran apr ex), on ne peut plus la réouvrir
+        //MBN: BUGFIX: lorsqu'on ferme la fenetre de choix autrement qu'en l'annulant (touch ailleurs sur l'écran apr ex), on ne peut plus la réouvrir
         mDialog.setOnCancelListener(new OnCancelListener() {
         	public void onCancel(DialogInterface dialog) {
         		mInputActionDelegate.cancelDateTimeDialog();
