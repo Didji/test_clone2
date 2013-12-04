@@ -4,30 +4,26 @@
 
 package org.chromium.content.browser.input;
 
+import java.util.Calendar;
+
+import org.chromium.content.R;
+import org.chromium.content.browser.input.DateTimePickerDialog.OnDateTimeSetListener;
+import org.chromium.content.browser.input.MultiFieldTimePickerDialog.OnMultiFieldTimeSetListener;
+
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.text.TextUtils;
+import android.content.DialogInterface.OnCancelListener;
 import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
-import org.chromium.content.browser.input.DateTimePickerDialog.OnDateTimeSetListener;
-import org.chromium.content.browser.input.MultiFieldTimePickerDialog.OnMultiFieldTimeSetListener;
-import org.chromium.content.browser.input.TwoFieldDatePickerDialog;
-import org.chromium.content.R;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
+@SuppressLint("NewApi")
 public class InputDialogContainer {
 
     interface InputActionDelegate {
@@ -176,7 +172,7 @@ public class InputDialogContainer {
                     }
                 });
 
-        mDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+        /*mDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
                 mContext.getText(R.string.date_picker_dialog_clear),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -184,7 +180,14 @@ public class InputDialogContainer {
                         mDialogAlreadyDismissed = true;
                         mInputActionDelegate.replaceDateTime(dialogType, 0, 0, 0, 0, 0, 0, 0, 0);
                     }
-                });
+                });*/
+        
+      //MBN: BUGFIX: lorsqu'on ferme la fenetre de choix autrement qu'en l'annulant (touch ailleurs sur l'écran apr ex), on ne peut plus la réouvrir
+        mDialog.setOnCancelListener(new OnCancelListener() {
+        	public void onCancel(DialogInterface dialog) {
+        		mInputActionDelegate.cancelDateTimeDialog();
+        	}
+        });
 
         mDialogAlreadyDismissed = false;
         mDialog.show();
