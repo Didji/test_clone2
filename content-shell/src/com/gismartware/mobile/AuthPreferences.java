@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+/**
+ * Wrapper d'enregistrement et lecture des données d'authentification.
+ * @author M. Beudin
+ */
 public class AuthPreferences {
 
 	private static final String KEY_USER = "user";

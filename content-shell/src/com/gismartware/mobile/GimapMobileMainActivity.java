@@ -32,6 +32,9 @@ import org.chromium.content_shell.Shell;
 import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.WindowAndroid;
 
+import com.gismartware.mobile.util.FileUtils;
+import com.gismartware.mobile.util.ImageUtils;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -206,17 +209,17 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     		if (accounts.size() > 1) {
     			//plusieurs comptes, choisir...
     			Intent intent = AccountManager.newChooseAccountIntent(null, accounts, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-    			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+    			startActivityForResult(intent, ActivityCode.ACCOUNT_CHOOSE.getCode());
     		} else if (accounts.size() == 1) {
     			authPreferences.setUser(accounts.get(0).name);
 				requestToken();
     		} else {
     			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-    			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+    			startActivityForResult(intent, ActivityCode.ACCOUNT_CHOOSE.getCode());
     		}
 		} else {
 			Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[] { GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-			startActivityForResult(intent, ActivityCode.OAUTH_ACCOUNT.getCode());
+			startActivityForResult(intent, ActivityCode.ACCOUNT_CHOOSE.getCode());
 		}
     }
     
@@ -388,7 +391,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     	if (resultCode == RESULT_OK) {
 			if (requestCode == ActivityCode.OAUTH_AUTHORIZATION.getCode()) {
 				requestToken();
-			} else if (requestCode == ActivityCode.OAUTH_ACCOUNT.getCode()) {
+			} else if (requestCode == ActivityCode.ACCOUNT_CHOOSE.getCode()) {
 				String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 				Log.d(TAG, "[OAUTH] Token renewal for user " + accountName);
 				authPreferences.setUser(accountName);
@@ -420,7 +423,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 				}
 			}
 		} else {
-			if (requestCode == ActivityCode.OAUTH_ACCOUNT.getCode()) {
+			if (requestCode == ActivityCode.ACCOUNT_CHOOSE.getCode()) {
 				finishActivityInit();
 			}
 		}

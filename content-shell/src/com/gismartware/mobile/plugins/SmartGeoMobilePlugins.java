@@ -16,7 +16,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
-import com.gismartware.mobile.FileUtils;
+import com.gismartware.mobile.util.FileUtils;
 
 public class SmartGeoMobilePlugins {
 	
