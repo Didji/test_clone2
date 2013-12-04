@@ -69,6 +69,15 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      $scope.doneAssetsCache = [] ;
 
     /**
+     * @ngdoc property
+     * @name planningController#doneAssetsCache
+     * @propertyOf planningController
+     * @const
+     * @description Done assets cache for conversion id->asset
+     */
+     $scope.lastUpdate = Smartgeo.get('lastUpdate');
+
+    /**
      * @ngdoc method
      * @name planningController#today
      * @methodOf planningController
@@ -140,7 +149,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 }
 
                 $scope.updateCount();
-
+                $scope.lastUpdate = (new Date()).getTime();
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -170,6 +179,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
         });
+        $scope.$watch('lastUpdate', function() {
+            Smartgeo.set('lastUpdate', $scope.lastUpdate);
+        }, true);
         $scope.$watch('missions', function() {
             Smartgeo.set('missions', $scope.missions);
         }, true);

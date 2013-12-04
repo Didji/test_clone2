@@ -97,4 +97,5 @@ window.smartgeo_i18n_lang['en'] = {
         _PLANNING_LOCATE_                   : "", //"Localiser",
         _PLANNING_WRITE_                    : "", //"Saisir"
         _PLANNING_FINISH_                   : "", //"terminé"
+        _PLANNING_REFRESHED_                : "", //"Actualisé"
 };
