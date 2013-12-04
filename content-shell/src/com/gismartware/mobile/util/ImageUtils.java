@@ -1,4 +1,4 @@
-package com.gismartware.mobile;
+package com.gismartware.mobile.util;
 
 import java.io.File;
 
