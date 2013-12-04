@@ -278,7 +278,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 assetsCache[i].marker.setIcon(assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
                 (function(i,marker){
                     marker.on('click', function(){
-                        clickHandler(mission, i);
+                        clickHandler(mission.id, i);
                     });
                 })(i, assetsCache[i].marker);
                 $scope.missionsClusters[mission.id].addLayer(assetsCache[i].marker);

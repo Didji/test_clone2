@@ -29,6 +29,7 @@
 
 html * {
     user-select : none;
+    outline:none;
 }
 
 html, body {
@@ -581,4 +582,3 @@ transition:none!important; /* Désolé, pris par le temps */
 .mission-assets-count-badge{
     margin-top: -15px;
 }
-
