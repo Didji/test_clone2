@@ -1,4 +1,7 @@
 angular.module('smartgeomobile').controller('siteInstallController', function ($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
+
+    'use strict' ;
+
     $scope.steps = [{
         color: '#fd9122',
         progress: 0,

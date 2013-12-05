@@ -1,4 +1,7 @@
 smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
+
+    'use strict' ;
+
     var G3ME = {
 
         _MAX_ZOOM : 22 ,
@@ -70,6 +73,9 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
+
+            var backgroundTile ;
+
             if(this.filecacheIsEnable){
                 backgroundTile = L.TileLayer.FileCache ;
             } else {
@@ -349,7 +355,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
             }
 
-            for (i = 0; i < this.site.zones.length; i++) {
+            for (var i = 0; i < this.site.zones.length; i++) {
                 if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
                     if(performBench){
                         G3ME.benchStart(this.site.zones[i].database_name);

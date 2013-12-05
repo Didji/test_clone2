@@ -1,5 +1,7 @@
 angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n){
 
+    'use strict' ;
+
     $scope.controller = $routeParams.controller ;
 
     if ($scope.controller === "oauth") {
