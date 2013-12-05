@@ -187,7 +187,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                 //     years: "%d years"
                 // },
                 strings = {
-                    prefixAgo: "il y a ",
+                    prefixAgo: null,
                     prefixFromNow: null,
                     suffixAgo: null,
                     suffixFromNow: null,

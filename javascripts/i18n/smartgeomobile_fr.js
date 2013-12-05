@@ -97,5 +97,6 @@ window.smartgeo_i18n_lang['fr'] = {
         _PLANNING_LOCATE_                   : "Localiser",
         _PLANNING_WRITE_                    : "Saisir",
         _PLANNING_FINISH_                   : "terminé",
-        _PLANNING_REFRESHED_                : "Actualisé",
+        _PLANNING_REFRESHED_                : "Actualisé il y a ",
+        _PLANNING_DISPLAY_FINISHED_         : "Afficher les OT terminés"
     };
