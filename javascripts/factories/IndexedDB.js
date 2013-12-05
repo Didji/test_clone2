@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('IndexedDB', function(){
+smartgeomobile.factory('IndexedDB', function(){
 
     var IndexedDB = {
 

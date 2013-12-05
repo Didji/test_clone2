@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
+smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
     var G3ME = {
 
         _MAX_ZOOM : 22 ,
