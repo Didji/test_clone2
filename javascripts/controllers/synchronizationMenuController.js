@@ -1,11 +1,13 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n, $timeout ) {
 
+    'use strict' ;
+
     $scope.reports = [];
 
     $scope.initialize = function(){
 
         $rootScope.site.activities._byId = [];
-        for (i = 0; i < $rootScope.site.activities.length; i++) {
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
             $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
         }
 
@@ -25,7 +27,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     };
 
     $scope.updateReportList = function(){
-        console.log("updateReportList");
         Smartgeo.get_('reports', function(reports){
             reports = reports || [] ;
             $scope.reports = [];
@@ -43,7 +44,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     };
 
     $scope.syncAll = function(){
-        console.log("syncAll");
         for (var i = 0; i < $scope.reports.length; i++) {
            $scope.sync(i);
         }

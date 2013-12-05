@@ -1,4 +1,7 @@
 smartgeomobile.factory('GiReportBuilder', function($templateCache) {
+
+      'use strict' ;
+
       return {
           _buildField: function(i, j, field) {
               var str, myField = 'report.activity.tabs['+i+'].fields['+j+']';
@@ -57,7 +60,7 @@ smartgeomobile.factory('GiReportBuilder', function($templateCache) {
                                           ng-required="'+myField+'.required" \
                                           ng-model = "report.fields['+field.id+']">';
                       str += '<option></option>';
-                      for(k in field.options) {
+                      for(var k in field.options) {
                           str += '<option value="'+field.options[k].value+'">'+field.options[k].label+'</option>';
                       }
                       str += '</select>';

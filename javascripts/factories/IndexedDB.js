@@ -1,5 +1,7 @@
 smartgeomobile.factory('IndexedDB', function(){
 
+    'use strict' ;
+
     var IndexedDB = {
 
         name : 'smartgeo',

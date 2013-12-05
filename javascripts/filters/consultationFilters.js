@@ -1,4 +1,7 @@
 smartgeomobile.filter('prettifyField', function() {
+
+    'use strict' ;
+
     return function(s) {
         if('string' !== typeof s) {
             return s;
@@ -6,6 +9,9 @@ smartgeomobile.filter('prettifyField', function() {
         return ((s + '') || '').replace(/\\n/g, '\n');
     };
 }).filter('consultationTabsFilter', function() {
+
+    'use strict' ;
+
     return function(tabsIn, asset) {
         var tabsOut = [];
         for (var i = 0; i < tabsIn.length; i++) {
@@ -24,6 +30,9 @@ smartgeomobile.filter('prettifyField', function() {
         return tabsOut;
     };
 }).filter('consultationFieldsFilter', function($rootScope) {
+
+    'use strict' ;
+
     return function(fieldsIn, asset) {
         var fieldsOut = [];
         for (var i = 0; i < fieldsIn.length; i++) {

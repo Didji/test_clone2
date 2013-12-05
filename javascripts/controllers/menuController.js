@@ -1,5 +1,7 @@
 angular.module('smartgeomobile').controller('menuController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n){
 
+    'use strict' ;
+
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
     $window.document.addEventListener('menubutton', function() {

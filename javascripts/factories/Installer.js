@@ -1,5 +1,7 @@
 smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
 
+    'use strict' ;
+
     var Installer = {
 
         // INSTALLATION CONSTANTS
