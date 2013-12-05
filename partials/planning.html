@@ -3,7 +3,7 @@
     <p style="color: rgb(138, 138, 138);font-size: 12px;margin-left: 15px;margin-bottom: -8px;margin-top: 6px;width: 265px;">
          <i18n>_PLANNING_REFRESHED_</i18n> {{lastUpdate | timeago}} <button class="btn btn-link"  style="margin:-10px; color:orange" ng-click="synchronize()"><i class="fa fa-refresh" style="margin:0"></i></button></p>
 
-    <div class="btn-group btn-block btn-custom-block" style="margin-left:15px">
+    <div class="btn-group btn-block btn-custom-block" style="margin-left:15px;margin-bottom: 5px;">
       <button style='min-width: 70px;' type="button" ng-click="move(-1)" ng-disabled="beforeToday <= 0" class="btn btn-default">
         <span class="icon icon-arrow-left"/>
         <span class="label label-warning" ng-show="beforeToday > 0">{{beforeToday}}</span>
@@ -19,13 +19,19 @@
         <span class="icon icon-arrow-right" />
       </button>
     </div>
-    <div ng-repeat="(key,mission) in (missions | moreThanOneDayButTodaysMissions:dayToDisplay)">
-      <!-- <h2 ng-show="$index == 0"><i18n>_PLANNING_CURRENT_MISSION_</i18n></h2> -->
+    <div ng-repeat="(key,mission) in (missions | lateMission)">
       <ng-include src="'partials/mission.html'"/>
     </div>
-    <div ng-repeat="(key,mission) in (missions | todaysMissions:dayToDisplay)">
-      <!-- <h2 ng-show="$index == 0"><i18n>_PLANNING_TODAY_MISSION_</i18n></h2> -->
+    <div ng-repeat="(key,mission) in (missions | todaysMissionsOrMoreThanOneDayButTodaysMissionsButNotLate:dayToDisplay)">
       <ng-include src="'partials/mission.html'"/>
+    </div>
+    <p ng-show="( filteredFinishedMission = (missions | todaysMissionsButFinished:dayToDisplay)).length != 0 " style="color: rgb(138, 138, 138);font-size: 12px;">
+      <label style="color: rgb(138, 138, 138);font-size: 12px;"><i18n>_PLANNING_DISPLAY_FINISHED_</i18n> <input type="checkbox" name="displayFinishedMission" ng-model='displayFinishedMission'/></label>
+    </p>
+    <div ng-show="displayFinishedMission">
+      <div ng-repeat="(key,mission) in filteredFinishedMission">
+        <ng-include src="'partials/mission.html'"/>
+      </div>
     </div>
 </div>
 
