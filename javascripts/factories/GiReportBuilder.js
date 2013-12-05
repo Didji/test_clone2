@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCache) {
+smartgeomobile.factory('GiReportBuilder', function($templateCache) {
       return {
           _buildField: function(i, j, field) {
               var str, myField = 'report.activity.tabs['+i+'].fields['+j+']';

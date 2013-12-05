@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').filter('prettifyField', function() {
+smartgeomobile.filter('prettifyField', function() {
     return function(s) {
         if('string' !== typeof s) {
             return s;

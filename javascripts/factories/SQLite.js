@@ -1,4 +1,6 @@
-angular.module('smartgeomobile').factory('SQLite', function(){
+smartgeomobile.factory('SQLite', function(){
+
+    'use strict' ;
 
     var SQLite = {
 
@@ -13,6 +15,53 @@ angular.module('smartgeomobile').factory('SQLite', function(){
             }
 
             return SQLite.databases[args.name];
+        },
+
+        parameters : function(){
+            return SQLite.openDatabase({name:'parameters'});
+        },
+
+        get: function(parameter, callback){
+            SQLite.parameters().transaction(function(transaction){
+                transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
+                transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
+                transaction.executeSql('SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results){
+                    if(results.rows.length === 1) {
+                        (callback || function(){})(JSON.parse(results.rows.item(0).p_value));
+                    } else {
+                        (callback || function(){})(undefined);
+                    }
+                }, function(transaction, SqlError){
+                    console.log(SqlError);
+                    (callback || function(){})(undefined);
+                });
+            });
+        },
+
+        set: function(parameter, value, callback){
+            SQLite.parameters().transaction(function(transaction){
+                transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
+                transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
+                transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function(transaction, results){
+                    (callback || function(){})();
+                }, function(transaction, SqlError){
+                    console.log(SqlError);
+                    (callback || function(){})(undefined);
+                });
+            });
+        },
+
+        unset: function(parameter, callback){
+            SQLite.parameters().transaction(function(transaction){
+                transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
+                transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
+                transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results){
+                    (callback || function(){})();
+                }, function(transaction, SqlError){
+                    console.log(SqlError);
+                    (callback || function(){})();
+                });
+            });
         }
 
     };

@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
+smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location, SQLite, IndexedDB){
 
     'use strict' ;
 
@@ -191,9 +191,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : false,
-                'goto'   : false,
-                'logout'   : false
+                'report' : true,
+                'goto'   : true,
+                'logout'   : true
             };
             return smgeo_right[module];
         },
@@ -356,7 +356,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 request += ' LIMIT ' + (Smartgeo._MAX_RESULTS_PER_SEARCH - partial_response.length) ;
             }
 
-            console.time(request);
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -509,15 +508,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
 
         // ASYNC GETTER AND SETTER
         get_: function(parameter, callback){
-            IndexedDB.get(parameter, callback);
+            (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
         },
 
         set_: function(parameter, value, callback){
-            IndexedDB.set(parameter, value, callback);
+            (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
         },
 
         unset_: function(parameter, callback){
-            IndexedDB.unset(parameter);
+            (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         }
     };
 
