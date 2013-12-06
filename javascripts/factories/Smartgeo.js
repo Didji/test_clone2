@@ -499,9 +499,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
         parametersCache : window.smartgeoPersistenceCache,
 
         get: function(parameter){
-            // console.log(this.parametersCache, parameter);
             if(this.parametersCache[parameter]){
-                console.log("cached value", parameter);
                 return this.parametersCache[parameter];
             } else {
                 return JSON.parse(localStorage.getItem(parameter));
@@ -509,7 +507,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
         },
 
         set: function(parameter, value){
-            // console.log(this.parametersCache, parameter);
             this.parametersCache[parameter] = value ;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
@@ -522,7 +519,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
         // ASYNC GETTER AND SETTER
         get_: function(parameter, callback){
             if(this.parametersCache[parameter]){
-                console.log("_cached value", parameter);
                 callback(this.parametersCache[parameter]) ;
                 return this.parametersCache[parameter] ;
             } else {

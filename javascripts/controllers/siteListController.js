@@ -4,7 +4,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
 
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
-    Smartgeo.unset('lastLeafletMapExtent'); // VEOLIA - QC 9427
+    Smartgeo.unset('lastLeafletMapExtent');
 
     function getRemoteSites(callback) {
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
@@ -33,9 +33,6 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 for(var id in knownSites) {
                     $scope.sites.push(knownSites[id]);
                 }
-                // if(!$scope.sites.length){
-                //     return  $location.path('/');
-                // }
                 autoLoadOrNot();
                 $scope.ready = true;
                 (callback || function(){})(false) ;
@@ -54,7 +51,6 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
             $scope.sites.push(knownSites[id]);
         }
         autoLoadOrNot();
-        // $scope.sites = Smartgeo.get('sites') ;
         $scope.ready = true;
         Smartgeo.set('online', true);
     }

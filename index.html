@@ -72,8 +72,7 @@
 
     <script>
         angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-
-            (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
+          (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
                 console.log(sites);
                 window.smartgeoPersistenceCache = {
                     sites : sites
