@@ -1,4 +1,3 @@
-angular.module('smartgeomobile').factory('IndexedDB', function(){
 
     var IndexedDB = {
 
@@ -65,7 +64,13 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
             this.open(function(){
                 var transaction = IndexedDB.database.transaction(["parameters"], "readwrite"),
                     objectStore = transaction.objectStore("parameters"),
-                    request     = objectStore.put({key:parameter, value:value});
+                    request     ;
+                try{
+                    request = objectStore.delete(parameter);
+                    request = objectStore.put({key:parameter, value:value});
+                } catch(e){
+                    console.log(e);
+                }
                 transaction.onsuccess =  (success || function(){})();
                 transaction.onerror   =  (error   || function(){})();
             });
@@ -86,5 +91,11 @@ angular.module('smartgeomobile').factory('IndexedDB', function(){
     window.indexedDB      = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
     window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+
+
+window.smartgeoPersistenceIndexedDB = IndexedDB ;
+
+smartgeomobile.factory('IndexedDB', function(){
+    'use strict' ;
     return IndexedDB ;
 });

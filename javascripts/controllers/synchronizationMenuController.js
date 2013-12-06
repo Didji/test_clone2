@@ -1,11 +1,13 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope,$http, $location, Smartgeo, $window, i18n, $timeout ) {
 
+    'use strict' ;
+
     $scope.reports = [];
 
     $scope.initialize = function(){
 
         $rootScope.site.activities._byId = [];
-        for (i = 0; i < $rootScope.site.activities.length; i++) {
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
             $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
         }
 
@@ -36,7 +38,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             Smartgeo.set_('reports', $scope.reports, function(){
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
             });
-            $scope.$apply() ;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
         });
     };
@@ -59,7 +63,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
                 Smartgeo.set_('reports', $scope.reports, function(){
                     $timeout(function(){
-                        $scope.reports[$index].hide = true ;
+                        if($scope.reports[$index]){
+                            $scope.reports[$index].hide = true ;
+                        }
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                     },3000);
                 });

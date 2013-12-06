@@ -3,6 +3,7 @@
  */
 angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n){
 
+    'use strict' ;
 
     var lastuser = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
 
@@ -23,7 +24,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.firstAuth  = true ;
         $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
     }
-
 
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.

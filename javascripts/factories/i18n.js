@@ -1,6 +1,9 @@
 window.smartgeo_i18n_lang = {};
 
-angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
+smartgeomobile.factory('i18n', function(Smartgeo){
+
+    'use strict' ;
+
     var i18n ;
     return i18n = {
         OVERRIDE_LANGUAGE : 'fr',
