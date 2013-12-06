@@ -86,15 +86,15 @@ window.smartgeo_i18n_lang['en'] = {
         _MAP_CONSULTATION_CONTROL           : "Consultation",
 
 
-        _PLANNING_SYNC_FAIL_                : "", //"Erreur lors de la mise à jour des missions",
-        _PLANNING_OBJECT_NOT_FOUND_         : "", //"Les objets de cette mission n'ont pas été trouvés.",
-        _PLANNING_REFRESH_                  : "", //"Actualiser",
-        _PLANNING_TODAY_                    : "", //"Aujourd'hui",
-        _PLANNING_BEFORE_                   : "", //"Avant",
-        _PLANNING_DISPLAY_DONE_ASSETS_      : "", //"Afficher objets terminés",
-        _PLANNING_LOCATE_                   : "", //"Localiser",
-        _PLANNING_WRITE_                    : "", //"Saisir"
-        _PLANNING_FINISH_                   : "", //"terminé"
-        _PLANNING_REFRESHED_                : "", //"Actualisé"
-        _PLANNING_DISPLAY_FINISHED_         : "", //Afficher les OT terminé"
+        _PLANNING_SYNC_FAIL_                : "Error while updating missions", //"Erreur lors de la mise à jour des missions",
+        _PLANNING_OBJECT_NOT_FOUND_         : "Mission's objects not found", //"Les objets de cette mission n'ont pas été trouvés.",
+        _PLANNING_REFRESH_                  : "Refresh", //"Actualiser",
+        _PLANNING_TODAY_                    : "Today", //"Aujourd'hui",
+        _PLANNING_BEFORE_                   : "Before", //"Avant",
+        _PLANNING_DISPLAY_DONE_ASSETS_      : "Show finished objects", //"Afficher objets terminés",
+        _PLANNING_LOCATE_                   : "Locate", //"Localiser",
+        _PLANNING_WRITE_                    : "Record", //"Saisir"
+        _PLANNING_FINISH_                   : "finished", //"terminé"
+        _PLANNING_REFRESHED_                : "Refreshed", //"Actualisé"
+        _PLANNING_DISPLAY_FINISHED_         : "Display finished mission", //Afficher les OT terminé"
 };
