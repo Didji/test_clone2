@@ -1,5 +1,7 @@
 angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n){
 
+    'use strict' ;
+
     $rootScope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
     $scope.searchIsPerforming = false ;

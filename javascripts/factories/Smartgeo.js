@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $window, $rootScope,$location, IndexedDB){
+smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location, SQLite, IndexedDB){
 
     'use strict' ;
 
@@ -181,6 +181,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
         },
 
         /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#parametersCache
+         * @propertyOf smartgeomobile.Smartgeo
+         * @description Setter and getter cache
+         */
+        parametersCache : window.smartgeoPersistenceCache,
+
+        /**
          * @ngdoc method
          * @name smartgeomobile.Smartgeo#get
          * @methodOf smartgeomobile.Smartgeo
@@ -190,7 +198,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * Local storage getter
          */
         get: function(parameter){
-            return Smartgeo.localStorageCache[parameter] || JSON.parse(localStorage.getItem(parameter));
+            if(this.parametersCache[parameter]){
+                return this.parametersCache[parameter];
+            } else {
+                return JSON.parse(localStorage.getItem(parameter));
+            }
         },
 
         /**
@@ -203,8 +215,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * Local storage setter
          */
         set: function(parameter, value){
-            localStorage.setItem(parameter, JSON.stringify(value));
-            Smartgeo.localStorageCache[parameter] = value;
+            this.parametersCache[parameter] = value ;
+            return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
         /**
@@ -216,8 +228,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * Clear localStorage's value
          */
         unset: function(parameter){
-            Smartgeo.localStorageCache[parameter] = undefined;
-            localStorage.removeItem(parameter);
+            this.parametersCache[parameter] = undefined ;
+            return localStorage.removeItem(parameter);
         },
 
         /**
@@ -231,7 +243,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * IndexedDB getter
          */
         get_: function(parameter, callback){
-            IndexedDB.get(parameter, callback);
+            if(this.parametersCache[parameter]){
+                callback(this.parametersCache[parameter]) ;
+                return this.parametersCache[parameter] ;
+            } else {
+                (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
+            }
         },
 
         /**
@@ -245,7 +262,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * IndexedDB setter
          */
         set_: function(parameter, value, callback){
-            IndexedDB.set(parameter, value, callback);
+            this.parametersCache[parameter] = value ;
+            (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
         },
 
         /**
@@ -258,7 +276,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
          * Clear IndexedDB's value
          */
         unset_: function(parameter, callback){
-            IndexedDB.unset(parameter);
+            this.parametersCache[parameter] = undefined ;
+            (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         },
 
         /**
@@ -294,7 +313,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
             var smgeo_right = {
                 'report' : true,
                 'goto'   : true,
-                'logout' : true
+                'logout'   : true
             };
             return smgeo_right[module];
         },
@@ -464,7 +483,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 request += ' LIMIT ' + (Smartgeo._MAX_RESULTS_PER_SEARCH - partial_response.length) ;
             }
 
-            console.time(request);
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
@@ -600,7 +618,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function(SQLite, $http, $wi
                 Smartgeo._LOGIN_MUTEX = false ;
                 (error || function(){})();
             });
-        },
+        }
 
     };
 

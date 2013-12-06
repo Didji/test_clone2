@@ -1,5 +1,7 @@
 angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n, $q){
 
+    'use strict' ;
+
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
@@ -63,7 +65,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 var act = $scope.report.activity;
                 // We have to flag fields which have visibility consequences
                 // to enable a correct layout.
-                for(var j = 0, numTabs = act.tabs.length; j < numTabs; j++) {
+                for(var j = 0, numTabs = act.tabs.length, tab ; j < numTabs; j++) {
                     tab = act.tabs[j];
                     for(var k = 0, numFields = tab.fields.length; k < numFields; k++) {
                         tab.fields[k].isconsequence = (tab.fields[k].visible === false);
@@ -365,7 +367,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         event.preventDefault();
     };
 
-    getBase64Image = function(src) {
+    function getBase64Image(src) {
         var img = document.createElement("img");
         img.src = src ;
         var canvas = document.createElement("canvas");
