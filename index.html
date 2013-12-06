@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" ng-app="smartgeomobile">
+<html lang="fr">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -15,7 +15,8 @@
     <link rel="stylesheet" type="text/css" href="css/vendors/component.css" />
     <link rel="stylesheet" type="text/css" href="css/smartgeomobile.css" />
 </head>
-<body>
+<body ng-app="smartgeobootstrap">
+
     <div id="mainview" ng-view></div>
     <!-- Vendors -->
     <script src="cordova.js"></script>
@@ -68,6 +69,19 @@
 
     <!-- Filters -->
     <script src="javascripts/filters/consultationFilters.js"></script>
+
+    <script>
+        angular.module("smartgeobootstrap", []).run(function ($rootScope) {
+
+            (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
+                console.log(sites);
+                window.smartgeoPersistenceCache = {
+                    sites : sites
+                };
+                angular.bootstrap(document, ['smartgeomobile']);
+            });
+        });
+    </script>
 
 </body>
 </html>
