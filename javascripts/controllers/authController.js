@@ -25,7 +25,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
     }
 
-
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */

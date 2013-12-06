@@ -113,9 +113,10 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         createZones: function(site, callback){
 
             var zones_matrix_length = Math.ceil(Math.sqrt(Math.pow(2, Math.ceil(Math.log(site.number.total / Installer._INSTALL_MAX_ASSETS_PER_ZONE) / Math.LN2))));
-                zones_matrix_length = Math.min(zones_matrix_length, Installer._INSTALL_MAX_ZONES_MATRIX_LENGTH),
-                zones_matrix_width  = (site.extent.xmax - site.extent.xmin) / zones_matrix_length,
-                zones_matrix_height = (site.extent.ymax - site.extent.ymin) / zones_matrix_length;
+                zones_matrix_length = Math.min(zones_matrix_length, Installer._INSTALL_MAX_ZONES_MATRIX_LENGTH);
+            var zones_matrix_width  = (site.extent.xmax - site.extent.xmin) / zones_matrix_length,
+                zones_matrix_height = (site.extent.ymax - site.extent.ymin) / zones_matrix_length,
+                extent ;
 
             site.zones = [];
 
