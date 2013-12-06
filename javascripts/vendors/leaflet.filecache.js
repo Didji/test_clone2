@@ -1356,9 +1356,13 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         var this_ = this ;
 
         this.requestQuota(function(){
-            (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT,grantedBytes, function(fs){
-                this_.filesystem = fs ;
-            }, this_.log_fs_error);
+            if(window.requestFileSystem || window.webkitRequestFileSystem){
+                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT,grantedBytes, function(fs){
+                    this_.filesystem = fs ;
+                }, this_.log_fs_error);
+            } else {
+                this_.filesystem = true ;
+            }
         });
     },
 
@@ -1495,40 +1499,66 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             tiles : this
         };
 
-        this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png', {}, function(fileEntry) {
-            fileEntry.file(function(file) {
-                var reader = new FileReader();
-                reader.readAsArrayBuffer(file);
-                reader.onloadend = function(event) {
-                    var data = event.target.result, datatype = "image/png", blob, bb;
-                    try {
-                        blob = new Blob([data], {type: datatype});
-                    } catch (e) {
-                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
-                        if (e.name == 'TypeError' && window.BlobBuilder) {
-                            bb = new BlobBuilder();
-                            bb.append(data);
-                            blob = bb.getBlob(datatype);
-                        } else if (e.name == "InvalidStateError") {
-                            blob = new Blob([data], {type: datatype});
-                        } else {
-                            console.log("Error when building blob");
-                        }
-                    }
-                    // image.style.border  = 'solid 1px blue';
-                    window.URL = window.URL || window.webkitURL;
-                    image.src           =   URL.createObjectURL(blob);
-                    image.onerror = function(event) {
-                        image.onerror = image.onload = null ;
-                    };
-                    image.onload = function(event) {
-                        image.onerror = image.onload = null ;
-                        image.className += " leaflet-tile-loaded";
-                        image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-                    };
-                    this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
-                        if(yes){
-                            var oldTile = image.src;
+        if(this.filesystem !== true)
+            {this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png', {}, function(fileEntry) {
+                            fileEntry.file(function(file) {
+                                var reader = new FileReader();
+                                reader.readAsArrayBuffer(file);
+                                reader.onloadend = function(event) {
+                                    var data = event.target.result, datatype = "image/png", blob, bb;
+                                    try {
+                                        blob = new Blob([data], {type: datatype});
+                                    } catch (e) {
+                                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
+                                        if (e.name == 'TypeError' && window.BlobBuilder) {
+                                            bb = new BlobBuilder();
+                                            bb.append(data);
+                                            blob = bb.getBlob(datatype);
+                                        } else if (e.name == "InvalidStateError") {
+                                            blob = new Blob([data], {type: datatype});
+                                        } else {
+                                            console.log("Error when building blob");
+                                        }
+                                    }
+                                    // image.style.border  = 'solid 1px blue';
+                                    window.URL = window.URL || window.webkitURL;
+                                    image.src           =   URL.createObjectURL(blob);
+                                    image.onerror = function(event) {
+                                        image.onerror = image.onload = null ;
+                                    };
+                                    image.onload = function(event) {
+                                        image.onerror = image.onload = null ;
+                                        image.className += " leaflet-tile-loaded";
+                                        image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+                                    };
+                                    this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
+                                        if(yes){
+                                            var oldTile = image.src;
+                                            image.src = this_.getTileUrl({x:x, y:y},z);
+                                            image.onerror = function(event) {
+                                                image.src = oldTile;
+                                                image.onerror = image.onload = null ;
+                                            };
+                                            image.onload = function(){
+                                                image.className += " leaflet-tile-loaded";
+                                                this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
+                                                    this_.getRemoteETag(   tileObject, function(remoteETag){
+                                                        if(remoteETag !== null){
+                                                            this_.writeMetadataTileFile(tileObject,{
+                                                                etag : remoteETag
+                                                            });
+                                                        }
+                                                    });
+                                                });
+                                                image.onerror = image.onload = null ;
+                                            };
+                                        }
+                                    });
+                                };
+                            });
+
+                        }, function(fileError){
+                            var oldTile = image.src ;
                             image.src = this_.getTileUrl({x:x, y:y},z);
                             image.onerror = function(event) {
                                 image.src = oldTile;
@@ -1536,24 +1566,11 @@ L.TileLayer.FileCache = L.TileLayer.extend({
                             };
                             image.onload = function(){
                                 image.className += " leaflet-tile-loaded";
-                                this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                                    this_.getRemoteETag(   tileObject, function(remoteETag){
-                                        if(remoteETag !== null){
-                                            this_.writeMetadataTileFile(tileObject,{
-                                                etag : remoteETag
-                                            });
-                                        }
-                                    });
-                                });
+                                this_.writeTileToCache(tileObject, this_.getDataURL(image));
                                 image.onerror = image.onload = null ;
                             };
-                        }
-                    });
-                };
-            });
-
-        }, function(fileError){
-            var oldTile = image.src ;
+                        });}
+        else {
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = function(event) {
                 image.src = oldTile;
@@ -1561,10 +1578,10 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             };
             image.onload = function(){
                 image.className += " leaflet-tile-loaded";
-                this_.writeTileToCache(tileObject, this_.getDataURL(image));
+                // this_.writeTileToCache(tileObject, this_.getDataURL(image));
                 image.onerror = image.onload = null ;
             };
-        });
+        }
     },
 
     readMetadataTileFile: function(tileObject, callback){
