@@ -493,29 +493,50 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             });
         },
 
+
         // GETTER AND SETTER
+
+        parametersCache : window.smartgeoPersistenceCache,
+
         get: function(parameter){
-            return JSON.parse(localStorage.getItem(parameter));
+            // console.log(this.parametersCache, parameter);
+            if(this.parametersCache[parameter]){
+                console.log("cached value", parameter);
+                return this.parametersCache[parameter];
+            } else {
+                return JSON.parse(localStorage.getItem(parameter));
+            }
         },
 
         set: function(parameter, value){
+            // console.log(this.parametersCache, parameter);
+            this.parametersCache[parameter] = value ;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
         unset: function(parameter){
+            this.parametersCache[parameter] = undefined ;
             return localStorage.removeItem(parameter);
         },
 
         // ASYNC GETTER AND SETTER
         get_: function(parameter, callback){
-            (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
+            if(this.parametersCache[parameter]){
+                console.log("_cached value", parameter);
+                callback(this.parametersCache[parameter]) ;
+                return this.parametersCache[parameter] ;
+            } else {
+                (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
+            }
         },
 
         set_: function(parameter, value, callback){
+            this.parametersCache[parameter] = value ;
             (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
         },
 
         unset_: function(parameter, callback){
+            this.parametersCache[parameter] = undefined ;
             (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         }
     };

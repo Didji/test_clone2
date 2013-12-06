@@ -1,6 +1,3 @@
-smartgeomobile.factory('SQLite', function(){
-
-    'use strict' ;
 
     var SQLite = {
 
@@ -65,6 +62,10 @@ smartgeomobile.factory('SQLite', function(){
         }
 
     };
-    return SQLite;
 
+window.smartgeoPersistenceSQLite = SQLite ;
+
+smartgeomobile.factory('SQLite', function(){
+    'use strict' ;
+    return SQLite;
 });
