@@ -64,7 +64,13 @@
             this.open(function(){
                 var transaction = IndexedDB.database.transaction(["parameters"], "readwrite"),
                     objectStore = transaction.objectStore("parameters"),
-                    request     = objectStore.put({key:parameter, value:value});
+                    request     ;
+                try{
+                    request = objectStore.delete(parameter);
+                    request = objectStore.put({key:parameter, value:value});
+                } catch(e){
+                    console.log(e);
+                }
                 transaction.onsuccess =  (success || function(){})();
                 transaction.onerror   =  (error   || function(){})();
             });
