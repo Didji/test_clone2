@@ -61,7 +61,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
                 Smartgeo.set_('reports', $scope.reports, function(){
                     $timeout(function(){
-                        $scope.reports[$index].hide = true ;
+                        if($scope.reports[$index]){
+                            $scope.reports[$index].hide = true ;
+                        }
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                     },3000);
                 });
