@@ -271,7 +271,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         get_: function(parameter, callback){
             if(this.parametersCache[parameter]){
-                callback(this.parametersCache[parameter]) ;
+                (callback || function(){})(this.parametersCache[parameter]) ;
                 return this.parametersCache[parameter] ;
             } else {
                 (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
@@ -646,7 +646,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 (error || function(){})();
             });
         }
-
     };
 
     Smartgeo._initializeGlobalEvents();
