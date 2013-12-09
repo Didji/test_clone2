@@ -50,6 +50,8 @@ window.smartgeo_i18n_lang['fr'] = {
         _REPORT_MEDIA                       : "Média" ,
         _REPORT_ADD_PICTURES                : "Ajouter une photo" ,
         _REPORT_SAVE                        : "Enregistrer" ,
+        _REPORT_LOADING                     : "Chargement",
+        _REPORT_DELETE                      : "Supprimer",
 
         _SEARCH_SEARCH                      : "Recherche" ,
         _SEARCH_ADVANCED_SEARCH             : "Recherche avancée" ,
