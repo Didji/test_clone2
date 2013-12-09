@@ -67,7 +67,10 @@
                     <ul class='ged-gallery' >
                         <li ng-repeat='image in report.ged'>
                             <img ng-src="{{image.content}}" alt=""/>
-                            <button class="btn btn-default btn-block btn-danger btn-xs" ng-click="removeGed($index)"><i18n>_REPORT_DELETE</i18n></button>
+                            <span ng-click="removeGed($index)" class="icon icon-trash" style="text-align: center;display: block;font-size: 2em;margin-top: 9px;"></span>
+
+                            <!-- <button class="btn btn-default btn-default " ng-click="">
+                            </button>-->
                         </li>
                     </ul>
                 </div>
