@@ -19,6 +19,12 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
 
     var stepsByOkey = {};
 
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+        if(next.indexOf('/map/') === -1) {
+            event.preventDefault();
+        }
+    });
+
     function buildSteps(site) {
         var steps = [],
             step,

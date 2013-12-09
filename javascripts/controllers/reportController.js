@@ -7,6 +7,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     $scope.fromConsult = false;
     GiReportBuilder.buildAllTemplates($scope.site.activities);
 
+    $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT ;
+
     $scope.report = {
         assets: [],
         fields: {},
@@ -365,6 +367,10 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope.toggleCollapse = function(event){
         event.preventDefault();
+    };
+
+    $scope.removeGed = function($index){
+        $scope.report.ged.splice($index, 1);
     };
 
     function getBase64Image(src) {

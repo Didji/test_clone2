@@ -399,7 +399,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         },
 
         uninstallSite : function(site, callback){
-            for (var i = 0; i < site.zones.length; i++) {
+            for (var i = 0; site && i < site.zones.length; i++) {
                 SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                     transaction.executeSql('DROP TABLE IF EXISTS ASSETS', [], function(){
                         Installer.checkpoint("destroy_zones_databases", site.zones.length, callback);

@@ -31,8 +31,11 @@
         <button style='min-width: 110px' class="btn btn-warning" ng-click="locateMission(key)" ng-show='mission.assets.length > 0'>
           <span class="fa fa-search fa-3x"></span><br/><i18n>_PLANNING_LOCATE_</i18n>
         </button>
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets" ng-show='mission.assets.length > 0'>
-          <span class="fa fa-pencil fa-3x"></span><span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span><br/><i18n>_PLANNING_WRITE_</i18n>
+        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets" ng-show='mission.assets.length > 0 && !mission.activity.nightTour'>
+          <span class="fa fa-file-text fa-3x"></span><span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span><br/><i18n>_PLANNING_WRITE_</i18n>
+        </button>
+        <button style='min-width: 110px' class="btn btn-warning" ng-click="startNightTour(mission)" ng-show='mission.activity.nightTour'>
+          <span class="fa fa-lightbulb-o fa-3x"></span>Démarrer tournée</i18n>
         </button>
       </div>
 </div>
