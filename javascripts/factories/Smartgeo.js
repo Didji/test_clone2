@@ -106,6 +106,16 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         reset: function(){
             localStorage.clear();
+            var sites = Smartgeo.get('sites') ;
+            Smartgeo.unset_('sites');
+            for(var k in sites){
+                var site = sites[k] ;
+                for (var i = 0; i < site.zones.length; i++) {
+                    SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                        transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
+                    });
+                }
+            }
         },
 
         /**

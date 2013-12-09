@@ -76,7 +76,7 @@
             });
         },
 
-        unset: function(parameters){
+        unset: function(parameters, callback){
             this.open(function(){
                 var request = IndexedDB.database.transaction(["parameters"], "readwrite")
                                 .objectStore("parameters")
