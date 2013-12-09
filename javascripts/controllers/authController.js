@@ -57,7 +57,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          */
         if(status === 403){
             alertify.alert( i18n.get("_AUTH_INCORRECT_PASSWORD") );
-        } else if (status === ''){
+        } else if (!status){
             alertify.alert( i18n.get("_AUTH_SERVER_UNREACHABLE") );
         } else {
             alertify.alert( i18n.get("_AUTH_SERVER_ERROR", status) );

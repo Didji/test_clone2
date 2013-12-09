@@ -15,7 +15,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_SMARTGEO_MOBILE_VERSION
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {string}
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
@@ -25,9 +24,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {integer}
          * @const
-         * @default 361
          * @description Width threshold which describes big screen
          */
         _BIG_SCREEN_THRESHOLD : 361,
@@ -37,12 +34,19 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
          * @propertyOf smartgeomobile.Smartgeo
-         * @returns {integer}
          * @const
-         * @default 10
          * @description Define max results per search (and advanced search)
          */
         _MAX_RESULTS_PER_SEARCH : 10,
+
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_SERVER_UNREACHABLE_THRESHOLD
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description Timeout, in milliseconds, for ping and login method
+         */
+        _SERVER_UNREACHABLE_THRESHOLD : 5000,
 
 
         /**
@@ -153,7 +157,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         ping : function(callback) {
             callback = callback || function(){};
-            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
+            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'), {}, {timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD})
                 .success(function(data){
                     Smartgeo.set('online', true);
                     callback(true);
@@ -480,7 +484,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                     'forcegimaplogin' : true
                 });
             }
-            $http.post(url).success(function(){
+            $http.post(url,{},{timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD}).success(function(){
                 Smartgeo._LOGIN_MUTEX = false ;
                 if($rootScope.site){
                     Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
