@@ -58,7 +58,7 @@
                 <h4 class="panel-title"><i18n>_REPORT_MEDIA</i18n></h4>
             </div>
             <div class="panel-body">
-                <button camera class='btn btn-default btn-block'  ng-model='report.ged'><i18n>_REPORT_ADD_PICTURES</i18n></button>
+                <button ng-disabled="report.ged.length >= 3" camera class='btn btn-default btn-block'  ng-model='report.ged'><i18n>_REPORT_ADD_PICTURES</i18n></button>
                 <div id="images">
                     <ul class='ged-gallery' >
                         <li ng-repeat='image in report.ged'>
