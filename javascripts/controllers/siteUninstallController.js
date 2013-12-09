@@ -9,7 +9,7 @@ angular.module('smartgeomobile').controller('siteUninstallController', function 
     Installer.uninstallSite($rootScope.site, function(){
         delete sites[$rootScope.site.id];
         Smartgeo.set_('sites', sites);
-        // $location.path('/');
+        $location.path('/');
         if(!$scope.$$phase) {
             $scope.$apply();
         }
