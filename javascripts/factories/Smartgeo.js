@@ -48,6 +48,15 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         _SERVER_UNREACHABLE_THRESHOLD : 5000,
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_MAX_MEDIA_PER_REPORT
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description Max media per report
+         */
+
+        _MAX_MEDIA_PER_REPORT : 3,
 
         /**
          * @ngdoc method
