@@ -369,6 +369,10 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         event.preventDefault();
     };
 
+    $scope.removeGed = function($index){
+        $scope.report.ged.splice($index, 1);
+    };
+
     function getBase64Image(src) {
         var img = document.createElement("img");
         img.src = src ;
