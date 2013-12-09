@@ -25,7 +25,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
          * @propertyOf smartgeomobile.Smartgeo
          * @const
-         * @default 361
          * @description Width threshold which describes big screen
          */
         _BIG_SCREEN_THRESHOLD : 361,
@@ -35,7 +34,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @ngdoc property
          * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
          * @propertyOf smartgeomobile.Smartgeo
-         * @default 10
+         * @const
          * @description Define max results per search (and advanced search)
          */
         _MAX_RESULTS_PER_SEARCH : 10,
@@ -48,6 +47,24 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
          localStorageCache : {},
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_SERVER_UNREACHABLE_THRESHOLD
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description Timeout, in milliseconds, for ping and login method
+         */
+        _SERVER_UNREACHABLE_THRESHOLD : 5000,
+
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_MAX_MEDIA_PER_REPORT
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description Max media per report
+         */
+
+        _MAX_MEDIA_PER_REPORT : 3,
 
         /**
          * @ngdoc method
@@ -106,6 +123,16 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         reset: function(){
             localStorage.clear();
+            var sites = Smartgeo.get('sites') ;
+            Smartgeo.unset_('sites');
+            for(var k in sites){
+                var site = sites[k] ;
+                for (var i = 0; i < site.zones.length; i++) {
+                    SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                        transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
+                    });
+                }
+            }
         },
 
         /**
@@ -157,7 +184,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
         ping : function(callback) {
             callback = callback || function(){};
-            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'))
+            $http.post(Smartgeo.getServiceUrl('global.dcnx.json'), {}, {timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD})
                 .success(function(data){
                     Smartgeo.set('online', true);
                     callback(true);
@@ -607,7 +634,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                     'forcegimaplogin' : true
                 });
             }
-            $http.post(url).success(function(){
+            $http.post(url,{},{timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD}).success(function(){
                 Smartgeo._LOGIN_MUTEX = false ;
                 if($rootScope.site){
                     Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);

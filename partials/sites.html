@@ -23,15 +23,15 @@
                     </button>
                     <ul class="dropdown-menu pull-right">
                         <li>
-                            <a href="#" ng-show="site.installed">
+                            <a href="#/sites/uninstall/{{site.id}}" ng-show="site.installed">
                                 <span class="icon-trash"></span>
-                                <i18n>_SITE_UNINSTALL</i18n>
+                                <i18n>_SITE_UNINSTALL</i18n> {{site.label}}
                             </a>
                         </li>
                         <li>
-                            <a href="#/sites/install/{{site.id}}" ng-show="site.installed">
+                            <a href="#/sites/update/{{site.id}}" ng-show="site.installed">
                                 <span class="icon-refresh"></span>
-                                <i18n>_SITE_UPDATE</i18n>
+                                <i18n>_SITE_UPDATE</i18n> {{site.label}}
                             </a>
                         </li>
                     </ul>

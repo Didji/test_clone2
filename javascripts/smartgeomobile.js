@@ -31,7 +31,9 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
             require: 'ngModel',
             link: function(scope, elm, attrs, ctrl) {
                 elm.on('click', function() {
-
+                    scope.$apply(function(){
+                        scope.isTakingPhoto = true ;
+                    })
                     navigator.getMedia = ( navigator.getUserMedia ||
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia ||
@@ -55,6 +57,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                     ctrl.$viewValue.push({
                                         content:canvas.toDataURL("image/png")
                                     });
+                                scope.isTakingPhoto = false ;
                                 });
                             };
                         };
@@ -93,6 +96,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                         ctrl.$viewValue.push({
                                             content:canvas.toDataURL("image/png")
                                         });
+                                        scope.isTakingPhoto = false ;
                                     });
                                 };
                             }
@@ -116,6 +120,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 ctrl.$viewValue.push({
                                     content:canvas.toDataURL("image/png")
                                 });
+                                scope.isTakingPhoto = false ;
                             });
 
                         }, false);
@@ -127,6 +132,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 ctrl.$viewValue.push({
                                     content:imageURI
                                 });
+                                scope.isTakingPhoto = false ;
                             });
                         }, function (err) {
                             ctrl.$setValidity('error', false);
@@ -152,6 +158,7 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 ctrl.$viewValue.push({
                                     content:canvas.toDataURL("image/png")
                                 });
+                                scope.isTakingPhoto = false ;
                             });
                         };
                     }

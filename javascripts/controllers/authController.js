@@ -25,6 +25,15 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
     }
 
+
+    // Prevent just unlogged user to go back to the map
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+        if(next.indexOf('/map/') !== -1) {
+            event.preventDefault();
+        }
+    });
+
+
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
@@ -48,7 +57,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
          */
         if(status === 403){
             alertify.alert( i18n.get("_AUTH_INCORRECT_PASSWORD") );
-        } else if (status === ''){
+        } else if (!status){
             alertify.alert( i18n.get("_AUTH_SERVER_UNREACHABLE") );
         } else {
             alertify.alert( i18n.get("_AUTH_SERVER_ERROR", status) );

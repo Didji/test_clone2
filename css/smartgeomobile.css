@@ -34,7 +34,7 @@ html * {
 
 html, body {
     height: 100%;
-    background: #373f45;
+    background: #525252;
     overflow: hidden;
     font-family: 'robotoregular', sans-serif;
     user-select :none;
