@@ -11,6 +11,7 @@ smartgeomobile.factory('i18n', function(Smartgeo){
         SYSTEM_LANGUAGE   : navigator.language.slice(0,2),
         FALLBACK_LANGUAGE : 'fr',
         UNTRANSLATED_CHAR : '≠',
+        MISSING_ARG_CHAR  : 'Ø',
         lang: function(){
             return this.CACHE ||
                  ( this.label[this.OVERRIDE_LANGUAGE] && (this.CACHE = this.OVERRIDE_LANGUAGE ) ) ||
@@ -25,7 +26,7 @@ smartgeomobile.factory('i18n', function(Smartgeo){
                 args.push(arguments[j]);
             }
             while(args && s && s.indexOf('%s') !== -1 && i < args.length){
-                s=s.replace('%s',args[i++]);
+                s=s.replace('%s',args[i++] || this.MISSING_ARG_CHAR);
             }
             return (s === undefined && key !== undefined ? this.UNTRANSLATED_CHAR : s) ;
         },
