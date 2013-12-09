@@ -349,7 +349,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
 
             var request  = " SELECT * FROM ASSETS ";
                 request += " WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
-                request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom IS NULL OR maxzoom IS NULL) ) ";
+                request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom = 'null' OR maxzoom = 'null') ) ";
 
             if(this.active_layers) {
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';

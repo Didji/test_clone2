@@ -105,7 +105,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         },
 
         saveSite: function(site){
-            var sites = Smartgeo.get('sites') || {};
+            var sites = Smartgeo.get_('sites') || {};
             sites[site.id] = site ;
             Smartgeo.set_('sites', sites);
         },
