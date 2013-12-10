@@ -70,7 +70,7 @@ html, body {
     top: 0;
     bottom: 0;
     right: 0;
-    background-color: #373f45;
+    background-color: #3F3F3F;
     height: 100%;
     width: 0px;
     position: absolute;
@@ -119,7 +119,7 @@ html, body {
     position: fixed;
     top: 5px;
     right: 5px;
-    border: 1px solid #373f45;
+    border: 1px solid #3F3F3F;
 }
 .consultation-panel.open .consultation-content{
     display: block;
@@ -142,7 +142,7 @@ html, body {
     border-right : none;
     text-decoration: none;
     border-radius: 8px 0 0 8px;
-    background: #373f45;
+    background: #3F3F3F;
 
 
 }
@@ -178,7 +178,7 @@ html, body {
 
 #mp-menu {
     overflow: auto;
-    background: #373f45;
+    background: #3F3F3F;
 }
 
 #mp-menu li > a, #mp-menu  label{
@@ -363,7 +363,7 @@ fieldset[disabled] .btn-primary.active {
     border-left : none;
     text-decoration: none;
     border-radius: 0 8px 8px 0;
-    background: #373f45;
+    background: #3F3F3F;
 }
 
 #trigger  span {
