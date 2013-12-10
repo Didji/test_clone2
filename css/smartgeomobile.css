@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'robotolight';
-    src: url('../fonts/Roboto-Light-webfont.eot');
-    src: url('../fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Light-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Light-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Light-webfont.svg#robotolight') format('svg');
+    src: url('fonts/Roboto-Light-webfont.eot');
+    src: url('fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Roboto-Light-webfont.woff') format('woff'),
+         url('fonts/Roboto-Light-webfont.ttf') format('truetype'),
+         url('fonts/Roboto-Light-webfont.svg#robotolight') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -12,11 +12,11 @@
 
 @font-face {
     font-family: 'robotoregular';
-    src: url('../fonts/Roboto-Regular-webfont.eot');
-    src: url('../fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Regular-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Regular-webfont.svg#robotoregular') format('svg');
+    src: url('fonts/Roboto-Regular-webfont.eot');
+    src: url('fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Roboto-Regular-webfont.woff') format('woff'),
+         url('fonts/Roboto-Regular-webfont.ttf') format('truetype'),
+         url('fonts/Roboto-Regular-webfont.svg#robotoregular') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -29,6 +29,7 @@
 
 html * {
     user-select : none;
+    outline:none;
 }
 
 html, body {
@@ -36,6 +37,7 @@ html, body {
     background: #525252;
     overflow: hidden;
     font-family: 'robotoregular', sans-serif;
+    user-select :none;
 }
 
 /** Vue principale */
@@ -59,6 +61,7 @@ html, body {
 #smartgeo-map{
     width:100%;
     height:100%;
+    background-color: white;
 }
 
 /** Panneaux de droite */
@@ -169,8 +172,8 @@ html, body {
  * droite et mange la carte. On désactive ça.
  */
 #mp-pusher {
-    -webkit-transition: -webkit-transform 0.5s;
-    transition:  transform 0.5s;
+/*    -webkit-transition: -webkit-transform 0.5s;
+    transition:  transform 0.5s;*/
 }
 
 #mp-menu {
@@ -423,8 +426,8 @@ label.prettycheckbox {
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+/*    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;*/
 }
 label.prettycheckbox.checked {
     border-radius: 3px;
@@ -488,10 +491,10 @@ ul.ged-gallery li img {
   opacity: 0;
   width: 0;
 
-  -webkit-transition: opacity 0.25s, width 0.25s;
+/*  -webkit-transition: opacity 0.25s, width 0.25s;
   -moz-transition: opacity 0.25s, width 0.25s;
   -o-transition: opacity 0.25s, width 0.25s;
-  transition: opacity 0.25s, width 0.25s;
+  transition: opacity 0.25s, width 0.25s;*/
 }
 
 .has-spinner.active {
@@ -562,4 +565,25 @@ transition:none!important; /* Désolé, pris par le temps */
     margin-top: 4px;
     display: inline-block;
     color: #fd9122;
+}
+
+/** Planning */
+
+.mission-label{
+    width: 73%;
+    display: block;
+    font-size: 12px;
+    margin-left: -7px;
+    font-weight: 400;
+}
+
+.custom-progress{
+    border: 1px solid rgb(255, 133, 0);
+}
+
+.mission-assets-count-badge{
+    margin-top: -15px;
+    margin-right: -10px;
+    font-size: 11px;
+    font-weight: 200;
 }

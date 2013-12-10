@@ -177,6 +177,22 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
             }, 10);
         },
 
+        getExtentsFromAssetsList: function(assets){
+            var xmin =   Infinity,
+                xmax = - Infinity,
+                ymin =   Infinity,
+                ymax = - Infinity;
+
+            for (var i = 0; i < assets.length; i++) {
+                xmin = assets[i].xmin < xmin ? assets[i].xmin : xmin ;
+                ymin = assets[i].ymin < ymin ? assets[i].ymin : ymin ;
+                xmax = assets[i].xmax > xmax ? assets[i].xmax : xmax ;
+                ymax = assets[i].ymax > ymax ? assets[i].ymax : ymax ;
+            }
+
+            return { xmin: xmin, xmax:xmax, ymin:ymin, ymax:ymax };
+        },
+
         extents_match : function(extent1, extent2){
             return !(extent1.xmax < extent2.xmin ||
                      extent1.xmin > extent2.xmax ||
@@ -349,7 +365,8 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
 
             var request  = " SELECT * FROM ASSETS ";
                 request += " WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
-                request += "      AND ( (minzoom <= 1*? and maxzoom >= 1*? ) or (minzoom = 'null' OR maxzoom = 'null') ) ";
+                request += "    AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ";
+
 
             if(this.active_layers) {
                 request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
