@@ -85,7 +85,7 @@
         </nav>
         <div class="scroller">
             <p>
-                <a href="#" id="trigger" ng-click="toggle($event)">
+                <a href="#" id="trigger" ng-click="toggle($event)" ng-show="!nightTourInProgress">
                     <span class="icon-ellipsis-vertical"></span>
                 </a>
             </p>
@@ -97,4 +97,5 @@
     <div id="smartgeo-map"></div>
 </span>
 
-<div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
+<div ng-include="'partials/consultation.html'"></div>
+<div ng-include="'partials/nightTour.html'"></div>

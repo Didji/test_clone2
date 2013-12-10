@@ -91,6 +91,7 @@ window.smartgeo_i18n_lang['fr'] = {
         _PLANNING_SYNC_FAIL_                : "Erreur lors de la mise à jour des missions",
         _PLANNING_OBJECT_NOT_FOUND_         : "Les objets de cette mission n'ont pas été trouvés.",
         _PLANNING_REFRESH_                  : "Actualiser",
+        _PLANNING_START_                    : "Démarrer",
         _PLANNING_TODAY_                    : "Aujourd'hui",
         _PLANNING_BEFORE_                   : "Avant",
         _PLANNING_DISPLAY_DONE_ASSETS_      : "Afficher objets terminés",

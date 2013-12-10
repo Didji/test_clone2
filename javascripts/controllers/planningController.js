@@ -273,8 +273,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.isLoading = true ;
         mission.openned = !mission.openned ;
+        //
 
-        if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length ){
+        if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length){
             return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
                     mission.isLoading = false ;
@@ -290,7 +291,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     extent         : G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]),
                     isLoading      : false
                 });
-
+                if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+                    // show last gps
+                }
                 $scope.highlightMission(mission);
                 if(locate !== false){
                     $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
@@ -309,6 +312,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         } else if(!mission.openned){
             $rootScope.$broadcast('UNHIGHLIGHT_ASSETS_FOR_MISSION'     , mission);
             $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
+            if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+                // hide last gps
+            }
         }
 
         mission.isLoading = false ;
@@ -335,8 +341,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @name planningController#showReport
      * @methodOf planningController
      * @param {Object} mission concerned mission
-     * @description
-     * Set map view to the mission's extent. If mission has no extent yet, it set it.
+     * @description Open report with concerned assets
+     *
      */
     $scope.showReport = function(mission){
         var selectedAssets = [];
@@ -347,6 +353,19 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         }
         $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
     };
+
+    /**
+     * @ngdoc method
+     * @name planningController#launchNightTour
+     * @methodOf planningController
+     * @param {Object} mission concerned mission
+     * @description
+     *
+     */
+     $scope.launchNightTour = function(mission){
+        $rootScope.$broadcast('START_NIGHT_TOUR', mission, $scope.assetsCache[mission.id]) ;
+     };
+
 
     /**
      * @ngdoc method

@@ -127,7 +127,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             Smartgeo.unset_('sites');
             for(var k in sites){
                 var site = sites[k] ;
-                for (var i = 0; i < site.zones.length; i++) {
+                for (var i = 0; site.zones && i < site.zones.length; i++) {
                     SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                         transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
                     });
