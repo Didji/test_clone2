@@ -11,7 +11,7 @@
 .container_s {
 	position: relative;
 	overflow: hidden;
-	background: #373f45;
+	background: #3F3F3F;
 }
 
 .menu-trigger {
@@ -53,7 +53,7 @@
 	top: 0;
 	left: 0;
 	width: 100%;
-	background: #373f45;
+	background: #3F3F3F;
 	-webkit-transform: translate3d(-100%, 0, 0);
 	transform: translate3d(-100%, 0, 0);
 }
@@ -219,6 +219,7 @@ background: linear-gradient(to right,  rgba(0,0,0,0.45) 0%,rgba(0,0,0,0) 100%); 
 
 .mp-back:hover {
 	text-decoration: none;
+	color : white;
 }
 .mp-back {
 	background: rgba(0,0,0,0.1);
