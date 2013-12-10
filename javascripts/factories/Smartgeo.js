@@ -510,9 +510,9 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 } else {
                     (success || function(){})();
                 }
-            }).error(function(){
+            }).error(function(response, status){
                 Smartgeo._LOGIN_MUTEX = false ;
-                (error || function(){})();
+                (error || function(){})(response, status);
             });
         },
 

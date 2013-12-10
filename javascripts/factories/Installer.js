@@ -4,6 +4,8 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
 
     var Installer = {
 
+        _LAST_ID_OKEY : {},
+
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
         _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
@@ -188,12 +190,13 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                 progress: 0
             });
 
-
             if(objectType.amount > Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
             } else {
-                var url = Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey ;
-
+                // var url = Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey ;
+                var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.assets.json', {
+                    okey : objectType.okey
+                });
                 if(update){
                     url += '&timestamp=' + site.oldTimestamp ;
                 }
@@ -234,9 +237,16 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                 url += '&timestamp=' + site.oldTimestamp ;
             }
 
+            if(Installer._LAST_ID_OKEY[objectType.okey]){
+                url += '&lastid=' + Installer._LAST_ID_OKEY[objectType.okey] ;
+            }
+
             $http
                 .get(url)
                 .success(function(data){
+                    // console.log(data.assets[data.assets.length-1]);
+                    Installer._LAST_ID_OKEY[objectType.okey] = data.assets[data.assets.length-1] ? data.assets[data.assets.length-1].guid : undefined ;
+                    // console.log( Installer._LAST_ID_OKEY);
                     Installer.save(site, data.assets, function(){
                         $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                             okey: objectType.okey,
