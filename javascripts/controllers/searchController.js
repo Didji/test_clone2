@@ -92,6 +92,9 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
             }
         }
         $scope.selectedCriteriaValues = newSelectedCriteriaValues ;
+        if(!$scope.$$phase) {
+            $scope.$$apply();
+        }
     };
 
     $scope.advancedSearch = function(event) {
