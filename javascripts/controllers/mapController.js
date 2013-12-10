@@ -42,8 +42,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $scope.consultationIsEnabled = false ;
 
     $rootScope.rights = {
-        'report' :  Smartgeo.getRight('report'),
-        'goto'   :  Smartgeo.getRight('goto'),
+        'report'   :  Smartgeo.getRight('report'),
+        'goto'     :  Smartgeo.getRight('goto'),
+        'planning' :  Smartgeo.getRight('planning'),
         'logout'   :  Smartgeo.getRight('logout')
     };
 

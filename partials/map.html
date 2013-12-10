@@ -10,13 +10,13 @@
                             <i18n>_MENU_CONSULTATION</i18n>
                         </a>
                     </li>
-                    <li>
+                    <li ng-show="rights.planning">
                         <a href="#">
                             <span class="icon icon-calendar"></span>
-                            Planning
+                            <i18n>_MENU_PLANNING</i18n>
                         </a>
                         <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
                             <div ng-include="'partials/planning.html'"></div>
                         </div>
                     </li>
