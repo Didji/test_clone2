@@ -6,7 +6,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
 
         // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
-        _INSTALL_MAX_ASSETS_PER_ZONE             : 128,
+        _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
         _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  500,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
@@ -107,15 +107,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         saveSite: function(site){
             var sites = Smartgeo.get_('sites') || {};
             sites[site.id] = site ;
-            try{
-                Smartgeo.set('sites', sites);
-            } catch (e){
-                if(e.code === 22){
-                    alertify.alert(e.message);
-                }
-                $location.path("/");
-                throw e ;
-            }
+            Smartgeo.set_('sites', sites);
         },
 
         createZones: function(site, callback){

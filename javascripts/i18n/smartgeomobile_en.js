@@ -96,6 +96,7 @@ window.smartgeo_i18n_lang['en'] = {
         _PLANNING_DISPLAY_DONE_ASSETS_      : "Show finished objects", //"Afficher objets terminés",
         _PLANNING_LOCATE_                   : "Locate", //"Localiser",
         _PLANNING_WRITE_                    : "Record", //"Saisir"
+        _PLANNING_START_                    : "Start", //"Démarrer"
         _PLANNING_FINISH_                   : "finished", //"terminé"
         _PLANNING_REFRESHED_                : "Refreshed", //"Actualisé"
         _PLANNING_DISPLAY_FINISHED_         : "Display finished mission", //Afficher les OT terminé"
