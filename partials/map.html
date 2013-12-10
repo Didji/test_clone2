@@ -1,5 +1,5 @@
 <div id="mainmenu" class="container_s" ng-controller="menuController">
-    <div class="mp-pusher" id="mp-pusher">
+    <div class="mp-pusher" id="mp-pusher" ng-click='close($event)'>
         <nav id="mp-menu" class="mp-menu">
             <div class="mp-level">
                 <h2><img class="logo_gi" src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></h2>
@@ -10,7 +10,16 @@
                             <i18n>_MENU_CONSULTATION</i18n>
                         </a>
                     </li>
-
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-calendar"></span>
+                            Planning
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'>retour</a>
+                            <div ng-include="'partials/planning.html'"></div>
+                        </div>
+                    </li>
                     <li>
                         <a href="#">
                             <span class="icon icon-search"></span>
@@ -37,16 +46,6 @@
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
-<!--                     <li>
-                        <a href="#">
-                            <span class="icon icon-list-ul"></span>
-                            <i18n>Planning</i18n>
-                        </a>
-                        <div class="mp-level" >
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
-                            <div ng-include="'partials/planning.html'"></div>
-                        </div>
-                    </li> -->
                     <li ng-show="rights.report">
                         <a href="#">
                             <span class="icon icon-edit"></span>
@@ -86,7 +85,7 @@
         </nav>
         <div class="scroller">
             <p>
-                <a href="#" id="trigger" ng-click="toggle($event)">
+                <a href="#" id="trigger" ng-click="toggle($event)" ng-show="!nightTourInProgress">
                     <span class="icon-ellipsis-vertical"></span>
                 </a>
             </p>
@@ -98,4 +97,5 @@
     <div id="smartgeo-map"></div>
 </span>
 
-<div  id="mainconsult" ng-include="'partials/consultation.html'"></div>
+<div ng-include="'partials/consultation.html'"></div>
+<div ng-include="'partials/nightTour.html'"></div>

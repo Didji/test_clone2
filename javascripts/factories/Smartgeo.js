@@ -18,7 +18,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.14",
+        _SMARTGEO_MOBILE_VERSION : "0.10.0",
 
         /**
          * @ngdoc property
@@ -38,6 +38,14 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @description Define max results per search (and advanced search)
          */
         _MAX_RESULTS_PER_SEARCH : 10,
+
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#localStorageCache
+         * @propertyOf smartgeomobile.Smartgeo
+         * @description Used for setter and getter best perf
+         */
+         localStorageCache : {},
 
         /**
          * @ngdoc property
@@ -119,7 +127,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             Smartgeo.unset_('sites');
             for(var k in sites){
                 var site = sites[k] ;
-                for (var i = 0; i < site.zones.length; i++) {
+                for (var i = 0; site.zones && i < site.zones.length; i++) {
                     SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
                         transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
                     });
@@ -186,7 +194,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 });
         },
 
-
         /**
          * @ngdoc method
          * @name smartgeomobile.Smartgeo#sanitizeAsset
@@ -200,6 +207,113 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#parametersCache
+         * @propertyOf smartgeomobile.Smartgeo
+         * @description Setter and getter cache
+         */
+        parametersCache : window.smartgeoPersistenceCache,
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#get
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @returns {*} Parameter's value
+         * @description
+         * Local storage getter
+         */
+        get: function(parameter){
+            if(this.parametersCache[parameter]){
+                return this.parametersCache[parameter];
+            } else {
+                return JSON.parse(localStorage.getItem(parameter));
+            }
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#set
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {*} value Parameter's value
+         * @description
+         * Local storage setter
+         */
+        set: function(parameter, value){
+            this.parametersCache[parameter] = value ;
+            return localStorage.setItem(parameter, JSON.stringify(value));
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#unset
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @description
+         * Clear localStorage's value
+         */
+        unset: function(parameter){
+            this.parametersCache[parameter] = undefined ;
+            return localStorage.removeItem(parameter);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#get_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called with parameter's value
+         * @returns {*} Parameter's value
+         * @description
+         * IndexedDB getter
+         */
+        get_: function(parameter, callback){
+            if(this.parametersCache[parameter]){
+                (callback || function(){})(this.parametersCache[parameter]) ;
+                return this.parametersCache[parameter] ;
+            } else {
+                (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
+            }
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#set_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called when value is setted
+         * @returns {*} Parameter's value
+         * @description
+         * IndexedDB setter
+         */
+        set_: function(parameter, value, callback){
+            this.parametersCache[parameter] = value ;
+            (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#unset_
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String} parameter Parameter's name
+         * @param {function} callback Called when value is unsetted
+         * @description
+         * Clear IndexedDB's value
+         */
+        unset_: function(parameter, callback){
+            this.parametersCache[parameter] = undefined ;
+            (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#log
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Useless log wrapper
+         */
         log: function(){
             console.log(arguments);
         },
@@ -210,6 +324,16 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             return check;
         },
 
+        findAssetsByGuids_big : function(site, guids, callback, partial_response){
+            partial_response = partial_response || [];
+            if(guids.length === 0){
+                return callback(partial_response);
+            } else {
+                Smartgeo.findAssetsByGuids(site, guids.slice(0, 333), function(assets){
+                    Smartgeo.findAssetsByGuids_big(site, guids.slice(333), callback, partial_response.concat(assets));
+                });
+            }
+        },
 
         // TODO : put this in a RightsManager
         getRight: function(module){
@@ -221,8 +345,13 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             return smgeo_right[module];
         },
 
-        findAssetsByGuids: function(site, guids, callback, zones, partial_response, error){
-             if (!zones) {
+        findAssetsByGuids: function(site, guids, callback, zones, partial_response){
+
+            if(guids.length > 333){
+                return Smartgeo.findAssetsByGuids_big(site, guids, callback);
+            }
+
+            if (!zones) {
                 zones = site.zones ;
                 partial_response = [];
             }
@@ -239,6 +368,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             if (typeof guids !== 'object') {
                 guids = [guids];
             }
+
             if (guids.length === 0) {
                 return callback([]);
             }
@@ -255,8 +385,10 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 t.executeSql(request, [],
                     function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
-                            var ast = rslt.rows.item(i);
+                            var ast = angular.copy(rslt.rows.item(i));
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
+                            ast.guid = ast.id;
+                            ast.geometry = JSON.parse(ast.geometry);
                             partial_response.push(ast);
                         }
                         _this.findAssetsByGuids(site,guids, callback, zones.slice(1), partial_response);
@@ -271,7 +403,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 alertify.log(SqlError.message);
                 (error || function(){})();
             });
-
         },
 
         findAssetsByOkey: function(site, okey, callback, zones, partial_response){
@@ -514,49 +645,6 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                 Smartgeo._LOGIN_MUTEX = false ;
                 (error || function(){})(response, status);
             });
-        },
-
-
-        // GETTER AND SETTER
-
-        parametersCache : window.smartgeoPersistenceCache,
-
-        get: function(parameter){
-            if(this.parametersCache[parameter]){
-                return this.parametersCache[parameter];
-            } else {
-                return JSON.parse(localStorage.getItem(parameter));
-            }
-        },
-
-        set: function(parameter, value){
-            this.parametersCache[parameter] = value ;
-            return localStorage.setItem(parameter, JSON.stringify(value));
-        },
-
-        unset: function(parameter){
-            this.parametersCache[parameter] = undefined ;
-            return localStorage.removeItem(parameter);
-        },
-
-        // ASYNC GETTER AND SETTER
-        get_: function(parameter, callback){
-            if(this.parametersCache[parameter]){
-                (callback||function(){})(this.parametersCache[parameter]) ;
-                return this.parametersCache[parameter] ;
-            } else {
-                (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
-            }
-        },
-
-        set_: function(parameter, value, callback){
-            this.parametersCache[parameter] = value ;
-            (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
-        },
-
-        unset_: function(parameter, callback){
-            this.parametersCache[parameter] = undefined ;
-            (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         }
     };
 

@@ -1499,6 +1499,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             tiles : this
         };
 
+
         if(this.filesystem !== true)
             {this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png', {}, function(fileEntry) {
                             fileEntry.file(function(file) {

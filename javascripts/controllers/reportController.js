@@ -15,6 +15,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         roFields: {},
         overrides: {},
         ged:[],
+        mission : 1*$routeParams.mission,
         activity: null,
         uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -246,7 +247,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     $scope.sendReport = function (event) {
         $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
-
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
             report.assets[i] = report.assets[i].id ;
@@ -298,7 +298,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             if(window.SmartgeoChromium && SmartgeoChromium.redirect){
                 SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
             } else {
-                open($rootScope.report_url_redirect, '_blank');
+                window.open($rootScope.report_url_redirect, "_blank");
             }
         }
 
@@ -338,9 +338,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
             url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
             return url;
-        }
-
-        if(url.indexOf('[KEY_INDEXED_FIELDS]') != -1){
+        } else if(url.indexOf('[KEY_INDEXED_FIELDS]') != -1){
             var injectedValues = '' ;
             for(var field in $scope.report.fields){
                 if($scope.report.fields.hasOwnProperty(field)){
@@ -349,6 +347,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             }
             injectedValues = injectedValues.slice(0, injectedValues.length-1);
             url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+            return url;
+        } else {
             return url;
         }
     }

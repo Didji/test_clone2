@@ -1,0 +1,43 @@
+<div ng-controller="nightTourController" class="consultation-panel" ng-class="state" id="consultation-panel">
+    <div id="toggleConsultationPanelButton" ng-show='nightTourInProgress' ng-click="togglePanel()">
+        <span class="fa fa-lightbulb-o"></span>
+    </div>
+
+    <div class="consultation-content">
+        <div class="panel panel-default" style='margin: 10px auto;' >
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  <span class="mission-label">{{mission.activity.label}} n°{{mission.number}} </span>
+                  <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
+                      <span ng-switch-when="0"><i18n>_PLANNING_FINISH_</i18n></span>
+                      <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
+                  </span>
+                  <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
+                </h3>
+                <p ng-show="mission.isLate" style="color: red;font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> En retard de {{ mission.end | sanitizeDate | timeago}} </p>
+              </div>
+              <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
+              <div class="panel-body"  ng-show='mission.openned || false'>
+
+                <p>
+                  <i class="fa fa-clock-o"></i> <i18n>_PLANNING_BEFORE_</i18n> {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+                </p>
+                <p ng-show='mission.city'>
+                  <i class="fa fa-map-marker"></i> {{mission.city}}
+                </p>
+                <p ng-show='mission.address'>
+                  <i class="fa fa-crosshairs"></i> {{mission.address}}
+                </p>
+
+                <p class="text-danger" ng-show='mission.objectNotFound'>
+                  <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
+                </p>
+                <button class="btn btn-warning btn-block" ng-click="locateMission()">
+                  <span class="fa fa-search"></span> <i18n>_PLANNING_LOCATE_</i18n>
+                </button>
+              </div>
+        </div>
+
+    </div>
+</div>
+
