@@ -35,6 +35,7 @@ window.smartgeo_i18n_lang['fr'] = {
         _UPDATE_UPDATING                    : "Mise à jour de " ,
 
         _MENU_CONSULTATION                  : "Consultation" ,
+        _MENU_PLANNING                      : "Planning" ,
         _MENU_SEARCH                        : "Recherche" ,
         _MENU_MY_POSITION                   : "Ma position" ,
         _MENU_ACTIVE_LAYERS                 : "Couches actives" ,

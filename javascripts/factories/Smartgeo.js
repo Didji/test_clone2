@@ -335,14 +335,8 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             }
         },
 
-        // TODO : put this in a RightsManager
         getRight: function(module){
-            var smgeo_right = {
-                'report' : true,
-                'goto'   : true,
-                'logout'   : true
-            };
-            return smgeo_right[module];
+            return window.smartgeoRightsManager[module];
         },
 
         findAssetsByGuids: function(site, guids, callback, zones, partial_response){
