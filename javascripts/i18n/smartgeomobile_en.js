@@ -12,6 +12,7 @@ window.smartgeo_i18n_lang['en'] = {
         _AUTH_PLEASE_WAIT                   : "Please wait ..." ,
         _AUTH_REQUIRED_FIELD_EMPTY          : "Please fill user and password fields." ,
         _AUTH_SERVER_ERROR                  : "%s", // status
+        _AUTH_INCORRECT_PASSWORD            : "Invalid password",//Mot de passe incorrect",
 
         _SMARTGEO_ONLINE                    : "Smartgeo is online" ,
         _SMARTGEO_OFFLINE                   : "Smartgeo is offline" ,
