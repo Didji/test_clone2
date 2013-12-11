@@ -114,10 +114,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope.state = 'closed';
     };
 
-    $scope.locateAsset = function(asset){
-        $rootScope.$broadcast("LOCATE_ASSET", asset);
-    };
-
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
 
