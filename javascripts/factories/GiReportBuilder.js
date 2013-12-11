@@ -21,17 +21,17 @@ smartgeomobile.factory('GiReportBuilder', function($templateCache) {
               }
               str += '>';
               str += field.label;
-              str += '<span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
+              str += ' <span class="required-marker icon-asterisk" ng-show="'+myField+'.required"></span>';
               var model = (field['default'] && field['default'].pkey) ? 'report.overrides['+field.id+']' : 'report.fields['+field.id+']',
                   placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields['+field.id+']}}' : '';
               switch(field.type) {
                   case 'D':
-                      str += '<input class="form-control" \
+                      str += '<span class="form-control pull-left" style="width:90%;margin-right: -30px;">{{'+model+' |  date:"dd/MM/yyyy"}}</span><input class="form-control pull-left" \
                                          ng-required="'+myField+'.required" \
                                          type="date" \
                                          name="f" \
                                          placeholder="'+placeholder+'" \
-                                         ng-model = "'+model+'"></input>';
+                                         ng-model = "'+model+'" style="width:0;margin-left: 1000px;left: -1000px;position: relative;margin-right: -1000px;opacity: 0;"></input>';
                       break;
                   case 'T':
                       str += '<input  class="form-control" \
