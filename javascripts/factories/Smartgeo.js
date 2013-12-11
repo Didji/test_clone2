@@ -214,9 +214,9 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
         // TODO : put this in a RightsManager
         getRight: function(module){
             var smgeo_right = {
-                'report' : true,
-                'goto'   : true,
-                'logout'   : true
+                'report' : false,
+                'goto'   : false,
+                'logout'   : false
             };
             return smgeo_right[module];
         },
