@@ -465,6 +465,11 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                         style : { color: '#fc9e49', opacity:0.9, weight: 7 }
                     });
                 break;
+            case "Polygon":
+                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
+                        style : { color: '#fc9e49', opacity:0.9, weight: 7 }
+                    });
+                break;
             default:
                 Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
@@ -502,6 +507,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 center = [coords[0][1], coords[0][0]] ;
                 break;
             case "MultiLineString":
+                center = [coords[0][0][1], coords[0][0][0]] ;
+                break;
+            case "Polygon":
                 center = [coords[0][0][1], coords[0][0][0]] ;
                 break;
             default:
