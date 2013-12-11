@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="css/vendors/component.css" />
     <link rel="stylesheet" type="text/css" href="css/smartgeomobile.css" />
 </head>
-<body ng-app="smartgeobootstrap">
+<body>
 
     <div id="mainview" ng-view></div>
     <!-- Vendors -->
@@ -72,14 +72,16 @@
     <script src="javascripts/filters/consultationFilters.js"></script>
 
     <script>
-        angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-          (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
-                window.smartgeoPersistenceCache = {
-                    sites : sites
-                };
                 angular.bootstrap(document, ['smartgeomobile']);
-            });
-        });
+
+        // angular.module("smartgeobootstrap", []).run(function ($rootScope) {
+        //   (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
+                window.smartgeoPersistenceCache = {
+                    // sites : sites
+                };
+        //         angular.bootstrap(document, ['smartgeomobile']);
+        //     });
+        // });
     </script>
 
 </body>

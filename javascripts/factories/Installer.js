@@ -107,9 +107,11 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         },
 
         saveSite: function(site){
-            var sites = Smartgeo.get_('sites') || {};
+            var sites = Smartgeo.get('sites') || {};
+            console.log(site, sites);
             sites[site.id] = site ;
-            Smartgeo.set_('sites', sites);
+            Smartgeo.set('sites', sites);
+            console.log(site, sites);
         },
 
         createZones: function(site, callback){
