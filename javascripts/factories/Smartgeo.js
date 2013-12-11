@@ -522,20 +522,22 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
         parametersCache : window.smartgeoPersistenceCache,
 
         get: function(parameter){
-            if(this.parametersCache[parameter]){
-                return this.parametersCache[parameter];
-            } else {
+            console.log(this.parametersCache);
+            // if(this.parametersCache[parameter]){
+            //     return this.parametersCache[parameter];
+            // } else {
                 return JSON.parse(localStorage.getItem(parameter));
-            }
+            // }
         },
 
         set: function(parameter, value){
-            this.parametersCache[parameter] = value ;
+            // console.log(this.parametersCache);
+            // this.parametersCache[parameter] = value ;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
         unset: function(parameter){
-            this.parametersCache[parameter] = undefined ;
+            // this.parametersCache[parameter] = undefined ;
             return localStorage.removeItem(parameter);
         },
 
