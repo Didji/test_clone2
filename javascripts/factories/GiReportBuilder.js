@@ -26,7 +26,7 @@ smartgeomobile.factory('GiReportBuilder', function($templateCache) {
                   placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields['+field.id+']}}' : '';
               switch(field.type) {
                   case 'D':
-                      str += '<span class="form-control pull-left" style="width:90%;margin-right: -30px;">{{'+model+' |  date:"dd/MM/yyyy"}}</span><input class="form-control pull-left" \
+                      str += '<span class="form-control pull-left" style="width:100%;margin-right: -30px;">{{'+model+' |  date:"dd/MM/yyyy"}}</span><input class="form-control pull-left" \
                                          ng-required="'+myField+'.required" \
                                          type="date" \
                                          name="f" \
