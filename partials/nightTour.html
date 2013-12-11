@@ -1,4 +1,4 @@
-<div ng-controller="nightTourController" class="consultation-panel" ng-class="state" id="consultation-panel">
+<div ng-init='initialize()' ng-controller="nightTourController" class="consultation-panel" ng-class="state" id="consultation-panel">
     <div id="toggleConsultationPanelButton" ng-show='nightTourInProgress' ng-click="togglePanel()">
         <span class="fa fa-lightbulb-o"></span>
     </div>
@@ -7,14 +7,13 @@
         <div class="panel panel-default" style='margin: 10px auto;' >
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  <span class="mission-label">{{mission.activity.label}} n°{{mission.number}} </span>
+                  <span class="mission-label">Tournée n°{{mission.number}}</span>
                   <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
                       <span ng-switch-when="0"><i18n>_PLANNING_FINISH_</i18n></span>
                       <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
                   </span>
                   <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
                 </h3>
-                <p ng-show="mission.isLate" style="color: red;font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> En retard de {{ mission.end | sanitizeDate | timeago}} </p>
               </div>
               <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
               <div class="panel-body"  ng-show='mission.openned || false'>
@@ -28,16 +27,27 @@
                 <p ng-show='mission.address'>
                   <i class="fa fa-crosshairs"></i> {{mission.address}}
                 </p>
-
+                <p ng-click="locateMission()" ng-show='!mission.objectNotFound'>
+                  <i class="fa fa-search"></i>  <i18n>_PLANNING_LOCATE_</i18n>
+                </p>
                 <p class="text-danger" ng-show='mission.objectNotFound'>
                   <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
                 </p>
-                <button class="btn btn-warning btn-block" ng-click="locateMission()">
-                  <span class="fa fa-search"></span> <i18n>_PLANNING_LOCATE_</i18n>
-                </button>
+
+                <button type="button" ng-show='!nightTourRecording' class="btn btn-default btn-lg" ng-click='resumeNightTour()'><i class="fa fa-play"></i></button>
+                <button type="button" ng-show='nightTourRecording' class="btn btn-default btn-lg" ng-click='pauseNightTour()'><i class="fa fa-pause"></i></button>
+                <button type="button" class="btn btn-default btn-lg" ng-click='stopNightTour()'><i class="fa fa-stop"> </i></button>
+                <button type="button" class="btn btn-default btn-lg"><i class="fa fa-check"> </i> Clôturer</button>
+
+                <div ng-show='nightTourRecording'>
+                  <h4 style="text-align: center;margin-top: 25px;">
+                    <i style='color:red' class="fa fa-circle blink"></i> Tournée en cours
+                  </h4>
+                </div>
+
               </div>
         </div>
-
     </div>
+
 </div>
 
