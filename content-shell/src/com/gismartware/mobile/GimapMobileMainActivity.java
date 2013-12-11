@@ -113,6 +113,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     
     @Override
 	public void onDestroy() {
+    	unregisterReceiver(networkChangeReceiver);
     	//TODO impossible to make deletion work...
     	if(FileUtils.delete(new File(GimapMobileApplication.WEB_ROOT))) {
     		Log.d(TAG, "Smartgeo has been successfully uninstalled!");
@@ -425,6 +426,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 		} else {
 			if (requestCode == ActivityCode.ACCOUNT_CHOOSE.getCode()) {
 				finishActivityInit();
+			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
+				getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[3]();");
 			}
 		}
     	
