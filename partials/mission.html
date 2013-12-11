@@ -8,7 +8,7 @@
           </span>
           <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
         </h3>
-        <p ng-show="mission.isLate" style="color: red;font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> En retard de {{ mission.end | sanitizeDate | timeago}} </p>
+        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> En retard de {{ mission.end | sanitizeDate | timeago}} </p>
       </div>
       <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
       <div class="panel-body"  ng-show='mission.openned || false'>
