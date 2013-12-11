@@ -131,7 +131,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                     var p2b = coords[i+1] ;
                     if(p1b[2] <= lineStringMiddle  && lineStringMiddle <= p2b[2] ){
                         var raptor = (lineStringMiddle - p1b[2]) / (p2b[2]-p1b[2]) ;
-                        return [ p1b[1] + raptor*(p2b[1]-p1b[1]) , p1b[0] + raptor*(p2b[0]-p1b[0]) ];
+                        return [ p1b[1] + raptor*(p2b[1]-p1b[1]) , p1b[0] + raptor*(p2b[0]-p1b[0]), p1b ];
                     }
                 }
         },
@@ -292,7 +292,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 symbology = this.site.symbology,
                 imageFactor = 1,
                 // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
-                imageFactor_2 = imageFactor / 2,
+                imageFactor_2 = 0.5,
                 scale = 256 * Math.pow(2, zoom),
                 xscale = canvas.width / Math.abs(xmax - xmin),
                 yscale = canvas.height / Math.abs(ymax - ymin),
@@ -307,48 +307,66 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 minDistanceToALabel = 15;
 
 
-            function drawLabel(ctx, txt, size, x, y) {
+            function drawLabel(ctx, txt, size, x, y, angle, color) {
+
+                ctx.save();
+
                 // Anticollision primaire.
                 var cur;
+                ctx.fillStyle = color;
                 for (var i = 0, lim = drawnLabels.length; i < lim; i++) {
                     cur = drawnLabels[i];
                     if ((x < (cur.x + cur.width + minDistanceToALabel)) &&
                         (x > (cur.x - minDistanceToALabel)) &&
-                        (y < (cur.y + minDistanceToALabel)) &&
+                        (y < (cur.y + cur.width + minDistanceToALabel)) &&
                         (y > (cur.y - minDistanceToALabel))) {
                         return;
                     }
                 }
+                var _width = ctx.measureText(txt).width;
+
+
+                ctx.translate(x ,y);
+                var offset_x= size * imageFactor_2 + 1 ;
+                var offset_y= 0 ;
+                if(angle){
+                    ctx.rotate(angle * DEG_TO_RAD);
+                    offset_x = -_width/2;
+                    offset_y= -4 ;
+                }
 
                 drawnLabels.push({
-                    x: x,
-                    y: y,
-                    width: ctx.measureText(txt).width
+                    x: x+offset_x,
+                    y: y+offset_y,
+                    width: _width
                 });
 
                 ctx.font = (size / 2) + 'px Arial';
-                ctx.strokeText(txt, x + size * imageFactor_2 + 1, y);
-                ctx.fillText(txt, x + size * imageFactor_2 + 1, y);
+                ctx.strokeText(txt,  offset_x,  offset_y);
+                ctx.fillText(txt,  offset_x, offset_y);
+                ctx.restore();
             }
 
             function drawLabels(ctx) {
                 var cur;
                 var lineWidth = ctx.lineWidth;
+                ctx.lineWidth = 3;
                 ctx.strokeStyle = 'white';
-                ctx.lineWidth = 4;
                 for (var i = 0, lim = labelCache.length; i < lim; i++) {
                     cur = labelCache[i];
-                    drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y);
+                    drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y, cur.angle, cur.color);
                 }
                 ctx.lineWidth = lineWidth;
             }
 
-            function addLabel(txt, size, x, y) {
+            function addLabel(txt, size, x, y, angle,  color) {
                 labelCache.push({
                     txt: txt,
                     x: x,
                     y: y,
-                    size: size
+                    size: size,
+                    color : color,
+                    angle : angle
                 });
             }
 
@@ -395,10 +413,12 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                                                 geom = parse(asset.geometry),
                                                 assetSymbology = symbology[asset.symbolId],
                                                 coord, coord_ = {}, x, y, image;
-                                            if (geom.type === "MultiLineString") {
+                                            if (geom.type === "MultiLineString" || geom.type === "Polygon") {
                                                 geom.coordinates = geom.coordinates[0];
+                                                ctx.strokeStyle = assetSymbology.style.strokecolor;
+                                                ctx.fillStyle = assetSymbology.style.fillcolor;
                                             }
-                                            if (geom.type === "LineString" || geom.type === "MultiLineString") {
+                                            if (geom.type === "LineString" || geom.type === "MultiLineString" || geom.type === "Polygon") {
                                                 ctx.beginPath();
                                                 for (var j = 0, l = geom.coordinates.length; j < l; j++) {
                                                     coord = geom.coordinates[j];
@@ -427,6 +447,40 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                                                     prevX = coord_.x;
                                                     prevY = coord_.y;
                                                 }
+                                                if ( (geom.type === "LineString" || geom.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
+                                                    var middle = G3ME.getLineStringMiddle(geom) , _middle = {}, _segmentBegin = {} ;
+
+                                                    _middle.x = middle[1] * 0.017453292519943295;
+                                                    _middle.y = Math.log(Math.tan(_pi4 + (middle[0] * 0.008726646259971648)));
+
+                                                    _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
+                                                    _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
+
+                                                    _middle.x = Math.floor(0.5 + _middle.x) - initialTopLeftPointX - nwmerc.x;
+                                                    _middle.y = Math.floor(0.5 + _middle.y) - initialTopLeftPointY - nwmerc.y;
+
+                                                    _segmentBegin.x = middle[2][0] * 0.017453292519943295;
+                                                    _segmentBegin.y = Math.log(Math.tan(_pi4 + (middle[2][1] * 0.008726646259971648)));
+
+                                                    _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
+                                                    _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
+
+                                                    _segmentBegin.x = Math.floor(0.5 + _segmentBegin.x) - initialTopLeftPointX - nwmerc.x;
+                                                    _segmentBegin.y = Math.floor(0.5 + _segmentBegin.y) - initialTopLeftPointY - nwmerc.y;
+
+
+                                                    var dx = _middle.x - _segmentBegin.x  , dy = _middle.y - _segmentBegin.y;
+                                                    if(dy < 0){
+                                                        dx=-dx ;
+                                                    }
+                                                    _middle.angle =  Math.acos(dx/Math.sqrt( dx*dx + dy*dy ))*(180/Math.PI) ;
+
+                                                    if(_middle.angle>90){
+                                                        _middle.angle -= 180 ;
+                                                    }
+
+                                                    addLabel(asset.maplabel, assetSymbology.label.size *2  , _middle.x, _middle.y, _middle.angle, assetSymbology.label.color );
+                                                }
                                                 ctx.strokeStyle = assetSymbology.style.strokecolor;
                                                 ctx.stroke();
                                             } else if (geom.type === "Point") {
@@ -451,7 +505,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                                                         image.height * imageFactor);
                                                     ctx.restore();
                                                     if (zoom > 16 && asset.maplabel) {
-                                                        addLabel(asset.maplabel, image.width, coord_.x, coord_.y);
+                                                        addLabel(asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color );
                                                     }
                                                 } else {
                                                     ctx.beginPath();
@@ -462,6 +516,9 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                                                 }
                                             } else {
                                                 Smartgeo.log( i18n.get("_G3ME_UNKNOWN_GEOMETRY", geom.type) );
+                                            }
+                                            if (geom.type === "Polygon") {
+                                                ctx.fill();
                                             }
                                         }
                                         if (zoom > 16) {

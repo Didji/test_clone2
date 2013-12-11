@@ -587,3 +587,13 @@ transition:none!important; /* Désolé, pris par le temps */
     font-size: 11px;
     font-weight: 200;
 }
+
+
+.blink {
+    animation: blink 1s steps(5, start) infinite;
+}
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
