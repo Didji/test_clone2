@@ -18,7 +18,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION : "0.9.3.14",
+        _SMARTGEO_MOBILE_VERSION : "0.9.3.15",
 
         /**
          * @ngdoc property
