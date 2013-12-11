@@ -2,20 +2,44 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
     'use strict' ;
 
-    $scope.state  = 'closed';
+    $scope.initialize = function(){
+        $scope.state  = 'closed';
+        $rootScope.nightTourInProgress  = false;
+        $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
 
-    $rootScope.nightTourInProgress  = false;
 
-    $scope.$on("START_NIGHT_TOUR", function(event, mission, assetsCache) {
-        console.log(assetsCache);
+        $scope.$watch('nightTourInProgress', function(newval, oldval) {
+            if(newval === true){
+                $scope.open();
+            } else {
+                if(oldval === true){
+                    $rootScope.openLeftMenu();
+                }
+                $scope.close();
+            }
+        }, true);
+
+    };
+
+    $scope.resumeNightTour = function(){
+        $rootScope.nightTourRecording  = true;
+    };
+
+    $scope.pauseNightTour = function(){
+        $rootScope.nightTourRecording  = false;
+    };
+
+    $scope.startNightTour = function(event, mission, assetsCache) {
         $scope.assetsCache = assetsCache ;
         $scope.mission = mission;
         $rootScope.closeLeftMenu();
         $rootScope.nightTourInProgress  = true;
+        $rootScope.nightTourRecording   = true;
+        $scope.open();
         if(!$scope.$$phase) {
             $scope.$apply();
         }
-    });
+    };
 
     $scope.close = function(){
         $scope.state = 'closed';
@@ -33,7 +57,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
 
-
+    $scope.stopNightTour = function(){
+        $rootScope.nightTourInProgress = false;
+    };
 
     /**
      * @ngdoc method

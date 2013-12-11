@@ -41,7 +41,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         return false;
     };
 
-    $scope.open = function (event){
+    $rootScope.openLeftMenu = $scope.open = function (event){
         Smartgeo.set('persitence.menu.open', true);
         if(event && event.preventDefault){
             event.preventDefault();
