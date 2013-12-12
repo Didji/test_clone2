@@ -389,9 +389,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     }
                 }
                 var asset = $scope.assetsCache[missionId][assetId] ;
-                asset.selected = !!!asset.selected ;
-                mission.selectedAssets += asset.selected ? 1 : -1   ;
-                $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
+                if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+
+                } else {
+                    asset.selected = !!!asset.selected ;
+                    mission.selectedAssets += asset.selected ? 1 : -1   ;
+                    $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
+                }
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }

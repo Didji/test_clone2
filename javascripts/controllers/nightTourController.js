@@ -7,7 +7,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         $rootScope.nightTourInProgress  = false;
         $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
 
-
         $scope.$watch('nightTourInProgress', function(newval, oldval) {
             if(newval === true){
                 $scope.open();
@@ -30,15 +29,26 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     $scope.startNightTour = function(event, mission, assetsCache) {
-        $scope.assetsCache = assetsCache ;
-        $scope.mission = mission;
+
+        if($rootScope.nightTourInProgress){
+            alertify.error('Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée.');
+            return false;
+        }
+
+        $scope.assetsCache   = assetsCache ;
+        $scope.mission       = mission;
+        $scope.isFollowingMe = true ;
+
         $rootScope.closeLeftMenu();
         $rootScope.nightTourInProgress  = true;
         $rootScope.nightTourRecording   = true;
+
         $scope.open();
+
         if(!$scope.$$phase) {
             $scope.$apply();
         }
+
     };
 
     $scope.close = function(){
