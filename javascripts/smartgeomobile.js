@@ -61,7 +61,11 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 });
                             };
                         };
-
+                        window.ChromiumCallbacks[3] = function(){
+                            scope.$apply(function(){
+                                scope.isTakingPhoto = false ;
+                            });
+                        };
                         SmartgeoChromium.launchCamera(1);
 
                     } else if(navigator.getMedia){

@@ -58,7 +58,7 @@
                 <h4 class="panel-title"><i18n>_REPORT_MEDIA</i18n></h4>
             </div>
             <div class="panel-body">
-                <button ng-disabled="report.ged.length >= _MAX_MEDIA_PER_REPORT" camera class='btn btn-default btn-block' ng-model='report.ged'>
+                <button ng-disabled="report.ged.length >= _MAX_MEDIA_PER_REPORT || isTakingPhoto" camera class='btn btn-default btn-block' ng-model='report.ged'>
                     <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
                     <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
                     <span style="position: relative;top: -10px;left: 15px;" ng-show='isTakingPhoto' us-spinner="{radius:4, width:2, length: 5, hwaccel:true, color:'orange'}"></span>
