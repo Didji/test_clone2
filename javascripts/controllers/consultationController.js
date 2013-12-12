@@ -107,7 +107,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.openLocatedReport = function(x, y){
-        $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+x+','+y+'/');
+        $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+y+','+x+'/');
     };
 
     $scope.close = function(){
