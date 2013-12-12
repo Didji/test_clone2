@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             if(window.document.body.scrollHeight < $(event.currentTarget).closest('label').offset().top ){
                 document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).closest('label').offset().top - 10 ;
             }
-        },500);
+        }, 650);
     };
 
     $scope.loadAssets = function(){
