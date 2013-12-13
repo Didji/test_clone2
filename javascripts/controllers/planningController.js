@@ -123,28 +123,30 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 var openedMission       = [],
                     displayDoneMission  = [],
                     selectedAssets      = {},
-                    i;
+                    i, currentId ;
 
                 for (i in $scope.missions) {
+                    currentId = $scope.missions[i].id ;
                     if($scope.missions[i].openned){
-                        openedMission.push($scope.missions[i].id);
+                        openedMission.push(currentId);
                     }
                     if($scope.missions[i].displayDone){
-                        displayDoneMission.push($scope.missions[i].id);
+                        displayDoneMission.push(currentId);
                     }
-                    selectedAssets[$scope.missions[i].id] = $scope.missions[i].selectedAssets ;
+                    selectedAssets[currentId] = $scope.missions[i].selectedAssets ;
                 }
 
                 $scope.missions = results.results;
 
                 for (i in $scope.missions) {
-                    if(openedMission.indexOf($scope.missions[i].id) >= 0){
+                    currentId = $scope.missions[i].id ;
+                    if(openedMission.indexOf(currentId) >= 0){
                         $scope.openMission(i, false);
-                        if(displayDoneMission.indexOf($scope.missions[i].id) >= 0){
+                        if(displayDoneMission.indexOf(currentId) >= 0){
                             $scope.showDoneAssets(i);
                         }
                     }
-                    $scope.missions[i].selectedAssets = selectedAssets[$scope.missions[i].id];
+                    $scope.missions[i].selectedAssets = selectedAssets[currentId];
 
                 }
 
@@ -292,7 +294,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     isLoading      : false
                 });
                 if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
-                    // show last gps
+                    mission.activity.isNightTour = true;
+                    var traces = Smartgeo.get('traces') || [];
+                    mission.trace = traces[mission.id];
+                    $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
                 }
                 $scope.highlightMission(mission);
                 if(locate !== false){
