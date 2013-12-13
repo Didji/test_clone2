@@ -29,6 +29,11 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                             iconAnchor      : [12,  41],
                             popupAnchor     : [ 1, -34],
                             shadowSize      : [41,  41]
+                        }),
+        TRUCK_ICON     = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/truck.png',
+                            iconSize        : [47,  40],
+                            iconAnchor      : [24,  40],
                         });
 
         $scope.missionsClusters = [];
@@ -228,6 +233,20 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
            alertify.error("Extent non valide");
        }
     });
+
+    $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng){
+        if(!$scope.myPositionMarker){
+            $scope.myPositionMarker = L.marker([lat,lng]).setIcon(TRUCK_ICON).addTo(G3ME.map);
+        } else {
+            $scope.myPositionMarker.setLatLng([lat,lng]);
+        }
+        G3ME.map.setView([lat,lng]);
+    });
+
+    $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function(){
+
+    });
+
     $scope.$on("ACTIVATE_POSITION", activatePosition);
 
     $scope.$on("ACTIVATE_CONSULTATION", function(event){
@@ -308,6 +327,31 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
         asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+    });
+
+    $scope.$on("__MAP_DISPLAY_TRACE__", function(event, mission){
+        if(!mission.trace.length){
+            return ;
+        }
+        $scope.traces = $scope.traces || {} ;
+        var geoJSON = {
+            "type": "LineString",
+            "coordinates": mission.trace
+        } ;
+
+        $scope.traces[mission.id] = $scope.traces[mission.id] || L.geoJson(geoJSON);
+        $scope.traces[mission.id].addTo(G3ME.map);
+
+        if(mission.trace.length){
+            var lastPosition = mission.trace[mission.trace.length-1];
+            if(!$scope.myLastPositionMarker){
+                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]]).setIcon(TRUCK_ICON).addTo(G3ME.map);
+            } else {
+                $scope.myLastPositionMarker.setLatLng([lastPosition[1], lastPosition[0]]);
+            }
+            G3ME.map.setView([lastPosition[1], lastPosition[0]]);
+        }
+
     });
 
 
