@@ -4,10 +4,15 @@
     </div>
 
     <div class="consultation-content">
-        <div ng-if="loading" class="alert alert-warning">
+        <div ng-if="loading" style='width: 0;margin: 0 auto;padding-top: 200px;'>
+            <span us-spinner="{radius:30, width:8, length: 16, hwaccel:true, color:'white'}"></span>
+            <i18n style="font-size: 1.5em;color: white;margin: 0px -57px;position: relative;top: 57px;">_CONSULTATION_LOADING</i18n>
+        </div>
+
+       <!--  <div ng-if="loading" class="alert alert-warning">
             <i class="icon icon-spinner"></i>
             <i18n>_CONSULTATION_LOADING</i18n>
-        </div>
+        </div> -->
         <div ng-if="!loading" >
             <div ng-repeat="priority in groups">
                 <div ng-repeat="(okey, assets) in priority">
