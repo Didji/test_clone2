@@ -15,8 +15,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
         $scope.$watch('nightTourInProgress', function(newval, oldval) {
             if(newval === true){
+                $scope.startFollowingPosition();
                 $scope.open();
             } else {
+                $scope.stopFollowingPosition();
                 if(oldval === true){
                     $rootScope.openLeftMenu();
                 }
@@ -87,7 +89,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         currentTrace.push([lng,lat]);
         traces[$scope.mission.id] = currentTrace ;
         Smartgeo.set('traces', traces);
-
+        $scope.mission.trace = currentTrace ;
+        $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', $scope.mission);
     };
 
     /**
@@ -99,6 +102,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.resumeNightTour = function(){
         $rootScope.nightTourRecording  = true;
+        $scope.stopFollowingPosition();
     };
 
     /**
@@ -120,7 +124,28 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.closeNightTour = function(){
+        alertify.confirm('Clôturer la tournée de nuit ?', function(yes){
+            if(yes){
+                $scope.stopNightTour();
+                // Send report
+            }
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+    };
 
+    /**
+     * @ngdoc method
+     * @name nightTourController#stopNightTour
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.stopNightTour = function(){
+        $rootScope.nightTourInProgress = false;
+        $scope.stopFollowingPosition();
+        $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
     };
 
     /**
@@ -188,17 +213,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.togglePanel = function(){
         $scope[($scope.state === 'open' ? 'close' : 'open')]() ;
-    };
-
-    /**
-     * @ngdoc method
-     * @name nightTourController#stopNightTour
-     * @methodOf nightTourController
-     * @description
-     *
-     */
-    $scope.stopNightTour = function(){
-        $rootScope.nightTourInProgress = false;
     };
 
     /**
