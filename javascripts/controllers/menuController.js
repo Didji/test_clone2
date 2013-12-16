@@ -12,14 +12,24 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     }
 
     $scope.backToPreviousLevel = function(event){
-        event.preventDefault();
+        event && event.preventDefault && event.preventDefault();
+        var openned = [];
+        if(!event){
+            $('.mp-level').each(function(i){
+                if( $(this).hasClass('mp-level-open')){
+                    openned.push(i) ;
+                }
+            });
+            event = {currentTarget:$( $('.mp-level')[openned[openned.length-1]]).find('.mp-back')[0]};
+        }
         var level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' );
         if( $scope.mlPushMenu.level <= level ) {
-            event.stopPropagation();
+            event.stopPropagation && event.stopPropagation();
             $scope.mlPushMenu.level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' ) - 1;
             $scope.mlPushMenu.level === 0 ? $scope.mlPushMenu._resetMenu() : $scope.mlPushMenu._closeMenu();
         }
-        var openned = [];
+
+        openned = [];
         $('.mp-level').each(function(i){
             if( $(this).hasClass('mp-level-open')){
                 openned.push(i) ;
@@ -29,6 +39,11 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
         return false;
     };
+
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+        event.preventDefault();
+        $scope.backToPreviousLevel();
+    });
 
     $rootScope.closeLeftMenu = $scope.close = function (event){
         Smartgeo.set('persitence.menu.open', false);
