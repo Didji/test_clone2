@@ -1,4 +1,4 @@
-smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
+angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
 
     'use strict' ;
 

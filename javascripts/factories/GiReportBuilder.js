@@ -1,4 +1,4 @@
-smartgeomobile.factory('GiReportBuilder', function($templateCache) {
+angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCache) {
 
       'use strict' ;
 

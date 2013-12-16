@@ -65,7 +65,7 @@
 
 window.smartgeoPersistenceSQLite = SQLite ;
 
-smartgeomobile.factory('SQLite', function(){
+angular.module('smartgeomobile').factory('SQLite', function(){
     'use strict' ;
     return SQLite;
 });

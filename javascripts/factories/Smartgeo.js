@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location, SQLite, IndexedDB){
+angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $rootScope,$location, SQLite, IndexedDB){
 
     'use strict' ;
 

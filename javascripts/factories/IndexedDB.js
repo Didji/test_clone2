@@ -95,7 +95,7 @@
 
 window.smartgeoPersistenceIndexedDB = IndexedDB ;
 
-smartgeomobile.factory('IndexedDB', function(){
+angular.module('smartgeomobile').factory('IndexedDB', function(){
     'use strict' ;
     return IndexedDB ;
 });

@@ -1,6 +1,6 @@
 window.smartgeo_i18n_lang = {};
 
-smartgeomobile.factory('i18n', function(Smartgeo){
+angular.module('smartgeomobile').factory('i18n', function(Smartgeo){
 
     'use strict' ;
 

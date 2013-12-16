@@ -9,6 +9,8 @@
     "grunt-contrib-clean": "0.4.1",
     "grunt-contrib-concat": "*",
     "grunt-contrib-copy": "*",
-    "grunt-contrib-compress": "*"
+    "grunt-contrib-compress": "*",
+    "grunt-contrib-uglify" : "*",
+    "grunt-ngmin" : "*"
   }
 }
