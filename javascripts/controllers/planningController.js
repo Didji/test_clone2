@@ -314,11 +314,14 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             if(mission.displayDone){
                 $scope.showDoneAssets($index);
             }
+            if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+                $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
+            }
         } else if(!mission.openned){
             $rootScope.$broadcast('UNHIGHLIGHT_ASSETS_FOR_MISSION'     , mission);
             $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
             if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
-                // hide last gps
+                $rootScope.$broadcast('__MAP_HIDE_TRACE__', mission);
             }
         }
 
