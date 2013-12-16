@@ -69,10 +69,14 @@ module.exports = function(grunt) {
         options: {
           archive: 'zip/gimap-mobile.zip'
         },
-        files: [{
-          src: ['dist/**'],
-          dest: './'
-        }]
+
+        files: [
+        // {
+        //   src: ['dist/**'],
+        //   dest: './'
+        // }
+        {flatten: true, src: ['dist/**'], dest: './'} // flattens results to a single level
+        ]
       }
     },
     uglify: {
