@@ -1,13 +1,20 @@
-angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, i18n){
+angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n){
 
     'use strict' ;
+
+    /**
+     * @ngdoc property
+     * @name nightTourController#_DRAG_THRESHOLD
+     * @propertyOf nightTourController
+     * @description
+     */
+    $scope._DRAG_THRESHOLD = 50 ;
 
     /**
      * @ngdoc method
      * @name nightTourController#initialize
      * @methodOf nightTourController
      * @description
-     *
      */
     $scope.initialize = function(){
         $rootScope.nightTourInProgress  = false;
@@ -29,6 +36,15 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         $scope.$watch('isFollowingMe', function(newval, oldval) {
             $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
         }, true);
+
+        G3ME.map.on('dragend', function(event){
+            if(event.distance > $scope._DRAG_THRESHOLD){
+                $scope.isFollowingMe = false ;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
+        });
 
     };
 
