@@ -11,7 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,9 +34,6 @@ import org.chromium.content.common.ProcessInitException;
 import org.chromium.content_shell.Shell;
 import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.WindowAndroid;
-
-import com.gismartware.mobile.util.FileUtils;
-import com.gismartware.mobile.util.ImageUtils;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -56,6 +56,9 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.gismartware.mobile.util.FileUtils;
+import com.gismartware.mobile.util.ImageUtils;
 
 
 /**
@@ -113,6 +116,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     
     @Override
 	public void onDestroy() {
+    	unregisterReceiver(networkChangeReceiver);
     	//TODO impossible to make deletion work...
     	if(FileUtils.delete(new File(GimapMobileApplication.WEB_ROOT))) {
     		Log.d(TAG, "Smartgeo has been successfully uninstalled!");
@@ -146,6 +150,18 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+		try {
+			if(new Date().after(new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2013"))) {
+	        	Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_LONG).show();
+	        	this.finish();
+	        	return;
+	        }
+		} catch (ParseException e1) {
+			Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_LONG).show();
+			this.finish();
+			return;
+		}
         
         installIfNeeded();
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
