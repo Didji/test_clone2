@@ -20,6 +20,9 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
                     openned.push(i) ;
                 }
             });
+            if(!openned.length){
+                return ;
+            }
             event = {currentTarget:$( $('.mp-level')[openned[openned.length-1]]).find('.mp-back')[0]};
         }
         var level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' );
@@ -29,20 +32,24 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             $scope.mlPushMenu.level === 0 ? $scope.mlPushMenu._resetMenu() : $scope.mlPushMenu._closeMenu();
         }
 
-        openned = [];
-        $('.mp-level').each(function(i){
-            if( $(this).hasClass('mp-level-open')){
-                openned.push(i) ;
-            }
-        });
+        // openned = [];
+        // $('.mp-level').each(function(i){
+        //     if( $(this).hasClass('mp-level-open')){
+        //         openned.push(i) ;
+        //     }
+        // });
         Smartgeo.set('persitence.menu.open.level', openned);
 
         return false;
     };
 
+
     $scope.$on('$locationChangeStart', function (event, next, current) {
-        event.preventDefault();
-        $scope.backToPreviousLevel();
+        // if(next.indexOf("/#/report/") === - 1){
+        //     event.preventDefault();
+        //     $scope.backToPreviousLevel();
+        // }
+        // console.log(arguments) ;
     });
 
     $rootScope.closeLeftMenu = $scope.close = function (event){
