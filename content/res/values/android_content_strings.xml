@@ -5,6 +5,7 @@
 <string name="accessibility_content_view">"Web View"</string>
 <string name="date_picker_dialog_set">"Set"</string>
 <string name="date_picker_dialog_clear">"Clear"</string>
+<string name="date_picker_dialog_today">"Today"</string>
 <string name="date_picker_dialog_title">"Set date"</string>
 <string name="date_time_picker_dialog_title">"Set date and time"</string>
 <string name="time_picker_dialog_title">"Set time"</string>
