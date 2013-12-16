@@ -75,7 +75,8 @@ module.exports = function(grunt) {
         //   src: ['dist/**'],
         //   dest: './'
         // }
-        {flatten: true, src: ['dist/**'], dest: './'} // flattens results to a single level
+        {cwd:'dist/',src:['**'],dest:'../',expand:true},
+        // {flatten: true, src: ['dist/**'], dest: './'} // flattens results to a single level
         ]
       }
     },
