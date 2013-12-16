@@ -1,4 +1,4 @@
-smartgeomobile.filter('prettifyField', function() {
+angular.module('smartgeomobile').filter('prettifyField', function() {
 
     'use strict' ;
 
