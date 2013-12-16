@@ -151,7 +151,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 }
 
                 $scope.updateCount();
+                $scope.removeDeprecatedTrace();
                 $scope.lastUpdate = (new Date()).getTime();
+
+                // TODO: remove unused GPS trace
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -193,6 +196,23 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
 
     };
+
+    /**
+     * @ngdoc method
+     * @name planningController#removeDeprecatedTrace
+     * @methodOf planningController
+     * @description
+     * Remove trace from localStorage with no mission attached.
+     */
+     $scope.removeDeprecatedTrace = function(){
+        var traces = Smartgeo.get('traces');
+        for(var i in traces){
+            if(!$scope.missions[i]){
+                delete traces[i];
+            }
+        }
+        Smartgeo.set('traces', traces);
+     };
 
     /**
      * @ngdoc method
