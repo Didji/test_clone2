@@ -6,7 +6,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
     $scope.initialize = function(){
 
-        $rootScope.site.activities._byId = [];
+        $rootScope.site.activities._byId = {};
         for (var i = 0; i < $rootScope.site.activities.length; i++) {
             $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
         }

@@ -84,6 +84,8 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
             }
             site.stats = stats ;
 
+            delete site.assets ;
+
             return site ;
         },
 

@@ -118,14 +118,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.synchronize = function(){
         Mission
             .query()
-            .success( function(results){
+            .success( function(data){
 
-                var openedMission       = [],
-                    displayDoneMission  = [],
-                    selectedAssets      = {},
+                var openedMission = [], previousMissionsId = [], displayDoneMission = [], selectedAssets = {},
                     i, currentId ;
 
                 for (i in $scope.missions) {
+                    previousMissionsId.push(1*i);
                     currentId = $scope.missions[i].id ;
                     if($scope.missions[i].openned){
                         openedMission.push(currentId);
@@ -135,11 +134,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     }
                     selectedAssets[currentId] = $scope.missions[i].selectedAssets ;
                 }
-
-                $scope.missions = results.results;
-
+                $scope.missions = data.results;
                 for (i in $scope.missions) {
                     currentId = $scope.missions[i].id ;
+                    if(previousMissionsId.indexOf(currentId) === -1){
+                        alertify.log("Une nouvelle mission est arrivée !");
+                        SmartgeoChromium.vibrate(10000);
+                    }
                     if(openedMission.indexOf(currentId) >= 0){
                         $scope.openMission(i, false);
                         if(displayDoneMission.indexOf(currentId) >= 0){
@@ -147,14 +148,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                         }
                     }
                     $scope.missions[i].selectedAssets = selectedAssets[currentId];
-
                 }
-
                 $scope.updateCount();
                 $scope.removeDeprecatedTrace();
                 $scope.lastUpdate = (new Date()).getTime();
-
-                // TODO: remove unused GPS trace
             })
             .error( function(){
                 if(Smartgeo.get('online')){
@@ -186,15 +183,15 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         });
         $scope.$watch('lastUpdate', function() {
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
-        }, true);
+        });
         $scope.$watch('missions', function() {
             Smartgeo.set('missions', $scope.missions);
-        }, true);
+        });
         $scope.$watch('dayToDisplay', function() {
             $scope.updateCount();
-        }, true);
+        });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
-
+        setInterval($scope.synchronize,120000);
     };
 
     /**
@@ -295,10 +292,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var mission = $scope.missions[$index] ;
         mission.isLoading = true ;
         mission.openned = !mission.openned ;
-        //
 
         if(mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length){
-            return Smartgeo.findAssetsByGuids($scope.site, mission.assets, function(assets){
+            return Smartgeo.findGeometryByGuids($scope.site, mission.assets, function(assets){
                 if(!assets.length){
                     mission.isLoading = false ;
                     mission.objectNotFound = true;
@@ -323,10 +319,17 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 if(locate !== false){
                     $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
                 }
-                $scope.$apply();
                 if(mission.displayDone){
                     $scope.showDoneAssets($index);
                 }
+                for(var i in $scope.assetsCache[mission.id]){
+                    delete $scope.assetsCache[mission.id][i].xmin;
+                    delete $scope.assetsCache[mission.id][i].xmax;
+                    delete $scope.assetsCache[mission.id][i].ymin;
+                    delete $scope.assetsCache[mission.id][i].ymax;
+                    delete $scope.assetsCache[mission.id][i].geomtry;
+                }
+                $scope.$apply();
             });
 
         } else if(mission.openned && $scope.assetsCache[mission.id] && mission.assets.length){

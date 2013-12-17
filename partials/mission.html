@@ -40,8 +40,7 @@
           class="btn btn-warning"
           ng-click="showReport(mission)"
           ng-disabled="!mission.selectedAssets"
-          ng-show='mission.assets.length > 0 && site.activities._byId[mission.activity.id].type != "night_tour" && !mission.objectNotFound'
-          >
+          ng-show='mission.assets.length > 0 && site.activities._byId[mission.activity.id].type != "night_tour" && !mission.objectNotFound'>
           <span class="fa fa-file-text fa-3x"></span>
           <span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span>
           <br/>

@@ -189,7 +189,6 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 xmax = assets[i].xmax > xmax ? assets[i].xmax : xmax ;
                 ymax = assets[i].ymax > ymax ? assets[i].ymax : ymax ;
             }
-
             return { xmin: xmin, xmax:xmax, ymin:ymin, ymax:ymax };
         },
 

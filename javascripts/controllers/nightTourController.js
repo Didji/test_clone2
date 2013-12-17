@@ -31,11 +31,14 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 }
                 $scope.close();
             }
-        }, true);
+        });
 
+        $scope.$watch('nightTourRecording', function(newval, oldval) {
+            $scope.isFollowingMe = newval;
+        });
         $scope.$watch('isFollowingMe', function(newval, oldval) {
             $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
-        }, true);
+        });
 
         G3ME.map.on('dragend', function(event){
             if(event.distance > $scope._DRAG_THRESHOLD){
@@ -68,6 +71,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.stopFollowingPosition = function(){
+        $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
         if($scope.watchInterval){
             clearInterval($scope.watchInterval);
         }
@@ -99,6 +103,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     $scope.addPositionToTrace = function(lat, lng){
         if(!$scope.mission){
             return alertify.error("Erreur : aucune tournée en cours");
+        }
+        if(!$scope.nightTourRecording){
+            return ;
         }
         var traces = Smartgeo.get('traces') || {},
             currentTrace = traces[$scope.mission.id] || [] ;
