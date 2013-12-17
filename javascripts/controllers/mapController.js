@@ -337,7 +337,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
     });
     $scope.$on("__MAP_HIDE_TRACE__", function(event, mission){
-        if($scope.traces[mission.id]){
+        if($scope.traces && $scope.traces[mission.id]){
             G3ME.map.removeLayer($scope.traces[mission.id]);
             G3ME.map.removeLayer($scope.myLastPositionMarker);
             delete $scope.traces[mission.id];

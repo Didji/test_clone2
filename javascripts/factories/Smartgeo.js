@@ -54,7 +54,7 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          * @const
          * @description Timeout, in milliseconds, for ping and login method
          */
-        _SERVER_UNREACHABLE_THRESHOLD : 5000,
+        _SERVER_UNREACHABLE_THRESHOLD : 15000,
 
         /**
          * @ngdoc property
@@ -65,6 +65,16 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
          */
 
         _MAX_MEDIA_PER_REPORT : 3,
+
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_MAX_ID_FOR_SELECT_REQUEST
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description
+         */
+
+        _MAX_ID_FOR_SELECT_REQUEST : 4000,
 
         /**
          * @ngdoc method
@@ -351,24 +361,89 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
             return check;
         },
 
-        findAssetsByGuids_big : function(site, guids, callback, partial_response){
-            partial_response = partial_response || [];
-            if(guids.length === 0){
-                return callback(partial_response);
-            } else {
-                Smartgeo.findAssetsByGuids(site, guids.slice(0, 333), function(assets){
-                    Smartgeo.findAssetsByGuids_big(site, guids.slice(333), callback, partial_response.concat(assets));
-                });
-            }
-        },
-
         getRight: function(module){
             return window.smartgeoRightsManager[module];
         },
 
+        findGeometryByGuids_big : function(site, guids, callback, partial_response){
+            partial_response = partial_response || [];
+            if(guids.length === 0){
+                return callback(partial_response);
+            } else {
+                Smartgeo.findGeometryByGuids(site, guids.slice(0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST), function(assets){
+                    Smartgeo.findGeometryByGuids_big(site, guids.slice(Smartgeo._MAX_ID_FOR_SELECT_REQUEST), callback, partial_response.concat(assets));
+                });
+            }
+        },
+
+        findGeometryByGuids: function(site, guids, callback, zones, partial_response){
+
+            if(guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST){
+                return Smartgeo.findGeometryByGuids_big(site, guids, callback);
+            }
+
+            if (!zones) {
+                zones = site.zones ;
+                partial_response = [];
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                 window._SMARTGEO_STOP_SEARCH = false ;
+                return callback([]);
+            }
+
+            if (!zones || !zones.length) {
+                return callback(partial_response);
+            }
+
+            if (typeof guids !== 'object') {
+                guids = [guids];
+            }
+
+            if (guids.length === 0) {
+                return callback([]);
+            }
+
+            var arguments_ = [],
+                _this = this,
+                request = 'SELECT id, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
+                j;
+
+            SQLite.openDatabase({
+                name: zones[0].database_name
+            }).transaction(function(t) {
+                t.executeSql('CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)');
+                t.executeSql(request, [],
+                    function(tx, rslt) {
+                        var asset ;
+                        for (var i = 0; i < rslt.rows.length; i++) {
+                            asset = rslt.rows.item(i);
+                            partial_response.push({
+                                guid        : asset.id,
+                                geometry    : JSON.parse(asset.geometry),
+                                xmin        : asset.xmin,
+                                xmax        : asset.xmax,
+                                ymin        : asset.ymin,
+                                ymax        : asset.ymax
+                            });
+                        }
+                        _this.findGeometryByGuids(site,guids, callback, zones.slice(1), partial_response);
+                    },
+                    function(tx, SqlError) {
+                        console.log(SqlError.message);
+                        alertify.log(SqlError.message);
+                        (error || function(){})();
+                    });
+            }, function(SqlError) {
+                console.log(SqlError.message);
+                alertify.log(SqlError.message);
+                (error || function(){})();
+            });
+        },
+
         findAssetsByGuids: function(site, guids, callback, zones, partial_response){
 
-            if(guids.length > 333){
+            if(guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST){
                 return Smartgeo.findAssetsByGuids_big(site, guids, callback);
             }
 
