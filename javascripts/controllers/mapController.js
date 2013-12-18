@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if($rootScope.report_activity){
             popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
             $(document).on('click', '.openLocateReportButton' , function(){
-                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lng+','+coords.lat+'/');
+                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lat+','+coords.lng+'/');
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
@@ -71,7 +71,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             return false;
         }
 
+        console.log('broadcasting CONSULTATION_CLICK_REQUESTED with '+JSON.stringify( e.latlng));
         $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
+
         var coords = e.latlng,
             mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
             radius_p = 40,
