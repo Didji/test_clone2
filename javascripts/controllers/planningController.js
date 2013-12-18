@@ -327,7 +327,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     delete $scope.assetsCache[mission.id][i].xmax;
                     delete $scope.assetsCache[mission.id][i].ymin;
                     delete $scope.assetsCache[mission.id][i].ymax;
-                    delete $scope.assetsCache[mission.id][i].geomtry;
+                    delete $scope.assetsCache[mission.id][i].geometry;
                 }
                 $scope.$apply();
             });
