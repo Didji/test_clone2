@@ -149,15 +149,13 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                     console.log("findAssetsByGuids returns :", assets);
                     if(!assets.length){
                         callback([]);
-                    } else if(assets.length === 1){
+                    } else {
                         var geometry = JSON.parse(assets[0].geometry) ;
                         if(geometry.type === 'Point'){
                             callback([assets[0].ymin,assets[0].xmin]);
                         } else {
                             callback(G3ME.getLineStringMiddle(geometry));
                         }
-                    } else {
-                        // TODO: return barycenter of ALL assets
                     }
                 }, null, null, function(){
                     (error || function(){})();
