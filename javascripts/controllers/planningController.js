@@ -429,28 +429,49 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @function
      */
     $scope.highlightMission = function(mission){
-        $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, $scope.assetsCache[mission.id], null,
-            /* marker click handler */
-            function(missionId, assetId){
-                var mission ;
-                for(var i in $scope.missions){
-                    if($scope.missions[i].id === missionId){
-                        mission = $scope.missions[i];
-                        break;
-                    }
-                }
-                var asset = $scope.assetsCache[missionId][assetId] ;
-                if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+        $rootScope.$broadcast('HIGHLIGHT_ASSETS_FOR_MISSION', mission, $scope.assetsCache[mission.id], null, $scope.markerClickHandler);
+    };
 
-                } else {
-                    asset.selected = !!!asset.selected ;
-                    mission.selectedAssets += asset.selected ? 1 : -1   ;
-                    $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
-                }
-                if(!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            });
+    /**
+     * @ngdoc method
+     * @name planningController#markerClickHandler
+     * @methodOf planningController
+     * @param {integer} missionId Concerned mission identifier
+     * @param {integer} assetId   Concerned asset identifier
+     * @description This method is called when click event is performed on marker
+     */
+    $scope.markerClickHandler = function(missionId, assetId){
+        var mission = $scope.missions[missionId],
+            asset   = $scope.assetsCache[missionId][assetId],
+            method  = $rootScope.site.activities._byId[mission.activity.id].type==="night_tour"?"NightTour":"Mission";
+        $scope["toggleAssetsMarkerFor"+method](mission, asset) ;
+    };
+
+    /**
+     * @ngdoc method
+     * @name planningController#toggleAssetsMarkerForMission
+     * @methodOf planningController
+     * @param {object} mission Concerned mission
+     * @param {object} asset   Concerned asset
+     * @description This method is called when click event is performed on marker for mission
+     */
+    $scope.toggleAssetsMarkerForMission = function(mission, asset){
+        asset.selected = !asset.selected ;
+        mission.selectedAssets += asset.selected ? 1 : -1   ;
+        $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
+        $scope.$apply();
+    };
+
+    /**
+     * @ngdoc method
+     * @name planningController#toggleAssetsMarkerForNightTour
+     * @methodOf planningController
+     * @param {object} mission Concerned mission
+     * @param {object} asset   Concerned asset
+     * @description This method is called when click event is performed on marker for night tour
+     */
+    $scope.toggleAssetsMarkerForNightTour = function(){
+
     };
 
     /**
