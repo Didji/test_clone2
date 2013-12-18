@@ -58,6 +58,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         $scope.reports[$index].syncInProgress = true ;
         $http.post(Smartgeo.get('url')+'gi.maintenance.mobility.report.json', $scope.reports[$index], {timeout: 55000})
             .success(function(){
+                if(!$scope.reports[$index]){
+                    return ;
+                }
                 $scope.reports[$index].syncInProgress = false ;
                 $scope.reports[$index].synced = true ;
 
@@ -70,10 +73,15 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                     },3000);
                 });
             }).error(function(error){
-                if(error.error){
-                    alertify.error(error.error.text);
-                } else {
-                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                if(!$scope.reports[$index]){
+                    return ;
+                }
+                if(Smartgeo.get('online')){
+                    if(error.error){
+                        alertify.error(error.error.text);
+                    } else {
+                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                    }
                 }
                 $scope.reports[$index].syncInProgress = false ;
             });

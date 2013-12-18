@@ -1,5 +1,5 @@
 <div class="panel panel-default" style='width: 90%;margin: 10px auto;' >
-      <div ng-click='openMission(key)' class="panel-heading">
+      <div ng-click='toggleMission(key)' class="panel-heading">
         <h3 class="panel-title">
           <span class="mission-label">{{mission.activity.label}} n°{{mission.number}} </span>
           <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">

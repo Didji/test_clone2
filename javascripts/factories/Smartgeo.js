@@ -491,11 +491,13 @@ smartgeomobile.factory('Smartgeo', function($http, $window, $rootScope,$location
                     },
                     function(tx, SqlError) {
                         console.log(SqlError.message);
+                        console.log(request);
                         alertify.log(SqlError.message);
                         (error || function(){})();
                     });
             }, function(SqlError) {
                 console.log(SqlError.message);
+                console.log(request);
                 alertify.log(SqlError.message);
                 (error || function(){})();
             });

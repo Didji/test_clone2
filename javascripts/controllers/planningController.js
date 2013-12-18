@@ -28,6 +28,14 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc property
+     * @name planningController#_SYNCHRONIZE_INTERVAL
+     * @propertyOf planningController
+     * @const
+     * @description
+     */
+    $scope._SYNCHRONIZE_INTERVAL = 60000;
+    /**
+     * @ngdoc property
      * @name planningController#dayToDisplay
      * @propertyOf planningController
      * @description Current displayed day on planning
@@ -139,10 +147,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     currentId = $scope.missions[i].id ;
                     if(previousMissionsId.indexOf(currentId) === -1){
                         alertify.log("Une nouvelle mission est arrivée !");
-                        SmartgeoChromium.vibrate(10000);
+                        window.SmartgeoChromium && SmartgeoChromium.vibrate(10000);
                     }
                     if(openedMission.indexOf(currentId) >= 0){
-                        $scope.openMission(i, false);
+                        $scope.toggleMission(i, false);
                         if(displayDoneMission.indexOf(currentId) >= 0){
                             $scope.showDoneAssets(i);
                         }
@@ -156,6 +164,16 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             .error( function(){
                 if(Smartgeo.get('online')){
                     alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
+                }
+                for (var i in $scope.missions) {
+                    if($scope.missions[i].openned){
+                        // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
+                        $scope.missions[i].openned = false;
+                        $scope.toggleMission(i, false);
+                        if($scope.missions[i].displayDone){
+                            $scope.showDoneAssets(i);
+                        }
+                    }
                 }
             });
     };
@@ -181,6 +199,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
         });
+
         $scope.$watch('lastUpdate', function() {
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
@@ -191,7 +210,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.updateCount();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
-        setInterval($scope.synchronize,120000);
+        setInterval($scope.synchronize,$scope._SYNCHRONIZE_INTERVAL);
     };
 
     /**
@@ -275,7 +294,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc method
-     * @name planningController#openMission
+     * @name planningController#toggleMission
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @param {boolean} locate if true, set view to mission extent
@@ -287,7 +306,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      *  <li>if it's not : displays clusters on map by sending {@link mapController#UNHIGHLIGHT_ASSETS_FOR_MISSION UNHIGHLIGHT\_ASSETS\_FOR\_MISSION} event to the {@link mapController mapController} </li>
      * </ul>
      */
-    $scope.openMission = function($index, locate){
+    $scope.toggleMission = function($index, locate){
 
         var mission = $scope.missions[$index] ;
         mission.isLoading = true ;
@@ -379,9 +398,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         var selectedAssets = [];
         for (var i = 0; i < $scope.assetsCache[mission.id].length; i++) {
             if($scope.assetsCache[mission.id][i].selected){
-                selectedAssets.push($scope.assetsCache[mission.id][i].id);
+                selectedAssets.push($scope.assetsCache[mission.id][i].guid);
             }
         }
+        console.log(selectedAssets);
         $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
     };
 
