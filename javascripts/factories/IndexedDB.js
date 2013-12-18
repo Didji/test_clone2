@@ -71,8 +71,8 @@
                 } catch(e){
                     console.log(e);
                 }
-                transaction.onsuccess =  (success || function(){})();
-                transaction.onerror   =  (error   || function(){})();
+                transaction.onsuccess =  (success || function(){});
+                transaction.onerror   =  (error   || function(){});
             });
         },
 
