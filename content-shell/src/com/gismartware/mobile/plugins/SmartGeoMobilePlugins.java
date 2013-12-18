@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -120,5 +121,13 @@ public class SmartGeoMobilePlugins {
 			result = false;
 		}
 		view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+	}
+	
+	@JavascriptInterface
+	public void vibrate(long ms) {
+		Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+		if (v.hasVibrator()) {
+			v.vibrate(ms);
+		}
 	}
 }
