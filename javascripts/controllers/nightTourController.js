@@ -25,8 +25,16 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                             iconAnchor      : [12,  41],
                             popupAnchor     : [ 1, -34],
                             shadowSize      : [41,  41]
+                        }),
+    $scope._DONE_ASSET_ICON = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/marker-icon-done.png',
+                            iconRetinaUrl   : 'javascripts/vendors/images/marker-icon-done-2x.png',
+                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
+                            iconSize        : [25,  41],
+                            iconAnchor      : [12,  41],
+                            popupAnchor     : [ 1, -34],
+                            shadowSize      : [41,  41]
                         });
-
 
     /**
      * @ngdoc method
@@ -176,6 +184,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 for(var i in $scope.assetsCache){
                     asset = $scope.assetsCache[i] ;
                     (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
+                    asset.marker.setIcon($scope._DONE_ASSET_ICON);
+                    asset.marker.off('click');
                 }
                 $scope.sendOkReports(ok);
                 $scope.sendKoReports(ko);
@@ -209,9 +219,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                     });
                 });
-            })
-            .success(function(){
-
             });
     };
 
@@ -241,9 +248,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                     });
                 });
-            })
-            .success(function(){
-
             });
     };
 
@@ -261,11 +265,12 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         var ok = [], ko = [], asset ;
         for(var i in $scope.assetsCache){
             asset = $scope.assetsCache[i] ;
-            if(asset.isWorking === true){
-                ok.push(asset.guid);
-            } else if(asset.isWorking === false){
-                ko.push(asset.guid);
+            if(asset.isWorking === undefined){
+                continue;
             }
+            asset.marker.setIcon($scope._DONE_ASSET_ICON);
+            asset.marker.off('click');
+            (asset.isWorking === true ? ok : ko ).push(asset.guid);
         }
         $scope.sendOkReports(ok);
         $scope.sendKoReports(ko);

@@ -158,7 +158,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     $scope.missions[i].selectedAssets = selectedAssets[currentId];
                 }
                 $scope.updateCount();
-                $scope.removeDeprecatedTrace();
+                $scope.removeDeprecatedTraces();
+                $scope.removeDeprecatedMarkers();
                 $scope.lastUpdate = (new Date()).getTime();
             })
             .error( function(){
@@ -215,12 +216,12 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc method
-     * @name planningController#removeDeprecatedTrace
+     * @name planningController#removeDeprecatedTraces
      * @methodOf planningController
      * @description
      * Remove trace from localStorage with no mission attached.
      */
-     $scope.removeDeprecatedTrace = function(){
+     $scope.removeDeprecatedTraces = function(){
         var traces = Smartgeo.get('traces');
         for(var i in traces){
             if(!$scope.missions[i]){
@@ -229,6 +230,18 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         }
         Smartgeo.set('traces', traces);
      };
+
+    /**
+     * @ngdoc method
+     * @name planningController#removeDeprecatedMarkers
+     * @methodOf planningController
+     * @description
+     * Remove trace from localStorage with no mission attached.
+     */
+     $scope.removeDeprecatedMarkers = function(){
+        $rootScope.$broadcast('UNHIGHLIGHT_DEPRECATED_MARKERS', $scope.missions);
+     };
+
 
     /**
      * @ngdoc method

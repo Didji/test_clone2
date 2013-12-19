@@ -73,7 +73,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-
+            this.tileUrl='http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png';
             var backgroundTile ;
 
             if(this.filecacheIsEnable){
