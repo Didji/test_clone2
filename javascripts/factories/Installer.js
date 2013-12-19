@@ -173,7 +173,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
             }
 
             Installer.installOkey(site, stats[0], function(){
-                Installer.install(site, stats.slice(1), callback);
+                Installer.install(site, stats.slice(1), callback, update);
             }, update);
 
         },
