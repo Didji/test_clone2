@@ -168,7 +168,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
 
         install: function(site, stats, callback, update){
 
-            if(!stats.length || ){
+            if(!stats.length){
                 return callback() ;
             }
 
