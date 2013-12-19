@@ -179,7 +179,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
         },
 
         update: function(site, stats, callback){
-            Installer.updateFlag = true ;
+            var update = true ;
             Installer.deleteAssets(site, site.obsoletes, function(){
                 Installer.install(site, stats, callback, update);
             });
@@ -199,7 +199,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                 var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.assets.json', {
                     okey : objectType.okey
                 });
-                if(Installer.updateFlag){
+                if(update){
                     url += '&timestamp=' + site.oldTimestamp ;
                 }
 
@@ -235,7 +235,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
             url += '&min='  + (lastFetched+1);
             url += '&max='  + newlastFetched;
 
-            if(Installer.updateFlag){
+            if(update){
                 url += '&timestamp=' + site.oldTimestamp ;
             }
 
