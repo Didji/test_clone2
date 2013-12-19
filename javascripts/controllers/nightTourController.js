@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n){
+angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http){
 
     'use strict' ;
 
@@ -9,6 +9,24 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      * @description
      */
     $scope._DRAG_THRESHOLD = 50 ;
+
+    $scope._OK_ASSET_ICON = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ok.png',
+                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
+                            iconSize        : [25,  41],
+                            iconAnchor      : [12,  41],
+                            popupAnchor     : [ 1, -34],
+                            shadowSize      : [41,  41]
+                        });
+    $scope._KO_ASSET_ICON = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ko.png',
+                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
+                            iconSize        : [25,  41],
+                            iconAnchor      : [12,  41],
+                            popupAnchor     : [ 1, -34],
+                            shadowSize      : [41,  41]
+                        });
+
 
     /**
      * @ngdoc method
@@ -32,6 +50,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 $scope.close();
             }
         });
+
+        $scope.$on("TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset);
+
 
         $scope.$watch('nightTourRecording', function(newval, oldval) {
             $scope.isFollowingMe = newval;
@@ -150,12 +171,80 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         alertify.confirm('Clôturer la tournée de nuit ?', function(yes){
             if(yes){
                 $scope.stopNightTour();
-                // Send report
-            }
-            if(!$scope.$$phase) {
                 $scope.$apply();
+                var ok = [], ko = [], asset ;
+                for(var i in $scope.assetsCache){
+                    asset = $scope.assetsCache[i] ;
+                    (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
+                }
+                $scope.sendOkReports(ok);
+                $scope.sendKoReports(ko);
             }
         });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#sendOkReports
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.sendOkReports = function(ok){
+         var report = {
+            assets: ok,
+            fields: {},
+            mission : $scope.mission.id,
+            activity: $scope.mission.activity.id,
+            uuid : Smartgeo.uuid()
+        };
+        report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
+        $http
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
+            .error(function(){
+                Smartgeo.get_('reports', function(reports){
+                    reports = reports || [] ;
+                    reports.push(report);
+                    Smartgeo.set_('reports', reports, function(){
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                    });
+                });
+            })
+            .success(function(){
+
+            });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#sendKoReports
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.sendKoReports = function(ko){
+        var report = {
+            assets: ko,
+            fields: {},
+            mission : $scope.mission.id,
+            activity: $scope.mission.activity.id,
+            uuid : Smartgeo.uuid()
+        };
+        report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
+        $http
+            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
+            .error(function(){
+                Smartgeo.get_('reports', function(reports){
+                    reports = reports || [] ;
+                    reports.push(report);
+                    Smartgeo.set_('reports', reports, function(){
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                    });
+                });
+            })
+            .success(function(){
+
+            });
     };
 
     /**
@@ -169,6 +258,17 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         $rootScope.nightTourInProgress = false;
         $scope.stopFollowingPosition();
         $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
+        var ok = [], ko = [], asset ;
+        for(var i in $scope.assetsCache){
+            asset = $scope.assetsCache[i] ;
+            if(asset.isWorking === true){
+                ok.push(asset.guid);
+            } else if(asset.isWorking === false){
+                ko.push(asset.guid);
+            }
+        }
+        $scope.sendOkReports(ok);
+        $scope.sendKoReports(ko);
     };
 
     /**
@@ -188,6 +288,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         } else if($rootScope.site.activities._byId[mission.activity.id].type !== "night_tour"){
             return alertify.error("Erreur : L'activité de cette mission n'est pas une tournée de nuit.");
         }
+
+        $scope.activity = $rootScope.site.activities._byId[mission.activity.id];
 
         $scope.assetsCache   = assetsCache ;
         $scope.mission       = mission;
@@ -250,6 +352,25 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             $scope.mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[$scope.mission.id]);
         }
         $rootScope.$broadcast('__MAP_SETVIEW__', $scope.mission.extent);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#toggleAsset
+     * @methodOf nightTourController
+     * @param {object} event        This method is called by event, so first argument is this event
+     * @param {object} mission      This parameter MUST BE a night tour
+     * @param {array}  asset        Clicked asset on map (contains marker)
+     * @description
+     *
+     */
+    $scope.toggleAsset = function(event, mission, asset){
+        if(!$scope.nightTourRecording){
+            // TODO: afficher une popup pour signaler que la tournée n'est pas en cours
+            return ;
+        }
+        asset.isWorking =   (asset.isWorking === undefined ? false : !asset.isWorking);
+        asset.marker.setIcon(asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON);
     };
 
 });

@@ -24,7 +24,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
         benchmarkGeneralStatistics: [],
 
 
-        filecacheIsEnable: true,
+        filecacheIsEnable: false,
 
         initialize : function(mapDivId, site, target, marker){
 
