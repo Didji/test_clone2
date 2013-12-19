@@ -5,7 +5,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
 
     var SELECTED_ASSET_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/marker-icon-selected.png',
+                            iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ok.png',
                             shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
                             iconSize        : [25,  41],
                             iconAnchor      : [12,  41],
@@ -30,6 +30,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                             popupAnchor     : [ 1, -34],
                             shadowSize      : [41,  41]
                         }),
+
         GRAY_TRUCK_ICON     = L.icon({
                             iconUrl         : 'javascripts/vendors/images/truck_gray.png',
                             iconSize        : [47,  40],
@@ -241,7 +242,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng){
         if(!$scope.myPositionMarker){
-            $scope.myPositionMarker = L.marker([lat,lng],{ zIndexOffset    : 10000}).setIcon(TRUCK_ICON).addTo(G3ME.map);
+            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(TRUCK_ICON).addTo(G3ME.map);
         } else {
             $scope.myPositionMarker.setLatLng([lat,lng]);
         }

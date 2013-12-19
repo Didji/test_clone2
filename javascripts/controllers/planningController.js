@@ -19,12 +19,12 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     /**
      * @ngdoc property
-     * @name planningController#DAY_TO_MS
+     * @name planningController#_DAY_TO_MS
      * @propertyOf planningController
      * @const
      * @description Day to milliseconds : 86400000
      */
-    $scope.DAY_TO_MS = 86400000 ;
+    $scope._DAY_TO_MS = 86400000 ;
 
     /**
      * @ngdoc property
@@ -107,7 +107,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.move = function(delta){
         $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
-        $scope.dayToDisplay += delta*$scope.DAY_TO_MS ;
+        $scope.dayToDisplay += delta*$scope._DAY_TO_MS ;
         if( Object.keys($filter('todaysMissions')($scope.missions,$scope.dayToDisplay)).length +
             Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions,$scope.dayToDisplay)).length === 0 ){
             $scope.move(delta);
@@ -193,7 +193,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      *     <li>Initialize counts ({@link planningController#updateCount $scope.updateCount}) </li>
      * </ul>
      */
-    $scope.initialize = function(){
+    $rootScope.initializePlanning = $scope.initialize = function(){
         $scope.missions = Smartgeo.get('missions');
         Smartgeo.get_('reports', function(reports){
             $scope.removeObsoleteMission(reports);
@@ -287,8 +287,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             if(!mission.assets.length){
                 continue;
             }
-            $scope.beforeToday += f(mission.begin) < ($scope.dayToDisplay - $scope.DAY_TO_MS) ? 1 : 0 ;
-            $scope.afterToday  += f(mission.end  ) > ($scope.dayToDisplay + $scope.DAY_TO_MS) ? 1 : 0 ;
+            $scope.beforeToday += f(mission.begin) < ($scope.dayToDisplay - $scope._DAY_TO_MS) ? 1 : 0 ;
+            $scope.afterToday  += f(mission.end  ) > ($scope.dayToDisplay + $scope._DAY_TO_MS) ? 1 : 0 ;
         }
     };
 
@@ -470,8 +470,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @param {object} asset   Concerned asset
      * @description This method is called when click event is performed on marker for night tour
      */
-    $scope.toggleAssetsMarkerForNightTour = function(){
-
+    $scope.toggleAssetsMarkerForNightTour = function(mission, asset){
+        $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR', mission, asset);
     };
 
     /**
