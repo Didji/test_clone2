@@ -50,7 +50,7 @@
           style='min-width: 110px'
           class="btn btn-warning"
           ng-click="launchNightTour(mission)"
-          ng-show='site.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound'>
+          ng-show='site.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
             <span class="fa fa-lightbulb-o fa-3x"></span>
             <br>
             <i18n>_PLANNING_START_</i18n>

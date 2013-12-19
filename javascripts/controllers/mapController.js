@@ -42,7 +42,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                             iconAnchor      : [24,  20],
                         });
 
-        $scope.missionsClusters = [];
+        $scope.missionsClusters = {};
 
     if(!$rootScope.site){
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
@@ -321,6 +321,20 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             G3ME.map.removeLayer($scope.missionsClusters['done-'+mission.id]);
         }
     });
+
+
+    $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions){
+        console.log('UNHIGHLIGHT_DEPRECATED_MARKERS', missions, $scope.missionsClusters);
+        for(var i in $scope.missionsClusters){
+            if(!missions[i] || missions[i].assets.length === 0){
+                G3ME.map.removeLayer($scope.missionsClusters[i]);
+                if($scope.missionsClusters['done-'+i]){
+                    G3ME.map.removeLayer($scope.missionsClusters['done-'+i]);
+                }
+            }
+        }
+    });
+
 
     $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
         if(!$scope.missionsClusters['done-'+mission.id]){
