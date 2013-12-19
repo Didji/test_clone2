@@ -324,7 +324,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
     $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions){
-        console.log('UNHIGHLIGHT_DEPRECATED_MARKERS', missions, $scope.missionsClusters);
         for(var i in $scope.missionsClusters){
             if(!missions[i] || missions[i].assets.length === 0){
                 G3ME.map.removeLayer($scope.missionsClusters[i]);
