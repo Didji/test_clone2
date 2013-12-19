@@ -75,7 +75,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
             site.symbology = symbology ;
 
             for(var okey in site.number){
-              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0) {
+              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0 && site.number[okey] !== "0") {
                   stats.push({
                       'okey'   : okey,
                       'amount' : site.number[okey]
@@ -168,7 +168,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
 
         install: function(site, stats, callback, update){
 
-            if(!stats.length){
+            if(!stats.length || ){
                 return callback() ;
             }
 
@@ -191,6 +191,10 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                 okey: objectType.okey,
                 progress: 0
             });
+
+            if(objectType.amount === 0 || objectType.amount === "0"){
+                return callback();
+            }
 
             if(objectType.amount > Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
