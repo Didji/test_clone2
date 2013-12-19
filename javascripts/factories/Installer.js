@@ -218,7 +218,7 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                     })
                     .error(function(){
                         $timeout(function(){
-                            Installer.installOkey(site, objectType, callback);
+                            Installer.installOkey(site, objectType, callback, update);
                         }, 100);
                     });
             }
@@ -255,12 +255,12 @@ smartgeomobile.factory('Installer', function(SQLite, Smartgeo, G3ME, $http, $roo
                             progress: Math.min(newlastFetched, objectType.amount)
                         });
                         $timeout(function(){
-                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
+                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback, update);
                         }, 100);
                     });
                 }).error(function(){
                     $timeout(function(){
-                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback);
+                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
                     }, 100);
                 });
         },
