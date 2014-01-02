@@ -244,11 +244,14 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     $scope.sendReport = function (event) {
+        console.log($scope.report);
         $scope.sendingReport = true ;
         var report = angular.copy($scope.report);
         // TODO : faire l'équivalent d'un preventDefault  (qui ne marchera pas là)
         for (var i = 0; i < report.assets.length; i++) {
-            report.assets[i] = report.assets[i].id ;
+            if(report.assets[i].id){
+                report.assets[i] = report.assets[i].id ;
+            }
         }
 
         for (i = 0; i < report.ged.length; i++) {

@@ -54,6 +54,8 @@ window.smartgeo_i18n_lang['en'] = {
         _REPORT_SAVE                        : "Save" ,
         _REPORT_LOADING                     : "Loading",
         _REPORT_DELETE                      : "Delete",
+        _REPORT_SELECT_ACTIVITY             : "Select activity",
+        _REPORT_SELECT_ASSETS               : "Select assets",
 
         _SEARCH_SEARCH                      : "Search" ,
         _SEARCH_ADVANCED_SEARCH             : "Advanced search" ,
