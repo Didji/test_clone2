@@ -1,29 +1,27 @@
 <form ng-controller="reportController" name="reportForm" class="reportForm">
-    <h3><i18n>_REPORT_REPORT</i18n> {{report.activity.label}}</h3>
+    <h3 ng-show="step!=='assets'"><i18n>_REPORT_REPORT</i18n> {{report.activity.label}}</h3>
     <div ng-show="step==='assets'">
-        <p>
-            <button class="btn btn-default" ng-click="cancel()">
-                <i18n>_REPORT_CANCEL</i18n>
-            </button>
-
-            <button class="btn btn-primary" ng-click="toForm()" ng-disabled="!report.assets.length">
-                <i18n>_REPORT_NEXT</i18n> <span class="icon-chevron-right"></span>
-            </button>
-        </p>
-        <p ng-show="!report.activity">
-            <select class="form-control"
-                    ng-change  = "loadAssets()"
-                    ng-model   = "report.activity"
-                    ng-options = "activity.label for activity in site.activities">
-            </select>
-        </p>
-        <p>
-            <select  class="form-control"
-                     ng-model   = "report.assets"
-                     ng-options = "asset as asset.label for asset in assets track by asset.id"
-                     multiple>
-            </select>
-        </p>
+        <div class="panel panel-default report">
+            <div class="panel-heading">
+                <h4 class="panel-title"><i18n>_REPORT_REPORT</i18n> {{report.activity.label}}</h4>
+            </div>
+            <div class="panel-body">
+                <p ng-show="!report.activity">
+                    <label><i18n>_REPORT_SELECT_ACTIVITY</i18n></label>
+                    <select class="form-control"
+                            ng-change  = "loadAssets()"
+                            ng-model   = "report.activity"
+                            ng-options = "activity.label for activity in site.activities">
+                    </select>
+                </p>
+                <p ng-show="report.activity">
+                    <label><i18n>_REPORT_SELECT_ASSETS</i18n></label>
+                    <select style="width:100%;margin:0;" ui-select2 ng-model="report.assets" ng-change="selectedCriteriaChangeHandler()" multiple>
+                        <option ng-repeat="asset in assets" value="{{asset.id}}">{{asset.label}}</option>
+                    </select>
+                </p>
+            </div>
+        </div>
         <p>
             <button class="btn btn-default" ng-click="cancel()">
                 <i18n>_REPORT_CANCEL</i18n>

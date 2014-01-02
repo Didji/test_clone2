@@ -54,6 +54,8 @@ window.smartgeo_i18n_lang['fr'] = {
         _REPORT_SAVE                        : "Enregistrer" ,
         _REPORT_LOADING                     : "Chargement",
         _REPORT_DELETE                      : "Supprimer",
+        _REPORT_SELECT_ACTIVITY             : "Sélectionner activité",
+        _REPORT_SELECT_ASSETS               : "Sélectionner patrimoine",
 
         _SEARCH_SEARCH                      : "Recherche" ,
         _SEARCH_ADVANCED_SEARCH             : "Recherche avancée" ,
