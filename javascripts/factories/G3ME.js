@@ -24,7 +24,7 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
         benchmarkGeneralStatistics: [],
 
 
-        filecacheIsEnable: true,
+        filecacheIsEnable: false,
 
         initialize : function(mapDivId, site, target, marker){
 
@@ -73,7 +73,8 @@ smartgeomobile.factory('G3ME', function(SQLite, Smartgeo, $rootScope, i18n){
                 this.tileUrl  = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-            this.tileUrl='http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png';
+            // this.tileUrl='http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png';
+            // this.tileUrl='http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/999/256/{z}/{x}/{y}.png';
             var backgroundTile ;
 
             if(this.filecacheIsEnable){
