@@ -75,7 +75,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             site.symbology = symbology ;
 
             for(var okey in site.number){
-              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0 && site.number[okey] !== "0")) {
+              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0 && site.number[okey] !== "0") {
                   stats.push({
                       'okey'   : okey,
                       'amount' : site.number[okey]
