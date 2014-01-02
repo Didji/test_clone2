@@ -84,6 +84,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
             site.stats = stats ;
 
+            delete site.assets ;
+
             return site ;
         },
 
