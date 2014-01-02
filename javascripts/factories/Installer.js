@@ -75,7 +75,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             site.symbology = symbology ;
 
             for(var okey in site.number){
-              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0) {
+              if (site.number.hasOwnProperty(okey) && okey !== 'total' && site.number[okey] !== 0 && site.number[okey] !== "0")) {
                   stats.push({
                       'okey'   : okey,
                       'amount' : site.number[okey]
@@ -173,7 +173,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             }
 
             Installer.installOkey(site, stats[0], function(){
-                Installer.install(site, stats.slice(1), callback);
+                Installer.install(site, stats.slice(1), callback, update);
             }, update);
 
         },
@@ -191,6 +191,10 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                 okey: objectType.okey,
                 progress: 0
             });
+
+            if(objectType.amount === 0 || objectType.amount === "0"){
+                return callback();
+            }
 
             if(objectType.amount > Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
@@ -218,7 +222,7 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                     })
                     .error(function(){
                         $timeout(function(){
-                            Installer.installOkey(site, objectType, callback);
+                            Installer.installOkey(site, objectType, callback, update);
                         }, 100);
                     });
             }
@@ -257,12 +261,12 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                             progress: Math.min(newlastFetched, objectType.amount)
                         });
                         $timeout(function(){
-                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback);
+                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback, update);
                         }, 100);
                     });
                 }).error(function(){
                     $timeout(function(){
-                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback);
+                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
                     }, 100);
                 });
         },
