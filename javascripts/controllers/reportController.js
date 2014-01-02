@@ -2,6 +2,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     'use strict' ;
 
+    $scope.comesFromIntent = $rootScope.map_activity   || $rootScope.report_activity  ;
+
     $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
@@ -280,12 +282,20 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                     Smartgeo.set_('reports', reports, function(){
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
                         $scope.sendingReport = false ;
+                        if(!$scope.comesFromIntent){
+                            endOfReport();
+                        }
                     });
                 });
             }).success(function(){
                 $scope.sendingReport = false ;
+                if(!$scope.comesFromIntent){
+                    endOfReport();
+                }
             });
-        endOfReport();
+        if($scope.comesFromIntent){
+            endOfReport();
+        }
     };
 
     function endOfReport(){

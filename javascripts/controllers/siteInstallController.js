@@ -78,7 +78,6 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
 
             var formatedSite = Installer.formatSiteMetadata(site);
             buildSteps(formatedSite);
-
             angular.extend($scope.site, formatedSite);
             Installer.createZones($scope.site, function(){
                 Installer.install($scope.site, $scope.site.stats, function(){

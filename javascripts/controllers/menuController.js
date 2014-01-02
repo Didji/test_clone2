@@ -53,12 +53,13 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     });
 
     $rootScope.closeLeftMenu = $scope.close = function (event){
-        Smartgeo.set('persitence.menu.open', false);
         if(event && event.preventDefault && $(event.target).attr('id') === "mp-pusher"){
             event.preventDefault();
             $scope.mlPushMenu._resetMenu();
+            Smartgeo.set('persitence.menu.open', false);
         } else if(!event){
             $scope.mlPushMenu._resetMenu();
+            Smartgeo.set('persitence.menu.open', false);
         }
         return false;
     };

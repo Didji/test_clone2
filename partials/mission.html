@@ -1,5 +1,5 @@
 <div class="panel panel-default" style='width: 90%;margin: 10px auto;' >
-      <div ng-click='openMission(key)' class="panel-heading">
+      <div ng-click='toggleMission(key)' class="panel-heading">
         <h3 class="panel-title">
           <span class="mission-label">{{mission.activity.label}} n°{{mission.number}} </span>
           <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
@@ -8,7 +8,7 @@
           </span>
           <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
         </h3>
-        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> En retard de {{ mission.end | sanitizeDate | timeago}} </p>
+        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> {{ mission.end | sanitizeDate | timeago}} de retard </p>
       </div>
       <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
       <div class="panel-body"  ng-show='mission.openned || false'>
@@ -28,19 +28,32 @@
         <p class="text-danger" ng-show='mission.objectNotFound'>
           <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
         </p>
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="locateMission(key)" ng-show='mission.assets.length > 0'>
-          <span class="fa fa-search fa-3x"></span><br/><i18n>_PLANNING_LOCATE_</i18n>
+        <button
+          style='min-width: 110px'
+          class="btn btn-warning"
+          ng-click="locateMission(key)"
+          ng-show='mission.assets.length > 0 && !mission.objectNotFound'>
+            <span class="fa fa-search fa-3x"></span><br/><i18n>_PLANNING_LOCATE_</i18n>
         </button>
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets" ng-show='mission.assets.length > 0 && site.activities._byId[mission.activity.id].type != "night_tour"'>
+        <button
+          style='min-width: 110px'
+          class="btn btn-warning"
+          ng-click="showReport(mission)"
+          ng-disabled="!mission.selectedAssets"
+          ng-show='mission.assets.length > 0 && site.activities._byId[mission.activity.id].type != "night_tour" && !mission.objectNotFound'>
           <span class="fa fa-file-text fa-3x"></span>
           <span ng-show='mission.selectedAssets > 0' class="badge badge-primary">{{mission.selectedAssets}}</span>
           <br/>
           <i18n>_PLANNING_WRITE_</i18n>
         </button>
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="launchNightTour(mission)" ng-show='site.activities._byId[mission.activity.id].type == "night_tour"'>
-          <span class="fa fa-lightbulb-o fa-3x"></span>
-          <br>
-          <i18n>_PLANNING_START_</i18n>
+        <button
+          style='min-width: 110px'
+          class="btn btn-warning"
+          ng-click="launchNightTour(mission)"
+          ng-show='site.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+            <span class="fa fa-lightbulb-o fa-3x"></span>
+            <br>
+            <i18n>_PLANNING_START_</i18n>
         </button>
       </div>
 </div>
