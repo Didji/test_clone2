@@ -60,6 +60,11 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 scope.isTakingPhoto = false ;
                                 });
                             };
+                            window.ChromiumCallbacks[3] = function(){
+                                scope.$apply(function(){
+                                    scope.isTakingPhoto = false ;
+                                });
+                            };
                         };
                         window.ChromiumCallbacks[3] = function(){
                             scope.$apply(function(){

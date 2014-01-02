@@ -88,7 +88,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if($rootScope.report_activity){
             popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
             $(document).on('click', '.openLocateReportButton' , function(){
-                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lng+','+coords.lat+'/');
+                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lat+','+coords.lng+'/');
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
