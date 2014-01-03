@@ -301,7 +301,11 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
         if(!$scope.missionsClusters[mission.id]){
-            $scope.missionsClusters[mission.id] =  L.markerClusterGroup();
+            $scope.missionsClusters[mission.id] = new L.MarkerClusterGroup({
+                iconCreateFunction: function(cluster) {
+                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
+                }
+            });
             for (var i = 0; i < assetsCache.length; i++) {
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
                 assetsCache[i].marker.setIcon(assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
@@ -336,9 +340,12 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
     $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
-        debugger;
         if(!$scope.missionsClusters['done-'+mission.id]){
-            $scope.missionsClusters['done-'+mission.id] =  L.markerClusterGroup();
+            $scope.missionsClusters['done-'+mission.id] = new L.MarkerClusterGroup({
+                iconCreateFunction: function(cluster) {
+                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-done', iconSize: new L.Point(40, 40) });
+                }
+            });
             for (var i = 0; i < assetsCache.length; i++) {
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
                 assetsCache[i].marker.setIcon(DONE_ASSET_ICON);
