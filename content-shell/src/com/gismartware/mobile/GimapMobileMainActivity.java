@@ -11,10 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,7 +107,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     private BroadcastReceiver mReceiver;
     
     /*
-     * COnnectivité
+     * Connectivité
      */
     private boolean isConnected;
     
@@ -151,20 +148,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-		try {
-			if(new Date().after(new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2013"))) {
-	        	Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_LONG).show();
-	        	this.finish();
-	        	return;
-	        }
-		} catch (ParseException e1) {
-			Toast.makeText(this, "Délai d'utilisation expiré!", Toast.LENGTH_LONG).show();
-			this.finish();
-			return;
-		}
-        
         installIfNeeded();
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
@@ -182,7 +166,6 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         try {
             LibraryLoader.ensureInitialized();
         } catch (ProcessInitException e) {
-            Log.e(TAG, "ContentView initialization failed.", e);
             finish();
             return;
         }
@@ -441,6 +424,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 		} else {
 			if (requestCode == ActivityCode.ACCOUNT_CHOOSE.getCode()) {
 				finishActivityInit();
+			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
+				getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[3]();");
 			}
 		}
     	
