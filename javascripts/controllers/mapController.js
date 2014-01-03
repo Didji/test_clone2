@@ -306,7 +306,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if(!$scope.missionsClusters[mission.id]){
             $scope.missionsClusters[mission.id] = new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
-                    return new L.DivIcon({ html: '<div><span>' + mission.number + ":" + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
+                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
                 },
                 disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
                 maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
