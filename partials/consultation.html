@@ -9,10 +9,6 @@
             <i18n style="font-size: 1.5em;color: white;margin: 0px -57px;position: relative;top: 57px;">_CONSULTATION_LOADING</i18n>
         </div>
 
-       <!--  <div ng-if="loading" class="alert alert-warning">
-            <i class="icon icon-spinner"></i>
-            <i18n>_CONSULTATION_LOADING</i18n>
-        </div> -->
         <div ng-if="!loading" >
             <div ng-repeat="priority in groups">
                 <div ng-repeat="(okey, assets) in priority">
@@ -66,9 +62,37 @@
                                             </li>
                                       </ul>
                                     </div>
+
                                     <hr/>
+
                                     <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
                                     <button class="btn btn-primary btn-block" ng-show="rights.goto" ng-click="gotoAsset(asset)"><i18n>_CONSULTATION_GOTO</i18n></button>
+
+                                    <hr  ng-show="( filteredOpennedMission = (missions | opennedMissions)).length != 0 "/>
+
+                                    <button
+                                        class="btn btn-primary btn-block"
+                                        ng-show="filteredOpennedMission.length == 1"
+                                        ng-click="addAssetsToMission(asset.guid)">
+                                        <i18n>_CONSULTATION_ADD_TO_MISSION</i18n> {{filteredOpennedMission[0].activity.label}} n°{{filteredOpennedMission[0].number}}
+                                    </button>
+
+                                    <div
+                                        class="btn-group dropup"
+                                        style="width:100%"
+                                        ng-show="filteredOpennedMission.length > 1">
+                                      <button
+                                        type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <i18n>_CONSULTATION_ADD_TO_</i18n><span class="caret"></span>
+                                      </button>
+                                      <ul class="dropdown-menu" role="menu">
+                                            <li ng-repeat="mission in filteredOpennedMission" >
+                                                <a href="#" ng-click="">{{mission.activity.label}} n°{{mission.number}}</a>
+                                            </li>
+                                      </ul>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
