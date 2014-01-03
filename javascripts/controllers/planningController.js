@@ -143,11 +143,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     selectedAssets[currentId] = $scope.missions[i].selectedAssets ;
                 }
                 $scope.missions = data.results;
+                var newMissionCount = 0;
                 for (i in $scope.missions) {
                     currentId = $scope.missions[i].id ;
                     if(previousMissionsId.indexOf(currentId) === -1){
-                        alertify.log("Une nouvelle mission est arrivée !");
-                        window.SmartgeoChromium && SmartgeoChromium.vibrate(10000);
+                        newMissionCount++ ;
                     }
                     if(openedMission.indexOf(currentId) >= 0){
                         $scope.toggleMission(i, false);
@@ -156,6 +156,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                         }
                     }
                     $scope.missions[i].selectedAssets = selectedAssets[currentId];
+                }
+                if(newMissionCount > 0){
+                    alertify.log("Une nouvelle mission est arrivée !");
+                    window.SmartgeoChromium && SmartgeoChromium.vibrate(500);
                 }
                 $scope.updateCount();
                 $scope.removeDeprecatedTraces();
