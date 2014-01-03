@@ -32,9 +32,6 @@ import org.chromium.content_shell.Shell;
 import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.WindowAndroid;
 
-import com.gismartware.mobile.util.FileUtils;
-import com.gismartware.mobile.util.ImageUtils;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -56,6 +53,9 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.gismartware.mobile.util.FileUtils;
+import com.gismartware.mobile.util.ImageUtils;
 
 
 /**
@@ -149,7 +149,6 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         super.onCreate(savedInstanceState);
         
         installIfNeeded();
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
@@ -167,7 +166,6 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         try {
             LibraryLoader.ensureInitialized();
         } catch (ProcessInitException e) {
-            Log.e(TAG, "ContentView initialization failed.", e);
             finish();
             return;
         }
