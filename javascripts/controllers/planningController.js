@@ -158,7 +158,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     $scope.missions[i].selectedAssets = selectedAssets[currentId];
                 }
                 if(newMissionCount > 0){
-                    alertify.log("Une nouvelle mission est arrivée !");
+                    alertify.log(newMissionCount + i18n.get('_PLANNING_NEW_MISSIONS_'));
                     window.SmartgeoChromium && SmartgeoChromium.vibrate(500);
                 }
                 $scope.updateCount();

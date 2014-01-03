@@ -103,5 +103,6 @@ window.smartgeo_i18n_lang['fr'] = {
         _PLANNING_WRITE_                    : "CR",
         _PLANNING_FINISH_                   : "terminé",
         _PLANNING_REFRESHED_                : "Actualisé il y a ",
-        _PLANNING_DISPLAY_FINISHED_         : "Afficher les OT terminés"
+        _PLANNING_DISPLAY_FINISHED_         : "Afficher les OT terminés",
+        _PLANNING_NEW_MISSIONS_             : " nouvelle(s) mission(s)"
     };
