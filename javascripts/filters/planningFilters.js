@@ -129,6 +129,16 @@ angular.module('smartgeomobile')
         return function(dateIn) {
             return sanitizeDate(dateIn);
         };
+    }).filter('opennedMissions', function() {
+        return function(missionsIn, date) {
+            var missionsOut = [];
+            for(var i in missionsIn){
+                if(missionsIn[i].openned){
+                    missionsOut.push(missionsIn[i]);
+                }
+            }
+            return missionsOut;
+        };
     });
 
 

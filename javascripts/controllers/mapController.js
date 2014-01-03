@@ -44,6 +44,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
         $scope.missionsClusters = {};
 
+    $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
+    $scope.MAX_CLUSTER_RADIUS = 50;
+
     if(!$rootScope.site){
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
         $location.path("#");
@@ -303,8 +306,10 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if(!$scope.missionsClusters[mission.id]){
             $scope.missionsClusters[mission.id] = new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
-                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
-                }
+                    return new L.DivIcon({ html: '<div><span>' + mission.number + ":" + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
+                },
+                disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
+                maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
             });
             for (var i = 0; i < assetsCache.length; i++) {
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
@@ -344,7 +349,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             $scope.missionsClusters['done-'+mission.id] = new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
                     return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-done', iconSize: new L.Point(40, 40) });
-                }
+                },
+                disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
+                maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
             });
             for (var i = 0; i < assetsCache.length; i++) {
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);

@@ -26,6 +26,8 @@ window.smartgeo_i18n_lang['en'] = {
         _CONSULTATION_GOTO                  : "Go to" ,
         _CONSULTATION_REPORT_ON_POSITION    : "Fill report on this position" ,
         _CONSULTATION_GPS_FAIL              : "Error while retrieving GPS coordinates" ,
+        _CONSULTATION_ADD_TO_MISSION        : "Add to ",
+        _CONSULTATION_ADD_TO_               : "Add to ...",
 
         _INSTALL_INSTALLING                 : "Installing " ,
         _INSTALL_IN_PROGRESS                : " in progress" ,
