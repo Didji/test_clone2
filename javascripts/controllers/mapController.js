@@ -325,7 +325,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions){
         for(var i in $scope.missionsClusters){
-            if(!missions[i] || missions[i].assets.length === 0){
+            if( (!missions[i] || missions[i].assets.length === 0) && i.indexOf('done') === -1){
                 G3ME.map.removeLayer($scope.missionsClusters[i]);
                 if($scope.missionsClusters['done-'+i]){
                     G3ME.map.removeLayer($scope.missionsClusters['done-'+i]);
@@ -336,6 +336,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
     $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
+        debugger;
         if(!$scope.missionsClusters['done-'+mission.id]){
             $scope.missionsClusters['done-'+mission.id] =  L.markerClusterGroup();
             for (var i = 0; i < assetsCache.length; i++) {
