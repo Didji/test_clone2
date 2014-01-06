@@ -10,7 +10,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
         $http.get(url)
             .success(function(sites){
                 var sitesById = {},
-                    knownSites = Smartgeo.get('sites') || {},
+                    knownSites = Smartgeo.get_('sites') || {},
                     site, tmpsites = {};
                 for(var i = 0, lim = sites.length; i < lim; i++) {
                     site = sites[i];
@@ -26,7 +26,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
                 $scope.ready = true;
                 (callback || function(){})(true) ;
             }).error(function(error, errorCode){
-                var knownSites = Smartgeo.get('sites') || {};
+                var knownSites = Smartgeo.get_('sites') || {};
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                 $scope.sites = [];
                 for(var id in knownSites) {
@@ -41,7 +41,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     function getLocalSites() {
 
         var sitesById = {},
-            knownSites = Smartgeo.get('sites') || {},
+            knownSites = Smartgeo.get_('sites') || {},
             site, tmpsites = {};
 
         // Pour que les filtres fonctionnent, il nous faut un simple tableau.

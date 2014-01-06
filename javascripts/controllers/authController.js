@@ -43,7 +43,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         for(var i in missions){
             missions[i].openned = false ;
         }
-        Smartgeo.set('missions', missions);
+        if(missions){
+            Smartgeo.set('missions', missions);
+        }
     };
 
     /**

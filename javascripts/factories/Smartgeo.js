@@ -133,7 +133,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          */
         reset: function(){
             localStorage.clear();
-            var sites = Smartgeo.get('sites') ;
+            var sites = Smartgeo.get_('sites') ;
             Smartgeo.unset_('sites');
             for(var k in sites){
                 var site = sites[k] ;
@@ -226,6 +226,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
         parametersCache : window.smartgeoPersistenceCache,
 
         /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#parametersCache_
+         * @propertyOf smartgeomobile.Smartgeo
+         * @description Setter and getter cache for async functions
+         */
+        parametersCache_ : window.smartgeoPersistenceCache_,
+
+        /**
          * @ngdoc method
          * @name smartgeomobile.Smartgeo#get
          * @methodOf smartgeomobile.Smartgeo
@@ -265,7 +273,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Clear localStorage's value
          */
         unset: function(parameter){
-            this.parametersCache[parameter] = undefined ;
+            delete this.parametersCache[parameter]  ;
             return localStorage.removeItem(parameter);
         },
 
@@ -280,9 +288,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * IndexedDB getter
          */
         get_: function(parameter, callback){
-            if(this.parametersCache[parameter]){
-                (callback || function(){})(this.parametersCache[parameter]) ;
-                return this.parametersCache[parameter] ;
+            if(this.parametersCache_[parameter]){
+                (callback || function(){})(this.parametersCache_[parameter]) ;
+                return this.parametersCache_[parameter] ;
             } else {
                 (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
             }
@@ -299,7 +307,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * IndexedDB setter
          */
         set_: function(parameter, value, callback){
-            this.parametersCache[parameter] = value ;
+            this.parametersCache_[parameter] = value ;
             (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
         },
 
@@ -313,7 +321,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Clear IndexedDB's value
          */
         unset_: function(parameter, callback){
-            this.parametersCache[parameter] = undefined ;
+            delete this.parametersCache_[parameter] ;
             (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         },
 
