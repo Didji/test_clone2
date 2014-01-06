@@ -4,7 +4,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope.comesFromIntent = $rootScope.map_activity   || $rootScope.report_activity  ;
 
-    $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site];
+    $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
     GiReportBuilder.buildAllTemplates($scope.site.activities);

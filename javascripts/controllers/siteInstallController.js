@@ -8,12 +8,10 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
         target: 100
     }];
     $scope.totalProgress = 100;
-    $scope.Math = Math;
-    $scope.sites = Smartgeo.get('sites') || {} ;
+    $scope.sites = Smartgeo.get_('sites') || {} ;
 
-    /* Si le site est déjà installé, on ne le reinstalle pas (#132) */
+    /* Si le site est déjà installé, on ne le reinstalle pas (#132), on retourne sur la carte */
     if($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true){
-        /* On retourne sur la carte */
         $location.path('/map/'+$routeParams.site);
     }
 
@@ -64,15 +62,29 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
     var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
     $http.get(url).success(function(sites){
-        $scope.steps[0].progress = 50;
 
-        angular.extend($scope.sites, sites);
-
-        for (var i = 0; i < sites.length; i++) {
+        for(var i in sites){
+            if(!$scope.sites[sites[i].id]){
+                $scope.sites[sites[i].id] = sites[i] ;
+            }
             if(sites[i].id === $routeParams.site){
                 $scope.site = sites[i];
             }
         }
+
+        $scope.steps[0].progress = 50;
+
+        // console.log("$scope.sites", JSON.parse(JSON.stringify($scope.sites))) ;
+        // console.log("sites", JSON.parse(JSON.stringify(sites))) ;
+        // angular.extend($scope.sites, sites);
+        // console.log("$scope.sites", JSON.parse(JSON.stringify($scope.sites))) ;
+        // console.log("sites", JSON.parse(JSON.stringify(sites))) ;
+
+        // for (i = 0; i < sites.length; i++) {
+        //     if(sites[i].id === $routeParams.site){
+        //         $scope.site = sites[i];
+        //     }
+        // }
         Installer.getInstallJSON($scope.site, function(site){
             $scope.steps[0].progress = 100;
 

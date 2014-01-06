@@ -20,9 +20,9 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     if($rootScope.site){
 
     } else if($routeParams.site){
-        $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
+        $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site] ;
     } else {
-        var sites = Smartgeo.get('sites') ;
+        var sites = Smartgeo.get_('sites') ;
         for(var siteId in sites){
             if(sites.hasOwnProperty(siteId)){
                 $rootScope.site = sites[siteId];

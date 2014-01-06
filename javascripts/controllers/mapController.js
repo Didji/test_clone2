@@ -2,7 +2,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     'use strict' ;
 
-    window.site = $rootScope.site = $rootScope.site || Smartgeo.get('sites')[$routeParams.site] ;
+    window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site] ;
 
     var SELECTED_ASSET_ICON     = L.icon({
                             iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ok.png',

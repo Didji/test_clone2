@@ -48,14 +48,14 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
     }
 
 
-    $scope.site = Smartgeo.get('sites')[$routeParams.site] ;
+    $scope.site = Smartgeo.get_('sites')[$routeParams.site] ;
 
     var url =  Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
     $http.get(url).success(function(sites){
         $scope.steps[0].progress = 50;
 
-        $scope.sites = Smartgeo.get('sites') || {} ;
+        $scope.sites = Smartgeo.get_('sites') || {} ;
 
         angular.extend($scope.sites, sites);
 
