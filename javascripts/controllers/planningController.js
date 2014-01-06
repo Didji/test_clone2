@@ -129,7 +129,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             .success( function(data){
 
                 var openedMission = [], previousMissionsId = [], displayDoneMission = [], selectedAssets = {},
-                    i, currentId ;
+                    i, currentId, postAddedAssetsMission = {};
+
+            // mission.postAddedAssets.push(asset.guid);
 
                 for (i in $rootScope.missions) {
                     previousMissionsId.push(1*i);
@@ -141,10 +143,18 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                         displayDoneMission.push(currentId);
                     }
                     selectedAssets[currentId] = $rootScope.missions[i].selectedAssets ;
+                    if($rootScope.missions[i].postAddedAssets){
+                        postAddedAssetsMission[$rootScope.missions[i].id] = $rootScope.missions[i].postAddedAssets ;
+                    }
                 }
+                console.log(postAddedAssetsMission);
                 $rootScope.missions = data.results;
                 var newMissionCount = 0;
                 for (i in $rootScope.missions) {
+                    $rootScope.missions[i].postAddedAssets = postAddedAssetsMission[$rootScope.missions[i].id];
+                    if($rootScope.missions[i].postAddedAssets){
+                        $rootScope.missions[i].assets = $rootScope.missions[i].assets.concat($rootScope.missions[i].postAddedAssets);
+                    }
                     currentId = $rootScope.missions[i].id ;
                     if(previousMissionsId.indexOf(currentId) === -1){
                         newMissionCount++ ;

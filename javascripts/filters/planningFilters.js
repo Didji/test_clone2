@@ -131,7 +131,6 @@ angular.module('smartgeomobile')
         };
     }).filter('opennedMissions', function() {
         return function(missionsIn, asset, site) {
-            console.log(site);
             var missionsOut = [];
             for(var i in missionsIn){
                 var missionsOkeys = site.activities._byId[missionsIn[i].activity.id].okeys , isCompatible = false;

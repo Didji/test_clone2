@@ -73,7 +73,7 @@
                                     <button
                                         class="btn btn-primary btn-block"
                                         ng-show="filteredOpennedMission.length == 1"
-                                        ng-click="addAssetsToMission(asset.guid)">
+                                        ng-click="addAssetsToMission(asset, filteredOpennedMission[0])">
                                         <i18n>_CONSULTATION_ADD_TO_MISSION</i18n> {{filteredOpennedMission[0].activity.label}} n°{{filteredOpennedMission[0].number}}
                                     </button>
 
@@ -87,7 +87,7 @@
                                       </button>
                                       <ul class="dropdown-menu" role="menu">
                                             <li ng-repeat="mission in filteredOpennedMission" >
-                                                <a href="#" ng-click="">{{mission.activity.label}} n°{{mission.number}}</a>
+                                                <a href="#" ng-click="addAssetsToMission(asset, mission, $event)">{{mission.activity.label}} n°{{mission.number}}</a>
                                             </li>
                                       </ul>
                                     </div>
