@@ -4,9 +4,6 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
 
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
-    Smartgeo.unset('lastLeafletMapExtent');
-    Smartgeo.unset('persitence.menu.open');
-    Smartgeo.unset('persitence.menu.open.level');
 
     function getRemoteSites(callback) {
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
