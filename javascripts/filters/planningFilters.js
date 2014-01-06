@@ -130,10 +130,18 @@ angular.module('smartgeomobile')
             return sanitizeDate(dateIn);
         };
     }).filter('opennedMissions', function() {
-        return function(missionsIn, date) {
+        return function(missionsIn, asset, site) {
+            console.log(site);
             var missionsOut = [];
             for(var i in missionsIn){
-                if(missionsIn[i].openned){
+                var missionsOkeys = site.activities._byId[missionsIn[i].activity.id].okeys , isCompatible = false;
+                for(var j in missionsOkeys ) {
+                    if(missionsOkeys[j].indexOf(asset.okey) !== -1){
+                        isCompatible = true;
+                        break;
+                    }
+                }
+                if(isCompatible && missionsIn[i].openned){
                     missionsOut.push(missionsIn[i]);
                 }
             }

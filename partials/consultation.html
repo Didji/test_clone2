@@ -68,7 +68,7 @@
                                     <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
                                     <button class="btn btn-primary btn-block" ng-show="rights.goto" ng-click="gotoAsset(asset)"><i18n>_CONSULTATION_GOTO</i18n></button>
 
-                                    <hr  ng-show="( filteredOpennedMission = (missions | opennedMissions)).length != 0 "/>
+                                    <hr  ng-show="( filteredOpennedMission = (missions | opennedMissions:asset:site)).length != 0 "/>
 
                                     <button
                                         class="btn btn-primary btn-block"
