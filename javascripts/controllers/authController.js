@@ -5,34 +5,46 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
 
     'use strict' ;
 
-    var lastuser = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
+    $scope.initialize = function(){
+        $scope.lastuser = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
+        $scope.version      = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+        $scope.username     = $scope.lastuser.username;
+        $scope.pwd          = $scope.lastuser.password;
+        $scope.readyToLog   = false;
+        $scope.firstAuth    = false;
+        $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') ;
+        $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+        $scope.rememberme = $scope.lastuser.password &&  $scope.lastuser.password.length ? true : false;
+        $scope.$on("DEVICE_IS_ONLINE", ping);
+        $scope.$on("DEVICE_IS_OFFLINE", ping);
 
-    $scope.version      = Smartgeo._SMARTGEO_MOBILE_VERSION ;
-    $scope.username     = lastuser.username;
-    $scope.pwd          = lastuser.password;
-    $scope.readyToLog   = false;
-    $scope.firstAuth    = false;
-    $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') ;
-    $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
-    $scope.rememberme = lastuser.password &&  lastuser.password.length ? true : false;
-    $scope.$on("DEVICE_IS_ONLINE", ping);
-    $scope.$on("DEVICE_IS_OFFLINE", ping);
+        $scope.resetPersistence();
 
-    if($scope.gimapUrl){
-        ping();
-    } else {
-        $scope.firstAuth  = true ;
-        $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
-    }
-
-
-    // Prevent just unlogged user to go back to the map
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-        if(next.indexOf('/map/') !== -1) {
-            event.preventDefault();
+        if($scope.gimapUrl){
+            ping();
+        } else {
+            $scope.firstAuth  = true ;
+            $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
         }
-    });
 
+        // Prevent just unlogged user to go back to the map
+        $scope.$on('$locationChangeStart', function (event, next, current) {
+            if(next.indexOf('/map/') !== -1) {
+                event.preventDefault();
+            }
+        });
+    };
+
+    $scope.resetPersistence = function(){
+        Smartgeo.unset('lastLeafletMapExtent');
+        Smartgeo.unset('persitence.menu.open');
+        Smartgeo.unset('persitence.menu.open.level');
+        var missions = Smartgeo.get('missions');
+        for(var i in missions){
+            missions[i].openned = false ;
+        }
+        Smartgeo.set('missions', missions);
+    };
 
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
@@ -65,7 +77,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         ping();
     }
 
-    function remoteLogin() {
+    $scope.remoteLogin = function() {
 
         $scope.readyToLog = false;
         $scope.logMessage = "_AUTH_PLEASE_WAIT";
@@ -75,24 +87,24 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
-                lastuser = {
+                $scope.lastuser = {
                     password:   $scope.rememberme ? $scope.pwd : '',
                     rememberme: $scope.rememberme
                 };
-                lastuser.username = $scope.username;
-                Smartgeo.set('user',lastuser);
+                $scope.lastuser.username = $scope.username;
+                Smartgeo.set('user',$scope.lastuser);
                 $location.path('sites');
             },loginFailed);
-    }
+    };
 
-    function localLogin() {
+    $scope.localLogin = function() {
         var knownUsers = Smartgeo.get('knownUsers') || {} ;
         if(knownUsers[$scope.username] === $scope.pwd) {
             $location.path('sites');
         } else {
             alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
         }
-    }
+    };
 
     $scope.login = function(){
 
@@ -115,7 +127,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
             alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
             return false ;
         }
-        Smartgeo.get('online') === true ? remoteLogin() : localLogin();
+        $scope[Smartgeo.get('online') === true ? "remoteLogin" : "localLogin"]();
     };
 
     $scope.setGimapUrl = function(){
