@@ -9,7 +9,7 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
     }];
     $scope.totalProgress = 100;
     $scope.sites = Smartgeo.get_('sites') || {} ;
-
+    $scope.Math = Math;
     /* Si le site est déjà installé, on ne le reinstalle pas (#132), on retourne sur la carte */
     if($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true){
         $location.path('/map/'+$routeParams.site);
@@ -105,6 +105,7 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
     });
 
     $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
+        console.log($scope.steps);
         $scope.currentInstalledOkey = action.okey;
         stepsByOkey[action.okey].progress = 1 * action.progress;
         if(!$scope.$$phase) {
