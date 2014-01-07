@@ -42,20 +42,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.gismartware.mobile.util.FileUtils;
-import com.gismartware.mobile.util.ImageUtils;
 
 
 /**
@@ -106,21 +105,24 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     private WindowAndroid mWindowAndroid;
     private BroadcastReceiver mReceiver;
     
-    /*
-     * Connectivité
-     */
     private boolean isConnected;
+    private String lastPicturePath;
+    
     
     @Override
 	public void onDestroy() {
-    	unregisterReceiver(networkChangeReceiver);
+    	super.onDestroy();
+    	
+    	if (networkChangeReceiver != null) {
+    		unregisterReceiver(networkChangeReceiver);
+    		networkChangeReceiver = null;
+    	}
     	//TODO impossible to make deletion work...
     	if(FileUtils.delete(new File(GimapMobileApplication.WEB_ROOT))) {
     		Log.d(TAG, "Smartgeo has been successfully uninstalled!");
     	} else {
     		Log.w(TAG, "Impossible to uninstall Smartgeo.");
     	}
-    	super.onDestroy();
 	}
     
     private void installIfNeeded() {
@@ -397,12 +399,15 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 				invalidateToken();
 				requestToken();
 			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
-				File origPic = new File(getRealPathFromURI(Uri.parse(intent.getData().toString())));
 				try {
-					Bitmap pic = ImageUtils.decodeFile(origPic, 600, 800);
-					File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), origPic.getName());
+					//on divise la taille (dimension) de la photo par 2
+					File file = new File(lastPicturePath);
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inSampleSize = 2;
+					Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
+					//on compresse la photo à 75% de qualité
 					OutputStream out = new FileOutputStream(file);
-					pic.compress(Bitmap.CompressFormat.JPEG, 80, out);
+					photo.compress(Bitmap.CompressFormat.JPEG, 75, out);
 					out.flush();
 					out.close();
 					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + file.getAbsolutePath() + "\");");
@@ -661,4 +666,12 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			}
     	}
 	};
+
+	public String getLastPicturePath() {
+		return lastPicturePath;
+	}
+
+	public void setLastPicturePath(String lastPicturePath) {
+		this.lastPicturePath = lastPicturePath;
+	}
 }

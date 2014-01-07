@@ -3,6 +3,8 @@
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
@@ -11,31 +13,42 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.GimapMobileMainActivity;
 import com.gismartware.mobile.util.FileUtils;
 
 public class SmartGeoMobilePlugins {
 	
 	private static final String TAG = "GimapMobilePlugins";
+	private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
 
 	private Context context;
 	private ContentView view;
+	private SimpleDateFormat pictureFileNameFormater;
 
 	public SmartGeoMobilePlugins(Context context, ContentView view) {
 		this.context = context;
 		this.view = view;
+		pictureFileNameFormater = new SimpleDateFormat(PICTURE_FILE_NAME_PATTERN);
 	}
 	
 	@JavascriptInterface
-	public void launchCamera(int callbackId) {
+	public void launchCamera(int callbackId) throws IOException {
 		Log.d(TAG, "Request camera");
 		Activity act = (Activity)context;
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		File photoFile = File.createTempFile(
+				pictureFileNameFormater.format(new Date()),
+		        ".jpg",
+		        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+		((GimapMobileMainActivity)context).setLastPicturePath(photoFile.getAbsolutePath());
 		act.startActivityForResult(intent, ActivityCode.CAPTURE_IMAGE.getCode());
 	}
 	
