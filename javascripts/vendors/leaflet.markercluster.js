@@ -595,7 +595,11 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
                 e.layer.spiderfy();
             }
         } else if (this.options.zoomToBoundsOnClick) {
-            e.layer.zoomToBounds();
+            if(e.layer._zoom >= 17 || e.layer._childCount <= 5){
+                e.layer._map.setView( e.layer._wLatLng, 19);
+            } else {
+                e.layer.zoomToBounds();
+            }
         }
     },
 
