@@ -74,17 +74,6 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
 
         $scope.steps[0].progress = 50;
 
-        // console.log("$scope.sites", JSON.parse(JSON.stringify($scope.sites))) ;
-        // console.log("sites", JSON.parse(JSON.stringify(sites))) ;
-        // angular.extend($scope.sites, sites);
-        // console.log("$scope.sites", JSON.parse(JSON.stringify($scope.sites))) ;
-        // console.log("sites", JSON.parse(JSON.stringify(sites))) ;
-
-        // for (i = 0; i < sites.length; i++) {
-        //     if(sites[i].id === $routeParams.site){
-        //         $scope.site = sites[i];
-        //     }
-        // }
         Installer.getInstallJSON($scope.site, function(site){
             $scope.steps[0].progress = 100;
 
@@ -105,7 +94,6 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
     });
 
     $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action){
-        console.log($scope.steps);
         $scope.currentInstalledOkey = action.okey;
         stepsByOkey[action.okey].progress = 1 * action.progress;
         if(!$scope.$$phase) {
