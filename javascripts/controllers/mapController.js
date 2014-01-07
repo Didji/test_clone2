@@ -311,16 +311,19 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
                 maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
             });
-            for (var i = 0; i < assetsCache.length; i++) {
-                assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-                assetsCache[i].marker.setIcon(assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
-                (function(i,marker){
-                    marker.on('click', function(){
-                        clickHandler(mission.id, i);
-                    });
-                })(i, assetsCache[i].marker);
-                $scope.missionsClusters[mission.id].addLayer(assetsCache[i].marker);
+        }
+        for (var i = 0; i < assetsCache.length; i++) {
+            if(assetsCache[i].marker){
+                continue;
             }
+            assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
+            assetsCache[i].marker.setIcon(assetsCache[i].selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+            (function(i,marker){
+                marker.on('click', function(){
+                    clickHandler(mission.id, i);
+                });
+            })(i, assetsCache[i].marker);
+            $scope.missionsClusters[mission.id].addLayer(assetsCache[i].marker);
         }
         G3ME.map.addLayer($scope.missionsClusters[mission.id]);
     });

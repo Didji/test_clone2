@@ -28,6 +28,7 @@
         <p class="text-danger" ng-show='mission.objectNotFound'>
           <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
         </p>
+
         <button
           style='min-width: 110px'
           class="btn btn-warning"
@@ -55,5 +56,45 @@
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
+        <p ng-show='mission.postAddedAssets.assets.length'>
+
+          <!-- <ul> -->
+          <table ng-show='mission.postAddedAssets.assets.length' class="table table-condensed">
+            <thead>
+              <tr>
+                <th>
+                  <i class="fa fa-plus-circle">
+                    <span ng-switch on="mission.postAddedAssets.assets.length">
+                        <span ng-switch-when="1">Objet ajouté</span>
+                        <span ng-switch-default>Objets ajoutés</span>
+                    </span>
+                  </i>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="asset in mission.postAddedAssets.assets">
+                <td>{{assetsCache[mission.id]._byId[asset].label}}</td>
+                <td><button class="btn btn-link" style="padding:0;" ng-click="removeAssetFromMission(assetsCache[mission.id]._byId[asset], mission)"><span class="icon icon-trash"></span></button></td>
+              </tr>
+             <!--  <tr ng-repeat="asset in mission.postAddedAssets.done">
+                <td>{{assetsCache[mission.id]._byId[asset].label}}</td>
+                <td></td>
+              </tr> -->
+            </tbody>
+          </table>
+            <!-- <li style="margin: -10px 0;" ng-repeat="asset in mission.postAddedAssets.assets">
+              {{asset}}
+              <button class="btn btn-link" ng-click=""><span class="icon icon-trash"></span></button>
+            </li>
+          </ul> -->
+        </p>
+        <!-- <p ng-show='mission.postAddedAssets.done.length'>
+          <i class="fa fa-plus-circle"> post added done</i>
+          <ul>
+            <li ng-repeat="asset in mission.postAddedAssets.done">{{asset}}</li>
+          </ul>
+        </p> -->
       </div>
 </div>
