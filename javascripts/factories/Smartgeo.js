@@ -414,7 +414,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
 
             var arguments_ = [],
                 _this = this,
-                request = 'SELECT id, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
+                request = 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
                 j;
 
             SQLite.openDatabase({
@@ -428,6 +428,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
                             asset = rslt.rows.item(i);
                             partial_response.push({
                                 guid        : asset.id,
+                                label       : asset.label,
                                 geometry    : JSON.parse(asset.geometry),
                                 xmin        : asset.xmin,
                                 xmax        : asset.xmax,

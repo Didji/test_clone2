@@ -143,17 +143,8 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
 
     $scope.addAssetsToMission = function (asset, mission, $event){
-        if($event){
-             $event.preventDefault();
-        }
-        if(mission.assets.indexOf(asset.guid) === -1 && mission.done.indexOf(asset.guid) === -1){
-            mission.assets.push(asset.guid);
-            if(!mission.postAddedAssets){
-                mission.postAddedAssets = [] ;
-            }
-            mission.postAddedAssets.push(asset.guid);
-        }
-        Smartgeo.set('missions', $rootScope.missions);
+        $event && $event.preventDefault();
+        $rootScope.addAssetToMission(asset, mission);
     };
 
 });
