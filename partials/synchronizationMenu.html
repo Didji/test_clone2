@@ -20,10 +20,10 @@
                         <span ng-show="report.syncInProgress" style="padding: 0px 1px;" us-spinner="{radius:5, width: 2, length: 5, hwaccel:true, color:'orange'}"></span>
                         <ul  ng-show='!report.syncInProgress' class="dropdown-menu" role="menu">
                             <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='sync($index)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='sync($index)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
                             </li>
                             <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;" ng-click='__delete($index)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button>
+                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='__delete($index)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button>
                             </li>
                         </ul>
                     </div>
