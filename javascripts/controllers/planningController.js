@@ -176,7 +176,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     mission.selectedAssets = selectedAssets[i];
                 }
                 if(newMissionCount > 0){
-                    alertify.log(newMissionCount + i18n.get('_PLANNING_NEW_MISSIONS_'));
+                    var text ;
+                    if(newMissionCount === 1){
+                        text = newMissionCount + i18n.get('_PLANNING_NEW_MISSION_') ;
+                    } else {
+                        text = newMissionCount + i18n.get('_PLANNING_NEW_MISSIONS_') ;
+                    }
+                    alertify.log(text);
                     window.SmartgeoChromium && SmartgeoChromium.vibrate(500);
                 }
                 $scope.updateCount();
@@ -232,6 +238,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         });
         $scope.$watch('dayToDisplay', function() {
             $scope.updateCount();
+        });
+        $scope.$on('SYNC_MISSION', function() {
+            $scope.synchronize();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
         setInterval($scope.synchronize,$scope._SYNCHRONIZE_INTERVAL);
