@@ -501,24 +501,24 @@ ul.ged-gallery li img {
   cursor:progress;
 }
 
-.has-spinner.active .spinner {
+.has-spinner.active .spinnerb {
   opacity: 1;
   width: auto; /* This doesn't work, just fix for unkown width elements */
 }
 
-.has-spinner.btn-mini.active .spinner {
+.has-spinner.btn-mini.active .spinnerb {
     width: 10px;
 }
 
-.has-spinner.btn-small.active .spinner {
+.has-spinner.btn-small.active .spinnerb {
     width: 13px;
 }
 
-.has-spinner.btn.active .spinner {
+.has-spinner.btn.active .spinnerb {
     width: 16px;
 }
 
-.has-spinner.btn-large.active .spinner {
+.has-spinner.btn-large.active .spinnerb {
     width: 19px;
 }
 
