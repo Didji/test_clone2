@@ -88,7 +88,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.startFollowingPosition = function(){
         $scope.stopFollowingPosition();
-        $scope.watchInterval = setInterval($scope.whereIAm, 3000);
+        Smartgeo.registerInterval('WATCH_INTERVAL', function(){
+            $scope.whereIAm();
+        }, 3000);
     };
 
     /**
@@ -100,9 +102,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.stopFollowingPosition = function(){
         $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
-        if($scope.watchInterval){
-            clearInterval($scope.watchInterval);
-        }
+        Smartgeo.clearInterval('WATCH_INTERVAL');
     };
 
     /**

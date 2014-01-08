@@ -19,6 +19,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.$on("DEVICE_IS_OFFLINE", ping);
 
         $scope.resetPersistence();
+        Smartgeo.clearIntervals();
 
         if($scope.gimapUrl){
             ping();

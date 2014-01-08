@@ -16,11 +16,12 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         });
 
         $scope.updateReportList();
-        $scope.updateReportListInterval = setInterval(function(){
+
+        Smartgeo.registerInterval("UPDATE_SYNCCENTER",function(){
             $scope.updateReportList();
         },5000);
 
-        $scope.syncAllInterval = setInterval(function(){
+        Smartgeo.registerInterval("SYNC_REPORTS",function(){
             $scope.syncAll();
         },60000);
 
