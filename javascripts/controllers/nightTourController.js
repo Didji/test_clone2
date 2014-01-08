@@ -77,7 +77,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 }
             }
         });
-
     };
 
     /**
@@ -184,11 +183,17 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 for(var i in $scope.assetsCache){
                     asset = $scope.assetsCache[i] ;
                     (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
-                    asset.marker.setIcon($scope._DONE_ASSET_ICON);
-                    asset.marker.off('click');
+                    if(asset.marker){
+                        asset.marker.setIcon($scope._DONE_ASSET_ICON);
+                        asset.marker.off('click');
+                    }
                 }
-                $scope.sendOkReports(ok);
-                $scope.sendKoReports(ko);
+                $scope.sendOkReports(ok, function(){
+                    $scope.sendKoReports(ko, function(){
+                        $rootScope.$broadcast('SYNC_MISSION');
+                    });
+                });
+
             }
         });
     };
@@ -200,7 +205,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      * @description
      *
      */
-    $scope.sendOkReports = function(ok){
+    $scope.sendOkReports = function(ok, callback){
+        if(!ok.length){
+            (callback || function(){})();
+        }
          var report = {
             assets: ok,
             fields: {},
@@ -211,12 +219,14 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
         $http
             .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
+            .success(callback || function(){})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
                     reports = reports || [] ;
                     reports.push(report);
                     Smartgeo.set_('reports', reports, function(){
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                        (callback || function(){})();
                     });
                 });
             });
@@ -229,7 +239,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      * @description
      *
      */
-    $scope.sendKoReports = function(ko){
+    $scope.sendKoReports = function(ko, callback){
+        if(!ko.length){
+            (callback || function(){})();
+        }
         var report = {
             assets: ko,
             fields: {},
@@ -240,12 +253,14 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
         $http
             .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
+            .success(callback || function(){})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
                     reports = reports || [] ;
                     reports.push(report);
                     Smartgeo.set_('reports', reports, function(){
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
+                        (callback || function(){})();
                     });
                 });
             });
@@ -272,8 +287,11 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             asset.marker.off('click');
             (asset.isWorking === true ? ok : ko ).push(asset.guid);
         }
-        $scope.sendOkReports(ok);
-        $scope.sendKoReports(ko);
+        $scope.sendOkReports(ok, function(){
+            $scope.sendKoReports(ko, function(){
+                $rootScope.$broadcast('SYNC_MISSION');
+            });
+        });
     };
 
     /**
