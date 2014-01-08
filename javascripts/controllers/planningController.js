@@ -243,7 +243,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.synchronize();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
-        setInterval($scope.synchronize,$scope._SYNCHRONIZE_INTERVAL);
+        Smartgeo.registerInterval('WATCH_INTERVAL', function(){
+            $scope.synchronize();
+        }, $scope._SYNCHRONIZE_INTERVAL);
     };
 
     /**

@@ -76,6 +76,49 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
 
         _MAX_ID_FOR_SELECT_REQUEST : 4000,
 
+        _intervals : {},
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#registerInterval
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String}   name
+         * @param {function} f
+         * @param {Integer}  interval
+         * @description
+         */
+        registerInterval : function(name, f, interval){
+            if(Smartgeo._intervals[name]){
+                clearInterval(Smartgeo._intervals[name]);
+            }
+            Smartgeo._intervals[name] = setInterval(f, interval);
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#clearIntervals
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         */
+        clearIntervals : function(){
+            for(var interval in Smartgeo._intervals){
+                clearInterval(Smartgeo._intervals[interval]);
+                delete Smartgeo._intervals[interval];
+            }
+        },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#clearInterval
+         * @methodOf smartgeomobile.Smartgeo
+         * @param {String}   name
+         * @description
+         */
+        clearInterval : function(name){
+            clearInterval(Smartgeo._intervals[name]);
+            delete Smartgeo._intervals[name];
+        },
+
         /**
          * @ngdoc method
          * @name smartgeomobile.Smartgeo#isRunningOnBigScreen
