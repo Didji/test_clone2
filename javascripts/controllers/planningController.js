@@ -615,7 +615,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             delete assets[0].xmax;
             delete assets[0].ymin;
             delete assets[0].ymax;
-            delete assets[0].geometry;
 
             mission.isLoading = false;
             $scope.$apply();
@@ -637,4 +636,20 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
         Smartgeo.set('missions', $rootScope.missions);
     };
+
+
+    /**
+     * @ngdoc method
+     * @name planningController#locateAsset
+     * @methodOf planningController
+     * @param {Object} asset
+     * @description
+     */
+    $scope.locateAsset = function(asset){
+        Smartgeo.findAssetsByGuids($scope.site, asset.guid, function(assets){
+            $rootScope.$broadcast("ZOOM_ON_ASSET", assets[0]);
+        });
+    };
 });
+
+
