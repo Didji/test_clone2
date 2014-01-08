@@ -1,39 +1,45 @@
-var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap', 'ui.select2', 'angularSpinner'])
-       .config(['$routeProvider', function($routeProvider, $rootScope) {
+/*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
+
+
+var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap", "ui.select2", "angularSpinner"])
+       .config(["$routeProvider", function($routeProvider) {
+            "use strict";
             $routeProvider.
-                when('/',                                       {templateUrl: 'partials/login.html'}).
-                when('/sites/',                                 {templateUrl: 'partials/sites.html'}).
+                when("/",                                       {templateUrl: "partials/login.html"}).
+                when("/sites/",                                 {templateUrl: "partials/sites.html"}).
 
-                when('/report/:site',                           {templateUrl: 'partials/report.html'}).
-                when('/report/:site/:activity',                 {templateUrl: 'partials/report.html'}).
-                when('/report/:site/:activity/:assets',         {templateUrl: 'partials/report.html'}).
-                when('/report/:site/:activity/:assets/:mission',{templateUrl: 'partials/report.html'}).
+                when("/report/:site",                           {templateUrl: "partials/report.html"}).
+                when("/report/:site/:activity",                 {templateUrl: "partials/report.html"}).
+                when("/report/:site/:activity/:assets",         {templateUrl: "partials/report.html"}).
+                when("/report/:site/:activity/:assets/:mission",{templateUrl: "partials/report.html"}).
 
-                when('/sites/install/:site',                    {templateUrl: 'partials/installation.html'}).
-                when('/sites/uninstall/:site',                  {templateUrl: 'partials/uninstall.html'}).
-                when('/sites/update/:site',                     {templateUrl: 'partials/update.html'}).
-                when('/map/:site',                              {templateUrl: 'partials/map.html'}).
-                when('/intent/:controller/?:args',              {templateUrl: "partials/intent.html"}).
+                when("/sites/install/:site",                    {templateUrl: "partials/installation.html"}).
+                when("/sites/uninstall/:site",                  {templateUrl: "partials/uninstall.html"}).
+                when("/sites/update/:site",                     {templateUrl: "partials/update.html"}).
+                when("/map/:site",                              {templateUrl: "partials/map.html"}).
+                when("/intent/:controller/?:args",              {templateUrl: "partials/intent.html"}).
 
                 otherwise({template: " ",  controller: function($location){
-                    console.log($location.url());
                     $location.path("/");
                 }});
 
-    }]).config(['$httpProvider', function($httpProvider) {
+    }]).config(["$httpProvider", function($httpProvider) {
+        "use strict";
         $httpProvider.defaults.withCredentials = true;
         $httpProvider.defaults.useXDomain = true;
         $httpProvider.defaults.cache = false;
-    }]).directive('camera', function() {
+    }]).directive("camera", function() {
+        "use strict";
         return {
-            restrict: 'A',
-            require: 'ngModel',
+            restrict: "A",
+            require: "ngModel",
             link: function(scope, elm, attrs, ctrl) {
-                elm.on('click', function() {
+                attrs = attrs ;
+                elm.on("click", function() {
                     scope.$apply(function(){
                         scope.isTakingPhoto = true ;
-                    })
+                    });
                     navigator.getMedia = ( navigator.getUserMedia ||
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia ||
@@ -44,18 +50,17 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                             window.ChromiumCallbacks = [];
                         }
                         window.ChromiumCallbacks[1] = function(path){
-                            console.log(path);
-                            var img = document.createElement("img");
-                            img.src = path;
-                            img.onload = function(){
-                                var canvas = document.createElement("canvas");
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                canvas.getContext("2d").drawImage(img, 0, 0);
+                            var imageElement = document.createElement("img");
+                            imageElement.src = path;
+                            imageElement.onload = function(){
+                                var canvasElement = document.createElement("canvas");
+                                canvasElement.width = imageElement.width;
+                                canvasElement.height = imageElement.height;
+                                canvasElement.getContext("2d").drawImage(imageElement, 0, 0);
                                 scope.$apply(function(){
-                                    ctrl.$viewValue=ctrl.$viewValue||[];
+                                    ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push({
-                                        content:canvas.toDataURL("image/png")
+                                        content:canvasElement.toDataURL("image/png")
                                     });
                                 scope.isTakingPhoto = false ;
                                 });
@@ -75,8 +80,8 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
 
                     } else if(navigator.getMedia){
                         var streaming = false,
-                            video     = document.createElement("video");
-                            canvas    = document.createElement("canvas");
+                            video     = document.createElement("video"),
+                            canvas    = document.createElement("canvas"),
                             width     = 320,
                             height    = 0;
 
@@ -92,18 +97,17 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                                 }
                                 video.play();
                             }, function(err) {
-                                console.log("An error occured! " , err);
-                                 var img = document.createElement("img");
-                                img.src = 'http://placehold.it/350x150';
-                                img.onload = function(){
-                                    var canvas = document.createElement("canvas");
-                                    canvas.width = img.width;
-                                    canvas.height = img.height;
-                                    canvas.getContext("2d").drawImage(img, 0, 0);
+                                var imageElement2 = document.createElement("img");
+                                imageElement2.src = "http://placehold.it/350x150";
+                                imageElement2.onload = function(){
+                                    var canvasElement = document.createElement("canvas");
+                                    canvasElement.width = imageElement2.width;
+                                    canvasElement.height = imageElement2.height;
+                                    canvasElement.getContext("2d").drawImage(imageElement2, 0, 0);
                                     scope.$apply(function(){
-                                        ctrl.$viewValue=ctrl.$viewValue||[];
+                                        ctrl.$viewValue = ctrl.$viewValue || [];
                                         ctrl.$viewValue.push({
-                                            content:canvas.toDataURL("image/png")
+                                            content:canvasElement.toDataURL("image/png")
                                         });
                                         scope.isTakingPhoto = false ;
                                     });
@@ -111,21 +115,21 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                             }
                         );
 
-                        video.addEventListener('canplay', function(ev){
+                        video.addEventListener("canplay", function(ev){
                             if (!streaming) {
-                                height = video.videoHeight / (video.videoWidth/width);
-                                video.setAttribute('width', width);
-                                video.setAttribute('height', height);
-                                canvas.setAttribute('width', width);
-                                canvas.setAttribute('height', height);
+                                height = video.videoHeight / (video.videoWidth / width);
+                                video.setAttribute("width", width);
+                                video.setAttribute("height", height);
+                                canvas.setAttribute("width", width);
+                                canvas.setAttribute("height", height);
                                 streaming = true;
                             }
                             canvas.width = width;
                             canvas.height = height;
-                            canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+                            canvas.getContext("2d").drawImage(video, 0, 0, width, height);
 
                             scope.$apply(function(){
-                                ctrl.$viewValue=ctrl.$viewValue||[];
+                                ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
                                     content:canvas.toDataURL("image/png")
                                 });
@@ -137,16 +141,15 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                     } else if(navigator.camera){
                         navigator.camera.getPicture(function (imageURI) {
                             scope.$apply(function(){
-                                ctrl.$viewValue=ctrl.$viewValue||[];
+                                ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
                                     content:imageURI
                                 });
                                 scope.isTakingPhoto = false ;
                             });
                         }, function (err) {
-                            ctrl.$setValidity('error', false);
+                            ctrl.$setValidity("error", false);
                         },{
-                            quality: 50,
                             quality: 100,
                             sourceType: navigator.camera.PictureSourceType.CAMERA,
                             mediaType: navigator.camera.MediaType.PICTURE,
@@ -156,16 +159,16 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                         });
                     } else {
                         var img = document.createElement("img");
-                        img.src = 'http://placehold.it/350x150';
+                        img.src = "http://placehold.it/350x150";
                         img.onload = function(){
-                            var canvas = document.createElement("canvas");
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                            canvas.getContext("2d").drawImage(img, 0, 0);
+                            var canvasElement2 = document.createElement("canvas");
+                            canvasElement2.width = img.width;
+                            canvasElement2.height = img.height;
+                            canvasElement2.getContext("2d").drawImage(img, 0, 0);
                             scope.$apply(function(){
-                                ctrl.$viewValue=ctrl.$viewValue||[];
+                                ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:canvas.toDataURL("image/png")
+                                    content:canvasElement2.toDataURL("image/png")
                                 });
                                 scope.isTakingPhoto = false ;
                             });
@@ -174,17 +177,19 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                 });
             }
         };
-    }).filter('timeago', function() {
-        return function(input, p_allowFuture) {
-            var substitute = function(stringOrFunction, number, strings) {
+    }).filter("timeago", function() {
+        "use strict";
+        return function(input, PAllowFuture) {
+            var nowTime = (new Date()).getTime(),
+                date = (new Date(input)).getTime(),
+                dateDifference = nowTime - date,
+                substitute = function(stringOrFunction, number, strings) {
                 var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, dateDifference) : stringOrFunction;
                 var value = (strings.numbers && strings.numbers[number]) || number;
                 return string.replace(/%d/i, value);
             },
-                nowTime = (new Date()).getTime(),
-                date = (new Date(input)).getTime(),
                 //refreshMillis= 6e4, //A minute
-                allowFuture = p_allowFuture || false,
+                allowFuture = PAllowFuture || false,
                 // strings = {
                 //     prefixAgo: null,
                 //     prefixFromNow: null,
@@ -219,7 +224,6 @@ var smartgeomobile = angular.module('smartgeomobile', ['ngRoute','ui.bootstrap',
                     year: "un an",
                     years: "%d ans"
                 },
-                dateDifference = nowTime - date,
                 words,
                 seconds = Math.abs(dateDifference) / 1000,
                 minutes = seconds / 60,

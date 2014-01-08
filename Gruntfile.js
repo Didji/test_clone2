@@ -8,6 +8,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-ngmin');
+  grunt.loadNpmTasks('grunt-eslint');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -20,6 +21,14 @@ module.exports = function(grunt) {
           dest: 'dist/'
         }]
       }
+    },
+    eslint: {
+        target: [
+          'javascripts/controllers/*.js',
+          'javascripts/factories/*.js',
+          'javascripts/filters/*.js',
+          'javascripts/*.js'
+        ]
     },
     concat: {
       options: {
@@ -101,5 +110,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('doc', ['clean', 'ngdocs']);
   grunt.registerTask('dist', ['concat:javascripts', 'ngmin:javascript', 'uglify:javascript', 'copy', 'clean', 'compress']);
+  grunt.registerTask('lint', ['eslint']);
 
 };

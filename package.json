@@ -11,6 +11,8 @@
     "grunt-contrib-copy": "*",
     "grunt-contrib-compress": "*",
     "grunt-contrib-uglify" : "*",
-    "grunt-ngmin" : "*"
+    "grunt-ngmin" : "*",
+    "grunt-eslint" : "*"
+
   }
 }
