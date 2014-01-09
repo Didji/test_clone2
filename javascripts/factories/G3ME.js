@@ -197,6 +197,16 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                      extent1.ymax < extent2.ymin);
         },
 
+        fullscreen : function(){
+            G3ME.mapDiv.style.width = "100%";
+            G3ME.invalidateMapSize();
+        },
+
+        reduceMapWidth : function(px){
+            G3ME.mapDiv.style.width = (window.innerWidth - px)+'px';
+            G3ME.invalidateMapSize();
+        },
+
         setVisibility: function(layers) {
             this.active_layers = [];
             for(var i in layers) {

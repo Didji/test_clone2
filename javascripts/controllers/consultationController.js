@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo, i18n){
+angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME){
 
     'use strict' ;
 
@@ -110,9 +110,9 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+lat+','+lng+'/');
     };
 
-    $scope.close = function(){
-        $scope.state = 'closed';
-    };
+
+
+
 
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
@@ -126,7 +126,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope[($scope.state === 'open' ? 'close' : 'open')]() ;
     };
 
+
+    $scope.close = function(){
+        G3ME.fullscreen();
+        $scope.state = 'closed';
+    };
+
     $scope.open = function(){
+        G3ME.reduceMapWidth(300);
         if(Smartgeo.isRunningOnLittleScreen()){
             $rootScope.$broadcast('_MENU_CLOSE_');
         }
