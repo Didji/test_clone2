@@ -275,6 +275,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.stopNightTour = function(){
         $rootScope.nightTourInProgress = false;
+        $rootScope.nightTourRecording   = false;
         $scope.stopFollowingPosition();
         $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
         var ok = [], ko = [], asset ;
@@ -388,7 +389,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.toggleAsset = function(event, mission, asset){
-        if(!$scope.nightTourRecording){
+        if(!$rootScope.nightTourRecording){
             // TODO: afficher une popup pour signaler que la tournée n'est pas en cours
             return ;
         }
