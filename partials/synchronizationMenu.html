@@ -11,7 +11,7 @@
 
         <li class="container">
             <div class="list-group">
-                <div class="list-group-item" ng-repeat="report in reports" ng-hide="report.hide">
+                <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
                     <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
                     <div class="btn-group pull-right" ng-show="!report.synced">
                         <button ng-show='!report.syncInProgress' type="button" class="btn btn-default  btn-s dropdown-toggle" data-toggle="dropdown">
