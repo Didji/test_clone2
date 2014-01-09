@@ -124,10 +124,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
      */
     $scope.synchronize = function(){
-        console.log('sync');
         Mission
             .query()
-            .success( function(data){
+            .success(function(data){
 
                 var open = [], previous = [], done = [], selectedAssets = {},
                     i, postAddedAssetsMission = {}, newMissionCount = 0 , mission ;
@@ -139,7 +138,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     if(mission.openned){
                         open.push(i);
                     }
-                    if(mission.displayDone){
+                    if(mission.displayDone && mission.assets.length){
                         done.push(i);
                     }
                     selectedAssets[i]         = mission.selectedAssets  ;
@@ -196,12 +195,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
                 }
                 for (var i in $rootScope.missions) {
-                    if($rootScope.missions[i].openned){
+                    var mission = $rootScope.missions[i];
+                    if(mission.openned && mission.assets.length){
                         // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
-                        $rootScope.missions[i].openned = false;
+                        mission.openned = false;
                         $scope.toggleMission(i, false);
-                        if($rootScope.missions[i].displayDone){
-                            $rootScope.missions[i].displayDone = false ;
+                        if(mission.displayDone){
+                            mission.displayDone = false ;
                             $scope.showDoneAssets(i);
                         }
                     }

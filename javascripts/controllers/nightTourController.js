@@ -176,26 +176,16 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.closeNightTour = function(){
         alertify.confirm('Clôturer la tournée de nuit ?', function(yes){
-            if(yes){
-                // $scope.$apply();
-                var ok = [], ko = [], asset ;
-                for(var i in $scope.assetsCache){
-                    asset = $scope.assetsCache[i] ;
-                    (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
-                    // if(asset.marker){
-                    //     asset.marker.setIcon($scope._DONE_ASSET_ICON);
-                    //     asset.marker.off('click');
-                    // }
-                }
-                $scope.stopNightTour(ok, ko);
-
-                // $scope.sendOkReports(ok, function(){
-                //     $scope.sendKoReports(ko, function(){
-                //         $rootScope.$broadcast('SYNC_MISSION');
-                //     });
-                // });
-
+            if(!yes){
+                return ;
             }
+            var ok = [], ko = [], asset ;
+            for(var i in $scope.assetsCache){
+                asset = $scope.assetsCache[i] ;
+                (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
+            }
+            $scope.mission.displayDone = false ;
+            $scope.stopNightTour(ok, ko);
         });
     };
 
@@ -217,20 +207,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
         if( (ko.length + ok.length) === 0 ) for(var i in $scope.assetsCache){
             asset = $scope.assetsCache[i] ;
-            if(asset.isWorking === undefined){
-                continue;
+            if(asset.isWorking !== undefined){
+                (asset.isWorking === true ? ok : ko ).push(asset.guid);
             }
-            // asset.marker.setIcon($scope._DONE_ASSET_ICON);
-            // // if(!$scope.mission.displayDone){
-            // //     G3ME.map.removeLayer(asset.marker);
-            // // }
-            // if(!$rootScope.doneAssetsCache[$scope.mission.id]){
-            //     $rootScope.doneAssetsCache[$scope.mission.id] = [];
-            // }
-            // $rootScope.doneAssetsCache[$scope.mission.id].push(asset);
-            // $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', $scope.mission);
-            // asset.marker.off('click');
-            (asset.isWorking === true ? ok : ko ).push(asset.guid);
         }
         $scope.sendOkReports(ok, function(){
             $scope.sendKoReports(ko, function(){
@@ -260,9 +239,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
         $http
             .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
-            .success(function(){
-                (callback || function(){})();
-            })
+            .success(callback || function(){})
             .error(function(){
                 Smartgeo.get_('reports', function(reports){
                     reports = reports || [] ;
@@ -284,7 +261,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.sendKoReports = function(ko, callback){
         if(!ko.length){
-            (callback || function(){})();
+            return (callback || function(){})();
         }
         var report = {
             assets: ko,
