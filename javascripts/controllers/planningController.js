@@ -224,8 +224,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      *     <li>Initialize counts ({@link planningController#updateCount $scope.updateCount}) </li>
      * </ul>
      */
-    $rootScope.initializePlanning = $scope.initialize = function(){
-        $rootScope.missions = Smartgeo.get('missions');
+    $scope.initialize = function(){
+        $rootScope.missions = Smartgeo.get('missions') || {} ;
         Smartgeo.get_('reports', function(reports){
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
@@ -235,7 +235,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
         $scope.$watch('missions', function() {
-            Smartgeo.set('missions', $rootScope.missions);
+            Smartgeo.set('missions', $rootScope.missions || {});
         });
         $scope.$watch('dayToDisplay', function() {
             $scope.updateCount();

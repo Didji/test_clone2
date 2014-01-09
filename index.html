@@ -81,25 +81,18 @@
 
     <script>
         angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-          (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
-
+            (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
                 window.smartgeoRightsManager = {
                     'report'   : true,
                     'goto'     : true,
                     'planning' : true,
                     'logout'   : true
                 };
-
-                window.smartgeoPersistenceCache = {
-
-                };
-
+                window.smartgeoPersistenceCache  = {};
                 window.smartgeoPersistenceCache_ = {
                     sites : sites
                 };
-
                 angular.bootstrap(document, ['smartgeomobile']);
-
             });
         });
     </script>
