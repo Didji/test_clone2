@@ -24,7 +24,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         benchmarkGeneralStatistics: [],
 
 
-        filecacheIsEnable: false,
+        filecacheIsEnable: true,
 
         initialize : function(mapDivId, site, target, marker){
 
