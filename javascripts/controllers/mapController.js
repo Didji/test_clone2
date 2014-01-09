@@ -31,15 +31,15 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                             shadowSize      : [41,  41]
                         }),
 
-        GRAY_TRUCK_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/truck_gray.png',
-                            iconSize        : [47,  40],
-                            iconAnchor      : [24,  20],
+        GRAY_TARGET_ICON     = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/target_gray.png',
+                            iconSize        : [32,  32],
+                            iconAnchor      : [16,  16],
                         }),
-        TRUCK_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/truck.png',
-                            iconSize        : [47,  40],
-                            iconAnchor      : [24,  20],
+        TARGET_ICON     = L.icon({
+                            iconUrl         : 'javascripts/vendors/images/target.png',
+                            iconSize        : [32,  32],
+                            iconAnchor      : [16,  16],
                         });
 
         $scope.missionsClusters = {};
@@ -245,7 +245,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng){
         if(!$scope.myPositionMarker){
-            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(TRUCK_ICON).addTo(G3ME.map);
+            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(TARGET_ICON).addTo(G3ME.map);
         } else {
             $scope.myPositionMarker.setLatLng([lat,lng]);
         }
@@ -397,7 +397,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if(mission.trace.length){
             var lastPosition = mission.trace[mission.trace.length-1];
             if(!$scope.myLastPositionMarker){
-                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]],{ zIndexOffset    : 1000}).setIcon(GRAY_TRUCK_ICON).addTo(G3ME.map);
+                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]],{ zIndexOffset    : 1000}).setIcon(GRAY_TARGET_ICON).addTo(G3ME.map);
             } else {
                 $scope.myLastPositionMarker.setLatLng([lastPosition[1], lastPosition[0]]);
             }

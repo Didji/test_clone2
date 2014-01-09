@@ -331,7 +331,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.close = function(){
+        // WARNING UGLY UGLY ALERT
         $scope.state = 'closed';
+        G3ME.fullscreen();
+
     };
 
     /**
@@ -342,7 +345,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.open = function(){
+        // WARNING UGLY UGLY ALERT
         $scope.state = 'open' ;
+        G3ME.reduceMapWidth(300);
     };
 
     /**
