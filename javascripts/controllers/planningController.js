@@ -74,7 +74,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @const
      * @description Done assets cache for conversion id->asset
      */
-     $scope.doneAssetsCache = [] ;
+     $rootScope.doneAssetsCache = [] ;
 
     /**
      * @ngdoc property
@@ -560,14 +560,15 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
         mission.isLoading = mission.displayDone = true ;
 
-        if(!$scope.doneAssetsCache[mission.id]){
+        // if(!$rootScope.doneAssetsCache[mission.id]){
+        if(!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length)){
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function(assets){
-                $scope.doneAssetsCache[mission.id] = assets ;
+                $rootScope.doneAssetsCache[mission.id] = assets ;
                 $scope.showDoneAssets($index) ;
             });
         }
 
-        $rootScope.$broadcast('HIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission, $scope.doneAssetsCache[mission.id]);
+        $rootScope.$broadcast('HIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission, $rootScope.doneAssetsCache[mission.id]);
 
         mission.isLoading = false ;
 
