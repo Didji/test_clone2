@@ -266,7 +266,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * @propertyOf smartgeomobile.Smartgeo
          * @description Setter and getter cache
          */
-        parametersCache : window.smartgeoPersistenceCache,
+        parametersCache : window.smartgeoPersistenceCache || {},
 
         /**
          * @ngdoc property
@@ -274,7 +274,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * @propertyOf smartgeomobile.Smartgeo
          * @description Setter and getter cache for async functions
          */
-        parametersCache_ : window.smartgeoPersistenceCache_,
+        parametersCache_ : window.smartgeoPersistenceCache_ || {},
 
         /**
          * @ngdoc method
@@ -286,8 +286,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Local storage getter
          */
         get: function(parameter){
-            if(this.parametersCache[parameter]){
-                return this.parametersCache[parameter];
+            if(Smartgeo.parametersCache[parameter]){
+                return Smartgeo.parametersCache[parameter];
             } else {
                 return JSON.parse(localStorage.getItem(parameter));
             }
@@ -303,7 +303,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Local storage setter
          */
         set: function(parameter, value){
-            this.parametersCache[parameter] = value ;
+            Smartgeo.parametersCache[parameter] = value ;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
 
@@ -316,7 +316,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Clear localStorage's value
          */
         unset: function(parameter){
-            delete this.parametersCache[parameter]  ;
+            delete Smartgeo.parametersCache[parameter]  ;
             return localStorage.removeItem(parameter);
         },
 
@@ -331,9 +331,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * IndexedDB getter
          */
         get_: function(parameter, callback){
-            if(this.parametersCache_[parameter]){
-                (callback || function(){})(this.parametersCache_[parameter]) ;
-                return this.parametersCache_[parameter] ;
+            if(Smartgeo.parametersCache_[parameter]){
+                (callback || function(){})(Smartgeo.parametersCache_[parameter]) ;
+                return Smartgeo.parametersCache_[parameter] ;
             } else {
                 (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
             }
@@ -350,7 +350,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * IndexedDB setter
          */
         set_: function(parameter, value, callback){
-            this.parametersCache_[parameter] = value ;
+            Smartgeo.parametersCache_[parameter] = value ;
             (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
         },
 
@@ -364,7 +364,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Clear IndexedDB's value
          */
         unset_: function(parameter, callback){
-            delete this.parametersCache_[parameter] ;
+            delete Smartgeo.parametersCache_[parameter] ;
             (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
         },
 
@@ -803,6 +803,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
                 Smartgeo._LOGIN_MUTEX = false ;
                 (error || function(){})(response, status);
             });
+        },
+        clearPersistence : function(){
+            Smartgeo.unset('lastLeafletMapExtent');
+            Smartgeo.unset('persitence.menu.open');
+            Smartgeo.unset('persitence.menu.open.level');
+            var missions = Smartgeo.get('missions');
+            for(var i in missions){
+                missions[i].openned = false ;
+            }
+            if(missions){
+                Smartgeo.set('missions', missions);
+            }
         }
     };
 

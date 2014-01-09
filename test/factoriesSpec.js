@@ -22,7 +22,6 @@ describe('Smartgeomobile factories', function() {
         expect(GiReportBuilder).not.toBe(null);
     }));
 
-
     describe('Smartgeo factory', function(){
 
         it('should store and save string properly', inject(function(Smartgeo) {

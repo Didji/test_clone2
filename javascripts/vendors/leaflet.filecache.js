@@ -629,7 +629,7 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             tiles : this
         };
 
-        image.src = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject);
+        image.src = 'file://' + Smartgeo.get('tileRootPath') + '/' +/* 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + */ this.getTilePath(tileObject);
         image.onerror = function(event) {
             image.src = this_.getTileUrl({x:x, y:y},z);
             image.onerror = image.onload = null ;

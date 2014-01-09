@@ -1,6 +1,5 @@
+
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
-
-
 
 var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap", "ui.select2", "angularSpinner"])
        .config(["$routeProvider", function($routeProvider) {
