@@ -348,19 +348,17 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
     $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
-        if(!$scope.missionsClusters['done-'+mission.id]){
-            $scope.missionsClusters['done-'+mission.id] = new L.MarkerClusterGroup({
-                iconCreateFunction: function(cluster) {
-                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-done', iconSize: new L.Point(40, 40) });
-                },
-                disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
-                maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
-            });
-            for (var i = 0; i < assetsCache.length; i++) {
-                assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-                assetsCache[i].marker.setIcon(DONE_ASSET_ICON);
-                $scope.missionsClusters['done-'+mission.id].addLayer(assetsCache[i].marker);
-            }
+        $scope.missionsClusters['done-'+mission.id] = $scope.missionsClusters['done-'+mission.id] || new L.MarkerClusterGroup({
+            iconCreateFunction: function(cluster) {
+                return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-done', iconSize: new L.Point(40, 40) });
+            },
+            disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
+            maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
+        });
+        for (var i = 0; i < assetsCache.length; i++) {
+            assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
+            assetsCache[i].marker.setIcon(DONE_ASSET_ICON);
+            $scope.missionsClusters['done-'+mission.id].addLayer(assetsCache[i].marker);
         }
         G3ME.map.addLayer($scope.missionsClusters['done-'+mission.id]);
     });
