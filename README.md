@@ -1,1 +1,1 @@
-!["Logo"](images/logo-smartgeo.png "Logo")
+!["Logo"](images/smartgeo-abra.png "Logo")
