@@ -55,8 +55,6 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 G3ME.map.fitBounds(target);
             } else if( target[0] == 1*target[0] && (target instanceof Object) ){
                 // target is a point
-
-                console.log(target);
                 G3ME.map.setView(target,18);
                 if(marker){
                     marker._map && (marker._map.removeLayer)(marker);
@@ -137,16 +135,12 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         },
 
         parseTarget: function(site, target, callback, error){
-            console.log("Going to parse ", target);
             if(G3ME.isLatLngString(target)){
                 // it's a position ! returning [lat, lng]
-                console.log(target, "is Lat/Lng");
                 callback(target.split(','));
             } else {
                 // so maybe it's an asset id ?
-                console.log(target, "is a guid, looking for it in database");
                 Smartgeo.findAssetsByGuids(site, target, function(assets){
-                    console.log("findAssetsByGuids returns :", assets);
                     if(!assets.length){
                         callback([]);
                     } else {
@@ -180,7 +174,6 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 xmax = - Infinity,
                 ymin =   Infinity,
                 ymax = - Infinity;
-
             for (var i = 0; i < assets.length; i++) {
                 xmin = assets[i].xmin < xmin ? assets[i].xmin : xmin ;
                 ymin = assets[i].ymin < ymin ? assets[i].ymin : ymin ;
