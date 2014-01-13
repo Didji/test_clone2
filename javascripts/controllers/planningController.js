@@ -129,7 +129,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             .success(function(data){
 
                 var open = [], previous = [], done = [], selectedAssets = {},
-                    i, postAddedAssetsMission = {}, newMissionCount = 0 , mission ;
+                    i, postAddedAssetsMission = {}, newMissionCount = 0 , mission , missionsExtents = {};
 
                 for (i in $rootScope.missions) {
                     i *= 1 ;
@@ -143,6 +143,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     }
                     selectedAssets[i]         = mission.selectedAssets  ;
                     postAddedAssetsMission[i] = mission.postAddedAssets ;
+                    missionsExtents[i]        = mission.extent ;
                 }
 
                 $rootScope.missions = data.results;
@@ -173,6 +174,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                             $scope.showDoneAssets(i);
                         }
                     }
+                    mission.extent = missionsExtents[i] ;
                     mission.selectedAssets = selectedAssets[i];
                 }
                 if(newMissionCount > 0){
