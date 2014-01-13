@@ -80,3 +80,5 @@ Dans un premier temps serveur devra renvoyer une liste d'appels via le même ser
 ## Interface mobilité
 
 Les appels seront affichés dans le planning au même titre qu'une mission (ordre de travail)
+
+![Smartgeo Mobile - Abra](http://www.eternia-fr.net/dex/images/dreamworld/063.png)
