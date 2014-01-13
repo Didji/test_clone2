@@ -599,12 +599,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
                 return callback(partial_response);
             }
 
-            var request = 'SELECT * FROM ASSETS WHERE label like ? or label = ? limit 0, 10',  _this = this;
+            var request = 'SELECT * FROM ASSETS WHERE label like ? limit 0, 10',  _this = this;
 
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function(t) {
-                t.executeSql(request, [label + "%", label + "%"],
+                t.executeSql(request, ["%" + label + "%"],
                     function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
