@@ -1,3 +1,4 @@
+![Smartgeo Mobile - Abra](https://raw.github.com/gismartwaredev/smartgeomobile/dev/images/smartgeo-abra.png?token=487387__eyJzY29wZSI6IlJhd0Jsb2I6Z2lzbWFydHdhcmVkZXYvc21hcnRnZW9tb2JpbGUvZGV2L2ltYWdlcy9zbWFydGdlby1hYnJhLnBuZyIsImV4cGlyZXMiOjEzOTAyMzQwNzR9--af30b103f1680bf298d4094740b36839a47a9722 "Logo")
 
 # Push d'appels
 
@@ -81,4 +82,4 @@ Dans un premier temps serveur devra renvoyer une liste d'appels via le même ser
 
 Les appels seront affichés dans le planning au même titre qu'une mission (ordre de travail)
 
-![Smartgeo Mobile - Abra](http://www.eternia-fr.net/dex/images/dreamworld/063.png)
+
