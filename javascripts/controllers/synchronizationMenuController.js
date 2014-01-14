@@ -77,7 +77,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 if(!$scope.reports[$index]){
                     return ;
                 }
-                if(Smartgeo.get('online')){
+                if(Smartgeo.get('online') && message !== "" && code !== 0){
                     if(error.error){
                         alertify.error(error.error.text);
                     } else {

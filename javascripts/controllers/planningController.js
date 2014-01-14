@@ -192,8 +192,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 $scope.removeDeprecatedMarkers();
                 $scope.lastUpdate = (new Date()).getTime();
             })
-            .error( function(){
-                if(Smartgeo.get('online')){
+            .error( function(message, code){
+                if(Smartgeo.get('online') && message !== "" && code !== 0){
                     alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
                 }
                 for (var i in $rootScope.missions) {
