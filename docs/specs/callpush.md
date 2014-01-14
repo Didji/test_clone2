@@ -82,4 +82,13 @@ Dans un premier temps serveur devra renvoyer une liste d'appels via le même ser
 
 Les appels seront affichés dans le planning au même titre qu'une mission (ordre de travail)
 
+Les appels ayant un caractère d'urgence devront rester sur l'interface, de manière visible (en rouge), tant que l'utilisateur n'a pas indiqué qu'il l'avait vu (en cliquant dessus par exemple).
 
+Le block 'appel' dans le planning sera très semblable au block 'mission':
+* Le nom (raison+motif) sera affiché à la place du numéro de mission 
+* Le caractère d'urgence définira la couleur de l'appel. Si l'appel est urgent, il sera mis en valeur (en tête rouge par exemple)
+* En cliquant sur un appel, il s'ouvrira. Si l'appel possède des identifiants d'objet, ceux ci seront marqués sur la carte.
+* Un bouton permettra de localiser l'appel. Si l'appel n'a aucun identifiant d'asset, ce bouton sera disabled 
+* Un fonction sera disponible dans la consultation si un appel est ouvert : 
+  - "Ajouter cet objet à l'appel n°#"
+  - "Saisir un CR pour l'appel n°#"
