@@ -537,7 +537,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         G3ME.map.addControl(CONSULTATION_CONTROL);
     }
 
-     function stopConsultation() {
+    function stopConsultation() {
         $scope.consultationIsEnabled = false;
         if(CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
             G3ME.map.removeControl(CONSULTATION_CONTROL);

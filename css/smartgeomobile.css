@@ -412,6 +412,7 @@ label.prettycheckbox, .list-group-item  label {
     color: #555555;
     padding: 6px 12px;
     vertical-align: middle;
+    clear:both;
 }
 label.prettycheckbox {
     border: 1px solid #cccccc;
@@ -586,4 +587,10 @@ ul.ged-gallery li img {
     margin-right: -10px;
     font-size: 11px;
     font-weight: 200;
+}
+
+
+.panel-heading  a {
+    display: block ;
+    width : 100%;
 }
