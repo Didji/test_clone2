@@ -299,6 +299,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.startNightTour = function(event, mission, assetsCache) {
 
+        $rootScope.stopConsultation();
+
         if($rootScope.nightTourInProgress){
             return alertify.error("Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée.");
         } else if($rootScope.site.activities._byId[mission.activity.id].type !== "night_tour"){
