@@ -92,3 +92,4 @@ Le block 'appel' dans le planning sera très semblable au block 'mission':
 * Un fonction sera disponible dans la consultation si un appel est ouvert : 
   - "Ajouter cet objet à l'appel n°#"
   - "Saisir un CR pour l'appel n°#"
+* Contrairement a une mission un appel ne peut pas être terminé, on peut toujours y ajouter des objets, et ce jusqu'a ce que l'appel soit clôturé depuis GiMAP.
