@@ -1,22 +1,31 @@
 package com.gismartware.mobile;
 
+import android.content.Context;
 import android.util.Log;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Security;
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class MailSender extends javax.mail.Authenticator {
@@ -29,13 +38,29 @@ public class MailSender extends javax.mail.Authenticator {
         Security.addProvider(new com.provider.JSSEProvider());
     }
 
-    public MailSender() {
+    private Multipart _multipart;
+    private Context context;
+    private ResourceBundle config = null ;
 
-        ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
+
+    public MailSender(Context context) {
+
+        this.context = context ;
+
+        try {
+            FileInputStream fis = new FileInputStream(context.getExternalFilesDir(null).getParent() + "/" + "config.properties");
+            config = new PropertyResourceBundle(fis);
+            fis.close();
+        } catch(Exception e){
+            Log.e("gismartware::MailSender/FileInputStream", e.getMessage(), e);
+        }
+        //ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
 
         this.mailhost = config.getString("logger.mailhost");
         this.user     = config.getString("logger.user");
         this.password = config.getString("logger.password");
+        this._multipart = new MimeMultipart();
+
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp");
         props.setProperty("mail.host", mailhost);
@@ -47,30 +72,48 @@ public class MailSender extends javax.mail.Authenticator {
         props.put("mail.smtp.socketFactory.fallback", "false");
         props.setProperty("mail.smtp.quitwait", "false");
 
+
         session = Session.getDefaultInstance(props, this);
-        session.setDebug(true);
+        //session.setDebug(true);
     }
 
     protected PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(user, password);
     }
 
-    public synchronized void sendMail(String subject, String body, String sender, String recipients) throws Exception {
-        try{
+    public synchronized void sendMail(String subject, String body, String sender, String recipients, String filename) throws Exception {
+
             MimeMessage message = new MimeMessage(session);
+
             DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+
             message.setSender(new InternetAddress(sender));
             message.setSubject(subject);
             message.setDataHandler(handler);
+
+            if(filename != null){
+                BodyPart messageBodyPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(filename);
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(config.getString("logger.filename"));
+                _multipart.addBodyPart(messageBodyPart);
+
+                BodyPart messageBodyPart2 = new MimeBodyPart();
+                messageBodyPart2.setText("");
+
+                _multipart.addBodyPart(messageBodyPart2);
+
+                message.setContent(_multipart);
+            }
+
             if (recipients.indexOf(',') > 0)
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
             else
                 message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
             Transport.send(message);
-        }catch(Exception e){
 
-            Log.e("SendMail", e.getMessage(), e);
-        }
+
+
     }
 
     public class ByteArrayDataSource implements DataSource {

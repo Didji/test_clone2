@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
@@ -135,12 +136,48 @@ public class SmartGeoMobilePlugins {
 		}
 		view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
 	}
-	
-	@JavascriptInterface
-	public void vibrate(long ms) {
-		Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-		if (v.hasVibrator()) {
-			v.vibrate(ms);
-		}
-	}
+
+    @JavascriptInterface
+    public void vibrate(long ms) {
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (v.hasVibrator()) {
+            v.vibrate(ms);
+        }
+    }
+
+    @JavascriptInterface
+    public void log(String message) {
+        ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
+        String fileName = config.getString("logger.filename");
+        String path = context.getExternalFilesDir(null).getParent() + "/" + fileName ;
+
+        File file = new File(path);
+        if(!file.exists()){
+            Log.e("gismartware", "" + path + " does not exist");
+            file.getParentFile().mkdirs();
+            String header = config.getString("logger.header");
+            try {
+                FileOutputStream os = new FileOutputStream(path, true);
+                os.write(header.getBytes());
+                os.flush();
+                os.close();
+            } catch (IOException e) {
+                Log.e("gismartware", "Error when writing '"+header+"' to " + path, e);
+            }
+        } else {
+            Log.e("gismartware", "" + path + " does exist");
+        }
+
+        File filePath = new File(path);
+        filePath.getParentFile().mkdirs();
+        try {
+            FileOutputStream os = new FileOutputStream(path, true);
+            os.write(message.getBytes());
+            os.write('\n');
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Error when writing '"+message+"' to " + path, e);
+        }
+    }
 }
