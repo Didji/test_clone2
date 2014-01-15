@@ -1,7 +1,7 @@
 package com.gismartware.mobile;
 
 /**
- * Liste des activités utilisées dans l'application avec leurs codes respectifs.
+ * Liste des activitÃ©s utilisÃ©es dans l'application avec leurs codes respectifs.
  * @author mbeudin
  */
 public enum ActivityCode {
@@ -12,7 +12,7 @@ public enum ActivityCode {
 	CAPTURE_IMAGE(100),
 	
 	/**
-	 * Géolocalisation.
+	 * Gï¿½olocalisation.
 	 */
 	GEOLOCATE(101),
 	

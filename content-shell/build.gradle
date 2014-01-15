@@ -9,6 +9,9 @@ dependencies {
     compile project(':media')
     compile project(':net')
     compile project(':ui')
+    compile files('libs/activation.jar')
+    compile files('libs/additionnal.jar')
+    compile files('libs/mail.jar')
 }
 
 android {

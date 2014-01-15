@@ -74,6 +74,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 	private static final boolean NEED_OAUTH = Boolean.valueOf(MESSAGES.getString("auth.needed"));
 	private static final boolean FILTER_ACCOUNT = Boolean.valueOf(MESSAGES.containsKey("auth.account.domain"));
 	private static final String OAUTH_INCLUDE_DOMAIN = MESSAGES.getString("auth.account.domain");
+
+    private static final boolean NEED_LOGGER = Boolean.valueOf(MESSAGES.getString("logger.needed"));
 	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
@@ -177,7 +179,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         mWindowAndroid = new WindowAndroid(this);
         mWindowAndroid.restoreInstanceState(savedInstanceState);
         mShellManager.setWindow(mWindowAndroid);
-        
+
         //gestion de l'authentification...
         if (NEED_OAUTH) {
         	authPreferences = new AuthPreferences(this);
@@ -194,10 +196,13 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         } else {
         	finishActivityInit();
         }
+        if(NEED_LOGGER){
+            this.startService(new Intent(this, GiAlarmService.class));
+        }
     }
     
     private void oauthRequestAccount() {
-    	//y a t il un filtrage de compte à effectuer?
+    	//y a t il un filtrage de compte ï¿½ effectuer?
     	if (FILTER_ACCOUNT) {
 			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
     		Account[] list = manager.getAccounts();
@@ -405,7 +410,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 					BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inSampleSize = 2;
 					Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
-					//on compresse la photo à 75% de qualité
+					//on compresse la photo ï¿½ 75% de qualitï¿½
 					OutputStream out = new FileOutputStream(file);
 					photo.compress(Bitmap.CompressFormat.JPEG, 75, out);
 					out.flush();
@@ -417,7 +422,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			} else if (requestCode == ActivityCode.GEOLOCATE.getCode()) {
 				Bundle extras = intent.getExtras();
 				Location location = (Location) extras.get("location");
-				if (location == null) { // pas de position (gps désactivé par ex)
+				if (location == null) { // pas de position (gps dï¿½sactivï¿½ par ex)
 					Log.e(TAG, "Pas de geolocalisation trouvee!");
 					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[2]();");
 				} else {
@@ -471,7 +476,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
     }
     
     /**
-	 * Méthode de mapping des urls des intents.
+	 * Mï¿½thode de mapping des urls des intents.
 	 * 
 	 * @param intent l'intent dont on veut mapper l'url
 	 * @return l'url cible
@@ -486,14 +491,14 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 		//controler en premier..
 		url.append(intent.getData().getHost());
 		
-		//ATTENTION!! Récupérer dataString sinon des caractères sautent avec getData().getQuery() car les valeurs dans l'URL peuvent 
+		//ATTENTION!! Rï¿½cupï¿½rer dataString sinon des caractï¿½res sautent avec getData().getQuery() car les valeurs dans l'URL peuvent 
 		//contenir des #, ce qui fait partie des "fragments" dans la spec de la classe Uri, et non de la query...
 		String[] urlParts = intent.getDataString().split("\\?");
 		
 		boolean appendedParams = false;
 		
 		if (urlParts.length > 1) {
-			//on recupere la query "à la main" (split), cad apres le "?"
+			//on recupere la query "ï¿½ la main" (split), cad apres le "?"
 			//il peut y avoir plusieurs parties (du au url redirect dans les parametres qui peuvent contenir des "?")
 			StringBuffer intentUrl = new StringBuffer(urlParts[1]);
 			for (int i = 2; i < urlParts.length; i++) {
@@ -512,7 +517,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 					
 					String paramName = param[0];
 					
-					//Est ce un champ composé? (exemple : fields[###564654###]=250
+					//Est ce un champ composï¿½? (exemple : fields[###564654###]=250
 					boolean composite = false;
 					Matcher matcher = hook.matcher(paramName);
 					if (matcher.matches()) {
@@ -520,7 +525,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 						paramName = matcher.group(1);
 					}
 					
-					//un paramètre source peut etre positionné dans plusieurs paramètres cible :
+					//un paramï¿½tre source peut etre positionnï¿½ dans plusieurs paramï¿½tres cible :
 					String[] destParams = MESSAGES.getString(paramName).split(",");
 					for (int j = 0; j < destParams.length; j++) {
 						url.append(destParams[j]);
@@ -529,13 +534,13 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 						}
 						url.append("=").append(param[1]);
 						
-						//ajout du "&" si plusieurs paramètres cible pour le paramètre source courant
+						//ajout du "&" si plusieurs paramï¿½tres cible pour le paramï¿½tre source courant
 						if (j < (destParams.length - 1)) {
 							url.append("&");
 						}
 					}
 					
-					//ajout du "&" s'il reste des paramètres dans la query principale
+					//ajout du "&" s'il reste des paramï¿½tres dans la query principale
 					if (i < (params.length - 1)) {
 						url.append("&");
 					}
@@ -543,7 +548,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			}
 		}
 		
-		//ajout du token à la fin, rien si inexistant
+		//ajout du token ï¿½ la fin, rien si inexistant
 		if (authPreferences.getToken() != null) {
 			if (appendedParams) {
 				url.append("&token=");
