@@ -5,6 +5,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 class SendEmailTask extends AsyncTask<String, Void, Void> {
@@ -16,18 +21,45 @@ class SendEmailTask extends AsyncTask<String, Void, Void> {
     }
     @Override
     protected Void doInBackground(String... strings) {
-        ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
+        ResourceBundle config = null;
+        try {
+            FileInputStream fis = new FileInputStream(mContext.getExternalFilesDir(null).getParent() + "/" + "config.properties");
+            config = new PropertyResourceBundle(fis);
+            fis.close();
+        } catch(Exception e){
+            Log.e("gismartware::MailSender/FileInputStream", e.getMessage(), e);
+        }
 
         Log.i("com.gismartware.smartgeoLogger#GiAlarmService", "SendMail ");
         try {
-            MailSender sender = new MailSender();
+            MailSender sender = new MailSender(mContext);
             sender.sendMail(config.getString("logger.subject"),
-                    "010213,177348838,1384348,8438349",
+                    "",
                     config.getString("logger.sender"),
-                    config.getString("logger.recipient"));
+                    config.getString("logger.recipient"),
+                    mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv"
+                    );
         } catch (Exception e) {
             this.exception = e;
+            MailSender sender = new MailSender(mContext);
+            Log.i("com.gismartware.smartgeoLogger#GiAlarmService", "attach " + mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv");
+
+            try {
+                sender.sendMail(config.getString("logger.subject"),
+                        ResourceBundle.getBundle("com.gismartware.mobile.config").getString("logger.nothing"),
+                        config.getString("logger.sender"),
+                        config.getString("logger.recipient"), null);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
+
+        File file = new File(mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv");
+        boolean deleted = file.delete();
+
+
+
+
         return null;
     }
 

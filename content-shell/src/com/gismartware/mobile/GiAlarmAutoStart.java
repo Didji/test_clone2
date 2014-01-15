@@ -14,7 +14,7 @@ public class GiAlarmAutoStart extends BroadcastReceiver {
         Log.i("com.gismartware.smartgeoLogger#GiAlarmAutoStart", "onReceive");
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Intent i = new Intent();
-            i.setAction("com.gismartware.smartgeoLogger.GiAlarmService");
+            i.setAction("com.gismartware.mobile.GiAlarmService");
             context.startService(i);
         }
     }
