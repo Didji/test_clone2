@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route){
+angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report){
 
     'use strict' ;
 
@@ -226,30 +226,21 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.sendOkReports = function(ok, callback){
+        callback = callback || function(){};
+
         if(!ok.length){
-            return (callback || function(){})();
+            return callback();
         }
-         var report = {
-            assets: ok,
-            fields: {},
-            mission : $scope.mission.id,
-            activity: $scope.mission.activity.id,
-            uuid : Smartgeo.uuid()
+
+        var report = {
+            assets   : ok,
+            fields   : {},
+            mission  : $scope.mission.id,
+            activity : $scope.mission.activity.id,
+            uuid     : Smartgeo.uuid()
         };
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-        $http
-            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
-            .success(callback || function(){})
-            .error(function(){
-                Smartgeo.get_('reports', function(reports){
-                    reports = reports || [] ;
-                    reports.push(report);
-                    Smartgeo.set_('reports', reports, function(){
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
-                        (callback || function(){})();
-                    });
-                });
-            });
+        Report.save(report).then(null, null, callback);
     };
 
     /**
@@ -260,8 +251,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.sendKoReports = function(ko, callback){
+        callback = callback || function(){};
         if(!ko.length){
-            return (callback || function(){})();
+            return callback();
         }
         var report = {
             assets: ko,
@@ -271,19 +263,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             uuid : Smartgeo.uuid()
         };
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-        $http
-            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report)
-            .success(callback || function(){})
-            .error(function(){
-                Smartgeo.get_('reports', function(reports){
-                    reports = reports || [] ;
-                    reports.push(report);
-                    Smartgeo.set_('reports', reports, function(){
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
-                        (callback || function(){})();
-                    });
-                });
-            });
+        Report.save(report).then(null, null, callback);
     };
 
 

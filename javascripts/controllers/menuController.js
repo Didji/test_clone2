@@ -89,7 +89,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         return false ;
     };
 
-    function updateSyncNumber(event, number) {
+    function updateSyncNumber(event) {
         Smartgeo.get_('reports', function(reports){
             reports = reports || [] ;
             $scope.toSyncNumber = 0 ;
