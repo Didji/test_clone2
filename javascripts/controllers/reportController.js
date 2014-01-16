@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n, $q){
+angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo,  $location, $http, GiReportBuilder, G3ME, i18n, Report){
 
     'use strict' ;
 
@@ -271,29 +271,13 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         report.timestamp = new Date().getTime();
         report.mission   = 1*$rootScope.report_mission || report.mission ;
 
-        var canceler = $q.defer();
+        Report.save(report).then(null, null, function(){
+            $scope.sendingReport = false ;
+            if(!$scope.comesFromIntent){
+                endOfReport();
+            }
+        });
 
-
-        $http
-            .post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 5000})
-            .error(function(){
-                Smartgeo.get_('reports', function(reports){
-                    reports = reports || [] ;
-                    reports.push(report);
-                    Smartgeo.set_('reports', reports, function(){
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", reports.length);
-                        $scope.sendingReport = false ;
-                        if(!$scope.comesFromIntent){
-                            endOfReport();
-                        }
-                    });
-                });
-            }).success(function(){
-                $scope.sendingReport = false ;
-                if(!$scope.comesFromIntent){
-                    endOfReport();
-                }
-            });
         if($scope.comesFromIntent){
             endOfReport();
         }
