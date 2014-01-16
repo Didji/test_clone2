@@ -18,7 +18,7 @@ Un appel est composé de :
 
 Dans un premier temps serveur devra renvoyer une liste d'appels via le même service qui renvoie actuellement les ordres de travail (showOT.json).
 
-### Temps réél 
+### Temps réél - Polling
 
 Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission(OT) ou appel n'a été inserée en base depuis le début de la requête HTTP. Si une nouvelle mission est trouvée en base, il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
 
