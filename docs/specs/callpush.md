@@ -18,7 +18,11 @@ Un appel est composé de :
 
 Dans un premier temps serveur devra renvoyer une liste d'appels via le même service qui renvoie actuellement les ordres de travail (showOT.json).
 
-> (On se posera la question du temps réél plus tard)
+### Temps réél 
+
+Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission(OT) ou appel n'a été inserée en base depuis le début de la requête HTTP. Si une nouvelle mission est trouvée en base, il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
+
+Entre deux requêtes à la base de données, le processus devra libérer la session et s'endormir pendant un certain temps (20 secondes ou moins ... :shipit: ). 
 
 ## Webservice GiMAP 
 
