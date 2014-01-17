@@ -24,9 +24,9 @@ Les appels doivent être filtés :
 
 ### Temps réél - Polling
 
-Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission(OT) ou appel n'a été passé à l'état "en cours" depuis le début de la requête HTTP. Si une nouvelle mission ou appel avec le statut "en cours" est trouvée en base, il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
+Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission (OT) n'a été planifiée pour l'équipe de l'utilisateur ou tant qu'aucun appel n'a été passé à l'état "en cours" depuis le début de la requête HTTP. Si une nouvelle mission a été assignée à son équipe ou si un appel a changé d'état pour passer "en cours", il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
 
-Entre deux requêtes à la base de données, le processus devra libérer la session et s'endormir pendant un certain temps (20 secondes). 
+Le service devra libérer la session avant d'entamer la boucle de requête. Entre deux requêtes à la base de données, le processus devra s'endormir pendant un certain temps (5 secondes). 
 
 ## Webservice GiMAP 
 
