@@ -21,7 +21,7 @@ angular.module('smartgeomobile')
                 missionbegin    = sanitizeDate(mission.begin);
                 missionend      = sanitizeDate(mission.end);
                 if(
-                    mission.assets.length && (
+                    (mission.assets.length || !mission.activity) && (
                         /* mission du jour */
                         ( missionbegin >= daybegin && missionend <= dayend ) ||
                         /* mission qui commencent aujourdhui et finissent un autre jour */
@@ -44,7 +44,7 @@ angular.module('smartgeomobile')
                 mission         = missionsIn[i];
                 missionbegin    = sanitizeDate(mission.begin);
                 missionend      = sanitizeDate(mission.end);
-                if(mission.assets.length && missionbegin < daybegin && missionend > daybegin){
+                if((mission.assets.length || !mission.activity) && missionbegin < daybegin && missionend > daybegin){
                     missionsOut[mission.id] = mission;
                 }
             }
@@ -62,10 +62,10 @@ angular.module('smartgeomobile')
                 mission         = missionsIn[i];
                 missionbegin    = sanitizeDate(mission.begin);
                 missionend      = sanitizeDate(mission.end);
-                if( (mission.assets.length && missionend > now) &&
-                    ((mission.assets.length && missionbegin < daybegin && missionend > daybegin)
+                if( (  (mission.assets.length || !mission.activity) && missionend > now) &&
+                    (( (mission.assets.length || !mission.activity) && missionbegin < daybegin && missionend > daybegin)
                     ||
-                    (mission.assets.length && (
+                    (  (mission.assets.length || !mission.activity) && (
                         /* mission du jour */
                         ( missionbegin >= daybegin && missionend <= dayend ) ||
                         /* mission qui commencent aujourdhui et finissent un autre jour */
@@ -87,7 +87,7 @@ angular.module('smartgeomobile')
             for(var i in missionsIn){
                 mission         = missionsIn[i];
                 missionend      = sanitizeDate(mission.end);
-                if( mission.assets.length && missionend < now ){
+                if( (mission.assets.length || !mission.activity) && missionend < now ){
                     mission.isLate=true;
                     missionsOut[mission.id] = mission;
                 }
@@ -107,7 +107,7 @@ angular.module('smartgeomobile')
                 missionend      = sanitizeDate(mission.end);
 
                 if(
-                    (!mission.assets.length) &&
+                    (!(mission.assets.length || !mission.activity)) &&
                         (
                             ( missionbegin < daybegin && missionend > daybegin)  ||
                             /* mission du jour */

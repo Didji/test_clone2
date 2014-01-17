@@ -1,10 +1,14 @@
 <div class="panel panel-default" style='width: 90%;margin: 10px auto;' >
-      <div ng-click='toggleMission(key)' class="panel-heading">
+      <div ng-click='toggleMission(key)' class="panel-heading" ng-class="mission.emergency ? 'emergency' : ''">
         <h3 class="panel-title">
-          <span class="mission-label">{{mission.activity.label}} n°{{mission.number}} </span>
-          <span ng-show="!mission.isLoading" class="badge pull-right mission-assets-count-badge" ng-switch on="mission.assets.length">
-              <span ng-switch-when="0"><i18n>_PLANNING_FINISH_</i18n></span>
-              <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
+          <span class="mission-label">
+            <span ng-if=" mission.activity">{{mission.activity.label}} n°{{mission.number}}</span>
+            <span ng-if="!mission.activity">{{mission.reason}} : {{mission.cause}}</span>
+          </span>
+
+          <span ng-show="!mission.isLoading && !(mission.assets.length == 0 && !mission.activity)" class="badge pull-right mission-assets-count-badge">
+              <span ng-if="mission.assets.length == 0 &&  mission.activity"><i18n>_PLANNING_FINISH_</i18n></span>
+              <span ng-if="mission.assets.length > 0">{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
           </span>
           <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
         </h3>
@@ -22,7 +26,7 @@
         <p ng-show='mission.address'>
           <i class="fa fa-crosshairs"></i> {{mission.address}}
         </p>
-        <p ng-click='toggleDoneAssetsVisibility(key)' ng-show='mission.assets.length > 0'>
+        <p ng-click='toggleDoneAssetsVisibility(key)' ng-show='mission.done.length > 0'>
           <i class="fa" ng-class=" mission.displayDone ? 'fa-check-circle-o' : 'fa-circle-o' " ></i> <i18n>_PLANNING_DISPLAY_DONE_ASSETS_</i18n>
         </p>
         <p class="text-danger" ng-show='mission.objectNotFound'>
