@@ -6,6 +6,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
     $scope.loading = false;
 
     var PREOPEN_TIMER;
+
+    $scope.$watch('loading', function() {
+        var elt = $('.consultation-content')[0] ;
+        elt.style.display='none';
+        elt.offsetHeight;
+        elt.style.display='block';
+    });
+
     // Lorsque la carte nous informe qu'une consultation est demandée,
     // on prépare une ouverture du panneau de consultation. S'il n'y a
     // pas de résultat, on annulera cette ouverture.
