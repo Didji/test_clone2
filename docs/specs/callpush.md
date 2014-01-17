@@ -1,6 +1,7 @@
-![Smartgeo Mobile - Abra](https://raw.github.com/gismartwaredev/smartgeomobile/dev/images/smartgeo-abra.png?token=487387__eyJzY29wZSI6IlJhd0Jsb2I6Z2lzbWFydHdhcmVkZXYvc21hcnRnZW9tb2JpbGUvZGV2L2ltYWdlcy9zbWFydGdlby1hYnJhLnBuZyIsImV4cGlyZXMiOjEzOTAyMzQwNzR9--af30b103f1680bf298d4094740b36839a47a9722 "Logo")
+![GI](http://gismartware.com/images/logo.png) 
+=============================================
 
-# Push d'appels
+# Push d'appels 
 
 ### Fonctionnalité
 
@@ -40,14 +41,8 @@ Entre deux requêtes à la base de données, le processus devra libérer la sess
         "id": "882722",
         "label": "Tournée de nuit luminaire"
       },
-      "assets": [
-        2406999,
-        2407301
-      ],
-      "done": [
-        2407033,
-        2407077
-      ]
+      "assets": [2406999, 2407301],
+      "done": [2407033, 2407077]
     }
   }
 }
@@ -68,14 +63,8 @@ Entre deux requêtes à la base de données, le processus devra libérer la sess
       "address"     : "18 rue Leynaud",      // rue + localisation précise (facultatif)
       "reason"      : "Intervention ligne",  // Raison d'appel
       "cause"       : "Problème",            // Motif
-      "assets"      : [                      // Liste des objets sur lequels il pourrait y avoir un CR (facultatif)
-        2406999,
-        2407301
-      ],
-      "done"        : [                       // Liste des objets sur lequels un CR a déjà été saisi (facultatif)
-        2407033,
-        2407045,
-        2407077
+      "assets"      : [24063999,  24073041], // Liste des objets sur lequels il pourrait y avoir un CR (facultatif)
+      "done"        : [24056999,  24047301]  // Liste des objets sur lequels un CR a déjà été saisi (facultatif)
       ]
     }
   }
