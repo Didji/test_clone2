@@ -52,12 +52,14 @@
                                         {{site.activities._byId[map_activity||report_activity].label}}
                                     </a>
 
-                                    <div class="btn-group dropup" style="width:100%" ng-show='!report_activity && !map_activity && rights.report'>
+                                    <div ng-show="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)"
+                                        class="btn-group dropup"
+                                        style="width:100%">
                                       <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                         <i18n>_CONSULTATION_REPORT</i18n><span class="caret"></span>
                                       </button>
                                       <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="activity in site.activities" ng-show='activity.okeys[0] == asset.okey && (activity.id == report_activity || !report_activity)'>
+                                            <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
                                                 <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
                                             </li>
                                       </ul>
@@ -68,7 +70,7 @@
                                     <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
                                     <button class="btn btn-primary btn-block" ng-show="rights.goto" ng-click="gotoAsset(asset)"><i18n>_CONSULTATION_GOTO</i18n></button>
 
-                                    <hr  ng-show="( filteredOpennedMission = (missions | opennedMissions:asset:site)).length != 0 "/>
+                                    <hr ng-show="( filteredOpennedMission = (missions|opennedMissions:asset:site) ).length != 0 "/>
 
                                     <button
                                         class="btn btn-primary btn-block"

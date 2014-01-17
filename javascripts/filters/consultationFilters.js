@@ -50,4 +50,17 @@ angular.module('smartgeomobile').filter('prettifyField', function() {
         }
         return fieldsOut;
     };
+}).filter('activityListFilter', function($rootScope) {
+
+    'use strict' ;
+
+    return function(activitiesIn, asset) {
+        var activitiesOut = [];
+        for (var i = 0; i < activitiesIn.length; i++) {
+            if(activitiesIn[i].okeys[0] == asset.okey){
+                activitiesOut.push(activitiesIn[i]) ;
+            }
+        }
+        return activitiesOut;
+    };
 });

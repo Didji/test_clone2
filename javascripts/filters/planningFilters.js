@@ -133,6 +133,9 @@ angular.module('smartgeomobile')
         return function(missionsIn, asset, site) {
             var missionsOut = [];
             for(var i in missionsIn){
+                if(!missionsIn[i].activity){
+                    continue ;
+                }
                 var missionsOkeys = site.activities._byId[missionsIn[i].activity.id].okeys , isCompatible = false;
                 for(var j in missionsOkeys ) {
                     if(missionsOkeys[j].indexOf(asset.okey) !== -1){
