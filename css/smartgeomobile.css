@@ -595,6 +595,15 @@ ul.ged-gallery li img {
     width : 100%;
 }
 
-.panel-default > .panel-heading {
+.panel-default > .panel-heading.report-heading {
     background-color: #d6d6d6;
+}
+
+.panel-heading.emergency {
+    background-color: rgb(189, 76, 76);
+    color: white;
+}
+
+.panel-heading.emergency .text-danger {
+    color: white;
 }

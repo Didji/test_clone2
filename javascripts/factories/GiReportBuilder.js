@@ -90,7 +90,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
           },
           _buildTab: function(i, tab) {
               var str = '<div class="panel panel-default report">';
-              str += '<div class="panel-heading"><h4 class="panel-title">';
+              str += '<div class="panel-heading report-heading"><h4 class="panel-title">';
               str += '        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#report-collapse-'+i+'"';
               str += '           ng-click="toggleCollapse($event)">';
               str += tab.label;

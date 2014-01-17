@@ -392,7 +392,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     extent         : G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]),
                     isLoading      : false
                 });
-                if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+                if(mission.activity && $rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
                     mission.activity.isNightTour = true;
                     var traces = Smartgeo.get('traces') || [];
                     mission.trace = traces[mission.id];
@@ -420,13 +420,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             if(mission.displayDone){
                 $scope.showDoneAssets($index);
             }
-            if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+            if(mission.activity && $rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
                 $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
             }
         } else if(!mission.openned){
             $rootScope.$broadcast('UNHIGHLIGHT_ASSETS_FOR_MISSION'     , mission);
             $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
-            if($rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
+            if(mission.activity && $rootScope.site.activities._byId[mission.activity.id].type === "night_tour"){
                 $rootScope.$broadcast('__MAP_HIDE_TRACE__', mission);
             }
         }
@@ -465,7 +465,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 selectedAssets.push($scope.assetsCache[mission.id][i].guid);
             }
         }
-        $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
+        if(mission.activity){
+            $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
+        } else {
+            console.log("pas d'activité !");
+        }
     };
 
     /**
@@ -506,7 +510,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.markerClickHandler = function(missionId, assetId){
         var mission = $rootScope.missions[missionId],
             asset   = $scope.assetsCache[missionId][assetId],
-            method  = $rootScope.site.activities._byId[mission.activity.id].type==="night_tour"?"NightTour":"Mission";
+            method  = (mission.activity && $rootScope.site.activities._byId[mission.activity.id].type==="night_tour")?"NightTour":"Mission";
         $scope["toggleAssetsMarkerFor"+method](mission, asset) ;
     };
 
