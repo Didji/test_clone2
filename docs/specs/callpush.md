@@ -1,5 +1,4 @@
 ![GI](http://gismartware.com/images/logo.png) 
-=============================================
 
 # Push d'appels 
 
