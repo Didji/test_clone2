@@ -149,8 +149,20 @@ angular.module('smartgeomobile')
             }
             return missionsOut;
         };
+    }).filter('opennedCalls', function() {
+        return function(missionsIn, asset, site) {
+            var missionsOut = [];
+            for(var i in missionsIn){
+                if(missionsIn[i].activity){
+                    continue ;
+                }
+                if(missionsIn[i].openned){
+                    missionsOut.push(missionsIn[i]);
+                }
+            }
+            return missionsOut;
+        };
     });
-
 
 function sanitizeDate(date){
     if(!date){

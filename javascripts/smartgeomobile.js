@@ -13,6 +13,8 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                 when("/report/:site/:activity/:assets",         {templateUrl: "partials/report.html"}).
                 when("/report/:site/:activity/:assets/:mission",{templateUrl: "partials/report.html"}).
 
+                when("/report/:site/undefined/:assets/:mission",{templateUrl: "partials/report.html"}).
+
                 when("/sites/install/:site",                    {templateUrl: "partials/installation.html"}).
                 when("/sites/uninstall/:site",                  {templateUrl: "partials/uninstall.html"}).
                 when("/sites/update/:site",                     {templateUrl: "partials/update.html"}).

@@ -3,7 +3,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     'use strict' ;
 
     $scope.comesFromIntent = $rootScope.map_activity   || $rootScope.report_activity  ;
-
     $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
@@ -11,23 +10,14 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT ;
 
-    $scope.report = {
-        assets: [],
-        fields: {},
-        roFields: {},
-        overrides: {},
-        ged:[],
-        mission : 1*$routeParams.mission,
-        activity: null,
-        uuid : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            })
-    };
+    $scope.report = Report.new();
+    $scope.report.mission = 1*$routeParams.mission ;
 
-    if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
+    if($routeParams.activity && $routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         $scope.fromConsult = true;
         $scope.step = "form";
+        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
+
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
             applyDefaultValues();
@@ -35,33 +25,34 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 $scope.$apply();
             }
         });
-    } else if ($routeParams.assets && G3ME.isLatLngString($routeParams.assets)){
+    } else if ($routeParams.activity && $routeParams.assets && G3ME.isLatLngString($routeParams.assets)){
+        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
         $scope.fromConsult = true;
         $scope.report.latlng = $routeParams.assets ;
         $scope.step = 'form';
-    } else {
-        // ERROR
-    }
-
-
-    $scope.bidouille = function(event ){
-        document.querySelector('#mainview').firstChild.scrollTop=$(event.currentTarget).closest('label')[0].offsetTop-7;
-    };
-
-    $scope.loadAssets = function(){
-        // TODO: optimize
-        Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets){
-            $scope.assets = assets ;
+    } else if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
+        Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
+            $scope.report.assets = assets;
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
         });
+    } else {
+        console.error('ERROR');
+    }
+
+    $scope.activityListChangeHandler = function(){
+        if(!$scope.report.assets.length){
+            $scope.loadAssets();
+        } else {
+            $scope.toForm();
+        }
     };
 
-    if($routeParams.activity){
-        $scope.reportTemplate = 'report-'+$routeParams.activity+'.html';
+    $scope.applyVisibility = function(){
+        $scope.reportTemplate = 'report-'+$scope.report.activity.id+'.html';
         for (var i = 0; i < $rootScope.site.activities.length; i++) {
-            if($rootScope.site.activities[i].id == $routeParams.activity) {
+            if($rootScope.site.activities[i].id == $scope.report.activity.id) {
                 $scope.report.activity = $rootScope.site.activities[i];
                 var act = $scope.report.activity;
                 // We have to flag fields which have visibility consequences
@@ -72,10 +63,26 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                         tab.fields[k].isconsequence = (tab.fields[k].visible === false);
                     }
                 }
-
                 break;
             }
         }
+    };
+
+    $scope.bidouille = function(event ){
+        document.querySelector('#mainview').firstChild.scrollTop=$(event.currentTarget).closest('label')[0].offsetTop-7;
+    };
+
+    $scope.loadAssets = function(){
+        Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets){
+            $scope.assets = assets ;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+    };
+
+    if($scope.report.activity){
+        $scope.applyVisibility();
         if(!$scope.fromConsult){
             $scope.loadAssets();
         }
@@ -132,7 +139,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         function getValueFromAssets(pkey, okey) {
             var rv = {}, val;
             for(var i = 0, lim = assets.length; i < lim; i++) {
-                console.log(assets[i].asset);
                 var a = JSON.parse(assets[i].asset).attributes,
                     list = getList(pkey, okey);
 
@@ -172,10 +178,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                     fields[field.id] = def;
                     $scope.report.roFields[field.id] = def;
                 } else {
-                    console.log(def) ;
                     def = getValueFromAssets(def.pkey, act.okeys[0]);
                     $scope.report.roFields[field.id] = $scope.formatFieldEntry(def);
-                    console.log($scope.report.roFields[field.id]);
                     $scope.report.overrides[field.id] = '';
                     fields[field.id] = def;
                 }
@@ -236,6 +240,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope.toForm = function() {
         $scope.step = 'form';
+        $scope.applyVisibility();
         applyDefaultValues();
     };
 

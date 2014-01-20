@@ -11,29 +11,19 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     $scope._DRAG_THRESHOLD = 50 ;
 
     $scope._OK_ASSET_ICON = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ok.png',
-                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
-                            iconSize        : [25,  41],
-                            iconAnchor      : [12,  41],
-                            popupAnchor     : [ 1, -34],
-                            shadowSize      : [41,  41]
+                            iconUrl         : 'javascripts/vendors/images/night-tour-ok.png',
+                            iconSize        : [65,  89],
+                            iconAnchor      : [32,  89],
                         });
     $scope._KO_ASSET_ICON = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/marker-icon-2x-ko.png',
-                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
-                            iconSize        : [25,  41],
-                            iconAnchor      : [12,  41],
-                            popupAnchor     : [ 1, -34],
-                            shadowSize      : [41,  41]
+                            iconUrl         : 'javascripts/vendors/images/night-tour-ko.png',
+                            iconSize        : [65,  89],
+                            iconAnchor      : [32,  89],
                         }),
     $scope._DONE_ASSET_ICON = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/marker-icon-done.png',
-                            iconRetinaUrl   : 'javascripts/vendors/images/marker-icon-done-2x.png',
-                            shadowUrl       : 'javascripts/vendors/images/marker-shadow.png',
-                            iconSize        : [25,  41],
-                            iconAnchor      : [12,  41],
-                            popupAnchor     : [ 1, -34],
-                            shadowSize      : [41,  41]
+                            iconUrl         : 'javascripts/vendors/images/night-tour-done.png',
+                            iconSize        : [30,  42],
+                            iconAnchor      : [15,  42],
                         });
 
     /**

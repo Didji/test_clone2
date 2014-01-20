@@ -299,7 +299,7 @@ color: #ffffff;
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     color: #FFF;
-    background-color: #FAB400;
+    background-color: #fd9122;
     border-color: #fd9122;
 }
 .btn-primary.disabled,
@@ -606,4 +606,8 @@ ul.ged-gallery li img {
 
 .panel-heading.emergency .text-danger {
     color: white;
+}
+
+.btn > *, .dropdown-menu > li > a {
+    white-space: normal;
 }

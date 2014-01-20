@@ -5,7 +5,7 @@
  * Planning controller
  */
 
-angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $filter, G3ME, i18n){
+angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $timeout, $filter, G3ME, i18n){
 
     'use strict';
 
@@ -124,8 +124,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
      */
     $scope.synchronize = function(){
-        Mission
-            .query()
+        Mission.query()
             .success(function(data){
 
                 var open = [], previous = [], done = [], selectedAssets = {},
@@ -246,10 +245,26 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.synchronize();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
-        Smartgeo.registerInterval('WATCH_INTERVAL', function(){
-            $scope.synchronize();
-        }, $scope._SYNCHRONIZE_INTERVAL);
+        $scope.poll();
     };
+
+
+    /**
+     * @ngdoc method
+     * @name planningController#poll
+     * @methodOf planningController
+     * @description
+     *
+     */
+     $scope.poll = function(){
+        Mission.poll()
+            .success(function(){
+                $scope.synchronize();
+                $scope.poll();
+            }).error(function(data, status){
+                $timeout($scope.poll, 5000);
+            });
+     };
 
     /**
      * @ngdoc method
@@ -308,7 +323,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 pendingAssets = reports[i].assets;
                 mission = missions[reports[i].mission];
                 for(var j = 0 , length = mission.assets.length; j < length ; j++){
-                    if( pendingAssets.indexOf(mission.assets[j]) === -1){
+                    if( pendingAssets.indexOf(1*mission.assets[j]) === -1){
                         continue ;
                     }
                     mission.done.push(mission.assets[j]);
@@ -468,7 +483,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         if(mission.activity){
             $location.path('report/'+$rootScope.site.id+'/'+mission.activity.id+'/'+selectedAssets.join(',')+'/'+mission.id);
         } else {
-            console.log("pas d'activité !");
+            $location.path('report/'+$rootScope.site.id+'//'+selectedAssets.join(',')+'/'+mission.id);
         }
     };
 
@@ -624,6 +639,13 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         Smartgeo.set('missions', $rootScope.missions);
 
         Smartgeo.findGeometryByGuids($scope.site, asset.guid, function(assets){
+
+            if(!$scope.assetsCache[mission.id]){
+                $scope.assetsCache[mission.id] = [];
+            }
+            if(!$scope.assetsCache[mission.id]._byId){
+                $scope.assetsCache[mission.id]._byId = {};
+            }
 
             $scope.assetsCache[mission.id].push(assets[0]) ;
             $scope.assetsCache[mission.id]._byId[assets[0].guid] = assets[0];
