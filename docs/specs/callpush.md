@@ -89,3 +89,4 @@ Le block 'appel' dans le planning sera très semblable au block 'mission':
   - "Ajouter cet objet à l'appel n°#"
   - "Saisir un CR pour l'appel n°#"
 * Contrairement a une mission un appel ne peut pas être terminé, on peut toujours y ajouter des objets, et ce jusqu'a ce que l'appel soit clôturé depuis GiMAP.
+* A partir du moment où un objet a été associé à un appel, seul ce type d'objet (okey) pourra y être associé par la suite. 
