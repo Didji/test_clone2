@@ -1,6 +1,6 @@
 ![GI](http://gismartware.com/images/logo.png) 
 
-# Push d'appels 
+# Push d'appels :telephone:
 
 ### Fonctionnalité
 
@@ -73,6 +73,39 @@ Le service devra libérer la session avant d'entamer la boucle de requête. Entr
   }
 }
 ```
+
+### Enregistrement d'un CR lié à un appel
+
+Le service à faire évoluer est `gi.maintenance.mobility.report`. Actuellement ce service attend les informations suivantes :
+
+```javascript
+  {
+    "assets":[2407053],
+    "fields": {
+      "27799430":"N"
+    },
+    "mission":439287439,
+    "activity":"882722",
+    "uuid":"fe8a946c-2bbd-4319-8cc3-f76b47de5e1c"
+  }
+```
+
+Pour un appel on rajoutera le flag `isCall` à `true`, exemple : 
+
+```javascript
+  {
+    "assets":[2407053],
+    "fields": {
+      "27799430":"N"
+    },
+    "mission":439287439,
+    "activity":"882722",
+    "isCall":true,
+    "uuid":"fe8a946c-2bbd-4319-8cc3-f76b47de5e1c"
+  }
+```
+
+Le numéro d'appel (id appel) sera dans l'attribut `mission`. Sinon le fonctionnement reste le même.
 
 ## Interface mobilité
 
