@@ -98,14 +98,13 @@ Pour un appel on rajoutera le flag `isCall` à `true`, exemple :
     "fields": {
       "27799430":"N"
     },
-    "mission":439287439,
+    "call":439287439,
     "activity":"882722",
-    "isCall":true,
     "uuid":"fe8a946c-2bbd-4319-8cc3-f76b47de5e1c"
   }
 ```
 
-Le numéro d'appel (id appel) sera dans l'attribut `mission`. Sinon le fonctionnement reste le même.
+Le numéro d'appel (id appel) sera dans l'attribut `call`. Sinon le fonctionnement reste le même.
 
 ## Interface mobilité
 
