@@ -1,6 +1,6 @@
-![Smartgeo Mobile - Abra](https://raw.github.com/gismartwaredev/smartgeomobile/dev/images/smartgeo-abra.png?token=487387__eyJzY29wZSI6IlJhd0Jsb2I6Z2lzbWFydHdhcmVkZXYvc21hcnRnZW9tb2JpbGUvZGV2L2ltYWdlcy9zbWFydGdlby1hYnJhLnBuZyIsImV4cGlyZXMiOjEzOTAyMzQwNzR9--af30b103f1680bf298d4094740b36839a47a9722 "Logo")
+![GI](http://gismartware.com/images/logo.png) 
 
-# Push d'appels
+# Push d'appels 
 
 ### Fonctionnalité
 
@@ -18,11 +18,15 @@ Un appel est composé de :
 
 Dans un premier temps serveur devra renvoyer une liste d'appels via le même service qui renvoie actuellement les ordres de travail (showOT.json).
 
+Les appels doivent être filtés : 
+* seuls les appels en cours doivent arriver sur la mobilité
+* seuls les appels concernant les sites accessibles par l'utilisateur doivent remonter
+
 ### Temps réél - Polling
 
-Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission(OT) ou appel n'a été inserée en base depuis le début de la requête HTTP. Si une nouvelle mission est trouvée en base, il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
+Un nouveau service devra être créé. Ce service tournera en boucle tant qu'aucune mission (OT) n'a été planifiée pour l'équipe de l'utilisateur ou tant qu'aucun appel n'a été passé à l'état "en cours" depuis le début de la requête HTTP. Si une nouvelle mission a été assignée à son équipe ou si un appel a changé d'état pour passer "en cours", il répond au service avec une réponse vide (ou pleine, mais le contenu sera ignoré) et un status OK (200).
 
-Entre deux requêtes à la base de données, le processus devra libérer la session et s'endormir pendant un certain temps (20 secondes ou moins ... :shipit: ). 
+Le service devra libérer la session avant d'entamer la boucle de requête. Entre deux requêtes à la base de données, le processus devra s'endormir pendant un certain temps (5 secondes). 
 
 ## Webservice GiMAP 
 
@@ -40,14 +44,8 @@ Entre deux requêtes à la base de données, le processus devra libérer la sess
         "id": "882722",
         "label": "Tournée de nuit luminaire"
       },
-      "assets": [
-        2406999,
-        2407301
-      ],
-      "done": [
-        2407033,
-        2407077
-      ]
+      "assets": [2406999, 2407301],
+      "done": [2407033, 2407077]
     }
   }
 }
@@ -68,14 +66,8 @@ Entre deux requêtes à la base de données, le processus devra libérer la sess
       "address"     : "18 rue Leynaud",      // rue + localisation précise (facultatif)
       "reason"      : "Intervention ligne",  // Raison d'appel
       "cause"       : "Problème",            // Motif
-      "assets"      : [                      // Liste des objets sur lequels il pourrait y avoir un CR (facultatif)
-        2406999,
-        2407301
-      ],
-      "done"        : [                       // Liste des objets sur lequels un CR a déjà été saisi (facultatif)
-        2407033,
-        2407045,
-        2407077
+      "assets"      : [24063999,  24073041], // Liste des objets sur lequels il pourrait y avoir un CR (facultatif)
+      "done"        : [24056999,  24047301]  // Liste des objets sur lequels un CR a déjà été saisi (facultatif)
       ]
     }
   }
@@ -97,3 +89,4 @@ Le block 'appel' dans le planning sera très semblable au block 'mission':
   - "Ajouter cet objet à l'appel n°#"
   - "Saisir un CR pour l'appel n°#"
 * Contrairement a une mission un appel ne peut pas être terminé, on peut toujours y ajouter des objets, et ce jusqu'a ce que l'appel soit clôturé depuis GiMAP.
+* A partir du moment où un objet a été associé à un appel, seul ce type d'objet (okey) pourra y être associé par la suite. 
