@@ -1,52 +1,52 @@
-angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n){
+angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon){
 
     'use strict' ;
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site] ;
 
-    var SELECTED_ASSET_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/mission-selected.png',
-                            iconSize        : [65,  89],
-                            iconAnchor      : [32,  89],
-                        }),
-        NON_SELECTED_ASSET_ICON = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/mission-todo.png',
-                            iconSize        : [49,  67],
-                            iconAnchor      : [25,  67],
-                        }),
-        NON_SELECTED_ASSET_ICON_NT = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/night-tour.png',
-                            iconSize        : [49,  67],
-                            iconAnchor      : [25,  67],
-                        }),
-        DONE_ASSET_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/mission-done.png',
-                            iconSize        : [30,  42],
-                            iconAnchor      : [15,  42],
-                        }),
+    // var SELECTED_ASSET_ICON     = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/mission-selected.png',
+    //                         iconSize        : [65,  89],
+    //                         iconAnchor      : [32,  89],
+    //                     }),
+    //     NON_SELECTED_ASSET_ICON = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/mission-todo.png',
+    //                         iconSize        : [49,  67],
+    //                         iconAnchor      : [25,  67],
+    //                     }),
+    //     NON_SELECTED_ASSET_ICON_NT = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/night-tour.png',
+    //                         iconSize        : [49,  67],
+    //                         iconAnchor      : [25,  67],
+    //                     }),
+    //     DONE_ASSET_ICON     = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/mission-done.png',
+    //                         iconSize        : [30,  42],
+    //                         iconAnchor      : [15,  42],
+    //                     }),
 
-        GRAY_TARGET_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/target_gray.png',
-                            iconSize        : [32,  32],
-                            iconAnchor      : [16,  16],
-                        }),
-        TARGET_ICON     = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/target.png',
-                            iconSize        : [32,  32],
-                            iconAnchor      : [16,  16],
-                        }),
-        DONE_ASSET_ICON_NT = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/night-tour-done.png',
-                            iconSize        : [30,  42],
-                            iconAnchor      : [15,  42],
-                        }),
-        CONSULTATION_ICON = L.icon({
-                            iconUrl         : 'javascripts/vendors/images/consultation.png',
-                            iconSize        : [49,  67],
-                            iconAnchor      : [25,  67],
-                        });
+    //     Icon.get('GRAY_TARGET')     = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/target_gray.png',
+    //                         iconSize        : [32,  32],
+    //                         iconAnchor      : [16,  16],
+    //                     }),
+    //     TARGET_ICON     = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/target.png',
+    //                         iconSize        : [32,  32],
+    //                         iconAnchor      : [16,  16],
+    //                     }),
+    //     DONE_ASSET_ICON_NT = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/night-tour-done.png',
+    //                         iconSize        : [30,  42],
+    //                         iconAnchor      : [15,  42],
+    //                     }),
+    //     CONSULTATION_ICON = L.icon({
+    //                         iconUrl         : 'javascripts/vendors/images/consultation.png',
+    //                         iconSize        : [49,  67],
+    //                         iconAnchor      : [25,  67],
+    //                     });
 
-        $scope.missionsClusters = {};
+    $scope.missionsClusters = {};
 
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;
@@ -249,7 +249,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng){
         if(!$scope.myPositionMarker){
-            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(TARGET_ICON).addTo(G3ME.map);
+            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
         } else {
             $scope.myPositionMarker.setLatLng([lat,lng]);
         }
@@ -321,7 +321,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 continue;
             }
             assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-            var icon = assetsCache[i].selected ? SELECTED_ASSET_ICON : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? NON_SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON_NT;
+            var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
             (function(i,marker){
                 marker.on('click', function(){
@@ -362,7 +362,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         });
         for (var i = 0; i < assetsCache.length; i++) {
             assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-            var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? DONE_ASSET_ICON : DONE_ASSET_ICON_NT ;
+            var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR') ;
             assetsCache[i].marker.setIcon(icon);
             $scope.missionsClusters['done-'+mission.id].addLayer(assetsCache[i].marker);
         }
@@ -370,7 +370,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     });
 
     $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
-        asset.marker.setIcon(asset.selected ? SELECTED_ASSET_ICON : NON_SELECTED_ASSET_ICON);
+        asset.marker.setIcon(asset.selected ? Icon.get('SELECTED_MISSION') : Icon.get('NON_SELECTED_MISSION'));
     });
     $scope.$on("__MAP_HIDE_TRACE__", function(event, mission){
         if($scope.traces && $scope.traces[mission.id]){
@@ -403,7 +403,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         if(mission.trace.length){
             var lastPosition = mission.trace[mission.trace.length-1];
             if(!$scope.myLastPositionMarker){
-                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]],{ zIndexOffset    : 1000}).setIcon(GRAY_TARGET_ICON).addTo(G3ME.map);
+                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]],{ zIndexOffset    : 1000}).setIcon(Icon.get('GRAY_TARGET')).addTo(G3ME.map);
             } else {
                 $scope.myLastPositionMarker.setLatLng([lastPosition[1], lastPosition[0]]);
             }
@@ -564,7 +564,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         switch (asset.geometry.type) {
             case "Point":
                 var coords = asset.geometry.coordinates ;
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {icon:CONSULTATION_ICON});
+                G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {icon:Icon.get('CONSULTATION')});
                 break;
             case "LineString":
                 G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
