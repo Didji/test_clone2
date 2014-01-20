@@ -2,111 +2,27 @@
     <div id="toggleConsultationPanelButton" ng-show="assets.length" ng-click="toggleConsultationPanel()">
         <span class="icon-info"></span>
     </div>
-
     <div class="consultation-content">
         <div ng-if="loading" style='width: 0;margin: 0 auto;padding-top: 200px;'>
             <span us-spinner="{radius:30, width:8, length: 16, hwaccel:true, color:'white'}"></span>
             <i18n style="font-size: 1.5em;color: white;margin: 0px -57px;position: relative;top: 57px;">_CONSULTATION_LOADING</i18n>
         </div>
-
         <div ng-if="!loading" >
             <div ng-repeat="priority in groups">
                 <div ng-repeat="(okey, assets) in priority">
                     <h4 class="family-title">{{site.metamodel[okey].label}}</h4>
                     <div class="panel-group" id="accordion">
                         <div ng-repeat='asset in assets' class="panel panel-default">
-                            <div class="panel-heading">
-                              <h4 class="panel-title">
-                                <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{asset.guid}}"
-                                    ng-click="toggleCollapse($event)">
-                                    <div ng-switch on="asset.label" >
-                                        <span ng-switch-when="">{{site.metamodel[okey].label}}</span>
-                                        <span ng-switch-default>{{asset.label}}</span>
-                                    </div>
-                                </a>
-                              </h4>
-                            </div>
-
-                            <div id="collapse-{{asset.guid}}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <span ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
-                                        <h5>{{tab.label}}</h5>
-                                        <table style="font-size: 0.8em;" class="table table-striped">
-                                            <tbody>
-                                                <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
-                                                    <td>{{field.label}}</td>
-                                                    <td ng-switch on="site.lists[field.options][asset.attributes[field.key]]">
-                                                        <span ng-switch-when="undefined"> {{asset.attributes[field.key] | prettifyField}}</span>
-                                                        <span ng-switch-default>{{site.lists[field.options][asset.attributes[field.key]] | prettifyField}}</span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </span>
-
-                                    <hr ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
-
-                                    <a  class="btn btn-primary btn-block"
-                                        href="#/report/{{site.id}}/{{site.activities._byId[map_activity||report_activity].id}}/{{asset.guid}}"
-                                        ng-show='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'>
-                                        {{site.activities._byId[map_activity||report_activity].label}}
-                                    </a>
-
-                                    <div ng-show="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)"
-                                        class="btn-group dropup"
-                                        style="width:100%">
-                                      <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                        <i18n>_CONSULTATION_REPORT</i18n><span class="caret"></span>
-                                      </button>
-                                      <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
-                                                <a href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{activity.label}}</a>
-                                            </li>
-                                      </ul>
-                                    </div>
-
-                                    <hr/>
-
-                                    <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
-                                    <button class="btn btn-primary btn-block" ng-show="rights.goto" ng-click="gotoAsset(asset)"><i18n>_CONSULTATION_GOTO</i18n></button>
-
-                                    <hr ng-show="( filteredOpennedMission = (missions|opennedMissions:asset:site) ).length != 0 "/>
-
-                                    <button
-                                        class="btn btn-primary btn-block"
-                                        ng-show="filteredOpennedMission.length == 1"
-                                        ng-click="addAssetsToMission(asset, filteredOpennedMission[0])">
-                                        <i18n>_CONSULTATION_ADD_TO_MISSION</i18n> {{filteredOpennedMission[0].activity.label}} n°{{filteredOpennedMission[0].number}}
-                                    </button>
-
-                                    <div
-                                        class="btn-group dropup"
-                                        style="width:100%"
-                                        ng-show="filteredOpennedMission.length > 1">
-                                      <button
-                                        type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                        <i18n>_CONSULTATION_ADD_TO_</i18n><span class="caret"></span>
-                                      </button>
-                                      <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="mission in filteredOpennedMission" >
-                                                <a href="#" ng-click="addAssetsToMission(asset, mission, $event)">{{mission.activity.label}} n°{{mission.number}}</a>
-                                            </li>
-                                      </ul>
-                                    </div>
-
-
-                                </div>
-                            </div>
+                            <ng-include src="'partials/consultation-asset.html'"/>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div style="margin-top: 25px;" ng-show="map_target && coordinates">
-                <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lat, coordinates.lng)"><i18n>_CONSULTATION_REPORT_ON_POSITION</i18n></button>
+                <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lat, coordinates.lng)">
+                    <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
+                </button>
             </div>
-
+        </div>
     </div>
-
 </div>
-

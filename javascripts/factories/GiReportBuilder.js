@@ -30,7 +30,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function($templateCa
                                          ng-required="'+myField+'.required" \
                                          type="date" name="f" placeholder="'+placeholder+'" \
                                          ng-model = "'+model+'"></input> \
-                                         <span class="form-control pull-left" style="margin-top:-34px">{{'+model+' |  date:"dd/MM/yyyy"}}</span>';
+                                         <span class="form-control pull-left" style="margin-top:-34px;margin-bottom: 10px;">{{'+model+' |  date:"dd/MM/yyyy"}}</span>';
                       break;
                   case 'T':
                       str += '<input  class="form-control" \

@@ -9,7 +9,7 @@
                 <p ng-show="!report.activity">
                     <label><i18n>_REPORT_SELECT_ACTIVITY</i18n></label>
                     <select class="form-control"
-                            ng-change  = "loadAssets()"
+                            ng-change  = "activityListChangeHandler()"
                             ng-model   = "report.activity"
                             ng-options = "activity.label for activity in site.activities">
                     </select>
@@ -41,7 +41,7 @@
             <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> <i18n>_REPORT_PREVIOUS</i18n>
             </button>
-            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
+            <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
                 <i18n>_REPORT_SAVE</i18n>
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
@@ -82,7 +82,7 @@
                 <span class="icon-chevron-left"></span> <i18n>_REPORT_PREVIOUS</i18n>
             </button>
 
-            <button class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
+            <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
                 <i18n>_REPORT_SAVE</i18n>
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
