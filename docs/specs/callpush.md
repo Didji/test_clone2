@@ -90,7 +90,7 @@ Le service à faire évoluer est `gi.maintenance.mobility.report`. Actuellement 
   }
 ```
 
-Pour un appel on rajoutera le flag `isCall` à `true`, exemple : 
+Pour un appel on rajoutera un flag `isCall`, qui sera à `false` par défaut et passera à `true` si le CR concerne un appel : 
 
 ```javascript
   {
@@ -98,13 +98,13 @@ Pour un appel on rajoutera le flag `isCall` à `true`, exemple :
     "fields": {
       "27799430":"N"
     },
-    "call":439287439,
+    "mission":439287439,
     "activity":"882722",
     "uuid":"fe8a946c-2bbd-4319-8cc3-f76b47de5e1c"
   }
 ```
 
-Le numéro d'appel (id appel) sera dans l'attribut `call`. Sinon le fonctionnement reste le même.
+Le numéro d'appel (id appel) sera dans l'attribut `mission`. Sinon le fonctionnement reste le même.
 
 ## Interface mobilité
 
