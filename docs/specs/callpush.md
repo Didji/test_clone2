@@ -99,7 +99,7 @@ Pour un appel on rajoutera un flag `isCall`, qui sera à `false` par défaut et 
       "27799430":"N"
     },
     "mission":439287439,
-    "isCall":true,
+    "isCall":"true",
     "activity":"882722",
     "uuid":"fe8a946c-2bbd-4319-8cc3-f76b47de5e1c"
   }
