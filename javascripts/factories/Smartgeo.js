@@ -701,12 +701,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
                 window.ChromiumCallbacks = [] ;
             }
 
-            window.ChromiumCallbacks[20] = function(){
-                Smartgeo._onlineTask();
-            };
-            window.ChromiumCallbacks[21] = function(){
-                Smartgeo._offlineTask() ;
-            };
+            window.ChromiumCallbacks[20] = Smartgeo._onlineTask ;
+            window.ChromiumCallbacks[21] = Smartgeo._offlineTask;
         },
 
         _onlineTask : function() {

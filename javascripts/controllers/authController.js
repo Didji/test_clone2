@@ -17,12 +17,16 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $scope.rememberme = $scope.lastuser.password &&  $scope.lastuser.password.length ? true : false;
         $scope.$on("DEVICE_IS_ONLINE", $scope.ping);
         $scope.$on("DEVICE_IS_OFFLINE", $scope.ping);
-
+        $rootScope.site = null ;
         Smartgeo.clearPersistence();
         Smartgeo.clearIntervals();
 
         if(window.SmartgeoChromium){
-            window.ChromiumCallbacks = [];
+
+            if(!window.ChromiumCallbacks){
+                window.ChromiumCallbacks = [] ;
+            }
+
             window.ChromiumCallbacks[13] = function(path){
                 Smartgeo.set('tileRootPath', path);
             };
@@ -80,9 +84,10 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
 
         $scope.readyToLog = false;
         $scope.logMessage = "_AUTH_PLEASE_WAIT";
-
+        console.log('ici');
         Smartgeo.login(encodeURIComponent($scope.username), encodeURIComponent($scope.pwd),
             function(){
+        console.log('ici');
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
@@ -93,6 +98,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 $scope.lastuser.username = $scope.username;
                 Smartgeo.set('user',$scope.lastuser);
                 $location.path('sites');
+            console.log('ici');
             },loginFailed);
     };
 
