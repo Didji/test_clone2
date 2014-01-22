@@ -7,12 +7,12 @@ angular.module('smartgeomobile').factory('Report', function($http, Smartgeo, $q,
             var deferred = $q.defer();
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {timeout: 5000})
                 .success(function(data){
-                    (window.SmartgeoChromium && window.SmartgeoChromium.log || angular.noop)(Report.getLog(report, true));
+                    window.SmartgeoChromium && window.SmartgeoChromium.log(Report.getLog(report, true));
                     deferred.notify ();
                     deferred.resolve();
                 })
                 .error(function(){
-                    (window.SmartgeoChromium && window.SmartgeoChromium.log || angular.noop)(Report.getLog(report, false));
+                    window.SmartgeoChromium && window.SmartgeoChromium.log(Report.getLog(report, false));
                     Smartgeo.get_('reports', function(reports){
                         reports = reports || [] ;
                         reports.push(report);
