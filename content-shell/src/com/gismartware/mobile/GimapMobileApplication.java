@@ -12,6 +12,9 @@ import org.chromium.content.browser.ResourceExtractor;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
+
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 
 /**
  * Entry point for the content shell application.  Handles initialization of information that needs
@@ -42,6 +45,11 @@ public class GimapMobileApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initializeApplicationParameters();
+        try {
+            LocationLibrary.initialiseLibrary(getBaseContext(),"com.gismartware.mobile");
+        } catch (UnsupportedOperationException ex) {
+            Log.d("TestApplication", "UnsupportedOperationException thrown - the device doesn't have any location providers");
+        }
 
         context = getApplicationContext();
         //specific initialization for gimap mobile web app:

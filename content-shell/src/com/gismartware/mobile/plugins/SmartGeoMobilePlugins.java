@@ -19,12 +19,15 @@ import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gismartware.mobile.ActivityCode;
 import com.gismartware.mobile.GimapMobileMainActivity;
 import com.gismartware.mobile.util.FileUtils;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 
-public class SmartGeoMobilePlugins {
+ public class SmartGeoMobilePlugins {
 	
 	private static final String TAG = "GimapMobilePlugins";
 	private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
@@ -75,11 +78,10 @@ public class SmartGeoMobilePlugins {
 	
 	@JavascriptInterface
 	public void locate() {
-		Log.d(TAG, "Request location");
-		
-		Activity act = (Activity)context;
-		Intent intent = new Intent(context, GeoLocation.class);
-		act.startActivityForResult(intent, ActivityCode.GEOLOCATE.getCode());
+        LocationLibrary.forceLocationUpdate(context);
+        //final LocationInfo locationInfo = new LocationInfo(context) ;
+        //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
+        //view.evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
 	}
 	
 	@JavascriptInterface

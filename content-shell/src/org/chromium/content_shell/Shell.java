@@ -150,7 +150,7 @@ public class Shell extends LinearLayout {
         mContentViewRenderView.setCurrentContentView(mContentView);   
         
         //ATTENTION
-        //Doit etre ici sinon pas de photo sur un intent quand l appli existe deja... (inexplicable dans l'état actuel de mes connaissances)
+        //Doit etre ici sinon pas de photo sur un intent quand l appli existe deja... (inexplicable dans l'ï¿½tat actuel de mes connaissances)
         mContentView.getContentViewCore().addJavascriptInterface(new SmartGeoMobilePlugins(super.getContext(), mContentView), "SmartgeoChromium");
     }
 

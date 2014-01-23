@@ -1204,7 +1204,7 @@ import java.util.Map;
      * @return Whether the current selection is editable (false if no text selected).
      */
     public boolean isSelectionEditable() {
-        return mHasSelection ? mSelectionEditable : false;
+        return true ;//mHasSelection ? mSelectionEditable : false;
     }
 
     // End FrameLayout overrides.
@@ -1669,6 +1669,7 @@ import java.util.Map;
     }
 
     public void onFocusChanged(boolean gainFocus) {
+        Log.e("gidebug", "contentViewCore#onFocusChanged");
         if (!gainFocus) getContentViewClient().onImeStateChangeRequested(false);
         if (mNativeContentViewCore != 0) nativeSetFocus(mNativeContentViewCore, gainFocus);
     }
@@ -1881,6 +1882,7 @@ import java.util.Map;
 
     private void handleTapOrPress(
             long timeMs, float xPix, float yPix, int isLongPressOrTap, boolean showPress) {
+
         if (mContainerView.isFocusable() && mContainerView.isFocusableInTouchMode()
                 && !mContainerView.isFocused())  {
             mContainerView.requestFocus();
@@ -1993,6 +1995,8 @@ import java.util.Map;
 
                 @Override
                 public void showHandles(int startDir, int endDir) {
+
+                    Log.e("gidebug","showHandles");
                     super.showHandles(startDir, endDir);
                     showSelectActionBar();
                 }
@@ -2032,6 +2036,7 @@ import java.util.Map;
 
                 @Override
                 public void showHandle() {
+                    Log.e("gidebug","getInsertionHandleController#showHandle");
                     super.showHandle();
                 }
             };
@@ -2106,7 +2111,7 @@ import java.util.Map;
 
             @Override
             public boolean isSelectionEditable() {
-                return mSelectionEditable;
+                return true; // mSelectionEditable;
             }
 
             @Override
@@ -2466,6 +2471,7 @@ import java.util.Map;
     @SuppressWarnings("unused")
     @CalledByNative
     private void showPastePopup(int xDip, int yDip) {
+        Log.e("gidebug","showPastePopup");
         mInsertionHandlePoint.setLocalDip(xDip, yDip);
         getInsertionHandleController().showHandle();
         updateHandleScreenPositions();
