@@ -36,6 +36,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -55,12 +56,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.gismartware.mobile.util.FileUtils;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibraryConstants;
 
 
 /**
  * Activity for managing the Content Shell.
  */
-public class GimapMobileMainActivity extends ChromiumActivity {
+public class GimapMobileMainActivity extends Activity {
 	
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
 	private static final String INSTALL_ZIP_FILE = MESSAGES.getString("install.zip.file");
@@ -79,8 +83,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 	private AuthPreferences authPreferences;
 	
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
-    private static final String[] CMD_OPTIONS = new String[] {"--allow-external-pages", "--allow-file-access", 
-        "--allow-file-access-from-files", "--disable-web-security", "--enable-strict-site-isolation", "--site-per-process"};
+    private static final String[] CMD_OPTIONS = new String[] {
+        "--allow-file-access-from-files", "--disable-web-security", "--no-sandbox", "--enable-accelerated-2d-canvas"};
     
     private static final String TAG = "GimapMobile";
 
@@ -199,6 +203,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         if(NEED_LOGGER){
             this.startService(new Intent(this, GiAlarmService.class));
         }
+
+        LocationLibrary.forceLocationUpdate(GimapMobileMainActivity.this);
     }
     
     private void oauthRequestAccount() {
@@ -354,11 +360,17 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 
         super.onPause();
         unregisterReceiver(mReceiver);
+        unregisterReceiver(lftBroadcastReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // This demonstrates how to dynamically create a receiver to listen to the location updates.
+        // You could also register a receiver in your manifest.
+        final IntentFilter lftIntentFilter = new IntentFilter(LocationLibraryConstants.getLocationChangedPeriodicBroadcastAction());
+        registerReceiver(lftBroadcastReceiver, lftIntentFilter);
 
         ContentView view = getActiveContentView();
         if (view != null) view.onActivityResume();
@@ -385,6 +397,18 @@ public class GimapMobileMainActivity extends ChromiumActivity {
         registerReceiver(mReceiver, intentFilter);
     }
 
+    private final BroadcastReceiver lftBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
+            //Toast.makeText(context, "BroadcastReceiver#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
+            //final LocationInfo locationInfo = new LocationInfo(context) ;
+            //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
+            getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
+        }
+    };
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
     	ActivityCode act = ActivityCode.getActivitiesFromValue(requestCode);
@@ -410,7 +434,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 					BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inSampleSize = 2;
 					Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
-					//on compresse la photo � 75% de qualit�
+					//on compresse la photo
 					OutputStream out = new FileOutputStream(file);
 					photo.compress(Bitmap.CompressFormat.JPEG, 75, out);
 					out.flush();
@@ -422,7 +446,7 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			} else if (requestCode == ActivityCode.GEOLOCATE.getCode()) {
 				Bundle extras = intent.getExtras();
 				Location location = (Location) extras.get("location");
-				if (location == null) { // pas de position (gps d�sactiv� par ex)
+				if (location == null) { // pas de position (gps désactivé par ex)
 					Log.e(TAG, "Pas de geolocalisation trouvee!");
 					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[2]();");
 				} else {
@@ -649,7 +673,8 @@ public class GimapMobileMainActivity extends ChromiumActivity {
 			return false;
 		}
 	}
-	
+
+
 	private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {

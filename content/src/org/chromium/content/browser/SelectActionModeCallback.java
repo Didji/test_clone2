@@ -105,8 +105,8 @@ public class SelectActionModeCallback implements ActionMode.Callback {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        mode.setTitle(null);
-        mode.setSubtitle(null);
+        //mode.setTitle(null);
+        //mode.setSubtitle(null);
         mEditable = mActionHandler.isSelectionEditable();
         createActionMenu(mode, menu);
         return true;
@@ -115,13 +115,15 @@ public class SelectActionModeCallback implements ActionMode.Callback {
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         boolean isEditableNow = mActionHandler.isSelectionEditable();
+        return true;
+        /*
         if (mEditable != isEditableNow) {
             mEditable = isEditableNow;
             menu.clear();
             createActionMenu(mode, menu);
             return true;
         }
-        return false;
+        return false;*/
     }
 
     private void createActionMenu(ActionMode mode, Menu menu) {

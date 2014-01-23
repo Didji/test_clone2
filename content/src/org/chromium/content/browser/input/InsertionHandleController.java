@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,8 @@ public abstract class InsertionHandleController implements CursorController {
      * Shows the handle.
      */
     public void showHandle() {
+        Log.e("gidebug", "InsertionHandleController#onCursorPositionChanged");
+
         createHandleIfNeeded();
         showHandleIfNeeded();
     }
@@ -68,12 +71,16 @@ public abstract class InsertionHandleController implements CursorController {
     }
 
     public void showHandleWithPastePopup() {
+        Log.e("gidebug", "showHandleWithPastePopup#onCursorPositionChanged");
+
         showHandle();
         showPastePopup();
     }
 
     /** Shows the handle at the given coordinates, as long as automatic showing is allowed */
     public void onCursorPositionChanged() {
+        Log.e("gidebug", "onCursorPositionChanged");
+
         if (mAllowAutomaticShowing) {
             showHandle();
         }

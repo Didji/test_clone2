@@ -28,6 +28,9 @@ public class GiAlarmService extends Service
         } catch(Exception e){
             Log.e("gismartware::MailSender/FileInputStream", e.getMessage(), e);
         }
+        if(config == null){
+            return Service.START_NOT_STICKY;
+        }
         Log.i("com.gismartware.smartgeoLogger#GiAlarmService", "onStartCommand");
         GiAlarm receiver = new GiAlarm();
         Calendar calendar = Calendar.getInstance();
