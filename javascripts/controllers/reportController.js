@@ -12,7 +12,11 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope.report = Report.new();
     $scope.report.mission = 1*$routeParams.mission ;
-
+    if(!$routeParams.activity && $routeParams.assets){
+        $scope.report.isCall = true  ;
+    } else {
+        $scope.report.isCall = false ;
+    }
     if($routeParams.activity && $routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         $scope.fromConsult = true;
         $scope.step = "form";
@@ -30,6 +34,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         $scope.fromConsult = true;
         $scope.report.latlng = $routeParams.assets ;
         $scope.step = 'form';
+    }  else if ($routeParams.activity && !$routeParams.assets ){
+        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
     } else if($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)){
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets){
             $scope.report.assets = assets;
@@ -37,8 +43,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
                 $scope.$apply();
             }
         });
-    } else {
-        console.error('ERROR');
     }
 
     $scope.activityListChangeHandler = function(){
