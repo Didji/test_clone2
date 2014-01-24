@@ -554,7 +554,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $rootScope.stopConsultation = stopConsultation ;
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
-
+        console.log('ici');
         customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
 
         if(G3ME.assetsMarkers[asset.guid]){
