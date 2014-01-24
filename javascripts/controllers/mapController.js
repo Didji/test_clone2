@@ -58,14 +58,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     }
 
     $scope.consultationIsEnabled = false ;
-
-    $rootScope.rights = {
-        'report'   :  Smartgeo.getRight('report'),
-        'goto'     :  Smartgeo.getRight('goto'),
-        'planning' :  Smartgeo.getRight('planning'),
-        'logout'   :  Smartgeo.getRight('logout')
-    };
-
     Smartgeo.silentLogin(function(){
         G3ME.backgroundTile && G3ME.backgroundTile.redraw() ;
     });

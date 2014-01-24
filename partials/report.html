@@ -51,7 +51,7 @@
         <div ng-show="!reportForm.$valid" class="container panel text-danger">
             <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> <i18n>_REPORT_REQUIRED_FIELDS</i18n></p>
         </div>
-        <div class="panel panel-default report">
+        <div ng-show="rights.media" class="panel panel-default report">
             <div class="panel-heading">
                 <h4 class="panel-title"><i18n>_REPORT_MEDIA</i18n></h4>
             </div>

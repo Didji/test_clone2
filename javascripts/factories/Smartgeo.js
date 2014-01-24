@@ -816,6 +816,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
 
     Smartgeo._initializeGlobalEvents();
     window.Smartgeo = Smartgeo;
+    $rootScope.rights = window.smartgeoRightsManager ;
     return Smartgeo ;
 
 });
