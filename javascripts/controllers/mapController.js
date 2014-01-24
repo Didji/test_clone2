@@ -506,23 +506,20 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
         POSITION_MARKER.addTo(G3ME.map);
 
-        $(POSITION_MARKER._path).fadeOut(1500, function() {
+        $(POSITION_MARKER._path).fadeOut(3000, function() {
             G3ME.map.removeLayer(POSITION_MARKER);
         });
 
+        ANGLE_MARKER = new L.Marker(event.latlng, {icon: Icon.get('TARGET')});
+        ANGLE_MARKER.addTo(G3ME.map);
         if('heading' in event) {
-            ANGLE_MARKER = new L.Marker(event.latlng, {icon: L.divIcon({className: 'gi-compass'})});
-            ANGLE_MARKER.addTo(G3ME.map);
             ANGLE_MARKER._icon.innerHTML = '<div></div>';
             ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)';
         } else {
-            ANGLE_MARKER = new L.Marker(event.latlng);
-            ANGLE_MARKER.addTo(G3ME.map);
             $(ANGLE_MARKER._path).fadeOut(5000, function() {
                 G3ME.map.removeLayer(ANGLE_MARKER);
             });
         }
-
     }
 
 
@@ -554,7 +551,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $rootScope.stopConsultation = stopConsultation ;
 
     $scope.highlightAsset = function(asset, customMarker, customClickHandler){
-        console.log('ici');
         customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
 
         if(G3ME.assetsMarkers[asset.guid]){
