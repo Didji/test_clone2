@@ -20,7 +20,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $rootScope.site = null ;
         Smartgeo.clearPersistence();
         Smartgeo.clearIntervals();
-
+        $rootScope.STOP_POLLING = true ;
         if(window.SmartgeoChromium){
 
             if(!window.ChromiumCallbacks){

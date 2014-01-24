@@ -245,6 +245,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $scope.synchronize();
         });
         $scope.dayToDisplay =  Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
+
+        $rootScope.STOP_POLLING = false ;
         $scope.poll();
     };
 
@@ -257,10 +259,18 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      *
      */
      $scope.poll = function(){
+        if($rootScope.STOP_POLLING === true){
+            return ;
+        }
         Mission.poll()
-            .success(function(){
-                $scope.synchronize();
-                $scope.poll();
+            .success(function(data){
+                try {
+                    JSON.parse(data);
+                    $scope.synchronize();
+                    $scope.poll();
+                } catch(itsnotajson){
+                    $timeout($scope.poll, 5000);
+                }
             }).error(function(data, status){
                 $timeout($scope.poll, 5000);
             });
