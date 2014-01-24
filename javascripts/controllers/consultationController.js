@@ -73,13 +73,15 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
         $(".collapse").collapse({
             toggle: false
-        }).on('show.bs.collapse', function () {
-            $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
-        }).on('hide.bs.collapse', function () {
-            $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
         });
-    });
 
+        // $(document).on('show.bs.collapse', ".collapse", function(){
+        //     $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
+        // }).on('hide.bs.collapse', ".collapse", function(){
+        //     console.log('icii', $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
+        //     $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
+        // });
+    });
 
     $scope.gotoAsset = function(asset){
 
@@ -118,10 +120,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+lat+','+lng+'/');
     };
 
-
-
-
-
     $scope.zoomOnAsset = function(asset){
         $rootScope.$broadcast("ZOOM_ON_ASSET", asset);
 
@@ -134,6 +132,10 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope[($scope.state === 'open' ? 'close' : 'open')]() ;
     };
 
+    $scope.toggleAsset = function(asset){
+        asset.open = !asset.open;
+        $rootScope.$broadcast((asset.open ? "" : "UN") + "HIGHLIGHT_ASSET", asset);
+    };
 
     $scope.close = function(){
         G3ME.fullscreen();
@@ -148,14 +150,9 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $scope.state = 'open' ;
     };
 
-    $scope.toggleCollapse = function(event){
-        event.preventDefault();
-    };
-
     $scope.definedFilter = function(value){
         return true;
     };
-
 
     $scope.addAssetsToMission = function (asset, mission, $event){
         $event && $event.preventDefault();
