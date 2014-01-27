@@ -1,0 +1,20 @@
+{
+  "name": "smartgeo-mobile",
+  "version": "0.11.0",
+  "dependencies": {
+    "angular": "*",
+    "angular-spinner": "*",
+    "angular-mocks"  : "*",
+    "angular-resource"  : "*",
+    "angular-route"  : "*",
+    "angular-select2"  : "*",
+    "angular-strap"  : "*",
+    "angular-ui"  : "*",
+    "bootstrap"  : "*",
+    "jquery"  : "*",
+    "select2"  : "*",
+    "leaflet-dist"   : "*",
+    "leaflet.markercluster"   : "*",
+    "alertify.js"    : "*"
+  }
+}
