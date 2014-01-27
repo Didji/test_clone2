@@ -12,6 +12,7 @@
     "grunt-contrib-compress": "*",
     "grunt-contrib-uglify" : "*",
     "grunt-ngmin" : "*",
+    "grunt-plato" : "*",
     "grunt-eslint" : "*", 
     "httpster" : "*", 
     "plato" : "*"
