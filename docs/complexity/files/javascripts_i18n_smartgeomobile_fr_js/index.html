@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>javascripts/i18n/smartgeomobile_fr.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">39.81</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">111</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">2.18</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">0.73</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">window.smartgeo_i18n_lang[&#039;fr&#039;] = {
+        _AUTH_LOG_MESSAGE_INIT_             : &quot;Initialisation&quot;,
+        _AUTH_LOG_MESSAGE_REMOTE_           : &quot;Connexion distante&quot;,
+        _AUTH_LOG_MESSAGE_LOCAL_            : &quot;Connexion locale&quot;,
+        _AUTH_LOG_MESSAGE_CHECK_            : &quot;Vérification du serveur&quot;,
+        _AUTH_FORGET_PASSWORD_              : &quot;Oublier le mot de passe enregistré&quot;,
+        _AUTH_SETTINGS_                     : &quot;Paramètres&quot;,
+        _AUTH_CHANGE_GIMAP_URL_             : &quot;Changer de serveur&quot;,
+        _AUTH_REMEMBER_PASSWORD_            : &quot;Se souvenir du mot de passe&quot;,
+        _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : &quot;Le mode déconnecté n&#039;est pas disponible pour %s car il ne s&#039;est jamais authentifié en mode connecté.&quot;,
+        _AUTH_SERVER_UNREACHABLE            : &quot;Serveur injoignable&quot; ,
+        _AUTH_PLEASE_WAIT                   : &quot;Veuillez patienter ...&quot; ,
+        _AUTH_REQUIRED_FIELD_EMPTY          : &quot;Veuillez renseigner les champs utilisateur et mot de passe.&quot; ,
+        _AUTH_SERVER_ERROR                  : &quot;Une erreur est survenue (%s)&quot;, // status
+        _AUTH_INCORRECT_PASSWORD            : &quot;Mot de passe incorrect&quot;,
+
+        _G3ME_UNKNOWN_GEOMETRY              : &quot;Géometrie inconnue (%s)&quot;, // geom
+
+        _SMARTGEO_ONLINE                    : &quot;Smartgeo est connecté&quot; ,
+        _SMARTGEO_OFFLINE                   : &quot;Smartgeo est déconnecté&quot; ,
+        _SMARTGEO_ZERO_SITE_SELECTED        : &quot;Aucun site trouvé&quot; ,
+
+        _CONSULTATION_LOADING               : &quot;Chargement&quot; ,
+        _CONSULTATION_REPORT                : &quot;Compte rendu&quot; ,
+        _CONSULTATION_LOCATE                : &quot;Localiser&quot; ,
+        _CONSULTATION_GOTO                  : &quot;S&#039;y rendre&quot; ,
+        _CONSULTATION_REPORT_ON_POSITION    : &quot;Compte rendu sur cette position&quot; ,
+        _CONSULTATION_GPS_FAIL              : &quot;Erreur lors de la récupération des coordonnées GPS&quot; ,
+        _CONSULTATION_ADD_TO_               : &quot;Ajouter à &quot;,
+        _CONSULTATION_WRITE_FOR_            : &quot;Saisir pour &quot;,
+
+        _INSTALL_INSTALLING                 : &quot;Installation de &quot; ,
+        _INSTALL_IN_PROGRESS                : &quot;en cours&quot; ,
+
+        _UNINSTALL_UNINSTALLING             : &quot;Désinstallation de &quot; ,
+
+        _UPDATE_UPDATING                    : &quot;Mise à jour de &quot; ,
+
+        _MENU_CONSULTATION                  : &quot;Consultation&quot; ,
+        _MENU_PLANNING                      : &quot;Planning&quot; ,
+        _MENU_SEARCH                        : &quot;Recherche&quot; ,
+        _MENU_MY_POSITION                   : &quot;Ma position&quot; ,
+        _MENU_ACTIVE_LAYERS                 : &quot;Couches actives&quot; ,
+        _MENU_BACK                          : &quot;Retour&quot; ,
+        _MENU_REPORT                        : &quot;Compte rendu&quot; ,
+        _MENU_SYNC                          : &quot;Synchronisation&quot; ,
+        _MENU_LOGOUT                        : &quot;Déconnexion&quot; ,
+
+        _REPORT_REPORT                      : &quot;Compte rendu&quot; ,
+        _REPORT_CANCEL                      : &quot;Annuler&quot; ,
+        _REPORT_NEXT                        : &quot;Suivant&quot; ,
+        _REPORT_PREVIOUS                    : &quot;Précedent&quot; ,
+        _REPORT_REQUIRED_FIELDS             : &quot;Certains champs obligatoires ne sont pas renseignés.&quot; ,
+        _REPORT_MEDIA                       : &quot;Média&quot; ,
+        _REPORT_ADD_PICTURES                : &quot;Ajouter une photo&quot; ,
+        _REPORT_SAVE                        : &quot;Enregistrer&quot; ,
+        _REPORT_LOADING                     : &quot;Chargement&quot;,
+        _REPORT_DELETE                      : &quot;Supprimer&quot;,
+        _REPORT_SELECT_ACTIVITY             : &quot;Sélectionner activité&quot;,
+        _REPORT_SELECT_ASSETS               : &quot;Sélectionner patrimoine&quot;,
+
+        _SEARCH_SEARCH                      : &quot;Recherche&quot; ,
+        _SEARCH_ADVANCED_SEARCH             : &quot;Recherche avancée&quot; ,
+        _SEARCH_BACK                        : &quot;Retour&quot; ,
+        _SEARCH_TYPE                        : &quot;Type&quot; ,
+        _SEARCH_CRITERIA                    : &quot;Critères&quot; ,
+        _SEARCH_ERASE_CRITERIA              : &quot;Supprimer les critères&quot; ,
+        _SEARCH_SEARCH_IN_PROGRESS          : &quot;Recherche en cours&quot; ,
+        _SEARCH_SEARCH_NO_RESULT            : &quot;Aucun résultat&quot; ,
+        _SEARCH_PICK_OBJECT_TYPE            : &quot;Veuillez sélectionner un type d&#039;objet&quot; ,
+        _SEARCH_SEARCH_HAS_BEEN_CANCELED    : &quot;La recherche a été annulée&quot;,
+        _SEARCH_CANCEL_SEARCH               : &quot;Annuler&quot;,
+
+        _SITE_LOADING                       : &quot;Chargement&quot; ,
+        _SITE_UNINSTALL                     : &quot;Désinstallation de &quot; ,
+        _SITE_UPDATE                        : &quot;Mise à jour de &quot; ,
+
+        _SYNC_SYNC_EVERYTHING               : &quot;Tout synchoniser&quot; ,
+        _SYNC_SYNC                          : &quot;Synchroniser&quot; ,
+        _SYNC_DELETE                        : &quot;Supprimer&quot; ,
+        _SYNC_EVERYTHING_IS_SYNCED          : &quot;Tous les comptes rendus sont synchronisés.&quot; ,
+        _SYNC_UPDATE                        : &quot;Mettre à jour&quot; ,
+        _SYNC_UNINSTALL                     : &quot;Désinstaller&quot; ,
+        _SYNC_UNKNOWN_ERROR_                : &quot;Erreur inconnue lors de la synchronisation.&quot;,
+        _SYNC_UNINSTALL_CONFIRM_MESSAGE_    : &quot;Voulez vous désinstaller %s&quot;, // sitename
+
+        _INTENT_ZERO_SITE_SELECTED          : &quot;Aucun site trouvé&quot; ,
+        _INTENT_OBJECT_NOT_FOUND            : &quot;L&#039;objet n&#039;a pas été trouvé dans la base de données du terminal&quot; ,
+        _INTENT_AUTH_FAILED                 : &quot;L&#039;authentification a échoué (%s)&quot;, // status
+
+        _MAP_ZERO_SITE_SELECTED             : &quot;Aucun site trouvé&quot; ,
+        _MAP_ZERO_OBJECT_FOUND              : &quot;Aucun patrimoine dans cette zone&quot; ,
+        _MAP_MY_POSITION_CONTROL            : &quot;Ma position&quot; ,
+        _MAP_GPS_FAIL                       : &quot;Erreur lors de la récupération des coordonnées GPS&quot; ,
+        _MAP_CONSULTATION_CONTROL           : &quot;Consultation&quot;,
+
+        _PLANNING_SYNC_FAIL_                : &quot;Erreur lors de la mise à jour des missions&quot;,
+        _PLANNING_OBJECT_NOT_FOUND_         : &quot;Les objets de cette mission n&#039;ont pas été trouvés.&quot;,
+        _PLANNING_REFRESH_                  : &quot;Actualiser&quot;,
+        _PLANNING_START_                    : &quot;Démarrer&quot;,
+        _PLANNING_TODAY_                    : &quot;Aujourd&#039;hui&quot;,
+        _PLANNING_BEFORE_                   : &quot;Avant&quot;,
+        _PLANNING_DISPLAY_DONE_ASSETS_      : &quot;Afficher objets terminés&quot;,
+        _PLANNING_LOCATE_                   : &quot;Localiser&quot;,
+        _PLANNING_WRITE_                    : &quot;CR&quot;,
+        _PLANNING_FINISH_                   : &quot;terminé&quot;,
+        _PLANNING_REFRESHED_                : &quot;Actualisé il y a &quot;,
+        _PLANNING_DISPLAY_FINISHED_         : &quot;Afficher les OT terminés&quot;,
+        _PLANNING_NEW_MISSION_              : &quot; nouvelle mission&quot;,
+        _PLANNING_NEW_MISSIONS_             : &quot; nouvelles missions&quot;
+    };</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

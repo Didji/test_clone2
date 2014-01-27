@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>javascripts/controllers/nightTourController.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">69.72</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">369</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">35.59</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">2.50</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">angular.module(&#039;smartgeomobile&#039;).controller(&#039;nightTourController&#039;, function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report){
+
+    &#039;use strict&#039; ;
+
+    /**
+     * @ngdoc property
+     * @name nightTourController#_DRAG_THRESHOLD
+     * @propertyOf nightTourController
+     * @description
+     */
+    $scope._DRAG_THRESHOLD = 50 ;
+
+    $scope._OK_ASSET_ICON = L.icon({
+                            iconUrl         : &#039;javascripts/vendors/images/night-tour-ok.png&#039;,
+                            iconSize        : [65,  89],
+                            iconAnchor      : [32,  89],
+                        });
+    $scope._KO_ASSET_ICON = L.icon({
+                            iconUrl         : &#039;javascripts/vendors/images/night-tour-ko.png&#039;,
+                            iconSize        : [65,  89],
+                            iconAnchor      : [32,  89],
+                        }),
+    $scope._DONE_ASSET_ICON = L.icon({
+                            iconUrl         : &#039;javascripts/vendors/images/night-tour-done.png&#039;,
+                            iconSize        : [30,  42],
+                            iconAnchor      : [15,  42],
+                        });
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#initialize
+     * @methodOf nightTourController
+     * @description
+     */
+    $scope.initialize = function(){
+        $rootScope.nightTourInProgress  = false;
+        $scope.state  = &#039;closed&#039;;
+        $scope.$on(&quot;START_NIGHT_TOUR&quot;, $scope.startNightTour);
+        $scope.$watch(&#039;nightTourInProgress&#039;, function(newval, oldval) {
+            if(newval === true){
+                $scope.startFollowingPosition();
+                $scope.open();
+            } else {
+                $scope.stopFollowingPosition();
+                if(oldval === true){
+                    $rootScope.openLeftMenu();
+                }
+                $scope.close();
+            }
+        });
+
+        $scope.$on(&quot;TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR&quot;, $scope.toggleAsset);
+
+
+        $scope.$watch(&#039;nightTourRecording&#039;, function(newval, oldval) {
+            $scope.isFollowingMe = newval;
+        });
+        $scope.$watch(&#039;isFollowingMe&#039;, function(newval, oldval) {
+            $scope[(newval === true ? &#039;start&#039; : &#039;stop&#039;) + &#039;FollowingPosition&#039;]();
+        });
+
+        G3ME.map.on(&#039;dragend&#039;, function(event){
+            if(event.distance &gt; $scope._DRAG_THRESHOLD){
+                $scope.isFollowingMe = false ;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
+        });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#startFollowingPosition
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.startFollowingPosition = function(){
+        $scope.stopFollowingPosition();
+        Smartgeo.registerInterval(&#039;WATCH_INTERVAL&#039;, function(){
+            $scope.whereIAm();
+        }, 3000);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#stopFollowingPosition
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.stopFollowingPosition = function(){
+        $rootScope.$broadcast(&#039;__MAP_UNHIGHTLIGHT_MY_POSITION&#039;, $scope.mission);
+        Smartgeo.clearInterval(&#039;WATCH_INTERVAL&#039;);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#whereIAm
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.whereIAm = function(){
+        Smartgeo.getUsersLocation(function(lat, lng /*, alt*/){
+            $rootScope.$broadcast(&#039;__MAP_HIGHTLIGHT_MY_POSITION&#039;, lat, lng);
+            $scope.addPositionToTrace( lat, lng);
+        });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#addPositionToTrace
+     * @methodOf nightTourController
+     * @param {float} lat Point&#039;s latitude
+     * @param {float} lng Point&#039;s longitude
+     * @description
+     *
+     */
+    $scope.addPositionToTrace = function(lat, lng){
+        if(!$scope.mission){
+            return alertify.error(&quot;Erreur : aucune tournée en cours&quot;);
+        }
+        if(!$scope.nightTourRecording){
+            return ;
+        }
+        var traces = Smartgeo.get(&#039;traces&#039;) || {},
+            currentTrace = traces[$scope.mission.id] || [] ;
+        currentTrace.push([lng,lat]);
+        traces[$scope.mission.id] = currentTrace ;
+        Smartgeo.set(&#039;traces&#039;, traces);
+        $scope.mission.trace = currentTrace ;
+        $rootScope.$broadcast(&#039;__MAP_DISPLAY_TRACE__&#039;, $scope.mission);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#resumeNightTour
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.resumeNightTour = function(){
+        $rootScope.nightTourRecording  = true;
+        $scope.stopFollowingPosition();
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#pauseNightTour
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.pauseNightTour = function(){
+        $rootScope.nightTourRecording  = false;
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#closeNightTour
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.closeNightTour = function(){
+        alertify.confirm(&#039;Clôturer la tournée de nuit ?&#039;, function(yes){
+            if(!yes){
+                return ;
+            }
+            var ok = [], ko = [], asset ;
+            for(var i in $scope.assetsCache){
+                asset = $scope.assetsCache[i] ;
+                (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
+            }
+            $scope.mission.displayDone = false ;
+            $scope.stopNightTour(ok, ko);
+        });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#stopNightTour
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.stopNightTour = function(ok ,ko){
+        $rootScope.nightTourInProgress = false;
+        $rootScope.nightTourRecording  = false;
+        $scope.stopFollowingPosition();
+        $rootScope.$broadcast(&#039;__MAP_UNHIGHTLIGHT_MY_POSITION&#039;, $scope.mission);
+        ok = ok || [] ;
+        ko = ko || [] ;
+        var asset ;
+
+        if( (ko.length + ok.length) === 0 ) for(var i in $scope.assetsCache){
+            asset = $scope.assetsCache[i] ;
+            if(asset.isWorking !== undefined){
+                (asset.isWorking === true ? ok : ko ).push(asset.guid);
+            }
+        }
+        $scope.sendOkReports(ok, function(){
+            $scope.sendKoReports(ko, function(){
+                $route.reload();
+            });
+        });
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#sendOkReports
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.sendOkReports = function(ok, callback){
+        callback = callback || function(){};
+
+        if(!ok.length){
+            return callback();
+        }
+
+        var report = {
+            assets   : ok,
+            fields   : {},
+            mission  : $scope.mission.id,
+            activity : $scope.mission.activity.id,
+            uuid     : Smartgeo.uuid()
+        };
+        report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
+        Report.save(report).then(null, null, callback);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#sendKoReports
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.sendKoReports = function(ko, callback){
+        callback = callback || function(){};
+        if(!ko.length){
+            return callback();
+        }
+        var report = {
+            assets: ko,
+            fields: {},
+            mission : $scope.mission.id,
+            activity: $scope.mission.activity.id,
+            uuid : Smartgeo.uuid()
+        };
+        report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
+        Report.save(report).then(null, null, callback);
+    };
+
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#startNightTour
+     * @methodOf nightTourController
+     * @param {object} event        This method is called by event, so first argument is this event
+     * @param {object} mission      This parameter MUST BE a night tour
+     * @param {array}  assetsCache  Array of mission&#039;s assets, fetched from database
+     * @description
+     *
+     */
+    $scope.startNightTour = function(event, mission, assetsCache) {
+
+        $rootScope.stopConsultation();
+
+        if($rootScope.nightTourInProgress){
+            return alertify.error(&quot;Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée.&quot;);
+        } else if($rootScope.site.activities._byId[mission.activity.id].type !== &quot;night_tour&quot;){
+            return alertify.error(&quot;Erreur : L&#039;activité de cette mission n&#039;est pas une tournée de nuit.&quot;);
+        }
+
+        $scope.activity = $rootScope.site.activities._byId[mission.activity.id];
+
+        $scope.assetsCache   = assetsCache ;
+        $scope.mission       = mission;
+        $scope.isFollowingMe = true ;
+
+        $rootScope.closeLeftMenu();
+        $rootScope.nightTourInProgress  = true;
+        $rootScope.nightTourRecording   = true;
+
+        $scope.open();
+
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
+
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#close
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.close = function(){
+        // WARNING UGLY UGLY ALERT
+        $scope.state = &#039;closed&#039;;
+        G3ME.fullscreen();
+
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#open
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.open = function(){
+        // WARNING UGLY UGLY ALERT
+        $scope.state = &#039;open&#039; ;
+        G3ME.reduceMapWidth(300);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#togglePanel
+     * @methodOf nightTourController
+     * @description
+     *
+     */
+    $scope.togglePanel = function(){
+        $scope[($scope.state === &#039;open&#039; ? &#039;close&#039; : &#039;open&#039;)]() ;
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#locateMission
+     * @methodOf nightTourController
+     * @description
+     * Set map view to the mission&#039;s extent. If mission has no extent yet, it set it.
+     */
+    $scope.locateMission = function(){
+        if(!$scope.mission.extent){
+            $scope.mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[$scope.mission.id]);
+        }
+        $rootScope.$broadcast(&#039;__MAP_SETVIEW__&#039;, $scope.mission.extent);
+    };
+
+    /**
+     * @ngdoc method
+     * @name nightTourController#toggleAsset
+     * @methodOf nightTourController
+     * @param {object} event        This method is called by event, so first argument is this event
+     * @param {object} mission      This parameter MUST BE a night tour
+     * @param {array}  asset        Clicked asset on map (contains marker)
+     * @description
+     *
+     */
+    $scope.toggleAsset = function(event, mission, asset){
+        if(!$rootScope.nightTourRecording){
+            // TODO: afficher une popup pour signaler que la tournée n&#039;est pas en cours
+            return ;
+        }
+        asset.isWorking =   (asset.isWorking === undefined ? false : !asset.isWorking);
+        asset.marker.setIcon(asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON);
+    };
+
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
