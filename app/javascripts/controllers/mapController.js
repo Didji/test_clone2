@@ -316,7 +316,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
             (function(i,marker){
-                marker.on('click', function(){
+                marker.on('click dblclick', function(event){
                     clickHandler(mission.id, i);
                 });
             })(i, assetsCache[i].marker);

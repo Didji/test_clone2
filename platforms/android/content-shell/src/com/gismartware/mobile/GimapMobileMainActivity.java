@@ -65,7 +65,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibraryConstants
  * Activity for managing the Content Shell.
  */
 public class GimapMobileMainActivity extends Activity {
-	
+
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
 	private static final String INSTALL_ZIP_FILE = MESSAGES.getString("install.zip.file");
 	private static final String INTENT_DEST_URL_PREFIX = GimapMobileApplication.DEFAULT_URL + MESSAGES.getString("intent.controler.url.prefix");
@@ -81,19 +81,19 @@ public class GimapMobileMainActivity extends Activity {
 
     private static final boolean NEED_LOGGER = Boolean.valueOf(MESSAGES.getString("logger.needed"));
 	private AuthPreferences authPreferences;
-	
+
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {
         "--allow-file-access-from-files", "--disable-web-security", "--no-sandbox", "--enable-accelerated-2d-canvas"};
-    
+
     private static final String TAG = "GimapMobile";
 
     private static final String ACTIVE_SHELL_URL_KEY = "activeUrl";
     private static final String ACTION_START_TRACE = "org.chromium.content_shell.action.PROFILE_START";
     private static final String ACTION_STOP_TRACE = "org.chromium.content_shell.action.PROFILE_STOP";
     public static final String COMMAND_LINE_ARGS_KEY = "commandLineArgs";
-    
-    
+
+
     /**
      * Sending an intent with this action will simulate a memory pressure signal at a critical
      * level.
@@ -110,15 +110,15 @@ public class GimapMobileMainActivity extends Activity {
     private ShellManager mShellManager;
     private WindowAndroid mWindowAndroid;
     private BroadcastReceiver mReceiver;
-    
+
     private boolean isConnected;
     private String lastPicturePath;
-    
-    
+
+
     @Override
 	public void onDestroy() {
     	super.onDestroy();
-    	
+
     	if (networkChangeReceiver != null) {
     		unregisterReceiver(networkChangeReceiver);
     		networkChangeReceiver = null;
@@ -130,7 +130,7 @@ public class GimapMobileMainActivity extends Activity {
     		Log.w(TAG, "Impossible to uninstall Smartgeo.");
     	}
 	}
-    
+
     private void installIfNeeded() {
     	//TODO: check it install needed (find a way)
     	//TODO: delete folder before install?
@@ -151,13 +151,13 @@ public class GimapMobileMainActivity extends Activity {
 			zip.delete();
 		}
     }
-    
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         installIfNeeded();
-        
+
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
             /*CommandLine.initFromFile(COMMAND_LINE_FILE);
@@ -206,7 +206,7 @@ public class GimapMobileMainActivity extends Activity {
 
         LocationLibrary.forceLocationUpdate(GimapMobileMainActivity.this);
     }
-    
+
     private void oauthRequestAccount() {
     	//y a t il un filtrage de compte � effectuer?
     	if (FILTER_ACCOUNT) {
@@ -234,7 +234,7 @@ public class GimapMobileMainActivity extends Activity {
 			startActivityForResult(intent, ActivityCode.ACCOUNT_CHOOSE.getCode());
 		}
     }
-    
+
     private void finishActivityInit() {
     	String startupUrl = getIntentUrl(getIntent());
         if (startupUrl != null) {
@@ -248,12 +248,12 @@ public class GimapMobileMainActivity extends Activity {
         		mShellManager.setStartupUrl("file://" + url.toString());
         	}
         }
-        
+
         ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNw = cm.getActiveNetworkInfo ();
         isConnected = (activeNw != null && activeNw.isConnected());
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        
+
         /*if (!TextUtils.isEmpty(startupUrl)) {
             mShellManager.setStartupUrl(Shell.sanitizeUrl(startupUrl));
         }*/
@@ -284,7 +284,7 @@ public class GimapMobileMainActivity extends Activity {
         if (shellUrl == null) {
         	shellUrl = ShellManager.DEFAULT_SHELL_URL;
         }
-        
+
         /*if (savedInstanceState != null && savedInstanceState.containsKey(ACTIVE_SHELL_URL_KEY)) {
             shellUrl = savedInstanceState.getString(ACTIVE_SHELL_URL_KEY);
         }*/
@@ -341,7 +341,7 @@ public class GimapMobileMainActivity extends Activity {
         } else {
         	url = getUrlFromIntent(intent);
         }
-        
+
         if (!TextUtils.isEmpty(url)) {
             Shell activeView = getActiveShell();
             if (activeView != null) {
@@ -401,10 +401,10 @@ public class GimapMobileMainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
-            //Toast.makeText(context, "BroadcastReceiver#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
-            //final LocationInfo locationInfo = new LocationInfo(context) ;
-            //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
-            getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
+
+            if (getActiveShell() != null && getActiveShell().getContentView() != null) {
+                getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
+            }
         }
     };
 
@@ -417,7 +417,7 @@ public class GimapMobileMainActivity extends Activity {
     	} else {
     		Log.d(TAG, "[onActivityResult] resultCode=" + resultCode + " on requestCode=" + requestCode);
     	}
-    	
+
     	if (resultCode == RESULT_OK) {
 			if (requestCode == ActivityCode.OAUTH_AUTHORIZATION.getCode()) {
 				requestToken();
@@ -451,7 +451,7 @@ public class GimapMobileMainActivity extends Activity {
 					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[2]();");
 				} else {
 					Log.d(TAG, location.toString());
-					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + 
+					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" +
 							location.getLongitude() + "," +  location.getLatitude() +", " + location.getAltitude() + ");");
 				}
 			}
@@ -462,7 +462,7 @@ public class GimapMobileMainActivity extends Activity {
 				getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[3]();");
 			}
 		}
-    	
+
         super.onActivityResult(requestCode, resultCode, intent);
         mWindowAndroid.onActivityResult(requestCode, resultCode, intent);
     }
@@ -498,10 +498,10 @@ public class GimapMobileMainActivity extends Activity {
         Shell shell = getActiveShell();
         return shell != null ? shell.getContentView() : null;
     }
-    
+
     /**
 	 * M�thode de mapping des urls des intents.
-	 * 
+	 *
 	 * @param intent l'intent dont on veut mapper l'url
 	 * @return l'url cible
 	 */
@@ -509,18 +509,18 @@ public class GimapMobileMainActivity extends Activity {
 		if (intent == null || intent.getData() == null) {
 			return null;
 		}
-		
+
 		StringBuffer url = new StringBuffer(INTENT_DEST_URL_PREFIX);
-		
+
 		//controler en premier..
 		url.append(intent.getData().getHost());
-		
-		//ATTENTION!! R�cup�rer dataString sinon des caract�res sautent avec getData().getQuery() car les valeurs dans l'URL peuvent 
+
+		//ATTENTION!! R�cup�rer dataString sinon des caract�res sautent avec getData().getQuery() car les valeurs dans l'URL peuvent
 		//contenir des #, ce qui fait partie des "fragments" dans la spec de la classe Uri, et non de la query...
 		String[] urlParts = intent.getDataString().split("\\?");
-		
+
 		boolean appendedParams = false;
-		
+
 		if (urlParts.length > 1) {
 			//on recupere la query "� la main" (split), cad apres le "?"
 			//il peut y avoir plusieurs parties (du au url redirect dans les parametres qui peuvent contenir des "?")
@@ -528,19 +528,19 @@ public class GimapMobileMainActivity extends Activity {
 			for (int i = 2; i < urlParts.length; i++) {
 				intentUrl.append("?").append(urlParts[i]);
 			}
-			
+
 			String[] params = intentUrl.toString().split("&");
 			if (params != null && params.length > 0) {
 				url.append("?");
 				appendedParams = true;
-				
+
 				Pattern hook = Pattern.compile(MESSAGES.getString("intent.controler.url.params.composite.regexp"));
-				
+
 				for (int i = 0; i < params.length; i++) {
 					String[] param = params[i].split("=");
-					
+
 					String paramName = param[0];
-					
+
 					//Est ce un champ compos�? (exemple : fields[###564654###]=250
 					boolean composite = false;
 					Matcher matcher = hook.matcher(paramName);
@@ -548,7 +548,7 @@ public class GimapMobileMainActivity extends Activity {
 						composite = true;
 						paramName = matcher.group(1);
 					}
-					
+
 					//un param�tre source peut etre positionn� dans plusieurs param�tres cible :
 					String[] destParams = MESSAGES.getString(paramName).split(",");
 					for (int j = 0; j < destParams.length; j++) {
@@ -557,13 +557,13 @@ public class GimapMobileMainActivity extends Activity {
 							url.append(matcher.group(2));
 						}
 						url.append("=").append(param[1]);
-						
+
 						//ajout du "&" si plusieurs param�tres cible pour le param�tre source courant
 						if (j < (destParams.length - 1)) {
 							url.append("&");
 						}
 					}
-					
+
 					//ajout du "&" s'il reste des param�tres dans la query principale
 					if (i < (params.length - 1)) {
 						url.append("&");
@@ -571,7 +571,7 @@ public class GimapMobileMainActivity extends Activity {
 				}
 			}
 		}
-		
+
 		//ajout du token � la fin, rien si inexistant
 		if (authPreferences.getToken() != null) {
 			if (appendedParams) {
@@ -583,7 +583,7 @@ public class GimapMobileMainActivity extends Activity {
 		}
 		return url.toString();
 	}
-	
+
 	private void requestToken() {
 		AccountManager accountManager = AccountManager.get(this);
 		Account userAccount = null;
@@ -597,7 +597,7 @@ public class GimapMobileMainActivity extends Activity {
 		}
 		accountManager.getAuthToken(userAccount, "oauth2:" + SCOPE, null, this, new OnTokenAcquired(), null);
 	}
-	
+
 	private void invalidateToken() {
 		String user = authPreferences.getUser();
 		if (user != null) {
@@ -605,12 +605,12 @@ public class GimapMobileMainActivity extends Activity {
 		} else {
 			Log.d(TAG, "[OAUTH] Invalidate token " + authPreferences.getToken());
 		}
-		
+
 		AccountManager accountManager = AccountManager.get(this);
 		accountManager.invalidateAuthToken(GOOGLE_ACCOUNT_TYPE, authPreferences.getToken());
 		authPreferences.setToken(null);
 	}
-	
+
 	private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
 		@Override
 		public void run(AccountManagerFuture<Bundle> result) {
@@ -625,7 +625,7 @@ public class GimapMobileMainActivity extends Activity {
 					String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 					Log.d(TAG, "[OAUTH] Token received : " + token + " for user " + name);
 					authPreferences.setToken(token);
-					
+
 					finishActivityInit();
 				}
 			} catch (Exception e) {
@@ -634,7 +634,7 @@ public class GimapMobileMainActivity extends Activity {
 			}
 		}
 	}
-	
+
 	public String getRealPathFromURI(Uri contentUri) {
         String[] proj= { MediaStore.Images.Media.DATA };
         Cursor cursor = this.getContentResolver().query(contentUri,
@@ -647,14 +647,14 @@ public class GimapMobileMainActivity extends Activity {
 
         return cursor.getString(column_index);
 	}
-	
+
 	private class IsTokenValidTask extends AsyncTask<String, Void, Boolean> {
 		protected Boolean doInBackground(String... token) {
 			try {
 				URL url = new URL(MESSAGES.getString("auth.specific.url") + token[0]);
 				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				int serverCode = con.getResponseCode();
-				
+
 				if (serverCode != 200) { //token plus bon
 					return false;
 				}
@@ -662,10 +662,10 @@ public class GimapMobileMainActivity extends Activity {
 			} catch (IOException e) {
 				Log.e(TAG, "Erreur de verification de token", e);
 				return false;
-			}	
+			}
 		}
 	}
-	
+
 	private boolean isTokenValid(String token) {
 		try {
 			return new IsTokenValidTask().execute(token).get();
@@ -679,9 +679,9 @@ public class GimapMobileMainActivity extends Activity {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
     		final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    		
+
 			NetworkInfo activeNw = connMgr.getActiveNetworkInfo();
-			
+
 			if ((activeNw != null && activeNw.isConnected()) && !isConnected) {
 				isConnected = true;
 

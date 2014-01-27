@@ -8,7 +8,7 @@
         <label><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="rememberme"></label>
         <hr>
         <button class="btn btn-lg btn-primary btn-block has-spinner" ng-class='{active:!readyToLog && !firstAuth}' type="submit"
-                ng-disabled=" !readyToLog || (!readyToLog && !firstAuth) || (firstAuth && !gimapUrl)">
+                ng-disabled="(!readyToLog && !firstAuth) || (firstAuth && !gimapUrl)">
             <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
             {{ logMessage | i18n }}
         </button>

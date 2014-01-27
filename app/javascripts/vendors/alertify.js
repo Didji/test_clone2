@@ -92,7 +92,7 @@
 			 */
 			labels : {
 				ok     : "OK",
-				cancel : "Annuler"
+				cancel : "Cancel"
 			},
 
 			/**

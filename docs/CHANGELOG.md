@@ -1,3 +1,6 @@
+`git log v0.9.1..v0.9.2 --no-merges --date=short --format=" * [%ad](https://github.com/gismartwaredev/smartgeomobile/commit/%h) - %s [%an](https://github.com/%an)" >> CHANGELOG.md`
+
+
 ### changelog v0.9.2 - 28/10/2013
 
 `git log v0.9.1..v0.9.2 --no-merges --date=short --format=" * [%h](https://github.com/gismartwaredev/smartgeomobile/commit/%h) - %s [%an](https://github.com/%an)" >> CHANGELOG.md`
