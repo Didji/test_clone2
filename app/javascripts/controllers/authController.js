@@ -84,10 +84,8 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
 
         $scope.readyToLog = false;
         $scope.logMessage = "_AUTH_PLEASE_WAIT";
-        console.log('ici');
         Smartgeo.login(encodeURIComponent($scope.username), encodeURIComponent($scope.pwd),
             function(){
-        console.log('ici');
                 var knownUsers = Smartgeo.get('knownUsers') || {} ;
                     knownUsers[$scope.username] = $scope.pwd;
                 Smartgeo.set('knownUsers', knownUsers);
@@ -98,7 +96,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 $scope.lastuser.username = $scope.username;
                 Smartgeo.set('user',$scope.lastuser);
                 $location.path('sites');
-            console.log('ici');
             },loginFailed);
     };
 
