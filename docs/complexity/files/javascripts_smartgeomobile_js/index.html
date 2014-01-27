@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>javascripts/smartgeomobile.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">66.95</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">256</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">33.41</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">3.21</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">/*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
+
+var smartgeomobile = angular.module(&quot;smartgeomobile&quot;, [&quot;ngRoute&quot;,&quot;ui.bootstrap&quot;, &quot;ui.select2&quot;, &quot;angularSpinner&quot;])
+       .config([&quot;$routeProvider&quot;, function($routeProvider) {
+            &quot;use strict&quot;;
+            $routeProvider.
+                when(&quot;/&quot;,                                       {templateUrl: &quot;partials/login.html&quot;}).
+                when(&quot;/sites/&quot;,                                 {templateUrl: &quot;partials/sites.html&quot;}).
+
+                when(&quot;/report/:site&quot;,                           {templateUrl: &quot;partials/report.html&quot;}).
+                when(&quot;/report/:site/:activity&quot;,                 {templateUrl: &quot;partials/report.html&quot;}).
+                when(&quot;/report/:site/:activity/:assets&quot;,         {templateUrl: &quot;partials/report.html&quot;}).
+                when(&quot;/report/:site/:activity/:assets/:mission&quot;,{templateUrl: &quot;partials/report.html&quot;}).
+
+                when(&quot;/report/:site/undefined/:assets/:mission&quot;,{templateUrl: &quot;partials/report.html&quot;}).
+
+                when(&quot;/sites/install/:site&quot;,                    {templateUrl: &quot;partials/installation.html&quot;}).
+                when(&quot;/sites/uninstall/:site&quot;,                  {templateUrl: &quot;partials/uninstall.html&quot;}).
+                when(&quot;/sites/update/:site&quot;,                     {templateUrl: &quot;partials/update.html&quot;}).
+                when(&quot;/map/:site&quot;,                              {templateUrl: &quot;partials/map.html&quot;}).
+                when(&quot;/intent/:controller/?:args&quot;,              {templateUrl: &quot;partials/intent.html&quot;}).
+
+                otherwise({template: &quot; &quot;,  controller: function($location){
+                    $location.path(&quot;/&quot;);
+                }});
+
+    }]).config([&quot;$httpProvider&quot;, function($httpProvider) {
+        &quot;use strict&quot;;
+        $httpProvider.defaults.withCredentials = true;
+        $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.cache = false;
+    }]).directive(&quot;camera&quot;, function() {
+        &quot;use strict&quot;;
+        return {
+            restrict: &quot;A&quot;,
+            require: &quot;ngModel&quot;,
+            link: function(scope, elm, attrs, ctrl) {
+                attrs = attrs ;
+                elm.on(&quot;click&quot;, function() {
+                    scope.$apply(function(){
+                        scope.isTakingPhoto = true ;
+                    });
+                    navigator.getMedia = ( navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia ||
+                         navigator.msGetUserMedia);
+
+                    if (window.SmartgeoChromium &amp;&amp; SmartgeoChromium.launchCamera){
+                        if(!window.ChromiumCallbacks){
+                            window.ChromiumCallbacks = [];
+                        }
+                        window.ChromiumCallbacks[1] = function(path){
+                            var imageElement = document.createElement(&quot;img&quot;);
+                            imageElement.src = path;
+                            imageElement.onload = function(){
+                                var canvasElement = document.createElement(&quot;canvas&quot;);
+                                canvasElement.width = imageElement.width;
+                                canvasElement.height = imageElement.height;
+                                canvasElement.getContext(&quot;2d&quot;).drawImage(imageElement, 0, 0);
+                                scope.$apply(function(){
+                                    ctrl.$viewValue = ctrl.$viewValue || [];
+                                    ctrl.$viewValue.push({
+                                        content:canvasElement.toDataURL(&quot;image/png&quot;)
+                                    });
+                                scope.isTakingPhoto = false ;
+                                });
+                            };
+                            window.ChromiumCallbacks[3] = function(){
+                                scope.$apply(function(){
+                                    scope.isTakingPhoto = false ;
+                                });
+                            };
+                        };
+                        window.ChromiumCallbacks[3] = function(){
+                            scope.$apply(function(){
+                                scope.isTakingPhoto = false ;
+                            });
+                        };
+                        SmartgeoChromium.launchCamera(1);
+
+                    } else if(navigator.getMedia){
+                        var streaming = false,
+                            video     = document.createElement(&quot;video&quot;),
+                            canvas    = document.createElement(&quot;canvas&quot;),
+                            width     = 320,
+                            height    = 0;
+
+                        navigator.getMedia({
+                                video: true,
+                                audio: false
+                            }, function(stream) {
+                                if (navigator.mozGetUserMedia) {
+                                    video.mozSrcObject = stream;
+                                } else {
+                                    var vendorURL = window.URL || window.webkitURL;
+                                    video.src = vendorURL.createObjectURL(stream);
+                                }
+                                video.play();
+                            }, function(err) {
+                                var imageElement2 = document.createElement(&quot;img&quot;);
+                                imageElement2.src = &quot;http://placehold.it/350x150&quot;;
+                                imageElement2.onload = function(){
+                                    var canvasElement = document.createElement(&quot;canvas&quot;);
+                                    canvasElement.width = imageElement2.width;
+                                    canvasElement.height = imageElement2.height;
+                                    canvasElement.getContext(&quot;2d&quot;).drawImage(imageElement2, 0, 0);
+                                    scope.$apply(function(){
+                                        ctrl.$viewValue = ctrl.$viewValue || [];
+                                        ctrl.$viewValue.push({
+                                            content:canvasElement.toDataURL(&quot;image/png&quot;)
+                                        });
+                                        scope.isTakingPhoto = false ;
+                                    });
+                                };
+                            }
+                        );
+
+                        video.addEventListener(&quot;canplay&quot;, function(ev){
+                            if (!streaming) {
+                                height = video.videoHeight / (video.videoWidth / width);
+                                video.setAttribute(&quot;width&quot;, width);
+                                video.setAttribute(&quot;height&quot;, height);
+                                canvas.setAttribute(&quot;width&quot;, width);
+                                canvas.setAttribute(&quot;height&quot;, height);
+                                streaming = true;
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            canvas.getContext(&quot;2d&quot;).drawImage(video, 0, 0, width, height);
+
+                            scope.$apply(function(){
+                                ctrl.$viewValue = ctrl.$viewValue || [];
+                                ctrl.$viewValue.push({
+                                    content:canvas.toDataURL(&quot;image/png&quot;)
+                                });
+                                scope.isTakingPhoto = false ;
+                            });
+
+                        }, false);
+
+                    } else if(navigator.camera){
+                        navigator.camera.getPicture(function (imageURI) {
+                            scope.$apply(function(){
+                                ctrl.$viewValue = ctrl.$viewValue || [];
+                                ctrl.$viewValue.push({
+                                    content:imageURI
+                                });
+                                scope.isTakingPhoto = false ;
+                            });
+                        }, function (err) {
+                            ctrl.$setValidity(&quot;error&quot;, false);
+                        },{
+                            quality: 100,
+                            sourceType: navigator.camera.PictureSourceType.CAMERA,
+                            mediaType: navigator.camera.MediaType.PICTURE,
+                            destinationType: Camera.DestinationType.FILE_URI,
+                            correctOrientation: false,
+                            saveToPhotoAlbum: true
+                        });
+                    } else {
+                        var img = document.createElement(&quot;img&quot;);
+                        img.src = &quot;http://placehold.it/350x150&quot;;
+                        img.onload = function(){
+                            var canvasElement2 = document.createElement(&quot;canvas&quot;);
+                            canvasElement2.width = img.width;
+                            canvasElement2.height = img.height;
+                            canvasElement2.getContext(&quot;2d&quot;).drawImage(img, 0, 0);
+                            scope.$apply(function(){
+                                ctrl.$viewValue = ctrl.$viewValue || [];
+                                ctrl.$viewValue.push({
+                                    content:canvasElement2.toDataURL(&quot;image/png&quot;)
+                                });
+                                scope.isTakingPhoto = false ;
+                            });
+                        };
+                    }
+                });
+            }
+        };
+    }).filter(&quot;timeago&quot;, function() {
+        &quot;use strict&quot;;
+        return function(input, PAllowFuture) {
+            var nowTime = (new Date()).getTime(),
+                date = (new Date(input)).getTime(),
+                dateDifference = nowTime - date,
+                substitute = function(stringOrFunction, number, strings) {
+                var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, dateDifference) : stringOrFunction;
+                var value = (strings.numbers &amp;&amp; strings.numbers[number]) || number;
+                return string.replace(/%d/i, value);
+            },
+                //refreshMillis= 6e4, //A minute
+                allowFuture = PAllowFuture || false,
+                // strings = {
+                //     prefixAgo: null,
+                //     prefixFromNow: null,
+                //     suffixAgo: &quot;ago&quot;,
+                //     suffixFromNow: &quot;from now&quot;,
+                //     seconds: &quot;less than a minute&quot;,
+                //     minute: &quot;about a minute&quot;,
+                //     minutes: &quot;%d minutes&quot;,
+                //     hour: &quot;about an hour&quot;,
+                //     hours: &quot;about %d hours&quot;,
+                //     day: &quot;a day&quot;,
+                //     days: &quot;%d days&quot;,
+                //     month: &quot;about a month&quot;,
+                //     months: &quot;%d months&quot;,
+                //     year: &quot;about a year&quot;,
+                //     years: &quot;%d years&quot;
+                // },
+                strings = {
+                    prefixAgo: null,
+                    prefixFromNow: null,
+                    suffixAgo: null,
+                    suffixFromNow: null,
+                    seconds: &quot;moins d&#039;une minute&quot;,
+                    minute: &quot;une minute&quot;,
+                    minutes: &quot;%d minutes&quot;,
+                    hour: &quot;une heure&quot;,
+                    hours: &quot;%d heures&quot;,
+                    day: &quot;un jour&quot;,
+                    days: &quot;%d jours&quot;,
+                    month: &quot;un mois&quot;,
+                    months: &quot;%d mois&quot;,
+                    year: &quot;un an&quot;,
+                    years: &quot;%d ans&quot;
+                },
+                words,
+                seconds = Math.abs(dateDifference) / 1000,
+                minutes = seconds / 60,
+                hours = minutes / 60,
+                days = hours / 24,
+                years = days / 365,
+                separator = strings.wordSeparator === undefined ? &quot; &quot; : strings.wordSeparator,
+                prefix = strings.prefixAgo,
+                suffix = strings.suffixAgo;
+
+            if (allowFuture) {
+                if (dateDifference &lt; 0) {
+                    prefix = strings.prefixFromNow;
+                    suffix = strings.suffixFromNow;
+                }
+            }
+
+            words = seconds &lt; 45 &amp;&amp; substitute(strings.seconds, Math.round(seconds), strings) ||
+                seconds &lt; 90 &amp;&amp; substitute(strings.minute, 1, strings) ||
+                minutes &lt; 45 &amp;&amp; substitute(strings.minutes, Math.round(minutes), strings) ||
+                minutes &lt; 90 &amp;&amp; substitute(strings.hour, 1, strings) ||
+                hours &lt; 24 &amp;&amp; substitute(strings.hours, Math.round(hours), strings) ||
+                hours &lt; 42 &amp;&amp; substitute(strings.day, 1, strings) ||
+                days &lt; 30 &amp;&amp; substitute(strings.days, Math.round(days), strings) ||
+                days &lt; 45 &amp;&amp; substitute(strings.month, 1, strings) ||
+                days &lt; 365 &amp;&amp; substitute(strings.months, Math.round(days / 30), strings) ||
+                years &lt; 1.5 &amp;&amp; substitute(strings.year, 1, strings) ||
+                substitute(strings.years, Math.round(years), strings);
+
+            return $.trim([prefix, words, suffix].join(separator));
+        };
+    });</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
