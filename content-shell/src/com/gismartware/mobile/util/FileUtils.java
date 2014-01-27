@@ -15,8 +15,6 @@ import java.util.zip.ZipFile;
 public abstract class FileUtils {
 	
 	/**
-	 * Copie d'un flux vers un fichier spécifié.
-	 * @param is le flux source à dupliquer
 	 * @param dest le fichier destination
 	 * @throws IOException
 	 */
@@ -40,9 +38,6 @@ public abstract class FileUtils {
 	}
 	
 	/**
-	 * Dézippe un fichier dans un répertoire donné.
-	 * @param zip le fichier zip à extraire
-	 * @param destDir répertoire destination d'extraction, créé s'il n'existe pas
 	 * @throws IOException
 	 */
 	public static final void unzip(File zip, File destDir) throws IOException {
@@ -81,8 +76,6 @@ public abstract class FileUtils {
 	}
 	
 	/**
-	 * Supprimer le fichier ou dossier passé en paramètre.
-	 * @param file un fichier ou dossier
 	 * @return true si suppression OK, false sinon
 	 */
 	public static boolean delete(File file) {
