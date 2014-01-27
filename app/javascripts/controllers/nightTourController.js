@@ -49,6 +49,13 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             }
         });
 
+        angular.element($window).bind("resize",function(e){
+            if($scope.state === 'open'){
+                $scope.close();
+                $scope.open();
+            }
+        });
+
         $scope.$on("TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset);
 
 
@@ -303,11 +310,14 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.close = function(){
-        // WARNING UGLY UGLY ALERT
-        $scope.state = 'closed';
+        if($scope.state === 'closed'){
+            return ;
+        }
         G3ME.fullscreen();
-
+        $scope.state = 'closed';
     };
+
+
 
     /**
      * @ngdoc method
@@ -317,9 +327,14 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      *
      */
     $scope.open = function(){
-        // WARNING UGLY UGLY ALERT
-        $scope.state = 'open' ;
+        if($scope.state === 'open'){
+            return ;
+        }
         G3ME.reduceMapWidth(300);
+        if(Smartgeo.isRunningOnLittleScreen()){
+            $rootScope.$broadcast('_MENU_CLOSE_');
+        }
+        $scope.state = 'open' ;
     };
 
     /**

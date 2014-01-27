@@ -5,6 +5,13 @@ angular.module('smartgeomobile').controller('consultationController', function (
     $scope.state  = 'closed';
     $scope.loading = false;
 
+    angular.element($window).bind("resize",function(e){
+        if($scope.state === 'open'){
+            $scope.close();
+            $scope.open();
+        }
+    });
+
     var PREOPEN_TIMER;
 
     $scope.$watch('loading', function() {
@@ -138,11 +145,17 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.close = function(){
+        if($scope.state === 'closed'){
+            return ;
+        }
         G3ME.fullscreen();
         $scope.state = 'closed';
     };
 
     $scope.open = function(){
+        if($scope.state === 'open'){
+            return ;
+        }
         G3ME.reduceMapWidth(300);
         if(Smartgeo.isRunningOnLittleScreen()){
             $rootScope.$broadcast('_MENU_CLOSE_');
