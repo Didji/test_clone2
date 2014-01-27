@@ -19,12 +19,6 @@
     <feature name="Notification">
         <param name="android-package" value="org.apache.cordova.dialogs.Notification" />
     </feature>
-    <feature name="NetworkStatus">
-        <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
-    </feature>
-    <feature name="Battery">
-        <param name="android-package" value="org.apache.cordova.batterystatus.BatteryListener" />
-    </feature>
     <feature name="Goto">
         <param name="android-package" value="com.gismartware.smartgeo.mobile.plugins.GoTo" />
     </feature>
@@ -33,9 +27,6 @@
     </feature>
     <feature name="Redirect">
         <param name="android-package" value="com.gismartware.smartgeo.mobile.plugins.Redirect" />
-    </feature>
-    <feature name="SplashScreen">
-        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
     </feature>
     <access origin="*" />
     <preference name="useBrowserHistory" value="true" />
