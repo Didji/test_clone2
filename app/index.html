@@ -117,6 +117,13 @@
                 window.smartgeoPersistenceCache_ = {
                     sites : sites
                 };
+
+                if(!navigator.userAgent.match(/Android/i)){
+                    window.SmartgeoChromium = false ;
+                }
+
+                window.ChromiumCallbacks = [] ;
+
                 angular.bootstrap(document, ['smartgeomobile']);
             });
         });

@@ -113,6 +113,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         Smartgeo.getUsersLocation(function(lat, lng /*, alt*/){
             $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
             $scope.addPositionToTrace( lat, lng);
+        }, function(){
+            alertify.error(i18n.get('_MAP_GPS_FAIL'));
+            $scope.isFollowingMe = false;
+            $scope.$apply();
         });
     };
 
@@ -125,7 +129,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      * @description
      *
      */
-    $scope.addPositionToTrace = function(lat, lng){
+    $scope.addPositionToTrace = function(lat, lng, force){
         if(!$scope.mission){
             return alertify.error("Erreur : aucune tournée en cours");
         }
@@ -133,9 +137,20 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             return ;
         }
         var traces = Smartgeo.get('traces') || {},
-            currentTrace = traces[$scope.mission.id] || [] ;
+            currentTrace = traces[$scope.mission.id] || [] ,
+            previousPosition = currentTrace[currentTrace.length - 1],
+            distanceFromLastPosition = L.latLng(previousPosition).distanceTo(L.latLng([lng,lat])),
+            now = new Date().getTime(),
+            timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
+
+        if(!force && previousPosition && ( distanceFromLastPosition > 500 || distanceFromLastPosition === 0 ) && timeBetweenLastPositionAndNow < 15000){
+            return ;
+        }
+
+        $scope.lastPositionWasSetByBatmanOn = new Date().getTime();
+
         currentTrace.push([lng,lat]);
-        traces[$scope.mission.id] = currentTrace ;
+        traces[$scope.mission.id] = currentTrace;
         Smartgeo.set('traces', traces);
         $scope.mission.trace = currentTrace ;
         $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', $scope.mission);

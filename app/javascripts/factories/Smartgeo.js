@@ -386,22 +386,31 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * @description
          * Polyfill for geolocation api
          */
-        getUsersLocation: function(callback){
+        getUsersLocation: function(success, error){
+            if(SmartgeoChromium.locate){
 
-            if(window.SmartgeoChromium && SmartgeoChromium.locate){
-                if(!window.ChromiumCallbacks){
-                    window.ChromiumCallbacks = [] ;
-                }
+                var LOCATED_TIMEOUT_FLAG;
+
                 ChromiumCallbacks[0] = function(lng, lat, alt){
-                    callback(lat, lng, alt);
+                    LOCATED_TIMEOUT_FLAG = true ;
+                    success(lat, lng, alt);
                 };
-                ChromiumCallbacks[2] = function(){
-                    alertify.error(i18n.get('_MAP_GPS_FAIL'));
-                };
+
                 SmartgeoChromium.locate();
+
+                $timeout(function(){
+                    if(!LOCATED_TIMEOUT_FLAG){
+                        return ;
+                    }
+                    ChromiumCallbacks[0] = angular.noop ;
+                    error();
+                },10000);
+
             } else {
                 navigator.geolocation.getCurrentPosition(function(position){
-                    callback(position.coords.latitude, position.coords.longitude, position.coords.altitude);
+                    success(position.coords.latitude, position.coords.longitude, position.coords.altitude);
+                }, function(){
+                    error();
                 });
             }
         },
