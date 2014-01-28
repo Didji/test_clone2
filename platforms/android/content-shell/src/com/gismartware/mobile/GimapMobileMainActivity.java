@@ -541,7 +541,7 @@ public class GimapMobileMainActivity extends Activity {
 
 					String paramName = param[0];
 
-					//Est ce un champ compos�? (exemple : fields[###564654###]=250
+					//Est ce un champ composé? (exemple : fields[###564654###]=250
 					boolean composite = false;
 					Matcher matcher = hook.matcher(paramName);
 					if (matcher.matches()) {
@@ -549,7 +549,7 @@ public class GimapMobileMainActivity extends Activity {
 						paramName = matcher.group(1);
 					}
 
-					//un param�tre source peut etre positionn� dans plusieurs param�tres cible :
+					//un paramétre source peut etre positionné dans plusieurs paramétres cible :
 					String[] destParams = MESSAGES.getString(paramName).split(",");
 					for (int j = 0; j < destParams.length; j++) {
 						url.append(destParams[j]);
@@ -558,13 +558,13 @@ public class GimapMobileMainActivity extends Activity {
 						}
 						url.append("=").append(param[1]);
 
-						//ajout du "&" si plusieurs param�tres cible pour le param�tre source courant
+						//ajout du "&" si plusieurs paramétres cible pour le paramétre source courant
 						if (j < (destParams.length - 1)) {
 							url.append("&");
 						}
 					}
 
-					//ajout du "&" s'il reste des param�tres dans la query principale
+					//ajout du "&" s'il reste des paramétres dans la query principale
 					if (i < (params.length - 1)) {
 						url.append("&");
 					}
@@ -572,7 +572,7 @@ public class GimapMobileMainActivity extends Activity {
 			}
 		}
 
-		//ajout du token � la fin, rien si inexistant
+		//ajout du token à la fin, rien si inexistant
 		if (authPreferences.getToken() != null) {
 			if (appendedParams) {
 				url.append("&token=");

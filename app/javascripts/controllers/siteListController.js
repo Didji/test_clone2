@@ -1,6 +1,8 @@
-angular.module('smartgeomobile').controller('siteListController', function ($scope, $http, $location, Smartgeo, i18n) {
+angular.module('smartgeomobile').controller('siteListController', function ($scope, $rootScope, $http, $location, Smartgeo, i18n) {
 
     'use strict' ;
+
+    window.site = $rootScope.site = undefined ;
 
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
