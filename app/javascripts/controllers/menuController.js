@@ -4,6 +4,8 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
 
+    $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+
     function closest( e, classname ) {
         if( classie.has( e, classname ) ) {
             return e;

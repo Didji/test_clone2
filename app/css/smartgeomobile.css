@@ -611,3 +611,11 @@ ul.ged-gallery li img {
 .btn > *, .dropdown-menu > li > a {
     white-space: normal;
 }
+
+
+#smartgeo-version {
+    margin-left: -50px;
+position: relative;
+top: 25px;
+font-size: 80%;
+}

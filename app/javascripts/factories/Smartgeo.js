@@ -76,7 +76,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
 
         _MAX_ID_FOR_SELECT_REQUEST : 4000,
 
-        _I_HAVE_SOME_SUICIDAL_TENDENCIES : true ,
+        _DONT_REALLY_RESET : false ,
 
         _intervals : {},
 
@@ -177,8 +177,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * Clear localStorage
          */
         reset: function(){
-            if(Smartgeo._I_HAVE_SOME_SUICIDAL_TENDENCIES){
-                return 'GUN_AGAINST_ME';
+            if(Smartgeo._DONT_REALLY_RESET){
+                return ;
             }
             localStorage.clear();
             var sites = Smartgeo.get_('sites') ;
