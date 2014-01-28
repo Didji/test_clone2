@@ -74,6 +74,9 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
 
     $scope.bidouille = function(event ){
         document.querySelector('#mainview').firstChild.scrollTop=$(event.currentTarget).closest('label')[0].offsetTop-7;
+        if(window.screen.height <= 640){
+            document.querySelector('.reportForm').style.paddingBottom =  "280px";
+        }
     };
 
     $scope.loadAssets = function(){
