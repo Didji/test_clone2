@@ -199,7 +199,6 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
             if(objectType.amount > Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
             } else {
-                // var url = Smartgeo.get('url')+'gi.maintenance.mobility.installation.assets.json&okey='+objectType.okey ;
                 var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.assets.json', {
                     okey : objectType.okey
                 });

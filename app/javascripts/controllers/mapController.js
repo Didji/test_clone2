@@ -4,50 +4,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site] ;
 
-    // var SELECTED_ASSET_ICON     = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/mission-selected.png',
-    //                         iconSize        : [65,  89],
-    //                         iconAnchor      : [32,  89],
-    //                     }),
-    //     NON_SELECTED_ASSET_ICON = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/mission-todo.png',
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     }),
-    //     NON_SELECTED_ASSET_ICON_NT = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/night-tour.png',
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     }),
-    //     DONE_ASSET_ICON     = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/mission-done.png',
-    //                         iconSize        : [30,  42],
-    //                         iconAnchor      : [15,  42],
-    //                     }),
-
-    //     Icon.get('GRAY_TARGET')     = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/target_gray.png',
-    //                         iconSize        : [32,  32],
-    //                         iconAnchor      : [16,  16],
-    //                     }),
-    //     TARGET_ICON     = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/target.png',
-    //                         iconSize        : [32,  32],
-    //                         iconAnchor      : [16,  16],
-    //                     }),
-    //     DONE_ASSET_ICON_NT = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/night-tour-done.png',
-    //                         iconSize        : [30,  42],
-    //                         iconAnchor      : [15,  42],
-    //                     }),
-    //     CONSULTATION_ICON = L.icon({
-    //                         iconUrl         : 'javascripts/vendors/images/consultation.png',
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     });
-
     $scope.missionsClusters = {};
-
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;
 
@@ -65,9 +22,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     G3ME.initialize( 'smartgeo-map',
                      $rootScope.site,
                      $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
-                     $rootScope.map_marker );
-
-
+                     $rootScope.map_marker ,
+                     $rootScope.map_zoom || 18 );
 
     G3ME.map.on('moveend', function(e) {
         var extent = G3ME.map.getBounds();
@@ -79,8 +35,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 ]);
         }
     });
-
-
 
     function noConsultableAssets(coords) {
         var popupContent = '<p>'+i18n.get('_MAP_ZERO_OBJECT_FOUND')+'</p>';

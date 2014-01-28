@@ -48,8 +48,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         });
     };
 
-
-
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */

@@ -25,7 +25,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
 
         filecacheIsEnable: false,
 
-        initialize : function(mapDivId, site, target, marker){
+        initialize : function(mapDivId, site, target, marker, zoom){
 
             this.site    = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
@@ -55,13 +55,15 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                 G3ME.map.fitBounds(target);
             } else if( target[0] == 1*target[0] && (target instanceof Object) ){
                 // target is a point
-                G3ME.map.setView(target,18);
+                G3ME.map.setView(target,zoom||18);
                 if(marker){
                     marker._map && (marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
-            } else {
+            } else if(Smartgeo.get('lastLeafletMapExtent')){
                 G3ME.map.fitBounds(Smartgeo.get('lastLeafletMapExtent'));
+            } else {
+                G3ME.map.fitBounds(target);
             }
 
             G3ME.invalidateMapSize();
@@ -144,7 +146,12 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
                     if(!assets.length){
                         callback([]);
                     } else {
-                        var geometry = JSON.parse(assets[0].geometry) ;
+                        var geometry;
+                        try{
+                            geometry = JSON.parse(assets[0].geometry) ;
+                        } catch (e) {
+                            geometry = assets[0].geometry ;
+                        }
                         if(geometry.type === 'Point'){
                             callback([assets[0].ymin,assets[0].xmin]);
                         } else {

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n){
+angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon){
 
     'use strict' ;
 
@@ -52,7 +52,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
             }
             $rootScope.map_target = assets ;
             if( $rootScope.map_marker === 'true' || $rootScope.map_marker === true){
-                $rootScope.map_marker = L.marker($rootScope.map_target);
+                $rootScope.map_marker = L.marker($rootScope.map_target, {icon:Icon.get('CONSULTATION')});
                 if($rootScope.report_target && $rootScope.report_activity){
                     $rootScope.map_marker.on('click',function(){
                         $location.path('/report/'+$rootScope.site.id+"/"+$rootScope.report_activity+"/"+$rootScope.report_target);
