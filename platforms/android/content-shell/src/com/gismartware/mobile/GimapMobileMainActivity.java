@@ -44,7 +44,9 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -208,7 +210,7 @@ public class GimapMobileMainActivity extends Activity {
     }
 
     private void oauthRequestAccount() {
-    	//y a t il un filtrage de compte � effectuer?
+    	//y a t il un filtrage de compte  effectuer?
     	if (FILTER_ACCOUNT) {
 			AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
     		Account[] list = manager.getAccounts();
@@ -429,11 +431,33 @@ public class GimapMobileMainActivity extends Activity {
 				requestToken();
 			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
 				try {
+
+                    BitmapFactory.Options bounds = new BitmapFactory.Options();
+                    bounds.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(lastPicturePath, bounds);
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 2;
+
+                    // On retourne la photo si jamais elle n'est pas dans le bon sens.
+                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath, options);
+                    ExifInterface exif = new ExifInterface(lastPicturePath);
+                    String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+                    int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+                    int rotationAngle = 0;
+                    if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+                    if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+                    if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+
+                    Matrix matrix = new Matrix();
+                    matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+                    Bitmap photo = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight()  , matrix, true);
+
 					//on divise la taille (dimension) de la photo par 2
 					File file = new File(lastPicturePath);
-					BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inSampleSize = 2;
-					Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
+					//BitmapFactory.Options options = new BitmapFactory.Options();
+					//options.inSampleSize = 2;
+					//Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
 					//on compresse la photo
 					OutputStream out = new FileOutputStream(file);
 					photo.compress(Bitmap.CompressFormat.JPEG, 75, out);
@@ -500,7 +524,7 @@ public class GimapMobileMainActivity extends Activity {
     }
 
     /**
-	 * M�thode de mapping des urls des intents.
+	 * Mthode de mapping des urls des intents.
 	 *
 	 * @param intent l'intent dont on veut mapper l'url
 	 * @return l'url cible
@@ -515,14 +539,14 @@ public class GimapMobileMainActivity extends Activity {
 		//controler en premier..
 		url.append(intent.getData().getHost());
 
-		//ATTENTION!! R�cup�rer dataString sinon des caract�res sautent avec getData().getQuery() car les valeurs dans l'URL peuvent
+		//ATTENTION!! Rcuprer dataString sinon des caractres sautent avec getData().getQuery() car les valeurs dans l'URL peuvent
 		//contenir des #, ce qui fait partie des "fragments" dans la spec de la classe Uri, et non de la query...
 		String[] urlParts = intent.getDataString().split("\\?");
 
 		boolean appendedParams = false;
 
 		if (urlParts.length > 1) {
-			//on recupere la query "� la main" (split), cad apres le "?"
+			//on recupere la query " la main" (split), cad apres le "?"
 			//il peut y avoir plusieurs parties (du au url redirect dans les parametres qui peuvent contenir des "?")
 			StringBuffer intentUrl = new StringBuffer(urlParts[1]);
 			for (int i = 2; i < urlParts.length; i++) {
