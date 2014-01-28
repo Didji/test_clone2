@@ -437,19 +437,32 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
         G3ME.map.addControl(POSITION_CONTROL);
 
-        if(window.SmartgeoChromium && SmartgeoChromium.locate){
-            if(!window.ChromiumCallbacks){
-                window.ChromiumCallbacks = [] ;
-            }
+        if(SmartgeoChromium.locate){
+
+            var LOCATED_TIMEOUT_FLAG;
+
             ChromiumCallbacks[0] = function(lng, lat, alt){
+                LOCATED_TIMEOUT_FLAG = true ;
                 setLocationMarker(null,lng, lat);
             };
-            ChromiumCallbacks[2] = function(){
-                alertify.error(i18n.get('_MAP_GPS_FAIL'));
-            };
+
             SmartgeoChromium.locate();
+
+            $timeout(function(){
+                if(!LOCATED_TIMEOUT_FLAG){
+                    alertify.error(i18n.get('_MAP_GPS_FAIL'));
+                    stopPosition();
+                    ChromiumCallbacks[0] = angular.noop ;
+                }
+            },10000);
+
         } else {
+            G3ME.map.off('locationfound locationerror');
             G3ME.map.on('locationfound', setLocationMarker);
+            G3ME.map.on('locationerror', function(){
+                alertify.error(i18n.get('_MAP_GPS_FAIL'));
+                stopPosition();
+            });
             G3ME.map.locate({watch: true, setView: true});
         }
 
