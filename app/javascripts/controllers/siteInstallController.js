@@ -83,11 +83,12 @@ angular.module('smartgeomobile').controller('siteInstallController', function ($
             Installer.createZones($scope.site, function(){
                 Installer.install($scope.site, $scope.site.stats, function(){
                     $scope.site.installed = true ;
-                    Installer.saveSite($scope.site);
-                    $location.path('/map/'+$routeParams.site);
-                    if(!$scope.$$phase) {
-                        $scope.$apply();
-                    }
+                    Installer.saveSite($scope.site, function(){
+                        $location.path('/map/'+$routeParams.site);
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    });
                 });
             });
         });
