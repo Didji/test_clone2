@@ -7,7 +7,7 @@
  */
 
 #import "SQLitePlugin.h"
-
+#include <regex.h>
 //LIBB64
 typedef enum
 {
@@ -127,6 +127,29 @@ static int base64_encode_blockend(char* code_out,
 	return codechar - code_out;
 }
 
+static void sqlite_regexp(sqlite3_context* context, int argc, sqlite3_value** values) {
+    int ret;
+    regex_t regex;
+    char* reg = (char*)sqlite3_value_text(values[0]);
+    char* text = (char*)sqlite3_value_text(values[1]);
+    
+    if ( argc != 2 || reg == 0 || text == 0) {
+        sqlite3_result_error(context, "SQL function regexp() called with invalid arguments.\n", -1);
+        return;
+    }
+    
+    ret = regcomp(&regex, reg, REG_EXTENDED | REG_NOSUB);
+    if ( ret != 0 ) {
+        sqlite3_result_error(context, "error compiling regular expression", -1);
+        return;
+    }
+    
+    ret = regexec(&regex, text , 0, NULL, 0);
+    regfree(&regex);
+    
+    sqlite3_result_int(context, (ret != REG_NOMATCH));
+}
+
 //LIBB64---END
 
 
@@ -137,6 +160,7 @@ static int base64_encode_blockend(char* code_out,
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
+
     self = (SQLitePlugin*)[super initWithWebView:theWebView];
     if (self) {
         openDBs = [NSMutableDictionary dictionaryWithCapacity:0];
@@ -190,6 +214,9 @@ static int base64_encode_blockend(char* code_out,
                 // const char *key = [[options objectForKey:@"key"] UTF8String];
                 // if(key != NULL) sqlite3_key(db, key, strlen(key));
 
+                sqlite3_create_function(db, "regexp", 2, SQLITE_ANY, NULL, &sqlite_regexp, NULL, NULL);
+               // sqlite3_create_function(*db, "regexp", 2, SQLITE_ANY,0, &sqlite_regexp,0,0)
+                
                 // Attempt to read the SQLite master table (test for SQLCipher version):
                 if(sqlite3_exec(db, (const char*)"SELECT count(*) FROM sqlite_master;", NULL, NULL, NULL) == SQLITE_OK) {
                     dbPointer = [NSValue valueWithPointer:db];
