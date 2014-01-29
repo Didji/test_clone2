@@ -108,10 +108,10 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                  .success(callback);
         },
 
-        saveSite: function(site){
+        saveSite: function(site, callback){
             var sites = Smartgeo.get_('sites') || {};
             sites[site.id] = site ;
-            Smartgeo.set_('sites', sites);
+            Smartgeo.set_('sites', sites, callback);
         },
 
         createZones: function(site, callback){
