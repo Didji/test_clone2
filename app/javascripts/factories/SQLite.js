@@ -8,7 +8,11 @@
 
         openDatabase: function(args) {
             if(!SQLite.databases[args.name]){
-                SQLite.databases[args.name] = (window.sqlitePlugin || window).openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
+                if(window.sqlitePlugin){
+                    SQLite.databases[args.name] = sqlitePlugin.openDatabase({name: args.name, bgType: 1}) ; // (args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
+                } else {
+                    SQLite.databases[args.name] = openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
+                }
             }
 
             return SQLite.databases[args.name];
