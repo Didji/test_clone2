@@ -3,6 +3,8 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     'use strict' ;
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+    $(".mp-menu").css('width', Smartgeo._SIDE_MENU_WIDTH);
+
 
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
 

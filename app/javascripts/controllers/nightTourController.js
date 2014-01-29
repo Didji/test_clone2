@@ -317,40 +317,27 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
     };
 
-    /**
-     * @ngdoc method
-     * @name nightTourController#close
-     * @methodOf nightTourController
-     * @description
-     *
-     */
     $scope.close = function(){
         if($scope.state === 'closed'){
             return ;
         }
         G3ME.fullscreen();
         $scope.state = 'closed';
+        $($(".consultation-panel")[1]).removeClass('open').css('width', 0);
     };
 
-
-
-    /**
-     * @ngdoc method
-     * @name nightTourController#open
-     * @methodOf nightTourController
-     * @description
-     *
-     */
     $scope.open = function(){
         if($scope.state === 'open'){
             return ;
         }
-        G3ME.reduceMapWidth(300);
+        G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
         if(Smartgeo.isRunningOnLittleScreen()){
             $rootScope.$broadcast('_MENU_CLOSE_');
         }
         $scope.state = 'open' ;
+        $($(".consultation-panel")[1]).addClass('open').css('width', Smartgeo._SIDE_MENU_WIDTH);
     };
+
 
     /**
      * @ngdoc method

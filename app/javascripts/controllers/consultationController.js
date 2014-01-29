@@ -12,6 +12,13 @@ angular.module('smartgeomobile').controller('consultationController', function (
         }
     });
 
+ // {
+  /*  -webkit-transform: translate3d(0%, 0, 0);
+    transform: translate3d(0%, 0, 0);*/
+    /*width: Smartgeo._SIDE_MENU_WIDTHpx;*/
+// }
+
+
     var PREOPEN_TIMER;
 
     $scope.$watch('loading', function() {
@@ -150,17 +157,19 @@ angular.module('smartgeomobile').controller('consultationController', function (
         }
         G3ME.fullscreen();
         $scope.state = 'closed';
+        $(".consultation-panel").first().removeClass('open').css('width', 0);
     };
 
     $scope.open = function(){
         if($scope.state === 'open'){
             return ;
         }
-        G3ME.reduceMapWidth(300);
+        G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
         if(Smartgeo.isRunningOnLittleScreen()){
             $rootScope.$broadcast('_MENU_CLOSE_');
         }
         $scope.state = 'open' ;
+        $(".consultation-panel").first().addClass('open').css('width', Smartgeo._SIDE_MENU_WIDTH);
     };
 
     $scope.definedFilter = function(value){

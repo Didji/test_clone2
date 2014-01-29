@@ -29,6 +29,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          */
         _BIG_SCREEN_THRESHOLD : 361,
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_SIDE_MENU_WIDTH
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description Width threshold which describes big screen
+         */
+        _SIDE_MENU_WIDTH : $window.screen.width > 361 ? 300 : $window.screen.width * 0.8 ,
 
         /**
          * @ngdoc property

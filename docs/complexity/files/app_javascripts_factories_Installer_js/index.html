@@ -49,7 +49,7 @@
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">424</p>
+      <p class="stat">423</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,7 +63,7 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">91.05</p>
+      <p class="stat">91.20</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
@@ -200,10 +200,10 @@
                  .success(callback);
         },
 
-        saveSite: function(site){
+        saveSite: function(site, callback){
             var sites = Smartgeo.get_(&#039;sites&#039;) || {};
             sites[site.id] = site ;
-            Smartgeo.set_(&#039;sites&#039;, sites);
+            Smartgeo.set_(&#039;sites&#039;, sites, callback);
         },
 
         createZones: function(site, callback){
@@ -291,7 +291,6 @@
             if(objectType.amount &gt; Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
                 Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
             } else {
-                // var url = Smartgeo.get(&#039;url&#039;)+&#039;gi.maintenance.mobility.installation.assets.json&amp;okey=&#039;+objectType.okey ;
                 var url = Smartgeo.getServiceUrl(&#039;gi.maintenance.mobility.installation.assets.json&#039;, {
                     okey : objectType.okey
                 });
