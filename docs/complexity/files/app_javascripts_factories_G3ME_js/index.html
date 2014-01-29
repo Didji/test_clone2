@@ -45,11 +45,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
-      <p class="stat">55.83</p>
+      <p class="stat">55.63</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">541</p>
+      <p class="stat">548</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,11 +63,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">91.64</p>
+      <p class="stat">94.82</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">8.45</p>
+      <p class="stat">8.54</p>
     </div>
   </div>
 </div>
@@ -117,7 +117,7 @@
 
         filecacheIsEnable: false,
 
-        initialize : function(mapDivId, site, target, marker){
+        initialize : function(mapDivId, site, target, marker, zoom){
 
             this.site    = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
@@ -147,13 +147,15 @@
                 G3ME.map.fitBounds(target);
             } else if( target[0] == 1*target[0] &amp;&amp; (target instanceof Object) ){
                 // target is a point
-                G3ME.map.setView(target,18);
+                G3ME.map.setView(target,zoom||18);
                 if(marker){
                     marker._map &amp;&amp; (marker._map.removeLayer)(marker);
                     marker.addTo(G3ME.map);
                 }
-            } else {
+            } else if(Smartgeo.get(&#039;lastLeafletMapExtent&#039;)){
                 G3ME.map.fitBounds(Smartgeo.get(&#039;lastLeafletMapExtent&#039;));
+            } else {
+                G3ME.map.fitBounds(target);
             }
 
             G3ME.invalidateMapSize();
@@ -236,7 +238,12 @@
                     if(!assets.length){
                         callback([]);
                     } else {
-                        var geometry = JSON.parse(assets[0].geometry) ;
+                        var geometry;
+                        try{
+                            geometry = JSON.parse(assets[0].geometry) ;
+                        } catch (e) {
+                            geometry = assets[0].geometry ;
+                        }
                         if(geometry.type === &#039;Point&#039;){
                             callback([assets[0].ymin,assets[0].xmin]);
                         } else {

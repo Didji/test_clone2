@@ -49,7 +49,7 @@
     </div>
     <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">629</p>
+      <p class="stat">583</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,11 +63,11 @@
   <div class="row">
     <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">86.14</p>
+      <p class="stat">86.05</p>
     </div>
     <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">8.33</p>
+      <p class="stat">8.34</p>
     </div>
   </div>
 </div>
@@ -96,50 +96,7 @@
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_(&#039;sites&#039;)[$routeParams.site] ;
 
-    // var SELECTED_ASSET_ICON     = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/mission-selected.png&#039;,
-    //                         iconSize        : [65,  89],
-    //                         iconAnchor      : [32,  89],
-    //                     }),
-    //     NON_SELECTED_ASSET_ICON = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/mission-todo.png&#039;,
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     }),
-    //     NON_SELECTED_ASSET_ICON_NT = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/night-tour.png&#039;,
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     }),
-    //     DONE_ASSET_ICON     = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/mission-done.png&#039;,
-    //                         iconSize        : [30,  42],
-    //                         iconAnchor      : [15,  42],
-    //                     }),
-
-    //     Icon.get(&#039;GRAY_TARGET&#039;)     = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/target_gray.png&#039;,
-    //                         iconSize        : [32,  32],
-    //                         iconAnchor      : [16,  16],
-    //                     }),
-    //     TARGET_ICON     = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/target.png&#039;,
-    //                         iconSize        : [32,  32],
-    //                         iconAnchor      : [16,  16],
-    //                     }),
-    //     DONE_ASSET_ICON_NT = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/night-tour-done.png&#039;,
-    //                         iconSize        : [30,  42],
-    //                         iconAnchor      : [15,  42],
-    //                     }),
-    //     CONSULTATION_ICON = L.icon({
-    //                         iconUrl         : &#039;javascripts/vendors/images/consultation.png&#039;,
-    //                         iconSize        : [49,  67],
-    //                         iconAnchor      : [25,  67],
-    //                     });
-
     $scope.missionsClusters = {};
-
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;
 
@@ -157,9 +114,8 @@
     G3ME.initialize( &#039;smartgeo-map&#039;,
                      $rootScope.site,
                      $rootScope.map_target || Smartgeo.get(&#039;lastLeafletMapExtent&#039;) || [],
-                     $rootScope.map_marker );
-
-
+                     $rootScope.map_marker ,
+                     $rootScope.map_zoom || 18 );
 
     G3ME.map.on(&#039;moveend&#039;, function(e) {
         var extent = G3ME.map.getBounds();
@@ -171,8 +127,6 @@
                 ]);
         }
     });
-
-
 
     function noConsultableAssets(coords) {
         var popupContent = &#039;&lt;p&gt;&#039;+i18n.get(&#039;_MAP_ZERO_OBJECT_FOUND&#039;)+&#039;&lt;/p&gt;&#039;;
