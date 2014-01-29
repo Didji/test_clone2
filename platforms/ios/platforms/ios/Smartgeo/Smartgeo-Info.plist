@@ -59,17 +59,21 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>0.9.0</string>
+    <string>0.11.0</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
-    <key>NSMainNibFile</key>
-    <string></string>
     <key>NSMainNibFile~ipad</key>
     <string></string>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleBlackOpaque</string>
     <key>UISupportedInterfaceOrientations</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
     </array>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
+    <key>UIStatusBarHidden</key>
+    <true/>
     <key>UISupportedInterfaceOrientations~ipad</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
