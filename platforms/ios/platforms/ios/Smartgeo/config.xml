@@ -45,4 +45,7 @@
     <access origin="*" />
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="false" />
+    <feature name="GotoPlugin">
+        <param name="ios-package" value="GotoPlugin" />
+    </feature>
 </widget>
