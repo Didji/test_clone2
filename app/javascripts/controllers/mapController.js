@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon){
+angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout){
 
     'use strict' ;
 
