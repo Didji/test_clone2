@@ -138,14 +138,18 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         }
         var traces = Smartgeo.get('traces') || {},
             currentTrace = traces[$scope.mission.id] || [] ,
-            previousPosition = currentTrace[currentTrace.length - 1],
-            distanceFromLastPosition = L.latLng(previousPosition).distanceTo(L.latLng([lng,lat])),
-            now = new Date().getTime(),
-            timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
+            previousPosition = currentTrace[currentTrace.length - 1] ;
 
-        if(!force && previousPosition && ( distanceFromLastPosition > 500 || distanceFromLastPosition === 0 ) && timeBetweenLastPositionAndNow < 15000){
-            return ;
-        }
+        if (previousPosition) {
+            var distanceFromLastPosition = L.latLng(previousPosition).distanceTo(L.latLng([lng,lat])),
+                 now = new Date().getTime(),
+                 timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
+
+             if(!force && previousPosition && ( distanceFromLastPosition > 500 || distanceFromLastPosition === 0 ) && timeBetweenLastPositionAndNow < 15000){
+                 console.log('return');
+                 return ;
+             }
+         }
 
         $scope.lastPositionWasSetByBatmanOn = new Date().getTime();
 
