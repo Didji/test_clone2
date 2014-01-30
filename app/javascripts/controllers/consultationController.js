@@ -112,10 +112,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
         if(window.SmartgeoChromium && SmartgeoChromium.goTo && SmartgeoChromium.locate){
 
-            if(!window.ChromiumCallbacks){
-                window.ChromiumCallbacks = [] ;
-            }
-
             ChromiumCallbacks[0] = function(lng, lat, alt){
                 SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
             };
@@ -126,6 +122,18 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
             SmartgeoChromium.locate();
 
+        } else {
+            Smartgeo.getUsersLocation(function(fromLat, fromLng){
+                if(!navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)){
+                    window.open("http://maps.apple.com/?saddr="+fromLat+","+fromLng+"&daddr="+coords.y+","+coords.x);
+                } else {
+                    cordova.exec(null, function(){
+                        alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
+                    }, "gotoPlugin", "goto",[fromLat,fromLng,coords.y,coords.x]);
+                }
+            }, function(){
+                alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
+            });
         }
 
     };
