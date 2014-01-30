@@ -12,13 +12,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
         }
     });
 
- // {
-  /*  -webkit-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);*/
-    /*width: Smartgeo._SIDE_MENU_WIDTHpx;*/
-// }
-
-
     var PREOPEN_TIMER;
 
     $scope.$watch('loading', function() {
