@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>javascripts/factories/Installer.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">65.24</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">424</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">91.05</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">5.67</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">angular.module(&#039;smartgeomobile&#039;).factory(&#039;Installer&#039;, function(SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout){
+
+    &#039;use strict&#039; ;
+
+    var Installer = {
+
+        _LAST_ID_OKEY : {},
+
+        // INSTALLATION CONSTANTS
+        _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST     : 1000,
+        _INSTALL_MAX_ASSETS_PER_ZONE             : 4096,
+        _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST   :  500,
+        _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST   :  999,
+        _INSTALL_MAX_ZONES_MATRIX_LENGTH         :    4,
+
+        deleteAssets: function(site, obsoletes, callback){
+            var assets = [] ;
+            for(var okey in obsoletes){
+                if(obsoletes.hasOwnProperty(okey)){
+                    assets = assets.concat(obsoletes[okey]);
+                }
+            }
+
+            if(assets.length &lt;= 0){
+                callback();
+            } else {
+                var request = &quot; DELETE FROM ASSETS WHERE id in ( &quot;+assets.join(&quot;,&quot;)+&quot; ) &quot;;
+                console.log(request);
+                for (var i = 0; i &lt; site.zones.length; i++) {
+                    SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                        transaction.executeSql(request , [], function(){
+                            Installer.checkpoint(&quot;_remove_assets_&quot;, site.zones.length, callback);
+                        });
+                    });
+                }
+            }
+        },
+
+        formatSiteMetadata: function(site, update){
+
+            var metamodel   = {},
+                lists       = {},
+                symbology   = {},
+                activities  = [],
+                stats       = [],
+                i = 0;
+
+            for (i = 0; i &lt; site.metamodel.length; i++) {
+                if(update || site.number[site.metamodel[i].okey] !== 0 ){
+                    metamodel[site.metamodel[i].okey] = site.metamodel[i];
+                }
+            }
+            site.metamodel = metamodel ;
+
+            activities._byId = [];
+            for (i = 0; i &lt; site.activities.length; i++) {
+                if(update || site.number[site.activities[i].okeys[0]] !== 0 ){
+                    activities.push(site.activities[i]);
+                    activities._byId[site.activities[i].id] = site.activities[i];
+                }
+            }
+            site.activities = activities;
+
+            for (var key in site.lists) {
+                if (site.lists.hasOwnProperty(key)) {
+                    lists[key] = site.lists[key];
+                }
+            }
+            site.lists = lists ;
+
+            for (i = 0; i &lt; site.symbology.length; i++) {
+                var symbolId = site.symbology[i].okey + &#039;&#039; + site.symbology[i].classindex + &#039;&#039; ;
+                symbology[symbolId] = site.symbology[i];
+            }
+            site.symbology = symbology ;
+
+            for(var okey in site.number){
+              if (site.number.hasOwnProperty(okey) &amp;&amp; okey !== &#039;total&#039; &amp;&amp; site.number[okey] !== 0 &amp;&amp; site.number[okey] !== &quot;0&quot;) {
+                  stats.push({
+                      &#039;okey&#039;   : okey,
+                      &#039;amount&#039; : site.number[okey]
+                  });
+              }
+            }
+            site.stats = stats ;
+
+            delete site.assets ;
+
+            return site ;
+        },
+
+        getInstallJSON: function(site, callback){
+            var url = Smartgeo.getServiceUrl(&#039;gi.maintenance.mobility.installation.json&#039;, {
+                &#039;site&#039; : site.id
+            });
+
+            $http.get(url)
+                 .success(callback);
+        },
+
+        getUpdateJSON: function(site, callback){
+            var url = Smartgeo.getServiceUrl(&#039;gi.maintenance.mobility.installation.json&#039;, {
+                &#039;site&#039;      : site.id,
+                &#039;timestamp&#039; : site.timestamp
+            });
+
+            $http.get(url)
+                 .success(callback);
+        },
+
+        saveSite: function(site){
+            var sites = Smartgeo.get_(&#039;sites&#039;) || {};
+            sites[site.id] = site ;
+            Smartgeo.set_(&#039;sites&#039;, sites);
+        },
+
+        createZones: function(site, callback){
+
+            var zones_matrix_length = Math.ceil(Math.sqrt(Math.pow(2, Math.ceil(Math.log(site.number.total / Installer._INSTALL_MAX_ASSETS_PER_ZONE) / Math.LN2))));
+                zones_matrix_length = Math.min(zones_matrix_length, Installer._INSTALL_MAX_ZONES_MATRIX_LENGTH);
+            var zones_matrix_width  = (site.extent.xmax - site.extent.xmin) / zones_matrix_length,
+                zones_matrix_height = (site.extent.ymax - site.extent.ymin) / zones_matrix_length,
+                extent ;
+
+            site.zones = [];
+
+            for (var i = 0; i &lt; zones_matrix_length; i++) {
+                for (var j = 0; j &lt; zones_matrix_length; j++) {
+                    extent = {
+                        xmin: site.extent.xmin +       i * zones_matrix_width,
+                        xmax: site.extent.xmin + (i + 1) * zones_matrix_width,
+                        ymin: site.extent.ymin +       j * zones_matrix_height,
+                        ymax: site.extent.ymin + (j + 1) * zones_matrix_height
+                    };
+                    site.zones.push({
+                        extent:             extent,
+                        assets:             [],
+                        insert_requests:    [],
+                        table_name:         JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|&quot;/g, &#039;&#039;),
+                        database_name:      JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|&quot;/g, &#039;&#039;)
+                    });
+                }
+            }
+
+            for (var i = 0; i &lt; site.zones.length; i++) {
+                SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                    transaction.executeSql(&#039;DROP TABLE IF EXISTS ASSETS&#039;);
+                    transaction.executeSql(&#039;CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, maplabel, minzoom integer, maxzoom integer, asset)&#039;);
+                    transaction.executeSql(&#039;CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)&#039;);
+                    transaction.executeSql(&#039;CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)&#039;, [], function(){
+                        Installer.checkpoint(&quot;create_zones_databases_&quot;, site.zones.length, callback);
+                    });
+                });
+            }
+
+            return site;
+        },
+
+        checkpoint: function (attribute, treeshold, callback) {
+            Installer[attribute] = 1 * (Installer[attribute] || 0) + 1;
+            if (Installer[attribute] &gt;= treeshold) {
+                Installer[attribute] = 0;
+                return callback();
+            } else {
+                return false;
+            }
+        },
+
+        install: function(site, stats, callback, update){
+
+            if(!stats.length){
+                return callback() ;
+            }
+
+            Installer.installOkey(site, stats[0], function(){
+                Installer.install(site, stats.slice(1), callback, update);
+            }, update);
+
+        },
+
+        update: function(site, stats, callback){
+            var update = true ;
+            Installer.deleteAssets(site, site.obsoletes, function(){
+                Installer.install(site, stats, callback, update);
+            });
+        },
+
+        installOkey : function (site, objectType, callback, update){
+
+            $rootScope.$broadcast(&quot;_INSTALLER_I_AM_CURRENTLY_DOING_THIS_&quot;, {
+                okey: objectType.okey,
+                progress: 0
+            });
+
+            if(objectType.amount === 0 || objectType.amount === &quot;0&quot;){
+                return callback();
+            }
+
+            if(objectType.amount &gt; Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST){
+                Installer.installOkeyPerSlice(site, objectType, 0, callback, update);
+            } else {
+                // var url = Smartgeo.get(&#039;url&#039;)+&#039;gi.maintenance.mobility.installation.assets.json&amp;okey=&#039;+objectType.okey ;
+                var url = Smartgeo.getServiceUrl(&#039;gi.maintenance.mobility.installation.assets.json&#039;, {
+                    okey : objectType.okey
+                });
+                if(update){
+                    url += &#039;&amp;timestamp=&#039; + site.oldTimestamp ;
+                }
+
+                $http
+                    .get(url)
+                    .success(function(data){
+                        Installer.save(site, data.assets, function(){
+                            $rootScope.$broadcast(&quot;_INSTALLER_I_AM_CURRENTLY_DOING_THIS_&quot;, {
+                                okey: objectType.okey,
+                                progress: objectType.amount
+                            });
+                            $timeout(function(){
+                                callback();
+                            }, 100);
+                        });
+                    })
+                    .error(function(){
+                        $timeout(function(){
+                            Installer.installOkey(site, objectType, callback, update);
+                        }, 100);
+                    });
+            }
+        },
+
+        installOkeyPerSlice: function (site, objectType, lastFetched, callback, update){
+            if(lastFetched &gt;= objectType.amount){
+                return callback();
+            }
+            var newlastFetched   = lastFetched + Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST,
+                url              =  Smartgeo.get(&#039;url&#039;) + &#039;gi.maintenance.mobility.installation.assets.json&#039;;
+
+            url += &#039;&amp;okey=&#039; + objectType.okey;
+            url += &#039;&amp;min=&#039;  + (lastFetched+1);
+            url += &#039;&amp;max=&#039;  + newlastFetched;
+
+            if(update){
+                url += &#039;&amp;timestamp=&#039; + site.oldTimestamp ;
+            }
+
+            if(Installer._LAST_ID_OKEY[objectType.okey]){
+                url += &#039;&amp;lastid=&#039; + Installer._LAST_ID_OKEY[objectType.okey] ;
+            }
+
+            $http
+                .get(url)
+                .success(function(data){
+                    Installer._LAST_ID_OKEY[objectType.okey] = data.assets[data.assets.length-1] ? data.assets[data.assets.length-1].guid : Installer._LAST_ID_OKEY[objectType.okey] ;
+                    if(!Installer._LAST_ID_OKEY[objectType.okey]){
+                        console.log(data.assets.length);
+                        console.log(data.assets);
+                    }
+                    Installer.save(site, data.assets, function(){
+                        $rootScope.$broadcast(&quot;_INSTALLER_I_AM_CURRENTLY_DOING_THIS_&quot;, {
+                            okey: objectType.okey,
+                            progress: Math.min(newlastFetched, objectType.amount)
+                        });
+                        $timeout(function(){
+                            Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback, update);
+                        }, 100);
+                    });
+                }).error(function(){
+                    $timeout(function(){
+                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
+                    }, 100);
+                });
+        },
+
+        save: function (site, assets, callback) {
+            Installer.distribute_assets_in_zones(site, assets);
+            Installer.save_zones_to_database(site, function() {
+                Installer.clean_zones(site);
+                callback();
+            });
+        },
+
+        clean_zones: function (site) {
+            for (var i = 0; i &lt; site.zones.length; i++){
+                if (site.zones[i].assets) {
+                    site.zones[i].assets_count = (site.zones[i].assets_count || 0) + site.zones[i].assets.length;
+                    site.zones[i].assets = [];
+                    site.zones[i].insert_requests = [];
+                }
+            }
+        },
+
+        distribute_assets_in_zones: function(site, assets) {
+
+            if (!assets){
+                return false;
+            }
+
+            var asset, bounds, asset_extent, zones = site.zones;
+
+            for (var i = 0, assets_length = assets.length; i &lt; assets_length; i++) {
+                asset = assets[i];
+                if (!asset || !asset.bounds) {
+                    continue;
+                }
+                bounds = asset.bounds;
+                asset_extent = {
+                    xmin: bounds.sw.lng,
+                    xmax: bounds.ne.lng,
+                    ymin: bounds.sw.lat,
+                    ymax: bounds.ne.lat
+                };
+                for (var j = 0, zones_length = zones.length; j &lt; zones_length; j++){
+                    if (G3ME.extents_match(zones[j].extent, asset_extent)){
+                        zones[j].assets.push(asset);
+                    }
+                }
+            }
+        },
+
+        save_zones_to_database: function (site, callback) {
+
+            for (var i = 0; i &lt; site.zones.length; i++) {
+                (function(i) {
+                    var temp_zone, sub_zone, zone = site.zones[i];
+                    if (zone.assets){
+                        temp_zone = zone.assets;
+                    } else {
+                        return Installer.checkpoint(&quot;saved_zones&quot;,  site.zones.length, callback);
+                    }
+                    while (temp_zone.length) {
+                        sub_zone = temp_zone.slice(0, Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST);
+                        zone.insert_requests.push(Installer.build_binded_insert_request(site, sub_zone));
+                        temp_zone = temp_zone.slice(Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST);
+                    }
+                    Installer.execute_requests_for_zone(site, zone, function() {
+                        Installer.checkpoint(&quot;saved_zones&quot;, site.zones.length, callback);
+                    });
+                })(i);
+            }
+        },
+
+        execute_requests_for_zone: function (site, zone, callback) {
+
+            if (zone.insert_requests.length === 0) {
+                return Installer.checkpoint(&quot;rqst&quot; + zone.table_name, zone.insert_requests.length, callback);
+            }
+
+            for (var i = 0; i &lt; zone.insert_requests.length; i++) {
+                (function(zone, request) {
+                    SQLite.openDatabase({name: zone.database_name}).transaction(function(transaction){
+                        transaction.executeSql(request.request, request.args, function() {
+                            Installer.checkpoint(&quot;rqst&quot; + zone.table_name, zone.insert_requests.length, callback);
+                            return ;
+                        }, function(tx, sqlerror) {
+                            console.log(sqlerror.message);
+                            Installer.checkpoint(&quot;rqst&quot; + zone.table_name, zone.insert_requests.length, callback);
+                        });
+                    });
+                })(zone, zone.insert_requests[i]);
+            }
+        },
+
+        build_binded_insert_request: function (site, assets) {
+
+             var request = &#039;&#039;,
+                asset, asset_, guid, check = /\&#039;/g,
+                metamodel = site.metamodel,
+                symbology = site.symbology,
+                bounds, geometry, symbolId, angle, label, args = [],
+                fields_in_request = [&#039;xmin&#039;, &#039;xmax&#039;, &#039;ymin&#039;, &#039;ymax&#039;, &#039;geometry&#039;, &#039;symbolId&#039;, &#039;angle&#039;, &#039;label&#039;, &#039;maplabel&#039;, &#039;minzoom&#039;, &#039;maxzoom&#039;, &#039;asset&#039;],
+                fields_to_delete = [&#039;guids&#039;, &#039;bounds&#039;, &#039;geometry&#039;, &#039;classindex&#039;, &#039;angle&#039;],
+                assets_length = assets.length, values_in_request,
+                i ,j, k;
+
+            for (i=0; i &lt; assets_length; i++) {
+                asset  = assets[i];
+                asset_ = JSON.parse(JSON.stringify(asset)) ;
+                guid   = asset.guid;
+                bounds = asset.bounds;
+
+                request += (request === &#039;&#039; ? &quot;INSERT INTO ASSETS SELECT &quot; : &quot; UNION SELECT &quot;) + &quot; &quot;+guid+&quot; as id &quot;;
+
+                for (k = 0; k &lt; fields_to_delete.length; k++){
+                    delete asset_[fields_to_delete[k]];
+                }
+
+                values_in_request = [
+                    bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
+                    JSON.stringify(asset.geometry),
+                    (&quot;&quot; + asset.okey + asset.classindex), (asset.angle || &quot;&quot;), (&#039;&#039; + (asset.attributes[metamodel[asset.okey].ukey] || &quot;&quot;)),
+                    asset.maplabel || &#039;&#039;,
+                    1 * symbology[(&quot;&quot; + asset.okey + asset.classindex)].minzoom,
+                    1 * symbology[(&quot;&quot; + asset.okey + asset.classindex)].maxzoom,
+                    JSON.stringify(asset_)
+                ];
+
+                for (j = 0; j &lt; fields_in_request.length; j++){
+                    request += &#039; , \&#039;&#039; + (  (typeof values_in_request[j] === &#039;string&#039; &amp;&amp; values_in_request[j].length ) || typeof values_in_request[j] !== &#039;string&#039; ? JSON.stringify(values_in_request[j]) : &#039;&#039; ).replace(/^&quot;(.+)&quot;$/, &#039;$1&#039;).replace(/\\&quot;/g, &#039;&quot;&#039;).replace(/&#039;/g, &#039;&amp;#039;&#039; ) + &#039;\&#039; as &#039; + fields_in_request[j];
+                }
+
+                if (assets[i]){
+                    delete assets[i];
+                }
+            }
+            return {
+                request: ((request !== &#039;&#039;) ? request : &#039;SELECT 1&#039;),
+                args: []
+            };
+        },
+
+        uninstallSite : function(site, callback){
+            for (var i = 0; site &amp;&amp; i &lt; site.zones.length; i++) {
+                SQLite.openDatabase({name: site.zones[i].database_name}).transaction(function(transaction){
+                    transaction.executeSql(&#039;DROP TABLE IF EXISTS ASSETS&#039;, [], function(){
+                        Installer.checkpoint(&quot;destroy_zones_databases&quot;, site.zones.length, callback);
+                    }, Smartgeo.log);
+                });
+            }
+        }
+    };
+
+    return Installer ;
+
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<div id="mainmenu" class="container_s" ng-controller="menuController">
+    <div class="mp-pusher" id="mp-pusher" ng-click='close($event)'>
+        <nav id="mp-menu" class="mp-menu">
+            <div class="mp-level">
+                <h2><img class="logo_gi" src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"><span id='smartgeo-version'>{{version}}</span></h2>
+                <ul>
+                    <li>
+                        <a href="#" ng-click='activateConsultation($event)'>
+                            <span class="icon icon-info-sign"></span>
+                            <i18n>_MENU_CONSULTATION</i18n>
+                        </a>
+                    </li>
+                    <li ng-show="rights.planning">
+                        <a href="#">
+                            <span class="icon icon-calendar"></span>
+                            <i18n>_MENU_PLANNING</i18n>
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <div ng-include="'partials/planning.html'"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-search"></span>
+                            <i18n>_MENU_SEARCH</i18n>
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <div ng-include="'partials/search.html'"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#" ng-click='activatePosition($event)'>
+                            <span class="icon icon-compass"></span>
+                            <i18n>_MENU_MY_POSITION</i18n>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-list-ul"></span>
+                            <i18n>_MENU_ACTIVE_LAYERS</i18n>
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <div ng-include="'partials/layers.html'"></div>
+                        </div>
+                    </li>
+                    <li ng-show="rights.report">
+                        <a href="#">
+                            <span class="icon icon-edit"></span>
+                            <i18n>_MENU_REPORT</i18n>
+                        </a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <ul>
+                                <li ng-repeat='activity in site.activities'>
+                                    <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
+                                        <span class="icon icon-chevron-right" ></span>
+                                        {{activity.label}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon icon-refresh"></span>
+                            <i18n>_MENU_SYNC</i18n>
+                            <span ng-if="toSyncNumber" class="badge pull-right">{{toSyncNumber}}</span>
+                        </a>
+                        <div class="mp-level">
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <div ng-include="'partials/synchronizationMenu.html'"></div>
+                        </div>
+                    </li>
+                    <li ng-show="rights.logout">
+                        <a href="#/">
+                            <span class="icon icon-power-off"></span>
+                            <i18n>_MENU_LOGOUT</i18n>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="scroller">
+            <p>
+                <a href="#" id="trigger" ng-click="toggle($event)" ng-show="!nightTourInProgress">
+                    <span class="icon-ellipsis-vertical"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<span id="mainmap" ng-controller="mapController">
+    <div id="smartgeo-map"></div>
+</span>
+
+<div ng-include="'partials/consultation.html'"></div>
+<div ng-include="'partials/nightTour.html'"></div>

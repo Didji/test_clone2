@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>javascripts/i18n/smartgeomobile_en.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">39.93</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">111</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">2.18</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">0.72</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">window.smartgeo_i18n_lang[&#039;en&#039;] = {
+        _AUTH_LOG_MESSAGE_INIT_             : &quot;Initialization&quot;,
+        _AUTH_LOG_MESSAGE_REMOTE_           : &quot;Remote login&quot;,
+        _AUTH_LOG_MESSAGE_LOCAL_            : &quot;Local login&quot;,
+        _AUTH_LOG_MESSAGE_CHECK_            : &quot;Checking server&quot;,
+        _AUTH_FORGET_PASSWORD_              : &quot;Forget saved password&quot;,
+        _AUTH_SETTINGS_                     : &quot;Settings&quot;,
+        _AUTH_CHANGE_GIMAP_URL_             : &quot;Change remote server&quot;,
+        _AUTH_REMEMBER_PASSWORD_            : &quot;Remember password&quot;,
+        _AUTH_INIT_WITHOUT_NETWORK_ERROR_   : &quot;Offline mode is not available for %s.&quot;,
+        _AUTH_SERVER_UNREACHABLE            : &quot;Unreachable server&quot; ,
+        _AUTH_PLEASE_WAIT                   : &quot;Please wait ...&quot; ,
+        _AUTH_REQUIRED_FIELD_EMPTY          : &quot;Please fill user and password fields.&quot; ,
+        _AUTH_SERVER_ERROR                  : &quot;%s&quot;, // status
+        _AUTH_INCORRECT_PASSWORD            : &quot;Invalid password&quot;,//Mot de passe incorrect&quot;,
+
+        _SMARTGEO_ONLINE                    : &quot;Smartgeo is online&quot; ,
+        _SMARTGEO_OFFLINE                   : &quot;Smartgeo is offline&quot; ,
+        _SMARTGEO_ZERO_SITE_SELECTED        : &quot;No site found&quot; ,
+
+        _G3ME_UNKNOWN_GEOMETRY              : &quot;Unknown geometry (%s)&quot;, // geom
+
+        _CONSULTATION_LOADING               : &quot;Loading ...&quot; ,
+        _CONSULTATION_REPORT                : &quot;Report&quot; ,
+        _CONSULTATION_LOCATE                : &quot;Locate&quot; ,
+        _CONSULTATION_GOTO                  : &quot;Go to&quot; ,
+        _CONSULTATION_REPORT_ON_POSITION    : &quot;Fill report on this position&quot; ,
+        _CONSULTATION_GPS_FAIL              : &quot;Error while retrieving GPS coordinates&quot; ,
+        _CONSULTATION_ADD_TO_               : &quot;Add to&quot;,
+        _CONSULTATION_WRITE_FOR_            : &quot;Write for &quot;,
+
+        _INSTALL_INSTALLING                 : &quot;Installing &quot; ,
+        _INSTALL_IN_PROGRESS                : &quot; in progress&quot; ,
+
+        _UNINSTALL_UNINSTALLING             : &quot;Uninstalling &quot; ,
+
+        _UPDATE_UPDATING                    : &quot;Updating &quot; ,
+
+        _MENU_CONSULTATION                  : &quot;Consultation&quot; ,
+        _MENU_PLANNING                      : &quot;Planning&quot; ,
+        _MENU_SEARCH                        : &quot;Search&quot; ,
+        _MENU_MY_POSITION                   : &quot;My position&quot; ,
+        _MENU_ACTIVE_LAYERS                 : &quot;Active layers&quot; ,
+        _MENU_BACK                          : &quot;Back&quot; ,
+        _MENU_REPORT                        : &quot;Report&quot; ,
+        _MENU_SYNC                          : &quot;Synchronization&quot; ,
+        _MENU_LOGOUT                        : &quot;Log out&quot; ,
+
+        _REPORT_REPORT                      : &quot;Report&quot; ,
+        _REPORT_CANCEL                      : &quot;Cancel&quot; ,
+        _REPORT_NEXT                        : &quot;Next&quot; ,
+        _REPORT_PREVIOUS                    : &quot;Previous&quot; ,
+        _REPORT_REQUIRED_FIELDS             : &quot;Please, fill required fields&quot; ,
+        _REPORT_MEDIA                       : &quot;Media&quot; ,
+        _REPORT_ADD_PICTURES                : &quot;Add pictures&quot; ,
+        _REPORT_SAVE                        : &quot;Save&quot; ,
+        _REPORT_LOADING                     : &quot;Loading&quot;,
+        _REPORT_DELETE                      : &quot;Delete&quot;,
+        _REPORT_SELECT_ACTIVITY             : &quot;Select activity&quot;,
+        _REPORT_SELECT_ASSETS               : &quot;Select assets&quot;,
+
+        _SEARCH_SEARCH                      : &quot;Search&quot; ,
+        _SEARCH_ADVANCED_SEARCH             : &quot;Advanced search&quot; ,
+        _SEARCH_BACK                        : &quot;Back&quot; ,
+        _SEARCH_TYPE                        : &quot;Type&quot; ,
+        _SEARCH_CRITERIA                    : &quot;Criteria&quot; ,
+        _SEARCH_ERASE_CRITERIA              : &quot;Erase criteria&quot; ,
+        _SEARCH_SEARCH_IN_PROGRESS          : &quot;Search in progress&quot; ,
+        _SEARCH_SEARCH_NO_RESULT            : &quot;No result&quot; ,
+        _SEARCH_PICK_OBJECT_TYPE            : &quot;Please select an object type&quot; ,
+        _SEARCH_SEARCH_HAS_BEEN_CANCELED    : &quot;Canceled&quot;,
+        _SEARCH_CANCEL_SEARCH               : &quot;Cancel&quot;,
+
+        _SITE_LOADING                       : &quot;Loading ...&quot; ,
+        _SITE_UNINSTALL                     : &quot;Uninstalling &quot; ,
+        _SITE_UPDATE                        : &quot;Updating &quot; ,
+
+        _SYNC_SYNC_EVERYTHING               : &quot;Synchronize all&quot; ,
+        _SYNC_SYNC                          : &quot;Synchronize&quot; ,
+        _SYNC_DELETE                        : &quot;Delete&quot; ,
+        _SYNC_EVERYTHING_IS_SYNCED          : &quot;All reports have been synchronized.&quot; ,
+        _SYNC_UPDATE                        : &quot;Update &quot; ,
+        _SYNC_UNINSTALL                     : &quot;Uninstall &quot; ,
+        _SYNC_UNKNOWN_ERROR_                : &quot;Unknown error while synchronizing reports&quot;,
+
+        _INTENT_ZERO_SITE_SELECTED          : &quot;No site found&quot; ,
+        _INTENT_OBJECT_NOT_FOUND            : &quot;Object not found in database&quot; ,
+        _INTENT_AUTH_FAILED                 : &quot;%s&quot;, // status
+
+        _MAP_ZERO_SITE_SELECTED             : &quot;No site found&quot; ,
+        _MAP_ZERO_OBJECT_FOUND              : &quot;No asset in this area&quot; ,
+        _MAP_MY_POSITION_CONTROL            : &quot;My position&quot; ,
+        _MAP_GPS_FAIL                       : &quot;Error while retrieving GPS coordinates&quot; ,
+        _MAP_CONSULTATION_CONTROL           : &quot;Consultation&quot;,
+
+
+        _PLANNING_SYNC_FAIL_                : &quot;Error while updating missions&quot;, //&quot;Erreur lors de la mise à jour des missions&quot;,
+        _PLANNING_OBJECT_NOT_FOUND_         : &quot;Mission&#039;s objects not found&quot;, //&quot;Les objets de cette mission n&#039;ont pas été trouvés.&quot;,
+        _PLANNING_REFRESH_                  : &quot;Refresh&quot;, //&quot;Actualiser&quot;,
+        _PLANNING_TODAY_                    : &quot;Today&quot;, //&quot;Aujourd&#039;hui&quot;,
+        _PLANNING_BEFORE_                   : &quot;Before&quot;, //&quot;Avant&quot;,
+        _PLANNING_DISPLAY_DONE_ASSETS_      : &quot;Show finished objects&quot;, //&quot;Afficher objets terminés&quot;,
+        _PLANNING_LOCATE_                   : &quot;Locate&quot;, //&quot;Localiser&quot;,
+        _PLANNING_WRITE_                    : &quot;Record&quot;, //&quot;Saisir&quot;
+        _PLANNING_START_                    : &quot;Start&quot;, //&quot;Démarrer&quot;
+        _PLANNING_FINISH_                   : &quot;finished&quot;, //&quot;terminé&quot;
+        _PLANNING_REFRESHED_                : &quot;Refreshed&quot;, //&quot;Actualisé&quot;
+        _PLANNING_DISPLAY_FINISHED_         : &quot;Display finished mission&quot;, //Afficher les OT terminé&quot;
+        _PLANNING_NEW_MISSION_              : &quot; new mission&quot;,
+        _PLANNING_NEW_MISSIONS_             : &quot; new missions&quot;
+};</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

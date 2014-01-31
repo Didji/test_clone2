@@ -1,0 +1,11 @@
+platforms/android/.settings
+platforms/android/.classpath
+platforms/android/.project
+platforms/android/bin
+platforms/android/gen
+platforms/android/assets/www/.git/*
+platforms/ios/www/.git/*
+
+.metadata
+.cordova/hooks
+platforms/android/.classpath
