@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>app/javascripts/controllers/intentController.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">62.44</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">109</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">31.88</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">1.04</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">angular.module(&#039;smartgeomobile&#039;).controller(&#039;intentController&#039;, function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon){
+
+    &#039;use strict&#039; ;
+
+    $scope.controller = $routeParams.controller ;
+
+    if ($scope.controller === &quot;oauth&quot;) {
+        if (!Smartgeo.get(&quot;url&quot;) || Smartgeo.get(&quot;url&quot;).indexOf($routeParams.url) === -1) {
+            Smartgeo.setGimapUrl($routeParams.url);
+        }
+        return tokenAuth($routeParams.token, function(){
+            $location.path(&#039;sites/&#039;);
+        });
+    }
+
+    if(!$scope.controller){
+        return false ;
+    }
+
+    if($rootScope.site){
+
+    } else if($routeParams.site){
+        $rootScope.site = $rootScope.site || Smartgeo.get_(&#039;sites&#039;)[$routeParams.site] ;
+    } else {
+        var sites = Smartgeo.get_(&#039;sites&#039;) ;
+        for(var siteId in sites){
+            if(sites.hasOwnProperty(siteId)){
+                $rootScope.site = sites[siteId];
+                break;
+            }
+        }
+    }
+
+    if(!$rootScope.site){
+        alertify.alert(i18n.get(&quot;_INTENT_ZERO_SITE_SELECTED&quot;));
+        $location.path(&quot;#&quot;);
+        return false ;
+    }
+
+    for(var arg in $routeParams){
+        if($routeParams.hasOwnProperty(arg) &amp;&amp; arg !== &quot;controller&quot; &amp;&amp; arg !== &quot;token&quot;){
+            $rootScope[arg] = $routeParams[arg];
+        }
+    }
+
+    if($rootScope.map_target){
+        // TODO: OULALA IT&#039;S UGLY /!\ REFACTOR ALERT /!\
+        G3ME.parseTarget($rootScope.site, $rootScope.map_target, function(assets){
+            if(!assets.length){
+                alertify.alert(i18n.get(&quot;_INTENT_OBJECT_NOT_FOUND&quot;));
+                return tokenAuth($routeParams.token, redirect);
+            }
+            $rootScope.map_target = assets ;
+            if( $rootScope.map_marker === &#039;true&#039; || $rootScope.map_marker === true){
+                $rootScope.map_marker = L.marker($rootScope.map_target, {icon:Icon.get(&#039;CONSULTATION&#039;)});
+                if($rootScope.report_target &amp;&amp; $rootScope.report_activity){
+                    $rootScope.map_marker.on(&#039;click&#039;,function(){
+                        $location.path(&#039;/report/&#039;+$rootScope.site.id+&quot;/&quot;+$rootScope.report_activity+&quot;/&quot;+$rootScope.report_target);
+                        $scope.$apply();
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    });
+                }
+            } else {
+                $rootScope.map_marker = undefined;
+            }
+            tokenAuth($routeParams.token, redirect);
+        }, function(){
+            document.location.reload();
+        });
+    } else {
+        tokenAuth($routeParams.token, redirect);
+    }
+
+    function tokenAuth(token, callback){
+
+        var currentUser = Smartgeo.get(&#039;user&#039;) || {};
+        currentUser.token = token ;
+        Smartgeo.set(&#039;user&#039;,currentUser) ;
+
+        Smartgeo.login(token, callback, function(response){
+            if( (response &amp;&amp; response.status === 200) || !response) {
+                callback();
+            } else {
+                alertify.alert(i18n.get(&quot;_INTENT_AUTH_FAILED&quot;, status));
+                $location.path(&#039;#&#039;);
+            }
+        });
+    }
+
+    function redirect(){
+        switch($scope.controller){
+            case &#039;map&#039;:
+                $location.path(&#039;map/&#039;+$rootScope.site.id);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+                break;
+
+            case &#039;report&#039;:
+                $location.path(&#039;report/&#039;+$rootScope.site.id+&#039;/&#039;+$rootScope.report_activity+&#039;/&#039;+$rootScope.target+&#039;/&#039;);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+                break;
+        }
+    }
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
