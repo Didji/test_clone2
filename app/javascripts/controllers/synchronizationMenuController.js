@@ -73,13 +73,13 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                     },3000);
                 });
-            }).error(function(error){
+            }).error(function(data, code){
                 if(!$scope.reports[$index]){
                     return ;
                 }
-                if(Smartgeo.get('online') && message !== "" && code !== 0){
-                    if(error.error){
-                        alertify.error(error.error.text);
+                if(Smartgeo.get('online') && code !== 0){
+                    if(data.error){
+                        alertify.error(data.error.text);
                     } else {
                         alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
                     }
