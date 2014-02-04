@@ -61,7 +61,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                                 scope.$apply(function(){
                                     ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push({
-                                        content:canvasElement.toDataURL("image/png")
+                                        content:canvasElement.toDataURL("image/jpeg", 0.75)
                                     });
                                 scope.isTakingPhoto = false ;
                                 });
@@ -108,7 +108,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                                     scope.$apply(function(){
                                         ctrl.$viewValue = ctrl.$viewValue || [];
                                         ctrl.$viewValue.push({
-                                            content:canvasElement.toDataURL("image/png")
+                                            content:canvasElement.toDataURL("image/jpeg", 0.75)
                                         });
                                         scope.isTakingPhoto = false ;
                                     });
@@ -132,7 +132,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                             scope.$apply(function(){
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:canvas.toDataURL("image/png")
+                                    content:canvas.toDataURL("image/jpeg", 0.75)
                                 });
                                 scope.isTakingPhoto = false ;
                             });
@@ -169,7 +169,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                             scope.$apply(function(){
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:canvasElement2.toDataURL("image/png")
+                                    content:canvasElement2.toDataURL("image/jpeg", 0.75)
                                 });
                                 scope.isTakingPhoto = false ;
                             });
