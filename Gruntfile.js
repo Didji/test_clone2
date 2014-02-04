@@ -185,7 +185,8 @@ module.exports = function(grunt) {
     });
 
     //single run tests
-    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage','coverage', 'plato:report', 'complexity:generic']);
+    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage']);
+    // grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage','coverage', 'plato:report', 'complexity:generic']);
     grunt.registerTask('test:unit', ['karma:unit']);
     grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
 

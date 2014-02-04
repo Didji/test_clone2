@@ -30,6 +30,7 @@
     "jshint-stylish" : "*",
     "grunt-plato"   : "*",
     "grunt-complexity" : "*",
-    "grunt-istanbul-coverage" : "*"
+    "grunt-istanbul-coverage" : "*",
+    "colors" : "*"
   }
 }
