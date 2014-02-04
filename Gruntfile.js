@@ -1,115 +1,185 @@
 module.exports = function(grunt) {
 
-  grunt.loadNpmTasks('grunt-ngdocs');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-ngmin');
-  grunt.loadNpmTasks('grunt-eslint');
+    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    copy: {
-      main: {
-        files: [{
-          src: [
-            'partials/*', 'images/*', 'css/*', 'css/vendors/*', 'javascripts/vendors/*', 'javascripts/vendors/images/*', 'css/fonts/*'
-          ],
-          dest: 'dist/'
-        }]
-      }
-    },
-    eslint: {
-        target: [
-          'javascripts/controllers/*.js',
-          'javascripts/factories/*.js',
-          'javascripts/filters/*.js',
-          'javascripts/*.js'
-        ]
-    },
-    concat: {
-      options: {
-        separator: ';'
-      },
-      javascripts: {
-        src: [
-          'javascripts/smartgeomobile.js',
-          'javascripts/factories/Smartgeo.js',
-          'javascripts/factories/SQLite.js',
-          'javascripts/factories/G3ME.js',
-          'javascripts/factories/GiReportBuilder.js',
-          'javascripts/factories/Installer.js',
-          'javascripts/factories/i18n.js',
-          'javascripts/factories/IndexedDB.js',
-          'javascripts/factories/Mission.js',
-          'javascripts/i18n/smartgeomobile_fr.js',
-          'javascripts/i18n/smartgeomobile_en.js',
-          'javascripts/controllers/*.js',
-          'javascripts/filters/*.js'
-        ],
-        dest: 'dist/javascripts/<%= pkg.name %>.concat.js'
-      },
-    },
-    ngdocs: {
-      options: {
-        dest: 'docs/ngdocs',
-        html5Mode: false,
-        title: "Smartgeo Mobile",
-        image: "images/logo.png",
-      },
-      all: [
-        'javascripts/controllers/planningController.js',
-        'javascripts/factories/Smartgeo.js',
-        'javascripts/factories/G3ME.js',
-      ]
-    },
-    connect: {
-      options: {
-        keepalive: true
-      },
-      server: {}
-    },
-    clean: ['docs/ngdocs', 'dist/javascripts/smartgeomobile.ngmin.js', 'dist/javascripts/smartgeomobile.concat.js'],
-    compress: {
-      main: {
-        options: {
-          archive: 'zip/gimap-mobile.zip'
+    grunt.initConfig({
+        shell: {
+            options: {
+                stdout: true
+            },
+            selenium: {
+                command: './selenium/start',
+                options: {
+                    stdout: false,
+                    async: true
+                }
+            },
+            protractor_install: {
+                command: 'node ./node_modules/protractor/bin/webdriver-manager update'
+            },
+            npm_install: {
+                command: 'npm install'
+            }
         },
 
-        files: [
-        // {
-        //   src: ['dist/**'],
-        //   dest: './'
-        // }
-        {cwd:'dist/',src:['**'],dest:'../',expand:true},
-        // {flatten: true, src: ['dist/**'], dest: './'} // flattens results to a single level
-        ]
-      }
-    },
-    uglify: {
-      javascript: {
-        files: {
-          'dist/javascripts/smartgeomobile.js': ['dist/javascripts/smartgeomobile.ngmin.js']
+        jsbeautifier: {
+            files: ["app/javascripts/**/*.js"],
+            options: {
+                js: {
+                    braceStyle: "collapse",
+                    breakChainedMethods: false,
+                    e4x: false,
+                    evalCode: false,
+                    indentChar: " ",
+                    indentLevel: 0,
+                    indentSize: 4,
+                    indentWithTabs: false,
+                    jslintHappy: true,
+                    keepArrayIndentation: false,
+                    keepFunctionIndentation: false,
+                    maxPreserveNewlines: 10,
+                    preserveNewlines: true,
+                    spaceBeforeConditional: true,
+                    spaceInParen: false,
+                    unescapeStrings: false,
+                    wrapLineLength: 0
+                }
+            }
+        },
+
+        plato: {
+            report: {
+                files: {
+                    'test/reports': [
+                        'app/javascripts/controllers/*.js',
+                        'app/javascripts/filters/*.js',
+                        'app/javascripts/factories/*.js',
+                        'app/javascripts/filters/*.js',
+                        'app/javascripts/*.js'
+                    ],
+                },
+            },
+        },
+
+        connect: {
+            options: {
+                base: 'app/'
+            },
+            webserver: {
+                options: {
+                    port: 8888,
+                    keepalive: true
+                }
+            },
+            devserver: {
+                options: {
+                    port: 8888
+                }
+            },
+            testserver: {
+                options: {
+                    port: 9999
+                }
+            },
+            coverage: {
+                options: {
+                    base: 'test/coverage/',
+                    port: 5555,
+                    keepalive: true
+                }
+            }
+        },
+
+        protractor: {
+            options: {
+                keepAlive: true,
+                configFile: "./test/protractor.configuration.js"
+            },
+            singlerun: {},
+            auto: {
+                keepAlive: true,
+                options: {
+                    args: {
+                        seleniumPort: 4444
+                    }
+                }
+            }
+        },
+
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
+            },
+            all: [
+                'app/javascripts/controllers/*.js',
+                'app/javascripts/filters/*.js',
+                'app/javascripts/factories/*.js',
+                'app/javascripts/*.js',
+            ]
+        },
+
+        open: {
+            devserver: {
+                path: 'http://localhost:8888'
+            },
+            coverage: {
+                path: 'http://localhost:5555'
+            }
+        },
+
+        karma: {
+            unit: {
+                configFile: './test/karma.unit.configuration.js',
+                autoWatch: false,
+                singleRun: true
+            },
+            unit_auto: {
+                configFile: './test/karma.unit.configuration.js',
+                autoWatch: true,
+                singleRun: false
+            },
+            unit_coverage: {
+                configFile: './test/karma.unit.configuration.js',
+                autoWatch: false,
+                singleRun: true,
+                reporters: ['progress', 'coverage'],
+                preprocessors: {
+                    'app/javascripts/**/*.js': ['coverage']
+                },
+                coverageReporter: {
+                    type: 'html',
+                    dir: 'test/coverage/'
+                }
+            },
         }
-      }
-    },
-    ngmin: {
-      javascript: {
-        src: ['dist/javascripts/smartgeomobile.concat.js'],
-        dest: 'dist/javascripts/smartgeomobile.ngmin.js'
-      },
-      standalone: {
-        src: ['dist/javascripts/contro.concat.js'],
-        dest: 'dist/javascripts/smartgeomobile.ngmin.js'
-      }
-    }
-  });
+    });
 
-  grunt.registerTask('doc', ['clean', 'ngdocs']);
-  grunt.registerTask('dist', ['concat:javascripts', 'ngmin:javascript', 'uglify:javascript', 'copy', 'clean', 'compress']);
-  grunt.registerTask('lint', ['eslint']);
+    //single run tests
+    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage', 'plato:report']);
+    grunt.registerTask('test:unit', ['karma:unit']);
+    grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
 
+    //autotest and watch tests
+    grunt.registerTask('autotest', ['karma:unit_auto']);
+    grunt.registerTask('autotest:unit', ['karma:unit_auto']);
+    grunt.registerTask('autotest:e2e', ['connect:testserver', 'shell:selenium']);
+
+    //coverage testing
+    grunt.registerTask('test:coverage', ['karma:unit_coverage']);
+    grunt.registerTask('coverage', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
+
+    //installation-related
+    grunt.registerTask('install', ['update', 'shell:protractor_install']);
+    grunt.registerTask('update', ['shell:npm_install']);
+
+    //defaults
+    grunt.registerTask('default', ['dev']);
+
+    //development
+    grunt.registerTask('dev', ['update', 'connect:devserver', 'open:devserver']);
+
+    //server daemon
+    grunt.registerTask('serve', ['connect:webserver']);
+    grunt.registerTask('beauty', ['jsbeautifier']);
 };

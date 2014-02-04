@@ -1,58 +1,60 @@
-angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout){
+angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout) {
 
-    'use strict' ;
+    'use strict';
 
-    window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site] ;
+    window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
     $scope.missionsClusters = {};
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;
 
-    if(!$rootScope.site){
+    if (!$rootScope.site) {
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
         $location.path("#");
-        return false ;
+        return false;
     }
 
-    $scope.consultationIsEnabled = false ;
-    Smartgeo.silentLogin(function(){
-        G3ME.backgroundTile && G3ME.backgroundTile.redraw() ;
+    $scope.consultationIsEnabled = false;
+    Smartgeo.silentLogin(function () {
+        if (G3ME.backgroundTile) {
+            G3ME.backgroundTile.redraw();
+        }
     });
 
-    G3ME.initialize( 'smartgeo-map',
-                     $rootScope.site,
-                     $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
-                     $rootScope.map_marker ,
-                     $rootScope.map_zoom || 18 );
+    G3ME.initialize('smartgeo-map',
+        $rootScope.site,
+        $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
+        $rootScope.map_marker,
+        $rootScope.map_zoom || 18);
 
-    G3ME.map.on('moveend', function(e) {
+    G3ME.map.on('moveend', function (e) {
         var extent = G3ME.map.getBounds();
-        if( extent._northEast.lat != extent._southWest.lat ||
-            extent._northEast.lng != extent._southWest.lng    ){
-                Smartgeo.set('lastLeafletMapExtent', [
-                    [extent._northEast.lat, extent._northEast.lng],
-                    [extent._southWest.lat, extent._southWest.lng]
-                ]);
+        if (extent._northEast.lat !== extent._southWest.lat ||
+            extent._northEast.lng !== extent._southWest.lng) {
+            Smartgeo.set('lastLeafletMapExtent', [
+                [extent._northEast.lat, extent._northEast.lng],
+                [extent._southWest.lat, extent._southWest.lng]
+            ]);
         }
     });
 
     function noConsultableAssets(coords) {
-        var popupContent = '<p>'+i18n.get('_MAP_ZERO_OBJECT_FOUND')+'</p>';
-        if($rootScope.report_activity){
+        var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+        if ($rootScope.report_activity) {
             popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
-            $(document).on('click', '.openLocateReportButton' , function(){
-                $location.path('report/'+$rootScope.site.id+'/'+$rootScope.report_activity+'/'+coords.lat+','+coords.lng+'/');
-                if(!$scope.$$phase) {
+            $(document).on('click', '.openLocateReportButton', function () {
+                $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
+                if (!$scope.$$phase) {
                     $scope.$apply();
                 }
             });
         }
         var popup = L.popup().setLatLng(coords)
-                .setContent(popupContent)
-                .openOn(G3ME.map);
+            .setContent(popupContent)
+            .openOn(G3ME.map);
 
-        if(!$rootScope.report_activity){
-            setTimeout(function() {
+        if (!$rootScope.report_activity) {
+            setTimeout(function () {
                 $(popup._container).fadeOut();
             }, 4000);
         }
@@ -62,7 +64,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     }
 
 
-    G3ME.map.on('click', function(e) {
+    G3ME.map.on('click', function (e) {
 
         if (!$scope.consultationIsEnabled) {
             return false;
@@ -115,15 +117,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         request += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
         request += "    AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
 
-        if(G3ME.active_layers) {
-            request += G3ME.active_layers.length
-                            ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )'
-                            : ' and 1=2 ';
+        if (G3ME.active_layers) {
+            request += G3ME.active_layers.length ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
         }
-        request +=     " order by priority LIMIT 0,100 ";
+        request += " order by priority LIMIT 0,100 ";
 
 
-        $(circle._path).fadeOut(1500, function() {
+        $(circle._path).fadeOut(1500, function () {
             G3ME.map.removeLayer(circle);
         });
 
@@ -131,24 +131,25 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         SQLite.openDatabase({
             name: zone.database_name,
             bgType: 1
-        }).transaction(function(t) {
+        }).transaction(function (t) {
             t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom],
-                function(t, results) {
-                    if (results.rows.length === 0 ) {
+                function (t, results) {
+                    if (results.rows.length === 0) {
                         return noConsultableAssets(coords);
                     }
                     // TODO : use filter ?
 
-                    var assets = [], asset, asset_;
+                    var assets = [],
+                        asset, asset_;
 
-                    for (var i = 0; i < results.rows.length && assets.length < 10 ; i++){
+                    for (var i = 0; i < results.rows.length && assets.length < 10; i++) {
                         asset_ = results.rows.item(i);
-                        asset  = Smartgeo.sanitizeAsset(asset_.asset);
-                        asset.label = asset_.label ;
-                        asset.geometry = JSON.parse(asset_.geometry) ;
-                        asset.priority = asset_.priority ;
+                        asset = Smartgeo.sanitizeAsset(asset_.asset);
+                        asset.label = asset_.label;
+                        asset.geometry = JSON.parse(asset_.geometry);
+                        asset.priority = asset_.priority;
 
-                        if(asset.geometry.type === "LineString"){
+                        if (asset.geometry.type === "LineString") {
 
                             var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
                                 p2,
@@ -156,15 +157,15 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                                 distanceToCenter;
 
                             for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
-                                if(j){
+                                if (j) {
                                     p2 = p3;
                                 } else {
-                                    p2 = G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j]);
+                                    p2 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j]);
                                 }
-                                p3 = G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j+1]);
-                                distanceToCenter = L.LineUtil.pointToSegmentDistance(p1,p2,p3);
+                                p3 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j + 1]);
+                                distanceToCenter = L.LineUtil.pointToSegmentDistance(p1, p2, p3);
 
-                                if(distanceToCenter <= radius_p ){
+                                if (distanceToCenter <= radius_p) {
                                     assets.push(asset);
                                     break;
                                 }
@@ -174,7 +175,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                         }
                     }
 
-                    if (assets.length === 0 ) {
+                    if (assets.length === 0) {
                         return noConsultableAssets(coords);
                     }
 
@@ -185,33 +186,37 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     });
 
 
-    $scope.$on("__MAP_SETVIEW__", function(event, extent){
-       if(extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax){
-           G3ME.map.fitBounds([[extent.ymin, extent.xmin] , [extent.ymax, extent.xmax]]);
-       } else {
-           alertify.error("Extent non valide");
-       }
-    });
-
-    $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng){
-        if(!$scope.myPositionMarker){
-            $scope.myPositionMarker = L.marker([lat,lng],{zIndexOffset:10000}).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
+    $scope.$on("__MAP_SETVIEW__", function (event, extent) {
+        if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {
+            G3ME.map.fitBounds([
+                [extent.ymin, extent.xmin],
+                [extent.ymax, extent.xmax]
+            ]);
         } else {
-            $scope.myPositionMarker.setLatLng([lat,lng]);
+            alertify.error("Extent non valide");
         }
-        G3ME.map.setView([lat,lng]);
     });
 
-    $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function(){
-        if($scope.myPositionMarker){
+    $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function (event, lat, lng) {
+        if (!$scope.myPositionMarker) {
+            $scope.myPositionMarker = L.marker([lat, lng], {
+                zIndexOffset: 10000
+            }).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
+        } else {
+            $scope.myPositionMarker.setLatLng([lat, lng]);
+        }
+        G3ME.map.setView([lat, lng]);
+    });
+
+    $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function () {
+        if ($scope.myPositionMarker) {
             G3ME.map.removeLayer($scope.myPositionMarker);
             delete $scope.myPositionMarker;
         }
     });
 
-    $scope.$on("ACTIVATE_POSITION", activatePosition);
 
-    $scope.$on("ACTIVATE_CONSULTATION", function(event){
+    $scope.$on("ACTIVATE_CONSULTATION", function (event) {
         activateConsultation();
     });
 
@@ -219,58 +224,62 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     /*
      *   General events
      */
-    $scope.$on("ZOOM_ON_ASSET", function(event, asset){
+    $scope.$on("ZOOM_ON_ASSET", function (event, asset) {
         $scope.zoomOnAsset(asset);
     });
-      $scope.$on("HIGHLIGHT_ASSET", function(event, asset){
-          $scope.highlightAsset(asset);
-      });
-      $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset){
-          $scope.unHighlightAsset(asset);
-      });
+    $scope.$on("HIGHLIGHT_ASSET", function (event, asset) {
+        $scope.highlightAsset(asset);
+    });
+    $scope.$on("UNHIGHLIGHT_ASSET", function (event, asset) {
+        $scope.unHighlightAsset(asset);
+    });
 
-    $scope.$on("HIGHLIGHT_ASSETS", function(event, assets, marker, clickHandler){
+    $scope.$on("HIGHLIGHT_ASSETS", function (event, assets, marker, clickHandler) {
         for (var i = 0; i < assets.length; i++) {
             $scope.highlightAsset(assets[i], marker, clickHandler);
         }
     });
-    $scope.$on("UNHIGHLIGHT_ASSETS", function(event, assets){
+    $scope.$on("UNHIGHLIGHT_ASSETS", function (event, assets) {
         for (var i = 0; i < assets.length; i++) {
             $scope.unHighlightAsset(assets[i]);
         }
     });
-    $scope.$on("UNHIGHLIGHT_ALL_ASSET", function(event){
-          $scope.unHighlightAllAsset();
-      });
+    $scope.$on("UNHIGHLIGHT_ALL_ASSET", function (event) {
+        $scope.unHighlightAllAsset();
+    });
 
     /*
      *   Planning related events
      */
-    $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
-        if($scope.missionsClusters[mission.id]){
+    $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
+        if ($scope.missionsClusters[mission.id]) {
             G3ME.map.removeLayer($scope.missionsClusters[mission.id]);
         }
     });
 
-    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
-        if(!$scope.missionsClusters[mission.id]){
+    $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
+        if (!$scope.missionsClusters[mission.id]) {
             $scope.missionsClusters[mission.id] = new L.MarkerClusterGroup({
-                iconCreateFunction: function(cluster) {
-                    return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-assets', iconSize: new L.Point(40, 40) });
+                iconCreateFunction: function (cluster) {
+                    return new L.DivIcon({
+                        html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                        className: 'marker-cluster-assets',
+                        iconSize: new L.Point(40, 40)
+                    });
                 },
                 disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
                 maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
             });
         }
         for (var i = 0; i < assetsCache.length; i++) {
-            if(assetsCache[i].marker){
+            if (assetsCache[i].marker) {
                 continue;
             }
             assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
             var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
-            (function(i,marker){
-                marker.on('click', function(){
+            (function (i, marker) {
+                marker.on('click', function () {
                     clickHandler(mission.id, i);
                 });
             })(i, assetsCache[i].marker);
@@ -279,81 +288,92 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         G3ME.map.addLayer($scope.missionsClusters[mission.id]);
     });
 
-    $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler){
-        if($scope.missionsClusters['done-'+mission.id]){
-            G3ME.map.removeLayer($scope.missionsClusters['done-'+mission.id]);
+    $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
+        if ($scope.missionsClusters['done-' + mission.id]) {
+            G3ME.map.removeLayer($scope.missionsClusters['done-' + mission.id]);
         }
     });
 
 
-    $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions){
-        for(var i in $scope.missionsClusters){
-            if( (!missions[i] || missions[i].assets.length === 0) && i.indexOf('done') === -1){
+    $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function (event, missions) {
+        for (var i in $scope.missionsClusters) {
+            if ((!missions[i] || missions[i].assets.length === 0) && i.indexOf('done') === -1) {
                 G3ME.map.removeLayer($scope.missionsClusters[i]);
-                if($scope.missionsClusters['done-'+i]){
-                    G3ME.map.removeLayer($scope.missionsClusters['done-'+i]);
+                if ($scope.missionsClusters['done-' + i]) {
+                    G3ME.map.removeLayer($scope.missionsClusters['done-' + i]);
                 }
             }
         }
     });
 
 
-    $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler){
-        $scope.missionsClusters['done-'+mission.id] = $scope.missionsClusters['done-'+mission.id] || new L.MarkerClusterGroup({
-            iconCreateFunction: function(cluster) {
-                return new L.DivIcon({ html: '<div><span>' + cluster.getChildCount() + '</span></div>', className: 'marker-cluster-done', iconSize: new L.Point(40, 40) });
+    $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
+        $scope.missionsClusters['done-' + mission.id] = $scope.missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
+            iconCreateFunction: function (cluster) {
+                return new L.DivIcon({
+                    html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                    className: 'marker-cluster-done',
+                    iconSize: new L.Point(40, 40)
+                });
             },
             disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
             maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
         });
         for (var i = 0; i < assetsCache.length; i++) {
             assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-            var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR') ;
+            var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
-            $scope.missionsClusters['done-'+mission.id].addLayer(assetsCache[i].marker);
+            $scope.missionsClusters['done-' + mission.id].addLayer(assetsCache[i].marker);
         }
-        G3ME.map.addLayer($scope.missionsClusters['done-'+mission.id]);
+        G3ME.map.addLayer($scope.missionsClusters['done-' + mission.id]);
     });
 
-    $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset){
+    $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function (event, asset) {
         asset.marker.setIcon(asset.selected ? Icon.get('SELECTED_MISSION') : Icon.get('NON_SELECTED_MISSION'));
     });
-    $scope.$on("__MAP_HIDE_TRACE__", function(event, mission){
-        if($scope.traces && $scope.traces[mission.id]){
+    $scope.$on("__MAP_HIDE_TRACE__", function (event, mission) {
+        if ($scope.traces && $scope.traces[mission.id]) {
             G3ME.map.removeLayer($scope.traces[mission.id]);
             G3ME.map.removeLayer($scope.myLastPositionMarker);
             delete $scope.traces[mission.id];
             delete $scope.myLastPositionMarker;
         }
     });
-    $scope.$on("__MAP_DISPLAY_TRACE__", function(event, mission, setView){
-        if(!mission.trace || !mission.trace.length){
-            return ;
+    $scope.$on("__MAP_DISPLAY_TRACE__", function (event, mission, setView) {
+        if (!mission.trace || !mission.trace.length) {
+            return;
         }
-        $scope.traces = $scope.traces || {} ;
+        $scope.traces = $scope.traces ||  {};
         var geoJSON = {
             "type": "LineString",
             "coordinates": mission.trace,
-            "color" : "orange"
-        } ;
+            "color": "orange"
+        };
 
-        if($scope.traces[mission.id]){
+        if ($scope.traces[mission.id]) {
             G3ME.map.removeLayer($scope.traces[mission.id]);
         }
-        $scope.traces[mission.id] = L.geoJson(geoJSON,{
-                                        style: function (feature) {
-                                            return {color: feature.geometry.color, opacity:0.9, weight: 7};
-                                        }});
+        $scope.traces[mission.id] = L.geoJson(geoJSON, {
+            style: function (feature) {
+                return {
+                    color: feature.geometry.color,
+                    opacity: 0.9,
+                    weight: 7
+                };
+            }
+        });
         $scope.traces[mission.id].addTo(G3ME.map);
 
-        if(mission.trace.length){
-            var lastPosition = mission.trace[mission.trace.length-1];
-            if(!$scope.myLastPositionMarker){
-                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]],{ zIndexOffset    : 1000}).setIcon(Icon.get('GRAY_TARGET')).addTo(G3ME.map);
+        if (mission.trace.length) {
+            var lastPosition = mission.trace[mission.trace.length - 1];
+            if (!$scope.myLastPositionMarker) {
+                $scope.myLastPositionMarker = L.marker([lastPosition[1], lastPosition[0]], {
+                    zIndexOffset: 1000
+                }).setIcon(Icon.get('GRAY_TARGET')).addTo(G3ME.map);
             } else {
                 $scope.myLastPositionMarker.setLatLng([lastPosition[1], lastPosition[0]]);
             }
-            if(setView){
+            if (setView) {
                 G3ME.map.setView([lastPosition[1], lastPosition[0]]);
             }
         }
@@ -364,11 +384,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     // Fonction utilitaire créant un contrôle Leaflet.
     function makeControl(title, icon, onclick) {
         var Constr = L.Control.extend({
-            options: {  position: 'topright' },
+            options: {
+                position: 'topright'
+            },
             onAdd: function (map) {
                 var container = L.DomUtil.create('div', 'leaflet-bar');
                 $(container)
-                    .html('<a href="#" title="'+title+'"><span class="icon '+icon+'"></span></a>')
+                    .html('<a href="#" title="' + title + '"><span class="icon ' + icon + '"></span></a>')
                     .on('click', onclick);
                 return container;
             }
@@ -381,50 +403,57 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     var POSITION_MARKER,
         ANGLE_MARKER,
         POSITION_CONTROL;
+
     function activatePosition(event) {
-        if(event){
+        if (event) {
             event.preventDefault();
         }
         stopPosition();
-        if(!POSITION_CONTROL){
+        if (!POSITION_CONTROL) {
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
         }
         G3ME.map.addControl(POSITION_CONTROL);
 
-        if(SmartgeoChromium.locate){
+        if (SmartgeoChromium.locate) {
 
             var LOCATED_TIMEOUT_FLAG;
 
-            ChromiumCallbacks[0] = function(lng, lat, alt){
-                LOCATED_TIMEOUT_FLAG = true ;
-                setLocationMarker(null,lng, lat);
+            ChromiumCallbacks[0] = function (lng, lat, alt) {
+                LOCATED_TIMEOUT_FLAG = true;
+                setLocationMarker(null, lng, lat);
             };
 
             SmartgeoChromium.locate();
 
-            $timeout(function(){
-                if(!LOCATED_TIMEOUT_FLAG){
+            $timeout(function () {
+                if (!LOCATED_TIMEOUT_FLAG) {
                     alertify.error(i18n.get('_MAP_GPS_FAIL'));
                     stopPosition();
-                    ChromiumCallbacks[0] = angular.noop ;
+                    ChromiumCallbacks[0] = angular.noop;
                 }
-            },10000);
+            }, 10000);
 
         } else {
             G3ME.map.off('locationfound locationerror');
             G3ME.map.on('locationfound', setLocationMarker);
-            G3ME.map.on('locationerror', function(){
+            G3ME.map.on('locationerror', function () {
                 alertify.error(i18n.get('_MAP_GPS_FAIL'));
                 stopPosition();
             });
-            G3ME.map.locate({watch: true, setView: true});
+            G3ME.map.locate({
+                watch: true,
+                setView: true
+            });
         }
 
     }
 
+    $scope.$on("ACTIVATE_POSITION", activatePosition);
+
+
     function stopPosition() {
         G3ME.map.stopLocate();
-        if(POSITION_CONTROL && POSITION_CONTROL._map) {
+        if (POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
         }
         removePositionMarker();
@@ -432,50 +461,57 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     }
 
     function removePositionMarker() {
-        if(POSITION_MARKER && POSITION_MARKER._map) {
+        if (POSITION_MARKER && POSITION_MARKER._map) {
             G3ME.map.removeLayer(POSITION_MARKER);
         }
-        if(ANGLE_MARKER && ANGLE_MARKER._map) {
+        if (ANGLE_MARKER && ANGLE_MARKER._map) {
             G3ME.map.removeLayer(ANGLE_MARKER);
         }
     }
 
     function setLocationMarker(event, lng, lat) {
 
-        if(event === null ) { /* CallbackChromium */
+        if (event === null) { /* CallbackChromium */
             event = {
-                latlng : {lat: lat, lng: lng},
-                accuracy : 10,
+                latlng: {
+                    lat: lat,
+                    lng: lng
+                },
+                accuracy: 10,
             };
-            G3ME.map.setView({lat: lat, lng: lng},18);
+            G3ME.map.setView({
+                lat: lat,
+                lng: lng
+            }, 18);
         } else {
             G3ME.map.off('locationfound', setLocationMarker);
         }
 
         removePositionMarker();
 
-        POSITION_MARKER = new L.Circle( event.latlng,
-                                        event.accuracy,
-                                        {
-                                            clickable   : false,
-                                            color       : '#fd9122',
-                                            opacity     : 0.1,
-                                            fillOpacity : 0.05
-                                        });
+        POSITION_MARKER = new L.Circle(event.latlng,
+            event.accuracy, {
+                clickable: false,
+                color: '#fd9122',
+                opacity: 0.1,
+                fillOpacity: 0.05
+            });
 
         POSITION_MARKER.addTo(G3ME.map);
 
-        $(POSITION_MARKER._path).fadeOut(3000, function() {
+        $(POSITION_MARKER._path).fadeOut(3000, function () {
             G3ME.map.removeLayer(POSITION_MARKER);
         });
 
-        ANGLE_MARKER = new L.Marker(event.latlng, {icon: Icon.get('TARGET')});
+        ANGLE_MARKER = new L.Marker(event.latlng, {
+            icon: Icon.get('TARGET')
+        });
         ANGLE_MARKER.addTo(G3ME.map);
-        if('heading' in event) {
+        if ('heading' in event) {
             ANGLE_MARKER._icon.innerHTML = '<div></div>';
-            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate('+event.heading+'deg)';
+            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate(' + event.heading + 'deg)';
         } else {
-            $(ANGLE_MARKER._path).fadeOut(5000, function() {
+            $(ANGLE_MARKER._path).fadeOut(5000, function () {
                 G3ME.map.removeLayer(ANGLE_MARKER);
             });
         }
@@ -486,13 +522,14 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     // Gestion de la consultation.
     //
     var CONSULTATION_CONTROL;
-    function activateConsultation(event){
-        if(event){
+
+    function activateConsultation(event) {
+        if (event) {
             event.preventDefault();
         }
         stopConsultation();
         $scope.consultationIsEnabled = true;
-        if(!CONSULTATION_CONTROL){
+        if (!CONSULTATION_CONTROL) {
             CONSULTATION_CONTROL = makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "icon-info-sign", stopConsultation);
         }
 
@@ -501,82 +538,95 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     function stopConsultation() {
         $scope.consultationIsEnabled = false;
-        if(CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
+        if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
             G3ME.map.removeControl(CONSULTATION_CONTROL);
         }
         return false;
     }
 
-    $rootScope.stopConsultation = stopConsultation ;
+    $rootScope.stopConsultation = stopConsultation;
 
-    $scope.highlightAsset = function(asset, customMarker, customClickHandler){
-        customClickHandler = customClickHandler ||  function(){$scope.zoomOnAsset(asset);};
+    $scope.highlightAsset = function (asset, customMarker, customClickHandler) {
+        customClickHandler = customClickHandler || function () {
+            $scope.zoomOnAsset(asset);
+        };
 
-        if(G3ME.assetsMarkers[asset.guid]){
+        if (G3ME.assetsMarkers[asset.guid]) {
             G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
         }
 
         switch (asset.geometry.type) {
-            case "Point":
-                var coords = asset.geometry.coordinates ;
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {icon:Icon.get('CONSULTATION')});
-                break;
-            case "LineString":
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
-                        style : { color: '#fc9e49', opacity:0.9, weight: 7 }
-                    });
-                break;
-            case "Polygon":
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry,  {
-                        style : { color: '#fc9e49', opacity:0.9, weight: 7 }
-                    });
-                break;
-            default:
-                Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+        case "Point":
+            var coords = asset.geometry.coordinates;
+            G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {
+                icon: Icon.get('CONSULTATION')
+            });
+            break;
+        case "LineString":
+            G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
+                style: {
+                    color: '#fc9e49',
+                    opacity: 0.9,
+                    weight: 7
+                }
+            });
+            break;
+        case "Polygon":
+            G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
+                style: {
+                    color: '#fc9e49',
+                    opacity: 0.9,
+                    weight: 7
+                }
+            });
+            break;
+        default:
+            Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
         G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
-        G3ME.assetsMarkers[asset.guid].on('dblclick', function(){
+        G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
             $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
         });
         G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
         G3ME.invalidateMapSize();
     };
 
-    $scope.unHighlightAsset = function(asset){
-        if(G3ME.assetsMarkers[asset.guid]){
+    $scope.unHighlightAsset = function (asset) {
+        if (G3ME.assetsMarkers[asset.guid]) {
             G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
         }
         G3ME.invalidateMapSize();
     };
 
-    $scope.unHighlightAllAsset = function(){
+    $scope.unHighlightAllAsset = function () {
         for (var i = 0; i < G3ME.assetsMarkers.length; i++) {
-            if(G3ME.assetsMarkers[i]){
+            if (G3ME.assetsMarkers[i]) {
                 G3ME.map.removeLayer(G3ME.assetsMarkers[i]);
             }
         }
         G3ME.invalidateMapSize();
     };
 
-    $scope.zoomOnAsset = function(asset){
-        var coords = asset.geometry.coordinates , center ;
+    $scope.zoomOnAsset = function (asset) {
+        var coords = asset.geometry.coordinates,
+            center;
         switch (asset.geometry.type) {
-            case "Point":
-                center = [coords[1], coords[0]] ;
-                break;
-            case "LineString":
-                center = [coords[0][1], coords[0][0]] ;
-                break;
-            case "MultiLineString":
-                center = [coords[0][0][1], coords[0][0][0]] ;
-                break;
-            case "Polygon":
-                center = [coords[0][0][1], coords[0][0][0]] ;
-                break;
-            default:
-                Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+        case "Point":
+            center = [coords[1], coords[0]];
+            break;
+        case "LineString":
+            center = [coords[0][1], coords[0][0]];
+            break;
+        case "MultiLineString":
+            center = [coords[0][0][1], coords[0][0][0]];
+            break;
+        case "Polygon":
+            center = [coords[0][0][1], coords[0][0][0]];
+            break;
+        default:
+            Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
         }
-        G3ME.map.setView(center,18);
+        G3ME.map.setView(center, 18);
         G3ME.invalidateMapSize();
     };
 
