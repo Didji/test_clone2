@@ -61,6 +61,22 @@ module.exports = function(grunt) {
             },
         },
 
+        complexity: {
+            generic: {
+                src: ['app/javascripts/controllers/*.js','app/javascripts/filters/*.js','app/javascripts/factories/*.js','app/javascripts/filters/*.js','app/javascripts/*.js'],
+                options: {
+                    breakOnErrors: true,
+                    // jsLintXML: 'report.xml', // create XML JSLint-like report
+                    // checkstyleXML: 'checkstyle.xml', // create checkstyle report
+                    errorsOnly: false, // show only maintainability errors
+                    cyclomatic: [3, 7, 12], // or optionally a single value, like 3
+                    halstead: [8, 13, 20], // or optionally a single value, like 8
+                    maintainability: 90,
+                    hideComplexFunctions : true
+                }
+            }
+        },
+
         connect: {
             options: {
                 base: 'app/'
@@ -156,7 +172,7 @@ module.exports = function(grunt) {
     });
 
     //single run tests
-    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage', 'plato:report']);
+    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage', 'plato:report', 'complexity:generic']);
     grunt.registerTask('test:unit', ['karma:unit']);
     grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
 

@@ -28,6 +28,7 @@
     "grunt-shell-spawn": "~0.3.0",
     "grunt-jsbeautifier" : "*",
     "jshint-stylish" : "*",
-    "grunt-plato"   : "*"
+    "grunt-plato"   : "*",
+    "grunt-complexity" : "*"
   }
 }
