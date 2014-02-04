@@ -63,7 +63,7 @@ module.exports = function(grunt) {
 
         complexity: {
             generic: {
-                src: ['app/javascripts/controllers/*.js','app/javascripts/filters/*.js','app/javascripts/factories/*.js','app/javascripts/filters/*.js','app/javascripts/*.js'],
+                src: ['app/javascripts/controllers/*.js', 'app/javascripts/filters/*.js', 'app/javascripts/factories/*.js', 'app/javascripts/filters/*.js', 'app/javascripts/*.js'],
                 options: {
                     breakOnErrors: true,
                     // jsLintXML: 'report.xml', // create XML JSLint-like report
@@ -72,8 +72,21 @@ module.exports = function(grunt) {
                     cyclomatic: [3, 7, 12], // or optionally a single value, like 3
                     halstead: [8, 13, 20], // or optionally a single value, like 8
                     maintainability: 90,
-                    hideComplexFunctions : true
+                    hideComplexFunctions: true
                 }
+            }
+        },
+
+        coverage: {
+            options: {
+                thresholds: {
+                    'statements': 1,
+                    'branches': 1,
+                    'lines': 1,
+                    'functions': 1
+                },
+                dir: 'coverage',
+                root: 'test'
             }
         },
 
@@ -172,7 +185,7 @@ module.exports = function(grunt) {
     });
 
     //single run tests
-    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage', 'plato:report', 'complexity:generic']);
+    grunt.registerTask('test', ['jsbeautifier', 'jshint', 'test:e2e', 'test:coverage','coverage', 'plato:report', 'complexity:generic']);
     grunt.registerTask('test:unit', ['karma:unit']);
     grunt.registerTask('test:e2e', ['connect:testserver', 'protractor:singlerun']);
 
@@ -183,7 +196,7 @@ module.exports = function(grunt) {
 
     //coverage testing
     grunt.registerTask('test:coverage', ['karma:unit_coverage']);
-    grunt.registerTask('coverage', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
+    grunt.registerTask('coverage_', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
 
     //installation-related
     grunt.registerTask('install', ['update', 'shell:protractor_install']);

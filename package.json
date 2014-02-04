@@ -29,6 +29,7 @@
     "grunt-jsbeautifier" : "*",
     "jshint-stylish" : "*",
     "grunt-plato"   : "*",
-    "grunt-complexity" : "*"
+    "grunt-complexity" : "*",
+    "grunt-istanbul-coverage" : "*"
   }
 }
