@@ -72,7 +72,7 @@ module.exports = function(grunt) {
                     cyclomatic: [3, 7, 12], // or optionally a single value, like 3
                     halstead: [8, 13, 20], // or optionally a single value, like 8
                     maintainability: 90,
-                    hideComplexFunctions: true
+                    hideComplexFunctions: false
                 }
             }
         },

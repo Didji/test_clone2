@@ -17,7 +17,7 @@
     "dojo"          : false,
 
     "predef"        : [  // Custom globals.
-        "Smartgeo" , "angular","ChromiumCallbacks", "alertify", "L", "SmartgeoChromium", "require", "module", "cordova", "classie", "sqlitePlugin", "mlPushMenu", "describe", "it", "protractor", "expect", "beforeEach", "inject", "jasmine", "runs", "waitsFor"
+        "Smartgeo" , "angular","ChromiumCallbacks", "alertify", "L", "SmartgeoChromium", "require", "module", "cordova", "classie", "sqlitePlugin", "mlPushMenu", "describe", "it", "protractor", "expect", "beforeEach", "inject", "jasmine", "runs", "waitsFor", "spyOn"
     ],
 
 
