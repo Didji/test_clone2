@@ -31,6 +31,7 @@
     "grunt-plato"   : "*",
     "grunt-complexity" : "*",
     "grunt-istanbul-coverage" : "*",
-    "colors" : "*"
+    "colors" : "*",
+    "concrete" : "*"
   }
 }

@@ -12,16 +12,6 @@ Prérequis :
 
 `git clone https://github.com/gismartwaredev/smartgeomobile`
 
-### Lancement de smartgeomobile 
-
-```bash
-sudo npm install -g grunt-cli
-cd smartgeomobile
-npm install
-grunt install 
-grunt dev
-```
-
 ### Lancement des tests smartgeomobile 
 
 ```bash 

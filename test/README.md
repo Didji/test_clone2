@@ -1,14 +1,12 @@
-Unit test
-=========
+Integration continue
+====================
 
-## Installation 
+Configuration (à la racine du projet) : 
+* `cp test/build-* .git/hooks/`
+* `npm install`
+* `grunt install`
+* `git config --add concrete.runner "grunt test"`
+* `git config --add concrete.branch dev`
 
-`npm install -g karma karma-coverage`
-
-## Running test 
-
-Run unit test on **Unix** : `test/test.sh` 
-
-Run unit test on **Windows** : `test/test.bat` 
-
-Run e2e test : `http://[your_smartgeomobile_instance]/test/runner.html`
+Lancement de concrete : 
+* `node_modules/concrete/bin/concrete .`
