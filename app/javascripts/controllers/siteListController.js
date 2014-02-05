@@ -1,8 +1,8 @@
 angular.module('smartgeomobile').controller('siteListController', function ($scope, $rootScope, $http, $location, Smartgeo, i18n) {
 
-    'use strict' ;
+    'use strict';
 
-    window.site = $rootScope.site = undefined ;
+    window.site = $rootScope.site = undefined;
 
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
@@ -10,33 +10,33 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     function getRemoteSites(callback) {
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
         $http.get(url)
-            .success(function(sites){
+            .success(function (sites) {
                 var sitesById = {},
                     knownSites = Smartgeo.get_('sites') || {},
                     site, tmpsites = {};
-                for(var i = 0, lim = sites.length; i < lim; i++) {
+                for (var i = 0, lim = sites.length; i < lim; i++) {
                     site = sites[i];
                     tmpsites[site.id] = site;
                 }
                 angular.extend(tmpsites, sitesById, knownSites);
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                 $scope.sites = [];
-                for(var id in tmpsites) {
+                for (var id in tmpsites) {
                     $scope.sites.push(tmpsites[id]);
                 }
                 autoLoadOrNot();
                 $scope.ready = true;
-                (callback || function(){})(true) ;
-            }).error(function(error, errorCode){
+                (callback || function () {})(true);
+            }).error(function (error, errorCode) {
                 var knownSites = Smartgeo.get_('sites') || {};
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                 $scope.sites = [];
-                for(var id in knownSites) {
+                for (var id in knownSites) {
                     $scope.sites.push(knownSites[id]);
                 }
                 autoLoadOrNot();
                 $scope.ready = true;
-                (callback || function(){})(false) ;
+                (callback || function () {})(false);
             });
     }
 
@@ -48,7 +48,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
 
         // Pour que les filtres fonctionnent, il nous faut un simple tableau.
         $scope.sites = [];
-        for(var id in knownSites) {
+        for (var id in knownSites) {
             $scope.sites.push(knownSites[id]);
         }
         autoLoadOrNot();
@@ -57,7 +57,7 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     }
 
     function autoLoadOrNot() {
-        if($scope.sites.length > 1 || !$scope.sites[0]) {
+        if ($scope.sites.length > 1 || !$scope.sites[0]) {
             // On a plus d'un site : on reste dans cette vue
             // pour afficher la liste des sites et laisser l'utilisateur
             // choisir.
@@ -68,22 +68,25 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
         // Il n'y a qu'un seul site.
         // S'il est installé, on le charge. Sinon, on l'installe.
         var site = $scope.sites[0];
-        if(site && site.installed) {
-            $location.path('/map/'+site.id);
+        if (site && site.installed) {
+            $location.path('/map/' + site.id);
 
         } else {
-            $location.path('/sites/install/'+site.id);
+            $location.path('/sites/install/' + site.id);
         }
     }
 
-    $scope.isInstalled = function(site) {
+    $scope.isInstalled = function (site) {
         return !!site.installed;
     };
 
-    $scope.isUnInstalled = function(site) {
+    $scope.isUnInstalled = function (site) {
         return !site.installed;
     };
     $scope.online = Smartgeo.get('online');
-    $scope.online === false ? getLocalSites() : getRemoteSites() ;
-
+    if ($scope.online === false) {
+        getLocalSites()
+    } else {
+        getRemoteSites();
+    }
 });

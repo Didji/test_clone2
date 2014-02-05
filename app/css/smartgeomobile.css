@@ -608,7 +608,7 @@ ul.ged-gallery li img {
     color: white;
 }
 
-.btn > *, .dropdown-menu > li > a {
+.btn.two-lines > *, .dropdown-menu > li > a {
     white-space: normal;
 }
 

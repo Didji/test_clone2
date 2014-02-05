@@ -1,7 +1,7 @@
 <span ng-show="( filteredOpennedCalls = (missions|opennedCalls:asset:site) ).length != 0 "/>
 
 <button
-    class="btn btn-block"
+    class="btn btn-block two-lines"
     ng-show="filteredOpennedCalls.length == 1"
     style="width:100%; margin-bottom: 5px;"
     ng-click="addAssetsToMission(asset, filteredOpennedCalls[0])">
@@ -37,7 +37,7 @@
     style="width:100%; margin-bottom: 5px;"
     ng-show="filteredOpennedCalls.length > 1">
   <button
-    type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    type="button" style="width:100%" class="btn btn-primary dropdown-toggle two-lines" data-toggle="dropdown">
     <i class="fa fa-phone"> </i> <i18n>_CONSULTATION_WRITE_FOR_</i18n> ...<span class="caret"></span>
   </button>
   <ul class="dropdown-menu" role="menu">
