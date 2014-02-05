@@ -10,9 +10,7 @@
       </button>
       <button type="button" class="btn btn-default" style="padding: 1px;width: 115px;">
         <span style="margin-right: -43px;">{{dayToDisplay |  date:"dd/MM/yy"}}<i style="position: relative;left: 7px;" class="fa fa-calendar"></i></span>
-        <input
-          style='width: 50px;border: none;background: transparent;padding-left: 150px;height: 30px;margin-left: -100px;outline: none;'
-          id="dayToDisplay" type="date" ng-model='dayToDisplay' ng-change="updateCount();">
+        <input id="dayToDisplay" type="date" ng-model='dayToDisplay' ng-change="updateCount();">
       </button>
       <button style='min-width: 70px;' type="button" ng-click="move(1)" ng-disabled="afterToday <= 0" class="btn btn-default">
         <span class="label label-warning" style='margin-right: 3px;' ng-show="afterToday > 0">{{afterToday}}</span>
