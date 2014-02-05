@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -rf platforms/ios/www/css platforms/ios/www/images platforms/ios/www/index.html platforms/ios/www/javascripts platforms/ios/www/partials
+cp -rf app/* platforms/ios/www/
+
+rm      platforms/android/content-shell/assets/gimap-mobile.zip
+zip -r  platforms/android/content-shell/assets/gimap-mobile.zip app
