@@ -1,6 +1,6 @@
 <span ng-show="( filteredOpennedMission = (missions|opennedMissions:asset:site) ).length != 0 "/>
 <button
-    class="btn btn-block"
+    class="btn btn-block two-lines"
     ng-show="filteredOpennedMission.length == 1"
     ng-click="addAssetsToMission(asset, filteredOpennedMission[0])">
     <i class="fa fa-wrench"> </i> <i18n>_CONSULTATION_ADD_TO_</i18n> {{filteredOpennedMission[0].activity.label}} n°{{filteredOpennedMission[0].number}}
@@ -11,7 +11,7 @@
     style="width:100%; margin-bottom: 5px;"
     ng-show="filteredOpennedMission.length > 1">
   <button
-    type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    type="button" style="width:100%" class="btn btn-primary dropdown-toggle two-lines" data-toggle="dropdown">
     <i class="fa fa-wrench"> </i> <i18n>_CONSULTATION_ADD_TO_</i18n> ... <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" role="menu">

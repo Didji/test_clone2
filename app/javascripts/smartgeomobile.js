@@ -1,122 +1,151 @@
-
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
-var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap", "ui.select2", "angularSpinner"])
-       .config(["$routeProvider", function($routeProvider) {
+var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner"])
+    .config(["$routeProvider",
+        function ($routeProvider) {
             "use strict";
             $routeProvider.
-                when("/",                                       {templateUrl: "partials/login.html"}).
-                when("/sites/",                                 {templateUrl: "partials/sites.html"}).
+            when("/", {
+                templateUrl: "partials/login.html"
+            }).
+            when("/sites/", {
+                templateUrl: "partials/sites.html"
+            }).
 
-                when("/report/:site",                           {templateUrl: "partials/report.html"}).
-                when("/report/:site/:activity",                 {templateUrl: "partials/report.html"}).
-                when("/report/:site/:activity/:assets",         {templateUrl: "partials/report.html"}).
-                when("/report/:site/:activity/:assets/:mission",{templateUrl: "partials/report.html"}).
+            when("/report/:site", {
+                templateUrl: "partials/report.html"
+            }).
+            when("/report/:site/:activity", {
+                templateUrl: "partials/report.html"
+            }).
+            when("/report/:site/:activity/:assets", {
+                templateUrl: "partials/report.html"
+            }).
+            when("/report/:site/:activity/:assets/:mission", {
+                templateUrl: "partials/report.html"
+            }).
 
-                when("/report/:site/undefined/:assets/:mission",{templateUrl: "partials/report.html"}).
+            when("/report/:site/undefined/:assets/:mission", {
+                templateUrl: "partials/report.html"
+            }).
 
-                when("/sites/install/:site",                    {templateUrl: "partials/installation.html"}).
-                when("/sites/uninstall/:site",                  {templateUrl: "partials/uninstall.html"}).
-                when("/sites/update/:site",                     {templateUrl: "partials/update.html"}).
-                when("/map/:site",                              {templateUrl: "partials/map.html"}).
-                when("/intent/:controller/?:args",              {templateUrl: "partials/intent.html"}).
+            when("/sites/install/:site", {
+                templateUrl: "partials/installation.html"
+            }).
+            when("/sites/uninstall/:site", {
+                templateUrl: "partials/uninstall.html"
+            }).
+            when("/sites/update/:site", {
+                templateUrl: "partials/update.html"
+            }).
+            when("/map/:site", {
+                templateUrl: "partials/map.html"
+            }).
+            when("/intent/:controller/?:args", {
+                templateUrl: "partials/intent.html"
+            }).
 
-                otherwise({template: " ",  controller: function($location){
+            otherwise({
+                template: " ",
+                controller: function ($location) {
                     $location.path("/");
-                }});
+                }
+            });
 
-    }]).config(["$httpProvider", function($httpProvider) {
-        "use strict";
-        $httpProvider.defaults.withCredentials = true;
-        $httpProvider.defaults.useXDomain = true;
-        $httpProvider.defaults.cache = false;
-    }]).directive("camera", function() {
+        }
+    ]).config(["$httpProvider",
+        function ($httpProvider) {
+            "use strict";
+            $httpProvider.defaults.withCredentials = true;
+            $httpProvider.defaults.useXDomain = true;
+            $httpProvider.defaults.cache = false;
+        }
+    ]).directive("camera", function () {
         "use strict";
         return {
             restrict: "A",
             require: "ngModel",
-            link: function(scope, elm, attrs, ctrl) {
-                attrs = attrs ;
-                elm.on("click", function() {
-                    scope.$apply(function(){
-                        scope.isTakingPhoto = true ;
+            link: function (scope, elm, attrs, ctrl) {
+                attrs = attrs;
+                elm.on("click", function () {
+                    scope.$apply(function () {
+                        scope.isTakingPhoto = true;
                     });
-                    navigator.getMedia = ( navigator.getUserMedia ||
-                         navigator.webkitGetUserMedia ||
-                         navigator.mozGetUserMedia ||
-                         navigator.msGetUserMedia);
+                    navigator.getMedia = (navigator.getUserMedia ||
+                        navigator.webkitGetUserMedia ||
+                        navigator.mozGetUserMedia ||
+                        navigator.msGetUserMedia);
 
-                    if (window.SmartgeoChromium && SmartgeoChromium.launchCamera){
-                        if(!window.ChromiumCallbacks){
+                    if (window.SmartgeoChromium && SmartgeoChromium.launchCamera) {
+                        if (!window.ChromiumCallbacks) {
                             window.ChromiumCallbacks = [];
                         }
-                        window.ChromiumCallbacks[1] = function(path){
+                        window.ChromiumCallbacks[1] = function (path) {
                             var imageElement = document.createElement("img");
                             imageElement.src = path;
-                            imageElement.onload = function(){
+                            imageElement.onload = function () {
                                 var canvasElement = document.createElement("canvas");
                                 canvasElement.width = imageElement.width;
                                 canvasElement.height = imageElement.height;
                                 canvasElement.getContext("2d").drawImage(imageElement, 0, 0);
-                                scope.$apply(function(){
+                                scope.$apply(function () {
                                     ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push({
-                                        content:canvasElement.toDataURL("image/png")
+                                        content: canvasElement.toDataURL("image/jpeg", 0.75)
                                     });
-                                scope.isTakingPhoto = false ;
+                                    scope.isTakingPhoto = false;
                                 });
                             };
-                            window.ChromiumCallbacks[3] = function(){
-                                scope.$apply(function(){
-                                    scope.isTakingPhoto = false ;
+                            window.ChromiumCallbacks[3] = function () {
+                                scope.$apply(function () {
+                                    scope.isTakingPhoto = false;
                                 });
                             };
                         };
-                        window.ChromiumCallbacks[3] = function(){
-                            scope.$apply(function(){
-                                scope.isTakingPhoto = false ;
+                        window.ChromiumCallbacks[3] = function () {
+                            scope.$apply(function () {
+                                scope.isTakingPhoto = false;
                             });
                         };
                         SmartgeoChromium.launchCamera(1);
 
-                    } else if(navigator.getMedia){
+                    } else if (navigator.getMedia) {
                         var streaming = false,
-                            video     = document.createElement("video"),
-                            canvas    = document.createElement("canvas"),
-                            width     = 320,
-                            height    = 0;
+                            video = document.createElement("video"),
+                            canvas = document.createElement("canvas"),
+                            width = 320,
+                            height = 0;
 
                         navigator.getMedia({
-                                video: true,
-                                audio: false
-                            }, function(stream) {
-                                if (navigator.mozGetUserMedia) {
-                                    video.mozSrcObject = stream;
-                                } else {
-                                    var vendorURL = window.URL || window.webkitURL;
-                                    video.src = vendorURL.createObjectURL(stream);
-                                }
-                                video.play();
-                            }, function(err) {
-                                var imageElement2 = document.createElement("img");
-                                imageElement2.src = "http://placehold.it/350x150";
-                                imageElement2.onload = function(){
-                                    var canvasElement = document.createElement("canvas");
-                                    canvasElement.width = imageElement2.width;
-                                    canvasElement.height = imageElement2.height;
-                                    canvasElement.getContext("2d").drawImage(imageElement2, 0, 0);
-                                    scope.$apply(function(){
-                                        ctrl.$viewValue = ctrl.$viewValue || [];
-                                        ctrl.$viewValue.push({
-                                            content:canvasElement.toDataURL("image/png")
-                                        });
-                                        scope.isTakingPhoto = false ;
-                                    });
-                                };
+                            video: true,
+                            audio: false
+                        }, function (stream) {
+                            if (navigator.mozGetUserMedia) {
+                                video.mozSrcObject = stream;
+                            } else {
+                                var vendorURL = window.URL || window.webkitURL;
+                                video.src = vendorURL.createObjectURL(stream);
                             }
-                        );
+                            video.play();
+                        }, function (err) {
+                            var imageElement2 = document.createElement("img");
+                            imageElement2.src = "http://placehold.it/350x150";
+                            imageElement2.onload = function () {
+                                var canvasElement = document.createElement("canvas");
+                                canvasElement.width = imageElement2.width;
+                                canvasElement.height = imageElement2.height;
+                                canvasElement.getContext("2d").drawImage(imageElement2, 0, 0);
+                                scope.$apply(function () {
+                                    ctrl.$viewValue = ctrl.$viewValue || [];
+                                    ctrl.$viewValue.push({
+                                        content: canvasElement.toDataURL("image/jpeg", 0.75)
+                                    });
+                                    scope.isTakingPhoto = false;
+                                });
+                            };
+                        });
 
-                        video.addEventListener("canplay", function(ev){
+                        video.addEventListener("canplay", function (ev) {
                             if (!streaming) {
                                 height = video.videoHeight / (video.videoWidth / width);
                                 video.setAttribute("width", width);
@@ -129,28 +158,28 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                             canvas.height = height;
                             canvas.getContext("2d").drawImage(video, 0, 0, width, height);
 
-                            scope.$apply(function(){
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:canvas.toDataURL("image/png")
+                                    content: canvas.toDataURL("image/jpeg", 0.75)
                                 });
-                                scope.isTakingPhoto = false ;
+                                scope.isTakingPhoto = false;
                             });
 
                         }, false);
 
-                    } else if(navigator.camera){
+                    } else if (navigator.camera) {
                         navigator.camera.getPicture(function (imageURI) {
-                            scope.$apply(function(){
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:imageURI
+                                    content: imageURI
                                 });
-                                scope.isTakingPhoto = false ;
+                                scope.isTakingPhoto = false;
                             });
                         }, function (err) {
                             ctrl.$setValidity("error", false);
-                        },{
+                        }, {
                             quality: 100,
                             sourceType: navigator.camera.PictureSourceType.CAMERA,
                             mediaType: navigator.camera.MediaType.PICTURE,
@@ -161,34 +190,34 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute","ui.bootstrap",
                     } else {
                         var img = document.createElement("img");
                         img.src = "http://placehold.it/350x150";
-                        img.onload = function(){
+                        img.onload = function () {
                             var canvasElement2 = document.createElement("canvas");
                             canvasElement2.width = img.width;
                             canvasElement2.height = img.height;
                             canvasElement2.getContext("2d").drawImage(img, 0, 0);
-                            scope.$apply(function(){
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
-                                    content:canvasElement2.toDataURL("image/png")
+                                    content: canvasElement2.toDataURL("image/jpeg", 0.75)
                                 });
-                                scope.isTakingPhoto = false ;
+                                scope.isTakingPhoto = false;
                             });
                         };
                     }
                 });
             }
         };
-    }).filter("timeago", function() {
+    }).filter("timeago", function () {
         "use strict";
-        return function(input, PAllowFuture) {
+        return function (input, PAllowFuture) {
             var nowTime = (new Date()).getTime(),
                 date = (new Date(input)).getTime(),
                 dateDifference = nowTime - date,
-                substitute = function(stringOrFunction, number, strings) {
-                var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, dateDifference) : stringOrFunction;
-                var value = (strings.numbers && strings.numbers[number]) || number;
-                return string.replace(/%d/i, value);
-            },
+                substitute = function (stringOrFunction, number, strings) {
+                    var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, dateDifference) : stringOrFunction;
+                    var value = (strings.numbers && strings.numbers[number]) || number;
+                    return string.replace(/%d/i, value);
+                },
                 //refreshMillis= 6e4, //A minute
                 allowFuture = PAllowFuture || false,
                 // strings = {
