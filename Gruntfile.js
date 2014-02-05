@@ -196,7 +196,7 @@ module.exports = function(grunt) {
 
     //coverage testing
     grunt.registerTask('test:coverage', ['karma:unit_coverage']);
-    grunt.registerTask('coverage_', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
+    // grunt.registerTask('coverage', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
 
     //installation-related
     grunt.registerTask('install', ['update', 'shell:protractor_install']);
