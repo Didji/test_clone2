@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+(function() {
+  var colors = require('colors');
+  console.log(("Smartgeo build failed").red);
+}).call(this);
