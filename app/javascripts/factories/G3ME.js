@@ -53,7 +53,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
             if(target[0] instanceof Array || G3ME.benchMe) {
                 // target is an extend
                 G3ME.map.fitBounds(target);
-            } else if( target[0] == 1*target[0] && (target instanceof Object) ){
+            } else if( target instanceof Array ){
                 // target is a point
                 G3ME.map.setView(target,zoom||18);
                 if(marker){
