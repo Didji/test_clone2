@@ -1,22 +1,22 @@
-if(navigator.userAgent.match(/Android/i)){
+if (navigator.userAgent.match(/Android/i)) {
 
-/*
- * L.TileLayer is used for standard xyz-numbered tile layers.
- */
+    /*
+     * L.TileLayer is used for standard xyz-numbered tile layers.
+     */
 
-L.TileLayer.FileCache = L.TileLayer.extend({
-    includes: L.Mixin.Events,
+    L.TileLayer.FileCache = L.TileLayer.extend({
+        includes: L.Mixin.Events,
 
-    options: {
-        minZoom: 0,
-        maxZoom: 18,
-        tileSize: 256,
-        subdomains: 'abc',
-        errorTileUrl: '',
-        attribution: '',
-        zoomOffset: 0,
-        opacity: 1,
-        /*
+        options: {
+            minZoom: 0,
+            maxZoom: 18,
+            tileSize: 256,
+            subdomains: 'abc',
+            errorTileUrl: '',
+            attribution: '',
+            zoomOffset: 0,
+            opacity: 1,
+            /*
         maxNativeZoom: null,
         zIndex: null,
         tms: false,
@@ -27,761 +27,785 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         reuseTiles: false,
         bounds: false,
         */
-        unloadInvisibleTiles: L.Browser.mobile,
-        updateWhenIdle: L.Browser.mobile
-    },
+            unloadInvisibleTiles: L.Browser.mobile,
+            updateWhenIdle: L.Browser.mobile
+        },
 
-    initialize: function (url, options) {
-        options = L.setOptions(this, options);
+        initialize: function (url, options) {
+            options = L.setOptions(this, options);
 
-        // detecting retina displays, adjusting tileSize and zoom levels
-        if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
+            // detecting retina displays, adjusting tileSize and zoom levels
+            if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
 
-            options.tileSize = Math.floor(options.tileSize / 2);
-            options.zoomOffset++;
+                options.tileSize = Math.floor(options.tileSize / 2);
+                options.zoomOffset++;
 
-            if (options.minZoom > 0) {
-                options.minZoom--;
-            }
-            this.options.maxZoom--;
-        }
-
-        if (options.bounds) {
-            options.bounds = L.latLngBounds(options.bounds);
-        }
-
-        this._url = url;
-
-        var subdomains = this.options.subdomains;
-
-        if (typeof subdomains === 'string') {
-            this.options.subdomains = subdomains.split('');
-        }
-
-        // this.initFS();
-
-
-    },
-
-    onAdd: function (map) {
-        this._map = map;
-        this._animated = map._zoomAnimated;
-
-        // create a container div for tiles
-        this._initContainer();
-
-        // set up events
-        map.on({
-            'viewreset': this._reset,
-            'moveend': this._update
-        }, this);
-
-        if (this._animated) {
-            map.on({
-                'zoomanim': this._animateZoom,
-                'zoomend': this._endZoomAnim
-            }, this);
-        }
-
-        if (!this.options.updateWhenIdle) {
-            this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-            map.on('move', this._limitedUpdate, this);
-        }
-
-        this._reset();
-        this._update();
-    },
-
-    addTo: function (map) {
-        map.addLayer(this);
-        return this;
-    },
-
-    onRemove: function (map) {
-        this._container.parentNode.removeChild(this._container);
-
-        map.off({
-            'viewreset': this._reset,
-            'moveend': this._update
-        }, this);
-
-        if (this._animated) {
-            map.off({
-                'zoomanim': this._animateZoom,
-                'zoomend': this._endZoomAnim
-            }, this);
-        }
-
-        if (!this.options.updateWhenIdle) {
-            map.off('move', this._limitedUpdate, this);
-        }
-
-        this._container = null;
-        this._map = null;
-    },
-
-    bringToFront: function () {
-        var pane = this._map._panes.tilePane;
-
-        if (this._container) {
-            pane.appendChild(this._container);
-            this._setAutoZIndex(pane, Math.max);
-        }
-
-        return this;
-    },
-
-    bringToBack: function () {
-        var pane = this._map._panes.tilePane;
-
-        if (this._container) {
-            pane.insertBefore(this._container, pane.firstChild);
-            this._setAutoZIndex(pane, Math.min);
-        }
-
-        return this;
-    },
-
-    getAttribution: function () {
-        return this.options.attribution;
-    },
-
-    getContainer: function () {
-        return this._container;
-    },
-
-    setOpacity: function (opacity) {
-        this.options.opacity = opacity;
-
-        if (this._map) {
-            this._updateOpacity();
-        }
-
-        return this;
-    },
-
-    setZIndex: function (zIndex) {
-        this.options.zIndex = zIndex;
-        this._updateZIndex();
-
-        return this;
-    },
-
-    setUrl: function (url, noRedraw) {
-        this._url = url;
-
-        if (!noRedraw) {
-            this.redraw();
-        }
-
-        return this;
-    },
-
-    redraw: function () {
-        if (this._map) {
-            this._reset({hard: true});
-            this._update();
-        }
-        return this;
-    },
-
-    _updateZIndex: function () {
-        if (this._container && this.options.zIndex !== undefined) {
-            this._container.style.zIndex = this.options.zIndex;
-        }
-    },
-
-    _setAutoZIndex: function (pane, compare) {
-
-        var layers = pane.children,
-            edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
-            zIndex, i, len;
-
-        for (i = 0, len = layers.length; i < len; i++) {
-
-            if (layers[i] !== this._container) {
-                zIndex = parseInt(layers[i].style.zIndex, 10);
-
-                if (!isNaN(zIndex)) {
-                    edgeZIndex = compare(edgeZIndex, zIndex);
+                if (options.minZoom > 0) {
+                    options.minZoom--;
                 }
+                this.options.maxZoom--;
             }
-        }
 
-        this.options.zIndex = this._container.style.zIndex =
-                (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
-    },
-
-    _updateOpacity: function () {
-        var i,
-            tiles = this._tiles;
-
-        if (L.Browser.ielt9) {
-            for (i in tiles) {
-                L.DomUtil.setOpacity(tiles[i], this.options.opacity);
+            if (options.bounds) {
+                options.bounds = L.latLngBounds(options.bounds);
             }
-        } else {
-            L.DomUtil.setOpacity(this._container, this.options.opacity);
-        }
-    },
 
-    _initContainer: function () {
-        var tilePane = this._map._panes.tilePane;
+            this._url = url;
 
-        if (!this._container) {
-            this._container = L.DomUtil.create('div', 'leaflet-layer');
+            var subdomains = this.options.subdomains;
 
-            this._updateZIndex();
+            if (typeof subdomains === 'string') {
+                this.options.subdomains = subdomains.split('');
+            }
+
+            // this.initFS();
+
+
+        },
+
+        onAdd: function (map) {
+            this._map = map;
+            this._animated = map._zoomAnimated;
+
+            // create a container div for tiles
+            this._initContainer();
+
+            // set up events
+            map.on({
+                'viewreset': this._reset,
+                'moveend': this._update
+            }, this);
 
             if (this._animated) {
-                var className = 'leaflet-tile-container leaflet-zoom-animated';
-
-                this._bgBuffer = L.DomUtil.create('div', className, this._container);
-                this._tileContainer = L.DomUtil.create('div', className, this._container);
-
-            } else {
-                this._tileContainer = this._container;
+                map.on({
+                    'zoomanim': this._animateZoom,
+                    'zoomend': this._endZoomAnim
+                }, this);
             }
 
-            tilePane.appendChild(this._container);
+            if (!this.options.updateWhenIdle) {
+                this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+                map.on('move', this._limitedUpdate, this);
+            }
 
-            if (this.options.opacity < 1) {
+            this._reset();
+            this._update();
+        },
+
+        addTo: function (map) {
+            map.addLayer(this);
+            return this;
+        },
+
+        onRemove: function (map) {
+            this._container.parentNode.removeChild(this._container);
+
+            map.off({
+                'viewreset': this._reset,
+                'moveend': this._update
+            }, this);
+
+            if (this._animated) {
+                map.off({
+                    'zoomanim': this._animateZoom,
+                    'zoomend': this._endZoomAnim
+                }, this);
+            }
+
+            if (!this.options.updateWhenIdle) {
+                map.off('move', this._limitedUpdate, this);
+            }
+
+            this._container = null;
+            this._map = null;
+        },
+
+        bringToFront: function () {
+            var pane = this._map._panes.tilePane;
+
+            if (this._container) {
+                pane.appendChild(this._container);
+                this._setAutoZIndex(pane, Math.max);
+            }
+
+            return this;
+        },
+
+        bringToBack: function () {
+            var pane = this._map._panes.tilePane;
+
+            if (this._container) {
+                pane.insertBefore(this._container, pane.firstChild);
+                this._setAutoZIndex(pane, Math.min);
+            }
+
+            return this;
+        },
+
+        getAttribution: function () {
+            return this.options.attribution;
+        },
+
+        getContainer: function () {
+            return this._container;
+        },
+
+        setOpacity: function (opacity) {
+            this.options.opacity = opacity;
+
+            if (this._map) {
                 this._updateOpacity();
             }
-        }
-    },
 
-    _reset: function (e) {
-        for (var key in this._tiles) {
-            this.fire('tileunload', {tile: this._tiles[key]});
-        }
+            return this;
+        },
 
-        this._tiles = {};
-        this._tilesToLoad = 0;
+        setZIndex: function (zIndex) {
+            this.options.zIndex = zIndex;
+            this._updateZIndex();
 
-        if (this.options.reuseTiles) {
-            this._unusedTiles = [];
-        }
+            return this;
+        },
 
-        this._tileContainer.innerHTML = '';
+        setUrl: function (url, noRedraw) {
+            this._url = url;
 
-        if (this._animated && e && e.hard) {
-            this._clearBgBuffer();
-        }
+            if (!noRedraw) {
+                this.redraw();
+            }
 
-        this._initContainer();
-    },
+            return this;
+        },
 
-    _getTileSize: function () {
-        var map = this._map,
-            zoom = map.getZoom(),
-            zoomN = this.options.maxNativeZoom,
-            tileSize = this.options.tileSize;
+        redraw: function () {
+            if (this._map) {
+                this._reset({
+                    hard: true
+                });
+                this._update();
+            }
+            return this;
+        },
 
-        if (zoomN && zoom > zoomN) {
-            tileSize = Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * tileSize);
-        }
+        _updateZIndex: function () {
+            if (this._container && this.options.zIndex !== undefined) {
+                this._container.style.zIndex = this.options.zIndex;
+            }
+        },
 
-        return tileSize;
-    },
+        _setAutoZIndex: function (pane, compare) {
 
-    _update: function () {
+            var layers = pane.children,
+                edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
+                zIndex, i, len;
 
-        if (!this._map) { return; }
+            for (i = 0, len = layers.length; i < len; i++) {
 
-        var map = this._map,
-            bounds = map.getPixelBounds(),
-            zoom = map.getZoom(),
-            tileSize = this._getTileSize();
+                if (layers[i] !== this._container) {
+                    zIndex = parseInt(layers[i].style.zIndex, 10);
 
-        if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
-            return;
-        }
+                    if (!isNaN(zIndex)) {
+                        edgeZIndex = compare(edgeZIndex, zIndex);
+                    }
+                }
+            }
 
-        var tileBounds = L.bounds(
+            this.options.zIndex = this._container.style.zIndex =
+                (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
+        },
+
+        _updateOpacity: function () {
+            var i,
+                tiles = this._tiles;
+
+            if (L.Browser.ielt9) {
+                for (i in tiles) {
+                    L.DomUtil.setOpacity(tiles[i], this.options.opacity);
+                }
+            } else {
+                L.DomUtil.setOpacity(this._container, this.options.opacity);
+            }
+        },
+
+        _initContainer: function () {
+            var tilePane = this._map._panes.tilePane;
+
+            if (!this._container) {
+                this._container = L.DomUtil.create('div', 'leaflet-layer');
+
+                this._updateZIndex();
+
+                if (this._animated) {
+                    var className = 'leaflet-tile-container leaflet-zoom-animated';
+
+                    this._bgBuffer = L.DomUtil.create('div', className, this._container);
+                    this._tileContainer = L.DomUtil.create('div', className, this._container);
+
+                } else {
+                    this._tileContainer = this._container;
+                }
+
+                tilePane.appendChild(this._container);
+
+                if (this.options.opacity < 1) {
+                    this._updateOpacity();
+                }
+            }
+        },
+
+        _reset: function (e) {
+            for (var key in this._tiles) {
+                this.fire('tileunload', {
+                    tile: this._tiles[key]
+                });
+            }
+
+            this._tiles = {};
+            this._tilesToLoad = 0;
+
+            if (this.options.reuseTiles) {
+                this._unusedTiles = [];
+            }
+
+            this._tileContainer.innerHTML = '';
+
+            if (this._animated && e && e.hard) {
+                this._clearBgBuffer();
+            }
+
+            this._initContainer();
+        },
+
+        _getTileSize: function () {
+            var map = this._map,
+                zoom = map.getZoom(),
+                zoomN = this.options.maxNativeZoom,
+                tileSize = this.options.tileSize;
+
+            if (zoomN && zoom > zoomN) {
+                tileSize = Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * tileSize);
+            }
+
+            return tileSize;
+        },
+
+        _update: function () {
+
+            if (!this._map) {
+                return;
+            }
+
+            var map = this._map,
+                bounds = map.getPixelBounds(),
+                zoom = map.getZoom(),
+                tileSize = this._getTileSize();
+
+            if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
+                return;
+            }
+
+            var tileBounds = L.bounds(
                 bounds.min.divideBy(tileSize)._floor(),
                 bounds.max.divideBy(tileSize)._floor());
 
-        this._addTilesFromCenterOut(tileBounds);
+            this._addTilesFromCenterOut(tileBounds);
 
-        if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
-            this._removeOtherTiles(tileBounds);
-        }
-    },
+            if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
+                this._removeOtherTiles(tileBounds);
+            }
+        },
 
-    _addTilesFromCenterOut: function (bounds) {
-        var queue = [],
-            center = bounds.getCenter();
+        _addTilesFromCenterOut: function (bounds) {
+            var queue = [],
+                center = bounds.getCenter();
 
-        var j, i, point;
+            var j, i, point;
 
-        for (j = bounds.min.y; j <= bounds.max.y; j++) {
-            for (i = bounds.min.x; i <= bounds.max.x; i++) {
-                point = new L.Point(i, j);
+            for (j = bounds.min.y; j <= bounds.max.y; j++) {
+                for (i = bounds.min.x; i <= bounds.max.x; i++) {
+                    point = new L.Point(i, j);
 
-                if (this._tileShouldBeLoaded(point)) {
-                    queue.push(point);
+                    if (this._tileShouldBeLoaded(point)) {
+                        queue.push(point);
+                    }
                 }
             }
-        }
 
-        var tilesToLoad = queue.length;
+            var tilesToLoad = queue.length;
 
-        if (tilesToLoad === 0) { return; }
-
-        // load tiles in order of their distance to center
-        queue.sort(function (a, b) {
-            return a.distanceTo(center) - b.distanceTo(center);
-        });
-
-        var fragment = document.createDocumentFragment();
-
-        // if its the first batch of tiles to load
-        if (!this._tilesToLoad) {
-            this.fire('loading');
-        }
-
-        this._tilesToLoad += tilesToLoad;
-
-        for (i = 0; i < tilesToLoad; i++) {
-            this._addTile(queue[i], fragment);
-        }
-
-        this._tileContainer.appendChild(fragment);
-    },
-
-    _tileShouldBeLoaded: function (tilePoint) {
-        if ((tilePoint.x + ':' + tilePoint.y) in this._tiles) {
-            return false; // already loaded
-        }
-
-        var options = this.options;
-
-        if (!options.continuousWorld) {
-            var limit = this._getWrapTileNum();
-
-            // don't load if exceeds world bounds
-            if ((options.noWrap && (tilePoint.x < 0 || tilePoint.x >= limit)) ||
-                tilePoint.y < 0 || tilePoint.y >= limit) { return false; }
-        }
-
-        if (options.bounds) {
-            var tileSize = options.tileSize,
-                nwPoint = tilePoint.multiplyBy(tileSize),
-                sePoint = nwPoint.add([tileSize, tileSize]),
-                nw = this._map.unproject(nwPoint),
-                se = this._map.unproject(sePoint);
-
-            // TODO temporary hack, will be removed after refactoring projections
-            // https://github.com/Leaflet/Leaflet/issues/1618
-            if (!options.continuousWorld && !options.noWrap) {
-                nw = nw.wrap();
-                se = se.wrap();
+            if (tilesToLoad === 0) {
+                return;
             }
 
-            if (!options.bounds.intersects([nw, se])) { return false; }
-        }
+            // load tiles in order of their distance to center
+            queue.sort(function (a, b) {
+                return a.distanceTo(center) - b.distanceTo(center);
+            });
 
-        return true;
-    },
+            var fragment = document.createDocumentFragment();
 
-    _removeOtherTiles: function (bounds) {
-        var kArr, x, y, key;
-
-        for (key in this._tiles) {
-            kArr = key.split(':');
-            x = parseInt(kArr[0], 10);
-            y = parseInt(kArr[1], 10);
-
-            // remove tile if it's out of bounds
-            if (x < bounds.min.x || x > bounds.max.x || y < bounds.min.y || y > bounds.max.y) {
-                this._removeTile(key);
+            // if its the first batch of tiles to load
+            if (!this._tilesToLoad) {
+                this.fire('loading');
             }
-        }
-    },
 
-    _removeTile: function (key) {
-        var tile = this._tiles[key];
+            this._tilesToLoad += tilesToLoad;
 
-        this.fire('tileunload', {tile: tile, url: tile.src});
+            for (i = 0; i < tilesToLoad; i++) {
+                this._addTile(queue[i], fragment);
+            }
 
-        if (this.options.reuseTiles) {
-            L.DomUtil.removeClass(tile, 'leaflet-tile-loaded');
-            this._unusedTiles.push(tile);
+            this._tileContainer.appendChild(fragment);
+        },
 
-        } else if (tile.parentNode === this._tileContainer) {
-            this._tileContainer.removeChild(tile);
-        }
+        _tileShouldBeLoaded: function (tilePoint) {
+            if ((tilePoint.x + ':' + tilePoint.y) in this._tiles) {
+                return false; // already loaded
+            }
 
-        // for https://github.com/CloudMade/Leaflet/issues/137
-        if (!L.Browser.android) {
-            tile.onload = null;
-            tile.src = L.Util.emptyImageUrl;
-        }
+            var options = this.options;
 
-        delete this._tiles[key];
-    },
+            if (!options.continuousWorld) {
+                var limit = this._getWrapTileNum();
 
-    _addTile: function (tilePoint, container) {
-        var tilePos = this._getTilePos(tilePoint);
+                // don't load if exceeds world bounds
+                if ((options.noWrap && (tilePoint.x < 0 || tilePoint.x >= limit)) ||
+                    tilePoint.y < 0 || tilePoint.y >= limit) {
+                    return false;
+                }
+            }
 
-        // get unused tile - or create a new tile
-        var tile = this._getTile(),
-            zoom = this._map.getZoom();
-        /*
+            if (options.bounds) {
+                var tileSize = options.tileSize,
+                    nwPoint = tilePoint.multiplyBy(tileSize),
+                    sePoint = nwPoint.add([tileSize, tileSize]),
+                    nw = this._map.unproject(nwPoint),
+                    se = this._map.unproject(sePoint);
+
+                // TODO temporary hack, will be removed after refactoring projections
+                // https://github.com/Leaflet/Leaflet/issues/1618
+                if (!options.continuousWorld && !options.noWrap) {
+                    nw = nw.wrap();
+                    se = se.wrap();
+                }
+
+                if (!options.bounds.intersects([nw, se])) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
+        _removeOtherTiles: function (bounds) {
+            var kArr, x, y, key;
+
+            for (key in this._tiles) {
+                kArr = key.split(':');
+                x = parseInt(kArr[0], 10);
+                y = parseInt(kArr[1], 10);
+
+                // remove tile if it's out of bounds
+                if (x < bounds.min.x || x > bounds.max.x || y < bounds.min.y || y > bounds.max.y) {
+                    this._removeTile(key);
+                }
+            }
+        },
+
+        _removeTile: function (key) {
+            var tile = this._tiles[key];
+
+            this.fire('tileunload', {
+                tile: tile,
+                url: tile.src
+            });
+
+            if (this.options.reuseTiles) {
+                L.DomUtil.removeClass(tile, 'leaflet-tile-loaded');
+                this._unusedTiles.push(tile);
+
+            } else if (tile.parentNode === this._tileContainer) {
+                this._tileContainer.removeChild(tile);
+            }
+
+            // for https://github.com/CloudMade/Leaflet/issues/137
+            if (!L.Browser.android) {
+                tile.onload = null;
+                tile.src = L.Util.emptyImageUrl;
+            }
+
+            delete this._tiles[key];
+        },
+
+        _addTile: function (tilePoint, container) {
+            var tilePos = this._getTilePos(tilePoint);
+
+            // get unused tile - or create a new tile
+            var tile = this._getTile(),
+                zoom = this._map.getZoom();
+            /*
         Chrome 20 layouts much faster with top/left (verify with timeline, frames)
         Android 4 browser has display issues with top/left and requires transform instead
         Android 2 browser requires top/left or tiles disappear on load or first drag
         (reappear after zoom) https://github.com/CloudMade/Leaflet/issues/866
         (other browsers don't currently care) - see debug/hacks/jitter.html for an example
         */
-        L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
+            L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
 
-        this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
+            this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
-        this._loadTile(tile, tilePoint, zoom);
+            this._loadTile(tile, tilePoint, zoom);
 
-        if (tile.parentNode !== this._tileContainer) {
-            container.appendChild(tile);
-        }
-    },
-
-    _getZoomForUrl: function () {
-
-        var options = this.options,
-            zoom = this._map.getZoom();
-
-        if (options.zoomReverse) {
-            zoom = options.maxZoom - zoom;
-        }
-
-        zoom += options.zoomOffset;
-
-        return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
-    },
-
-    _getTilePos: function (tilePoint) {
-        var origin = this._map.getPixelOrigin(),
-            tileSize = this._getTileSize();
-
-        return tilePoint.multiplyBy(tileSize).subtract(origin);
-    },
-
-    // image-specific code (override to implement e.g. Canvas or SVG tile layer)
-
-    getTileUrl: function (tilePoint, zoom) {
-        return L.Util.template(this._url, L.extend({
-            s: this._getSubdomain(tilePoint),
-            z: zoom,
-            x: tilePoint.x,
-            y: tilePoint.y
-        }, this.options));
-    },
-
-    _getWrapTileNum: function () {
-        // TODO refactor, limit is not valid for non-standard projections
-        return Math.pow(2, this._getZoomForUrl());
-    },
-
-    _adjustTilePoint: function (tilePoint) {
-
-        var limit = this._getWrapTileNum();
-
-        // wrap tile coordinates
-        if (!this.options.continuousWorld && !this.options.noWrap) {
-            tilePoint.x = ((tilePoint.x % limit) + limit) % limit;
-        }
-
-        if (this.options.tms) {
-            tilePoint.y = limit - tilePoint.y - 1;
-        }
-
-        tilePoint.z = this._getZoomForUrl();
-    },
-
-    _getSubdomain: function (tilePoint) {
-        var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
-        return this.options.subdomains[index];
-    },
-
-    _getTile: function () {
-        if (this.options.reuseTiles && this._unusedTiles.length > 0) {
-            var tile = this._unusedTiles.pop();
-            this._resetTile(tile);
-            return tile;
-        }
-        return this._createTile();
-    },
-
-    // Override if data stored on a tile needs to be cleaned up before reuse
-    _resetTile: function (/*tile*/) {},
-
-    _createTile: function () {
-        var tile = L.DomUtil.create('img', 'leaflet-tile');
-        tile.style.width = tile.style.height = this._getTileSize() + 'px';
-        tile.galleryimg = 'no';
-
-        tile.onselectstart = tile.onmousemove = L.Util.falseFn;
-
-        if (L.Browser.ielt9 && this.options.opacity !== undefined) {
-            L.DomUtil.setOpacity(tile, this.options.opacity);
-        }
-        return tile;
-    },
-
-    _loadTile: function (tile, tilePoint, zoom) {
-        tile._layer  = this;
-        tile.onload  = this._tileOnLoad;
-        tile.onerror = this._tileOnError;
-
-        this._adjustTilePoint(tilePoint);
-        this.fetchTileFromCache(tile,zoom,tilePoint.x,tilePoint.y);
-    },
-
-    _tileLoaded: function () {
-        this._tilesToLoad--;
-        if (!this._tilesToLoad) {
-            this.fire('load');
-
-            if (this._animated) {
-                // clear scaled tiles after all new tiles are loaded (for performance)
-                clearTimeout(this._clearBgBufferTimer);
-                this._clearBgBufferTimer = setTimeout(L.bind(this._clearBgBuffer, this), 500);
+            if (tile.parentNode !== this._tileContainer) {
+                container.appendChild(tile);
             }
-        }
-    },
+        },
 
-    _tileOnLoad: function () {
-        var layer = this._layer;
+        _getZoomForUrl: function () {
 
-        //Only if we are loading an actual image
-        if (this.src !== L.Util.emptyImageUrl) {
-            L.DomUtil.addClass(this, 'leaflet-tile-loaded');
+            var options = this.options,
+                zoom = this._map.getZoom();
 
-            layer.fire('tileload', {
+            if (options.zoomReverse) {
+                zoom = options.maxZoom - zoom;
+            }
+
+            zoom += options.zoomOffset;
+
+            return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
+        },
+
+        _getTilePos: function (tilePoint) {
+            var origin = this._map.getPixelOrigin(),
+                tileSize = this._getTileSize();
+
+            return tilePoint.multiplyBy(tileSize).subtract(origin);
+        },
+
+        // image-specific code (override to implement e.g. Canvas or SVG tile layer)
+
+        getTileUrl: function (tilePoint, zoom) {
+            return L.Util.template(this._url, L.extend({
+                s: this._getSubdomain(tilePoint),
+                z: zoom,
+                x: tilePoint.x,
+                y: tilePoint.y
+            }, this.options));
+        },
+
+        _getWrapTileNum: function () {
+            // TODO refactor, limit is not valid for non-standard projections
+            return Math.pow(2, this._getZoomForUrl());
+        },
+
+        _adjustTilePoint: function (tilePoint) {
+
+            var limit = this._getWrapTileNum();
+
+            // wrap tile coordinates
+            if (!this.options.continuousWorld && !this.options.noWrap) {
+                tilePoint.x = ((tilePoint.x % limit) + limit) % limit;
+            }
+
+            if (this.options.tms) {
+                tilePoint.y = limit - tilePoint.y - 1;
+            }
+
+            tilePoint.z = this._getZoomForUrl();
+        },
+
+        _getSubdomain: function (tilePoint) {
+            var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
+            return this.options.subdomains[index];
+        },
+
+        _getTile: function () {
+            if (this.options.reuseTiles && this._unusedTiles.length > 0) {
+                var tile = this._unusedTiles.pop();
+                this._resetTile(tile);
+                return tile;
+            }
+            return this._createTile();
+        },
+
+        // Override if data stored on a tile needs to be cleaned up before reuse
+        _resetTile: function ( /*tile*/ ) {},
+
+        _createTile: function () {
+            var tile = L.DomUtil.create('img', 'leaflet-tile');
+            tile.style.width = tile.style.height = this._getTileSize() + 'px';
+            tile.galleryimg = 'no';
+
+            tile.onselectstart = tile.onmousemove = L.Util.falseFn;
+
+            if (L.Browser.ielt9 && this.options.opacity !== undefined) {
+                L.DomUtil.setOpacity(tile, this.options.opacity);
+            }
+            return tile;
+        },
+
+        _loadTile: function (tile, tilePoint, zoom) {
+            tile._layer = this;
+            tile.onload = this._tileOnLoad;
+            tile.onerror = this._tileOnError;
+
+            this._adjustTilePoint(tilePoint);
+            this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
+        },
+
+        _tileLoaded: function () {
+            this._tilesToLoad--;
+            if (!this._tilesToLoad) {
+                this.fire('load');
+
+                if (this._animated) {
+                    // clear scaled tiles after all new tiles are loaded (for performance)
+                    clearTimeout(this._clearBgBufferTimer);
+                    this._clearBgBufferTimer = setTimeout(L.bind(this._clearBgBuffer, this), 500);
+                }
+            }
+        },
+
+        _tileOnLoad: function () {
+            var layer = this._layer;
+
+            //Only if we are loading an actual image
+            if (this.src !== L.Util.emptyImageUrl) {
+                L.DomUtil.addClass(this, 'leaflet-tile-loaded');
+
+                layer.fire('tileload', {
+                    tile: this,
+                    url: this.src
+                });
+            }
+
+            layer._tileLoaded();
+        },
+
+        _tileOnError: function () {
+            var layer = this._layer;
+
+            layer.fire('tileerror', {
                 tile: this,
                 url: this.src
             });
-        }
 
-        layer._tileLoaded();
-    },
-
-    _tileOnError: function () {
-        var layer = this._layer;
-
-        layer.fire('tileerror', {
-            tile: this,
-            url: this.src
-        });
-
-        var newUrl = layer.options.errorTileUrl;
-        if (newUrl) {
-            this.src = newUrl;
-        }
-
-        layer._tileLoaded();
-    },
-
-
-    getTilePath : function(tile){
-        return 'tiles/'+tile.z+'/'+tile.x+'_'+tile.y+'.png';
-    },
-
-
-    writeTileToCache: function(tileObject, dataUrl, callback){
-        var this_ = this ;
-        var path  = this.getTilePath(tileObject);
-
-        if(window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG){
-            if(!window.ChromiumCallbacks){
-                window.ChromiumCallbacks = [] ;
+            var newUrl = layer.options.errorTileUrl;
+            if (newUrl) {
+                this.src = newUrl;
             }
-            ChromiumCallbacks[10] = function(success){
-                if(success){
-                } else {
-                    console.log("Error while writing " +path);
+
+            layer._tileLoaded();
+        },
+
+
+        getTilePath: function (tile) {
+            return 'tiles/' + tile.z + '/' + tile.x + '_' + tile.y + '.png';
+        },
+
+
+        writeTileToCache: function (tileObject, dataUrl, callback) {
+            var this_ = this;
+            var path = this.getTilePath(tileObject);
+
+            if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
+                if (!window.ChromiumCallbacks) {
+                    window.ChromiumCallbacks = [];
                 }
-                (callback || function(){})();
+                ChromiumCallbacks[10] = function (success) {
+                    if (success) {} else {
+                        console.log("Error while writing " + path);
+                    }
+                    (callback || function () {})();
+                };
+                SmartgeoChromium.writeBase64ToPNG(dataUrl.split(',')[1], path);
+            }
+        },
+
+        getDataURL: function (img) {
+            canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            return canvas.toDataURL();
+        },
+
+        fetchTileFromCache: function (image, z, x, y) {
+            var this_ = this;
+            var tileObject = {
+                image: image,
+                provider: this.id,
+                x: x,
+                y: y,
+                z: z,
+                src: null,
+                tiles: this
             };
-            SmartgeoChromium.writeBase64ToPNG(dataUrl.split(',')[1], path);
-        }
-    },
 
-    getDataURL: function (img) {
-        canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        return canvas.toDataURL();
-    },
-
-    fetchTileFromCache: function(image,z,x,y){
-        var this_ = this ;
-        var tileObject = {
-            image : image,
-            provider : this.id,
-            x : x,
-            y : y,
-            z : z,
-            src : null,
-            tiles : this
-        };
-
-        image.src = 'file://' + Smartgeo.get('tileRootPath') + '/' +/* 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + */ this.getTilePath(tileObject);
-        image.onerror = function(event) {
-            image.src = this_.getTileUrl({x:x, y:y},z);
-            image.onerror = image.onload = null ;
-            image.onerror= function(){
-                image.onerror = image.onload = null ;
+            image.src = 'file://' + Smartgeo.get('tileRootPath') + '/' + /* 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + */ this.getTilePath(tileObject);
+            image.onerror = function (event) {
+                image.src = this_.getTileUrl({
+                    x: x,
+                    y: y
+                }, z);
+                image.onerror = image.onload = null;
+                image.onerror = function () {
+                    image.onerror = image.onload = null;
+                };
+                image.onload = function () {
+                    image.className += " leaflet-tile-loaded";
+                    image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+                    image.onerror = image.onload = null;
+                    this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+                        this_.getRemoteETag(tileObject, function (remoteETag) {
+                            if (remoteETag !== null) {
+                                this_.writeMetadataTileFile(tileObject, {
+                                    etag: remoteETag
+                                });
+                            }
+                        });
+                    });
+                };
             };
-            image.onload= function(){
+
+            image.onload = function () {
                 image.className += " leaflet-tile-loaded";
                 image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-                image.onerror = image.onload = null ;
-                this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                    this_.getRemoteETag(   tileObject, function(remoteETag){
-                        if(remoteETag !== null){
-                            this_.writeMetadataTileFile(tileObject,{
-                                etag : remoteETag
+
+                image.onerror = image.onload = null;
+
+                this_.doINeedToReCacheThisTile(tileObject, function (yes) {
+                    if (yes) {
+                        var oldTile = image.src;
+                        image.src = this_.getTileUrl({
+                            x: x,
+                            y: y
+                        }, z);
+                        image.onerror = function (event) {
+                            image.src = oldTile;
+                            image.onerror = image.onload = null;
+                        };
+                        image.onload = function () {
+                            image.className += " leaflet-tile-loaded";
+                            image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+
+                            this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+                                this_.getRemoteETag(tileObject, function (remoteETag) {
+                                    if (remoteETag !== null) {
+                                        this_.writeMetadataTileFile(tileObject, {
+                                            etag: remoteETag
+                                        });
+                                    }
+                                });
                             });
-                        }
-                    });
-                });
-            };
-        };
-
-        image.onload = function(){
-            image.className += " leaflet-tile-loaded";
-                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-
-            image.onerror = image.onload = null ;
-
-            this_.doINeedToReCacheThisTile(tileObject, function(yes){
-                if(yes){
-                    var oldTile = image.src;
-                    image.src = this_.getTileUrl({x:x, y:y},z);
-                    image.onerror = function(event) {
-                        image.src = oldTile;
-                        image.onerror = image.onload = null ;
-                    };
-                    image.onload = function(){
-                        image.className += " leaflet-tile-loaded";
-                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-
-                        this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                            this_.getRemoteETag(   tileObject, function(remoteETag){
-                                if(remoteETag !== null){
-                                    this_.writeMetadataTileFile(tileObject,{
-                                        etag : remoteETag
-                                    });
-                                }
-                            });
-                        });
-                        image.onerror = image.onload = null ;
-                    };
-                }
-            });
-
-
-        };
-    },
-
-    doINeedToReCacheThisTile: function(tileObject, callback){
-        var _this = this ;
-        this.readMetadataTileFile(tileObject, function(metadata){
-            if(metadata && !metadata.etag){
-                callback(true);
-            } else {
-                _this.getRemoteETag(tileObject, function(remoteETag){
-                    if(metadata.etag != remoteETag && remoteETag !== null){
-                        callback(true);
-                    } else {
-                        callback(false);
+                            image.onerror = image.onload = null;
+                        };
                     }
                 });
-            }
-        });
-    },
 
-    readMetadataTileFile: function(tileObject, callback){
-        var path  = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject)+'.metadata';
-        $.getJSON(path, function(metadata) {
-           (callback || function(){})(metadata);
-        }).fail(function() {
-           (callback || function(){})({etag:undefined});
-        });
-    },
 
-    writeMetadataTileFile: function(tileObject, metadata, callback){
-        var _this = this ;
-        var path  = this.getTilePath(tileObject)+'.metadata';
-        if(window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG){
-            if(!window.ChromiumCallbacks){
-                window.ChromiumCallbacks = [] ;
-            }
-            ChromiumCallbacks[11] = function(success){
-                if(success){
-                } else {
-                    console.log("writeJSONError while writing " +path);
-                }
-                (callback || function(){})();
             };
-            SmartgeoChromium.writeJSON(JSON.stringify(metadata), path);
-        }
-    },
+        },
 
-    getRemoteETag: function(tileObject, callback){
-        var http = new XMLHttpRequest(),
-            url  = this.getTileUrl({x:tileObject.x, y:tileObject.y},tileObject.z);
-        http.withCredentials = true;
-        http.open('HEAD', url, true);
-        http.onreadystatechange = function() {
-            if (this.readyState == this.DONE && this.status === 200) {
-                callback(this.getResponseHeader("etag"));
-            } else if(this.readyState == this.DONE && this.status === 403){
-                Smartgeo.silentLogin();
-                callback(null);
+        doINeedToReCacheThisTile: function (tileObject, callback) {
+            var _this = this;
+            this.readMetadataTileFile(tileObject, function (metadata) {
+                if (metadata && !metadata.etag) {
+                    callback(true);
+                } else {
+                    _this.getRemoteETag(tileObject, function (remoteETag) {
+                        if (metadata.etag != remoteETag && remoteETag !== null) {
+                            callback(true);
+                        } else {
+                            callback(false);
+                        }
+                    });
+                }
+            });
+        },
+
+        readMetadataTileFile: function (tileObject, callback) {
+            var path = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject) + '.metadata';
+            $.getJSON(path, function (metadata) {
+                (callback || function () {})(metadata);
+            }).fail(function () {
+                (callback || function () {})({
+                    etag: undefined
+                });
+            });
+        },
+
+        writeMetadataTileFile: function (tileObject, metadata, callback) {
+            var _this = this;
+            var path = this.getTilePath(tileObject) + '.metadata';
+            if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
+                if (!window.ChromiumCallbacks) {
+                    window.ChromiumCallbacks = [];
+                }
+                ChromiumCallbacks[11] = function (success) {
+                    if (success) {} else {
+                        console.log("writeJSONError while writing " + path);
+                    }
+                    (callback || function () {})();
+                };
+                SmartgeoChromium.writeJSON(JSON.stringify(metadata), path);
             }
-        };
-        http.send();
-    },
+        },
 
-    convertDataURIToBinary: function (dataURI) {
-        var BASE64_MARKER = ';base64,';
-        var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-        var base64 = dataURI.substring(base64Index);
-        var raw = window.atob(base64);
-        var rawLength = raw.length;
-        var array = new Uint8Array(new ArrayBuffer(rawLength));
-        for (i = 0; i < rawLength; i++) {
-            array[i] = raw.charCodeAt(i);
+        getRemoteETag: function (tileObject, callback) {
+            var http = new XMLHttpRequest(),
+                url = this.getTileUrl({
+                    x: tileObject.x,
+                    y: tileObject.y
+                }, tileObject.z);
+            http.withCredentials = true;
+            http.open('HEAD', url, true);
+            http.onreadystatechange = function () {
+                if (this.readyState == this.DONE && this.status === 200) {
+                    callback(this.getResponseHeader("etag"));
+                } else if (this.readyState == this.DONE && this.status === 403) {
+                    Smartgeo.silentLogin();
+                    callback(null);
+                }
+            };
+            http.send();
+        },
+
+        convertDataURIToBinary: function (dataURI) {
+            var BASE64_MARKER = ';base64,';
+            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            var base64 = dataURI.substring(base64Index);
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+            for (i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+            return array;
         }
-        return array;
-    }
-});
+    });
 
 } else {
 
 
-/*
- * L.TileLayer is used for standard xyz-numbered tile layers.
- */
+    /*
+     * L.TileLayer is used for standard xyz-numbered tile layers.
+     */
 
-L.TileLayer.FileCache = L.TileLayer.extend({
-    includes: L.Mixin.Events,
+    L.TileLayer.FileCache = L.TileLayer.extend({
+        includes: L.Mixin.Events,
 
-    options: {
-        minZoom: 0,
-        maxZoom: 18,
-        tileSize: 256,
-        subdomains: 'abc',
-        errorTileUrl: '',
-        attribution: '',
-        zoomOffset: 0,
-        opacity: 1,
-        /*
+        options: {
+            minZoom: 0,
+            maxZoom: 18,
+            tileSize: 256,
+            subdomains: 'abc',
+            errorTileUrl: '',
+            attribution: '',
+            zoomOffset: 0,
+            opacity: 1,
+            /*
         maxNativeZoom: null,
         zIndex: null,
         tms: false,
@@ -792,583 +816,598 @@ L.TileLayer.FileCache = L.TileLayer.extend({
         reuseTiles: false,
         bounds: false,
         */
-        unloadInvisibleTiles: L.Browser.mobile,
-        updateWhenIdle: L.Browser.mobile
-    },
+            unloadInvisibleTiles: L.Browser.mobile,
+            updateWhenIdle: L.Browser.mobile
+        },
 
-    initialize: function (url, options) {
-        options = L.setOptions(this, options);
+        initialize: function (url, options) {
+            options = L.setOptions(this, options);
 
-        // detecting retina displays, adjusting tileSize and zoom levels
-        if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
+            // detecting retina displays, adjusting tileSize and zoom levels
+            if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
 
-            options.tileSize = Math.floor(options.tileSize / 2);
-            options.zoomOffset++;
+                options.tileSize = Math.floor(options.tileSize / 2);
+                options.zoomOffset++;
 
-            if (options.minZoom > 0) {
-                options.minZoom--;
-            }
-            this.options.maxZoom--;
-        }
-
-        if (options.bounds) {
-            options.bounds = L.latLngBounds(options.bounds);
-        }
-
-        this._url = url;
-
-        var subdomains = this.options.subdomains;
-
-        if (typeof subdomains === 'string') {
-            this.options.subdomains = subdomains.split('');
-        }
-
-        this.initFS();
-
-
-    },
-
-    onAdd: function (map) {
-        this._map = map;
-        this._animated = map._zoomAnimated;
-
-        // create a container div for tiles
-        this._initContainer();
-
-        // set up events
-        map.on({
-            'viewreset': this._reset,
-            'moveend': this._update
-        }, this);
-
-        if (this._animated) {
-            map.on({
-                'zoomanim': this._animateZoom,
-                'zoomend': this._endZoomAnim
-            }, this);
-        }
-
-        if (!this.options.updateWhenIdle) {
-            this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-            map.on('move', this._limitedUpdate, this);
-        }
-
-        this._reset();
-        this._update();
-    },
-
-    addTo: function (map) {
-        map.addLayer(this);
-        return this;
-    },
-
-    onRemove: function (map) {
-        this._container.parentNode.removeChild(this._container);
-
-        map.off({
-            'viewreset': this._reset,
-            'moveend': this._update
-        }, this);
-
-        if (this._animated) {
-            map.off({
-                'zoomanim': this._animateZoom,
-                'zoomend': this._endZoomAnim
-            }, this);
-        }
-
-        if (!this.options.updateWhenIdle) {
-            map.off('move', this._limitedUpdate, this);
-        }
-
-        this._container = null;
-        this._map = null;
-    },
-
-    bringToFront: function () {
-        var pane = this._map._panes.tilePane;
-
-        if (this._container) {
-            pane.appendChild(this._container);
-            this._setAutoZIndex(pane, Math.max);
-        }
-
-        return this;
-    },
-
-    bringToBack: function () {
-        var pane = this._map._panes.tilePane;
-
-        if (this._container) {
-            pane.insertBefore(this._container, pane.firstChild);
-            this._setAutoZIndex(pane, Math.min);
-        }
-
-        return this;
-    },
-
-    getAttribution: function () {
-        return this.options.attribution;
-    },
-
-    getContainer: function () {
-        return this._container;
-    },
-
-    setOpacity: function (opacity) {
-        this.options.opacity = opacity;
-
-        if (this._map) {
-            this._updateOpacity();
-        }
-
-        return this;
-    },
-
-    setZIndex: function (zIndex) {
-        this.options.zIndex = zIndex;
-        this._updateZIndex();
-
-        return this;
-    },
-
-    setUrl: function (url, noRedraw) {
-        this._url = url;
-
-        if (!noRedraw) {
-            this.redraw();
-        }
-
-        return this;
-    },
-
-    redraw: function () {
-        if (this._map) {
-            this._reset({hard: true});
-            this._update();
-        }
-        return this;
-    },
-
-    _updateZIndex: function () {
-        if (this._container && this.options.zIndex !== undefined) {
-            this._container.style.zIndex = this.options.zIndex;
-        }
-    },
-
-    _setAutoZIndex: function (pane, compare) {
-
-        var layers = pane.children,
-            edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
-            zIndex, i, len;
-
-        for (i = 0, len = layers.length; i < len; i++) {
-
-            if (layers[i] !== this._container) {
-                zIndex = parseInt(layers[i].style.zIndex, 10);
-
-                if (!isNaN(zIndex)) {
-                    edgeZIndex = compare(edgeZIndex, zIndex);
+                if (options.minZoom > 0) {
+                    options.minZoom--;
                 }
+                this.options.maxZoom--;
             }
-        }
 
-        this.options.zIndex = this._container.style.zIndex =
-                (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
-    },
-
-    _updateOpacity: function () {
-        var i,
-            tiles = this._tiles;
-
-        if (L.Browser.ielt9) {
-            for (i in tiles) {
-                L.DomUtil.setOpacity(tiles[i], this.options.opacity);
+            if (options.bounds) {
+                options.bounds = L.latLngBounds(options.bounds);
             }
-        } else {
-            L.DomUtil.setOpacity(this._container, this.options.opacity);
-        }
-    },
 
-    _initContainer: function () {
-        var tilePane = this._map._panes.tilePane;
+            this._url = url;
 
-        if (!this._container) {
-            this._container = L.DomUtil.create('div', 'leaflet-layer');
+            var subdomains = this.options.subdomains;
 
-            this._updateZIndex();
+            if (typeof subdomains === 'string') {
+                this.options.subdomains = subdomains.split('');
+            }
+
+            this.initFS();
+
+
+        },
+
+        onAdd: function (map) {
+            this._map = map;
+            this._animated = map._zoomAnimated;
+
+            // create a container div for tiles
+            this._initContainer();
+
+            // set up events
+            map.on({
+                'viewreset': this._reset,
+                'moveend': this._update
+            }, this);
 
             if (this._animated) {
-                var className = 'leaflet-tile-container leaflet-zoom-animated';
-
-                this._bgBuffer = L.DomUtil.create('div', className, this._container);
-                this._tileContainer = L.DomUtil.create('div', className, this._container);
-
-            } else {
-                this._tileContainer = this._container;
+                map.on({
+                    'zoomanim': this._animateZoom,
+                    'zoomend': this._endZoomAnim
+                }, this);
             }
 
-            tilePane.appendChild(this._container);
+            if (!this.options.updateWhenIdle) {
+                this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+                map.on('move', this._limitedUpdate, this);
+            }
 
-            if (this.options.opacity < 1) {
+            this._reset();
+            this._update();
+        },
+
+        addTo: function (map) {
+            map.addLayer(this);
+            return this;
+        },
+
+        onRemove: function (map) {
+            this._container.parentNode.removeChild(this._container);
+
+            map.off({
+                'viewreset': this._reset,
+                'moveend': this._update
+            }, this);
+
+            if (this._animated) {
+                map.off({
+                    'zoomanim': this._animateZoom,
+                    'zoomend': this._endZoomAnim
+                }, this);
+            }
+
+            if (!this.options.updateWhenIdle) {
+                map.off('move', this._limitedUpdate, this);
+            }
+
+            this._container = null;
+            this._map = null;
+        },
+
+        bringToFront: function () {
+            var pane = this._map._panes.tilePane;
+
+            if (this._container) {
+                pane.appendChild(this._container);
+                this._setAutoZIndex(pane, Math.max);
+            }
+
+            return this;
+        },
+
+        bringToBack: function () {
+            var pane = this._map._panes.tilePane;
+
+            if (this._container) {
+                pane.insertBefore(this._container, pane.firstChild);
+                this._setAutoZIndex(pane, Math.min);
+            }
+
+            return this;
+        },
+
+        getAttribution: function () {
+            return this.options.attribution;
+        },
+
+        getContainer: function () {
+            return this._container;
+        },
+
+        setOpacity: function (opacity) {
+            this.options.opacity = opacity;
+
+            if (this._map) {
                 this._updateOpacity();
             }
-        }
-    },
 
-    _reset: function (e) {
-        for (var key in this._tiles) {
-            this.fire('tileunload', {tile: this._tiles[key]});
-        }
+            return this;
+        },
 
-        this._tiles = {};
-        this._tilesToLoad = 0;
+        setZIndex: function (zIndex) {
+            this.options.zIndex = zIndex;
+            this._updateZIndex();
 
-        if (this.options.reuseTiles) {
-            this._unusedTiles = [];
-        }
+            return this;
+        },
 
-        this._tileContainer.innerHTML = '';
+        setUrl: function (url, noRedraw) {
+            this._url = url;
 
-        if (this._animated && e && e.hard) {
-            this._clearBgBuffer();
-        }
+            if (!noRedraw) {
+                this.redraw();
+            }
 
-        this._initContainer();
-    },
+            return this;
+        },
 
-    _getTileSize: function () {
-        var map = this._map,
-            zoom = map.getZoom(),
-            zoomN = this.options.maxNativeZoom,
-            tileSize = this.options.tileSize;
+        redraw: function () {
+            if (this._map) {
+                this._reset({
+                    hard: true
+                });
+                this._update();
+            }
+            return this;
+        },
 
-        if (zoomN && zoom > zoomN) {
-            tileSize = Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * tileSize);
-        }
+        _updateZIndex: function () {
+            if (this._container && this.options.zIndex !== undefined) {
+                this._container.style.zIndex = this.options.zIndex;
+            }
+        },
 
-        return tileSize;
-    },
+        _setAutoZIndex: function (pane, compare) {
 
-    _update: function () {
+            var layers = pane.children,
+                edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
+                zIndex, i, len;
 
-        if (!this._map) { return; }
+            for (i = 0, len = layers.length; i < len; i++) {
 
-        var map = this._map,
-            bounds = map.getPixelBounds(),
-            zoom = map.getZoom(),
-            tileSize = this._getTileSize();
+                if (layers[i] !== this._container) {
+                    zIndex = parseInt(layers[i].style.zIndex, 10);
 
-        if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
-            return;
-        }
+                    if (!isNaN(zIndex)) {
+                        edgeZIndex = compare(edgeZIndex, zIndex);
+                    }
+                }
+            }
 
-        var tileBounds = L.bounds(
+            this.options.zIndex = this._container.style.zIndex =
+                (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
+        },
+
+        _updateOpacity: function () {
+            var i,
+                tiles = this._tiles;
+
+            if (L.Browser.ielt9) {
+                for (i in tiles) {
+                    L.DomUtil.setOpacity(tiles[i], this.options.opacity);
+                }
+            } else {
+                L.DomUtil.setOpacity(this._container, this.options.opacity);
+            }
+        },
+
+        _initContainer: function () {
+            var tilePane = this._map._panes.tilePane;
+
+            if (!this._container) {
+                this._container = L.DomUtil.create('div', 'leaflet-layer');
+
+                this._updateZIndex();
+
+                if (this._animated) {
+                    var className = 'leaflet-tile-container leaflet-zoom-animated';
+
+                    this._bgBuffer = L.DomUtil.create('div', className, this._container);
+                    this._tileContainer = L.DomUtil.create('div', className, this._container);
+
+                } else {
+                    this._tileContainer = this._container;
+                }
+
+                tilePane.appendChild(this._container);
+
+                if (this.options.opacity < 1) {
+                    this._updateOpacity();
+                }
+            }
+        },
+
+        _reset: function (e) {
+            for (var key in this._tiles) {
+                this.fire('tileunload', {
+                    tile: this._tiles[key]
+                });
+            }
+
+            this._tiles = {};
+            this._tilesToLoad = 0;
+
+            if (this.options.reuseTiles) {
+                this._unusedTiles = [];
+            }
+
+            this._tileContainer.innerHTML = '';
+
+            if (this._animated && e && e.hard) {
+                this._clearBgBuffer();
+            }
+
+            this._initContainer();
+        },
+
+        _getTileSize: function () {
+            var map = this._map,
+                zoom = map.getZoom(),
+                zoomN = this.options.maxNativeZoom,
+                tileSize = this.options.tileSize;
+
+            if (zoomN && zoom > zoomN) {
+                tileSize = Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * tileSize);
+            }
+
+            return tileSize;
+        },
+
+        _update: function () {
+
+            if (!this._map) {
+                return;
+            }
+
+            var map = this._map,
+                bounds = map.getPixelBounds(),
+                zoom = map.getZoom(),
+                tileSize = this._getTileSize();
+
+            if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
+                return;
+            }
+
+            var tileBounds = L.bounds(
                 bounds.min.divideBy(tileSize)._floor(),
                 bounds.max.divideBy(tileSize)._floor());
 
-        this._addTilesFromCenterOut(tileBounds);
+            this._addTilesFromCenterOut(tileBounds);
 
-        if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
-            this._removeOtherTiles(tileBounds);
-        }
-    },
+            if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
+                this._removeOtherTiles(tileBounds);
+            }
+        },
 
-    _addTilesFromCenterOut: function (bounds) {
-        var queue = [],
-            center = bounds.getCenter();
+        _addTilesFromCenterOut: function (bounds) {
+            var queue = [],
+                center = bounds.getCenter();
 
-        var j, i, point;
+            var j, i, point;
 
-        for (j = bounds.min.y; j <= bounds.max.y; j++) {
-            for (i = bounds.min.x; i <= bounds.max.x; i++) {
-                point = new L.Point(i, j);
+            for (j = bounds.min.y; j <= bounds.max.y; j++) {
+                for (i = bounds.min.x; i <= bounds.max.x; i++) {
+                    point = new L.Point(i, j);
 
-                if (this._tileShouldBeLoaded(point)) {
-                    queue.push(point);
+                    if (this._tileShouldBeLoaded(point)) {
+                        queue.push(point);
+                    }
                 }
             }
-        }
 
-        var tilesToLoad = queue.length;
+            var tilesToLoad = queue.length;
 
-        if (tilesToLoad === 0) { return; }
-
-        // load tiles in order of their distance to center
-        queue.sort(function (a, b) {
-            return a.distanceTo(center) - b.distanceTo(center);
-        });
-
-        var fragment = document.createDocumentFragment();
-
-        // if its the first batch of tiles to load
-        if (!this._tilesToLoad) {
-            this.fire('loading');
-        }
-
-        this._tilesToLoad += tilesToLoad;
-
-        for (i = 0; i < tilesToLoad; i++) {
-            this._addTile(queue[i], fragment);
-        }
-
-        this._tileContainer.appendChild(fragment);
-    },
-
-    _tileShouldBeLoaded: function (tilePoint) {
-        if ((tilePoint.x + ':' + tilePoint.y) in this._tiles) {
-            return false; // already loaded
-        }
-
-        var options = this.options;
-
-        if (!options.continuousWorld) {
-            var limit = this._getWrapTileNum();
-
-            // don't load if exceeds world bounds
-            if ((options.noWrap && (tilePoint.x < 0 || tilePoint.x >= limit)) ||
-                tilePoint.y < 0 || tilePoint.y >= limit) { return false; }
-        }
-
-        if (options.bounds) {
-            var tileSize = options.tileSize,
-                nwPoint = tilePoint.multiplyBy(tileSize),
-                sePoint = nwPoint.add([tileSize, tileSize]),
-                nw = this._map.unproject(nwPoint),
-                se = this._map.unproject(sePoint);
-
-            // TODO temporary hack, will be removed after refactoring projections
-            // https://github.com/Leaflet/Leaflet/issues/1618
-            if (!options.continuousWorld && !options.noWrap) {
-                nw = nw.wrap();
-                se = se.wrap();
+            if (tilesToLoad === 0) {
+                return;
             }
 
-            if (!options.bounds.intersects([nw, se])) { return false; }
-        }
+            // load tiles in order of their distance to center
+            queue.sort(function (a, b) {
+                return a.distanceTo(center) - b.distanceTo(center);
+            });
 
-        return true;
-    },
+            var fragment = document.createDocumentFragment();
 
-    _removeOtherTiles: function (bounds) {
-        var kArr, x, y, key;
-
-        for (key in this._tiles) {
-            kArr = key.split(':');
-            x = parseInt(kArr[0], 10);
-            y = parseInt(kArr[1], 10);
-
-            // remove tile if it's out of bounds
-            if (x < bounds.min.x || x > bounds.max.x || y < bounds.min.y || y > bounds.max.y) {
-                this._removeTile(key);
+            // if its the first batch of tiles to load
+            if (!this._tilesToLoad) {
+                this.fire('loading');
             }
-        }
-    },
 
-    _removeTile: function (key) {
-        var tile = this._tiles[key];
+            this._tilesToLoad += tilesToLoad;
 
-        this.fire('tileunload', {tile: tile, url: tile.src});
+            for (i = 0; i < tilesToLoad; i++) {
+                this._addTile(queue[i], fragment);
+            }
 
-        if (this.options.reuseTiles) {
-            L.DomUtil.removeClass(tile, 'leaflet-tile-loaded');
-            this._unusedTiles.push(tile);
+            this._tileContainer.appendChild(fragment);
+        },
 
-        } else if (tile.parentNode === this._tileContainer) {
-            this._tileContainer.removeChild(tile);
-        }
+        _tileShouldBeLoaded: function (tilePoint) {
+            if ((tilePoint.x + ':' + tilePoint.y) in this._tiles) {
+                return false; // already loaded
+            }
 
-        // for https://github.com/CloudMade/Leaflet/issues/137
-        if (!L.Browser.android) {
-            tile.onload = null;
-            tile.src = L.Util.emptyImageUrl;
-        }
+            var options = this.options;
 
-        delete this._tiles[key];
-    },
+            if (!options.continuousWorld) {
+                var limit = this._getWrapTileNum();
 
-    _addTile: function (tilePoint, container) {
-        var tilePos = this._getTilePos(tilePoint);
+                // don't load if exceeds world bounds
+                if ((options.noWrap && (tilePoint.x < 0 || tilePoint.x >= limit)) ||
+                    tilePoint.y < 0 || tilePoint.y >= limit) {
+                    return false;
+                }
+            }
 
-        // get unused tile - or create a new tile
-        var tile = this._getTile(),
-            zoom = this._map.getZoom();
-        /*
+            if (options.bounds) {
+                var tileSize = options.tileSize,
+                    nwPoint = tilePoint.multiplyBy(tileSize),
+                    sePoint = nwPoint.add([tileSize, tileSize]),
+                    nw = this._map.unproject(nwPoint),
+                    se = this._map.unproject(sePoint);
+
+                // TODO temporary hack, will be removed after refactoring projections
+                // https://github.com/Leaflet/Leaflet/issues/1618
+                if (!options.continuousWorld && !options.noWrap) {
+                    nw = nw.wrap();
+                    se = se.wrap();
+                }
+
+                if (!options.bounds.intersects([nw, se])) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
+        _removeOtherTiles: function (bounds) {
+            var kArr, x, y, key;
+
+            for (key in this._tiles) {
+                kArr = key.split(':');
+                x = parseInt(kArr[0], 10);
+                y = parseInt(kArr[1], 10);
+
+                // remove tile if it's out of bounds
+                if (x < bounds.min.x || x > bounds.max.x || y < bounds.min.y || y > bounds.max.y) {
+                    this._removeTile(key);
+                }
+            }
+        },
+
+        _removeTile: function (key) {
+            var tile = this._tiles[key];
+
+            this.fire('tileunload', {
+                tile: tile,
+                url: tile.src
+            });
+
+            if (this.options.reuseTiles) {
+                L.DomUtil.removeClass(tile, 'leaflet-tile-loaded');
+                this._unusedTiles.push(tile);
+
+            } else if (tile.parentNode === this._tileContainer) {
+                this._tileContainer.removeChild(tile);
+            }
+
+            // for https://github.com/CloudMade/Leaflet/issues/137
+            if (!L.Browser.android) {
+                tile.onload = null;
+                tile.src = L.Util.emptyImageUrl;
+            }
+
+            delete this._tiles[key];
+        },
+
+        _addTile: function (tilePoint, container) {
+            var tilePos = this._getTilePos(tilePoint);
+
+            // get unused tile - or create a new tile
+            var tile = this._getTile(),
+                zoom = this._map.getZoom();
+            /*
         Chrome 20 layouts much faster with top/left (verify with timeline, frames)
         Android 4 browser has display issues with top/left and requires transform instead
         Android 2 browser requires top/left or tiles disappear on load or first drag
         (reappear after zoom) https://github.com/CloudMade/Leaflet/issues/866
         (other browsers don't currently care) - see debug/hacks/jitter.html for an example
         */
-        L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
+            L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
 
-        this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
+            this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
-        this._loadTile(tile, tilePoint, zoom);
+            this._loadTile(tile, tilePoint, zoom);
 
-        if (tile.parentNode !== this._tileContainer) {
-            container.appendChild(tile);
-        }
-    },
-
-    _getZoomForUrl: function () {
-
-        var options = this.options,
-            zoom = this._map.getZoom();
-
-        if (options.zoomReverse) {
-            zoom = options.maxZoom - zoom;
-        }
-
-        zoom += options.zoomOffset;
-
-        return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
-    },
-
-    _getTilePos: function (tilePoint) {
-        var origin = this._map.getPixelOrigin(),
-            tileSize = this._getTileSize();
-
-        return tilePoint.multiplyBy(tileSize).subtract(origin);
-    },
-
-    // image-specific code (override to implement e.g. Canvas or SVG tile layer)
-
-    getTileUrl: function (tilePoint, zoom) {
-        return L.Util.template(this._url, L.extend({
-            s: this._getSubdomain(tilePoint),
-            z: zoom,
-            x: tilePoint.x,
-            y: tilePoint.y
-        }, this.options));
-    },
-
-    _getWrapTileNum: function () {
-        // TODO refactor, limit is not valid for non-standard projections
-        return Math.pow(2, this._getZoomForUrl());
-    },
-
-    _adjustTilePoint: function (tilePoint) {
-
-        var limit = this._getWrapTileNum();
-
-        // wrap tile coordinates
-        if (!this.options.continuousWorld && !this.options.noWrap) {
-            tilePoint.x = ((tilePoint.x % limit) + limit) % limit;
-        }
-
-        if (this.options.tms) {
-            tilePoint.y = limit - tilePoint.y - 1;
-        }
-
-        tilePoint.z = this._getZoomForUrl();
-    },
-
-    _getSubdomain: function (tilePoint) {
-        var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
-        return this.options.subdomains[index];
-    },
-
-    _getTile: function () {
-        if (this.options.reuseTiles && this._unusedTiles.length > 0) {
-            var tile = this._unusedTiles.pop();
-            this._resetTile(tile);
-            return tile;
-        }
-        return this._createTile();
-    },
-
-    // Override if data stored on a tile needs to be cleaned up before reuse
-    _resetTile: function (/*tile*/) {},
-
-    _createTile: function () {
-        var tile = L.DomUtil.create('img', 'leaflet-tile');
-        tile.style.width = tile.style.height = this._getTileSize() + 'px';
-        tile.galleryimg = 'no';
-
-        tile.onselectstart = tile.onmousemove = L.Util.falseFn;
-
-        if (L.Browser.ielt9 && this.options.opacity !== undefined) {
-            L.DomUtil.setOpacity(tile, this.options.opacity);
-        }
-        return tile;
-    },
-
-    _loadTile: function (tile, tilePoint, zoom) {
-        tile._layer  = this;
-        tile.onload  = this._tileOnLoad;
-        tile.onerror = this._tileOnError;
-
-        this._adjustTilePoint(tilePoint);
-        // tile.src     = this.getTileUrl(tilePoint);
-        // this._getTile(tile, tilePoint,zoom);
-        this.fetchTileFromCache(tile,zoom,tilePoint.x,tilePoint.y);
-    },
-
-    _tileLoaded: function () {
-        this._tilesToLoad--;
-        if (!this._tilesToLoad) {
-            this.fire('load');
-
-            if (this._animated) {
-                // clear scaled tiles after all new tiles are loaded (for performance)
-                clearTimeout(this._clearBgBufferTimer);
-                this._clearBgBufferTimer = setTimeout(L.bind(this._clearBgBuffer, this), 500);
+            if (tile.parentNode !== this._tileContainer) {
+                container.appendChild(tile);
             }
-        }
-    },
+        },
 
-    _tileOnLoad: function () {
-        var layer = this._layer;
+        _getZoomForUrl: function () {
 
-        //Only if we are loading an actual image
-        if (this.src !== L.Util.emptyImageUrl) {
-            L.DomUtil.addClass(this, 'leaflet-tile-loaded');
+            var options = this.options,
+                zoom = this._map.getZoom();
 
-            layer.fire('tileload', {
+            if (options.zoomReverse) {
+                zoom = options.maxZoom - zoom;
+            }
+
+            zoom += options.zoomOffset;
+
+            return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
+        },
+
+        _getTilePos: function (tilePoint) {
+            var origin = this._map.getPixelOrigin(),
+                tileSize = this._getTileSize();
+
+            return tilePoint.multiplyBy(tileSize).subtract(origin);
+        },
+
+        // image-specific code (override to implement e.g. Canvas or SVG tile layer)
+
+        getTileUrl: function (tilePoint, zoom) {
+            return L.Util.template(this._url, L.extend({
+                s: this._getSubdomain(tilePoint),
+                z: zoom,
+                x: tilePoint.x,
+                y: tilePoint.y
+            }, this.options));
+        },
+
+        _getWrapTileNum: function () {
+            // TODO refactor, limit is not valid for non-standard projections
+            return Math.pow(2, this._getZoomForUrl());
+        },
+
+        _adjustTilePoint: function (tilePoint) {
+
+            var limit = this._getWrapTileNum();
+
+            // wrap tile coordinates
+            if (!this.options.continuousWorld && !this.options.noWrap) {
+                tilePoint.x = ((tilePoint.x % limit) + limit) % limit;
+            }
+
+            if (this.options.tms) {
+                tilePoint.y = limit - tilePoint.y - 1;
+            }
+
+            tilePoint.z = this._getZoomForUrl();
+        },
+
+        _getSubdomain: function (tilePoint) {
+            var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
+            return this.options.subdomains[index];
+        },
+
+        _getTile: function () {
+            if (this.options.reuseTiles && this._unusedTiles.length > 0) {
+                var tile = this._unusedTiles.pop();
+                this._resetTile(tile);
+                return tile;
+            }
+            return this._createTile();
+        },
+
+        // Override if data stored on a tile needs to be cleaned up before reuse
+        _resetTile: function ( /*tile*/ ) {},
+
+        _createTile: function () {
+            var tile = L.DomUtil.create('img', 'leaflet-tile');
+            tile.style.width = tile.style.height = this._getTileSize() + 'px';
+            tile.galleryimg = 'no';
+
+            tile.onselectstart = tile.onmousemove = L.Util.falseFn;
+
+            if (L.Browser.ielt9 && this.options.opacity !== undefined) {
+                L.DomUtil.setOpacity(tile, this.options.opacity);
+            }
+            return tile;
+        },
+
+        _loadTile: function (tile, tilePoint, zoom) {
+            tile._layer = this;
+            tile.onload = this._tileOnLoad;
+            tile.onerror = this._tileOnError;
+
+            this._adjustTilePoint(tilePoint);
+            // tile.src     = this.getTileUrl(tilePoint);
+            // this._getTile(tile, tilePoint,zoom);
+            this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
+        },
+
+        _tileLoaded: function () {
+            this._tilesToLoad--;
+            if (!this._tilesToLoad) {
+                this.fire('load');
+
+                if (this._animated) {
+                    // clear scaled tiles after all new tiles are loaded (for performance)
+                    clearTimeout(this._clearBgBufferTimer);
+                    this._clearBgBufferTimer = setTimeout(L.bind(this._clearBgBuffer, this), 500);
+                }
+            }
+        },
+
+        _tileOnLoad: function () {
+            var layer = this._layer;
+
+            //Only if we are loading an actual image
+            if (this.src !== L.Util.emptyImageUrl) {
+                L.DomUtil.addClass(this, 'leaflet-tile-loaded');
+
+                layer.fire('tileload', {
+                    tile: this,
+                    url: this.src
+                });
+            }
+
+            layer._tileLoaded();
+        },
+
+        _tileOnError: function () {
+            var layer = this._layer;
+
+            layer.fire('tileerror', {
                 tile: this,
                 url: this.src
             });
-        }
 
-        layer._tileLoaded();
-    },
-
-    _tileOnError: function () {
-        var layer = this._layer;
-
-        layer.fire('tileerror', {
-            tile: this,
-            url: this.src
-        });
-
-        var newUrl = layer.options.errorTileUrl;
-        if (newUrl) {
-            this.src = newUrl;
-        }
-
-        layer._tileLoaded();
-    },
-
-
-    initFS: function(grantedBytes){
-        grantedBytes = grantedBytes || 100*1024*1024;
-        var this_ = this ;
-
-        this.requestQuota(function(){
-            if(window.requestFileSystem || window.webkitRequestFileSystem){
-                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT,grantedBytes, function(fs){
-                    this_.filesystem = fs ;
-                }, this_.log_fs_error);
-            } else {
-                this_.filesystem = true ;
+            var newUrl = layer.options.errorTileUrl;
+            if (newUrl) {
+                this.src = newUrl;
             }
-        });
-    },
 
-     log_fs_error: function(e){
-        var msg = '';
-        switch (e.code) {
+            layer._tileLoaded();
+        },
+
+
+        initFS: function (grantedBytes) {
+            grantedBytes = grantedBytes || 100 * 1024 * 1024;
+            var this_ = this;
+
+            this.requestQuota(function () {
+                if (window.requestFileSystem || window.webkitRequestFileSystem) {
+                    (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, grantedBytes, function (fs) {
+                        this_.filesystem = fs;
+                    }, this_.log_fs_error);
+                } else {
+                    this_.filesystem = true;
+                }
+            });
+        },
+
+        log_fs_error: function (e) {
+            var msg = '';
+            switch (e.code) {
             case FileError.QUOTA_EXCEEDED_ERR:
                 msg = 'QUOTA_EXCEEDED_ERR';
                 break;
@@ -1387,297 +1426,333 @@ L.TileLayer.FileCache = L.TileLayer.extend({
             default:
                 msg = 'Unknown Error';
                 break;
-        }
-        console.log('Error: ' + msg);
-    },
+            }
+            console.log('Error: ' + msg);
+        },
 
-    requestQuota: function(callback){
-         window.requestFileSystem
-        if(navigator.webkitPersistentStorage){
-            navigator.webkitPersistentStorage.requestQuota(1024*1024*500, callback);
-        } else if(window.storageInfo) {
-            window.storageInfo.requestQuota(window.PERSISTENT, 0, callback);
-        } else {
-            console.log("no filesystem found");
-            callback();
-        }
-    },
-
-    getTilePath : function(tile){
-        return 'tiles/'+tile.z ; //+'/'+tile.x ;
-    },
-
-    createDirectory: function(path, callback, step){
-        step = step || 1 ;
-
-        if(step > path.length)
-            return callback();
-
-        var this_ = this ;
-
-        this.filesystem.root.getDirectory(path.split('/').slice(0,step).join('/'), {create: true}, function(dirEntry) {
-            this_.createDirectory(path, callback, ++step);
-        }, this_.log_fs_error);
-
-    },
-
-
-    writeTileToCache: function(tileObject, dataUrl, callback){
-        var this_ = this ;
-        var path  = this.getTilePath(tileObject);
-        var data = this.convertDataURIToBinary(dataUrl);
-
-        this.createDirectory(path, function(){
-            this_.filesystem.root.getFile(path+'/'+tileObject.x+'_'+tileObject.y+'.png', {create: true}, function(fileEntry) {
-                fileEntry.createWriter(function(writer) {
-                    writer.onwriteend = (callback || function(){});
-                    writer.onerror = function(e) {
-                        console.log('Write failed: ' + e.toString());
-                    };
-
-                    var blob , datatype ='image/png';
-
-                    try {
-                        // Chrome browser
-                        blob = new Blob([data], {type: datatype});
-                        writer.write(blob);
-                    } catch (e) {
-                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
-                        if (e.name == 'TypeError' && window.BlobBuilder) {
-                            // Android browser
-                            cordova.exec(
-                                function() {
-                                    console.log('Fichier écrit avec succes');
-                                },
-                                function(error) {
-                                    console.log(JSON.stringify(error));
-                                },
-                                "WriteFilePlugin",
-                                "writeBase64toPNG", [dataUrl.split(',')[1],path+'/'+tileObject.x+'_'+tileObject.y+'.png' ]
-                            );
-
-                        } else if (e.name == "InvalidStateError") {
-                            blob = new Blob([data], {type: datatype});
-                            writer.write(blob);
-                        } else {
-                            console.log("Error when building blob");
-                        }
-                    }
-
-                }, this_.log_fs_error);
-            }, this_.log_fs_error);
-        });
-    },
-
-    getDataURL: function (img) {
-        canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        return canvas.toDataURL();
-    },
-
-    fetchTileFromCache: function(image,z,x,y){
-        // console.log("fetchTileFromCache")
-
-        var this_ = this ;
-
-        if(!this.filesystem){
-            return setTimeout(function() {
-                this_.fetchTileFromCache(image, z, x, y);
-            }, 400);
-        }
-
-        var tileObject = {
-            image : image,
-            provider : this.id,
-            x : x,
-            y : y,
-            z : z,
-            src : null,
-            tiles : this
-        };
-
-
-        if(this.filesystem !== true)
-            {this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png', {}, function(fileEntry) {
-                            fileEntry.file(function(file) {
-                                var reader = new FileReader();
-                                reader.readAsArrayBuffer(file);
-                                reader.onloadend = function(event) {
-                                    var data = event.target.result, datatype = "image/png", blob, bb;
-                                    try {
-                                        blob = new Blob([data], {type: datatype});
-                                    } catch (e) {
-                                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
-                                        if (e.name == 'TypeError' && window.BlobBuilder) {
-                                            bb = new BlobBuilder();
-                                            bb.append(data);
-                                            blob = bb.getBlob(datatype);
-                                        } else if (e.name == "InvalidStateError") {
-                                            blob = new Blob([data], {type: datatype});
-                                        } else {
-                                            console.log("Error when building blob");
-                                        }
-                                    }
-                                    // image.style.border  = 'solid 1px blue';
-                                    window.URL = window.URL || window.webkitURL;
-                                    image.src           =   URL.createObjectURL(blob);
-                                    image.onerror = function(event) {
-                                        image.onerror = image.onload = null ;
-                                    };
-                                    image.onload = function(event) {
-                                        image.onerror = image.onload = null ;
-                                        image.className += " leaflet-tile-loaded";
-                                        image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-                                    };
-                                    this_.doINeedToReCacheThisTile(tileObject, file, function(yes){
-                                        if(yes){
-                                            var oldTile = image.src;
-                                            image.src = this_.getTileUrl({x:x, y:y},z);
-                                            image.onerror = function(event) {
-                                                image.src = oldTile;
-                                                image.onerror = image.onload = null ;
-                                            };
-                                            image.onload = function(){
-                                                image.className += " leaflet-tile-loaded";
-                                                this_.writeTileToCache(tileObject, this_.getDataURL(image), function(){
-                                                    this_.getRemoteETag(   tileObject, function(remoteETag){
-                                                        if(remoteETag !== null){
-                                                            this_.writeMetadataTileFile(tileObject,{
-                                                                etag : remoteETag
-                                                            });
-                                                        }
-                                                    });
-                                                });
-                                                image.onerror = image.onload = null ;
-                                            };
-                                        }
-                                    });
-                                };
-                            });
-
-                        }, function(fileError){
-                            var oldTile = image.src ;
-                            image.src = this_.getTileUrl({x:x, y:y},z);
-                            image.onerror = function(event) {
-                                image.src = oldTile;
-                                image.onerror = image.onload = null ;
-                            };
-                            image.onload = function(){
-                                image.className += " leaflet-tile-loaded";
-                                this_.writeTileToCache(tileObject, this_.getDataURL(image));
-                                image.onerror = image.onload = null ;
-                            };
-                        });}
-        else {
-            image.src = this_.getTileUrl({x:x, y:y},z);
-            image.onerror = function(event) {
-                image.src = oldTile;
-                image.onerror = image.onload = null ;
-            };
-            image.onload = function(){
-                image.className += " leaflet-tile-loaded";
-                // this_.writeTileToCache(tileObject, this_.getDataURL(image));
-                image.onerror = image.onload = null ;
-            };
-        }
-    },
-
-    readMetadataTileFile: function(tileObject, callback){
-        this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png.metadata', {create: true}, function(fileEntry) {
-            fileEntry.file(function(file) {
-            var reader = new FileReader();
-            reader.onloadend = function(){
-                var metadata ;
-                try {
-                    metadata = JSON.parse(reader.result || '{}');
-                    callback(metadata);
-                } catch (e){
-                    callback({etag:undefined});
-                }
-            };
-            reader.readAsText(file);
-            });
-        });
-    },
-
-    writeMetadataTileFile: function(tileObject, metadata, callback){
-        var _this = this ;
-        this.filesystem.root.getFile(this.getTilePath(tileObject)+'/'+tileObject.x+'_'+tileObject.y+'.png.metadata', {create: true}, function(fileEntry) {
-            fileEntry.createWriter(function(writer) {
-                writer.onwriteend = function(){
-                    writer.onwriteend = (callback || function(){});
-                    var blob , datatype ='text/plain';
-                    try {
-                        // Chrome browser
-                        blob = new Blob([JSON.stringify(metadata)], {type: datatype});
-                        writer.write(blob);
-                    } catch (e) {
-                        window.BlobBuilder = window.BlobBuilder ||  window.WebKitBlobBuilder;
-                        if (e.name == "InvalidStateError") {
-                            blob = new Blob([JSON.stringify(metadata)], {type: datatype});
-                            writer.write(blob);
-                        }
-                    }
-                }
-                writer.truncate(0);
-                writer.onerror = function(e) {
-                    console.log('Write failed: ' + e.toString());
-                }
-            }, _this.log_fs_error);
-        });
-    },
-
-    doINeedToReCacheThisTile: function(tileObject, file, callback){
-        var _this = this ;
-        this.readMetadataTileFile(tileObject, function(metadata){
-            if(!metadata.etag){
-                callback(true);
+        requestQuota: function (callback) {
+            window.requestFileSystem
+            if (navigator.webkitPersistentStorage) {
+                navigator.webkitPersistentStorage.requestQuota(1024 * 1024 * 500, callback);
+            } else if (window.storageInfo) {
+                window.storageInfo.requestQuota(window.PERSISTENT, 0, callback);
             } else {
-                _this.getRemoteETag(tileObject, function(remoteETag){
-                    if(metadata.etag != remoteETag && remoteETag !== null){
-                        callback(true);
-                    } else {
-                        callback(false);
-                    }
+                console.log("no filesystem found");
+                callback();
+            }
+        },
+
+        getTilePath: function (tile) {
+            return 'tiles/' + tile.z; //+'/'+tile.x ;
+        },
+
+        createDirectory: function (path, callback, step) {
+            step = step || 1;
+
+            if (step > path.length)
+                return callback();
+
+            var this_ = this;
+
+            this.filesystem.root.getDirectory(path.split('/').slice(0, step).join('/'), {
+                create: true
+            }, function (dirEntry) {
+                this_.createDirectory(path, callback, ++step);
+            }, this_.log_fs_error);
+
+        },
+
+
+        writeTileToCache: function (tileObject, dataUrl, callback) {
+            var this_ = this;
+            var path = this.getTilePath(tileObject);
+            var data = this.convertDataURIToBinary(dataUrl);
+
+            this.createDirectory(path, function () {
+                this_.filesystem.root.getFile(path + '/' + tileObject.x + '_' + tileObject.y + '.png', {
+                    create: true
+                }, function (fileEntry) {
+                    fileEntry.createWriter(function (writer) {
+                        writer.onwriteend = (callback || function () {});
+                        writer.onerror = function (e) {
+                            console.log('Write failed: ' + e.toString());
+                        };
+
+                        var blob, datatype = 'image/png';
+
+                        try {
+                            // Chrome browser
+                            blob = new Blob([data], {
+                                type: datatype
+                            });
+                            writer.write(blob);
+                        } catch (e) {
+                            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+                            if (e.name == 'TypeError' && window.BlobBuilder) {
+                                // Android browser
+                                cordova.exec(
+                                    function () {
+                                        console.log('Fichier écrit avec succes');
+                                    },
+                                    function (error) {
+                                        console.log(JSON.stringify(error));
+                                    },
+                                    "WriteFilePlugin",
+                                    "writeBase64toPNG", [dataUrl.split(',')[1], path + '/' + tileObject.x + '_' + tileObject.y + '.png']
+                                );
+
+                            } else if (e.name == "InvalidStateError") {
+                                blob = new Blob([data], {
+                                    type: datatype
+                                });
+                                writer.write(blob);
+                            } else {
+                                console.log("Error when building blob");
+                            }
+                        }
+
+                    }, this_.log_fs_error);
+                }, this_.log_fs_error);
+            });
+        },
+
+        getDataURL: function (img) {
+            canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            return canvas.toDataURL();
+        },
+
+        fetchTileFromCache: function (image, z, x, y) {
+            // console.log("fetchTileFromCache")
+
+            var this_ = this;
+
+            if (!this.filesystem) {
+                return setTimeout(function () {
+                    this_.fetchTileFromCache(image, z, x, y);
+                }, 400);
+            }
+
+            var tileObject = {
+                image: image,
+                provider: this.id,
+                x: x,
+                y: y,
+                z: z,
+                src: null,
+                tiles: this
+            };
+
+
+            if (this.filesystem !== true) {
+                this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function (fileEntry) {
+                    fileEntry.file(function (file) {
+                        var reader = new FileReader();
+                        reader.readAsArrayBuffer(file);
+                        reader.onloadend = function (event) {
+                            var data = event.target.result,
+                                datatype = "image/png",
+                                blob, bb;
+                            try {
+                                blob = new Blob([data], {
+                                    type: datatype
+                                });
+                            } catch (e) {
+                                window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+                                if (e.name == 'TypeError' && window.BlobBuilder) {
+                                    bb = new BlobBuilder();
+                                    bb.append(data);
+                                    blob = bb.getBlob(datatype);
+                                } else if (e.name == "InvalidStateError") {
+                                    blob = new Blob([data], {
+                                        type: datatype
+                                    });
+                                } else {
+                                    console.log("Error when building blob");
+                                }
+                            }
+                            // image.style.border  = 'solid 1px blue';
+                            window.URL = window.URL || window.webkitURL;
+                            image.src = URL.createObjectURL(blob);
+                            image.onerror = function (event) {
+                                image.onerror = image.onload = null;
+                            };
+                            image.onload = function (event) {
+                                image.onerror = image.onload = null;
+                                image.className += " leaflet-tile-loaded";
+                                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+                            };
+                            this_.doINeedToReCacheThisTile(tileObject, file, function (yes) {
+                                if (yes) {
+                                    var oldTile = image.src;
+                                    image.src = this_.getTileUrl({
+                                        x: x,
+                                        y: y
+                                    }, z);
+                                    image.onerror = function (event) {
+                                        image.src = oldTile;
+                                        image.onerror = image.onload = null;
+                                    };
+                                    image.onload = function () {
+                                        image.className += " leaflet-tile-loaded";
+                                        this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+                                            this_.getRemoteETag(tileObject, function (remoteETag) {
+                                                if (remoteETag !== null) {
+                                                    this_.writeMetadataTileFile(tileObject, {
+                                                        etag: remoteETag
+                                                    });
+                                                }
+                                            });
+                                        });
+                                        image.onerror = image.onload = null;
+                                    };
+                                }
+                            });
+                        };
+                    });
+
+                }, function (fileError) {
+                    var oldTile = image.src;
+                    image.src = this_.getTileUrl({
+                        x: x,
+                        y: y
+                    }, z);
+                    image.onerror = function (event) {
+                        image.src = oldTile;
+                        image.onerror = image.onload = null;
+                    };
+                    image.onload = function () {
+                        image.className += " leaflet-tile-loaded";
+                        this_.writeTileToCache(tileObject, this_.getDataURL(image));
+                        image.onerror = image.onload = null;
+                    };
                 });
+            } else {
+                image.src = this_.getTileUrl({
+                    x: x,
+                    y: y
+                }, z);
+                image.onerror = function (event) {
+                    image.src = oldTile;
+                    image.onerror = image.onload = null;
+                };
+                image.onload = function () {
+                    image.className += " leaflet-tile-loaded";
+                    // this_.writeTileToCache(tileObject, this_.getDataURL(image));
+                    image.onerror = image.onload = null;
+                };
             }
-        });
-    },
+        },
 
-    getRemoteETag: function(tileObject, callback){
-        var http = new XMLHttpRequest(),
-            url  = this.getTileUrl({x:tileObject.x, y:tileObject.y},tileObject.z);
-        http.withCredentials = true;
-        http.open('HEAD', url, true);
-        http.onreadystatechange = function() {
-            if (this.readyState == this.DONE && this.status === 200) {
-                callback(this.getResponseHeader("etag"));
-            } else if(this.readyState == this.DONE && this.status === 403){
-                Smartgeo.silentLogin();
-                callback(null);
+        readMetadataTileFile: function (tileObject, callback) {
+            this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
+                create: true
+            }, function (fileEntry) {
+                fileEntry.file(function (file) {
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                        var metadata;
+                        try {
+                            metadata = JSON.parse(reader.result || '{}');
+                            callback(metadata);
+                        } catch (e) {
+                            callback({
+                                etag: undefined
+                            });
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            });
+        },
+
+        writeMetadataTileFile: function (tileObject, metadata, callback) {
+            var _this = this;
+            this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
+                create: true
+            }, function (fileEntry) {
+                fileEntry.createWriter(function (writer) {
+                    writer.onwriteend = function () {
+                        writer.onwriteend = (callback || function () {});
+                        var blob, datatype = 'text/plain';
+                        try {
+                            // Chrome browser
+                            blob = new Blob([JSON.stringify(metadata)], {
+                                type: datatype
+                            });
+                            writer.write(blob);
+                        } catch (e) {
+                            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+                            if (e.name == "InvalidStateError") {
+                                blob = new Blob([JSON.stringify(metadata)], {
+                                    type: datatype
+                                });
+                                writer.write(blob);
+                            }
+                        }
+                    }
+                    writer.truncate(0);
+                    writer.onerror = function (e) {
+                        console.log('Write failed: ' + e.toString());
+                    }
+                }, _this.log_fs_error);
+            });
+        },
+
+        doINeedToReCacheThisTile: function (tileObject, file, callback) {
+            var _this = this;
+            this.readMetadataTileFile(tileObject, function (metadata) {
+                if (!metadata.etag) {
+                    callback(true);
+                } else {
+                    _this.getRemoteETag(tileObject, function (remoteETag) {
+                        if (metadata.etag != remoteETag && remoteETag !== null) {
+                            callback(true);
+                        } else {
+                            callback(false);
+                        }
+                    });
+                }
+            });
+        },
+
+        getRemoteETag: function (tileObject, callback) {
+            var http = new XMLHttpRequest(),
+                url = this.getTileUrl({
+                    x: tileObject.x,
+                    y: tileObject.y
+                }, tileObject.z);
+            http.withCredentials = true;
+            http.open('HEAD', url, true);
+            http.onreadystatechange = function () {
+                if (this.readyState == this.DONE && this.status === 200) {
+                    callback(this.getResponseHeader("etag"));
+                } else if (this.readyState == this.DONE && this.status === 403) {
+                    Smartgeo.silentLogin();
+                    callback(null);
+                }
+
+            };
+            http.send();
+        },
+
+        convertDataURIToBinary: function (dataURI) {
+            var BASE64_MARKER = ';base64,';
+            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            var base64 = dataURI.substring(base64Index);
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+            for (i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
             }
-
-        };
-        http.send();
-    },
-
-    convertDataURIToBinary: function (dataURI) {
-        var BASE64_MARKER = ';base64,';
-        var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-        var base64 = dataURI.substring(base64Index);
-        var raw = window.atob(base64);
-        var rawLength = raw.length;
-        var array = new Uint8Array(new ArrayBuffer(rawLength));
-
-        for (i = 0; i < rawLength; i++) {
-            array[i] = raw.charCodeAt(i);
+            return array;
         }
-        return array;
-    }
 
 
-});
+    });
 }

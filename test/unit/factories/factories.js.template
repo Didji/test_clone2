@@ -1,0 +1,15 @@
+describe('factories', function() {
+
+    beforeEach(module('smartgeomobile'));
+
+    it('should', inject(function(Smartgeo) {
+        expect(Smartgeo).not.toBe(null);
+    }));
+
+    describe('Smartgeo factory', function(){
+        it('should', inject(function(Smartgeo) {
+
+        }));
+    });
+
+});
