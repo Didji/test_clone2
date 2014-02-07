@@ -44,30 +44,25 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
             $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
         }
 
-        // Prevent just unlogged user to go back to the map
-        $scope.$on('$locationChangeStart', function (event, next, current) {
-            if (next.indexOf('/map/') !== -1) {
-                event.preventDefault();
-            }
-        });
+        $scope.$on('$locationChangeStart', $scope.preventLocationChangeStart);
     };
+
+    $scope.preventLocationChangeStart = function (event, next, current) {
+        if (next.indexOf('/map/') !== -1) {
+            event.preventDefault();
+        }
+    }
 
     /**
      * Vérifie que le serveur est accessible et déconnecte l'utilisateur courant.
      */
-    $scope.ping = function (callback) {
+    $scope.ping = function () {
         $scope.readyToLog = false;
         $scope.logMessage = '_AUTH_LOG_MESSAGE_CHECK_';
-        Smartgeo.ping(function (serverIsReachable) {
-            $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (serverIsReachable ? 'REMOTE' : 'LOCAL') + '_';
-            $scope.readyToLog = true;
-            if (typeof callback === 'function') {
-                (callback || function () {})(serverIsReachable);
-            }
-        });
+        Smartgeo.ping($scope.isServerReachable);
     };
 
-    function loginFailed(response, status) {
+    $scope.loginFailed = function(response, status) {
         /**
          * TODO: find a smart way to detect X-Orginin errors
          *       (they looks like no connection)
@@ -98,7 +93,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
                 $scope.lastuser.username = $scope.username;
                 Smartgeo.set('user', $scope.lastuser);
                 $location.path('sites');
-            }, loginFailed);
+            }, $scope.loginFailed);
     };
 
     $scope.localLogin = function () {
@@ -110,18 +105,21 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         }
     };
 
+    $scope.isServerReachable = function(yes){
+        $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (yes ? 'REMOTE' : 'LOCAL') + '_';
+        $scope.readyToLog = true;
+        // if(yes){
+        if (!yes) {
+            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
+        }
+        // }
+    };
+
     $scope.login = function () {
 
         if ($scope.firstAuth) {
             $scope.gimapUrl = Smartgeo.setGimapUrl($scope.gimapUrl);
-            return $scope.ping(function (serverIsReachable) {
-                if (serverIsReachable) {
-                    $scope.firstAuth = false;
-                    $scope.login();
-                } else {
-                    alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
-                }
-            });
+            return $scope.ping();
         }
 
         $scope.username = $scope.username.trim();

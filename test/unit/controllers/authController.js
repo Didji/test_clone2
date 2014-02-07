@@ -60,19 +60,11 @@ describe('Smartgeomobile controllers', function() {
             }));
 
 
-            it('should prevent url change on locationChangeStart', inject(function(Smartgeo, $controller, $location) {
-                ctrl = $controller('authController', {$scope:$scope});
-                $scope.initialize();
-                $location.path('/#');
-                // $location.path('/map'); // MAKE THIS WORK
-                $scope.$broadcast('$locationChangeStart', "/map/");
-                expect($location.path()).toEqual('/#');
-            }));
 
 
         });
 
-        describe('AuthController#setGimapUrl', function(){
+        describe('AuthController#preventLocationChangeStart', function(){
 
 
             it('should reset values', inject(function(Smartgeo, $controller) {
@@ -86,6 +78,33 @@ describe('Smartgeomobile controllers', function() {
             }));
         });
 
+        describe('AuthController#setGimapUrl', function(){
+            it('should prevent url change on locationChangeStart when backing to map', inject(function(Smartgeo, $controller, $location) {
+                ctrl = $controller('authController', {$scope:$scope});
+                $scope.initialize();
+                var mockEvent = document.createEvent('CustomEvent');
+                mockEvent.initCustomEvent('$locationChangeStart', false, false, null);
+                var next = "/map/" ;
+                spyOn(mockEvent, "preventDefault").andCallThrough();
+                $scope.preventLocationChangeStart(mockEvent, next);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+            }));
+        });
+
+        describe('AuthController#setGimapUrl', function(){
+            it('should not prevent url change on locationChangeStart when backing to site', inject(function(Smartgeo, $controller, $location) {
+                ctrl = $controller('authController', {$scope:$scope});
+                $scope.initialize();
+                var mockEvent = document.createEvent('CustomEvent');
+                mockEvent.initCustomEvent('$locationChangeStart', false, false, null);
+                var next = "/site/" ;
+                spyOn(mockEvent, "preventDefault").andCallThrough();
+                $scope.preventLocationChangeStart(mockEvent, next);
+                expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+            }));
+        });
+
+
         describe('AuthController#forgetPassword', function(){
             it('should call ping method if gimapUrl is setted', inject(function(Smartgeo, $controller) {
                 ctrl = $controller('authController', {$scope:$scope});
@@ -97,32 +116,25 @@ describe('Smartgeomobile controllers', function() {
 
         describe('AuthController#initialize#android', function($controller){
 
-
             it('should instanciate window.ChromiumCallbacks if its not', inject(function(Smartgeo,$controller) {
                 ctrl = $controller('authController', {$scope:$scope});
-                window.SmartgeoChromium = {
-                    getExtApplicationDirectory : angular.noop
-                } ;
-                window.ChromiumCallbacks = undefined ;
+                window.SmartgeoChromium  = { getExtApplicationDirectory : angular.noop};
+                window.ChromiumCallbacks = false ;
                 $scope.initialize();
                 expect(window.ChromiumCallbacks).not.toBe(null);
             }));
 
             it('should set tileRootPath', inject(function(Smartgeo,$controller) {
                 ctrl = $controller('authController', {$scope:$scope});
-
-                window.SmartgeoChromium = {
-                    getExtApplicationDirectory : angular.noop
-                } ;
-                window.ChromiumCallbacks = undefined ;
+                window.SmartgeoChromium  = { getExtApplicationDirectory : angular.noop};
+                window.ChromiumCallbacks = false ;
+                spyOn(window.SmartgeoChromium, "getExtApplicationDirectory").andCallThrough();
                 $scope.initialize();
-
                 var fakeRootPath = '/fake/root/path' ;
                 window.ChromiumCallbacks[13](fakeRootPath);
                 expect(Smartgeo.get('tileRootPath')).toEqual(fakeRootPath)
+                expect(window.SmartgeoChromium.getExtApplicationDirectory).toHaveBeenCalled();
             }));
-
-
 
         });
     });
