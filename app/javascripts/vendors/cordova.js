@@ -25,14 +25,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 */
 
     ;
-    (function() {
+    (function () {
 
         // file: lib/scripts/require.js
 
         var require,
-        define;
+            define;
 
-        (function() {
+        (function () {
             var modules = {};
             // Stack of moduleIds currently being built.
             var requireStack = [];
@@ -47,7 +47,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 return module.exports;
             }
 
-            require = function(id) {
+            require = function (id) {
                 if (!modules[id]) {
                     throw "module " + id + " not found";
                 } else if (id in inProgressModules) {
@@ -67,7 +67,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 return modules[id].exports;
             };
 
-            define = function(id, factory) {
+            define = function (id, factory) {
                 if (modules[id]) {
                     throw "module " + id + " already defined";
                 }
@@ -78,7 +78,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 };
             };
 
-            define.remove = function(id) {
+            define.remove = function (id) {
                 delete modules[id];
             };
 
@@ -92,7 +92,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         }
 
         // file: lib/cordova.js
-        define("cordova", function(require, exports, module) {
+        define("cordova", function (require, exports, module) {
 
 
             var channel = require('cordova/channel');
@@ -100,7 +100,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Listen for DOMContentLoaded and notify our channel subscribers.
              */
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 channel.onDOMContentLoaded.fire();
             }, false);
             if (document.readyState == 'complete' || document.readyState == 'interactive') {
@@ -120,9 +120,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * Houses custom event handlers to intercept on document + window event listeners.
              */
             var documentEventHandlers = {},
-            windowEventHandlers = {};
+                windowEventHandlers = {};
 
-            document.addEventListener = function(evt, handler, capture) {
+            document.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof documentEventHandlers[e] != 'undefined') {
                     documentEventHandlers[e].subscribe(handler);
@@ -131,7 +131,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 }
             };
 
-            window.addEventListener = function(evt, handler, capture) {
+            window.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof windowEventHandlers[e] != 'undefined') {
                     windowEventHandlers[e].subscribe(handler);
@@ -140,7 +140,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 }
             };
 
-            document.removeEventListener = function(evt, handler, capture) {
+            document.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubscribing from an event that is handled by a plugin
                 if (typeof documentEventHandlers[e] != "undefined") {
@@ -150,7 +150,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 }
             };
 
-            window.removeEventListener = function(evt, handler, capture) {
+            window.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubscribing from an event that is handled by a plugin
                 if (typeof windowEventHandlers[e] != "undefined") {
@@ -175,7 +175,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
             if (typeof window.console === "undefined") {
                 window.console = {
-                    log: function() {}
+                    log: function () {}
                 };
             }
 
@@ -185,19 +185,19 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 /**
                  * Methods to add/remove your own addEventListener hijacking on document + window.
                  */
-                addWindowEventHandler: function(event) {
+                addWindowEventHandler: function (event) {
                     return (windowEventHandlers[event] = channel.create(event));
                 },
-                addStickyDocumentEventHandler: function(event) {
+                addStickyDocumentEventHandler: function (event) {
                     return (documentEventHandlers[event] = channel.createSticky(event));
                 },
-                addDocumentEventHandler: function(event) {
+                addDocumentEventHandler: function (event) {
                     return (documentEventHandlers[event] = channel.create(event));
                 },
-                removeWindowEventHandler: function(event) {
+                removeWindowEventHandler: function (event) {
                     delete windowEventHandlers[event];
                 },
-                removeDocumentEventHandler: function(event) {
+                removeDocumentEventHandler: function (event) {
                     delete documentEventHandlers[event];
                 },
                 /**
@@ -205,7 +205,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                  *
                  * @return object
                  */
-                getOriginalHandlers: function() {
+                getOriginalHandlers: function () {
                     return {
                         'document': {
                             'addEventListener': m_document_addEventListener,
@@ -221,13 +221,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                  * Method to fire event from native code
                  * bNoDetach is required for events which cause an exception which needs to be caught in native code
                  */
-                fireDocumentEvent: function(type, data, bNoDetach) {
+                fireDocumentEvent: function (type, data, bNoDetach) {
                     var evt = createEvent(type, data);
                     if (typeof documentEventHandlers[type] != 'undefined') {
                         if (bNoDetach) {
                             documentEventHandlers[type].fire(evt);
                         } else {
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 documentEventHandlers[type].fire(evt);
                             }, 0);
                         }
@@ -235,10 +235,10 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                         document.dispatchEvent(evt);
                     }
                 },
-                fireWindowEvent: function(type, data) {
+                fireWindowEvent: function (type, data) {
                     var evt = createEvent(type, data);
                     if (typeof windowEventHandlers[type] != 'undefined') {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             windowEventHandlers[type].fire(evt);
                         }, 0);
                     } else {
@@ -269,7 +269,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 /**
                  * Called by native code when returning successful result from an action.
                  */
-                callbackSuccess: function(callbackId, args) {
+                callbackSuccess: function (callbackId, args) {
                     try {
                         cordova.callbackFromNative(callbackId, true, args.status, [args.message], args.keepCallback);
                     } catch (e) {
@@ -280,7 +280,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 /**
                  * Called by native code when returning error result from an action.
                  */
-                callbackError: function(callbackId, args) {
+                callbackError: function (callbackId, args) {
                     // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
                     // Derive success from status.
                     try {
@@ -293,7 +293,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 /**
                  * Called by native code when returning the result from an action.
                  */
-                callbackFromNative: function(callbackId, success, status, args, keepCallback) {
+                callbackFromNative: function (callbackId, success, status, args, keepCallback) {
                     var callback = cordova.callbacks[callbackId];
                     if (callback) {
                         if (success && status == cordova.callbackStatus.OK) {
@@ -308,8 +308,8 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                         }
                     }
                 },
-                addConstructor: function(func) {
-                    channel.onCordovaReady.subscribe(function() {
+                addConstructor: function (func) {
+                    channel.onCordovaReady.subscribe(function () {
                         try {
                             func();
                         } catch (e) {
@@ -329,7 +329,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/argscheck.js
-        define("cordova/argscheck", function(require, exports, module) {
+        define("cordova/argscheck", function (require, exports, module) {
 
             var exec = require('cordova/exec');
             var utils = require('cordova/utils');
@@ -395,7 +395,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/builder.js
-        define("cordova/builder", function(require, exports, module) {
+        define("cordova/builder", function (require, exports, module) {
 
             var utils = require('cordova/utils');
 
@@ -412,7 +412,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 obj[key] = value;
                 // Getters can only be overridden by getters.
                 if (obj[key] !== value) {
-                    utils.defineGetter(obj, key, function() {
+                    utils.defineGetter(obj, key, function () {
                         return value;
                     });
                 }
@@ -420,7 +420,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
             function assignOrWrapInDeprecateGetter(obj, key, value, message) {
                 if (message) {
-                    utils.defineGetter(obj, key, function() {
+                    utils.defineGetter(obj, key, function () {
                         console.log(message);
                         delete obj[key];
                         clobber(obj, key, value);
@@ -432,7 +432,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             }
 
             function include(parent, objects, clobber, merge) {
-                each(objects, function(obj, key) {
+                each(objects, function (obj, key) {
                     try {
                         var result = obj.path ? require(obj.path) : {};
 
@@ -493,23 +493,23 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 }
             }
 
-            exports.buildIntoButDoNotClobber = function(objects, target) {
+            exports.buildIntoButDoNotClobber = function (objects, target) {
                 include(target, objects, false, false);
             };
-            exports.buildIntoAndClobber = function(objects, target) {
+            exports.buildIntoAndClobber = function (objects, target) {
                 include(target, objects, true, false);
             };
-            exports.buildIntoAndMerge = function(objects, target) {
+            exports.buildIntoAndMerge = function (objects, target) {
                 include(target, objects, true, true);
             };
             exports.recursiveMerge = recursiveMerge;
             exports.assignOrWrapInDeprecateGetter = assignOrWrapInDeprecateGetter;
-            exports.replaceHookForTesting = function() {};
+            exports.replaceHookForTesting = function () {};
 
         });
 
         // file: lib/common/channel.js
-        define("cordova/channel", function(require, exports, module) {
+        define("cordova/channel", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 nextGuid = 1;
@@ -555,7 +555,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @constructor
              * @param type  String the channel name
              */
-            var Channel = function(type, sticky) {
+            var Channel = function (type, sticky) {
                 this.type = type;
                 // Map of guid -> function.
                 this.handlers = {};
@@ -569,65 +569,65 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 // the last listener is unsubscribed.
                 this.onHasSubscribersChange = null;
             },
-            channel = {
-                /**
-                 * Calls the provided function only after all of the channels specified
-                 * have been fired. All channels must be sticky channels.
-                 */
-                join: function(h, c) {
-                    var len = c.length,
-                        i = len,
-                        f = function() {
-                            if (!(--i)) h();
-                        };
-                    for (var j = 0; j < len; j++) {
-                        if (c[j].state === 0) {
-                            throw Error('Can only use join with sticky channels.');
+                channel = {
+                    /**
+                     * Calls the provided function only after all of the channels specified
+                     * have been fired. All channels must be sticky channels.
+                     */
+                    join: function (h, c) {
+                        var len = c.length,
+                            i = len,
+                            f = function () {
+                                if (!(--i)) h();
+                            };
+                        for (var j = 0; j < len; j++) {
+                            if (c[j].state === 0) {
+                                throw Error('Can only use join with sticky channels.');
+                            }
+                            c[j].subscribe(f);
                         }
-                        c[j].subscribe(f);
-                    }
-                    if (!len) h();
-                },
-                create: function(type) {
-                    return channel[type] = new Channel(type, false);
-                },
-                createSticky: function(type) {
-                    return channel[type] = new Channel(type, true);
-                },
+                        if (!len) h();
+                    },
+                    create: function (type) {
+                        return channel[type] = new Channel(type, false);
+                    },
+                    createSticky: function (type) {
+                        return channel[type] = new Channel(type, true);
+                    },
 
-                /**
-                 * cordova Channels that must fire before "deviceready" is fired.
-                 */
-                deviceReadyChannelsArray: [],
-                deviceReadyChannelsMap: {},
+                    /**
+                     * cordova Channels that must fire before "deviceready" is fired.
+                     */
+                    deviceReadyChannelsArray: [],
+                    deviceReadyChannelsMap: {},
 
-                /**
-                 * Indicate that a feature needs to be initialized before it is ready to be used.
-                 * This holds up Cordova's "deviceready" event until the feature has been initialized
-                 * and Cordova.initComplete(feature) is called.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                waitForInitialization: function(feature) {
-                    if (feature) {
-                        var c = channel[feature] || this.createSticky(feature);
-                        this.deviceReadyChannelsMap[feature] = c;
-                        this.deviceReadyChannelsArray.push(c);
-                    }
-                },
+                    /**
+                     * Indicate that a feature needs to be initialized before it is ready to be used.
+                     * This holds up Cordova's "deviceready" event until the feature has been initialized
+                     * and Cordova.initComplete(feature) is called.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    waitForInitialization: function (feature) {
+                        if (feature) {
+                            var c = channel[feature] || this.createSticky(feature);
+                            this.deviceReadyChannelsMap[feature] = c;
+                            this.deviceReadyChannelsArray.push(c);
+                        }
+                    },
 
-                /**
-                 * Indicate that initialization code has completed and the feature is ready to be used.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                initializationComplete: function(feature) {
-                    var c = this.deviceReadyChannelsMap[feature];
-                    if (c) {
-                        c.fire();
+                    /**
+                     * Indicate that initialization code has completed and the feature is ready to be used.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    initializationComplete: function (feature) {
+                        var c = this.deviceReadyChannelsMap[feature];
+                        if (c) {
+                            c.fire();
+                        }
                     }
-                }
-            };
+                };
 
             function forceFunction(f) {
                 if (typeof f != 'function') throw "Function required as first argument!";
@@ -640,7 +640,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * and a guid that can be used to stop subscribing to the channel.
              * Returns the guid.
              */
-            Channel.prototype.subscribe = function(f, c) {
+            Channel.prototype.subscribe = function (f, c) {
                 // need a function to call
                 forceFunction(f);
                 if (this.state == 2) {
@@ -674,7 +674,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Unsubscribes the function with the given guid from the channel.
              */
-            Channel.prototype.unsubscribe = function(f) {
+            Channel.prototype.unsubscribe = function (f) {
                 // need a function to unsubscribe
                 forceFunction(f);
 
@@ -692,7 +692,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Calls all functions subscribed to this channel.
              */
-            Channel.prototype.fire = function(e) {
+            Channel.prototype.fire = function (e) {
                 var fail = false,
                     fireArgs = Array.prototype.slice.call(arguments);
                 // Apply stickiness.
@@ -760,7 +760,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/commandProxy.js
-        define("cordova/commandProxy", function(require, exports, module) {
+        define("cordova/commandProxy", function (require, exports, module) {
 
 
             // internal map of proxy function
@@ -769,28 +769,28 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             module.exports = {
 
                 // example: cordova.commandProxy.add("Accelerometer",{getCurrentAcceleration: function(successCallback, errorCallback, options) {...},...);
-                add: function(id, proxyObj) {
+                add: function (id, proxyObj) {
                     console.log("adding proxy for " + id);
                     CommandProxyMap[id] = proxyObj;
                     return proxyObj;
                 },
 
                 // cordova.commandProxy.remove("Accelerometer");
-                remove: function(id) {
+                remove: function (id) {
                     var proxy = CommandProxyMap[id];
                     delete CommandProxyMap[id];
                     CommandProxyMap[id] = null;
                     return proxy;
                 },
 
-                get: function(service, action) {
+                get: function (service, action) {
                     return (CommandProxyMap[service] ? CommandProxyMap[service][action] : null);
                 }
             };
         });
 
         // file: lib/android/exec.js
-        define("cordova/exec", function(require, exports, module) {
+        define("cordova/exec", function (require, exports, module) {
 
             /**
              * Execute a cordova command.  It is up to the native side whether this action
@@ -917,7 +917,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             androidExec.jsToNativeModes = jsToNativeModes;
             androidExec.nativeToJsModes = nativeToJsModes;
 
-            androidExec.setJsToNativeBridgeMode = function(mode) {
+            androidExec.setJsToNativeBridgeMode = function (mode) {
                 if (mode == jsToNativeModes.JS_OBJECT && !window._cordovaNative) {
                     console.log('Falling back on PROMPT mode since _cordovaNative is missing. Expected for Android 3.2 and lower only.');
                     mode = jsToNativeModes.PROMPT;
@@ -926,7 +926,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 jsToNativeBridgeMode = mode;
             };
 
-            androidExec.setNativeToJsBridgeMode = function(mode) {
+            androidExec.setNativeToJsBridgeMode = function (mode) {
                 if (mode == nativeToJsBridgeMode) {
                     return;
                 }
@@ -995,7 +995,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             }
 
             // This is called from the NativeToJsMessageQueue.java.
-            androidExec.processMessages = function(messages) {
+            androidExec.processMessages = function (messages) {
                 if (messages) {
                     messagesFromNative.push(messages);
                     while (messagesFromNative.length) {
@@ -1032,14 +1032,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/modulemapper.js
-        define("cordova/modulemapper", function(require, exports, module) {
+        define("cordova/modulemapper", function (require, exports, module) {
 
             var builder = require('cordova/builder'),
                 moduleMap = define.moduleMap,
                 symbolList,
                 deprecationMap;
 
-            exports.reset = function() {
+            exports.reset = function () {
                 symbolList = [];
                 deprecationMap = {};
             };
@@ -1055,15 +1055,15 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             }
 
             // Note: Android 2.3 does have Function.bind().
-            exports.clobbers = function(moduleName, symbolPath, opt_deprecationMessage) {
+            exports.clobbers = function (moduleName, symbolPath, opt_deprecationMessage) {
                 addEntry('c', moduleName, symbolPath, opt_deprecationMessage);
             };
 
-            exports.merges = function(moduleName, symbolPath, opt_deprecationMessage) {
+            exports.merges = function (moduleName, symbolPath, opt_deprecationMessage) {
                 addEntry('m', moduleName, symbolPath, opt_deprecationMessage);
             };
 
-            exports.defaults = function(moduleName, symbolPath, opt_deprecationMessage) {
+            exports.defaults = function (moduleName, symbolPath, opt_deprecationMessage) {
                 addEntry('d', moduleName, symbolPath, opt_deprecationMessage);
             };
 
@@ -1079,7 +1079,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 return cur;
             }
 
-            exports.mapModules = function(context) {
+            exports.mapModules = function (context) {
                 var origSymbols = {};
                 context.CDV_origSymbols = origSymbols;
                 for (var i = 0, len = symbolList.length; i < len; i += 3) {
@@ -1106,7 +1106,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 }
             };
 
-            exports.getOriginalSymbol = function(context, symbolPath) {
+            exports.getOriginalSymbol = function (context, symbolPath) {
                 var origSymbols = context.CDV_origSymbols;
                 if (origSymbols && (symbolPath in origSymbols)) {
                     return origSymbols[symbolPath];
@@ -1119,7 +1119,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 return obj;
             };
 
-            exports.loadMatchingModules = function(matchingRegExp) {
+            exports.loadMatchingModules = function (matchingRegExp) {
                 for (var k in moduleMap) {
                     if (matchingRegExp.exec(k)) {
                         require(k);
@@ -1133,11 +1133,11 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/android/platform.js
-        define("cordova/platform", function(require, exports, module) {
+        define("cordova/platform", function (require, exports, module) {
 
             module.exports = {
                 id: "android",
-                initialize: function() {
+                initialize: function () {
                     var channel = require("cordova/channel"),
                         cordova = require('cordova'),
                         exec = require('cordova/exec'),
@@ -1150,7 +1150,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                     // Inject a listener for the backbutton on the document.
                     var backButtonChannel = cordova.addDocumentEventHandler('backbutton');
-                    backButtonChannel.onHasSubscribersChange = function() {
+                    backButtonChannel.onHasSubscribersChange = function () {
                         // If we just attached the first handler or detached the last handler,
                         // let native know we need to override the back button.
                         exec(null, null, "App", "overrideBackbutton", [this.numHandlers == 1]);
@@ -1162,7 +1162,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                     // Let native code know we are all done on the JS side.
                     // Native code will then un-hide the WebView.
-                    channel.join(function() {
+                    channel.join(function () {
                         exec(null, null, "App", "show", []);
                     }, [channel.onCordovaReady]);
                 }
@@ -1171,9 +1171,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Acceleration.js
-        define("cordova/plugin/Acceleration", function(require, exports, module) {
+        define("cordova/plugin/Acceleration", function (require, exports, module) {
 
-            var Acceleration = function(x, y, z, timestamp) {
+            var Acceleration = function (x, y, z, timestamp) {
                 this.x = x;
                 this.y = y;
                 this.z = z;
@@ -1185,7 +1185,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Camera.js
-        define("cordova/plugin/Camera", function(require, exports, module) {
+        define("cordova/plugin/Camera", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -1208,7 +1208,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} errorCallback
              * @param {Object} options
              */
-            cameraExport.getPicture = function(successCallback, errorCallback, options) {
+            cameraExport.getPicture = function (successCallback, errorCallback, options) {
                 argscheck.checkArgs('fFO', 'Camera.getPicture', arguments);
                 options = options || {};
                 var getValue = argscheck.getValue;
@@ -1227,13 +1227,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                 var cameraDirection = getValue(options.cameraDirection, Camera.Direction.BACK);
 
                 var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
-                mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection];
+                    mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection
+                ];
 
                 exec(successCallback, errorCallback, "Camera", "takePicture", args);
                 return new CameraPopoverHandle();
             };
 
-            cameraExport.cleanup = function(successCallback, errorCallback) {
+            cameraExport.cleanup = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, "Camera", "cleanup", []);
             };
 
@@ -1242,7 +1243,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CameraConstants.js
-        define("cordova/plugin/CameraConstants", function(require, exports, module) {
+        define("cordova/plugin/CameraConstants", function (require, exports, module) {
 
             module.exports = {
                 DestinationType: {
@@ -1280,15 +1281,15 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CameraPopoverHandle.js
-        define("cordova/plugin/CameraPopoverHandle", function(require, exports, module) {
+        define("cordova/plugin/CameraPopoverHandle", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
             /**
              * A handle to an image picker popover.
              */
-            var CameraPopoverHandle = function() {
-                this.setPosition = function(popoverOptions) {
+            var CameraPopoverHandle = function () {
+                this.setPosition = function (popoverOptions) {
                     console.log('CameraPopoverHandle.setPosition is only supported on iOS.');
                 };
             };
@@ -1298,14 +1299,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CameraPopoverOptions.js
-        define("cordova/plugin/CameraPopoverOptions", function(require, exports, module) {
+        define("cordova/plugin/CameraPopoverOptions", function (require, exports, module) {
 
             var Camera = require('cordova/plugin/CameraConstants');
 
             /**
              * Encapsulates options for iOS Popover image picker
              */
-            var CameraPopoverOptions = function(x, y, width, height, arrowDir) {
+            var CameraPopoverOptions = function (x, y, width, height, arrowDir) {
                 // information of rectangle that popover should be anchored to
                 this.x = x || 0;
                 this.y = y || 32;
@@ -1320,12 +1321,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CaptureAudioOptions.js
-        define("cordova/plugin/CaptureAudioOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureAudioOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all audio capture operation configuration options.
              */
-            var CaptureAudioOptions = function() {
+            var CaptureAudioOptions = function () {
                 // Upper limit of sound clips user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single sound clip in seconds.
@@ -1339,12 +1340,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CaptureError.js
-        define("cordova/plugin/CaptureError", function(require, exports, module) {
+        define("cordova/plugin/CaptureError", function (require, exports, module) {
 
             /**
              * The CaptureError interface encapsulates all errors in the Capture API.
              */
-            var CaptureError = function(c) {
+            var CaptureError = function (c) {
                 this.code = c || null;
             };
 
@@ -1364,12 +1365,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CaptureImageOptions.js
-        define("cordova/plugin/CaptureImageOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureImageOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all image capture operation configuration options.
              */
-            var CaptureImageOptions = function() {
+            var CaptureImageOptions = function () {
                 // Upper limit of images user can take. Value must be equal or greater than 1.
                 this.limit = 1;
                 // The selected image mode. Must match with one of the elements in supportedImageModes array.
@@ -1381,12 +1382,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CaptureVideoOptions.js
-        define("cordova/plugin/CaptureVideoOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureVideoOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all video capture operation configuration options.
              */
-            var CaptureVideoOptions = function() {
+            var CaptureVideoOptions = function () {
                 // Upper limit of videos user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single video clip in seconds.
@@ -1400,14 +1401,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CompassError.js
-        define("cordova/plugin/CompassError", function(require, exports, module) {
+        define("cordova/plugin/CompassError", function (require, exports, module) {
 
             /**
              *  CompassError.
              *  An error code assigned by an implementation when an error has occurred
              * @constructor
              */
-            var CompassError = function(err) {
+            var CompassError = function (err) {
                 this.code = (err !== undefined ? err : null);
             };
 
@@ -1419,9 +1420,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/CompassHeading.js
-        define("cordova/plugin/CompassHeading", function(require, exports, module) {
+        define("cordova/plugin/CompassHeading", function (require, exports, module) {
 
-            var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp) {
+            var CompassHeading = function (magneticHeading, trueHeading, headingAccuracy, timestamp) {
                 this.magneticHeading = magneticHeading;
                 this.trueHeading = trueHeading;
                 this.headingAccuracy = headingAccuracy;
@@ -1433,7 +1434,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ConfigurationData.js
-        define("cordova/plugin/ConfigurationData", function(require, exports, module) {
+        define("cordova/plugin/ConfigurationData", function (require, exports, module) {
 
             /**
              * Encapsulates a set of parameters that the capture device supports.
@@ -1455,7 +1456,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Connection.js
-        define("cordova/plugin/Connection", function(require, exports, module) {
+        define("cordova/plugin/Connection", function (require, exports, module) {
 
             /**
              * Network status
@@ -1474,7 +1475,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Contact.js
-        define("cordova/plugin/Contact", function(require, exports, module) {
+        define("cordova/plugin/Contact", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -1538,8 +1539,8 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Array.<ContactField>} categories
              * @param {Array.<ContactField>} urls contact's web sites
              */
-            var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, addresses,
-            ims, organizations, birthday, note, photos, categories, urls) {
+            var Contact = function (id, displayName, name, nickname, phoneNumbers, emails, addresses,
+                ims, organizations, birthday, note, photos, categories, urls) {
                 this.id = id || null;
                 this.rawId = null;
                 this.displayName = displayName || null;
@@ -1562,9 +1563,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.remove = function(successCB, errorCB) {
+            Contact.prototype.remove = function (successCB, errorCB) {
                 argscheck.checkArgs('FF', 'Contact.remove', arguments);
-                var fail = errorCB && function(code) {
+                var fail = errorCB && function (code) {
                         errorCB(new ContactError(code));
                     };
                 if (this.id === null) {
@@ -1579,7 +1580,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * With the contact ID set to null.
              * @return copy of this Contact
              */
-            Contact.prototype.clone = function() {
+            Contact.prototype.clone = function () {
                 var clonedContact = utils.clone(this);
                 clonedContact.id = null;
                 clonedContact.rawId = null;
@@ -1609,12 +1610,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.save = function(successCB, errorCB) {
+            Contact.prototype.save = function (successCB, errorCB) {
                 argscheck.checkArgs('FFO', 'Contact.save', arguments);
-                var fail = errorCB && function(code) {
+                var fail = errorCB && function (code) {
                         errorCB(new ContactError(code));
                     };
-                var success = function(result) {
+                var success = function (result) {
                     if (result) {
                         if (successCB) {
                             var fullContact = require('cordova/plugin/contacts').create(result);
@@ -1635,7 +1636,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactAddress.js
-        define("cordova/plugin/ContactAddress", function(require, exports, module) {
+        define("cordova/plugin/ContactAddress", function (require, exports, module) {
 
             /**
              * Contact address.
@@ -1649,7 +1650,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param country
              */
 
-            var ContactAddress = function(pref, type, formatted, streetAddress, locality, region, postalCode, country) {
+            var ContactAddress = function (pref, type, formatted, streetAddress, locality, region, postalCode, country) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -1666,14 +1667,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactError.js
-        define("cordova/plugin/ContactError", function(require, exports, module) {
+        define("cordova/plugin/ContactError", function (require, exports, module) {
 
             /**
              *  ContactError.
              *  An error code assigned by an implementation when an error has occurred
              * @constructor
              */
-            var ContactError = function(err) {
+            var ContactError = function (err) {
                 this.code = (typeof err != 'undefined' ? err : null);
             };
 
@@ -1693,7 +1694,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactField.js
-        define("cordova/plugin/ContactField", function(require, exports, module) {
+        define("cordova/plugin/ContactField", function (require, exports, module) {
 
             /**
              * Generic contact field.
@@ -1703,7 +1704,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param value
              * @param pref
              */
-            var ContactField = function(type, value, pref) {
+            var ContactField = function (type, value, pref) {
                 this.id = null;
                 this.type = (type && type.toString()) || null;
                 this.value = (value && value.toString()) || null;
@@ -1715,7 +1716,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactFindOptions.js
-        define("cordova/plugin/ContactFindOptions", function(require, exports, module) {
+        define("cordova/plugin/ContactFindOptions", function (require, exports, module) {
 
             /**
              * ContactFindOptions.
@@ -1724,7 +1725,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param multiple boolean used to determine if more than one contact should be returned
              */
 
-            var ContactFindOptions = function(filter, multiple) {
+            var ContactFindOptions = function (filter, multiple) {
                 this.filter = filter || '';
                 this.multiple = (typeof multiple != 'undefined' ? multiple : false);
             };
@@ -1734,7 +1735,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactName.js
-        define("cordova/plugin/ContactName", function(require, exports, module) {
+        define("cordova/plugin/ContactName", function (require, exports, module) {
 
             /**
              * Contact name.
@@ -1746,7 +1747,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param prefix
              * @param suffix
              */
-            var ContactName = function(formatted, familyName, givenName, middle, prefix, suffix) {
+            var ContactName = function (formatted, familyName, givenName, middle, prefix, suffix) {
                 this.formatted = formatted || null;
                 this.familyName = familyName || null;
                 this.givenName = givenName || null;
@@ -1760,7 +1761,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/ContactOrganization.js
-        define("cordova/plugin/ContactOrganization", function(require, exports, module) {
+        define("cordova/plugin/ContactOrganization", function (require, exports, module) {
 
             /**
              * Contact organization.
@@ -1775,7 +1776,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param desc
              */
 
-            var ContactOrganization = function(pref, type, name, dept, title) {
+            var ContactOrganization = function (pref, type, name, dept, title) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -1789,7 +1790,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Coordinates.js
-        define("cordova/plugin/Coordinates", function(require, exports, module) {
+        define("cordova/plugin/Coordinates", function (require, exports, module) {
 
             /**
              * This class contains position information.
@@ -1802,7 +1803,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Object} altacc
              * @constructor
              */
-            var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
+            var Coordinates = function (lat, lng, alt, acc, head, vel, altacc) {
                 /**
                  * The latitude of the position.
                  */
@@ -1843,7 +1844,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/DirectoryEntry.js
-        define("cordova/plugin/DirectoryEntry", function(require, exports, module) {
+        define("cordova/plugin/DirectoryEntry", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 utils = require('cordova/utils'),
@@ -1861,7 +1862,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * {DOMString} fullPath the absolute full path to the directory (readonly)
              * TODO: implement this!!! {FileSystem} filesystem on which the directory resides (readonly)
              */
-            var DirectoryEntry = function(name, fullPath) {
+            var DirectoryEntry = function (name, fullPath) {
                 DirectoryEntry.__super__.constructor.call(this, false, true, name, fullPath);
             };
 
@@ -1870,7 +1871,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Creates a new DirectoryReader to read entries from this directory
              */
-            DirectoryEntry.prototype.createReader = function() {
+            DirectoryEntry.prototype.createReader = function () {
                 return new DirectoryReader(this.fullPath);
             };
 
@@ -1882,13 +1883,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getDirectory = function(path, options, successCallback, errorCallback) {
+            DirectoryEntry.prototype.getDirectory = function (path, options, successCallback, errorCallback) {
                 argscheck.checkArgs('sOFF', 'DirectoryEntry.getDirectory', arguments);
-                var win = successCallback && function(result) {
+                var win = successCallback && function (result) {
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getDirectory", [this.fullPath, path, options]);
@@ -1900,9 +1901,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with no parameters
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCallback) {
+            DirectoryEntry.prototype.removeRecursively = function (successCallback, errorCallback) {
                 argscheck.checkArgs('FF', 'DirectoryEntry.removeRecursively', arguments);
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "removeRecursively", [this.fullPath]);
@@ -1916,14 +1917,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getFile = function(path, options, successCallback, errorCallback) {
+            DirectoryEntry.prototype.getFile = function (path, options, successCallback, errorCallback) {
                 argscheck.checkArgs('sOFF', 'DirectoryEntry.getFile', arguments);
-                var win = successCallback && function(result) {
+                var win = successCallback && function (result) {
                         var FileEntry = require('cordova/plugin/FileEntry');
                         var entry = new FileEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFile", [this.fullPath, path, options]);
@@ -1934,7 +1935,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/DirectoryReader.js
-        define("cordova/plugin/DirectoryReader", function(require, exports, module) {
+        define("cordova/plugin/DirectoryReader", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError');
@@ -1953,8 +1954,8 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with a list of entries
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryReader.prototype.readEntries = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryReader.prototype.readEntries = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var retVal = [];
                         for (var i = 0; i < result.length; i++) {
                             var entry = null;
@@ -1971,7 +1972,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                         }
                         successCallback(retVal);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "readEntries", [this.path]);
@@ -1982,7 +1983,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Entry.js
-        define("cordova/plugin/Entry", function(require, exports, module) {
+        define("cordova/plugin/Entry", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -2020,13 +2021,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param errorCallback
              *            {Function} is called with a FileError
              */
-            Entry.prototype.getMetadata = function(successCallback, errorCallback) {
+            Entry.prototype.getMetadata = function (successCallback, errorCallback) {
                 argscheck.checkArgs('FF', 'Entry.getMetadata', arguments);
-                var success = successCallback && function(lastModified) {
+                var success = successCallback && function (lastModified) {
                         var metadata = new Metadata(lastModified);
                         successCallback(metadata);
                     };
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
 
@@ -2043,7 +2044,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param metadataObject
              *            {Object} keys and values to set
              */
-            Entry.prototype.setMetadata = function(successCallback, errorCallback, metadataObject) {
+            Entry.prototype.setMetadata = function (successCallback, errorCallback, metadataObject) {
                 argscheck.checkArgs('FFO', 'Entry.setMetadata', arguments);
                 exec(successCallback, errorCallback, "File", "setMetadata", [this.fullPath, metadataObject]);
             };
@@ -2060,16 +2061,16 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.moveTo = function(parent, newName, successCallback, errorCallback) {
+            Entry.prototype.moveTo = function (parent, newName, successCallback, errorCallback) {
                 argscheck.checkArgs('oSFF', 'Entry.moveTo', arguments);
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 // source path
                 var srcPath = this.fullPath,
                     // entry name
                     name = newName || this.name,
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (successCallback) {
                                 // create appropriate Entry object
@@ -2098,9 +2099,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.copyTo = function(parent, newName, successCallback, errorCallback) {
+            Entry.prototype.copyTo = function (parent, newName, successCallback, errorCallback) {
                 argscheck.checkArgs('oSFF', 'Entry.copyTo', arguments);
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
 
@@ -2109,7 +2110,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                     // entry name
                     name = newName || this.name,
                     // success callback
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (successCallback) {
                                 // create appropriate Entry object
@@ -2129,7 +2130,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Return a URL that can be used to identify this entry.
              */
-            Entry.prototype.toURL = function() {
+            Entry.prototype.toURL = function () {
                 // fullPath attribute contains the full URL
                 return this.fullPath;
             };
@@ -2140,7 +2141,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {DOMString} mimeType for a FileEntry, the mime type to be used to interpret the file, when loaded through this URI.
              * @return uri
              */
-            Entry.prototype.toURI = function(mimeType) {
+            Entry.prototype.toURI = function (mimeType) {
                 console.log("DEPRECATED: Update your code to use 'toURL'");
                 // fullPath attribute contains the full URI
                 return this.toURL();
@@ -2154,9 +2155,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param successCallback {Function} called with no parameters
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.remove = function(successCallback, errorCallback) {
+            Entry.prototype.remove = function (successCallback, errorCallback) {
                 argscheck.checkArgs('FF', 'Entry.remove', arguments);
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "remove", [this.fullPath]);
@@ -2168,14 +2169,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param successCallback {Function} called with the parent DirectoryEntry object
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.getParent = function(successCallback, errorCallback) {
+            Entry.prototype.getParent = function (successCallback, errorCallback) {
                 argscheck.checkArgs('FF', 'Entry.getParent', arguments);
-                var win = successCallback && function(result) {
+                var win = successCallback && function (result) {
                         var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getParent", [this.fullPath]);
@@ -2186,7 +2187,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/File.js
-        define("cordova/plugin/File", function(require, exports, module) {
+        define("cordova/plugin/File", function (require, exports, module) {
 
             /**
              * Constructor.
@@ -2197,7 +2198,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * size {Number} size of the file in bytes
              */
 
-            var File = function(name, fullPath, type, lastModifiedDate, size) {
+            var File = function (name, fullPath, type, lastModifiedDate, size) {
                 this.name = name || '';
                 this.fullPath = fullPath || null;
                 this.type = type || null;
@@ -2216,7 +2217,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * start {Number} The index at which to start the slice (inclusive).
              * end {Number} The index at which to end the slice (exclusive).
              */
-            File.prototype.slice = function(start, end) {
+            File.prototype.slice = function (start, end) {
                 var size = this.end - this.start;
                 var newStart = 0;
                 var newEnd = size;
@@ -2248,7 +2249,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileEntry.js
-        define("cordova/plugin/FileEntry", function(require, exports, module) {
+        define("cordova/plugin/FileEntry", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -2266,7 +2267,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * {DOMString} fullPath the absolute full path to the file (readonly)
              * {FileSystem} filesystem on which the file resides (readonly)
              */
-            var FileEntry = function(name, fullPath) {
+            var FileEntry = function (name, fullPath) {
                 FileEntry.__super__.constructor.apply(this, [true, false, name, fullPath]);
             };
 
@@ -2278,8 +2279,8 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with the new FileWriter
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
-                this.file(function(filePointer) {
+            FileEntry.prototype.createWriter = function (successCallback, errorCallback) {
+                this.file(function (filePointer) {
                     var writer = new FileWriter(filePointer);
 
                     if (writer.fileName === null || writer.fileName === "") {
@@ -2296,12 +2297,12 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param {Function} successCallback is called with the new File object
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.file = function(successCallback, errorCallback) {
-                var win = successCallback && function(f) {
+            FileEntry.prototype.file = function (successCallback, errorCallback) {
+                var win = successCallback && function (f) {
                         var file = new File(f.name, f.fullPath, f.type, f.lastModifiedDate, f.size);
                         successCallback(file);
                     };
-                var fail = errorCallback && function(code) {
+                var fail = errorCallback && function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFileMetadata", [this.fullPath]);
@@ -2313,7 +2314,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileError.js
-        define("cordova/plugin/FileError", function(require, exports, module) {
+        define("cordova/plugin/FileError", function (require, exports, module) {
 
             /**
              * FileError
@@ -2345,7 +2346,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileReader.js
-        define("cordova/plugin/FileReader", function(require, exports, module) {
+        define("cordova/plugin/FileReader", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 modulemapper = require('cordova/modulemapper'),
@@ -2363,7 +2364,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *      To read from the SD card, the file name is "sdcard/my_file.txt"
              * @constructor
              */
-            var FileReader = function() {
+            var FileReader = function () {
                 this._readyState = 0;
                 this._error = null;
                 this._result = null;
@@ -2376,22 +2377,22 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             FileReader.LOADING = 1;
             FileReader.DONE = 2;
 
-            utils.defineGetter(FileReader.prototype, 'readyState', function() {
+            utils.defineGetter(FileReader.prototype, 'readyState', function () {
                 return this._fileName ? this._readyState : this._realReader.readyState;
             });
 
-            utils.defineGetter(FileReader.prototype, 'error', function() {
+            utils.defineGetter(FileReader.prototype, 'error', function () {
                 return this._fileName ? this._error : this._realReader.error;
             });
 
-            utils.defineGetter(FileReader.prototype, 'result', function() {
+            utils.defineGetter(FileReader.prototype, 'result', function () {
                 return this._fileName ? this._result : this._realReader.result;
             });
 
             function defineEvent(eventName) {
-                utils.defineGetterSetter(FileReader.prototype, eventName, function() {
+                utils.defineGetterSetter(FileReader.prototype, eventName, function () {
                     return this._realReader[eventName] || null;
-                }, function(value) {
+                }, function (value) {
                     this._realReader[eventName] = value;
                 });
             }
@@ -2431,7 +2432,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Abort reading file.
              */
-            FileReader.prototype.abort = function() {
+            FileReader.prototype.abort = function () {
                 if (origFileReader && !this._fileName) {
                     return this._realReader.abort();
                 }
@@ -2463,7 +2464,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param file          {File} File object containing file properties
              * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
              */
-            FileReader.prototype.readAsText = function(file, encoding) {
+            FileReader.prototype.readAsText = function (file, encoding) {
                 if (initRead(this, file)) {
                     return this._realReader.readAsText(file, encoding);
                 }
@@ -2475,65 +2476,65 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // Save result
-                    me._result = r;
+                        // Save result
+                        me._result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    // null result
-                    me._result = null;
+                        // null result
+                        me._result = null;
 
-                    // Save error
-                    me._error = new FileError(e);
+                        // Save error
+                        me._error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsText", execArgs);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsText", execArgs);
             };
 
 
@@ -2544,7 +2545,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsDataURL = function(file) {
+            FileReader.prototype.readAsDataURL = function (file) {
                 if (initRead(this, file)) {
                     return this._realReader.readAsDataURL(file);
                 }
@@ -2554,64 +2555,64 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    // Save result
-                    me._result = r;
+                        // Save result
+                        me._result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    me._result = null;
+                        me._result = null;
 
-                    // Save error
-                    me._error = new FileError(e);
+                        // Save error
+                        me._error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsDataURL", execArgs);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsDataURL", execArgs);
             };
 
             /**
@@ -2619,7 +2620,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsBinaryString = function(file) {
+            FileReader.prototype.readAsBinaryString = function (file) {
                 if (initRead(this, file)) {
                     return this._realReader.readAsBinaryString(file);
                 }
@@ -2629,63 +2630,63 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    me._result = r;
+                        me._result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    me._result = null;
+                        me._result = null;
 
-                    // Save error
-                    me._error = new FileError(e);
+                        // Save error
+                        me._error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsBinaryString", execArgs);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsBinaryString", execArgs);
             };
 
             /**
@@ -2693,7 +2694,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsArrayBuffer = function(file) {
+            FileReader.prototype.readAsArrayBuffer = function (file) {
                 if (initRead(this, file)) {
                     return this._realReader.readAsArrayBuffer(file);
                 }
@@ -2703,63 +2704,63 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    me._result = r;
+                        me._result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me._readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me._readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me._readyState = FileReader.DONE;
+                        // DONE state
+                        me._readyState = FileReader.DONE;
 
-                    me._result = null;
+                        me._result = null;
 
-                    // Save error
-                    me._error = new FileError(e);
+                        // Save error
+                        me._error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsArrayBuffer", execArgs);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsArrayBuffer", execArgs);
             };
 
             module.exports = FileReader;
@@ -2767,7 +2768,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileSystem.js
-        define("cordova/plugin/FileSystem", function(require, exports, module) {
+        define("cordova/plugin/FileSystem", function (require, exports, module) {
 
             var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
 
@@ -2778,7 +2779,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * {DOMString} name the unique name of the file system (readonly)
              * {DirectoryEntry} root directory of the file system (readonly)
              */
-            var FileSystem = function(name, root) {
+            var FileSystem = function (name, root) {
                 this.name = name || null;
                 if (root) {
                     this.root = new DirectoryEntry(root.name, root.fullPath);
@@ -2790,7 +2791,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileTransfer.js
-        define("cordova/plugin/FileTransfer", function(require, exports, module) {
+        define("cordova/plugin/FileTransfer", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -2843,7 +2844,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * FileTransfer uploads a file to a remote server.
              * @constructor
              */
-            var FileTransfer = function() {
+            var FileTransfer = function () {
                 this._id = ++idCounter;
                 this.onprogress = null; // optional callback
             };
@@ -2858,7 +2859,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param options {FileUploadOptions} Optional parameters such as file name and mimetype
              * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
              */
-            FileTransfer.prototype.upload = function(filePath, server, successCallback, errorCallback, options, trustAllHosts) {
+            FileTransfer.prototype.upload = function (filePath, server, successCallback, errorCallback, options, trustAllHosts) {
                 argscheck.checkArgs('ssFFO*', 'FileTransfer.upload', arguments);
                 // check for options
                 var fileKey = null;
@@ -2894,13 +2895,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                     }
                 }
 
-                var fail = errorCallback && function(e) {
+                var fail = errorCallback && function (e) {
                         var error = new FileTransferError(e.code, e.source, e.target, e.http_status, e.body);
                         errorCallback(error);
                     };
 
                 var self = this;
-                var win = function(result) {
+                var win = function (result) {
                     if (typeof result.lengthComputable != "undefined") {
                         if (self.onprogress) {
                             self.onprogress(newProgressEvent(result));
@@ -2921,7 +2922,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
              * @param options {FileDownloadOptions} Optional parameters such as headers
              */
-            FileTransfer.prototype.download = function(source, target, successCallback, errorCallback, trustAllHosts, options) {
+            FileTransfer.prototype.download = function (source, target, successCallback, errorCallback, trustAllHosts, options) {
                 argscheck.checkArgs('ssFF*', 'FileTransfer.download', arguments);
                 var self = this;
 
@@ -2941,7 +2942,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                     headers = options.headers || null;
                 }
 
-                var win = function(result) {
+                var win = function (result) {
                     if (typeof result.lengthComputable != "undefined") {
                         if (self.onprogress) {
                             return self.onprogress(newProgressEvent(result));
@@ -2961,7 +2962,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
                     }
                 };
 
-                var fail = errorCallback && function(e) {
+                var fail = errorCallback && function (e) {
                         var error = new FileTransferError(e.code, e.source, e.target, e.http_status, e.body);
                         errorCallback(error);
                     };
@@ -2974,7 +2975,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param successCallback {Function}  Callback to be invoked upon success
              * @param errorCallback {Function}    Callback to be invoked upon error
              */
-            FileTransfer.prototype.abort = function(successCallback, errorCallback) {
+            FileTransfer.prototype.abort = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, 'FileTransfer', 'abort', [this._id]);
             };
 
@@ -2983,13 +2984,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileTransferError.js
-        define("cordova/plugin/FileTransferError", function(require, exports, module) {
+        define("cordova/plugin/FileTransferError", function (require, exports, module) {
 
             /**
              * FileTransferError
              * @constructor
              */
-            var FileTransferError = function(code, source, target, status, body) {
+            var FileTransferError = function (code, source, target, status, body) {
                 this.code = code || null;
                 this.source = source || null;
                 this.target = target || null;
@@ -3007,7 +3008,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileUploadOptions.js
-        define("cordova/plugin/FileUploadOptions", function(require, exports, module) {
+        define("cordova/plugin/FileUploadOptions", function (require, exports, module) {
 
             /**
              * Options to customize the HTTP request used to upload files.
@@ -3019,7 +3020,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param headers {Object}   Keys are header names, values are header values. Multiple
              *                           headers of the same name are not supported.
              */
-            var FileUploadOptions = function(fileKey, fileName, mimeType, params, headers) {
+            var FileUploadOptions = function (fileKey, fileName, mimeType, params, headers) {
                 this.fileKey = fileKey || null;
                 this.fileName = fileName || null;
                 this.mimeType = mimeType || null;
@@ -3032,13 +3033,13 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileUploadResult.js
-        define("cordova/plugin/FileUploadResult", function(require, exports, module) {
+        define("cordova/plugin/FileUploadResult", function (require, exports, module) {
 
             /**
              * FileUploadResult
              * @constructor
              */
-            var FileUploadResult = function() {
+            var FileUploadResult = function () {
                 this.bytesSent = 0;
                 this.responseCode = null;
                 this.response = null;
@@ -3049,7 +3050,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/FileWriter.js
-        define("cordova/plugin/FileWriter", function(require, exports, module) {
+        define("cordova/plugin/FileWriter", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
@@ -3066,7 +3067,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param file {File} File object containing file properties
              * @param append if true write to the end of the file, otherwise overwrite the file
              */
-            var FileWriter = function(file) {
+            var FileWriter = function (file) {
                 this.fileName = "";
                 this.length = 0;
                 if (file) {
@@ -3100,7 +3101,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Abort writing file.
              */
-            FileWriter.prototype.abort = function() {
+            FileWriter.prototype.abort = function () {
                 // check for invalid state
                 if (this.readyState === FileWriter.DONE || this.readyState === FileWriter.INIT) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -3131,7 +3132,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param text to be written
              */
-            FileWriter.prototype.write = function(text) {
+            FileWriter.prototype.write = function (text) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -3151,65 +3152,65 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // position always increases by bytes written because file would be extended
-                    me.position += r;
-                    // The length of the file is now where we are done writing.
+                        // position always increases by bytes written because file would be extended
+                        me.position += r;
+                        // The length of the file is now where we are done writing.
 
-                    me.length = me.position;
+                        me.length = me.position;
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "write", [this.fileName, text, this.position]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "write", [this.fileName, text, this.position]);
             };
 
             /**
@@ -3221,7 +3222,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param offset is the location to move the file pointer to.
              */
-            FileWriter.prototype.seek = function(offset) {
+            FileWriter.prototype.seek = function (offset) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -3252,7 +3253,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @param size to chop the file at.
              */
-            FileWriter.prototype.truncate = function(size) {
+            FileWriter.prototype.truncate = function (size) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -3272,63 +3273,63 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Update the length of the file
-                    me.length = r;
-                    me.position = Math.min(me.position, r);
+                        // Update the length of the file
+                        me.length = r;
+                        me.position = Math.min(me.position, r);
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "truncate", [this.fileName, size]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "truncate", [this.fileName, size]);
             };
 
             module.exports = FileWriter;
@@ -3336,7 +3337,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Flags.js
-        define("cordova/plugin/Flags", function(require, exports, module) {
+        define("cordova/plugin/Flags", function (require, exports, module) {
 
             /**
              * Supplies arguments to methods that lookup or create files and directories.
@@ -3358,7 +3359,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/GlobalizationError.js
-        define("cordova/plugin/GlobalizationError", function(require, exports, module) {
+        define("cordova/plugin/GlobalizationError", function (require, exports, module) {
 
 
             /**
@@ -3368,7 +3369,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param code
              * @param message
              */
-            var GlobalizationError = function(code, message) {
+            var GlobalizationError = function (code, message) {
                 this.code = code || null;
                 this.message = message || '';
             };
@@ -3384,7 +3385,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/InAppBrowser.js
-        define("cordova/plugin/InAppBrowser", function(require, exports, module) {
+        define("cordova/plugin/InAppBrowser", function (require, exports, module) {
 
             var exec = require('cordova/exec');
             var channel = require('cordova/channel');
@@ -3399,29 +3400,29 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             }
 
             InAppBrowser.prototype = {
-                _eventHandler: function(event) {
+                _eventHandler: function (event) {
                     if (event.type in this.channels) {
                         this.channels[event.type].fire(event);
                     }
                 },
-                close: function(eventname) {
+                close: function (eventname) {
                     exec(null, null, "InAppBrowser", "close", []);
                 },
-                addEventListener: function(eventname, f) {
+                addEventListener: function (eventname, f) {
                     if (eventname in this.channels) {
                         this.channels[eventname].subscribe(f);
                     }
                 },
-                removeEventListener: function(eventname, f) {
+                removeEventListener: function (eventname, f) {
                     if (eventname in this.channels) {
                         this.channels[eventname].unsubscribe(f);
                     }
                 }
             };
 
-            module.exports = function(strUrl, strWindowName, strWindowFeatures) {
+            module.exports = function (strUrl, strWindowName, strWindowFeatures) {
                 var iab = new InAppBrowser();
-                var cb = function(eventname) {
+                var cb = function (eventname) {
                     iab._eventHandler(eventname);
                 };
                 exec(cb, cb, "InAppBrowser", "open", [strUrl, strWindowName, strWindowFeatures]);
@@ -3432,14 +3433,14 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/LocalFileSystem.js
-        define("cordova/plugin/LocalFileSystem", function(require, exports, module) {
+        define("cordova/plugin/LocalFileSystem", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
             /**
              * Represents a local file system.
              */
-            var LocalFileSystem = function() {
+            var LocalFileSystem = function () {
 
             };
 
@@ -3451,7 +3452,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/Media.js
-        define("cordova/plugin/Media", function(require, exports, module) {
+        define("cordova/plugin/Media", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 utils = require('cordova/utils'),
@@ -3471,7 +3472,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param statusCallback        The callback to be called when media status has changed.
              *                                  statusCallback(int statusCode) - OPTIONAL
              */
-            var Media = function(src, successCallback, errorCallback, statusCallback) {
+            var Media = function (src, successCallback, errorCallback, statusCallback) {
                 argscheck.checkArgs('SFFF', 'Media', arguments);
                 this.id = utils.createUUID();
                 mediaObjects[this.id] = this;
@@ -3499,23 +3500,23 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             Media.MEDIA_MSG = ["None", "Starting", "Running", "Paused", "Stopped"];
 
             // "static" function to return existing objs.
-            Media.get = function(id) {
+            Media.get = function (id) {
                 return mediaObjects[id];
             };
 
             /**
              * Start or resume playing audio file.
              */
-            Media.prototype.play = function(options) {
+            Media.prototype.play = function (options) {
                 exec(null, null, "Media", "startPlayingAudio", [this.id, this.src, options]);
             };
 
             /**
              * Stop playing audio file.
              */
-            Media.prototype.stop = function() {
+            Media.prototype.stop = function () {
                 var me = this;
-                exec(function() {
+                exec(function () {
                     me._position = 0;
                 }, this.errorCallback, "Media", "stopPlayingAudio", [this.id]);
             };
@@ -3523,9 +3524,9 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Seek or jump to a new time in the track..
              */
-            Media.prototype.seekTo = function(milliseconds) {
+            Media.prototype.seekTo = function (milliseconds) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                 }, this.errorCallback, "Media", "seekToAudio", [this.id, milliseconds]);
             };
@@ -3533,7 +3534,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Pause playing audio file.
              */
-            Media.prototype.pause = function() {
+            Media.prototype.pause = function () {
                 exec(null, this.errorCallback, "Media", "pausePlayingAudio", [this.id]);
             };
 
@@ -3543,16 +3544,16 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              *
              * @return      duration or -1 if not known.
              */
-            Media.prototype.getDuration = function() {
+            Media.prototype.getDuration = function () {
                 return this._duration;
             };
 
             /**
              * Get position of audio.
              */
-            Media.prototype.getCurrentPosition = function(success, fail) {
+            Media.prototype.getCurrentPosition = function (success, fail) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                     success(p);
                 }, fail, "Media", "getCurrentPositionAudio", [this.id]);
@@ -3561,28 +3562,28 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
             /**
              * Start recording audio file.
              */
-            Media.prototype.startRecord = function() {
+            Media.prototype.startRecord = function () {
                 exec(null, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
             };
 
             /**
              * Stop recording audio file.
              */
-            Media.prototype.stopRecord = function() {
+            Media.prototype.stopRecord = function () {
                 exec(null, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
             };
 
             /**
              * Release the resources.
              */
-            Media.prototype.release = function() {
+            Media.prototype.release = function () {
                 exec(null, this.errorCallback, "Media", "release", [this.id]);
             };
 
             /**
              * Adjust the volume.
              */
-            Media.prototype.setVolume = function(volume) {
+            Media.prototype.setVolume = function (volume) {
                 exec(null, null, "Media", "setVolume", [this.id, volume]);
             };
 
@@ -3594,30 +3595,30 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
              * @param msgType       The 'type' of update this is
              * @param value         Use of value is determined by the msgType
              */
-            Media.onStatus = function(id, msgType, value) {
+            Media.onStatus = function (id, msgType, value) {
 
                 var media = mediaObjects[id];
 
                 if (media) {
                     switch (msgType) {
-                        case Media.MEDIA_STATE:
-                            media.statusCallback && media.statusCallback(value);
-                            if (value == Media.MEDIA_STOPPED) {
-                                media.successCallback && media.successCallback();
-                            }
-                            break;
-                        case Media.MEDIA_DURATION:
-                            media._duration = value;
-                            break;
-                        case Media.MEDIA_ERROR:
-                            media.errorCallback && media.errorCallback(value);
-                            break;
-                        case Media.MEDIA_POSITION:
-                            media._position = Number(value);
-                            break;
-                        default:
-                            console.error && console.error("Unhandled Media.onStatus :: " + msgType);
-                            break;
+                    case Media.MEDIA_STATE:
+                        media.statusCallback && media.statusCallback(value);
+                        if (value == Media.MEDIA_STOPPED) {
+                            media.successCallback && media.successCallback();
+                        }
+                        break;
+                    case Media.MEDIA_DURATION:
+                        media._duration = value;
+                        break;
+                    case Media.MEDIA_ERROR:
+                        media.errorCallback && media.errorCallback(value);
+                        break;
+                    case Media.MEDIA_POSITION:
+                        media._position = Number(value);
+                        break;
+                    default:
+                        console.error && console.error("Unhandled Media.onStatus :: " + msgType);
+                        break;
                     }
                 } else {
                     console.error && console.error("Received Media.onStatus callback for unknown media :: " + id);
@@ -3630,7 +3631,7 @@ if (navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/Chrome/
         });
 
         // file: lib/common/plugin/MediaError.js
-        define("cordova/plugin/MediaError", function(require, exports, module) {
+        define("cordova/plugin/MediaError", function (require, exports, module) {
 
             /**
              * This class contains information about any Media errors.
@@ -3650,7 +3651,7 @@ we should simply use a literal :
 
 
             if (!_MediaError) {
-                window.MediaError = _MediaError = function(code, msg) {
+                window.MediaError = _MediaError = function (code, msg) {
                     this.code = (typeof code != 'undefined') ? code : null;
                     this.message = msg || ""; // message is NON-standard! do not use!
                 };
@@ -3670,7 +3671,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFile.js
-        define("cordova/plugin/MediaFile", function(require, exports, module) {
+        define("cordova/plugin/MediaFile", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -3685,7 +3686,7 @@ we should simply use a literal :
              * lastModifiedDate {Date} last modified date
              * size {Number} size of the file in bytes
              */
-            var MediaFile = function(name, fullPath, type, lastModifiedDate, size) {
+            var MediaFile = function (name, fullPath, type, lastModifiedDate, size) {
                 MediaFile.__super__.constructor.apply(this, arguments);
             };
 
@@ -3697,7 +3698,7 @@ we should simply use a literal :
              * @param {Function} successCB
              * @param {Function} errorCB
              */
-            MediaFile.prototype.getFormatData = function(successCallback, errorCallback) {
+            MediaFile.prototype.getFormatData = function (successCallback, errorCallback) {
                 if (typeof this.fullPath === "undefined" || this.fullPath === null) {
                     errorCallback(new CaptureError(CaptureError.CAPTURE_INVALID_ARGUMENT));
                 } else {
@@ -3710,7 +3711,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFileData.js
-        define("cordova/plugin/MediaFileData", function(require, exports, module) {
+        define("cordova/plugin/MediaFileData", function (require, exports, module) {
 
             /**
              * MediaFileData encapsulates format information of a media file.
@@ -3721,7 +3722,7 @@ we should simply use a literal :
              * @param {long} width
              * @param {float} duration
              */
-            var MediaFileData = function(codecs, bitrate, height, width, duration) {
+            var MediaFileData = function (codecs, bitrate, height, width, duration) {
                 this.codecs = codecs || null;
                 this.bitrate = bitrate || 0;
                 this.height = height || 0;
@@ -3734,14 +3735,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Metadata.js
-        define("cordova/plugin/Metadata", function(require, exports, module) {
+        define("cordova/plugin/Metadata", function (require, exports, module) {
 
             /**
              * Information about the state of the file or directory
              *
              * {Date} modificationTime (readonly)
              */
-            var Metadata = function(time) {
+            var Metadata = function (time) {
                 this.modificationTime = (typeof time != 'undefined' ? new Date(time) : null);
             };
 
@@ -3750,11 +3751,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Position.js
-        define("cordova/plugin/Position", function(require, exports, module) {
+        define("cordova/plugin/Position", function (require, exports, module) {
 
             var Coordinates = require('cordova/plugin/Coordinates');
 
-            var Position = function(coords, timestamp) {
+            var Position = function (coords, timestamp) {
                 if (coords) {
                     this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
                 } else {
@@ -3768,7 +3769,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/PositionError.js
-        define("cordova/plugin/PositionError", function(require, exports, module) {
+        define("cordova/plugin/PositionError", function (require, exports, module) {
 
             /**
              * Position error object
@@ -3777,7 +3778,7 @@ we should simply use a literal :
              * @param code
              * @param message
              */
-            var PositionError = function(code, message) {
+            var PositionError = function (code, message) {
                 this.code = code || null;
                 this.message = message || '';
             };
@@ -3791,7 +3792,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ProgressEvent.js
-        define("cordova/plugin/ProgressEvent", function(require, exports, module) {
+        define("cordova/plugin/ProgressEvent", function (require, exports, module) {
 
             // If ProgressEvent exists in global context, use it already, otherwise use our own polyfill
             // Feature test: See if we can instantiate a native ProgressEvent;
@@ -3799,7 +3800,7 @@ we should simply use a literal :
             // otherwise fill-in with our own implementation.
             //
             // NOTE: right now we always fill in with our own. Down the road would be nice if we can use whatever is native in the webview.
-            var ProgressEvent = (function() {
+            var ProgressEvent = (function () {
                 /*
     var createEvent = function(data) {
         var event = document.createEvent('Events');
@@ -3843,7 +3844,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/accelerometer.js
-        define("cordova/plugin/accelerometer", function(require, exports, module) {
+        define("cordova/plugin/accelerometer", function (require, exports, module) {
 
             /**
              * This class provides access to device accelerometer data.
@@ -3869,13 +3870,13 @@ we should simply use a literal :
             // Tells native to start.
 
             function start() {
-                exec(function(a) {
+                exec(function (a) {
                     var tempListeners = listeners.slice(0);
                     accel = new Acceleration(a.x, a.y, a.z, a.timestamp);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].win(accel);
                     }
-                }, function(e) {
+                }, function (e) {
                     var tempListeners = listeners.slice(0);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].fail(e);
@@ -3920,15 +3921,15 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the acceleration data. (OPTIONAL)
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  */
-                getCurrentAcceleration: function(successCallback, errorCallback, options) {
+                getCurrentAcceleration: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'accelerometer.getCurrentAcceleration', arguments);
 
                     var p;
-                    var win = function(a) {
+                    var win = function (a) {
                         removeListeners(p);
                         successCallback(a);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         removeListeners(p);
                         errorCallback && errorCallback(e);
                     };
@@ -3949,7 +3950,7 @@ we should simply use a literal :
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchAcceleration: function(successCallback, errorCallback, options) {
+                watchAcceleration: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'accelerometer.watchAcceleration', arguments);
                     // Default interval (10 sec)
                     var frequency = (options && options.frequency && typeof options.frequency == 'number') ? options.frequency : 10000;
@@ -3957,14 +3958,14 @@ we should simply use a literal :
                     // Keep reference to watch id, and report accel readings as often as defined in frequency
                     var id = utils.createUUID();
 
-                    var p = createCallbackPair(function() {}, function(e) {
+                    var p = createCallbackPair(function () {}, function (e) {
                         removeListeners(p);
                         errorCallback && errorCallback(e);
                     });
                     listeners.push(p);
 
                     timers[id] = {
-                        timer: window.setInterval(function() {
+                        timer: window.setInterval(function () {
                             if (accel) {
                                 successCallback(accel);
                             }
@@ -3990,7 +3991,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The id of the watch returned from #watchAcceleration.
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     // Stop javascript timer & remove from timer list
                     if (id && timers[id]) {
                         window.clearInterval(timers[id].timer);
@@ -4005,7 +4006,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/accelerometer/symbols.js
-        define("cordova/plugin/accelerometer/symbols", function(require, exports, module) {
+        define("cordova/plugin/accelerometer/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -4016,7 +4017,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/app.js
-        define("cordova/plugin/android/app", function(require, exports, module) {
+        define("cordova/plugin/android/app", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -4024,7 +4025,7 @@ we should simply use a literal :
                 /**
                  * Clear the resource cache.
                  */
-                clearCache: function() {
+                clearCache: function () {
                     exec(null, null, "App", "clearCache", []);
                 },
 
@@ -4042,14 +4043,14 @@ we should simply use a literal :
                  * Example:
                  *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
                  */
-                loadUrl: function(url, props) {
+                loadUrl: function (url, props) {
                     exec(null, null, "App", "loadUrl", [url, props]);
                 },
 
                 /**
                  * Cancel loadUrl that is waiting to be loaded.
                  */
-                cancelLoadUrl: function() {
+                cancelLoadUrl: function () {
                     exec(null, null, "App", "cancelLoadUrl", []);
                 },
 
@@ -4057,7 +4058,7 @@ we should simply use a literal :
                  * Clear web history in this web view.
                  * Instead of BACK button loading the previous web page, it will exit the app.
                  */
-                clearHistory: function() {
+                clearHistory: function () {
                     exec(null, null, "App", "clearHistory", []);
                 },
 
@@ -4065,7 +4066,7 @@ we should simply use a literal :
                  * Go to previous page displayed.
                  * This is the same as pressing the backbutton on Android device.
                  */
-                backHistory: function() {
+                backHistory: function () {
                     exec(null, null, "App", "backHistory", []);
                 },
 
@@ -4078,14 +4079,14 @@ we should simply use a literal :
                  *
                  * @param override        T=override, F=cancel override
                  */
-                overrideBackbutton: function(override) {
+                overrideBackbutton: function (override) {
                     exec(null, null, "App", "overrideBackbutton", [override]);
                 },
 
                 /**
                  * Exit and terminate the application.
                  */
-                exitApp: function() {
+                exitApp: function () {
                     return exec(null, null, "App", "exitApp", []);
                 }
             };
@@ -4093,7 +4094,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/device.js
-        define("cordova/plugin/android/device", function(require, exports, module) {
+        define("cordova/plugin/android/device", function (require, exports, module) {
 
             var channel = require('cordova/channel'),
                 utils = require('cordova/utils'),
@@ -4107,7 +4108,7 @@ we should simply use a literal :
                  *
                  * You must explicitly override the back button.
                  */
-                overrideBackButton: function() {
+                overrideBackButton: function () {
                     console.log("Device.overrideBackButton() is deprecated.  Use App.overrideBackbutton(true).");
                     app.overrideBackbutton(true);
                 },
@@ -4118,7 +4119,7 @@ we should simply use a literal :
                  *
                  * This resets the back button to the default behavior
                  */
-                resetBackButton: function() {
+                resetBackButton: function () {
                     console.log("Device.resetBackButton() is deprecated.  Use App.overrideBackbutton(false).");
                     app.overrideBackbutton(false);
                 },
@@ -4129,7 +4130,7 @@ we should simply use a literal :
                  *
                  * This terminates the activity!
                  */
-                exitApp: function() {
+                exitApp: function () {
                     console.log("Device.exitApp() is deprecated.  Use App.exitApp().");
                     app.exitApp();
                 }
@@ -4138,20 +4139,20 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/nativeapiprovider.js
-        define("cordova/plugin/android/nativeapiprovider", function(require, exports, module) {
+        define("cordova/plugin/android/nativeapiprovider", function (require, exports, module) {
 
             var nativeApi = this._cordovaNative || require('cordova/plugin/android/promptbasednativeapi');
             var currentApi = nativeApi;
 
             module.exports = {
-                get: function() {
+                get: function () {
                     return currentApi;
                 },
-                setPreferPrompt: function(value) {
+                setPreferPrompt: function (value) {
                     currentApi = value ? require('cordova/plugin/android/promptbasednativeapi') : nativeApi;
                 },
                 // Used only by tests.
-                set: function(value) {
+                set: function (value) {
                     currentApi = value;
                 }
             };
@@ -4159,7 +4160,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/notification.js
-        define("cordova/plugin/android/notification", function(require, exports, module) {
+        define("cordova/plugin/android/notification", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -4167,7 +4168,7 @@ we should simply use a literal :
              * Provides Android enhanced notification API.
              */
             module.exports = {
-                activityStart: function(title, message) {
+                activityStart: function (title, message) {
                     // If title and message not specified then mimic Android behavior of
                     // using default strings.
                     if (typeof title === "undefined" && typeof message == "undefined") {
@@ -4181,7 +4182,7 @@ we should simply use a literal :
                 /**
                  * Close an activity dialog
                  */
-                activityStop: function() {
+                activityStop: function () {
                     exec(null, null, 'Notification', 'activityStop', []);
                 },
 
@@ -4193,14 +4194,14 @@ we should simply use a literal :
                  * @param {String}
                  *            message Message to display in the dialog.
                  */
-                progressStart: function(title, message) {
+                progressStart: function (title, message) {
                     exec(null, null, 'Notification', 'progressStart', [title, message]);
                 },
 
                 /**
                  * Close the progress dialog.
                  */
-                progressStop: function() {
+                progressStop: function () {
                     exec(null, null, 'Notification', 'progressStop', []);
                 },
 
@@ -4210,7 +4211,7 @@ we should simply use a literal :
                  * @param {Number}
                  *            value 0-100
                  */
-                progressValue: function(value) {
+                progressValue: function (value) {
                     exec(null, null, 'Notification', 'progressValue', [value]);
                 }
             };
@@ -4218,16 +4219,16 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/promptbasednativeapi.js
-        define("cordova/plugin/android/promptbasednativeapi", function(require, exports, module) {
+        define("cordova/plugin/android/promptbasednativeapi", function (require, exports, module) {
 
             module.exports = {
-                exec: function(service, action, callbackId, argsJson) {
+                exec: function (service, action, callbackId, argsJson) {
                     return prompt(argsJson, 'gap:' + JSON.stringify([service, action, callbackId]));
                 },
-                setNativeToJsBridgeMode: function(value) {
+                setNativeToJsBridgeMode: function (value) {
                     prompt(value, 'gap_bridge_mode:');
                 },
-                retrieveJsMessages: function() {
+                retrieveJsMessages: function () {
                     return prompt('', 'gap_poll:');
                 }
             };
@@ -4235,7 +4236,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/storage.js
-        define("cordova/plugin/android/storage", function(require, exports, module) {
+        define("cordova/plugin/android/storage", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -4248,7 +4249,7 @@ we should simply use a literal :
              * PRIVATE METHOD
              * @constructor
              */
-            var DroidDB_Rows = function() {
+            var DroidDB_Rows = function () {
                 this.resultSet = []; // results array
                 this.length = 0; // number of rows
             };
@@ -4259,7 +4260,7 @@ we should simply use a literal :
              * @param row           The row number to return
              * @return              The row object
              */
-            DroidDB_Rows.prototype.item = function(row) {
+            DroidDB_Rows.prototype.item = function (row) {
                 return this.resultSet[row];
             };
 
@@ -4268,7 +4269,7 @@ we should simply use a literal :
              * PRIVATE METHOD
              * @constructor
              */
-            var DroidDB_Result = function() {
+            var DroidDB_Result = function () {
                 this.rows = new DroidDB_Rows();
             };
 
@@ -4360,7 +4361,7 @@ we should simply use a literal :
              * @constructor
              * @param tx                The transaction object that this query belongs to
              */
-            var DroidDB_Query = function(tx) {
+            var DroidDB_Query = function (tx) {
 
                 // Set the id of the query
                 this.id = utils.createUUID();
@@ -4388,7 +4389,7 @@ we should simply use a literal :
              * PRIVATE METHOD
              * @constructor
              */
-            var DroidDB_Tx = function() {
+            var DroidDB_Tx = function () {
 
                 // Set the id of the transaction
                 this.id = utils.createUUID();
@@ -4407,7 +4408,7 @@ we should simply use a literal :
              *
              * @param id                Query id
              */
-            DroidDB_Tx.prototype.queryComplete = function(id) {
+            DroidDB_Tx.prototype.queryComplete = function (id) {
                 delete this.queryList[id];
 
                 // If no more outstanding queries, then fire transaction success
@@ -4435,7 +4436,7 @@ we should simply use a literal :
              * @param id                Query id
              * @param reason            Error message
              */
-            DroidDB_Tx.prototype.queryFailed = function(id, reason) {
+            DroidDB_Tx.prototype.queryFailed = function (id, reason) {
 
                 // The sql queries in this transaction have already been run, since
                 // we really don't have a real transaction implemented in native code.
@@ -4460,7 +4461,7 @@ we should simply use a literal :
              * @param successCallback       Success callback
              * @param errorCallback         Error callback
              */
-            DroidDB_Tx.prototype.executeSql = function(sql, params, successCallback, errorCallback) {
+            DroidDB_Tx.prototype.executeSql = function (sql, params, successCallback, errorCallback) {
 
                 // Init params array
                 if (typeof params === 'undefined') {
@@ -4479,7 +4480,7 @@ we should simply use a literal :
                 exec(null, null, "Storage", "executeSql", [sql, params, query.id]);
             };
 
-            var DatabaseShell = function() {};
+            var DatabaseShell = function () {};
 
             /**
              * Start a transaction.
@@ -4489,7 +4490,7 @@ we should simply use a literal :
              * @param successCallback {Function}
              * @param errorCallback {Function}
              */
-            DatabaseShell.prototype.transaction = function(process, errorCallback, successCallback) {
+            DatabaseShell.prototype.transaction = function (process, errorCallback, successCallback) {
                 var tx = new DroidDB_Tx();
                 tx.successCallback = successCallback;
                 tx.errorCallback = errorCallback;
@@ -4516,7 +4517,7 @@ we should simply use a literal :
              * @param size              Database size in bytes
              * @return                  Database object
              */
-            var DroidDB_openDatabase = function(name, version, display_name, size) {
+            var DroidDB_openDatabase = function (name, version, display_name, size) {
                 exec(null, null, "Storage", "openDatabase", [name, version, display_name, size]);
                 var db = new DatabaseShell();
                 return db;
@@ -4532,7 +4533,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/storage/openDatabase.js
-        define("cordova/plugin/android/storage/openDatabase", function(require, exports, module) {
+        define("cordova/plugin/android/storage/openDatabase", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper'),
@@ -4540,7 +4541,7 @@ we should simply use a literal :
 
             var originalOpenDatabase = modulemapper.getOriginalSymbol(window, 'openDatabase');
 
-            module.exports = function(name, version, desc, size) {
+            module.exports = function (name, version, desc, size) {
                 // First patch WebSQL if necessary
                 if (!originalOpenDatabase) {
                     // Not defined, create an openDatabase function for all to use!
@@ -4565,7 +4566,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/android/storage/symbols.js
-        define("cordova/plugin/android/storage/symbols", function(require, exports, module) {
+        define("cordova/plugin/android/storage/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -4576,7 +4577,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/battery.js
-        define("cordova/plugin/battery", function(require, exports, module) {
+        define("cordova/plugin/battery", function (require, exports, module) {
 
             /**
              * This class contains information about the current battery status.
@@ -4589,7 +4590,7 @@ we should simply use a literal :
                 return battery.channels.batterystatus.numHandlers + battery.channels.batterylow.numHandlers + battery.channels.batterycritical.numHandlers;
             }
 
-            var Battery = function() {
+            var Battery = function () {
                 this._level = null;
                 this._isPlugged = null;
                 // Create new event handlers on the window (returns a channel instance)
@@ -4607,7 +4608,7 @@ we should simply use a literal :
              * Keep track of how many handlers we have so we can start and stop the native battery listener
              * appropriately (and hopefully save on battery life!).
              */
-            Battery.onHasSubscribersChange = function() {
+            Battery.onHasSubscribersChange = function () {
                 // If we just registered the first handler, make sure native listener is started.
                 if (this.numHandlers === 1 && handlers() === 1) {
                     exec(battery._status, battery._error, "Battery", "start", []);
@@ -4621,7 +4622,7 @@ we should simply use a literal :
              *
              * @param {Object} info            keys: level, isPlugged
              */
-            Battery.prototype._status = function(info) {
+            Battery.prototype._status = function (info) {
                 if (info) {
                     var me = battery;
                     var level = info.level;
@@ -4646,7 +4647,7 @@ we should simply use a literal :
             /**
              * Error callback for battery start
              */
-            Battery.prototype._error = function(e) {
+            Battery.prototype._error = function (e) {
                 console.log("Error initializing Battery: " + e);
             };
 
@@ -4657,7 +4658,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/battery/symbols.js
-        define("cordova/plugin/battery/symbols", function(require, exports, module) {
+        define("cordova/plugin/battery/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -4667,7 +4668,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/camera/symbols.js
-        define("cordova/plugin/camera/symbols", function(require, exports, module) {
+        define("cordova/plugin/camera/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -4679,7 +4680,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/capture.js
-        define("cordova/plugin/capture", function(require, exports, module) {
+        define("cordova/plugin/capture", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 MediaFile = require('cordova/plugin/MediaFile');
@@ -4694,7 +4695,7 @@ we should simply use a literal :
              */
 
             function _capture(type, successCallback, errorCallback, options) {
-                var win = function(pluginResult) {
+                var win = function (pluginResult) {
                     var mediaFiles = [];
                     var i;
                     for (i = 0; i < pluginResult.length; i++) {
@@ -4727,7 +4728,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureAudioOptions} options
              */
-            Capture.prototype.captureAudio = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureAudio = function (successCallback, errorCallback, options) {
                 _capture("captureAudio", successCallback, errorCallback, options);
             };
 
@@ -4738,7 +4739,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureImageOptions} options
              */
-            Capture.prototype.captureImage = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureImage = function (successCallback, errorCallback, options) {
                 _capture("captureImage", successCallback, errorCallback, options);
             };
 
@@ -4749,7 +4750,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureVideoOptions} options
              */
-            Capture.prototype.captureVideo = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureVideo = function (successCallback, errorCallback, options) {
                 _capture("captureVideo", successCallback, errorCallback, options);
             };
 
@@ -4759,7 +4760,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/capture/symbols.js
-        define("cordova/plugin/capture/symbols", function(require, exports, module) {
+        define("cordova/plugin/capture/symbols", function (require, exports, module) {
 
             var modulemapper = require('cordova/modulemapper');
 
@@ -4775,7 +4776,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/compass.js
-        define("cordova/plugin/compass", function(require, exports, module) {
+        define("cordova/plugin/compass", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -4792,14 +4793,14 @@ we should simply use a literal :
                      * getting the heading data.
                      * @param {CompassOptions} options The options for getting the heading data (not used).
                      */
-                    getCurrentHeading: function(successCallback, errorCallback, options) {
+                    getCurrentHeading: function (successCallback, errorCallback, options) {
                         argscheck.checkArgs('fFO', 'compass.getCurrentHeading', arguments);
 
-                        var win = function(result) {
+                        var win = function (result) {
                             var ch = new CompassHeading(result.magneticHeading, result.trueHeading, result.headingAccuracy, result.timestamp);
                             successCallback(ch);
                         };
-                        var fail = errorCallback && function(code) {
+                        var fail = errorCallback && function (code) {
                                 var ce = new CompassError(code);
                                 errorCallback(ce);
                             };
@@ -4818,7 +4819,7 @@ we should simply use a literal :
                      * such as timeout and the frequency of the watch. For iOS, filter parameter
                      * specifies to watch via a distance filter rather than time.
                      */
-                    watchHeading: function(successCallback, errorCallback, options) {
+                    watchHeading: function (successCallback, errorCallback, options) {
                         argscheck.checkArgs('fFO', 'compass.watchHeading', arguments);
                         // Default interval (100 msec)
                         var frequency = (options !== undefined && options.frequency !== undefined) ? options.frequency : 100;
@@ -4831,7 +4832,7 @@ we should simply use a literal :
                             compass.getCurrentHeading(successCallback, errorCallback, options);
                         } else {
                             // Start watch timer to get headings
-                            timers[id] = window.setInterval(function() {
+                            timers[id] = window.setInterval(function () {
                                 compass.getCurrentHeading(successCallback, errorCallback);
                             }, frequency);
                         }
@@ -4843,7 +4844,7 @@ we should simply use a literal :
                      * Clears the specified heading watch.
                      * @param {String} watchId The ID of the watch returned from #watchHeading.
                      */
-                    clearWatch: function(id) {
+                    clearWatch: function (id) {
                         // Stop javascript timer & remove from timer list
                         if (id && timers[id]) {
                             if (timers[id] != "iOS") {
@@ -4862,7 +4863,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/compass/symbols.js
-        define("cordova/plugin/compass/symbols", function(require, exports, module) {
+        define("cordova/plugin/compass/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -4874,7 +4875,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/console-via-logger.js
-        define("cordova/plugin/console-via-logger", function(require, exports, module) {
+        define("cordova/plugin/console-via-logger", function (require, exports, module) {
 
             //------------------------------------------------------------------------------
 
@@ -4910,7 +4911,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
             // used for unimplemented methods
             //------------------------------------------------------------------------------
-            console.useLogger = function(value) {
+            console.useLogger = function (value) {
                 if (arguments.length) UseLogger = !! value;
 
                 if (UseLogger) {
@@ -4923,37 +4924,37 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.log = function() {
+            console.log = function () {
                 if (logger.useConsole()) return;
                 logger.log.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.error = function() {
+            console.error = function () {
                 if (logger.useConsole()) return;
                 logger.error.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.warn = function() {
+            console.warn = function () {
                 if (logger.useConsole()) return;
                 logger.warn.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.info = function() {
+            console.info = function () {
                 if (logger.useConsole()) return;
                 logger.info.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.debug = function() {
+            console.debug = function () {
                 if (logger.useConsole()) return;
                 logger.debug.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.assert = function(expression) {
+            console.assert = function (expression) {
                 if (expression) return;
 
                 var message = utils.vformat(arguments[1], [].slice.call(arguments, 2));
@@ -4961,15 +4962,15 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.clear = function() {};
+            console.clear = function () {};
 
             //------------------------------------------------------------------------------
-            console.dir = function(object) {
+            console.dir = function (object) {
                 console.log("%o", object);
             };
 
             //------------------------------------------------------------------------------
-            console.dirxml = function(node) {
+            console.dirxml = function (node) {
                 console.log(node.innerHTML);
             };
 
@@ -4986,12 +4987,12 @@ we should simply use a literal :
             console.groupEnd = noop;
 
             //------------------------------------------------------------------------------
-            console.time = function(name) {
+            console.time = function (name) {
                 Timers[name] = new Date().valueOf();
             };
 
             //------------------------------------------------------------------------------
-            console.timeEnd = function(name) {
+            console.timeEnd = function (name) {
                 var timeStart = Timers[name];
                 if (!timeStart) {
                     console.warn("unknown timer: " + name);
@@ -5018,7 +5019,7 @@ we should simply use a literal :
             console.exception = console.log;
 
             //------------------------------------------------------------------------------
-            console.table = function(data, columns) {
+            console.table = function (data, columns) {
                 console.log("%o", data);
             };
 
@@ -5027,7 +5028,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
 
             function wrappedOrigCall(orgFunc, newFunc) {
-                return function() {
+                return function () {
                     var args = [].slice.call(arguments);
                     try {
                         orgFunc.apply(WinConsole, args);
@@ -5052,7 +5053,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/contacts.js
-        define("cordova/plugin/contacts", function(require, exports, module) {
+        define("cordova/plugin/contacts", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -5073,12 +5074,12 @@ we should simply use a literal :
                  * @param {ContactFindOptions} options that can be applied to contact searching
                  * @return array of Contacts matching search criteria
                  */
-                find: function(fields, successCB, errorCB, options) {
+                find: function (fields, successCB, errorCB, options) {
                     argscheck.checkArgs('afFO', 'contacts.find', arguments);
                     if (!fields.length) {
                         errorCB && errorCB(new ContactError(ContactError.INVALID_ARGUMENT_ERROR));
                     } else {
-                        var win = function(result) {
+                        var win = function (result) {
                             var cs = [];
                             for (var i = 0, l = result.length; i < l; i++) {
                                 cs.push(contacts.create(result[i]));
@@ -5096,7 +5097,7 @@ we should simply use a literal :
                  * @param properties an object whose properties will be examined to create a new Contact
                  * @returns new Contact object
                  */
-                create: function(properties) {
+                create: function (properties) {
                     argscheck.checkArgs('O', 'contacts.create', arguments);
                     var contact = new Contact();
                     for (var i in properties) {
@@ -5113,7 +5114,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/contacts/symbols.js
-        define("cordova/plugin/contacts/symbols", function(require, exports, module) {
+        define("cordova/plugin/contacts/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5130,7 +5131,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/device.js
-        define("cordova/plugin/device", function(require, exports, module) {
+        define("cordova/plugin/device", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 channel = require('cordova/channel'),
@@ -5157,8 +5158,8 @@ we should simply use a literal :
 
                 var me = this;
 
-                channel.onCordovaReady.subscribe(function() {
-                    me.getInfo(function(info) {
+                channel.onCordovaReady.subscribe(function () {
+                    me.getInfo(function (info) {
                         me.available = true;
                         me.platform = info.platform;
                         me.version = info.version;
@@ -5167,7 +5168,7 @@ we should simply use a literal :
                         me.cordova = info.cordova;
                         me.model = info.model;
                         channel.onCordovaInfoReady.fire();
-                    }, function(e) {
+                    }, function (e) {
                         me.available = false;
                         utils.alert("[ERROR] Error initializing Cordova: " + e);
                     });
@@ -5180,7 +5181,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the heading data is available
              * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
              */
-            Device.prototype.getInfo = function(successCallback, errorCallback) {
+            Device.prototype.getInfo = function (successCallback, errorCallback) {
                 argscheck.checkArgs('fF', 'Device.getInfo', arguments);
                 exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
             };
@@ -5190,7 +5191,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/device/symbols.js
-        define("cordova/plugin/device/symbols", function(require, exports, module) {
+        define("cordova/plugin/device/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5201,7 +5202,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/echo.js
-        define("cordova/plugin/echo", function(require, exports, module) {
+        define("cordova/plugin/echo", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 utils = require('cordova/utils');
@@ -5213,7 +5214,7 @@ we should simply use a literal :
              * @param message  The string to be echoed.
              * @param forceAsync  Whether to force an async return value (for testing native->js bridge).
              */
-            module.exports = function(successCallback, errorCallback, message, forceAsync) {
+            module.exports = function (successCallback, errorCallback, message, forceAsync) {
                 var action = 'echo';
                 var messageIsMultipart = (utils.typeName(message) == "Array");
                 var args = messageIsMultipart ? message : [message];
@@ -5239,7 +5240,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/file/symbols.js
-        define("cordova/plugin/file/symbols", function(require, exports, module) {
+        define("cordova/plugin/file/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper'),
@@ -5250,9 +5251,9 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/file/symbolshelper.js
-        define("cordova/plugin/file/symbolshelper", function(require, exports, module) {
+        define("cordova/plugin/file/symbolshelper", function (require, exports, module) {
 
-            module.exports = function(exportFunc) {
+            module.exports = function (exportFunc) {
                 exportFunc('cordova/plugin/DirectoryEntry', 'DirectoryEntry');
                 exportFunc('cordova/plugin/DirectoryReader', 'DirectoryReader');
                 exportFunc('cordova/plugin/Entry', 'Entry');
@@ -5275,7 +5276,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/filetransfer/symbols.js
-        define("cordova/plugin/filetransfer/symbols", function(require, exports, module) {
+        define("cordova/plugin/filetransfer/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5286,7 +5287,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/geolocation.js
-        define("cordova/plugin/geolocation", function(require, exports, module) {
+        define("cordova/plugin/geolocation", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 utils = require('cordova/utils'),
@@ -5327,7 +5328,7 @@ we should simply use a literal :
             // Returns a timeout failure, closed over a specified timeout value and error callback.
 
             function createTimeout(errorCallback, timeout) {
-                var t = setTimeout(function() {
+                var t = setTimeout(function () {
                     clearTimeout(t);
                     t = null;
                     errorCallback({
@@ -5347,7 +5348,7 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the heading position. (OPTIONAL)
                  * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
                  */
-                getCurrentPosition: function(successCallback, errorCallback, options) {
+                getCurrentPosition: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'geolocation.getCurrentPosition', arguments);
                     options = parseParameters(options);
 
@@ -5357,7 +5358,7 @@ we should simply use a literal :
                         timer: null
                     };
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timeoutTimer.timer);
                         if (!(timeoutTimer.timer)) {
                             // Timeout already happened, or native fired error callback for
@@ -5377,7 +5378,7 @@ we should simply use a literal :
                         geolocation.lastPosition = pos;
                         successCallback(pos);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timeoutTimer.timer);
                         timeoutTimer.timer = null;
                         var err = new PositionError(e.code, e.message);
@@ -5422,7 +5423,7 @@ we should simply use a literal :
                  * @param {PositionOptions} options     The options for getting the location data such as frequency. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchPosition: function(successCallback, errorCallback, options) {
+                watchPosition: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'geolocation.getCurrentPosition', arguments);
                     options = parseParameters(options);
 
@@ -5431,7 +5432,7 @@ we should simply use a literal :
                     // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
                     timers[id] = geolocation.getCurrentPosition(successCallback, errorCallback, options);
 
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timers[id].timer);
                         var err = new PositionError(e.code, e.message);
                         if (errorCallback) {
@@ -5439,7 +5440,7 @@ we should simply use a literal :
                         }
                     };
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timers[id].timer);
                         if (options.timeout !== Infinity) {
                             timers[id].timer = createTimeout(fail, options.timeout);
@@ -5466,7 +5467,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The ID of the watch returned from #watchPosition
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     if (id && timers[id] !== undefined) {
                         clearTimeout(timers[id].timer);
                         timers[id].timer = false;
@@ -5480,7 +5481,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/geolocation/symbols.js
-        define("cordova/plugin/geolocation/symbols", function(require, exports, module) {
+        define("cordova/plugin/geolocation/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5493,7 +5494,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/globalization.js
-        define("cordova/plugin/globalization", function(require, exports, module) {
+        define("cordova/plugin/globalization", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -5518,7 +5519,7 @@ we should simply use a literal :
                  *    globalization.getPreferredLanguage(function (language) {alert('language:' + language.value + '\n');},
                  *                                function () {});
                  */
-                getPreferredLanguage: function(successCB, failureCB) {
+                getPreferredLanguage: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getPreferredLanguage', arguments);
                     exec(successCB, failureCB, "Globalization", "getPreferredLanguage", []);
                 },
@@ -5540,7 +5541,7 @@ we should simply use a literal :
                  *    globalization.getLocaleName(function (locale) {alert('locale:' + locale.value + '\n');},
                  *                                function () {});
                  */
-                getLocaleName: function(successCB, failureCB) {
+                getLocaleName: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getLocaleName', arguments);
                     exec(successCB, failureCB, "Globalization", "getLocaleName", []);
                 },
@@ -5571,7 +5572,7 @@ we should simply use a literal :
                  *                function (errorCode) {alert(errorCode);},
                  *                {formatLength:'short'});
                  */
-                dateToString: function(date, successCB, failureCB, options) {
+                dateToString: function (date, successCB, failureCB, options) {
                     argscheck.checkArgs('dfFO', 'Globalization.dateToString', arguments);
                     var dateValue = date.valueOf();
                     exec(successCB, failureCB, "Globalization", "dateToString", [{
@@ -5616,7 +5617,7 @@ we should simply use a literal :
                  *                function (errorCode) {alert(errorCode);},
                  *                {selector:'date'});
                  */
-                stringToDate: function(dateString, successCB, failureCB, options) {
+                stringToDate: function (dateString, successCB, failureCB, options) {
                     argscheck.checkArgs('sfFO', 'Globalization.stringToDate', arguments);
                     exec(successCB, failureCB, "Globalization", "stringToDate", [{
                         "dateString": dateString,
@@ -5657,7 +5658,7 @@ we should simply use a literal :
                  *                function () {},
                  *                {formatLength:'short'});
                  */
-                getDatePattern: function(successCB, failureCB, options) {
+                getDatePattern: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getDatePattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getDatePattern", [{
                         "options": options
@@ -5690,7 +5691,7 @@ we should simply use a literal :
                  *            alert('Month:' + names.value[i] + '\n');}},
                  *        function () {});
                  */
-                getDateNames: function(successCB, failureCB, options) {
+                getDateNames: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getDateNames', arguments);
                     exec(successCB, failureCB, "Globalization", "getDateNames", [{
                         "options": options
@@ -5717,7 +5718,7 @@ we should simply use a literal :
                  *                function (date) {alert('dst:' + date.dst + '\n');}
                  *                function () {});
                  */
-                isDayLightSavingsTime: function(date, successCB, failureCB) {
+                isDayLightSavingsTime: function (date, successCB, failureCB) {
                     argscheck.checkArgs('dfF', 'Globalization.isDayLightSavingsTime', arguments);
                     var dateValue = date.valueOf();
                     exec(successCB, failureCB, "Globalization", "isDayLightSavingsTime", [{
@@ -5743,7 +5744,7 @@ we should simply use a literal :
                  *                { alert('Day:' + day.value + '\n');},
                  *                function () {});
                  */
-                getFirstDayOfWeek: function(successCB, failureCB) {
+                getFirstDayOfWeek: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getFirstDayOfWeek', arguments);
                     exec(successCB, failureCB, "Globalization", "getFirstDayOfWeek", []);
                 },
@@ -5772,7 +5773,7 @@ we should simply use a literal :
                  *                function () {},
                  *                {type:'decimal'});
                  */
-                numberToString: function(number, successCB, failureCB, options) {
+                numberToString: function (number, successCB, failureCB, options) {
                     argscheck.checkArgs('nfFO', 'Globalization.numberToString', arguments);
                     exec(successCB, failureCB, "Globalization", "numberToString", [{
                         "number": number,
@@ -5803,7 +5804,7 @@ we should simply use a literal :
                  *                function (number) {alert('Number:' + number.value + '\n');},
                  *                function () { alert('Error parsing number');});
                  */
-                stringToNumber: function(numberString, successCB, failureCB, options) {
+                stringToNumber: function (numberString, successCB, failureCB, options) {
                     argscheck.checkArgs('sfFO', 'Globalization.stringToNumber', arguments);
                     exec(successCB, failureCB, "Globalization", "stringToNumber", [{
                         "numberString": numberString,
@@ -5843,7 +5844,7 @@ we should simply use a literal :
                  *                function (pattern) {alert('Pattern:' + pattern.pattern + '\n');},
                  *                function () {});
                  */
-                getNumberPattern: function(successCB, failureCB, options) {
+                getNumberPattern: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getNumberPattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getNumberPattern", [{
                         "options": options
@@ -5877,7 +5878,7 @@ we should simply use a literal :
                  *                function (currency) {alert('Pattern:' + currency.pattern + '\n');}
                  *                function () {});
                  */
-                getCurrencyPattern: function(currencyCode, successCB, failureCB) {
+                getCurrencyPattern: function (currencyCode, successCB, failureCB) {
                     argscheck.checkArgs('sfF', 'Globalization.getCurrencyPattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getCurrencyPattern", [{
                         "currencyCode": currencyCode
@@ -5891,7 +5892,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/globalization/symbols.js
-        define("cordova/plugin/globalization/symbols", function(require, exports, module) {
+        define("cordova/plugin/globalization/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5902,7 +5903,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/inappbrowser/symbols.js
-        define("cordova/plugin/inappbrowser/symbols", function(require, exports, module) {
+        define("cordova/plugin/inappbrowser/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -5912,7 +5913,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/logger.js
-        define("cordova/plugin/logger", function(require, exports, module) {
+        define("cordova/plugin/logger", function (require, exports, module) {
 
             //------------------------------------------------------------------------------
             // The logger module exports the following properties/functions:
@@ -5954,7 +5955,8 @@ we should simply use a literal :
                 "ERROR",
                 "WARN",
                 "INFO",
-                "DEBUG"];
+                "DEBUG"
+            ];
 
             /*
              * add the logging levels to the logger object and
@@ -5989,7 +5991,7 @@ we should simply use a literal :
              * default level is WARN, so only messages logged with LOG, ERROR, or
              * WARN will be displayed; INFO and DEBUG messages will be ignored.
              */
-            logger.level = function(value) {
+            logger.level = function (value) {
                 if (arguments.length) {
                     if (LevelsMap[value] === null) {
                         throw new Error("invalid logging level: " + value);
@@ -6007,7 +6009,7 @@ we should simply use a literal :
              * browser 'console' object.  Otherwise, it will use the
              * native Logger plugin.
              */
-            logger.useConsole = function(value) {
+            logger.useConsole = function (value) {
                 if (arguments.length) UseConsole = !! value;
 
                 if (UseConsole) {
@@ -6035,7 +6037,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.log = function(message) {
+            logger.log = function (message) {
                 logWithArgs("LOG", arguments);
             };
 
@@ -6045,7 +6047,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.error = function(message) {
+            logger.error = function (message) {
                 logWithArgs("ERROR", arguments);
             };
 
@@ -6055,7 +6057,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.warn = function(message) {
+            logger.warn = function (message) {
                 logWithArgs("WARN", arguments);
             };
 
@@ -6065,7 +6067,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.info = function(message) {
+            logger.info = function (message) {
                 logWithArgs("INFO", arguments);
             };
 
@@ -6075,7 +6077,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.debug = function(message) {
+            logger.debug = function (message) {
                 logWithArgs("DEBUG", arguments);
             };
 
@@ -6092,7 +6094,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.logLevel = function(level, message /* , ... */ ) {
+            logger.logLevel = function (level, message /* , ... */ ) {
                 // format the message with the parameters
                 var formatArgs = [].slice.call(arguments, 2);
                 message = utils.vformat(message, formatArgs);
@@ -6122,26 +6124,26 @@ we should simply use a literal :
 
                 // log to the console
                 switch (level) {
-                    case logger.LOG:
-                        console.log(message);
-                        break;
-                    case logger.ERROR:
-                        console.log("ERROR: " + message);
-                        break;
-                    case logger.WARN:
-                        console.log("WARN: " + message);
-                        break;
-                    case logger.INFO:
-                        console.log("INFO: " + message);
-                        break;
-                    case logger.DEBUG:
-                        console.log("DEBUG: " + message);
-                        break;
+                case logger.LOG:
+                    console.log(message);
+                    break;
+                case logger.ERROR:
+                    console.log("ERROR: " + message);
+                    break;
+                case logger.WARN:
+                    console.log("WARN: " + message);
+                    break;
+                case logger.INFO:
+                    console.log("INFO: " + message);
+                    break;
+                case logger.DEBUG:
+                    console.log("DEBUG: " + message);
+                    break;
                 }
             };
 
             // when deviceready fires, log queued messages
-            logger.__onDeviceReady = function() {
+            logger.__onDeviceReady = function () {
                 if (DeviceReady) return;
 
                 DeviceReady = true;
@@ -6160,7 +6162,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/logger/symbols.js
-        define("cordova/plugin/logger/symbols", function(require, exports, module) {
+        define("cordova/plugin/logger/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -6170,7 +6172,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/media/symbols.js
-        define("cordova/plugin/media/symbols", function(require, exports, module) {
+        define("cordova/plugin/media/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -6181,7 +6183,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/network.js
-        define("cordova/plugin/network", function(require, exports, module) {
+        define("cordova/plugin/network", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 cordova = require('cordova'),
@@ -6192,7 +6194,7 @@ we should simply use a literal :
             // This works because we clobber the naviagtor object with our own
             // object in bootstrap.js.
             if (typeof navigator != 'undefined') {
-                utils.defineGetter(navigator, 'onLine', function() {
+                utils.defineGetter(navigator, 'onLine', function () {
                     return this.connection.type != 'none';
                 });
             }
@@ -6207,7 +6209,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the Connection data is available
              * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
              */
-            NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
+            NetworkConnection.prototype.getInfo = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
             };
 
@@ -6215,38 +6217,38 @@ we should simply use a literal :
             var timerId = null;
             var timeout = 500;
 
-            channel.onCordovaReady.subscribe(function() {
-                me.getInfo(function(info) {
-                    me.type = info;
-                    if (info === "none") {
-                        // set a timer if still offline at the end of timer send the offline event
-                        timerId = setTimeout(function() {
-                            cordova.fireDocumentEvent("offline");
-                            timerId = null;
-                        }, timeout);
-                    } else {
-                        // If there is a current offline event pending clear it
-                        if (timerId !== null) {
-                            clearTimeout(timerId);
-                            timerId = null;
+            channel.onCordovaReady.subscribe(function () {
+                me.getInfo(function (info) {
+                        me.type = info;
+                        if (info === "none") {
+                            // set a timer if still offline at the end of timer send the offline event
+                            timerId = setTimeout(function () {
+                                cordova.fireDocumentEvent("offline");
+                                timerId = null;
+                            }, timeout);
+                        } else {
+                            // If there is a current offline event pending clear it
+                            if (timerId !== null) {
+                                clearTimeout(timerId);
+                                timerId = null;
+                            }
+                            cordova.fireDocumentEvent("online");
                         }
-                        cordova.fireDocumentEvent("online");
-                    }
 
-                    // should only fire this once
-                    if (channel.onCordovaConnectionReady.state !== 2) {
-                        channel.onCordovaConnectionReady.fire();
-                    }
-                },
+                        // should only fire this once
+                        if (channel.onCordovaConnectionReady.state !== 2) {
+                            channel.onCordovaConnectionReady.fire();
+                        }
+                    },
 
-                function(e) {
-                    // If we can't get the network info we should still tell Cordova
-                    // to fire the deviceready event.
-                    if (channel.onCordovaConnectionReady.state !== 2) {
-                        channel.onCordovaConnectionReady.fire();
-                    }
-                    console.log("Error initializing Network Connection: " + e);
-                });
+                    function (e) {
+                        // If we can't get the network info we should still tell Cordova
+                        // to fire the deviceready event.
+                        if (channel.onCordovaConnectionReady.state !== 2) {
+                            channel.onCordovaConnectionReady.fire();
+                        }
+                        console.log("Error initializing Network Connection: " + e);
+                    });
             });
 
             module.exports = me;
@@ -6254,7 +6256,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/networkstatus/symbols.js
-        define("cordova/plugin/networkstatus/symbols", function(require, exports, module) {
+        define("cordova/plugin/networkstatus/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -6266,7 +6268,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/notification.js
-        define("cordova/plugin/notification", function(require, exports, module) {
+        define("cordova/plugin/notification", function (require, exports, module) {
 
             var exec = require('cordova/exec');
             var platform = require('cordova/platform');
@@ -6285,7 +6287,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Alert)
                  * @param {String} buttonLabel          Label of the close button (default: OK)
                  */
-                alert: function(message, completeCallback, title, buttonLabel) {
+                alert: function (message, completeCallback, title, buttonLabel) {
                     var _title = (title || "Alert");
                     var _buttonLabel = (buttonLabel || "OK");
                     exec(completeCallback, null, "Notification", "alert", [message, _title, _buttonLabel]);
@@ -6300,7 +6302,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Confirm)
                  * @param {Array} buttonLabels          Array of the labels of the buttons (default: ['OK', 'Cancel'])
                  */
-                confirm: function(message, resultCallback, title, buttonLabels) {
+                confirm: function (message, resultCallback, title, buttonLabels) {
                     var _title = (title || "Confirm");
                     var _buttonLabels = (buttonLabels || ["OK", "Cancel"]);
 
@@ -6337,7 +6339,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the dialog (default: "Prompt")
                  * @param {Array} buttonLabels          Array of strings for the button labels (default: ["OK","Cancel"])
                  */
-                prompt: function(message, resultCallback, title, buttonLabels) {
+                prompt: function (message, resultCallback, title, buttonLabels) {
                     var _message = (message || "Prompt message");
                     var _title = (title || "Prompt");
                     var _buttonLabels = (buttonLabels || ["OK", "Cancel"]);
@@ -6349,7 +6351,7 @@ we should simply use a literal :
                  *
                  * @param {Integer} mills       The number of milliseconds to vibrate for.
                  */
-                vibrate: function(mills) {
+                vibrate: function (mills) {
                     exec(null, null, "Notification", "vibrate", [mills]);
                 },
 
@@ -6359,7 +6361,7 @@ we should simply use a literal :
                  *
                  * @param {Integer} count       The number of beeps.
                  */
-                beep: function(count) {
+                beep: function (count) {
                     exec(null, null, "Notification", "beep", [count]);
                 }
             };
@@ -6367,7 +6369,7 @@ we should simply use a literal :
         });
 
         // file: lib/android/plugin/notification/symbols.js
-        define("cordova/plugin/notification/symbols", function(require, exports, module) {
+        define("cordova/plugin/notification/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -6378,7 +6380,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/requestFileSystem.js
-        define("cordova/plugin/requestFileSystem", function(require, exports, module) {
+        define("cordova/plugin/requestFileSystem", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 FileError = require('cordova/plugin/FileError'),
@@ -6392,9 +6394,9 @@ we should simply use a literal :
              * @param successCallback  invoked with a FileSystem object
              * @param errorCallback  invoked if error occurs retrieving file system
              */
-            var requestFileSystem = function(type, size, successCallback, errorCallback) {
+            var requestFileSystem = function (type, size, successCallback, errorCallback) {
                 argscheck.checkArgs('nnFF', 'requestFileSystem', arguments);
-                var fail = function(code) {
+                var fail = function (code) {
                     errorCallback && errorCallback(new FileError(code));
                 };
 
@@ -6402,7 +6404,7 @@ we should simply use a literal :
                     fail(FileError.SYNTAX_ERR);
                 } else {
                     // if successful, return a FileSystem object
-                    var success = function(file_system) {
+                    var success = function (file_system) {
                         if (file_system) {
                             if (successCallback) {
                                 // grab the name and root from the file system object
@@ -6423,7 +6425,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/resolveLocalFileSystemURI.js
-        define("cordova/plugin/resolveLocalFileSystemURI", function(require, exports, module) {
+        define("cordova/plugin/resolveLocalFileSystemURI", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 DirectoryEntry = require('cordova/plugin/DirectoryEntry'),
@@ -6437,21 +6439,21 @@ we should simply use a literal :
              * @param successCallback  invoked with Entry object corresponding to URI
              * @param errorCallback    invoked if error occurs retrieving file system entry
              */
-            module.exports = function(uri, successCallback, errorCallback) {
+            module.exports = function (uri, successCallback, errorCallback) {
                 argscheck.checkArgs('sFF', 'resolveLocalFileSystemURI', arguments);
                 // error callback
-                var fail = function(error) {
+                var fail = function (error) {
                     errorCallback && errorCallback(new FileError(error));
                 };
                 // sanity check for 'not:valid:filename'
                 if (!uri || uri.split(":").length > 2) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         fail(FileError.ENCODING_ERR);
                     }, 0);
                     return;
                 }
                 // if successful, return either a file or directory entry
-                var success = function(entry) {
+                var success = function (entry) {
                     var result;
                     if (entry) {
                         if (successCallback) {
@@ -6471,15 +6473,15 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/splashscreen.js
-        define("cordova/plugin/splashscreen", function(require, exports, module) {
+        define("cordova/plugin/splashscreen", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
             var splashscreen = {
-                show: function() {
+                show: function () {
                     exec(null, null, "SplashScreen", "show", []);
                 },
-                hide: function() {
+                hide: function () {
                     exec(null, null, "SplashScreen", "hide", []);
                 }
             };
@@ -6489,7 +6491,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/splashscreen/symbols.js
-        define("cordova/plugin/splashscreen/symbols", function(require, exports, module) {
+        define("cordova/plugin/splashscreen/symbols", function (require, exports, module) {
 
 
             var modulemapper = require('cordova/modulemapper');
@@ -6499,7 +6501,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/symbols.js
-        define("cordova/symbols", function(require, exports, module) {
+        define("cordova/symbols", function (require, exports, module) {
 
             var modulemapper = require('cordova/modulemapper');
 
@@ -6512,14 +6514,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/utils.js
-        define("cordova/utils", function(require, exports, module) {
+        define("cordova/utils", function (require, exports, module) {
 
             var utils = exports;
 
             /**
              * Defines a property getter / setter for obj[key].
              */
-            utils.defineGetterSetter = function(obj, key, getFunc, opt_setFunc) {
+            utils.defineGetterSetter = function (obj, key, getFunc, opt_setFunc) {
                 if (Object.defineProperty) {
                     var desc = {
                         get: getFunc,
@@ -6542,7 +6544,7 @@ we should simply use a literal :
              */
             utils.defineGetter = utils.defineGetterSetter;
 
-            utils.arrayIndexOf = function(a, item) {
+            utils.arrayIndexOf = function (a, item) {
                 if (a.indexOf) {
                     return a.indexOf(item);
                 }
@@ -6558,7 +6560,7 @@ we should simply use a literal :
             /**
              * Returns whether the item was found in the array.
              */
-            utils.arrayRemove = function(a, item) {
+            utils.arrayRemove = function (a, item) {
                 var index = utils.arrayIndexOf(a, item);
                 if (index != -1) {
                     a.splice(index, 1);
@@ -6566,28 +6568,28 @@ we should simply use a literal :
                 return index != -1;
             };
 
-            utils.typeName = function(val) {
+            utils.typeName = function (val) {
                 return Object.prototype.toString.call(val).slice(8, -1);
             };
 
             /**
              * Returns an indication of whether the argument is an array or not
              */
-            utils.isArray = function(a) {
+            utils.isArray = function (a) {
                 return utils.typeName(a) == 'Array';
             };
 
             /**
              * Returns an indication of whether the argument is a Date or not
              */
-            utils.isDate = function(d) {
+            utils.isDate = function (d) {
                 return utils.typeName(d) == 'Date';
             };
 
             /**
              * Does a deep clone of the object.
              */
-            utils.clone = function(obj) {
+            utils.clone = function (obj) {
                 if (!obj || typeof obj == 'function' || utils.isDate(obj) || typeof obj != 'object') {
                     return obj;
                 }
@@ -6614,13 +6616,13 @@ we should simply use a literal :
             /**
              * Returns a wrapped version of the function
              */
-            utils.close = function(context, func, params) {
+            utils.close = function (context, func, params) {
                 if (typeof params == 'undefined') {
-                    return function() {
+                    return function () {
                         return func.apply(context, arguments);
                     };
                 } else {
-                    return function() {
+                    return function () {
                         return func.apply(context, params);
                     };
                 }
@@ -6629,7 +6631,7 @@ we should simply use a literal :
             /**
              * Create a UUID
              */
-            utils.createUUID = function() {
+            utils.createUUID = function () {
                 return UUIDcreatePart(4) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(6);
             };
 
@@ -6637,11 +6639,11 @@ we should simply use a literal :
              * Extends a child object from a parent object using classical inheritance
              * pattern.
              */
-            utils.extend = (function() {
+            utils.extend = (function () {
                 // proxy used to establish prototype chain
-                var F = function() {};
+                var F = function () {};
                 // extend Child from Parent
-                return function(Child, Parent) {
+                return function (Child, Parent) {
                     F.prototype = Parent.prototype;
                     Child.prototype = new F();
                     Child.__super__ = Parent.prototype;
@@ -6652,7 +6654,7 @@ we should simply use a literal :
             /**
              * Alerts a message in any available way: alert or console.log.
              */
-            utils.alert = function(msg) {
+            utils.alert = function (msg) {
                 if (window.alert) {
                     window.alert(msg);
                 } else if (console && console.log) {
@@ -6665,7 +6667,7 @@ we should simply use a literal :
              *
              * see utils.vformat() for more information
              */
-            utils.format = function(formatString /* ,... */ ) {
+            utils.format = function (formatString /* ,... */ ) {
                 var args = [].slice.call(arguments, 1);
                 return utils.vformat(formatString, args);
             };
@@ -6684,7 +6686,7 @@ we should simply use a literal :
              * for rationale, see FireBug's Console API:
              *    http://getfirebug.com/wiki/index.php/Console_API
              */
-            utils.vformat = function(formatString, args) {
+            utils.vformat = function (formatString, args) {
                 if (formatString === null || formatString === undefined) return "";
                 if (arguments.length == 1) return formatString.toString();
                 if (typeof formatString != "string") return formatString.toString();
@@ -6737,11 +6739,11 @@ we should simply use a literal :
 
                 try {
                     switch (formatChar) {
-                        case 'j':
-                        case 'o':
-                            return JSON.stringify(object);
-                        case 'c':
-                            return '';
+                    case 'j':
+                    case 'o':
+                        return JSON.stringify(object);
+                    case 'c':
+                        return '';
                     }
                 } catch (e) {
                     return "error JSON.stringify()ing argument: " + e;
@@ -6761,12 +6763,12 @@ we should simply use a literal :
 
         // file: lib/scripts/bootstrap.js
 
-        (function(context) {
+        (function (context) {
             // Replace navigator before any modules are required(), to ensure it happens as soon as possible.
             // We replace it so that properties that can't be clobbered can instead be overridden.
 
             function replaceNavigator(origNavigator) {
-                var CordovaNavigator = function() {};
+                var CordovaNavigator = function () {};
                 CordovaNavigator.prototype = origNavigator;
                 var newNavigator = new CordovaNavigator();
                 // This work-around really only applies to new APIs that are newer than Function.bind.
@@ -6796,7 +6798,7 @@ we should simply use a literal :
             /**
              * Create all cordova objects once page has fully loaded and native side is ready.
              */
-            channel.join(function() {
+            channel.join(function () {
                 var builder = require('cordova/builder'),
                     platform = require('cordova/platform');
 
@@ -6812,7 +6814,7 @@ we should simply use a literal :
 
                 // Fire onDeviceReady event once all constructors have run and
                 // cordova info has been received from native side.
-                channel.join(function() {
+                channel.join(function () {
                     require('cordova').fireDocumentEvent('deviceready');
                 }, channel.deviceReadyChannelsArray);
 
@@ -6825,7 +6827,7 @@ we should simply use a literal :
         // Tries to load all plugins' js-modules.
         // This is an async process, but onDeviceReady is blocked on onPluginsReady.
         // onPluginsReady is fired when there are no plugins to load, or they are all done.
-        (function(context) {
+        (function (context) {
             // To be populated with the handler by handlePluginsObject.
             var onScriptLoadingComplete;
 
@@ -6864,7 +6866,7 @@ we should simply use a literal :
             function handlePluginsObject(modules) {
                 // First create the callback for when all plugins are loaded.
                 var mapper = context.cordova.require('cordova/modulemapper');
-                onScriptLoadingComplete = function() {
+                onScriptLoadingComplete = function () {
                     // Loop through all the plugins and then through their clobbers and merges.
                     for (var i = 0; i < modules.length; i++) {
                         var module = modules[i];
@@ -6902,7 +6904,7 @@ we should simply use a literal :
             // Try to XHR the cordova_plugins.json file asynchronously.
             try { // we commented we were going to try, so let us actually try and catch
                 var xhr = new context.XMLHttpRequest();
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if (this.readyState != 4) { // not DONE
                         return;
                     }
@@ -6932,14 +6934,14 @@ we should simply use a literal :
     })();
 
 } else if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i)) {;
-    (function() {
+    (function () {
 
         // file: lib/scripts/require.js
 
         var require,
-        define;
+            define;
 
-        (function() {
+        (function () {
             var modules = {};
             // Stack of moduleIds currently being built.
             var requireStack = [];
@@ -6954,7 +6956,7 @@ we should simply use a literal :
                 return module.exports;
             }
 
-            require = function(id) {
+            require = function (id) {
                 if (!modules[id]) {
                     throw "module " + id + " not found";
                 } else if (id in inProgressModules) {
@@ -6974,7 +6976,7 @@ we should simply use a literal :
                 return modules[id].exports;
             };
 
-            define = function(id, factory) {
+            define = function (id, factory) {
                 if (modules[id]) {
                     throw "module " + id + " already defined";
                 }
@@ -6985,7 +6987,7 @@ we should simply use a literal :
                 };
             };
 
-            define.remove = function(id) {
+            define.remove = function (id) {
                 delete modules[id];
             };
 
@@ -6998,7 +7000,7 @@ we should simply use a literal :
         }
 
         // file: lib/cordova.js
-        define("cordova", function(require, exports, module) {
+        define("cordova", function (require, exports, module) {
 
 
             var channel = require('cordova/channel');
@@ -7006,7 +7008,7 @@ we should simply use a literal :
             /**
              * Listen for DOMContentLoaded and notify our channel subscribers.
              */
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 channel.onDOMContentLoaded.fire();
             }, false);
             if (document.readyState == 'complete' || document.readyState == 'interactive') {
@@ -7026,9 +7028,9 @@ we should simply use a literal :
              * Houses custom event handlers to intercept on document + window event listeners.
              */
             var documentEventHandlers = {},
-            windowEventHandlers = {};
+                windowEventHandlers = {};
 
-            document.addEventListener = function(evt, handler, capture) {
+            document.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof documentEventHandlers[e] != 'undefined') {
                     documentEventHandlers[e].subscribe(handler);
@@ -7037,7 +7039,7 @@ we should simply use a literal :
                 }
             };
 
-            window.addEventListener = function(evt, handler, capture) {
+            window.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof windowEventHandlers[e] != 'undefined') {
                     windowEventHandlers[e].subscribe(handler);
@@ -7046,7 +7048,7 @@ we should simply use a literal :
                 }
             };
 
-            document.removeEventListener = function(evt, handler, capture) {
+            document.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubscribing from an event that is handled by a plugin
                 if (typeof documentEventHandlers[e] != "undefined") {
@@ -7056,7 +7058,7 @@ we should simply use a literal :
                 }
             };
 
-            window.removeEventListener = function(evt, handler, capture) {
+            window.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubscribing from an event that is handled by a plugin
                 if (typeof windowEventHandlers[e] != "undefined") {
@@ -7081,7 +7083,7 @@ we should simply use a literal :
 
             if (typeof window.console === "undefined") {
                 window.console = {
-                    log: function() {}
+                    log: function () {}
                 };
             }
 
@@ -7091,19 +7093,19 @@ we should simply use a literal :
                 /**
                  * Methods to add/remove your own addEventListener hijacking on document + window.
                  */
-                addWindowEventHandler: function(event) {
+                addWindowEventHandler: function (event) {
                     return (windowEventHandlers[event] = channel.create(event));
                 },
-                addStickyDocumentEventHandler: function(event) {
+                addStickyDocumentEventHandler: function (event) {
                     return (documentEventHandlers[event] = channel.createSticky(event));
                 },
-                addDocumentEventHandler: function(event) {
+                addDocumentEventHandler: function (event) {
                     return (documentEventHandlers[event] = channel.create(event));
                 },
-                removeWindowEventHandler: function(event) {
+                removeWindowEventHandler: function (event) {
                     delete windowEventHandlers[event];
                 },
-                removeDocumentEventHandler: function(event) {
+                removeDocumentEventHandler: function (event) {
                     delete documentEventHandlers[event];
                 },
                 /**
@@ -7111,7 +7113,7 @@ we should simply use a literal :
                  *
                  * @return object
                  */
-                getOriginalHandlers: function() {
+                getOriginalHandlers: function () {
                     return {
                         'document': {
                             'addEventListener': m_document_addEventListener,
@@ -7127,13 +7129,13 @@ we should simply use a literal :
                  * Method to fire event from native code
                  * bNoDetach is required for events which cause an exception which needs to be caught in native code
                  */
-                fireDocumentEvent: function(type, data, bNoDetach) {
+                fireDocumentEvent: function (type, data, bNoDetach) {
                     var evt = createEvent(type, data);
                     if (typeof documentEventHandlers[type] != 'undefined') {
                         if (bNoDetach) {
                             documentEventHandlers[type].fire(evt);
                         } else {
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 documentEventHandlers[type].fire(evt);
                             }, 0);
                         }
@@ -7141,10 +7143,10 @@ we should simply use a literal :
                         document.dispatchEvent(evt);
                     }
                 },
-                fireWindowEvent: function(type, data) {
+                fireWindowEvent: function (type, data) {
                     var evt = createEvent(type, data);
                     if (typeof windowEventHandlers[type] != 'undefined') {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             windowEventHandlers[type].fire(evt);
                         }, 0);
                     } else {
@@ -7175,7 +7177,7 @@ we should simply use a literal :
                 /**
                  * Called by native code when returning successful result from an action.
                  */
-                callbackSuccess: function(callbackId, args) {
+                callbackSuccess: function (callbackId, args) {
                     try {
                         cordova.callbackFromNative(callbackId, true, args.status, args.message, args.keepCallback);
                     } catch (e) {
@@ -7186,7 +7188,7 @@ we should simply use a literal :
                 /**
                  * Called by native code when returning error result from an action.
                  */
-                callbackError: function(callbackId, args) {
+                callbackError: function (callbackId, args) {
                     // TODO: Deprecate callbackSuccess and callbackError in favour of callbackFromNative.
                     // Derive success from status.
                     try {
@@ -7199,7 +7201,7 @@ we should simply use a literal :
                 /**
                  * Called by native code when returning the result from an action.
                  */
-                callbackFromNative: function(callbackId, success, status, message, keepCallback) {
+                callbackFromNative: function (callbackId, success, status, message, keepCallback) {
                     var callback = cordova.callbacks[callbackId];
                     if (callback) {
                         if (success && status == cordova.callbackStatus.OK) {
@@ -7214,8 +7216,8 @@ we should simply use a literal :
                         }
                     }
                 },
-                addConstructor: function(func) {
-                    channel.onCordovaReady.subscribe(function() {
+                addConstructor: function (func) {
+                    channel.onCordovaReady.subscribe(function () {
                         try {
                             func();
                         } catch (e) {
@@ -7235,7 +7237,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/argscheck.js
-        define("cordova/argscheck", function(require, exports, module) {
+        define("cordova/argscheck", function (require, exports, module) {
 
             var exec = require('cordova/exec');
             var moduleExports = module.exports;
@@ -7294,7 +7296,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/builder.js
-        define("cordova/builder", function(require, exports, module) {
+        define("cordova/builder", function (require, exports, module) {
 
             var utils = require('cordova/utils');
 
@@ -7310,7 +7312,7 @@ we should simply use a literal :
                 obj[key] = value;
                 // Getters can only be overridden by getters.
                 if (obj[key] !== value) {
-                    utils.defineGetter(obj, key, function() {
+                    utils.defineGetter(obj, key, function () {
                         return value;
                     });
                 }
@@ -7318,7 +7320,7 @@ we should simply use a literal :
 
             function assignOrWrapInDeprecateGetter(obj, key, value, message) {
                 if (message) {
-                    utils.defineGetter(obj, key, function() {
+                    utils.defineGetter(obj, key, function () {
                         console.log(message);
                         return value;
                     });
@@ -7328,7 +7330,7 @@ we should simply use a literal :
             }
 
             function include(parent, objects, clobber, merge) {
-                each(objects, function(obj, key) {
+                each(objects, function (obj, key) {
                     try {
                         var result = obj.path ? require(obj.path) : {};
 
@@ -7395,13 +7397,13 @@ we should simply use a literal :
             }
 
             module.exports = {
-                buildIntoButDoNotClobber: function(objects, target) {
+                buildIntoButDoNotClobber: function (objects, target) {
                     include(target, objects, false, false);
                 },
-                buildIntoAndClobber: function(objects, target) {
+                buildIntoAndClobber: function (objects, target) {
                     include(target, objects, true, false);
                 },
-                buildIntoAndMerge: function(objects, target) {
+                buildIntoAndMerge: function (objects, target) {
                     include(target, objects, true, true);
                 }
             };
@@ -7409,7 +7411,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/channel.js
-        define("cordova/channel", function(require, exports, module) {
+        define("cordova/channel", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 nextGuid = 1;
@@ -7455,7 +7457,7 @@ we should simply use a literal :
              * @constructor
              * @param type  String the channel name
              */
-            var Channel = function(type, sticky) {
+            var Channel = function (type, sticky) {
                 this.type = type;
                 // Map of guid -> function.
                 this.handlers = {};
@@ -7469,65 +7471,65 @@ we should simply use a literal :
                 // the last listener is unsubscribed.
                 this.onHasSubscribersChange = null;
             },
-            channel = {
-                /**
-                 * Calls the provided function only after all of the channels specified
-                 * have been fired. All channels must be sticky channels.
-                 */
-                join: function(h, c) {
-                    var len = c.length,
-                        i = len,
-                        f = function() {
-                            if (!(--i)) h();
-                        };
-                    for (var j = 0; j < len; j++) {
-                        if (c[j].state === 0) {
-                            throw Error('Can only use join with sticky channels.');
+                channel = {
+                    /**
+                     * Calls the provided function only after all of the channels specified
+                     * have been fired. All channels must be sticky channels.
+                     */
+                    join: function (h, c) {
+                        var len = c.length,
+                            i = len,
+                            f = function () {
+                                if (!(--i)) h();
+                            };
+                        for (var j = 0; j < len; j++) {
+                            if (c[j].state === 0) {
+                                throw Error('Can only use join with sticky channels.');
+                            }
+                            c[j].subscribe(f);
                         }
-                        c[j].subscribe(f);
-                    }
-                    if (!len) h();
-                },
-                create: function(type) {
-                    return channel[type] = new Channel(type, false);
-                },
-                createSticky: function(type) {
-                    return channel[type] = new Channel(type, true);
-                },
+                        if (!len) h();
+                    },
+                    create: function (type) {
+                        return channel[type] = new Channel(type, false);
+                    },
+                    createSticky: function (type) {
+                        return channel[type] = new Channel(type, true);
+                    },
 
-                /**
-                 * cordova Channels that must fire before "deviceready" is fired.
-                 */
-                deviceReadyChannelsArray: [],
-                deviceReadyChannelsMap: {},
+                    /**
+                     * cordova Channels that must fire before "deviceready" is fired.
+                     */
+                    deviceReadyChannelsArray: [],
+                    deviceReadyChannelsMap: {},
 
-                /**
-                 * Indicate that a feature needs to be initialized before it is ready to be used.
-                 * This holds up Cordova's "deviceready" event until the feature has been initialized
-                 * and Cordova.initComplete(feature) is called.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                waitForInitialization: function(feature) {
-                    if (feature) {
-                        var c = channel[feature] || this.createSticky(feature);
-                        this.deviceReadyChannelsMap[feature] = c;
-                        this.deviceReadyChannelsArray.push(c);
-                    }
-                },
+                    /**
+                     * Indicate that a feature needs to be initialized before it is ready to be used.
+                     * This holds up Cordova's "deviceready" event until the feature has been initialized
+                     * and Cordova.initComplete(feature) is called.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    waitForInitialization: function (feature) {
+                        if (feature) {
+                            var c = channel[feature] || this.createSticky(feature);
+                            this.deviceReadyChannelsMap[feature] = c;
+                            this.deviceReadyChannelsArray.push(c);
+                        }
+                    },
 
-                /**
-                 * Indicate that initialization code has completed and the feature is ready to be used.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                initializationComplete: function(feature) {
-                    var c = this.deviceReadyChannelsMap[feature];
-                    if (c) {
-                        c.fire();
+                    /**
+                     * Indicate that initialization code has completed and the feature is ready to be used.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    initializationComplete: function (feature) {
+                        var c = this.deviceReadyChannelsMap[feature];
+                        if (c) {
+                            c.fire();
+                        }
                     }
-                }
-            };
+                };
 
             function forceFunction(f) {
                 if (typeof f != 'function') throw "Function required as first argument!";
@@ -7540,7 +7542,7 @@ we should simply use a literal :
              * and a guid that can be used to stop subscribing to the channel.
              * Returns the guid.
              */
-            Channel.prototype.subscribe = function(f, c) {
+            Channel.prototype.subscribe = function (f, c) {
                 // need a function to call
                 forceFunction(f);
                 if (this.state == 2) {
@@ -7574,7 +7576,7 @@ we should simply use a literal :
             /**
              * Unsubscribes the function with the given guid from the channel.
              */
-            Channel.prototype.unsubscribe = function(f) {
+            Channel.prototype.unsubscribe = function (f) {
                 // need a function to unsubscribe
                 forceFunction(f);
 
@@ -7592,7 +7594,7 @@ we should simply use a literal :
             /**
              * Calls all functions subscribed to this channel.
              */
-            Channel.prototype.fire = function(e) {
+            Channel.prototype.fire = function (e) {
                 var fail = false,
                     fireArgs = Array.prototype.slice.call(arguments);
                 // Apply stickiness.
@@ -7657,7 +7659,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/commandProxy.js
-        define("cordova/commandProxy", function(require, exports, module) {
+        define("cordova/commandProxy", function (require, exports, module) {
 
 
             // internal map of proxy function
@@ -7666,28 +7668,28 @@ we should simply use a literal :
             module.exports = {
 
                 // example: cordova.commandProxy.add("Accelerometer",{getCurrentAcceleration: function(successCallback, errorCallback, options) {...},...);
-                add: function(id, proxyObj) {
+                add: function (id, proxyObj) {
                     console.log("adding proxy for " + id);
                     CommandProxyMap[id] = proxyObj;
                     return proxyObj;
                 },
 
                 // cordova.commandProxy.remove("Accelerometer");
-                remove: function(id) {
+                remove: function (id) {
                     var proxy = CommandProxyMap[id];
                     delete CommandProxyMap[id];
                     CommandProxyMap[id] = null;
                     return proxy;
                 },
 
-                get: function(service, action) {
+                get: function (service, action) {
                     return (CommandProxyMap[service] ? CommandProxyMap[service][action] : null);
                 }
             };
         });
 
         // file: lib/common/common.js
-        define("cordova/common", function(require, exports, module) {
+        define("cordova/common", function (require, exports, module) {
 
             module.exports = {
                 defaults: {
@@ -7911,7 +7913,7 @@ we should simply use a literal :
         });
 
         // file: lib/ios/exec.js
-        define("cordova/exec", function(require, exports, module) {
+        define("cordova/exec", function (require, exports, module) {
 
             /**
              * Creates a gap bridge iframe used to notify the native code about queued
@@ -8040,7 +8042,7 @@ we should simply use a literal :
 
             iOSExec.jsToNativeModes = jsToNativeModes;
 
-            iOSExec.setJsToNativeBridgeMode = function(mode) {
+            iOSExec.setJsToNativeBridgeMode = function (mode) {
                 // Remove the iFrame since it may be no longer required, and its existence
                 // can trigger browser bugs.
                 // https://issues.apache.org/jira/browse/CB-593
@@ -8051,7 +8053,7 @@ we should simply use a literal :
                 bridgeMode = mode;
             };
 
-            iOSExec.nativeFetchMessages = function() {
+            iOSExec.nativeFetchMessages = function () {
                 // Each entry in commandQueue is a JSON string already.
                 if (!commandQueue.length) {
                     return '';
@@ -8061,14 +8063,14 @@ we should simply use a literal :
                 return json;
             };
 
-            iOSExec.nativeCallback = function(callbackId, status, payload, keepCallback) {
-                return iOSExec.nativeEvalAndFetch(function() {
+            iOSExec.nativeCallback = function (callbackId, status, payload, keepCallback) {
+                return iOSExec.nativeEvalAndFetch(function () {
                     var success = status === 0 || status === 1;
                     cordova.callbackFromNative(callbackId, success, status, payload, keepCallback);
                 });
             };
 
-            iOSExec.nativeEvalAndFetch = function(func) {
+            iOSExec.nativeEvalAndFetch = function (func) {
                 // This shouldn't be nested, but better to be safe.
                 isInContextOfEvalJs++;
                 try {
@@ -8084,11 +8086,11 @@ we should simply use a literal :
         });
 
         // file: lib/ios/platform.js
-        define("cordova/platform", function(require, exports, module) {
+        define("cordova/platform", function (require, exports, module) {
 
             module.exports = {
                 id: "ios",
-                initialize: function() {},
+                initialize: function () {},
                 clobbers: {
                     File: { // exists natively, override
                         path: "cordova/plugin/File"
@@ -8139,9 +8141,9 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Acceleration.js
-        define("cordova/plugin/Acceleration", function(require, exports, module) {
+        define("cordova/plugin/Acceleration", function (require, exports, module) {
 
-            var Acceleration = function(x, y, z, timestamp) {
+            var Acceleration = function (x, y, z, timestamp) {
                 this.x = x;
                 this.y = y;
                 this.z = z;
@@ -8153,7 +8155,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Camera.js
-        define("cordova/plugin/Camera", function(require, exports, module) {
+        define("cordova/plugin/Camera", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 Camera = require('cordova/plugin/CameraConstants');
@@ -8174,7 +8176,7 @@ we should simply use a literal :
              * @param {Function} errorCallback
              * @param {Object} options
              */
-            cameraExport.getPicture = function(successCallback, errorCallback, options) {
+            cameraExport.getPicture = function (successCallback, errorCallback, options) {
                 options = options || {};
                 // successCallback required
                 if (typeof successCallback != "function") {
@@ -8261,12 +8263,13 @@ we should simply use a literal :
                 }
 
                 var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
-                mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions];
+                    mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions
+                ];
 
                 exec(successCallback, errorCallback, "Camera", "takePicture", args);
             };
 
-            cameraExport.cleanup = function(successCallback, errorCallback) {
+            cameraExport.cleanup = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, "Camera", "cleanup", []);
             };
 
@@ -8275,7 +8278,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CameraConstants.js
-        define("cordova/plugin/CameraConstants", function(require, exports, module) {
+        define("cordova/plugin/CameraConstants", function (require, exports, module) {
 
             module.exports = {
                 DestinationType: {
@@ -8308,14 +8311,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CameraPopoverOptions.js
-        define("cordova/plugin/CameraPopoverOptions", function(require, exports, module) {
+        define("cordova/plugin/CameraPopoverOptions", function (require, exports, module) {
 
             var Camera = require('cordova/plugin/CameraConstants');
 
             /**
              * Encapsulates options for iOS Popover image picker
              */
-            var CameraPopoverOptions = function(x, y, width, height, arrowDir) {
+            var CameraPopoverOptions = function (x, y, width, height, arrowDir) {
                 // information of rectangle that popover should be anchored to
                 this.x = x || 0;
                 this.y = y || 32;
@@ -8330,12 +8333,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureAudioOptions.js
-        define("cordova/plugin/CaptureAudioOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureAudioOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all audio capture operation configuration options.
              */
-            var CaptureAudioOptions = function() {
+            var CaptureAudioOptions = function () {
                 // Upper limit of sound clips user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single sound clip in seconds.
@@ -8349,12 +8352,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureError.js
-        define("cordova/plugin/CaptureError", function(require, exports, module) {
+        define("cordova/plugin/CaptureError", function (require, exports, module) {
 
             /**
              * The CaptureError interface encapsulates all errors in the Capture API.
              */
-            var CaptureError = function(c) {
+            var CaptureError = function (c) {
                 this.code = c || null;
             };
 
@@ -8374,12 +8377,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureImageOptions.js
-        define("cordova/plugin/CaptureImageOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureImageOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all image capture operation configuration options.
              */
-            var CaptureImageOptions = function() {
+            var CaptureImageOptions = function () {
                 // Upper limit of images user can take. Value must be equal or greater than 1.
                 this.limit = 1;
                 // The selected image mode. Must match with one of the elements in supportedImageModes array.
@@ -8391,12 +8394,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureVideoOptions.js
-        define("cordova/plugin/CaptureVideoOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureVideoOptions", function (require, exports, module) {
 
             /**
              * Encapsulates all video capture operation configuration options.
              */
-            var CaptureVideoOptions = function() {
+            var CaptureVideoOptions = function () {
                 // Upper limit of videos user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single video clip in seconds.
@@ -8410,14 +8413,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CompassError.js
-        define("cordova/plugin/CompassError", function(require, exports, module) {
+        define("cordova/plugin/CompassError", function (require, exports, module) {
 
             /**
              *  CompassError.
              *  An error code assigned by an implementation when an error has occurred
              * @constructor
              */
-            var CompassError = function(err) {
+            var CompassError = function (err) {
                 this.code = (err !== undefined ? err : null);
             };
 
@@ -8429,9 +8432,9 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CompassHeading.js
-        define("cordova/plugin/CompassHeading", function(require, exports, module) {
+        define("cordova/plugin/CompassHeading", function (require, exports, module) {
 
-            var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp) {
+            var CompassHeading = function (magneticHeading, trueHeading, headingAccuracy, timestamp) {
                 this.magneticHeading = (magneticHeading !== undefined ? magneticHeading : null);
                 this.trueHeading = (trueHeading !== undefined ? trueHeading : null);
                 this.headingAccuracy = (headingAccuracy !== undefined ? headingAccuracy : null);
@@ -8443,7 +8446,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ConfigurationData.js
-        define("cordova/plugin/ConfigurationData", function(require, exports, module) {
+        define("cordova/plugin/ConfigurationData", function (require, exports, module) {
 
             /**
              * Encapsulates a set of parameters that the capture device supports.
@@ -8465,7 +8468,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Connection.js
-        define("cordova/plugin/Connection", function(require, exports, module) {
+        define("cordova/plugin/Connection", function (require, exports, module) {
 
             /**
              * Network status
@@ -8483,7 +8486,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Contact.js
-        define("cordova/plugin/Contact", function(require, exports, module) {
+        define("cordova/plugin/Contact", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 ContactError = require('cordova/plugin/ContactError'),
@@ -8546,8 +8549,8 @@ we should simply use a literal :
              * @param {Array.<ContactField>} categories
              * @param {Array.<ContactField>} urls contact's web sites
              */
-            var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, addresses,
-            ims, organizations, birthday, note, photos, categories, urls) {
+            var Contact = function (id, displayName, name, nickname, phoneNumbers, emails, addresses,
+                ims, organizations, birthday, note, photos, categories, urls) {
                 this.id = id || null;
                 this.rawId = null;
                 this.displayName = displayName || null;
@@ -8570,8 +8573,8 @@ we should simply use a literal :
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.remove = function(successCB, errorCB) {
-                var fail = function(code) {
+            Contact.prototype.remove = function (successCB, errorCB) {
+                var fail = function (code) {
                     errorCB(new ContactError(code));
                 };
                 if (this.id === null) {
@@ -8586,7 +8589,7 @@ we should simply use a literal :
              * With the contact ID set to null.
              * @return copy of this Contact
              */
-            Contact.prototype.clone = function() {
+            Contact.prototype.clone = function () {
                 var clonedContact = utils.clone(this);
                 var i;
                 clonedContact.id = null;
@@ -8640,11 +8643,11 @@ we should simply use a literal :
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.save = function(successCB, errorCB) {
-                var fail = function(code) {
+            Contact.prototype.save = function (successCB, errorCB) {
+                var fail = function (code) {
                     errorCB(new ContactError(code));
                 };
-                var success = function(result) {
+                var success = function (result) {
                     if (result) {
                         if (typeof successCB === 'function') {
                             var fullContact = require('cordova/plugin/contacts').create(result);
@@ -8665,7 +8668,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactAddress.js
-        define("cordova/plugin/ContactAddress", function(require, exports, module) {
+        define("cordova/plugin/ContactAddress", function (require, exports, module) {
 
             /**
              * Contact address.
@@ -8679,7 +8682,7 @@ we should simply use a literal :
              * @param country
              */
 
-            var ContactAddress = function(pref, type, formatted, streetAddress, locality, region, postalCode, country) {
+            var ContactAddress = function (pref, type, formatted, streetAddress, locality, region, postalCode, country) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -8696,14 +8699,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactError.js
-        define("cordova/plugin/ContactError", function(require, exports, module) {
+        define("cordova/plugin/ContactError", function (require, exports, module) {
 
             /**
              *  ContactError.
              *  An error code assigned by an implementation when an error has occurred
              * @constructor
              */
-            var ContactError = function(err) {
+            var ContactError = function (err) {
                 this.code = (typeof err != 'undefined' ? err : null);
             };
 
@@ -8723,7 +8726,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactField.js
-        define("cordova/plugin/ContactField", function(require, exports, module) {
+        define("cordova/plugin/ContactField", function (require, exports, module) {
 
             /**
              * Generic contact field.
@@ -8733,7 +8736,7 @@ we should simply use a literal :
              * @param value
              * @param pref
              */
-            var ContactField = function(type, value, pref) {
+            var ContactField = function (type, value, pref) {
                 this.id = null;
                 this.type = (type && type.toString()) || null;
                 this.value = (value && value.toString()) || null;
@@ -8745,7 +8748,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactFindOptions.js
-        define("cordova/plugin/ContactFindOptions", function(require, exports, module) {
+        define("cordova/plugin/ContactFindOptions", function (require, exports, module) {
 
             /**
              * ContactFindOptions.
@@ -8754,7 +8757,7 @@ we should simply use a literal :
              * @param multiple boolean used to determine if more than one contact should be returned
              */
 
-            var ContactFindOptions = function(filter, multiple) {
+            var ContactFindOptions = function (filter, multiple) {
                 this.filter = filter || '';
                 this.multiple = (typeof multiple != 'undefined' ? multiple : false);
             };
@@ -8764,7 +8767,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactName.js
-        define("cordova/plugin/ContactName", function(require, exports, module) {
+        define("cordova/plugin/ContactName", function (require, exports, module) {
 
             /**
              * Contact name.
@@ -8776,7 +8779,7 @@ we should simply use a literal :
              * @param prefix
              * @param suffix
              */
-            var ContactName = function(formatted, familyName, givenName, middle, prefix, suffix) {
+            var ContactName = function (formatted, familyName, givenName, middle, prefix, suffix) {
                 this.formatted = formatted || null;
                 this.familyName = familyName || null;
                 this.givenName = givenName || null;
@@ -8790,7 +8793,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactOrganization.js
-        define("cordova/plugin/ContactOrganization", function(require, exports, module) {
+        define("cordova/plugin/ContactOrganization", function (require, exports, module) {
 
             /**
              * Contact organization.
@@ -8805,7 +8808,7 @@ we should simply use a literal :
              * @param desc
              */
 
-            var ContactOrganization = function(pref, type, name, dept, title) {
+            var ContactOrganization = function (pref, type, name, dept, title) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -8819,7 +8822,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Coordinates.js
-        define("cordova/plugin/Coordinates", function(require, exports, module) {
+        define("cordova/plugin/Coordinates", function (require, exports, module) {
 
             /**
              * This class contains position information.
@@ -8832,7 +8835,7 @@ we should simply use a literal :
              * @param {Object} altacc
              * @constructor
              */
-            var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
+            var Coordinates = function (lat, lng, alt, acc, head, vel, altacc) {
                 /**
                  * The latitude of the position.
                  */
@@ -8873,7 +8876,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/DirectoryEntry.js
-        define("cordova/plugin/DirectoryEntry", function(require, exports, module) {
+        define("cordova/plugin/DirectoryEntry", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -8890,7 +8893,7 @@ we should simply use a literal :
              * {DOMString} fullPath the absolute full path to the directory (readonly)
              * TODO: implement this!!! {FileSystem} filesystem on which the directory resides (readonly)
              */
-            var DirectoryEntry = function(name, fullPath) {
+            var DirectoryEntry = function (name, fullPath) {
                 DirectoryEntry.__super__.constructor.apply(this, [false, true, name, fullPath]);
             };
 
@@ -8899,7 +8902,7 @@ we should simply use a literal :
             /**
              * Creates a new DirectoryReader to read entries from this directory
              */
-            DirectoryEntry.prototype.createReader = function() {
+            DirectoryEntry.prototype.createReader = function () {
                 return new DirectoryReader(this.fullPath);
             };
 
@@ -8911,12 +8914,12 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getDirectory = function(path, options, successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryEntry.prototype.getDirectory = function (path, options, successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getDirectory", [this.fullPath, path, options]);
@@ -8928,8 +8931,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with no parameters
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCallback) {
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+            DirectoryEntry.prototype.removeRecursively = function (successCallback, errorCallback) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "removeRecursively", [this.fullPath]);
@@ -8943,13 +8946,13 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getFile = function(path, options, successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryEntry.prototype.getFile = function (path, options, successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var FileEntry = require('cordova/plugin/FileEntry');
                         var entry = new FileEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFile", [this.fullPath, path, options]);
@@ -8960,7 +8963,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/DirectoryReader.js
-        define("cordova/plugin/DirectoryReader", function(require, exports, module) {
+        define("cordova/plugin/DirectoryReader", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError');
@@ -8979,8 +8982,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with a list of entries
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryReader.prototype.readEntries = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryReader.prototype.readEntries = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var retVal = [];
                         for (var i = 0; i < result.length; i++) {
                             var entry = null;
@@ -8997,7 +9000,7 @@ we should simply use a literal :
                         }
                         successCallback(retVal);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "readEntries", [this.path]);
@@ -9008,7 +9011,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Entry.js
-        define("cordova/plugin/Entry", function(require, exports, module) {
+        define("cordova/plugin/Entry", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
@@ -9045,12 +9048,12 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} is called with a FileError
              */
-            Entry.prototype.getMetadata = function(successCallback, errorCallback) {
-                var success = typeof successCallback !== 'function' ? null : function(lastModified) {
+            Entry.prototype.getMetadata = function (successCallback, errorCallback) {
+                var success = typeof successCallback !== 'function' ? null : function (lastModified) {
                         var metadata = new Metadata(lastModified);
                         successCallback(metadata);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
 
@@ -9067,7 +9070,7 @@ we should simply use a literal :
              * @param metadataObject
              *            {Object} keys and values to set
              */
-            Entry.prototype.setMetadata = function(successCallback, errorCallback, metadataObject) {
+            Entry.prototype.setMetadata = function (successCallback, errorCallback, metadataObject) {
 
                 exec(successCallback, errorCallback, "File", "setMetadata", [this.fullPath, metadataObject]);
             };
@@ -9084,8 +9087,8 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.moveTo = function(parent, newName, successCallback, errorCallback) {
-                var fail = function(code) {
+            Entry.prototype.moveTo = function (parent, newName, successCallback, errorCallback) {
+                var fail = function (code) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(code));
                     }
@@ -9099,7 +9102,7 @@ we should simply use a literal :
                 var srcPath = this.fullPath,
                     // entry name
                     name = newName || this.name,
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (typeof successCallback === 'function') {
                                 // create appropriate Entry object
@@ -9132,8 +9135,8 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.copyTo = function(parent, newName, successCallback, errorCallback) {
-                var fail = function(code) {
+            Entry.prototype.copyTo = function (parent, newName, successCallback, errorCallback) {
+                var fail = function (code) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(code));
                     }
@@ -9150,7 +9153,7 @@ we should simply use a literal :
                     // entry name
                     name = newName || this.name,
                     // success callback
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (typeof successCallback === 'function') {
                                 // create appropriate Entry object
@@ -9174,7 +9177,7 @@ we should simply use a literal :
             /**
              * Return a URL that can be used to identify this entry.
              */
-            Entry.prototype.toURL = function() {
+            Entry.prototype.toURL = function () {
                 // fullPath attribute contains the full URL
                 return this.fullPath;
             };
@@ -9185,7 +9188,7 @@ we should simply use a literal :
              * @param {DOMString} mimeType for a FileEntry, the mime type to be used to interpret the file, when loaded through this URI.
              * @return uri
              */
-            Entry.prototype.toURI = function(mimeType) {
+            Entry.prototype.toURI = function (mimeType) {
                 console.log("DEPRECATED: Update your code to use 'toURL'");
                 // fullPath attribute contains the full URI
                 return this.toURL();
@@ -9199,8 +9202,8 @@ we should simply use a literal :
              * @param successCallback {Function} called with no parameters
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.remove = function(successCallback, errorCallback) {
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+            Entry.prototype.remove = function (successCallback, errorCallback) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "remove", [this.fullPath]);
@@ -9212,13 +9215,13 @@ we should simply use a literal :
              * @param successCallback {Function} called with the parent DirectoryEntry object
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.getParent = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            Entry.prototype.getParent = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getParent", [this.fullPath]);
@@ -9229,7 +9232,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/File.js
-        define("cordova/plugin/File", function(require, exports, module) {
+        define("cordova/plugin/File", function (require, exports, module) {
 
             /**
              * Constructor.
@@ -9240,7 +9243,7 @@ we should simply use a literal :
              * size {Number} size of the file in bytes
              */
 
-            var File = function(name, fullPath, type, lastModifiedDate, size) {
+            var File = function (name, fullPath, type, lastModifiedDate, size) {
                 this.name = name || '';
                 this.fullPath = fullPath || null;
                 this.type = type || null;
@@ -9253,7 +9256,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileEntry.js
-        define("cordova/plugin/FileEntry", function(require, exports, module) {
+        define("cordova/plugin/FileEntry", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -9271,7 +9274,7 @@ we should simply use a literal :
              * {DOMString} fullPath the absolute full path to the file (readonly)
              * {FileSystem} filesystem on which the file resides (readonly)
              */
-            var FileEntry = function(name, fullPath) {
+            var FileEntry = function (name, fullPath) {
                 FileEntry.__super__.constructor.apply(this, [true, false, name, fullPath]);
             };
 
@@ -9283,8 +9286,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new FileWriter
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
-                this.file(function(filePointer) {
+            FileEntry.prototype.createWriter = function (successCallback, errorCallback) {
+                this.file(function (filePointer) {
                     var writer = new FileWriter(filePointer);
 
                     if (writer.fileName === null || writer.fileName === "") {
@@ -9305,12 +9308,12 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new File object
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.file = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(f) {
+            FileEntry.prototype.file = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (f) {
                         var file = new File(f.name, f.fullPath, f.type, f.lastModifiedDate, f.size);
                         successCallback(file);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFileMetadata", [this.fullPath]);
@@ -9322,7 +9325,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileError.js
-        define("cordova/plugin/FileError", function(require, exports, module) {
+        define("cordova/plugin/FileError", function (require, exports, module) {
 
             /**
              * FileError
@@ -9354,7 +9357,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileReader.js
-        define("cordova/plugin/FileReader", function(require, exports, module) {
+        define("cordova/plugin/FileReader", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
@@ -9368,7 +9371,7 @@ we should simply use a literal :
              *      To read from the SD card, the file name is "sdcard/my_file.txt"
              * @constructor
              */
-            var FileReader = function() {
+            var FileReader = function () {
                 this.fileName = "";
 
                 this.readyState = 0; // FileReader.EMPTY
@@ -9396,7 +9399,7 @@ we should simply use a literal :
             /**
              * Abort reading file.
              */
-            FileReader.prototype.abort = function() {
+            FileReader.prototype.abort = function () {
                 this.result = null;
 
                 if (this.readyState == FileReader.DONE || this.readyState == FileReader.EMPTY) {
@@ -9425,7 +9428,7 @@ we should simply use a literal :
              * @param file          {File} File object containing file properties
              * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
              */
-            FileReader.prototype.readAsText = function(file, encoding) {
+            FileReader.prototype.readAsText = function (file, encoding) {
                 // Figure out pathing
                 this.fileName = '';
                 if (typeof file.fullPath === 'undefined') {
@@ -9456,65 +9459,65 @@ we should simply use a literal :
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // Save result
-                    me.result = r;
+                        // Save result
+                        me.result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // null result
-                    me.result = null;
+                        // null result
+                        me.result = null;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsText", [this.fileName, enc]);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsText", [this.fileName, enc]);
             };
 
 
@@ -9525,7 +9528,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsDataURL = function(file) {
+            FileReader.prototype.readAsDataURL = function (file) {
                 this.fileName = "";
                 if (typeof file.fullPath === "undefined") {
                     this.fileName = file;
@@ -9552,64 +9555,64 @@ we should simply use a literal :
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // Save result
-                    me.result = r;
+                        // Save result
+                        me.result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    me.result = null;
+                        me.result = null;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsDataURL", [this.fileName]);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsDataURL", [this.fileName]);
             };
 
             /**
@@ -9617,7 +9620,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsBinaryString = function(file) {
+            FileReader.prototype.readAsBinaryString = function (file) {
                 // TODO - Can't return binary data to browser.
                 console.log('method "readAsBinaryString" is not supported at this time.');
             };
@@ -9627,7 +9630,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsArrayBuffer = function(file) {
+            FileReader.prototype.readAsArrayBuffer = function (file) {
                 // TODO - Can't return binary data to browser.
                 console.log('This method is not supported at this time.');
             };
@@ -9637,7 +9640,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileSystem.js
-        define("cordova/plugin/FileSystem", function(require, exports, module) {
+        define("cordova/plugin/FileSystem", function (require, exports, module) {
 
             var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
 
@@ -9648,7 +9651,7 @@ we should simply use a literal :
              * {DOMString} name the unique name of the file system (readonly)
              * {DirectoryEntry} root directory of the file system (readonly)
              */
-            var FileSystem = function(name, root) {
+            var FileSystem = function (name, root) {
                 this.name = name || null;
                 if (root) {
                     this.root = new DirectoryEntry(root.name, root.fullPath);
@@ -9660,7 +9663,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileTransfer.js
-        define("cordova/plugin/FileTransfer", function(require, exports, module) {
+        define("cordova/plugin/FileTransfer", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileTransferError = require('cordova/plugin/FileTransferError'),
@@ -9680,7 +9683,7 @@ we should simply use a literal :
              * FileTransfer uploads a file to a remote server.
              * @constructor
              */
-            var FileTransfer = function() {
+            var FileTransfer = function () {
                 this._id = ++idCounter;
                 this.onprogress = null; // optional callback
             };
@@ -9695,7 +9698,7 @@ we should simply use a literal :
              * @param options {FileUploadOptions} Optional parameters such as file name and mimetype
              * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
              */
-            FileTransfer.prototype.upload = function(filePath, server, successCallback, errorCallback, options, trustAllHosts) {
+            FileTransfer.prototype.upload = function (filePath, server, successCallback, errorCallback, options, trustAllHosts) {
                 // sanity parameter checking
                 if (!filePath || !server) throw new Error("FileTransfer.upload requires filePath and server URL parameters at the minimum.");
                 // check for options
@@ -9720,13 +9723,13 @@ we should simply use a literal :
                     }
                 }
 
-                var fail = function(e) {
+                var fail = function (e) {
                     var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
                     errorCallback(error);
                 };
 
                 var self = this;
-                var win = function(result) {
+                var win = function (result) {
                     if (typeof result.lengthComputable != "undefined") {
                         if (self.onprogress) {
                             return self.onprogress(newProgressEvent(result));
@@ -9746,11 +9749,11 @@ we should simply use a literal :
              * @param errorCallback {Function}    Callback to be invoked upon error
              * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
              */
-            FileTransfer.prototype.download = function(source, target, successCallback, errorCallback, trustAllHosts) {
+            FileTransfer.prototype.download = function (source, target, successCallback, errorCallback, trustAllHosts) {
                 // sanity parameter checking
                 if (!source || !target) throw new Error("FileTransfer.download requires source URI and target URI parameters at the minimum.");
                 var self = this;
-                var win = function(result) {
+                var win = function (result) {
                     if (typeof result.lengthComputable != "undefined") {
                         if (self.onprogress) {
                             return self.onprogress(newProgressEvent(result));
@@ -9770,7 +9773,7 @@ we should simply use a literal :
                     }
                 };
 
-                var fail = function(e) {
+                var fail = function (e) {
                     var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
                     errorCallback(error);
                 };
@@ -9783,7 +9786,7 @@ we should simply use a literal :
              * @param successCallback {Function}  Callback to be invoked upon success
              * @param errorCallback {Function}    Callback to be invoked upon error
              */
-            FileTransfer.prototype.abort = function(successCallback, errorCallback) {
+            FileTransfer.prototype.abort = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, 'FileTransfer', 'abort', [this._id]);
             };
 
@@ -9792,13 +9795,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileTransferError.js
-        define("cordova/plugin/FileTransferError", function(require, exports, module) {
+        define("cordova/plugin/FileTransferError", function (require, exports, module) {
 
             /**
              * FileTransferError
              * @constructor
              */
-            var FileTransferError = function(code, source, target, status) {
+            var FileTransferError = function (code, source, target, status) {
                 this.code = code || null;
                 this.source = source || null;
                 this.target = target || null;
@@ -9815,7 +9818,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileUploadOptions.js
-        define("cordova/plugin/FileUploadOptions", function(require, exports, module) {
+        define("cordova/plugin/FileUploadOptions", function (require, exports, module) {
 
             /**
              * Options to customize the HTTP request used to upload files.
@@ -9827,7 +9830,7 @@ we should simply use a literal :
              * @param headers {Object}   Keys are header names, values are header values. Multiple
              *                           headers of the same name are not supported.
              */
-            var FileUploadOptions = function(fileKey, fileName, mimeType, params, headers) {
+            var FileUploadOptions = function (fileKey, fileName, mimeType, params, headers) {
                 this.fileKey = fileKey || null;
                 this.fileName = fileName || null;
                 this.mimeType = mimeType || null;
@@ -9840,13 +9843,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileUploadResult.js
-        define("cordova/plugin/FileUploadResult", function(require, exports, module) {
+        define("cordova/plugin/FileUploadResult", function (require, exports, module) {
 
             /**
              * FileUploadResult
              * @constructor
              */
-            var FileUploadResult = function() {
+            var FileUploadResult = function () {
                 this.bytesSent = 0;
                 this.responseCode = null;
                 this.response = null;
@@ -9857,7 +9860,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileWriter.js
-        define("cordova/plugin/FileWriter", function(require, exports, module) {
+        define("cordova/plugin/FileWriter", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
@@ -9874,7 +9877,7 @@ we should simply use a literal :
              * @param file {File} File object containing file properties
              * @param append if true write to the end of the file, otherwise overwrite the file
              */
-            var FileWriter = function(file) {
+            var FileWriter = function (file) {
                 this.fileName = "";
                 this.length = 0;
                 if (file) {
@@ -9908,7 +9911,7 @@ we should simply use a literal :
             /**
              * Abort writing file.
              */
-            FileWriter.prototype.abort = function() {
+            FileWriter.prototype.abort = function () {
                 // check for invalid state
                 if (this.readyState === FileWriter.DONE || this.readyState === FileWriter.INIT) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -9939,7 +9942,7 @@ we should simply use a literal :
              *
              * @param text to be written
              */
-            FileWriter.prototype.write = function(text) {
+            FileWriter.prototype.write = function (text) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -9959,65 +9962,65 @@ we should simply use a literal :
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // position always increases by bytes written because file would be extended
-                    me.position += r;
-                    // The length of the file is now where we are done writing.
+                        // position always increases by bytes written because file would be extended
+                        me.position += r;
+                        // The length of the file is now where we are done writing.
 
-                    me.length = me.position;
+                        me.length = me.position;
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "write", [this.fileName, text, this.position]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "write", [this.fileName, text, this.position]);
             };
 
             /**
@@ -10029,7 +10032,7 @@ we should simply use a literal :
              *
              * @param offset is the location to move the file pointer to.
              */
-            FileWriter.prototype.seek = function(offset) {
+            FileWriter.prototype.seek = function (offset) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -10060,7 +10063,7 @@ we should simply use a literal :
              *
              * @param size to chop the file at.
              */
-            FileWriter.prototype.truncate = function(size) {
+            FileWriter.prototype.truncate = function (size) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -10080,63 +10083,63 @@ we should simply use a literal :
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Update the length of the file
-                    me.length = r;
-                    me.position = Math.min(me.position, r);
+                        // Update the length of the file
+                        me.length = r;
+                        me.position = Math.min(me.position, r);
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "truncate", [this.fileName, size]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "truncate", [this.fileName, size]);
             };
 
             module.exports = FileWriter;
@@ -10144,7 +10147,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Flags.js
-        define("cordova/plugin/Flags", function(require, exports, module) {
+        define("cordova/plugin/Flags", function (require, exports, module) {
 
             /**
              * Supplies arguments to methods that lookup or create files and directories.
@@ -10166,7 +10169,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/GlobalizationError.js
-        define("cordova/plugin/GlobalizationError", function(require, exports, module) {
+        define("cordova/plugin/GlobalizationError", function (require, exports, module) {
 
 
             /**
@@ -10176,7 +10179,7 @@ we should simply use a literal :
              * @param code
              * @param message
              */
-            var GlobalizationError = function(code, message) {
+            var GlobalizationError = function (code, message) {
                 this.code = code || null;
                 this.message = message || '';
             };
@@ -10192,7 +10195,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/InAppBrowser.js
-        define("cordova/plugin/InAppBrowser", function(require, exports, module) {
+        define("cordova/plugin/InAppBrowser", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -10205,32 +10208,32 @@ we should simply use a literal :
                 };
             }
 
-            InAppBrowser.prototype._eventHandler = function(event) {
+            InAppBrowser.prototype._eventHandler = function (event) {
                 if (event.type in this.channels) {
                     this.channels[event.type].fire(event);
                 }
             }
 
-            InAppBrowser.open = function(strUrl, strWindowName, strWindowFeatures) {
+            InAppBrowser.open = function (strUrl, strWindowName, strWindowFeatures) {
                 var iab = new InAppBrowser();
-                var cb = function(eventname) {
+                var cb = function (eventname) {
                     iab._eventHandler(eventname);
                 }
                 exec(cb, null, "InAppBrowser", "open", [strUrl, strWindowName, strWindowFeatures]);
                 return iab;
             }
 
-            InAppBrowser.prototype.close = function(eventname, f) {
+            InAppBrowser.prototype.close = function (eventname, f) {
                 exec(null, null, "InAppBrowser", "close", []);
             }
 
-            InAppBrowser.prototype.addEventListener = function(eventname, f) {
+            InAppBrowser.prototype.addEventListener = function (eventname, f) {
                 if (eventname in this.channels) {
                     this.channels[eventname].subscribe(f);
                 }
             }
 
-            InAppBrowser.prototype.removeEventListener = function(eventname, f) {
+            InAppBrowser.prototype.removeEventListener = function (eventname, f) {
                 if (eventname in this.channels) {
                     this.channels[eventname].unsubscribe(f);
                 }
@@ -10242,14 +10245,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/LocalFileSystem.js
-        define("cordova/plugin/LocalFileSystem", function(require, exports, module) {
+        define("cordova/plugin/LocalFileSystem", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
             /**
              * Represents a local file system.
              */
-            var LocalFileSystem = function() {
+            var LocalFileSystem = function () {
 
             };
 
@@ -10261,7 +10264,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Media.js
-        define("cordova/plugin/Media", function(require, exports, module) {
+        define("cordova/plugin/Media", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec');
@@ -10280,7 +10283,7 @@ we should simply use a literal :
              * @param statusCallback        The callback to be called when media status has changed.
              *                                  statusCallback(int statusCode) - OPTIONAL
              */
-            var Media = function(src, successCallback, errorCallback, statusCallback) {
+            var Media = function (src, successCallback, errorCallback, statusCallback) {
 
                 // successCallback optional
                 if (successCallback && (typeof successCallback !== "function")) {
@@ -10326,23 +10329,23 @@ we should simply use a literal :
             Media.MEDIA_MSG = ["None", "Starting", "Running", "Paused", "Stopped"];
 
             // "static" function to return existing objs.
-            Media.get = function(id) {
+            Media.get = function (id) {
                 return mediaObjects[id];
             };
 
             /**
              * Start or resume playing audio file.
              */
-            Media.prototype.play = function(options) {
+            Media.prototype.play = function (options) {
                 exec(null, null, "Media", "startPlayingAudio", [this.id, this.src, options]);
             };
 
             /**
              * Stop playing audio file.
              */
-            Media.prototype.stop = function() {
+            Media.prototype.stop = function () {
                 var me = this;
-                exec(function() {
+                exec(function () {
                     me._position = 0;
                 }, this.errorCallback, "Media", "stopPlayingAudio", [this.id]);
             };
@@ -10350,9 +10353,9 @@ we should simply use a literal :
             /**
              * Seek or jump to a new time in the track..
              */
-            Media.prototype.seekTo = function(milliseconds) {
+            Media.prototype.seekTo = function (milliseconds) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                 }, this.errorCallback, "Media", "seekToAudio", [this.id, milliseconds]);
             };
@@ -10360,7 +10363,7 @@ we should simply use a literal :
             /**
              * Pause playing audio file.
              */
-            Media.prototype.pause = function() {
+            Media.prototype.pause = function () {
                 exec(null, this.errorCallback, "Media", "pausePlayingAudio", [this.id]);
             };
 
@@ -10370,16 +10373,16 @@ we should simply use a literal :
              *
              * @return      duration or -1 if not known.
              */
-            Media.prototype.getDuration = function() {
+            Media.prototype.getDuration = function () {
                 return this._duration;
             };
 
             /**
              * Get position of audio.
              */
-            Media.prototype.getCurrentPosition = function(success, fail) {
+            Media.prototype.getCurrentPosition = function (success, fail) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                     success(p);
                 }, fail, "Media", "getCurrentPositionAudio", [this.id]);
@@ -10388,28 +10391,28 @@ we should simply use a literal :
             /**
              * Start recording audio file.
              */
-            Media.prototype.startRecord = function() {
+            Media.prototype.startRecord = function () {
                 exec(null, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
             };
 
             /**
              * Stop recording audio file.
              */
-            Media.prototype.stopRecord = function() {
+            Media.prototype.stopRecord = function () {
                 exec(null, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
             };
 
             /**
              * Release the resources.
              */
-            Media.prototype.release = function() {
+            Media.prototype.release = function () {
                 exec(null, this.errorCallback, "Media", "release", [this.id]);
             };
 
             /**
              * Adjust the volume.
              */
-            Media.prototype.setVolume = function(volume) {
+            Media.prototype.setVolume = function (volume) {
                 exec(null, null, "Media", "setVolume", [this.id, volume]);
             };
 
@@ -10421,30 +10424,30 @@ we should simply use a literal :
              * @param msgType       The 'type' of update this is
              * @param value         Use of value is determined by the msgType
              */
-            Media.onStatus = function(id, msgType, value) {
+            Media.onStatus = function (id, msgType, value) {
 
                 var media = mediaObjects[id];
 
                 if (media) {
                     switch (msgType) {
-                        case Media.MEDIA_STATE:
-                            media.statusCallback && media.statusCallback(value);
-                            if (value == Media.MEDIA_STOPPED) {
-                                media.successCallback && media.successCallback();
-                            }
-                            break;
-                        case Media.MEDIA_DURATION:
-                            media._duration = value;
-                            break;
-                        case Media.MEDIA_ERROR:
-                            media.errorCallback && media.errorCallback(value);
-                            break;
-                        case Media.MEDIA_POSITION:
-                            media._position = Number(value);
-                            break;
-                        default:
-                            console && console.error && console.error("Unhandled Media.onStatus :: " + msgType);
-                            break;
+                    case Media.MEDIA_STATE:
+                        media.statusCallback && media.statusCallback(value);
+                        if (value == Media.MEDIA_STOPPED) {
+                            media.successCallback && media.successCallback();
+                        }
+                        break;
+                    case Media.MEDIA_DURATION:
+                        media._duration = value;
+                        break;
+                    case Media.MEDIA_ERROR:
+                        media.errorCallback && media.errorCallback(value);
+                        break;
+                    case Media.MEDIA_POSITION:
+                        media._position = Number(value);
+                        break;
+                    default:
+                        console && console.error && console.error("Unhandled Media.onStatus :: " + msgType);
+                        break;
                     }
                 } else {
                     console && console.error && console.error("Received Media.onStatus callback for unknown media :: " + id);
@@ -10457,7 +10460,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaError.js
-        define("cordova/plugin/MediaError", function(require, exports, module) {
+        define("cordova/plugin/MediaError", function (require, exports, module) {
 
             /**
              * This class contains information about any Media errors.
@@ -10477,7 +10480,7 @@ we should simply use a literal :
 
 
             if (!_MediaError) {
-                window.MediaError = _MediaError = function(code, msg) {
+                window.MediaError = _MediaError = function (code, msg) {
                     this.code = (typeof code != 'undefined') ? code : null;
                     this.message = msg || ""; // message is NON-standard! do not use!
                 };
@@ -10497,7 +10500,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFile.js
-        define("cordova/plugin/MediaFile", function(require, exports, module) {
+        define("cordova/plugin/MediaFile", function (require, exports, module) {
 
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
@@ -10512,7 +10515,7 @@ we should simply use a literal :
              * lastModifiedDate {Date} last modified date
              * size {Number} size of the file in bytes
              */
-            var MediaFile = function(name, fullPath, type, lastModifiedDate, size) {
+            var MediaFile = function (name, fullPath, type, lastModifiedDate, size) {
                 MediaFile.__super__.constructor.apply(this, arguments);
             };
 
@@ -10524,7 +10527,7 @@ we should simply use a literal :
              * @param {Function} successCB
              * @param {Function} errorCB
              */
-            MediaFile.prototype.getFormatData = function(successCallback, errorCallback) {
+            MediaFile.prototype.getFormatData = function (successCallback, errorCallback) {
                 if (typeof this.fullPath === "undefined" || this.fullPath === null) {
                     errorCallback(new CaptureError(CaptureError.CAPTURE_INVALID_ARGUMENT));
                 } else {
@@ -10537,7 +10540,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFileData.js
-        define("cordova/plugin/MediaFileData", function(require, exports, module) {
+        define("cordova/plugin/MediaFileData", function (require, exports, module) {
 
             /**
              * MediaFileData encapsulates format information of a media file.
@@ -10548,7 +10551,7 @@ we should simply use a literal :
              * @param {long} width
              * @param {float} duration
              */
-            var MediaFileData = function(codecs, bitrate, height, width, duration) {
+            var MediaFileData = function (codecs, bitrate, height, width, duration) {
                 this.codecs = codecs || null;
                 this.bitrate = bitrate || 0;
                 this.height = height || 0;
@@ -10561,14 +10564,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Metadata.js
-        define("cordova/plugin/Metadata", function(require, exports, module) {
+        define("cordova/plugin/Metadata", function (require, exports, module) {
 
             /**
              * Information about the state of the file or directory
              *
              * {Date} modificationTime (readonly)
              */
-            var Metadata = function(time) {
+            var Metadata = function (time) {
                 this.modificationTime = (typeof time != 'undefined' ? new Date(time) : null);
             };
 
@@ -10577,11 +10580,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Position.js
-        define("cordova/plugin/Position", function(require, exports, module) {
+        define("cordova/plugin/Position", function (require, exports, module) {
 
             var Coordinates = require('cordova/plugin/Coordinates');
 
-            var Position = function(coords, timestamp) {
+            var Position = function (coords, timestamp) {
                 if (coords) {
                     this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
                 } else {
@@ -10595,7 +10598,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/PositionError.js
-        define("cordova/plugin/PositionError", function(require, exports, module) {
+        define("cordova/plugin/PositionError", function (require, exports, module) {
 
             /**
              * Position error object
@@ -10604,7 +10607,7 @@ we should simply use a literal :
              * @param code
              * @param message
              */
-            var PositionError = function(code, message) {
+            var PositionError = function (code, message) {
                 this.code = code || null;
                 this.message = message || '';
             };
@@ -10618,7 +10621,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ProgressEvent.js
-        define("cordova/plugin/ProgressEvent", function(require, exports, module) {
+        define("cordova/plugin/ProgressEvent", function (require, exports, module) {
 
             // If ProgressEvent exists in global context, use it already, otherwise use our own polyfill
             // Feature test: See if we can instantiate a native ProgressEvent;
@@ -10626,7 +10629,7 @@ we should simply use a literal :
             // otherwise fill-in with our own implementation.
             //
             // NOTE: right now we always fill in with our own. Down the road would be nice if we can use whatever is native in the webview.
-            var ProgressEvent = (function() {
+            var ProgressEvent = (function () {
                 /*
     var createEvent = function(data) {
         var event = document.createEvent('Events');
@@ -10670,7 +10673,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/accelerometer.js
-        define("cordova/plugin/accelerometer", function(require, exports, module) {
+        define("cordova/plugin/accelerometer", function (require, exports, module) {
 
             /**
              * This class provides access to device accelerometer data.
@@ -10696,13 +10699,13 @@ we should simply use a literal :
             // Tells native to start.
 
             function start() {
-                exec(function(a) {
+                exec(function (a) {
                     var tempListeners = listeners.slice(0);
                     accel = new Acceleration(a.x, a.y, a.z, a.timestamp);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].win(accel);
                     }
-                }, function(e) {
+                }, function (e) {
                     var tempListeners = listeners.slice(0);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].fail(e);
@@ -10747,15 +10750,15 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the acceleration data. (OPTIONAL)
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  */
-                getCurrentAcceleration: function(successCallback, errorCallback, options) {
+                getCurrentAcceleration: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'accelerometer.getCurrentAcceleration', arguments);
 
                     var p;
-                    var win = function(a) {
+                    var win = function (a) {
                         removeListeners(p);
                         successCallback(a);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         removeListeners(p);
                         errorCallback && errorCallback(e);
                     };
@@ -10776,7 +10779,7 @@ we should simply use a literal :
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchAcceleration: function(successCallback, errorCallback, options) {
+                watchAcceleration: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'accelerometer.watchAcceleration', arguments);
                     // Default interval (10 sec)
                     var frequency = (options && options.frequency && typeof options.frequency == 'number') ? options.frequency : 10000;
@@ -10784,14 +10787,14 @@ we should simply use a literal :
                     // Keep reference to watch id, and report accel readings as often as defined in frequency
                     var id = utils.createUUID();
 
-                    var p = createCallbackPair(function() {}, function(e) {
+                    var p = createCallbackPair(function () {}, function (e) {
                         removeListeners(p);
                         errorCallback && errorCallback(e);
                     });
                     listeners.push(p);
 
                     timers[id] = {
-                        timer: window.setInterval(function() {
+                        timer: window.setInterval(function () {
                             if (accel) {
                                 successCallback(accel);
                             }
@@ -10817,7 +10820,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The id of the watch returned from #watchAcceleration.
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     // Stop javascript timer & remove from timer list
                     if (id && timers[id]) {
                         window.clearInterval(timers[id].timer);
@@ -10832,7 +10835,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/battery.js
-        define("cordova/plugin/battery", function(require, exports, module) {
+        define("cordova/plugin/battery", function (require, exports, module) {
 
             /**
              * This class contains information about the current battery status.
@@ -10845,7 +10848,7 @@ we should simply use a literal :
                 return battery.channels.batterystatus.numHandlers + battery.channels.batterylow.numHandlers + battery.channels.batterycritical.numHandlers;
             }
 
-            var Battery = function() {
+            var Battery = function () {
                 this._level = null;
                 this._isPlugged = null;
                 // Create new event handlers on the window (returns a channel instance)
@@ -10863,7 +10866,7 @@ we should simply use a literal :
              * Keep track of how many handlers we have so we can start and stop the native battery listener
              * appropriately (and hopefully save on battery life!).
              */
-            Battery.onHasSubscribersChange = function() {
+            Battery.onHasSubscribersChange = function () {
                 // If we just registered the first handler, make sure native listener is started.
                 if (this.numHandlers === 1 && handlers() === 1) {
                     exec(battery._status, battery._error, "Battery", "start", []);
@@ -10877,7 +10880,7 @@ we should simply use a literal :
              *
              * @param {Object} info            keys: level, isPlugged
              */
-            Battery.prototype._status = function(info) {
+            Battery.prototype._status = function (info) {
                 if (info) {
                     var me = battery;
                     var level = info.level;
@@ -10902,7 +10905,7 @@ we should simply use a literal :
             /**
              * Error callback for battery start
              */
-            Battery.prototype._error = function(e) {
+            Battery.prototype._error = function (e) {
                 console.log("Error initializing Battery: " + e);
             };
 
@@ -10913,7 +10916,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/capture.js
-        define("cordova/plugin/capture", function(require, exports, module) {
+        define("cordova/plugin/capture", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 MediaFile = require('cordova/plugin/MediaFile');
@@ -10928,7 +10931,7 @@ we should simply use a literal :
              */
 
             function _capture(type, successCallback, errorCallback, options) {
-                var win = function(pluginResult) {
+                var win = function (pluginResult) {
                     var mediaFiles = [];
                     var i;
                     for (i = 0; i < pluginResult.length; i++) {
@@ -10961,7 +10964,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureAudioOptions} options
              */
-            Capture.prototype.captureAudio = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureAudio = function (successCallback, errorCallback, options) {
                 _capture("captureAudio", successCallback, errorCallback, options);
             };
 
@@ -10972,7 +10975,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureImageOptions} options
              */
-            Capture.prototype.captureImage = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureImage = function (successCallback, errorCallback, options) {
                 _capture("captureImage", successCallback, errorCallback, options);
             };
 
@@ -10983,7 +10986,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureVideoOptions} options
              */
-            Capture.prototype.captureVideo = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureVideo = function (successCallback, errorCallback, options) {
                 _capture("captureVideo", successCallback, errorCallback, options);
             };
 
@@ -10993,7 +10996,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/compass.js
-        define("cordova/plugin/compass", function(require, exports, module) {
+        define("cordova/plugin/compass", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -11010,14 +11013,14 @@ we should simply use a literal :
                      * getting the heading data.
                      * @param {CompassOptions} options The options for getting the heading data (not used).
                      */
-                    getCurrentHeading: function(successCallback, errorCallback, options) {
+                    getCurrentHeading: function (successCallback, errorCallback, options) {
                         argscheck.checkArgs('fFO', 'compass.getCurrentHeading', arguments);
 
-                        var win = function(result) {
+                        var win = function (result) {
                             var ch = new CompassHeading(result.magneticHeading, result.trueHeading, result.headingAccuracy, result.timestamp);
                             successCallback(ch);
                         };
-                        var fail = errorCallback && function(code) {
+                        var fail = errorCallback && function (code) {
                                 var ce = new CompassError(code);
                                 errorCallback(ce);
                             };
@@ -11036,7 +11039,7 @@ we should simply use a literal :
                      * such as timeout and the frequency of the watch. For iOS, filter parameter
                      * specifies to watch via a distance filter rather than time.
                      */
-                    watchHeading: function(successCallback, errorCallback, options) {
+                    watchHeading: function (successCallback, errorCallback, options) {
                         argscheck.checkArgs('fFO', 'compass.watchHeading', arguments);
                         // Default interval (100 msec)
                         var frequency = (options !== undefined && options.frequency !== undefined) ? options.frequency : 100;
@@ -11049,7 +11052,7 @@ we should simply use a literal :
                             compass.getCurrentHeading(successCallback, errorCallback, options);
                         } else {
                             // Start watch timer to get headings
-                            timers[id] = window.setInterval(function() {
+                            timers[id] = window.setInterval(function () {
                                 compass.getCurrentHeading(successCallback, errorCallback);
                             }, frequency);
                         }
@@ -11061,7 +11064,7 @@ we should simply use a literal :
                      * Clears the specified heading watch.
                      * @param {String} watchId The ID of the watch returned from #watchHeading.
                      */
-                    clearWatch: function(id) {
+                    clearWatch: function (id) {
                         // Stop javascript timer & remove from timer list
                         if (id && timers[id]) {
                             if (timers[id] != "iOS") {
@@ -11080,7 +11083,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/console-via-logger.js
-        define("cordova/plugin/console-via-logger", function(require, exports, module) {
+        define("cordova/plugin/console-via-logger", function (require, exports, module) {
 
             //------------------------------------------------------------------------------
 
@@ -11116,7 +11119,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
             // used for unimplemented methods
             //------------------------------------------------------------------------------
-            console.useLogger = function(value) {
+            console.useLogger = function (value) {
                 if (arguments.length) UseLogger = !! value;
 
                 if (UseLogger) {
@@ -11129,37 +11132,37 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.log = function() {
+            console.log = function () {
                 if (logger.useConsole()) return;
                 logger.log.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.error = function() {
+            console.error = function () {
                 if (logger.useConsole()) return;
                 logger.error.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.warn = function() {
+            console.warn = function () {
                 if (logger.useConsole()) return;
                 logger.warn.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.info = function() {
+            console.info = function () {
                 if (logger.useConsole()) return;
                 logger.info.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.debug = function() {
+            console.debug = function () {
                 if (logger.useConsole()) return;
                 logger.debug.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.assert = function(expression) {
+            console.assert = function (expression) {
                 if (expression) return;
 
                 var message = utils.vformat(arguments[1], [].slice.call(arguments, 2));
@@ -11167,15 +11170,15 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.clear = function() {};
+            console.clear = function () {};
 
             //------------------------------------------------------------------------------
-            console.dir = function(object) {
+            console.dir = function (object) {
                 console.log("%o", object);
             };
 
             //------------------------------------------------------------------------------
-            console.dirxml = function(node) {
+            console.dirxml = function (node) {
                 console.log(node.innerHTML);
             };
 
@@ -11192,12 +11195,12 @@ we should simply use a literal :
             console.groupEnd = noop;
 
             //------------------------------------------------------------------------------
-            console.time = function(name) {
+            console.time = function (name) {
                 Timers[name] = new Date().valueOf();
             };
 
             //------------------------------------------------------------------------------
-            console.timeEnd = function(name) {
+            console.timeEnd = function (name) {
                 var timeStart = Timers[name];
                 if (!timeStart) {
                     console.warn("unknown timer: " + name);
@@ -11224,7 +11227,7 @@ we should simply use a literal :
             console.exception = console.log;
 
             //------------------------------------------------------------------------------
-            console.table = function(data, columns) {
+            console.table = function (data, columns) {
                 console.log("%o", data);
             };
 
@@ -11233,7 +11236,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
 
             function wrappedOrigCall(orgFunc, newFunc) {
-                return function() {
+                return function () {
                     var args = [].slice.call(arguments);
                     try {
                         orgFunc.apply(WinConsole, args);
@@ -11258,7 +11261,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/contacts.js
-        define("cordova/plugin/contacts", function(require, exports, module) {
+        define("cordova/plugin/contacts", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -11279,12 +11282,12 @@ we should simply use a literal :
                  * @param {ContactFindOptions} options that can be applied to contact searching
                  * @return array of Contacts matching search criteria
                  */
-                find: function(fields, successCB, errorCB, options) {
+                find: function (fields, successCB, errorCB, options) {
                     argscheck.checkArgs('afFO', 'contacts.find', arguments);
                     if (!fields.length) {
                         errorCB && errorCB(new ContactError(ContactError.INVALID_ARGUMENT_ERROR));
                     } else {
-                        var win = function(result) {
+                        var win = function (result) {
                             var cs = [];
                             for (var i = 0, l = result.length; i < l; i++) {
                                 cs.push(contacts.create(result[i]));
@@ -11302,7 +11305,7 @@ we should simply use a literal :
                  * @param properties an object whose properties will be examined to create a new Contact
                  * @returns new Contact object
                  */
-                create: function(properties) {
+                create: function (properties) {
                     argscheck.checkArgs('O', 'contacts.create', arguments);
                     var contact = new Contact();
                     for (var i in properties) {
@@ -11319,7 +11322,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/device.js
-        define("cordova/plugin/device", function(require, exports, module) {
+        define("cordova/plugin/device", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 channel = require('cordova/channel'),
@@ -11346,8 +11349,8 @@ we should simply use a literal :
 
                 var me = this;
 
-                channel.onCordovaReady.subscribe(function() {
-                    me.getInfo(function(info) {
+                channel.onCordovaReady.subscribe(function () {
+                    me.getInfo(function (info) {
                         me.available = true;
                         me.platform = info.platform;
                         me.version = info.version;
@@ -11356,7 +11359,7 @@ we should simply use a literal :
                         me.cordova = info.cordova;
                         me.model = info.model;
                         channel.onCordovaInfoReady.fire();
-                    }, function(e) {
+                    }, function (e) {
                         me.available = false;
                         utils.alert("[ERROR] Error initializing Cordova: " + e);
                     });
@@ -11369,7 +11372,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the heading data is available
              * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
              */
-            Device.prototype.getInfo = function(successCallback, errorCallback) {
+            Device.prototype.getInfo = function (successCallback, errorCallback) {
                 argscheck.checkArgs('fF', 'Device.getInfo', arguments);
                 exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
             };
@@ -11379,7 +11382,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/echo.js
-        define("cordova/plugin/echo", function(require, exports, module) {
+        define("cordova/plugin/echo", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -11390,7 +11393,7 @@ we should simply use a literal :
              * @param message  The string to be echoed.
              * @param forceAsync  Whether to force an async return value (for testing native->js bridge).
              */
-            module.exports = function(successCallback, errorCallback, message, forceAsync) {
+            module.exports = function (successCallback, errorCallback, message, forceAsync) {
                 var action = forceAsync ? 'echoAsync' : 'echo';
                 exec(successCallback, errorCallback, "Echo", action, [message]);
             };
@@ -11399,7 +11402,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/geolocation.js
-        define("cordova/plugin/geolocation", function(require, exports, module) {
+        define("cordova/plugin/geolocation", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 utils = require('cordova/utils'),
@@ -11440,7 +11443,7 @@ we should simply use a literal :
             // Returns a timeout failure, closed over a specified timeout value and error callback.
 
             function createTimeout(errorCallback, timeout) {
-                var t = setTimeout(function() {
+                var t = setTimeout(function () {
                     clearTimeout(t);
                     t = null;
                     errorCallback({
@@ -11460,7 +11463,7 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the heading position. (OPTIONAL)
                  * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
                  */
-                getCurrentPosition: function(successCallback, errorCallback, options) {
+                getCurrentPosition: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'geolocation.getCurrentPosition', arguments);
                     options = parseParameters(options);
 
@@ -11470,7 +11473,7 @@ we should simply use a literal :
                         timer: null
                     };
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timeoutTimer.timer);
                         if (!(timeoutTimer.timer)) {
                             // Timeout already happened, or native fired error callback for
@@ -11490,7 +11493,7 @@ we should simply use a literal :
                         geolocation.lastPosition = pos;
                         successCallback(pos);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timeoutTimer.timer);
                         timeoutTimer.timer = null;
                         var err = new PositionError(e.code, e.message);
@@ -11535,7 +11538,7 @@ we should simply use a literal :
                  * @param {PositionOptions} options     The options for getting the location data such as frequency. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchPosition: function(successCallback, errorCallback, options) {
+                watchPosition: function (successCallback, errorCallback, options) {
                     argscheck.checkArgs('fFO', 'geolocation.getCurrentPosition', arguments);
                     options = parseParameters(options);
 
@@ -11544,7 +11547,7 @@ we should simply use a literal :
                     // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
                     timers[id] = geolocation.getCurrentPosition(successCallback, errorCallback, options);
 
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timers[id].timer);
                         var err = new PositionError(e.code, e.message);
                         if (errorCallback) {
@@ -11552,7 +11555,7 @@ we should simply use a literal :
                         }
                     };
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timers[id].timer);
                         if (options.timeout !== Infinity) {
                             timers[id].timer = createTimeout(fail, options.timeout);
@@ -11579,7 +11582,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The ID of the watch returned from #watchPosition
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     if (id && timers[id] !== undefined) {
                         clearTimeout(timers[id].timer);
                         timers[id].timer = false;
@@ -11593,7 +11596,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/globalization.js
-        define("cordova/plugin/globalization", function(require, exports, module) {
+        define("cordova/plugin/globalization", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 exec = require('cordova/exec'),
@@ -11618,7 +11621,7 @@ we should simply use a literal :
                  *    globalization.getPreferredLanguage(function (language) {alert('language:' + language.value + '\n');},
                  *                                function () {});
                  */
-                getPreferredLanguage: function(successCB, failureCB) {
+                getPreferredLanguage: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getPreferredLanguage', arguments);
                     exec(successCB, failureCB, "Globalization", "getPreferredLanguage", []);
                 },
@@ -11640,7 +11643,7 @@ we should simply use a literal :
                  *    globalization.getLocaleName(function (locale) {alert('locale:' + locale.value + '\n');},
                  *                                function () {});
                  */
-                getLocaleName: function(successCB, failureCB) {
+                getLocaleName: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getLocaleName', arguments);
                     exec(successCB, failureCB, "Globalization", "getLocaleName", []);
                 },
@@ -11671,7 +11674,7 @@ we should simply use a literal :
                  *                function (errorCode) {alert(errorCode);},
                  *                {formatLength:'short'});
                  */
-                dateToString: function(date, successCB, failureCB, options) {
+                dateToString: function (date, successCB, failureCB, options) {
                     argscheck.checkArgs('dfFO', 'Globalization.dateToString', arguments);
                     var dateValue = date.valueOf();
                     exec(successCB, failureCB, "Globalization", "dateToString", [{
@@ -11716,7 +11719,7 @@ we should simply use a literal :
                  *                function (errorCode) {alert(errorCode);},
                  *                {selector:'date'});
                  */
-                stringToDate: function(dateString, successCB, failureCB, options) {
+                stringToDate: function (dateString, successCB, failureCB, options) {
                     argscheck.checkArgs('sfFO', 'Globalization.stringToDate', arguments);
                     exec(successCB, failureCB, "Globalization", "stringToDate", [{
                         "dateString": dateString,
@@ -11757,7 +11760,7 @@ we should simply use a literal :
                  *                function () {},
                  *                {formatLength:'short'});
                  */
-                getDatePattern: function(successCB, failureCB, options) {
+                getDatePattern: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getDatePattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getDatePattern", [{
                         "options": options
@@ -11790,7 +11793,7 @@ we should simply use a literal :
                  *            alert('Month:' + names.value[i] + '\n');}},
                  *        function () {});
                  */
-                getDateNames: function(successCB, failureCB, options) {
+                getDateNames: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getDateNames', arguments);
                     exec(successCB, failureCB, "Globalization", "getDateNames", [{
                         "options": options
@@ -11817,7 +11820,7 @@ we should simply use a literal :
                  *                function (date) {alert('dst:' + date.dst + '\n');}
                  *                function () {});
                  */
-                isDayLightSavingsTime: function(date, successCB, failureCB) {
+                isDayLightSavingsTime: function (date, successCB, failureCB) {
                     argscheck.checkArgs('dfF', 'Globalization.isDayLightSavingsTime', arguments);
                     var dateValue = date.valueOf();
                     exec(successCB, failureCB, "Globalization", "isDayLightSavingsTime", [{
@@ -11843,7 +11846,7 @@ we should simply use a literal :
                  *                { alert('Day:' + day.value + '\n');},
                  *                function () {});
                  */
-                getFirstDayOfWeek: function(successCB, failureCB) {
+                getFirstDayOfWeek: function (successCB, failureCB) {
                     argscheck.checkArgs('fF', 'Globalization.getFirstDayOfWeek', arguments);
                     exec(successCB, failureCB, "Globalization", "getFirstDayOfWeek", []);
                 },
@@ -11872,7 +11875,7 @@ we should simply use a literal :
                  *                function () {},
                  *                {type:'decimal'});
                  */
-                numberToString: function(number, successCB, failureCB, options) {
+                numberToString: function (number, successCB, failureCB, options) {
                     argscheck.checkArgs('nfFO', 'Globalization.numberToString', arguments);
                     exec(successCB, failureCB, "Globalization", "numberToString", [{
                         "number": number,
@@ -11903,7 +11906,7 @@ we should simply use a literal :
                  *                function (number) {alert('Number:' + number.value + '\n');},
                  *                function () { alert('Error parsing number');});
                  */
-                stringToNumber: function(numberString, successCB, failureCB, options) {
+                stringToNumber: function (numberString, successCB, failureCB, options) {
                     argscheck.checkArgs('sfFO', 'Globalization.stringToNumber', arguments);
                     exec(successCB, failureCB, "Globalization", "stringToNumber", [{
                         "numberString": numberString,
@@ -11943,7 +11946,7 @@ we should simply use a literal :
                  *                function (pattern) {alert('Pattern:' + pattern.pattern + '\n');},
                  *                function () {});
                  */
-                getNumberPattern: function(successCB, failureCB, options) {
+                getNumberPattern: function (successCB, failureCB, options) {
                     argscheck.checkArgs('fFO', 'Globalization.getNumberPattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getNumberPattern", [{
                         "options": options
@@ -11977,7 +11980,7 @@ we should simply use a literal :
                  *                function (currency) {alert('Pattern:' + currency.pattern + '\n');}
                  *                function () {});
                  */
-                getCurrencyPattern: function(currencyCode, successCB, failureCB) {
+                getCurrencyPattern: function (currencyCode, successCB, failureCB) {
                     argscheck.checkArgs('sfF', 'Globalization.getCurrencyPattern', arguments);
                     exec(successCB, failureCB, "Globalization", "getCurrencyPattern", [{
                         "currencyCode": currencyCode
@@ -11991,7 +11994,7 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/Contact.js
-        define("cordova/plugin/ios/Contact", function(require, exports, module) {
+        define("cordova/plugin/ios/Contact", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 ContactError = require('cordova/plugin/ContactError');
@@ -12000,7 +12003,7 @@ we should simply use a literal :
              * Provides iOS Contact.display API.
              */
             module.exports = {
-                display: function(errorCB, options) {
+                display: function (errorCB, options) {
                     /*
                      *    Display a contact using the iOS Contact Picker UI
                      *    NOT part of W3C spec so no official documentation
@@ -12026,15 +12029,15 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/Entry.js
-        define("cordova/plugin/ios/Entry", function(require, exports, module) {
+        define("cordova/plugin/ios/Entry", function (require, exports, module) {
 
             module.exports = {
-                toURL: function() {
+                toURL: function () {
                     // TODO: refactor path in a cross-platform way so we can eliminate
                     // these kinds of platform-specific hacks.
                     return "file://localhost" + this.fullPath;
                 },
-                toURI: function() {
+                toURI: function () {
                     console.log("DEPRECATED: Update your code to use 'toURL'");
                     return "file://localhost" + this.fullPath;
                 }
@@ -12043,7 +12046,7 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/FileReader.js
-        define("cordova/plugin/ios/FileReader", function(require, exports, module) {
+        define("cordova/plugin/ios/FileReader", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
@@ -12051,7 +12054,7 @@ we should simply use a literal :
                 ProgressEvent = require('cordova/plugin/ProgressEvent');
 
             module.exports = {
-                readAsText: function(file, encoding) {
+                readAsText: function (file, encoding) {
                     // Figure out pathing
                     this.fileName = '';
                     if (typeof file.fullPath === 'undefined') {
@@ -12082,65 +12085,65 @@ we should simply use a literal :
 
                     // Read file
                     exec(
-                    // Success callback
+                        // Success callback
 
-                    function(r) {
-                        // If DONE (cancelled), then don't do anything
-                        if (me.readyState === FileReader.DONE) {
-                            return;
-                        }
+                        function (r) {
+                            // If DONE (cancelled), then don't do anything
+                            if (me.readyState === FileReader.DONE) {
+                                return;
+                            }
 
-                        // Save result
-                        me.result = decodeURIComponent(r);
+                            // Save result
+                            me.result = decodeURIComponent(r);
 
-                        // If onload callback
-                        if (typeof me.onload === "function") {
-                            me.onload(new ProgressEvent("load", {
-                                target: me
-                            }));
-                        }
+                            // If onload callback
+                            if (typeof me.onload === "function") {
+                                me.onload(new ProgressEvent("load", {
+                                    target: me
+                                }));
+                            }
 
-                        // DONE state
-                        me.readyState = FileReader.DONE;
+                            // DONE state
+                            me.readyState = FileReader.DONE;
 
-                        // If onloadend callback
-                        if (typeof me.onloadend === "function") {
-                            me.onloadend(new ProgressEvent("loadend", {
-                                target: me
-                            }));
-                        }
-                    },
-                    // Error callback
+                            // If onloadend callback
+                            if (typeof me.onloadend === "function") {
+                                me.onloadend(new ProgressEvent("loadend", {
+                                    target: me
+                                }));
+                            }
+                        },
+                        // Error callback
 
-                    function(e) {
-                        // If DONE (cancelled), then don't do anything
-                        if (me.readyState === FileReader.DONE) {
-                            return;
-                        }
+                        function (e) {
+                            // If DONE (cancelled), then don't do anything
+                            if (me.readyState === FileReader.DONE) {
+                                return;
+                            }
 
-                        // DONE state
-                        me.readyState = FileReader.DONE;
+                            // DONE state
+                            me.readyState = FileReader.DONE;
 
-                        // null result
-                        me.result = null;
+                            // null result
+                            me.result = null;
 
-                        // Save error
-                        me.error = new FileError(e);
+                            // Save error
+                            me.error = new FileError(e);
 
-                        // If onerror callback
-                        if (typeof me.onerror === "function") {
-                            me.onerror(new ProgressEvent("error", {
-                                target: me
-                            }));
-                        }
+                            // If onerror callback
+                            if (typeof me.onerror === "function") {
+                                me.onerror(new ProgressEvent("error", {
+                                    target: me
+                                }));
+                            }
 
-                        // If onloadend callback
-                        if (typeof me.onloadend === "function") {
-                            me.onloadend(new ProgressEvent("loadend", {
-                                target: me
-                            }));
-                        }
-                    },
+                            // If onloadend callback
+                            if (typeof me.onloadend === "function") {
+                                me.onloadend(new ProgressEvent("loadend", {
+                                    target: me
+                                }));
+                            }
+                        },
                         "File", "readAsText", [this.fileName, enc]);
                 }
             };
@@ -12148,7 +12151,7 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/console.js
-        define("cordova/plugin/ios/console", function(require, exports, module) {
+        define("cordova/plugin/ios/console", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -12180,11 +12183,11 @@ we should simply use a literal :
             function wrappedMethod(console, method) {
                 var origMethod = console[method];
 
-                return function(message) {
+                return function (message) {
                     exec(null, null,
                         'Debug Console', 'log', [stringify(message), {
-                        logLevel: method.toUpperCase()
-                    }]);
+                            logLevel: method.toUpperCase()
+                        }]);
 
                     if (!origMethod) return;
 
@@ -12199,7 +12202,7 @@ we should simply use a literal :
             // it didn't do anything useful, since the level constants weren't accessible
             // to anyone
 
-            console.setLevel = function() {};
+            console.setLevel = function () {};
             console.logLevel = 0;
 
             // wrapper the logging messages
@@ -12217,7 +12220,7 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/contacts.js
-        define("cordova/plugin/ios/contacts", function(require, exports, module) {
+        define("cordova/plugin/ios/contacts", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -12225,7 +12228,7 @@ we should simply use a literal :
              * Provides iOS enhanced contacts API.
              */
             module.exports = {
-                newContactUI: function(successCallback) {
+                newContactUI: function (successCallback) {
                     /*
                      *    Create a contact using the iOS Contact Picker UI
                      *    NOT part of W3C spec so no official documentation
@@ -12234,7 +12237,7 @@ we should simply use a literal :
                      */
                     exec(successCallback, null, "Contacts", "newContact", []);
                 },
-                chooseContact: function(successCallback, options) {
+                chooseContact: function (successCallback, options) {
                     /*
                      *    Select a contact using the iOS Contact Picker UI
                      *    NOT part of W3C spec so no official documentation
@@ -12253,7 +12256,7 @@ we should simply use a literal :
                      *            if fields provided contact object contains information for the specified fields
                      *
                      */
-                    var win = function(result) {
+                    var win = function (result) {
                         var fullContact = require('cordova/plugin/contacts').create(result);
                         successCallback(fullContact.id, fullContact);
                     };
@@ -12264,12 +12267,12 @@ we should simply use a literal :
         });
 
         // file: lib/ios/plugin/ios/notification.js
-        define("cordova/plugin/ios/notification", function(require, exports, module) {
+        define("cordova/plugin/ios/notification", function (require, exports, module) {
 
             var Media = require('cordova/plugin/Media');
 
             module.exports = {
-                beep: function(count) {
+                beep: function (count) {
                     (new Media('beep.wav')).play();
                 }
             };
@@ -12277,7 +12280,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/logger.js
-        define("cordova/plugin/logger", function(require, exports, module) {
+        define("cordova/plugin/logger", function (require, exports, module) {
 
             //------------------------------------------------------------------------------
             // The logger module exports the following properties/functions:
@@ -12319,7 +12322,8 @@ we should simply use a literal :
                 "ERROR",
                 "WARN",
                 "INFO",
-                "DEBUG"];
+                "DEBUG"
+            ];
 
             /*
              * add the logging levels to the logger object and
@@ -12354,7 +12358,7 @@ we should simply use a literal :
              * default level is WARN, so only messages logged with LOG, ERROR, or
              * WARN will be displayed; INFO and DEBUG messages will be ignored.
              */
-            logger.level = function(value) {
+            logger.level = function (value) {
                 if (arguments.length) {
                     if (LevelsMap[value] === null) {
                         throw new Error("invalid logging level: " + value);
@@ -12372,7 +12376,7 @@ we should simply use a literal :
              * browser 'console' object.  Otherwise, it will use the
              * native Logger plugin.
              */
-            logger.useConsole = function(value) {
+            logger.useConsole = function (value) {
                 if (arguments.length) UseConsole = !! value;
 
                 if (UseConsole) {
@@ -12400,7 +12404,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.log = function(message) {
+            logger.log = function (message) {
                 logWithArgs("LOG", arguments);
             };
 
@@ -12410,7 +12414,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.error = function(message) {
+            logger.error = function (message) {
                 logWithArgs("ERROR", arguments);
             };
 
@@ -12420,7 +12424,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.warn = function(message) {
+            logger.warn = function (message) {
                 logWithArgs("WARN", arguments);
             };
 
@@ -12430,7 +12434,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.info = function(message) {
+            logger.info = function (message) {
                 logWithArgs("INFO", arguments);
             };
 
@@ -12440,7 +12444,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.debug = function(message) {
+            logger.debug = function (message) {
                 logWithArgs("DEBUG", arguments);
             };
 
@@ -12457,7 +12461,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.logLevel = function(level, message /* , ... */ ) {
+            logger.logLevel = function (level, message /* , ... */ ) {
                 // format the message with the parameters
                 var formatArgs = [].slice.call(arguments, 2);
                 message = utils.vformat(message, formatArgs);
@@ -12487,26 +12491,26 @@ we should simply use a literal :
 
                 // log to the console
                 switch (level) {
-                    case logger.LOG:
-                        console.log(message);
-                        break;
-                    case logger.ERROR:
-                        console.log("ERROR: " + message);
-                        break;
-                    case logger.WARN:
-                        console.log("WARN: " + message);
-                        break;
-                    case logger.INFO:
-                        console.log("INFO: " + message);
-                        break;
-                    case logger.DEBUG:
-                        console.log("DEBUG: " + message);
-                        break;
+                case logger.LOG:
+                    console.log(message);
+                    break;
+                case logger.ERROR:
+                    console.log("ERROR: " + message);
+                    break;
+                case logger.WARN:
+                    console.log("WARN: " + message);
+                    break;
+                case logger.INFO:
+                    console.log("INFO: " + message);
+                    break;
+                case logger.DEBUG:
+                    console.log("DEBUG: " + message);
+                    break;
                 }
             };
 
             // when deviceready fires, log queued messages
-            logger.__onDeviceReady = function() {
+            logger.__onDeviceReady = function () {
                 if (DeviceReady) return;
 
                 DeviceReady = true;
@@ -12525,7 +12529,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/network.js
-        define("cordova/plugin/network", function(require, exports, module) {
+        define("cordova/plugin/network", function (require, exports, module) {
 
             var exec = require('cordova/exec'),
                 cordova = require('cordova'),
@@ -12536,7 +12540,7 @@ we should simply use a literal :
             // This works because we clobber the naviagtor object with our own
             // object in bootstrap.js.
             if (typeof navigator != 'undefined') {
-                utils.defineGetter(navigator, 'onLine', function() {
+                utils.defineGetter(navigator, 'onLine', function () {
                     return this.connection.type != 'none';
                 });
             }
@@ -12551,7 +12555,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the Connection data is available
              * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
              */
-            NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
+            NetworkConnection.prototype.getInfo = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
             };
 
@@ -12559,38 +12563,38 @@ we should simply use a literal :
             var timerId = null;
             var timeout = 500;
 
-            channel.onCordovaReady.subscribe(function() {
-                me.getInfo(function(info) {
-                    me.type = info;
-                    if (info === "none") {
-                        // set a timer if still offline at the end of timer send the offline event
-                        timerId = setTimeout(function() {
-                            cordova.fireDocumentEvent("offline");
-                            timerId = null;
-                        }, timeout);
-                    } else {
-                        // If there is a current offline event pending clear it
-                        if (timerId !== null) {
-                            clearTimeout(timerId);
-                            timerId = null;
+            channel.onCordovaReady.subscribe(function () {
+                me.getInfo(function (info) {
+                        me.type = info;
+                        if (info === "none") {
+                            // set a timer if still offline at the end of timer send the offline event
+                            timerId = setTimeout(function () {
+                                cordova.fireDocumentEvent("offline");
+                                timerId = null;
+                            }, timeout);
+                        } else {
+                            // If there is a current offline event pending clear it
+                            if (timerId !== null) {
+                                clearTimeout(timerId);
+                                timerId = null;
+                            }
+                            cordova.fireDocumentEvent("online");
                         }
-                        cordova.fireDocumentEvent("online");
-                    }
 
-                    // should only fire this once
-                    if (channel.onCordovaConnectionReady.state !== 2) {
-                        channel.onCordovaConnectionReady.fire();
-                    }
-                },
+                        // should only fire this once
+                        if (channel.onCordovaConnectionReady.state !== 2) {
+                            channel.onCordovaConnectionReady.fire();
+                        }
+                    },
 
-                function(e) {
-                    // If we can't get the network info we should still tell Cordova
-                    // to fire the deviceready event.
-                    if (channel.onCordovaConnectionReady.state !== 2) {
-                        channel.onCordovaConnectionReady.fire();
-                    }
-                    console.log("Error initializing Network Connection: " + e);
-                });
+                    function (e) {
+                        // If we can't get the network info we should still tell Cordova
+                        // to fire the deviceready event.
+                        if (channel.onCordovaConnectionReady.state !== 2) {
+                            channel.onCordovaConnectionReady.fire();
+                        }
+                        console.log("Error initializing Network Connection: " + e);
+                    });
             });
 
             module.exports = me;
@@ -12598,7 +12602,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/notification.js
-        define("cordova/plugin/notification", function(require, exports, module) {
+        define("cordova/plugin/notification", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
@@ -12616,7 +12620,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Alert)
                  * @param {String} buttonLabel          Label of the close button (default: OK)
                  */
-                alert: function(message, completeCallback, title, buttonLabel) {
+                alert: function (message, completeCallback, title, buttonLabel) {
                     var _title = (title || "Alert");
                     var _buttonLabel = (buttonLabel || "OK");
                     exec(completeCallback, null, "Notification", "alert", [message, _title, _buttonLabel]);
@@ -12631,7 +12635,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Confirm)
                  * @param {String} buttonLabels         Comma separated list of the labels of the buttons (default: 'OK,Cancel')
                  */
-                confirm: function(message, resultCallback, title, buttonLabels) {
+                confirm: function (message, resultCallback, title, buttonLabels) {
                     var _title = (title || "Confirm");
                     var _buttonLabels = (buttonLabels || "OK,Cancel");
                     exec(resultCallback, null, "Notification", "confirm", [message, _title, _buttonLabels]);
@@ -12642,7 +12646,7 @@ we should simply use a literal :
                  *
                  * @param {Integer} mills       The number of milliseconds to vibrate for.
                  */
-                vibrate: function(mills) {
+                vibrate: function (mills) {
                     exec(null, null, "Notification", "vibrate", [mills]);
                 },
 
@@ -12652,7 +12656,7 @@ we should simply use a literal :
                  *
                  * @param {Integer} count       The number of beeps.
                  */
-                beep: function(count) {
+                beep: function (count) {
                     exec(null, null, "Notification", "beep", [count]);
                 }
             };
@@ -12660,7 +12664,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/requestFileSystem.js
-        define("cordova/plugin/requestFileSystem", function(require, exports, module) {
+        define("cordova/plugin/requestFileSystem", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 FileError = require('cordova/plugin/FileError'),
@@ -12674,9 +12678,9 @@ we should simply use a literal :
              * @param successCallback  invoked with a FileSystem object
              * @param errorCallback  invoked if error occurs retrieving file system
              */
-            var requestFileSystem = function(type, size, successCallback, errorCallback) {
+            var requestFileSystem = function (type, size, successCallback, errorCallback) {
                 argscheck.checkArgs('nnFF', 'requestFileSystem', arguments);
-                var fail = function(code) {
+                var fail = function (code) {
                     errorCallback && errorCallback(new FileError(code));
                 };
 
@@ -12684,7 +12688,7 @@ we should simply use a literal :
                     fail(FileError.SYNTAX_ERR);
                 } else {
                     // if successful, return a FileSystem object
-                    var success = function(file_system) {
+                    var success = function (file_system) {
                         if (file_system) {
                             if (successCallback) {
                                 // grab the name and root from the file system object
@@ -12705,7 +12709,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/resolveLocalFileSystemURI.js
-        define("cordova/plugin/resolveLocalFileSystemURI", function(require, exports, module) {
+        define("cordova/plugin/resolveLocalFileSystemURI", function (require, exports, module) {
 
             var argscheck = require('cordova/argscheck'),
                 DirectoryEntry = require('cordova/plugin/DirectoryEntry'),
@@ -12719,21 +12723,21 @@ we should simply use a literal :
              * @param successCallback  invoked with Entry object corresponding to URI
              * @param errorCallback    invoked if error occurs retrieving file system entry
              */
-            module.exports = function(uri, successCallback, errorCallback) {
+            module.exports = function (uri, successCallback, errorCallback) {
                 argscheck.checkArgs('sFF', 'resolveLocalFileSystemURI', arguments);
                 // error callback
-                var fail = function(error) {
+                var fail = function (error) {
                     errorCallback && errorCallback(new FileError(error));
                 };
                 // sanity check for 'not:valid:filename'
                 if (!uri || uri.split(":").length > 2) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         fail(FileError.ENCODING_ERR);
                     }, 0);
                     return;
                 }
                 // if successful, return either a file or directory entry
-                var success = function(entry) {
+                var success = function (entry) {
                     var result;
                     if (entry) {
                         if (successCallback) {
@@ -12753,15 +12757,15 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/splashscreen.js
-        define("cordova/plugin/splashscreen", function(require, exports, module) {
+        define("cordova/plugin/splashscreen", function (require, exports, module) {
 
             var exec = require('cordova/exec');
 
             var splashscreen = {
-                show: function() {
+                show: function () {
                     exec(null, null, "SplashScreen", "show", []);
                 },
-                hide: function() {
+                hide: function () {
                     exec(null, null, "SplashScreen", "hide", []);
                 }
             };
@@ -12771,14 +12775,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/utils.js
-        define("cordova/utils", function(require, exports, module) {
+        define("cordova/utils", function (require, exports, module) {
 
             var utils = exports;
 
             /**
              * Defines a property getter for obj[key].
              */
-            utils.defineGetter = function(obj, key, func) {
+            utils.defineGetter = function (obj, key, func) {
                 if (Object.defineProperty) {
                     Object.defineProperty(obj, key, {
                         get: func
@@ -12788,7 +12792,7 @@ we should simply use a literal :
                 }
             };
 
-            utils.arrayIndexOf = function(a, item) {
+            utils.arrayIndexOf = function (a, item) {
                 if (a.indexOf) {
                     return a.indexOf(item);
                 }
@@ -12804,7 +12808,7 @@ we should simply use a literal :
             /**
              * Returns whether the item was found in the array.
              */
-            utils.arrayRemove = function(a, item) {
+            utils.arrayRemove = function (a, item) {
                 var index = utils.arrayIndexOf(a, item);
                 if (index != -1) {
                     a.splice(index, 1);
@@ -12815,21 +12819,21 @@ we should simply use a literal :
             /**
              * Returns an indication of whether the argument is an array or not
              */
-            utils.isArray = function(a) {
+            utils.isArray = function (a) {
                 return Object.prototype.toString.call(a) == '[object Array]';
             };
 
             /**
              * Returns an indication of whether the argument is a Date or not
              */
-            utils.isDate = function(d) {
+            utils.isDate = function (d) {
                 return Object.prototype.toString.call(d) == '[object Date]';
             };
 
             /**
              * Does a deep clone of the object.
              */
-            utils.clone = function(obj) {
+            utils.clone = function (obj) {
                 if (!obj || typeof obj == 'function' || utils.isDate(obj) || typeof obj != 'object') {
                     return obj;
                 }
@@ -12856,13 +12860,13 @@ we should simply use a literal :
             /**
              * Returns a wrapped version of the function
              */
-            utils.close = function(context, func, params) {
+            utils.close = function (context, func, params) {
                 if (typeof params == 'undefined') {
-                    return function() {
+                    return function () {
                         return func.apply(context, arguments);
                     };
                 } else {
-                    return function() {
+                    return function () {
                         return func.apply(context, params);
                     };
                 }
@@ -12871,7 +12875,7 @@ we should simply use a literal :
             /**
              * Create a UUID
              */
-            utils.createUUID = function() {
+            utils.createUUID = function () {
                 return UUIDcreatePart(4) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(6);
             };
 
@@ -12879,11 +12883,11 @@ we should simply use a literal :
              * Extends a child object from a parent object using classical inheritance
              * pattern.
              */
-            utils.extend = (function() {
+            utils.extend = (function () {
                 // proxy used to establish prototype chain
-                var F = function() {};
+                var F = function () {};
                 // extend Child from Parent
-                return function(Child, Parent) {
+                return function (Child, Parent) {
                     F.prototype = Parent.prototype;
                     Child.prototype = new F();
                     Child.__super__ = Parent.prototype;
@@ -12894,7 +12898,7 @@ we should simply use a literal :
             /**
              * Alerts a message in any available way: alert or console.log.
              */
-            utils.alert = function(msg) {
+            utils.alert = function (msg) {
                 if (window.alert) {
                     window.alert(msg);
                 } else if (console && console.log) {
@@ -12907,7 +12911,7 @@ we should simply use a literal :
              *
              * see utils.vformat() for more information
              */
-            utils.format = function(formatString /* ,... */ ) {
+            utils.format = function (formatString /* ,... */ ) {
                 var args = [].slice.call(arguments, 1);
                 return utils.vformat(formatString, args);
             };
@@ -12926,7 +12930,7 @@ we should simply use a literal :
              * for rationale, see FireBug's Console API:
              *    http://getfirebug.com/wiki/index.php/Console_API
              */
-            utils.vformat = function(formatString, args) {
+            utils.vformat = function (formatString, args) {
                 if (formatString === null || formatString === undefined) return "";
                 if (arguments.length == 1) return formatString.toString();
                 if (typeof formatString != "string") return formatString.toString();
@@ -12979,11 +12983,11 @@ we should simply use a literal :
 
                 try {
                     switch (formatChar) {
-                        case 'j':
-                        case 'o':
-                            return JSON.stringify(object);
-                        case 'c':
-                            return '';
+                    case 'j':
+                    case 'o':
+                        return JSON.stringify(object);
+                    case 'c':
+                        return '';
                     }
                 } catch (e) {
                     return "error JSON.stringify()ing argument: " + e;
@@ -13003,7 +13007,7 @@ we should simply use a literal :
 
         // file: lib/scripts/bootstrap.js
 
-        (function(context) {
+        (function (context) {
             // Replace navigator before any modules are required(), to ensure it happens as soon as possible.
             // We replace it so that properties that can't be clobbered can instead be overridden.
             if (context.navigator) {
@@ -13014,11 +13018,11 @@ we should simply use a literal :
 
             var channel = require("cordova/channel"),
                 _self = {
-                    boot: function() {
+                    boot: function () {
                         /**
                          * Create all cordova objects once page has fully loaded and native side is ready.
                          */
-                        channel.join(function() {
+                        channel.join(function () {
                             var builder = require('cordova/builder'),
                                 base = require('cordova/common'),
                                 platform = require('cordova/platform');
@@ -13040,7 +13044,7 @@ we should simply use a literal :
 
                             // Fire onDeviceReady event once all constructors have run and
                             // cordova info has been received from native side.
-                            channel.join(function() {
+                            channel.join(function () {
                                 require('cordova').fireDocumentEvent('deviceready');
                             }, channel.deviceReadyChannelsArray);
 
@@ -13063,13 +13067,13 @@ we should simply use a literal :
 
     })();
 } else if (navigator.userAgent.match(/MSIE/)) {;
-    (function() {
+    (function () {
 
         // file: lib/scripts/require.js
         var require,
-        define;
+            define;
 
-        (function() {
+        (function () {
             var modules = {};
 
             function build(module) {
@@ -13080,14 +13084,14 @@ we should simply use a literal :
                 return module.exports;
             }
 
-            require = function(id) {
+            require = function (id) {
                 if (!modules[id]) {
                     throw "module " + id + " not found";
                 }
                 return modules[id].factory ? build(modules[id]) : modules[id].exports;
             };
 
-            define = function(id, factory) {
+            define = function (id, factory) {
                 if (modules[id]) {
                     throw "module " + id + " already defined";
                 }
@@ -13098,7 +13102,7 @@ we should simply use a literal :
                 };
             };
 
-            define.remove = function(id) {
+            define.remove = function (id) {
                 delete modules[id];
             };
 
@@ -13110,13 +13114,13 @@ we should simply use a literal :
             module.exports.define = define;
         }
         // file: lib/cordova.js
-        define("cordova", function(require, exports, module) {
+        define("cordova", function (require, exports, module) {
             var channel = require('cordova/channel');
 
             /**
              * Listen for DOMContentLoaded and notify our channel subscribers.
              */
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 channel.onDOMContentLoaded.fire();
             }, false);
             if (document.readyState == 'complete' || document.readyState == 'interactive') {
@@ -13136,9 +13140,9 @@ we should simply use a literal :
              * Houses custom event handlers to intercept on document + window event listeners.
              */
             var documentEventHandlers = {},
-            windowEventHandlers = {};
+                windowEventHandlers = {};
 
-            document.addEventListener = function(evt, handler, capture) {
+            document.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof documentEventHandlers[e] != 'undefined') {
                     if (evt === 'deviceready') {
@@ -13151,7 +13155,7 @@ we should simply use a literal :
                 }
             };
 
-            window.addEventListener = function(evt, handler, capture) {
+            window.addEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 if (typeof windowEventHandlers[e] != 'undefined') {
                     windowEventHandlers[e].subscribe(handler);
@@ -13160,7 +13164,7 @@ we should simply use a literal :
                 }
             };
 
-            document.removeEventListener = function(evt, handler, capture) {
+            document.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubcribing from an event that is handled by a plugin
                 if (typeof documentEventHandlers[e] != "undefined") {
@@ -13170,7 +13174,7 @@ we should simply use a literal :
                 }
             };
 
-            window.removeEventListener = function(evt, handler, capture) {
+            window.removeEventListener = function (evt, handler, capture) {
                 var e = evt.toLowerCase();
                 // If unsubcribing from an event that is handled by a plugin
                 if (typeof windowEventHandlers[e] != "undefined") {
@@ -13195,7 +13199,7 @@ we should simply use a literal :
 
             if (typeof window.console === "undefined") {
                 window.console = {
-                    log: function() {}
+                    log: function () {}
                 };
             }
 
@@ -13205,16 +13209,16 @@ we should simply use a literal :
                 /**
                  * Methods to add/remove your own addEventListener hijacking on document + window.
                  */
-                addWindowEventHandler: function(event, opts) {
+                addWindowEventHandler: function (event, opts) {
                     return (windowEventHandlers[event] = channel.create(event, opts));
                 },
-                addDocumentEventHandler: function(event, opts) {
+                addDocumentEventHandler: function (event, opts) {
                     return (documentEventHandlers[event] = channel.create(event, opts));
                 },
-                removeWindowEventHandler: function(event) {
+                removeWindowEventHandler: function (event) {
                     delete windowEventHandlers[event];
                 },
-                removeDocumentEventHandler: function(event) {
+                removeDocumentEventHandler: function (event) {
                     delete documentEventHandlers[event];
                 },
                 /**
@@ -13222,7 +13226,7 @@ we should simply use a literal :
                  *
                  * @return object
                  */
-                getOriginalHandlers: function() {
+                getOriginalHandlers: function () {
                     return {
                         'document': {
                             'addEventListener': m_document_addEventListener,
@@ -13237,20 +13241,20 @@ we should simply use a literal :
                 /**
                  * Method to fire event from native code
                  */
-                fireDocumentEvent: function(type, data) {
+                fireDocumentEvent: function (type, data) {
                     var evt = createEvent(type, data);
                     if (typeof documentEventHandlers[type] != 'undefined') {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             documentEventHandlers[type].fire(evt);
                         }, 0);
                     } else {
                         document.dispatchEvent(evt);
                     }
                 },
-                fireWindowEvent: function(type, data) {
+                fireWindowEvent: function (type, data) {
                     var evt = createEvent(type, data);
                     if (typeof windowEventHandlers[type] != 'undefined') {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             windowEventHandlers[type].fire(evt);
                         }, 0);
                     } else {
@@ -13294,7 +13298,7 @@ we should simply use a literal :
                  * @param callbackId
                  * @param args
                  */
-                callbackSuccess: function(callbackId, args) {
+                callbackSuccess: function (callbackId, args) {
                     if (cordova.callbacks[callbackId]) {
 
                         // If result is to be sent to callback
@@ -13321,7 +13325,7 @@ we should simply use a literal :
                  * @param callbackId
                  * @param args
                  */
-                callbackError: function(callbackId, args) {
+                callbackError: function (callbackId, args) {
                     if (cordova.callbacks[callbackId]) {
                         try {
                             if (cordova.callbacks[callbackId].fail) {
@@ -13337,8 +13341,8 @@ we should simply use a literal :
                         }
                     }
                 },
-                addConstructor: function(func) {
-                    channel.onCordovaReady.subscribeOnce(function() {
+                addConstructor: function (func) {
+                    channel.onCordovaReady.subscribeOnce(function () {
                         try {
                             func();
                         } catch (e) {
@@ -13358,7 +13362,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/builder.js
-        define("cordova/builder", function(require, exports, module) {
+        define("cordova/builder", function (require, exports, module) {
             var utils = require('cordova/utils');
 
             function each(objects, func, context) {
@@ -13370,7 +13374,7 @@ we should simply use a literal :
             }
 
             function include(parent, objects, clobber, merge) {
-                each(objects, function(obj, key) {
+                each(objects, function (obj, key) {
                     try {
                         var result = obj.path ? require(obj.path) : {};
 
@@ -13426,7 +13430,7 @@ we should simply use a literal :
                             target.prototype[prop] = src[prop];
                         } else {
                             target[prop] = typeof src[prop] === 'object' ? recursiveMerge(
-                            target[prop], src[prop]) : src[prop];
+                                target[prop], src[prop]) : src[prop];
                         }
                     }
                 }
@@ -13434,15 +13438,15 @@ we should simply use a literal :
             }
 
             module.exports = {
-                build: function(objects) {
+                build: function (objects) {
                     return {
-                        intoButDontClobber: function(target) {
+                        intoButDontClobber: function (target) {
                             include(target, objects, false, false);
                         },
-                        intoAndClobber: function(target) {
+                        intoAndClobber: function (target) {
                             include(target, objects, true, false);
                         },
-                        intoAndMerge: function(target) {
+                        intoAndMerge: function (target) {
                             include(target, objects, true, true);
                         }
                     };
@@ -13452,7 +13456,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/channel.js
-        define("cordova/channel", function(require, exports, module) {
+        define("cordova/channel", function (require, exports, module) {
             var utils = require('cordova/utils');
 
             /**
@@ -13501,7 +13505,7 @@ we should simply use a literal :
              *                       something unsubscribes to the Channel. Sets
              *                       context to the Channel.
              */
-            var Channel = function(type, opts) {
+            var Channel = function (type, opts) {
                 this.type = type;
                 this.handlers = {};
                 this.numHandlers = 0;
@@ -13517,65 +13521,65 @@ we should simply use a literal :
                     if (opts.onUnsubscribe) this.events.onUnsubscribe = opts.onUnsubscribe;
                 }
             },
-            channel = {
-                /**
-                 * Calls the provided function only after all of the channels specified
-                 * have been fired.
-                 */
-                join: function(h, c) {
-                    var i = c.length;
-                    var len = i;
-                    var f = function() {
-                        if (!(--i)) h();
-                    };
-                    for (var j = 0; j < len; j++) {
-                        !c[j].fired ? c[j].subscribeOnce(f) : i--;
-                    }
-                    if (!i) h();
-                },
-                create: function(type, opts) {
-                    channel[type] = new Channel(type, opts);
-                    return channel[type];
-                },
-
-                /**
-                 * cordova Channels that must fire before "deviceready" is fired.
-                 */
-                deviceReadyChannelsArray: [],
-                deviceReadyChannelsMap: {},
-
-                /**
-                 * Indicate that a feature needs to be initialized before it is ready to be used.
-                 * This holds up Cordova's "deviceready" event until the feature has been initialized
-                 * and Cordova.initComplete(feature) is called.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                waitForInitialization: function(feature) {
-                    if (feature) {
-                        var c = null;
-                        if (this[feature]) {
-                            c = this[feature];
-                        } else {
-                            c = this.create(feature);
+                channel = {
+                    /**
+                     * Calls the provided function only after all of the channels specified
+                     * have been fired.
+                     */
+                    join: function (h, c) {
+                        var i = c.length;
+                        var len = i;
+                        var f = function () {
+                            if (!(--i)) h();
+                        };
+                        for (var j = 0; j < len; j++) {
+                            !c[j].fired ? c[j].subscribeOnce(f) : i--;
                         }
-                        this.deviceReadyChannelsMap[feature] = c;
-                        this.deviceReadyChannelsArray.push(c);
-                    }
-                },
+                        if (!i) h();
+                    },
+                    create: function (type, opts) {
+                        channel[type] = new Channel(type, opts);
+                        return channel[type];
+                    },
 
-                /**
-                 * Indicate that initialization code has completed and the feature is ready to be used.
-                 *
-                 * @param feature {String}     The unique feature name
-                 */
-                initializationComplete: function(feature) {
-                    var c = this.deviceReadyChannelsMap[feature];
-                    if (c) {
-                        c.fire();
+                    /**
+                     * cordova Channels that must fire before "deviceready" is fired.
+                     */
+                    deviceReadyChannelsArray: [],
+                    deviceReadyChannelsMap: {},
+
+                    /**
+                     * Indicate that a feature needs to be initialized before it is ready to be used.
+                     * This holds up Cordova's "deviceready" event until the feature has been initialized
+                     * and Cordova.initComplete(feature) is called.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    waitForInitialization: function (feature) {
+                        if (feature) {
+                            var c = null;
+                            if (this[feature]) {
+                                c = this[feature];
+                            } else {
+                                c = this.create(feature);
+                            }
+                            this.deviceReadyChannelsMap[feature] = c;
+                            this.deviceReadyChannelsArray.push(c);
+                        }
+                    },
+
+                    /**
+                     * Indicate that initialization code has completed and the feature is ready to be used.
+                     *
+                     * @param feature {String}     The unique feature name
+                     */
+                    initializationComplete: function (feature) {
+                        var c = this.deviceReadyChannelsMap[feature];
+                        if (c) {
+                            c.fire();
+                        }
                     }
-                }
-            };
+                };
 
             function forceFunction(f) {
                 if (f === null || f === undefined || typeof f != 'function') throw "Function required as first argument!";
@@ -13588,7 +13592,7 @@ we should simply use a literal :
              * and a guid that can be used to stop subscribing to the channel.
              * Returns the guid.
              */
-            Channel.prototype.subscribe = function(f, c, g) {
+            Channel.prototype.subscribe = function (f, c, g) {
                 // need a function to call
                 forceFunction(f);
 
@@ -13618,13 +13622,13 @@ we should simply use a literal :
              * Like subscribe but the function is only called once and then it
              * auto-unsubscribes itself.
              */
-            Channel.prototype.subscribeOnce = function(f, c) {
+            Channel.prototype.subscribeOnce = function (f, c) {
                 // need a function to call
                 forceFunction(f);
 
                 var g = null;
                 var _this = this;
-                var m = function() {
+                var m = function () {
                     f.apply(c || null, arguments);
                     _this.unsubscribe(g);
                 };
@@ -13642,7 +13646,7 @@ we should simply use a literal :
             /**
              * Unsubscribes the function with the given guid from the channel.
              */
-            Channel.prototype.unsubscribe = function(g) {
+            Channel.prototype.unsubscribe = function (g) {
                 // need a function to unsubscribe
                 if (g === null || g === undefined) {
                     throw "You must pass _something_ into Channel.unsubscribe";
@@ -13664,7 +13668,7 @@ we should simply use a literal :
             /**
              * Calls all functions subscribed to this channel.
              */
-            Channel.prototype.fire = function(e) {
+            Channel.prototype.fire = function (e) {
                 if (this.enabled) {
                     var fail = false;
                     this.fired = true;
@@ -13719,7 +13723,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/common.js
-        define("cordova/common", function(require, exports, module) {
+        define("cordova/common", function (require, exports, module) {
             module.exports = {
                 objects: {
                     cordova: {
@@ -13930,7 +13934,7 @@ we should simply use a literal :
         });
 
         // file: lib/win7/exec.js
-        define("cordova/exec", function(require, exports, module) {
+        define("cordova/exec", function (require, exports, module) {
             var jsHandler = require('cordova/plugin/win7/jsHandler'),
                 cordova = require('cordova');
 
@@ -13996,30 +14000,30 @@ we should simply use a literal :
         });
 
         // file: lib/win7/platform.js
-        define("cordova/platform", function(require, exports, module) {
+        define("cordova/platform", function (require, exports, module) {
             var device = require('cordova/plugin/win7/device');
 
             module.exports = {
                 id: device.platform,
-                initialize: function() {
+                initialize: function () {
                     var channel = require("cordova/channel"),
                         storage = require('cordova/plugin/win7/storage');
 
                     // Inject a lsitener for the backbutton, and tell native to override the flag (true/false) when we have 1 or more, or 0, listeners
                     var backButtonChannel = cordova.addDocumentEventHandler('backbutton', {
-                        onSubscribe: function() {
+                        onSubscribe: function () {
                             if (this.numHandlers === 1) {
                                 exec(null, null, "Platform", "backButtonEventOn", []);
                             }
                         },
-                        onUnsubscribe: function() {
+                        onUnsubscribe: function () {
                             if (this.numHandlers === 0) {
                                 exec(null, null, "Platform", "backButtonEventOff", []);
                             }
                         }
                     });
 
-                    channel.onDestroy.subscribe(function() {
+                    channel.onDestroy.subscribe(function () {
                         // Remove session storage database
                         storage.removeDatabase(device.uuid);
                     });
@@ -14036,7 +14040,7 @@ we should simply use a literal :
                         });
                     }
 
-                    channel.join(function() {
+                    channel.join(function () {
                         if (typeof window.sessionStorage == 'undefined' || window.sessionStorage === null) {
                             Object.defineProperty(window, "sessionStorage", {
                                 writable: false,
@@ -14059,8 +14063,8 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Acceleration.js
-        define("cordova/plugin/Acceleration", function(require, exports, module) {
-            var Acceleration = function(x, y, z, timestamp) {
+        define("cordova/plugin/Acceleration", function (require, exports, module) {
+            var Acceleration = function (x, y, z, timestamp) {
                 this.x = x;
                 this.y = y;
                 this.z = z;
@@ -14072,7 +14076,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Camera.js
-        define("cordova/plugin/Camera", function(require, exports, module) {
+        define("cordova/plugin/Camera", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 Camera = require('cordova/plugin/CameraConstants');
 
@@ -14092,7 +14096,7 @@ we should simply use a literal :
              * @param {Function} errorCallback
              * @param {Object} options
              */
-            cameraExport.getPicture = function(successCallback, errorCallback, options) {
+            cameraExport.getPicture = function (successCallback, errorCallback, options) {
                 // successCallback required
                 if (typeof successCallback != "function") {
                     console.log("Camera Error: successCallback is not a function");
@@ -14178,12 +14182,13 @@ we should simply use a literal :
                 }
 
                 var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
-                mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions];
+                    mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions
+                ];
 
                 exec(successCallback, errorCallback, "Camera", "takePicture", args);
             };
 
-            cameraExport.cleanup = function(successCallback, errorCallback) {
+            cameraExport.cleanup = function (successCallback, errorCallback) {
                 exec(successCallback, errorCallback, "Camera", "cleanup", []);
             };
 
@@ -14191,7 +14196,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CameraConstants.js
-        define("cordova/plugin/CameraConstants", function(require, exports, module) {
+        define("cordova/plugin/CameraConstants", function (require, exports, module) {
             module.exports = {
                 DestinationType: {
                     DATA_URL: 0, // Return base64 encoded string
@@ -14222,13 +14227,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CameraPopoverOptions.js
-        define("cordova/plugin/CameraPopoverOptions", function(require, exports, module) {
+        define("cordova/plugin/CameraPopoverOptions", function (require, exports, module) {
             var Camera = require('cordova/plugin/CameraConstants');
 
             /**
              * Encapsulates options for iOS Popover image picker
              */
-            var CameraPopoverOptions = function(x, y, width, height, arrowDir) {
+            var CameraPopoverOptions = function (x, y, width, height, arrowDir) {
                 // information of rectangle that popover should be anchored to
                 this.x = x || 0;
                 this.y = y || 32;
@@ -14242,11 +14247,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureAudioOptions.js
-        define("cordova/plugin/CaptureAudioOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureAudioOptions", function (require, exports, module) {
             /**
              * Encapsulates all audio capture operation configuration options.
              */
-            var CaptureAudioOptions = function() {
+            var CaptureAudioOptions = function () {
                 // Upper limit of sound clips user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single sound clip in seconds.
@@ -14259,11 +14264,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureError.js
-        define("cordova/plugin/CaptureError", function(require, exports, module) {
+        define("cordova/plugin/CaptureError", function (require, exports, module) {
             /**
              * The CaptureError interface encapsulates all errors in the Capture API.
              */
-            var CaptureError = function(c) {
+            var CaptureError = function (c) {
                 this.code = c || null;
             };
 
@@ -14282,11 +14287,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureImageOptions.js
-        define("cordova/plugin/CaptureImageOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureImageOptions", function (require, exports, module) {
             /**
              * Encapsulates all image capture operation configuration options.
              */
-            var CaptureImageOptions = function() {
+            var CaptureImageOptions = function () {
                 // Upper limit of images user can take. Value must be equal or greater than 1.
                 this.limit = 1;
                 // The selected image mode. Must match with one of the elements in supportedImageModes array.
@@ -14297,11 +14302,11 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CaptureVideoOptions.js
-        define("cordova/plugin/CaptureVideoOptions", function(require, exports, module) {
+        define("cordova/plugin/CaptureVideoOptions", function (require, exports, module) {
             /**
              * Encapsulates all video capture operation configuration options.
              */
-            var CaptureVideoOptions = function() {
+            var CaptureVideoOptions = function () {
                 // Upper limit of videos user can record. Value must be equal or greater than 1.
                 this.limit = 1;
                 // Maximum duration of a single video clip in seconds.
@@ -14314,13 +14319,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CompassError.js
-        define("cordova/plugin/CompassError", function(require, exports, module) {
+        define("cordova/plugin/CompassError", function (require, exports, module) {
             /**
              *  CompassError.
              *  An error code assigned by an implementation when an error has occured
              * @constructor
              */
-            var CompassError = function(err) {
+            var CompassError = function (err) {
                 this.code = (err !== undefined ? err : null);
             };
 
@@ -14331,8 +14336,8 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/CompassHeading.js
-        define("cordova/plugin/CompassHeading", function(require, exports, module) {
-            var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp) {
+        define("cordova/plugin/CompassHeading", function (require, exports, module) {
+            var CompassHeading = function (magneticHeading, trueHeading, headingAccuracy, timestamp) {
                 this.magneticHeading = (magneticHeading !== undefined ? magneticHeading : null);
                 this.trueHeading = (trueHeading !== undefined ? trueHeading : null);
                 this.headingAccuracy = (headingAccuracy !== undefined ? headingAccuracy : null);
@@ -14343,7 +14348,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ConfigurationData.js
-        define("cordova/plugin/ConfigurationData", function(require, exports, module) {
+        define("cordova/plugin/ConfigurationData", function (require, exports, module) {
             /**
              * Encapsulates a set of parameters that the capture device supports.
              */
@@ -14363,7 +14368,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Connection.js
-        define("cordova/plugin/Connection", function(require, exports, module) {
+        define("cordova/plugin/Connection", function (require, exports, module) {
             /**
              * Network status
              */
@@ -14379,7 +14384,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Contact.js
-        define("cordova/plugin/Contact", function(require, exports, module) {
+        define("cordova/plugin/Contact", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 ContactError = require('cordova/plugin/ContactError'),
                 utils = require('cordova/utils');
@@ -14441,8 +14446,8 @@ we should simply use a literal :
              * @param {Array.<ContactField>} categories
              * @param {Array.<ContactField>} urls contact's web sites
              */
-            var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, addresses,
-            ims, organizations, birthday, note, photos, categories, urls) {
+            var Contact = function (id, displayName, name, nickname, phoneNumbers, emails, addresses,
+                ims, organizations, birthday, note, photos, categories, urls) {
                 this.id = id || null;
                 this.rawId = null;
                 this.displayName = displayName || null;
@@ -14465,8 +14470,8 @@ we should simply use a literal :
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.remove = function(successCB, errorCB) {
-                var fail = function(code) {
+            Contact.prototype.remove = function (successCB, errorCB) {
+                var fail = function (code) {
                     errorCB(new ContactError(code));
                 };
                 if (this.id === null) {
@@ -14481,7 +14486,7 @@ we should simply use a literal :
              * With the contact ID set to null.
              * @return copy of this Contact
              */
-            Contact.prototype.clone = function() {
+            Contact.prototype.clone = function () {
                 var clonedContact = utils.clone(this);
                 var i;
                 clonedContact.id = null;
@@ -14535,11 +14540,11 @@ we should simply use a literal :
              * @param successCB success callback
              * @param errorCB error callback
              */
-            Contact.prototype.save = function(successCB, errorCB) {
-                var fail = function(code) {
+            Contact.prototype.save = function (successCB, errorCB) {
+                var fail = function (code) {
                     errorCB(new ContactError(code));
                 };
-                var success = function(result) {
+                var success = function (result) {
                     if (result) {
                         if (typeof successCB === 'function') {
                             var fullContact = require('cordova/plugin/contacts').create(result);
@@ -14560,7 +14565,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactAddress.js
-        define("cordova/plugin/ContactAddress", function(require, exports, module) {
+        define("cordova/plugin/ContactAddress", function (require, exports, module) {
             /**
              * Contact address.
              * @constructor
@@ -14573,7 +14578,7 @@ we should simply use a literal :
              * @param country
              */
 
-            var ContactAddress = function(pref, type, formatted, streetAddress, locality, region, postalCode, country) {
+            var ContactAddress = function (pref, type, formatted, streetAddress, locality, region, postalCode, country) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -14589,13 +14594,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactError.js
-        define("cordova/plugin/ContactError", function(require, exports, module) {
+        define("cordova/plugin/ContactError", function (require, exports, module) {
             /**
              *  ContactError.
              *  An error code assigned by an implementation when an error has occured
              * @constructor
              */
-            var ContactError = function(err) {
+            var ContactError = function (err) {
                 this.code = (typeof err != 'undefined' ? err : null);
             };
 
@@ -14614,7 +14619,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactField.js
-        define("cordova/plugin/ContactField", function(require, exports, module) {
+        define("cordova/plugin/ContactField", function (require, exports, module) {
             /**
              * Generic contact field.
              * @constructor
@@ -14623,7 +14628,7 @@ we should simply use a literal :
              * @param value
              * @param pref
              */
-            var ContactField = function(type, value, pref) {
+            var ContactField = function (type, value, pref) {
                 this.id = null;
                 this.type = (type && type.toString()) || null;
                 this.value = (value && value.toString()) || null;
@@ -14634,7 +14639,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactFindOptions.js
-        define("cordova/plugin/ContactFindOptions", function(require, exports, module) {
+        define("cordova/plugin/ContactFindOptions", function (require, exports, module) {
             /**
              * ContactFindOptions.
              * @constructor
@@ -14642,7 +14647,7 @@ we should simply use a literal :
              * @param multiple boolean used to determine if more than one contact should be returned
              */
 
-            var ContactFindOptions = function(filter, multiple) {
+            var ContactFindOptions = function (filter, multiple) {
                 this.filter = filter || '';
                 this.multiple = (typeof multiple != 'undefined' ? multiple : false);
             };
@@ -14651,7 +14656,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactName.js
-        define("cordova/plugin/ContactName", function(require, exports, module) {
+        define("cordova/plugin/ContactName", function (require, exports, module) {
             /**
              * Contact name.
              * @constructor
@@ -14662,7 +14667,7 @@ we should simply use a literal :
              * @param prefix
              * @param suffix
              */
-            var ContactName = function(formatted, familyName, givenName, middle, prefix, suffix) {
+            var ContactName = function (formatted, familyName, givenName, middle, prefix, suffix) {
                 this.formatted = formatted || null;
                 this.familyName = familyName || null;
                 this.givenName = givenName || null;
@@ -14675,7 +14680,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ContactOrganization.js
-        define("cordova/plugin/ContactOrganization", function(require, exports, module) {
+        define("cordova/plugin/ContactOrganization", function (require, exports, module) {
             /**
              * Contact organization.
              * @constructor
@@ -14689,7 +14694,7 @@ we should simply use a literal :
              * @param desc
              */
 
-            var ContactOrganization = function(pref, type, name, dept, title) {
+            var ContactOrganization = function (pref, type, name, dept, title) {
                 this.id = null;
                 this.pref = (typeof pref != 'undefined' ? pref : false);
                 this.type = type || null;
@@ -14702,7 +14707,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Coordinates.js
-        define("cordova/plugin/Coordinates", function(require, exports, module) {
+        define("cordova/plugin/Coordinates", function (require, exports, module) {
             /**
              * This class contains position information.
              * @param {Object} lat
@@ -14714,7 +14719,7 @@ we should simply use a literal :
              * @param {Object} altacc
              * @constructor
              */
-            var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
+            var Coordinates = function (lat, lng, alt, acc, head, vel, altacc) {
                 /**
                  * The latitude of the position.
                  */
@@ -14755,7 +14760,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/DirectoryEntry.js
-        define("cordova/plugin/DirectoryEntry", function(require, exports, module) {
+        define("cordova/plugin/DirectoryEntry", function (require, exports, module) {
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
                 Entry = require('cordova/plugin/Entry'),
@@ -14771,7 +14776,7 @@ we should simply use a literal :
              * {DOMString} fullPath the absolute full path to the directory (readonly)
              * TODO: implement this!!! {FileSystem} filesystem on which the directory resides (readonly)
              */
-            var DirectoryEntry = function(name, fullPath) {
+            var DirectoryEntry = function (name, fullPath) {
                 DirectoryEntry.__super__.constructor.apply(this, [false, true, name, fullPath]);
             };
 
@@ -14780,7 +14785,7 @@ we should simply use a literal :
             /**
              * Creates a new DirectoryReader to read entries from this directory
              */
-            DirectoryEntry.prototype.createReader = function() {
+            DirectoryEntry.prototype.createReader = function () {
                 return new DirectoryReader(this.fullPath);
             };
 
@@ -14792,12 +14797,12 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getDirectory = function(path, options, successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryEntry.prototype.getDirectory = function (path, options, successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getDirectory", [this.fullPath, path, options]);
@@ -14809,8 +14814,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with no parameters
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCallback) {
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+            DirectoryEntry.prototype.removeRecursively = function (successCallback, errorCallback) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "removeRecursively", [this.fullPath]);
@@ -14824,13 +14829,13 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new entry
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryEntry.prototype.getFile = function(path, options, successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryEntry.prototype.getFile = function (path, options, successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var FileEntry = require('cordova/plugin/FileEntry');
                         var entry = new FileEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFile", [this.fullPath, path, options]);
@@ -14841,7 +14846,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/DirectoryReader.js
-        define("cordova/plugin/DirectoryReader", function(require, exports, module) {
+        define("cordova/plugin/DirectoryReader", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError');
 
@@ -14859,8 +14864,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with a list of entries
              * @param {Function} errorCallback is called with a FileError
              */
-            DirectoryReader.prototype.readEntries = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            DirectoryReader.prototype.readEntries = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var retVal = [];
                         for (var i = 0; i < result.length; i++) {
                             var entry = null;
@@ -14877,7 +14882,7 @@ we should simply use a literal :
                         }
                         successCallback(retVal);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "readEntries", [this.path]);
@@ -14888,7 +14893,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Entry.js
-        define("cordova/plugin/Entry", function(require, exports, module) {
+        define("cordova/plugin/Entry", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
                 Metadata = require('cordova/plugin/Metadata');
@@ -14924,12 +14929,12 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} is called with a FileError
              */
-            Entry.prototype.getMetadata = function(successCallback, errorCallback) {
-                var success = typeof successCallback !== 'function' ? null : function(lastModified) {
+            Entry.prototype.getMetadata = function (successCallback, errorCallback) {
+                var success = typeof successCallback !== 'function' ? null : function (lastModified) {
                         var metadata = new Metadata(lastModified);
                         successCallback(metadata);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
 
@@ -14946,7 +14951,7 @@ we should simply use a literal :
              * @param metadataObject
              *            {Object} keys and values to set
              */
-            Entry.prototype.setMetadata = function(successCallback, errorCallback, metadataObject) {
+            Entry.prototype.setMetadata = function (successCallback, errorCallback, metadataObject) {
 
                 exec(successCallback, errorCallback, "File", "setMetadata", [this.fullPath, metadataObject]);
             };
@@ -14963,8 +14968,8 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.moveTo = function(parent, newName, successCallback, errorCallback) {
-                var fail = function(code) {
+            Entry.prototype.moveTo = function (parent, newName, successCallback, errorCallback) {
+                var fail = function (code) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(code));
                     }
@@ -14978,7 +14983,7 @@ we should simply use a literal :
                 var srcPath = this.fullPath,
                     // entry name
                     name = newName || this.name,
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (typeof successCallback === 'function') {
                                 // create appropriate Entry object
@@ -15011,8 +15016,8 @@ we should simply use a literal :
              * @param errorCallback
              *            {Function} called with a FileError
              */
-            Entry.prototype.copyTo = function(parent, newName, successCallback, errorCallback) {
-                var fail = function(code) {
+            Entry.prototype.copyTo = function (parent, newName, successCallback, errorCallback) {
+                var fail = function (code) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(code));
                     }
@@ -15029,7 +15034,7 @@ we should simply use a literal :
                     // entry name
                     name = newName || this.name,
                     // success callback
-                    success = function(entry) {
+                    success = function (entry) {
                         if (entry) {
                             if (typeof successCallback === 'function') {
                                 // create appropriate Entry object
@@ -15053,7 +15058,7 @@ we should simply use a literal :
             /**
              * Return a URL that can be used to identify this entry.
              */
-            Entry.prototype.toURL = function() {
+            Entry.prototype.toURL = function () {
                 // fullPath attribute contains the full URL
                 return this.fullPath;
             };
@@ -15064,7 +15069,7 @@ we should simply use a literal :
              * @param {DOMString} mimeType for a FileEntry, the mime type to be used to interpret the file, when loaded through this URI.
              * @return uri
              */
-            Entry.prototype.toURI = function(mimeType) {
+            Entry.prototype.toURI = function (mimeType) {
                 console.log("DEPRECATED: Update your code to use 'toURL'");
                 // fullPath attribute contains the full URI
                 return this.toURL();
@@ -15078,8 +15083,8 @@ we should simply use a literal :
              * @param successCallback {Function} called with no parameters
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.remove = function(successCallback, errorCallback) {
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+            Entry.prototype.remove = function (successCallback, errorCallback) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(successCallback, fail, "File", "remove", [this.fullPath]);
@@ -15091,13 +15096,13 @@ we should simply use a literal :
              * @param successCallback {Function} called with the parent DirectoryEntry object
              * @param errorCallback {Function} called with a FileError
              */
-            Entry.prototype.getParent = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(result) {
+            Entry.prototype.getParent = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (result) {
                         var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
                         var entry = new DirectoryEntry(result.name, result.fullPath);
                         successCallback(entry);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getParent", [this.fullPath]);
@@ -15107,7 +15112,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/File.js
-        define("cordova/plugin/File", function(require, exports, module) {
+        define("cordova/plugin/File", function (require, exports, module) {
             /**
              * Constructor.
              * name {DOMString} name of the file, without path information
@@ -15117,7 +15122,7 @@ we should simply use a literal :
              * size {Number} size of the file in bytes
              */
 
-            var File = function(name, fullPath, type, lastModifiedDate, size) {
+            var File = function (name, fullPath, type, lastModifiedDate, size) {
                 this.name = name || '';
                 this.fullPath = fullPath || null;
                 this.type = type || null;
@@ -15129,7 +15134,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileEntry.js
-        define("cordova/plugin/FileEntry", function(require, exports, module) {
+        define("cordova/plugin/FileEntry", function (require, exports, module) {
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
                 Entry = require('cordova/plugin/Entry'),
@@ -15146,7 +15151,7 @@ we should simply use a literal :
              * {DOMString} fullPath the absolute full path to the file (readonly)
              * {FileSystem} filesystem on which the file resides (readonly)
              */
-            var FileEntry = function(name, fullPath) {
+            var FileEntry = function (name, fullPath) {
                 FileEntry.__super__.constructor.apply(this, [true, false, name, fullPath]);
             };
 
@@ -15158,8 +15163,8 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new FileWriter
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
-                this.file(function(filePointer) {
+            FileEntry.prototype.createWriter = function (successCallback, errorCallback) {
+                this.file(function (filePointer) {
                     var writer = new FileWriter(filePointer);
 
                     if (writer.fileName === null || writer.fileName === "") {
@@ -15180,12 +15185,12 @@ we should simply use a literal :
              * @param {Function} successCallback is called with the new File object
              * @param {Function} errorCallback is called with a FileError
              */
-            FileEntry.prototype.file = function(successCallback, errorCallback) {
-                var win = typeof successCallback !== 'function' ? null : function(f) {
+            FileEntry.prototype.file = function (successCallback, errorCallback) {
+                var win = typeof successCallback !== 'function' ? null : function (f) {
                         var file = new File(f.name, f.fullPath, f.type, f.lastModifiedDate, f.size);
                         successCallback(file);
                     };
-                var fail = typeof errorCallback !== 'function' ? null : function(code) {
+                var fail = typeof errorCallback !== 'function' ? null : function (code) {
                         errorCallback(new FileError(code));
                     };
                 exec(win, fail, "File", "getFileMetadata", [this.fullPath]);
@@ -15196,7 +15201,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileError.js
-        define("cordova/plugin/FileError", function(require, exports, module) {
+        define("cordova/plugin/FileError", function (require, exports, module) {
             /**
              * FileError
              */
@@ -15226,7 +15231,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileReader.js
-        define("cordova/plugin/FileReader", function(require, exports, module) {
+        define("cordova/plugin/FileReader", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
                 ProgressEvent = require('cordova/plugin/ProgressEvent');
@@ -15239,7 +15244,7 @@ we should simply use a literal :
              *      To read from the SD card, the file name is "sdcard/my_file.txt"
              * @constructor
              */
-            var FileReader = function() {
+            var FileReader = function () {
                 this.fileName = "";
 
                 this.readyState = 0; // FileReader.EMPTY
@@ -15267,7 +15272,7 @@ we should simply use a literal :
             /**
              * Abort reading file.
              */
-            FileReader.prototype.abort = function() {
+            FileReader.prototype.abort = function () {
                 this.result = null;
 
                 if (this.readyState == FileReader.DONE || this.readyState == FileReader.EMPTY) {
@@ -15296,7 +15301,7 @@ we should simply use a literal :
              * @param file          {File} File object containing file properties
              * @param encoding      [Optional] (see http://www.iana.org/assignments/character-sets)
              */
-            FileReader.prototype.readAsText = function(file, encoding) {
+            FileReader.prototype.readAsText = function (file, encoding) {
                 // Figure out pathing
                 this.fileName = '';
                 if (typeof file.fullPath === 'undefined') {
@@ -15327,65 +15332,65 @@ we should simply use a literal :
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // Save result
-                    me.result = r;
+                        // Save result
+                        me.result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // null result
-                    me.result = null;
+                        // null result
+                        me.result = null;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsText", [this.fileName, enc]);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsText", [this.fileName, enc]);
             };
 
 
@@ -15396,7 +15401,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsDataURL = function(file) {
+            FileReader.prototype.readAsDataURL = function (file) {
                 this.fileName = "";
                 if (typeof file.fullPath === "undefined") {
                     this.fileName = file;
@@ -15423,64 +15428,64 @@ we should simply use a literal :
 
                 // Read file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    // Save result
-                    me.result = r;
+                        // Save result
+                        me.result = r;
 
-                    // If onload callback
-                    if (typeof me.onload === "function") {
-                        me.onload(new ProgressEvent("load", {
-                            target: me
-                        }));
-                    }
+                        // If onload callback
+                        if (typeof me.onload === "function") {
+                            me.onload(new ProgressEvent("load", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileReader.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileReader.DONE;
+                        // DONE state
+                        me.readyState = FileReader.DONE;
 
-                    me.result = null;
+                        me.result = null;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            target: me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                target: me
+                            }));
+                        }
 
-                    // If onloadend callback
-                    if (typeof me.onloadend === "function") {
-                        me.onloadend(new ProgressEvent("loadend", {
-                            target: me
-                        }));
-                    }
-                }, "File", "readAsDataURL", [this.fileName]);
+                        // If onloadend callback
+                        if (typeof me.onloadend === "function") {
+                            me.onloadend(new ProgressEvent("loadend", {
+                                target: me
+                            }));
+                        }
+                    }, "File", "readAsDataURL", [this.fileName]);
             };
 
             /**
@@ -15488,7 +15493,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsBinaryString = function(file) {
+            FileReader.prototype.readAsBinaryString = function (file) {
                 // TODO - Can't return binary data to browser.
                 console.log('method "readAsBinaryString" is not supported at this time.');
             };
@@ -15498,7 +15503,7 @@ we should simply use a literal :
              *
              * @param file          {File} File object containing file properties
              */
-            FileReader.prototype.readAsArrayBuffer = function(file) {
+            FileReader.prototype.readAsArrayBuffer = function (file) {
                 // TODO - Can't return binary data to browser.
                 console.log('This method is not supported at this time.');
             };
@@ -15507,7 +15512,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileSystem.js
-        define("cordova/plugin/FileSystem", function(require, exports, module) {
+        define("cordova/plugin/FileSystem", function (require, exports, module) {
             var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
 
             /**
@@ -15517,7 +15522,7 @@ we should simply use a literal :
              * {DOMString} name the unique name of the file system (readonly)
              * {DirectoryEntry} root directory of the file system (readonly)
              */
-            var FileSystem = function(name, root) {
+            var FileSystem = function (name, root) {
                 this.name = name || null;
                 if (root) {
                     this.root = new DirectoryEntry(root.name, root.fullPath);
@@ -15529,7 +15534,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileTransfer.js
-        define("cordova/plugin/FileTransfer", function(require, exports, module) {
+        define("cordova/plugin/FileTransfer", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 FileTransferError = require('cordova/plugin/FileTransferError');
 
@@ -15537,7 +15542,7 @@ we should simply use a literal :
              * FileTransfer uploads a file to a remote server.
              * @constructor
              */
-            var FileTransfer = function() {};
+            var FileTransfer = function () {};
 
             /**
              * Given an absolute file path, uploads a file on the device to a remote server
@@ -15549,7 +15554,7 @@ we should simply use a literal :
              * @param options {FileUploadOptions} Optional parameters such as file name and mimetype
              * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
              */
-            FileTransfer.prototype.upload = function(filePath, server, successCallback, errorCallback, options, trustAllHosts) {
+            FileTransfer.prototype.upload = function (filePath, server, successCallback, errorCallback, options, trustAllHosts) {
                 // sanity parameter checking
                 if (!filePath || !server) throw new Error("FileTransfer.upload requires filePath and server URL parameters at the minimum.");
                 // check for options
@@ -15574,7 +15579,7 @@ we should simply use a literal :
                     }
                 }
 
-                var fail = function(e) {
+                var fail = function (e) {
                     var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
                     errorCallback(error);
                 };
@@ -15589,10 +15594,10 @@ we should simply use a literal :
              * @param successCallback (Function}  Callback to be invoked when upload has completed
              * @param errorCallback {Function}    Callback to be invoked upon error
              */
-            FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
+            FileTransfer.prototype.download = function (source, target, successCallback, errorCallback) {
                 // sanity parameter checking
                 if (!source || !target) throw new Error("FileTransfer.download requires source URI and target URI parameters at the minimum.");
-                var win = function(result) {
+                var win = function (result) {
                     var entry = null;
                     if (result.isDirectory) {
                         entry = new(require('cordova/plugin/DirectoryEntry'))();
@@ -15606,7 +15611,7 @@ we should simply use a literal :
                     successCallback(entry);
                 };
 
-                var fail = function(e) {
+                var fail = function (e) {
                     var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
                     errorCallback(error);
                 };
@@ -15619,12 +15624,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileTransferError.js
-        define("cordova/plugin/FileTransferError", function(require, exports, module) {
+        define("cordova/plugin/FileTransferError", function (require, exports, module) {
             /**
              * FileTransferError
              * @constructor
              */
-            var FileTransferError = function(code, source, target, status) {
+            var FileTransferError = function (code, source, target, status) {
                 this.code = code || null;
                 this.source = source || null;
                 this.target = target || null;
@@ -15640,7 +15645,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileUploadOptions.js
-        define("cordova/plugin/FileUploadOptions", function(require, exports, module) {
+        define("cordova/plugin/FileUploadOptions", function (require, exports, module) {
             /**
              * Options to customize the HTTP request used to upload files.
              * @constructor
@@ -15651,7 +15656,7 @@ we should simply use a literal :
              * @param headers {Object}   Keys are header names, values are header values. Multiple
              *                           headers of the same name are not supported.
              */
-            var FileUploadOptions = function(fileKey, fileName, mimeType, params, headers) {
+            var FileUploadOptions = function (fileKey, fileName, mimeType, params, headers) {
                 this.fileKey = fileKey || null;
                 this.fileName = fileName || null;
                 this.mimeType = mimeType || null;
@@ -15664,12 +15669,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileUploadResult.js
-        define("cordova/plugin/FileUploadResult", function(require, exports, module) {
+        define("cordova/plugin/FileUploadResult", function (require, exports, module) {
             /**
              * FileUploadResult
              * @constructor
              */
-            var FileUploadResult = function() {
+            var FileUploadResult = function () {
                 this.bytesSent = 0;
                 this.responseCode = null;
                 this.response = null;
@@ -15679,7 +15684,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/FileWriter.js
-        define("cordova/plugin/FileWriter", function(require, exports, module) {
+        define("cordova/plugin/FileWriter", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 FileError = require('cordova/plugin/FileError'),
                 ProgressEvent = require('cordova/plugin/ProgressEvent');
@@ -15695,7 +15700,7 @@ we should simply use a literal :
              * @param file {File} File object containing file properties
              * @param append if true write to the end of the file, otherwise overwrite the file
              */
-            var FileWriter = function(file) {
+            var FileWriter = function (file) {
                 this.fileName = "";
                 this.length = 0;
                 if (file) {
@@ -15729,7 +15734,7 @@ we should simply use a literal :
             /**
              * Abort writing file.
              */
-            FileWriter.prototype.abort = function() {
+            FileWriter.prototype.abort = function () {
                 // check for invalid state
                 if (this.readyState === FileWriter.DONE || this.readyState === FileWriter.INIT) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -15760,7 +15765,7 @@ we should simply use a literal :
              *
              * @param text to be written
              */
-            FileWriter.prototype.write = function(text) {
+            FileWriter.prototype.write = function (text) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -15780,65 +15785,65 @@ we should simply use a literal :
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // position always increases by bytes written because file would be extended
-                    me.position += r;
-                    // The length of the file is now where we are done writing.
+                        // position always increases by bytes written because file would be extended
+                        me.position += r;
+                        // The length of the file is now where we are done writing.
 
-                    me.length = me.position;
+                        me.length = me.position;
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "write", [this.fileName, text, this.position]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "write", [this.fileName, text, this.position]);
             };
 
             /**
@@ -15850,7 +15855,7 @@ we should simply use a literal :
              *
              * @param offset is the location to move the file pointer to.
              */
-            FileWriter.prototype.seek = function(offset) {
+            FileWriter.prototype.seek = function (offset) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -15881,7 +15886,7 @@ we should simply use a literal :
              *
              * @param size to chop the file at.
              */
-            FileWriter.prototype.truncate = function(size) {
+            FileWriter.prototype.truncate = function (size) {
                 // Throw an exception if we are already writing a file
                 if (this.readyState === FileWriter.WRITING) {
                     throw new FileError(FileError.INVALID_STATE_ERR);
@@ -15901,63 +15906,63 @@ we should simply use a literal :
 
                 // Write file
                 exec(
-                // Success callback
+                    // Success callback
 
-                function(r) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (r) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Update the length of the file
-                    me.length = r;
-                    me.position = Math.min(me.position, r);
+                        // Update the length of the file
+                        me.length = r;
+                        me.position = Math.min(me.position, r);
 
-                    // If onwrite callback
-                    if (typeof me.onwrite === "function") {
-                        me.onwrite(new ProgressEvent("write", {
-                            "target": me
-                        }));
-                    }
+                        // If onwrite callback
+                        if (typeof me.onwrite === "function") {
+                            me.onwrite(new ProgressEvent("write", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                },
-                // Error callback
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    },
+                    // Error callback
 
-                function(e) {
-                    // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileWriter.DONE) {
-                        return;
-                    }
+                    function (e) {
+                        // If DONE (cancelled), then don't do anything
+                        if (me.readyState === FileWriter.DONE) {
+                            return;
+                        }
 
-                    // DONE state
-                    me.readyState = FileWriter.DONE;
+                        // DONE state
+                        me.readyState = FileWriter.DONE;
 
-                    // Save error
-                    me.error = new FileError(e);
+                        // Save error
+                        me.error = new FileError(e);
 
-                    // If onerror callback
-                    if (typeof me.onerror === "function") {
-                        me.onerror(new ProgressEvent("error", {
-                            "target": me
-                        }));
-                    }
+                        // If onerror callback
+                        if (typeof me.onerror === "function") {
+                            me.onerror(new ProgressEvent("error", {
+                                "target": me
+                            }));
+                        }
 
-                    // If onwriteend callback
-                    if (typeof me.onwriteend === "function") {
-                        me.onwriteend(new ProgressEvent("writeend", {
-                            "target": me
-                        }));
-                    }
-                }, "File", "truncate", [this.fileName, size]);
+                        // If onwriteend callback
+                        if (typeof me.onwriteend === "function") {
+                            me.onwriteend(new ProgressEvent("writeend", {
+                                "target": me
+                            }));
+                        }
+                    }, "File", "truncate", [this.fileName, size]);
             };
 
             module.exports = FileWriter;
@@ -15965,7 +15970,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Flags.js
-        define("cordova/plugin/Flags", function(require, exports, module) {
+        define("cordova/plugin/Flags", function (require, exports, module) {
             /**
              * Supplies arguments to methods that lookup or create files and directories.
              *
@@ -15985,13 +15990,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/LocalFileSystem.js
-        define("cordova/plugin/LocalFileSystem", function(require, exports, module) {
+        define("cordova/plugin/LocalFileSystem", function (require, exports, module) {
             var exec = require('cordova/exec');
 
             /**
              * Represents a local file system.
              */
-            var LocalFileSystem = function() {
+            var LocalFileSystem = function () {
 
             };
 
@@ -16002,7 +16007,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Media.js
-        define("cordova/plugin/Media", function(require, exports, module) {
+        define("cordova/plugin/Media", function (require, exports, module) {
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec');
 
@@ -16020,7 +16025,7 @@ we should simply use a literal :
              * @param statusCallback        The callback to be called when media status has changed.
              *                                  statusCallback(int statusCode) - OPTIONAL
              */
-            var Media = function(src, successCallback, errorCallback, statusCallback) {
+            var Media = function (src, successCallback, errorCallback, statusCallback) {
 
                 // successCallback optional
                 if (successCallback && (typeof successCallback !== "function")) {
@@ -16066,23 +16071,23 @@ we should simply use a literal :
             Media.MEDIA_MSG = ["None", "Starting", "Running", "Paused", "Stopped"];
 
             // "static" function to return existing objs.
-            Media.get = function(id) {
+            Media.get = function (id) {
                 return mediaObjects[id];
             };
 
             /**
              * Start or resume playing audio file.
              */
-            Media.prototype.play = function(options) {
+            Media.prototype.play = function (options) {
                 exec(null, null, "Media", "startPlayingAudio", [this.id, this.src, options]);
             };
 
             /**
              * Stop playing audio file.
              */
-            Media.prototype.stop = function() {
+            Media.prototype.stop = function () {
                 var me = this;
-                exec(function() {
+                exec(function () {
                     me._position = 0;
                     me.successCallback();
                 }, this.errorCallback, "Media", "stopPlayingAudio", [this.id]);
@@ -16091,9 +16096,9 @@ we should simply use a literal :
             /**
              * Seek or jump to a new time in the track..
              */
-            Media.prototype.seekTo = function(milliseconds) {
+            Media.prototype.seekTo = function (milliseconds) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                 }, this.errorCallback, "Media", "seekToAudio", [this.id, milliseconds]);
             };
@@ -16101,7 +16106,7 @@ we should simply use a literal :
             /**
              * Pause playing audio file.
              */
-            Media.prototype.pause = function() {
+            Media.prototype.pause = function () {
                 exec(null, this.errorCallback, "Media", "pausePlayingAudio", [this.id]);
             };
 
@@ -16111,16 +16116,16 @@ we should simply use a literal :
              *
              * @return      duration or -1 if not known.
              */
-            Media.prototype.getDuration = function() {
+            Media.prototype.getDuration = function () {
                 return this._duration;
             };
 
             /**
              * Get position of audio.
              */
-            Media.prototype.getCurrentPosition = function(success, fail) {
+            Media.prototype.getCurrentPosition = function (success, fail) {
                 var me = this;
-                exec(function(p) {
+                exec(function (p) {
                     me._position = p;
                     success(p);
                 }, fail, "Media", "getCurrentPositionAudio", [this.id]);
@@ -16129,28 +16134,28 @@ we should simply use a literal :
             /**
              * Start recording audio file.
              */
-            Media.prototype.startRecord = function() {
+            Media.prototype.startRecord = function () {
                 exec(this.successCallback, this.errorCallback, "Media", "startRecordingAudio", [this.id, this.src]);
             };
 
             /**
              * Stop recording audio file.
              */
-            Media.prototype.stopRecord = function() {
+            Media.prototype.stopRecord = function () {
                 exec(this.successCallback, this.errorCallback, "Media", "stopRecordingAudio", [this.id]);
             };
 
             /**
              * Release the resources.
              */
-            Media.prototype.release = function() {
+            Media.prototype.release = function () {
                 exec(null, this.errorCallback, "Media", "release", [this.id]);
             };
 
             /**
              * Adjust the volume.
              */
-            Media.prototype.setVolume = function(volume) {
+            Media.prototype.setVolume = function (volume) {
                 exec(null, null, "Media", "setVolume", [this.id, volume]);
             };
 
@@ -16162,7 +16167,7 @@ we should simply use a literal :
              * @param status        The status code (int)
              * @param msg           The status message (string)
              */
-            Media.onStatus = function(id, msg, value) {
+            Media.onStatus = function (id, msg, value) {
                 var media = mediaObjects[id];
                 // If state update
                 if (msg === Media.MEDIA_STATE) {
@@ -16190,12 +16195,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaError.js
-        define("cordova/plugin/MediaError", function(require, exports, module) {
+        define("cordova/plugin/MediaError", function (require, exports, module) {
             /**
              * This class contains information about any Media errors.
              * @constructor
              */
-            var MediaError = function(code, msg) {
+            var MediaError = function (code, msg) {
                 this.code = (code !== undefined ? code : null);
                 this.message = msg || "";
             };
@@ -16210,7 +16215,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFile.js
-        define("cordova/plugin/MediaFile", function(require, exports, module) {
+        define("cordova/plugin/MediaFile", function (require, exports, module) {
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
                 File = require('cordova/plugin/File'),
@@ -16224,7 +16229,7 @@ we should simply use a literal :
              * lastModifiedDate {Date} last modified date
              * size {Number} size of the file in bytes
              */
-            var MediaFile = function(name, fullPath, type, lastModifiedDate, size) {
+            var MediaFile = function (name, fullPath, type, lastModifiedDate, size) {
                 MediaFile.__super__.constructor.apply(this, arguments);
             };
 
@@ -16236,7 +16241,7 @@ we should simply use a literal :
              * @param {Function} successCB
              * @param {Function} errorCB
              */
-            MediaFile.prototype.getFormatData = function(successCallback, errorCallback) {
+            MediaFile.prototype.getFormatData = function (successCallback, errorCallback) {
                 if (typeof this.fullPath === "undefined" || this.fullPath === null) {
                     errorCallback(new CaptureError(CaptureError.CAPTURE_INVALID_ARGUMENT));
                 } else {
@@ -16251,7 +16256,7 @@ we should simply use a literal :
              *
              * @param {PluginResult} pluginResult
              */
-            MediaFile.cast = function(pluginResult) {
+            MediaFile.cast = function (pluginResult) {
                 var mediaFiles = [];
                 for (var i = 0; i < pluginResult.message.length; i++) {
                     var mediaFile = new MediaFile();
@@ -16271,7 +16276,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/MediaFileData.js
-        define("cordova/plugin/MediaFileData", function(require, exports, module) {
+        define("cordova/plugin/MediaFileData", function (require, exports, module) {
             /**
              * MediaFileData encapsulates format information of a media file.
              *
@@ -16281,7 +16286,7 @@ we should simply use a literal :
              * @param {long} width
              * @param {float} duration
              */
-            var MediaFileData = function(codecs, bitrate, height, width, duration) {
+            var MediaFileData = function (codecs, bitrate, height, width, duration) {
                 this.codecs = codecs || null;
                 this.bitrate = bitrate || 0;
                 this.height = height || 0;
@@ -16293,13 +16298,13 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Metadata.js
-        define("cordova/plugin/Metadata", function(require, exports, module) {
+        define("cordova/plugin/Metadata", function (require, exports, module) {
             /**
              * Information about the state of the file or directory
              *
              * {Date} modificationTime (readonly)
              */
-            var Metadata = function(time) {
+            var Metadata = function (time) {
                 this.modificationTime = (typeof time != 'undefined' ? new Date(time) : null);
             };
 
@@ -16307,10 +16312,10 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/Position.js
-        define("cordova/plugin/Position", function(require, exports, module) {
+        define("cordova/plugin/Position", function (require, exports, module) {
             var Coordinates = require('cordova/plugin/Coordinates');
 
-            var Position = function(coords, timestamp) {
+            var Position = function (coords, timestamp) {
                 if (coords) {
                     this.coords = new Coordinates(coords.latitude, coords.longitude, coords.altitude, coords.accuracy, coords.heading, coords.velocity, coords.altitudeAccuracy);
                 } else {
@@ -16324,7 +16329,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/PositionError.js
-        define("cordova/plugin/PositionError", function(require, exports, module) {
+        define("cordova/plugin/PositionError", function (require, exports, module) {
             /**
              * Position error object
              *
@@ -16332,7 +16337,7 @@ we should simply use a literal :
              * @param code
              * @param message
              */
-            var PositionError = function(code, message) {
+            var PositionError = function (code, message) {
                 this.code = code || null;
                 this.message = message || '';
             };
@@ -16345,14 +16350,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/ProgressEvent.js
-        define("cordova/plugin/ProgressEvent", function(require, exports, module) {
+        define("cordova/plugin/ProgressEvent", function (require, exports, module) {
             // If ProgressEvent exists in global context, use it already, otherwise use our own polyfill
             // Feature test: See if we can instantiate a native ProgressEvent;
             // if so, use that approach,
             // otherwise fill-in with our own implementation.
             //
             // NOTE: right now we always fill in with our own. Down the road would be nice if we can use whatever is native in the webview.
-            var ProgressEvent = (function() {
+            var ProgressEvent = (function () {
                 /*
     var createEvent = function(data) {
         var event = document.createEvent('Events');
@@ -16395,7 +16400,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/accelerometer.js
-        define("cordova/plugin/accelerometer", function(require, exports, module) {
+        define("cordova/plugin/accelerometer", function (require, exports, module) {
             /**
              * This class provides access to device accelerometer data.
              * @constructor
@@ -16419,13 +16424,13 @@ we should simply use a literal :
             // Tells native to start.
 
             function start() {
-                exec(function(a) {
+                exec(function (a) {
                     var tempListeners = listeners.slice(0);
                     accel = new Acceleration(a.x, a.y, a.z, a.timestamp);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].win(accel);
                     }
-                }, function(e) {
+                }, function (e) {
                     var tempListeners = listeners.slice(0);
                     for (var i = 0, l = tempListeners.length; i < l; i++) {
                         tempListeners[i].fail(e);
@@ -16470,18 +16475,18 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the acceleration data. (OPTIONAL)
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  */
-                getCurrentAcceleration: function(successCallback, errorCallback, options) {
+                getCurrentAcceleration: function (successCallback, errorCallback, options) {
                     // successCallback required
                     if (typeof successCallback !== "function") {
                         throw "getCurrentAcceleration must be called with at least a success callback function as first parameter.";
                     }
 
                     var p;
-                    var win = function(a) {
+                    var win = function (a) {
                         removeListeners(p);
                         successCallback(a);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         removeListeners(p);
                         errorCallback(e);
                     };
@@ -16502,7 +16507,7 @@ we should simply use a literal :
                  * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchAcceleration: function(successCallback, errorCallback, options) {
+                watchAcceleration: function (successCallback, errorCallback, options) {
                     // Default interval (10 sec)
                     var frequency = (options && options.frequency && typeof options.frequency == 'number') ? options.frequency : 10000;
 
@@ -16514,14 +16519,14 @@ we should simply use a literal :
                     // Keep reference to watch id, and report accel readings as often as defined in frequency
                     var id = utils.createUUID();
 
-                    var p = createCallbackPair(function() {}, function(e) {
+                    var p = createCallbackPair(function () {}, function (e) {
                         removeListeners(p);
                         errorCallback(e);
                     });
                     listeners.push(p);
 
                     timers[id] = {
-                        timer: window.setInterval(function() {
+                        timer: window.setInterval(function () {
                             if (accel) {
                                 successCallback(accel);
                             }
@@ -16547,7 +16552,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The id of the watch returned from #watchAcceleration.
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     // Stop javascript timer & remove from timer list
                     if (id && timers[id]) {
                         window.clearInterval(timers[id].timer);
@@ -16562,7 +16567,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/battery.js
-        define("cordova/plugin/battery", function(require, exports, module) {
+        define("cordova/plugin/battery", function (require, exports, module) {
             /**
              * This class contains information about the current battery status.
              * @constructor
@@ -16574,7 +16579,7 @@ we should simply use a literal :
                 return battery.channels.batterystatus.numHandlers + battery.channels.batterylow.numHandlers + battery.channels.batterycritical.numHandlers;
             }
 
-            var Battery = function() {
+            var Battery = function () {
                 this._level = null;
                 this._isPlugged = null;
                 // Create new event handlers on the window (returns a channel instance)
@@ -16593,7 +16598,7 @@ we should simply use a literal :
              * Keep track of how many handlers we have so we can start and stop the native battery listener
              * appropriately (and hopefully save on battery life!).
              */
-            Battery.prototype.onSubscribe = function() {
+            Battery.prototype.onSubscribe = function () {
                 var me = battery;
                 // If we just registered the first handler, make sure native listener is started.
                 if (handlers() === 1) {
@@ -16601,7 +16606,7 @@ we should simply use a literal :
                 }
             };
 
-            Battery.prototype.onUnsubscribe = function() {
+            Battery.prototype.onUnsubscribe = function () {
                 var me = battery;
 
                 // If we just unregistered the last handler, make sure native listener is stopped.
@@ -16615,7 +16620,7 @@ we should simply use a literal :
              *
              * @param {Object} info            keys: level, isPlugged
              */
-            Battery.prototype._status = function(info) {
+            Battery.prototype._status = function (info) {
                 if (info) {
                     var me = battery;
                     var level = info.level;
@@ -16640,7 +16645,7 @@ we should simply use a literal :
             /**
              * Error callback for battery start
              */
-            Battery.prototype._error = function(e) {
+            Battery.prototype._error = function (e) {
                 console.log("Error initializing Battery: " + e);
             };
 
@@ -16650,7 +16655,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/capture.js
-        define("cordova/plugin/capture", function(require, exports, module) {
+        define("cordova/plugin/capture", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 MediaFile = require('cordova/plugin/MediaFile');
 
@@ -16664,7 +16669,7 @@ we should simply use a literal :
              */
 
             function _capture(type, successCallback, errorCallback, options) {
-                var win = function(pluginResult) {
+                var win = function (pluginResult) {
                     var mediaFiles = [];
                     var i;
                     for (i = 0; i < pluginResult.length; i++) {
@@ -16697,7 +16702,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureAudioOptions} options
              */
-            Capture.prototype.captureAudio = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureAudio = function (successCallback, errorCallback, options) {
                 _capture("captureAudio", successCallback, errorCallback, options);
             };
 
@@ -16708,7 +16713,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureImageOptions} options
              */
-            Capture.prototype.captureImage = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureImage = function (successCallback, errorCallback, options) {
                 _capture("captureImage", successCallback, errorCallback, options);
             };
 
@@ -16719,7 +16724,7 @@ we should simply use a literal :
              * @param {Function} errorCB
              * @param {CaptureVideoOptions} options
              */
-            Capture.prototype.captureVideo = function(successCallback, errorCallback, options) {
+            Capture.prototype.captureVideo = function (successCallback, errorCallback, options) {
                 _capture("captureVideo", successCallback, errorCallback, options);
             };
 
@@ -16729,7 +16734,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/compass.js
-        define("cordova/plugin/compass", function(require, exports, module) {
+        define("cordova/plugin/compass", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 utils = require('cordova/utils'),
                 CompassHeading = require('cordova/plugin/CompassHeading'),
@@ -16744,7 +16749,7 @@ we should simply use a literal :
                      * getting the heading data.
                      * @param {CompassOptions} options The options for getting the heading data (not used).
                      */
-                    getCurrentHeading: function(successCallback, errorCallback, options) {
+                    getCurrentHeading: function (successCallback, errorCallback, options) {
                         // successCallback required
                         if (typeof successCallback !== "function") {
                             console.log("Compass Error: successCallback is not a function");
@@ -16757,11 +16762,11 @@ we should simply use a literal :
                             return;
                         }
 
-                        var win = function(result) {
+                        var win = function (result) {
                             var ch = new CompassHeading(result.magneticHeading, result.trueHeading, result.headingAccuracy, result.timestamp);
                             successCallback(ch);
                         };
-                        var fail = function(code) {
+                        var fail = function (code) {
                             var ce = new CompassError(code);
                             errorCallback(ce);
                         };
@@ -16780,7 +16785,7 @@ we should simply use a literal :
                      * such as timeout and the frequency of the watch. For iOS, filter parameter
                      * specifies to watch via a distance filter rather than time.
                      */
-                    watchHeading: function(successCallback, errorCallback, options) {
+                    watchHeading: function (successCallback, errorCallback, options) {
                         // Default interval (100 msec)
                         var frequency = (options !== undefined && options.frequency !== undefined) ? options.frequency : 100;
                         var filter = (options !== undefined && options.filter !== undefined) ? options.filter : 0;
@@ -16804,7 +16809,7 @@ we should simply use a literal :
                             compass.getCurrentHeading(successCallback, errorCallback, options);
                         } else {
                             // Start watch timer to get headings
-                            timers[id] = window.setInterval(function() {
+                            timers[id] = window.setInterval(function () {
                                 compass.getCurrentHeading(successCallback, errorCallback);
                             }, frequency);
                         }
@@ -16816,7 +16821,7 @@ we should simply use a literal :
                      * Clears the specified heading watch.
                      * @param {String} watchId The ID of the watch returned from #watchHeading.
                      */
-                    clearWatch: function(id) {
+                    clearWatch: function (id) {
                         // Stop javascript timer & remove from timer list
                         if (id && timers[id]) {
                             if (timers[id] != "iOS") {
@@ -16834,7 +16839,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/console-via-logger.js
-        define("cordova/plugin/console-via-logger", function(require, exports, module) {
+        define("cordova/plugin/console-via-logger", function (require, exports, module) {
             //------------------------------------------------------------------------------
 
             var logger = require("cordova/plugin/logger");
@@ -16869,7 +16874,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
             // used for unimplemented methods
             //------------------------------------------------------------------------------
-            console.useLogger = function(value) {
+            console.useLogger = function (value) {
                 if (arguments.length) UseLogger = !! value;
 
                 if (UseLogger) {
@@ -16882,37 +16887,37 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.log = function() {
+            console.log = function () {
                 if (logger.useConsole()) return;
                 logger.log.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.error = function() {
+            console.error = function () {
                 if (logger.useConsole()) return;
                 logger.error.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.warn = function() {
+            console.warn = function () {
                 if (logger.useConsole()) return;
                 logger.warn.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.info = function() {
+            console.info = function () {
                 if (logger.useConsole()) return;
                 logger.info.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.debug = function() {
+            console.debug = function () {
                 if (logger.useConsole()) return;
                 logger.debug.apply(logger, [].slice.call(arguments));
             };
 
             //------------------------------------------------------------------------------
-            console.assert = function(expression) {
+            console.assert = function (expression) {
                 if (expression) return;
 
                 var message = utils.vformat(arguments[1], [].slice.call(arguments, 2));
@@ -16920,15 +16925,15 @@ we should simply use a literal :
             };
 
             //------------------------------------------------------------------------------
-            console.clear = function() {};
+            console.clear = function () {};
 
             //------------------------------------------------------------------------------
-            console.dir = function(object) {
+            console.dir = function (object) {
                 console.log("%o", object);
             };
 
             //------------------------------------------------------------------------------
-            console.dirxml = function(node) {
+            console.dirxml = function (node) {
                 console.log(node.innerHTML);
             };
 
@@ -16945,12 +16950,12 @@ we should simply use a literal :
             console.groupEnd = noop;
 
             //------------------------------------------------------------------------------
-            console.time = function(name) {
+            console.time = function (name) {
                 Timers[name] = new Date().valueOf();
             };
 
             //------------------------------------------------------------------------------
-            console.timeEnd = function(name) {
+            console.timeEnd = function (name) {
                 var timeStart = Timers[name];
                 if (!timeStart) {
                     console.warn("unknown timer: " + name);
@@ -16977,7 +16982,7 @@ we should simply use a literal :
             console.exception = console.log;
 
             //------------------------------------------------------------------------------
-            console.table = function(data, columns) {
+            console.table = function (data, columns) {
                 console.log("%o", data);
             };
 
@@ -16986,7 +16991,7 @@ we should simply use a literal :
             //------------------------------------------------------------------------------
 
             function wrapperedOrigCall(orgFunc, newFunc) {
-                return function() {
+                return function () {
                     var args = [].slice.call(arguments);
                     try {
                         orgFunc.apply(WinConsole, args);
@@ -17011,7 +17016,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/contacts.js
-        define("cordova/plugin/contacts", function(require, exports, module) {
+        define("cordova/plugin/contacts", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 ContactError = require('cordova/plugin/ContactError'),
                 utils = require('cordova/utils'),
@@ -17030,7 +17035,7 @@ we should simply use a literal :
                  * @param {ContactFindOptions} options that can be applied to contact searching
                  * @return array of Contacts matching search criteria
                  */
-                find: function(fields, successCB, errorCB, options) {
+                find: function (fields, successCB, errorCB, options) {
                     if (!successCB) {
                         throw new TypeError("You must specify a success callback for the find command.");
                     }
@@ -17039,7 +17044,7 @@ we should simply use a literal :
                             errorCB(new ContactError(ContactError.INVALID_ARGUMENT_ERROR));
                         }
                     } else {
-                        var win = function(result) {
+                        var win = function (result) {
                             var cs = [];
                             for (var i = 0, l = result.length; i < l; i++) {
                                 cs.push(contacts.create(result[i]));
@@ -17057,7 +17062,7 @@ we should simply use a literal :
                  * @param properties an object who's properties will be examined to create a new Contact
                  * @returns new Contact object
                  */
-                create: function(properties) {
+                create: function (properties) {
                     var i;
                     var contact = new Contact();
                     for (i in properties) {
@@ -17074,7 +17079,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/device.js
-        define("cordova/plugin/device", function(require, exports, module) {
+        define("cordova/plugin/device", function (require, exports, module) {
             var channel = require('cordova/channel'),
                 utils = require('cordova/utils'),
                 exec = require('cordova/exec');
@@ -17098,8 +17103,8 @@ we should simply use a literal :
 
                 var me = this;
 
-                channel.onCordovaReady.subscribeOnce(function() {
-                    me.getInfo(function(info) {
+                channel.onCordovaReady.subscribeOnce(function () {
+                    me.getInfo(function (info) {
                         me.available = true;
                         me.platform = info.platform;
                         me.version = info.version;
@@ -17107,7 +17112,7 @@ we should simply use a literal :
                         me.uuid = info.uuid;
                         me.cordova = info.cordova;
                         channel.onCordovaInfoReady.fire();
-                    }, function(e) {
+                    }, function (e) {
                         me.available = false;
                         utils.alert("[ERROR] Error initializing Cordova: " + e);
                     });
@@ -17120,7 +17125,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the heading data is available
              * @param {Function} errorCallback The function to call when there is an error getting the heading data. (OPTIONAL)
              */
-            Device.prototype.getInfo = function(successCallback, errorCallback) {
+            Device.prototype.getInfo = function (successCallback, errorCallback) {
 
                 // successCallback required
                 if (typeof successCallback !== "function") {
@@ -17143,7 +17148,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/geolocation.js
-        define("cordova/plugin/geolocation", function(require, exports, module) {
+        define("cordova/plugin/geolocation", function (require, exports, module) {
             var utils = require('cordova/utils'),
                 exec = require('cordova/exec'),
                 PositionError = require('cordova/plugin/PositionError'),
@@ -17182,7 +17187,7 @@ we should simply use a literal :
             // Returns a timeout failure, closed over a specified timeout value and error callback.
 
             function createTimeout(errorCallback, timeout) {
-                var t = setTimeout(function() {
+                var t = setTimeout(function () {
                     clearTimeout(t);
                     t = null;
                     errorCallback({
@@ -17202,7 +17207,7 @@ we should simply use a literal :
                  * @param {Function} errorCallback      The function to call when there is an error getting the heading position. (OPTIONAL)
                  * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
                  */
-                getCurrentPosition: function(successCallback, errorCallback, options) {
+                getCurrentPosition: function (successCallback, errorCallback, options) {
                     if (arguments.length === 0) {
                         throw new Error("getCurrentPosition must be called with at least one argument.");
                     }
@@ -17212,7 +17217,7 @@ we should simply use a literal :
                     // before the "timeout" param provided expires
                     var timeoutTimer = null;
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timeoutTimer);
                         if (!timeoutTimer) {
                             // Timeout already happened, or native fired error callback for
@@ -17232,7 +17237,7 @@ we should simply use a literal :
                         geolocation.lastPosition = pos;
                         successCallback(pos);
                     };
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timeoutTimer);
                         timeoutTimer = null;
                         var err = new PositionError(e.code, e.message);
@@ -17277,7 +17282,7 @@ we should simply use a literal :
                  * @param {PositionOptions} options     The options for getting the location data such as frequency. (OPTIONAL)
                  * @return String                       The watch id that must be passed to #clearWatch to stop watching.
                  */
-                watchPosition: function(successCallback, errorCallback, options) {
+                watchPosition: function (successCallback, errorCallback, options) {
                     if (arguments.length === 0) {
                         throw new Error("watchPosition must be called with at least one argument.");
                     }
@@ -17288,7 +17293,7 @@ we should simply use a literal :
                     // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
                     timers[id] = geolocation.getCurrentPosition(successCallback, errorCallback, options);
 
-                    var fail = function(e) {
+                    var fail = function (e) {
                         clearTimeout(timers[id]);
                         var err = new PositionError(e.code, e.message);
                         if (errorCallback) {
@@ -17296,7 +17301,7 @@ we should simply use a literal :
                         }
                     };
 
-                    var win = function(p) {
+                    var win = function (p) {
                         clearTimeout(timers[id]);
                         if (options.timeout !== Infinity) {
                             timers[id] = createTimeout(fail, options.timeout);
@@ -17323,7 +17328,7 @@ we should simply use a literal :
                  *
                  * @param {String} id       The ID of the watch returned from #watchPosition
                  */
-                clearWatch: function(id) {
+                clearWatch: function (id) {
                     if (id && timers[id] !== undefined) {
                         clearTimeout(timers[id]);
                         delete timers[id];
@@ -17337,7 +17342,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/logger.js
-        define("cordova/plugin/logger", function(require, exports, module) {
+        define("cordova/plugin/logger", function (require, exports, module) {
             //------------------------------------------------------------------------------
             // The logger module exports the following properties/functions:
             //
@@ -17378,7 +17383,8 @@ we should simply use a literal :
                 "ERROR",
                 "WARN",
                 "INFO",
-                "DEBUG"];
+                "DEBUG"
+            ];
 
             /*
              * add the logging levels to the logger object and
@@ -17413,7 +17419,7 @@ we should simply use a literal :
              * default level is WARN, so only messages logged with LOG, ERROR, or
              * WARN will be displayed; INFO and DEBUG messages will be ignored.
              */
-            logger.level = function(value) {
+            logger.level = function (value) {
                 if (arguments.length) {
                     if (LevelsMap[value] === null) {
                         throw new Error("invalid logging level: " + value);
@@ -17431,7 +17437,7 @@ we should simply use a literal :
              * browser 'console' object.  Otherwise, it will use the
              * native Logger plugin.
              */
-            logger.useConsole = function(value) {
+            logger.useConsole = function (value) {
                 if (arguments.length) UseConsole = !! value;
 
                 if (UseConsole) {
@@ -17459,7 +17465,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.log = function(message) {
+            logger.log = function (message) {
                 logWithArgs("LOG", arguments);
             };
 
@@ -17469,7 +17475,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.error = function(message) {
+            logger.error = function (message) {
                 logWithArgs("ERROR", arguments);
             };
 
@@ -17479,7 +17485,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.warn = function(message) {
+            logger.warn = function (message) {
                 logWithArgs("WARN", arguments);
             };
 
@@ -17489,7 +17495,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.info = function(message) {
+            logger.info = function (message) {
                 logWithArgs("INFO", arguments);
             };
 
@@ -17499,7 +17505,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.debug = function(message) {
+            logger.debug = function (message) {
                 logWithArgs("DEBUG", arguments);
             };
 
@@ -17516,7 +17522,7 @@ we should simply use a literal :
              * Parameters passed after message are used applied to
              * the message with utils.format()
              */
-            logger.logLevel = function(level, message /* , ... */ ) {
+            logger.logLevel = function (level, message /* , ... */ ) {
                 // format the message with the parameters
                 var formatArgs = [].slice.call(arguments, 2);
                 message = utils.vformat(message, formatArgs);
@@ -17546,26 +17552,26 @@ we should simply use a literal :
 
                 // log to the console
                 switch (level) {
-                    case logger.LOG:
-                        console.log(message);
-                        break;
-                    case logger.ERROR:
-                        console.log("ERROR: " + message);
-                        break;
-                    case logger.WARN:
-                        console.log("WARN: " + message);
-                        break;
-                    case logger.INFO:
-                        console.log("INFO: " + message);
-                        break;
-                    case logger.DEBUG:
-                        console.log("DEBUG: " + message);
-                        break;
+                case logger.LOG:
+                    console.log(message);
+                    break;
+                case logger.ERROR:
+                    console.log("ERROR: " + message);
+                    break;
+                case logger.WARN:
+                    console.log("WARN: " + message);
+                    break;
+                case logger.INFO:
+                    console.log("INFO: " + message);
+                    break;
+                case logger.DEBUG:
+                    console.log("DEBUG: " + message);
+                    break;
                 }
             };
 
             // when deviceready fires, log queued messages
-            logger.__onDeviceReady = function() {
+            logger.__onDeviceReady = function () {
                 if (DeviceReady) return;
 
                 DeviceReady = true;
@@ -17584,12 +17590,12 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/network.js
-        define("cordova/plugin/network", function(require, exports, module) {
+        define("cordova/plugin/network", function (require, exports, module) {
             var exec = require('cordova/exec'),
                 cordova = require('cordova'),
                 channel = require('cordova/channel');
 
-            var NetworkConnection = function() {
+            var NetworkConnection = function () {
                 this.type = null;
                 this._firstRun = true;
                 this._timer = null;
@@ -17597,40 +17603,40 @@ we should simply use a literal :
 
                 var me = this;
 
-                channel.onCordovaReady.subscribeOnce(function() {
-                    me.getInfo(function(info) {
-                        me.type = info;
-                        if (info === "none") {
-                            // set a timer if still offline at the end of timer send the offline event
-                            me._timer = setTimeout(function() {
-                                cordova.fireDocumentEvent("offline");
-                                me._timer = null;
-                            }, me.timeout);
-                        } else {
-                            // If there is a current offline event pending clear it
-                            if (me._timer !== null) {
-                                clearTimeout(me._timer);
-                                me._timer = null;
+                channel.onCordovaReady.subscribeOnce(function () {
+                    me.getInfo(function (info) {
+                            me.type = info;
+                            if (info === "none") {
+                                // set a timer if still offline at the end of timer send the offline event
+                                me._timer = setTimeout(function () {
+                                    cordova.fireDocumentEvent("offline");
+                                    me._timer = null;
+                                }, me.timeout);
+                            } else {
+                                // If there is a current offline event pending clear it
+                                if (me._timer !== null) {
+                                    clearTimeout(me._timer);
+                                    me._timer = null;
+                                }
+                                cordova.fireDocumentEvent("online");
                             }
-                            cordova.fireDocumentEvent("online");
-                        }
 
-                        // should only fire this once
-                        if (me._firstRun) {
-                            me._firstRun = false;
-                            channel.onCordovaConnectionReady.fire();
-                        }
-                    },
+                            // should only fire this once
+                            if (me._firstRun) {
+                                me._firstRun = false;
+                                channel.onCordovaConnectionReady.fire();
+                            }
+                        },
 
-                    function(e) {
-                        // If we can't get the network info we should still tell Cordova
-                        // to fire the deviceready event.
-                        if (me._firstRun) {
-                            me._firstRun = false;
-                            channel.onCordovaConnectionReady.fire();
-                        }
-                        console.log("Error initializing Network Connection: " + e);
-                    });
+                        function (e) {
+                            // If we can't get the network info we should still tell Cordova
+                            // to fire the deviceready event.
+                            if (me._firstRun) {
+                                me._firstRun = false;
+                                channel.onCordovaConnectionReady.fire();
+                            }
+                            console.log("Error initializing Network Connection: " + e);
+                        });
                 });
             };
 
@@ -17640,7 +17646,7 @@ we should simply use a literal :
              * @param {Function} successCallback The function to call when the Connection data is available
              * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
              */
-            NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
+            NetworkConnection.prototype.getInfo = function (successCallback, errorCallback) {
                 // Get info
                 exec(successCallback, errorCallback, "NetworkStatus", "getConnectionInfo", []);
             };
@@ -17649,7 +17655,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/notification.js
-        define("cordova/plugin/notification", function(require, exports, module) {
+        define("cordova/plugin/notification", function (require, exports, module) {
             var exec = require('cordova/exec');
 
             /**
@@ -17666,7 +17672,7 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Alert)
                  * @param {String} buttonLabel          Label of the close button (default: OK)
                  */
-                alert: function(message, completeCallback, title, buttonLabel) {
+                alert: function (message, completeCallback, title, buttonLabel) {
                     var _title = (title || "Alert");
                     var _buttonLabel = (buttonLabel || "OK");
                     exec(completeCallback, null, "Notification", "alert", [message, _title, _buttonLabel]);
@@ -17681,10 +17687,10 @@ we should simply use a literal :
                  * @param {String} title                Title of the alert dialog (default: Confirm)
                  * @param {String} buttonLabels         Comma separated list of the labels of the buttons (default: 'OK,Cancel')
                  */
-                confirm: function(message, resultCallback, title, buttonLabels) {
+                confirm: function (message, resultCallback, title, buttonLabels) {
                     var _title = (title || "Confirm");
                     var _buttonLabels = (buttonLabels || "OK,Cancel");
-                    var cb = function(buttonIndex) {
+                    var cb = function (buttonIndex) {
                         // exec returns a 0-based index while notification api expects
                         // a 1-based index.
                         resultCallback(buttonIndex + 1);
@@ -17697,7 +17703,7 @@ we should simply use a literal :
                  *
                  * @param {Integer} mills       The number of milliseconds to vibrate for.
                  */
-                vibrate: function(mills) {
+                vibrate: function (mills) {
                     exec(null, null, "Notification", "vibrate", [mills]);
                 },
 
@@ -17707,14 +17713,14 @@ we should simply use a literal :
                  *
                  * @param {Integer} count       The number of beeps.
                  */
-                beep: function(count) {
+                beep: function (count) {
                     exec(null, null, "Notification", "beep", [count]);
                 }
             };
         });
 
         // file: lib/common/plugin/requestFileSystem.js
-        define("cordova/plugin/requestFileSystem", function(require, exports, module) {
+        define("cordova/plugin/requestFileSystem", function (require, exports, module) {
             var FileError = require('cordova/plugin/FileError'),
                 FileSystem = require('cordova/plugin/FileSystem'),
                 exec = require('cordova/exec');
@@ -17726,8 +17732,8 @@ we should simply use a literal :
              * @param successCallback  invoked with a FileSystem object
              * @param errorCallback  invoked if error occurs retrieving file system
              */
-            var requestFileSystem = function(type, size, successCallback, errorCallback) {
-                var fail = function(code) {
+            var requestFileSystem = function (type, size, successCallback, errorCallback) {
+                var fail = function (code) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(code));
                     }
@@ -17737,7 +17743,7 @@ we should simply use a literal :
                     fail(FileError.SYNTAX_ERR);
                 } else {
                     // if successful, return a FileSystem object
-                    var success = function(file_system) {
+                    var success = function (file_system) {
                         if (file_system) {
                             if (typeof successCallback === 'function') {
                                 // grab the name and root from the file system object
@@ -17757,7 +17763,7 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/resolveLocalFileSystemURI.js
-        define("cordova/plugin/resolveLocalFileSystemURI", function(require, exports, module) {
+        define("cordova/plugin/resolveLocalFileSystemURI", function (require, exports, module) {
             var DirectoryEntry = require('cordova/plugin/DirectoryEntry'),
                 FileEntry = require('cordova/plugin/FileEntry'),
                 FileError = require('cordova/plugin/FileError'),
@@ -17769,22 +17775,22 @@ we should simply use a literal :
              * @param successCallback  invoked with Entry object corresponding to URI
              * @param errorCallback    invoked if error occurs retrieving file system entry
              */
-            module.exports = function(uri, successCallback, errorCallback) {
+            module.exports = function (uri, successCallback, errorCallback) {
                 // error callback
-                var fail = function(error) {
+                var fail = function (error) {
                     if (typeof errorCallback === 'function') {
                         errorCallback(new FileError(error));
                     }
                 };
                 // sanity check for 'not:valid:filename'
                 if (!uri || uri.split(":").length > 2) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         fail(FileError.ENCODING_ERR);
                     }, 0);
                     return;
                 }
                 // if successful, return either a file or directory entry
-                var success = function(entry) {
+                var success = function (entry) {
                     var result;
                     if (entry) {
                         if (typeof successCallback === 'function') {
@@ -17808,14 +17814,14 @@ we should simply use a literal :
         });
 
         // file: lib/common/plugin/splashscreen.js
-        define("cordova/plugin/splashscreen", function(require, exports, module) {
+        define("cordova/plugin/splashscreen", function (require, exports, module) {
             var exec = require('cordova/exec');
 
             var splashscreen = {
-                show: function() {
+                show: function () {
                     exec(null, null, "SplashScreen", "show", []);
                 },
-                hide: function() {
+                hide: function () {
                     exec(null, null, "SplashScreen", "hide", []);
                 }
             };
@@ -17824,8 +17830,8 @@ we should simply use a literal :
         });
 
         // file: lib/win7/plugin/win7/SQLError.js
-        define("cordova/plugin/win7/SQLError", function(require, exports, module) {
-            var SQLError = function() {};
+        define("cordova/plugin/win7/SQLError", function (require, exports, module) {
+            var SQLError = function () {};
 
             SQLError.UNKNOWN_ERR = 0;
             SQLError.DATABASE_ERR = 1;
@@ -17840,7 +17846,7 @@ we should simply use a literal :
         });
 
         // file: lib/win7/plugin/win7/device.js
-        define("cordova/plugin/win7/device", function(require, exports, module) {
+        define("cordova/plugin/win7/device", function (require, exports, module) {
             var channel = require('cordova/channel'),
                 exec = require('cordova/exec');
 
@@ -17854,21 +17860,21 @@ we should simply use a literal :
 
                 var me = this;
 
-                channel.onCordovaReady.subscribeOnce(function() {
-                    me.getInfo(function(info) {
+                channel.onCordovaReady.subscribeOnce(function () {
+                    me.getInfo(function (info) {
                         me.platform = info.platform;
                         me.version = info.version;
                         me.name = info.name;
                         me.uuid = info.uuid;
                         me.cordova = info.cordova;
                         channel.onCordovaInfoReady.fire();
-                    }, function(e) {
+                    }, function (e) {
                         console.log('Error initializing Cordova: ' + e);
                     });
                 });
             };
 
-            Device.prototype.getInfo = function(successCallback, errorCallback) {
+            Device.prototype.getInfo = function (successCallback, errorCallback) {
 
                 // Get info
                 exec(successCallback, errorCallback, 'Device', 'getDeviceInfo', []);
@@ -17878,11 +17884,11 @@ we should simply use a literal :
         });
 
         // file: lib/win7/plugin/win7/jsHandler.js
-        define("cordova/plugin/win7/jsHandler", function(require, exports, module) {
+        define("cordova/plugin/win7/jsHandler", function (require, exports, module) {
             var cordova = require('cordova');
 
             module.exports = {
-                exec: function(successCallback, errorCallback, clazz, action, args) {
+                exec: function (successCallback, errorCallback, clazz, action, args) {
                     try {
                         var plugin = require('cordova/plugin/win7/' + clazz);
 
@@ -17909,23 +17915,23 @@ we should simply use a literal :
         });
 
         // file: lib/win7/plugin/win7/storage.js
-        define("cordova/plugin/win7/storage", function(require, exports, module) {
+        define("cordova/plugin/win7/storage", function (require, exports, module) {
             var channel = require("cordova/channel"),
                 utils = require('cordova/utils'),
                 exec = require('cordova/exec');
 
             var queryQueue = {};
 
-            var Rows = function() {
+            var Rows = function () {
                 this.resultSet = []; // results array
                 this.length = 0; // number of rows
             };
 
-            Rows.prototype.item = function(row) {
+            Rows.prototype.item = function (row) {
                 return this.resultSet[row];
             };
 
-            var Result = function() {
+            var Result = function () {
                 this.rows = new Rows();
             };
 
@@ -18000,7 +18006,7 @@ we should simply use a literal :
                 }
             }
 
-            var Query = function(tx) {
+            var Query = function (tx) {
 
                 // Set the id of the query
                 this.id = utils.createUUID();
@@ -18024,7 +18030,7 @@ we should simply use a literal :
 
             };
 
-            var Transaction = function(database) {
+            var Transaction = function (database) {
                 this.db = database;
                 // Set the id of the transaction
                 this.id = utils.createUUID();
@@ -18039,7 +18045,7 @@ we should simply use a literal :
                 this.numPendingQueries = 0;
             };
 
-            Transaction.prototype.queryComplete = function(id) {
+            Transaction.prototype.queryComplete = function (id) {
                 delete this.queryList[id];
 
                 // If no more outstanding queries, then fire transaction success
@@ -18047,7 +18053,7 @@ we should simply use a literal :
                     this.numPendingQueries--;
                     if (this.numPendingQueries === 0) {
                         try {
-                            var cb = this.successCallback || function() {};
+                            var cb = this.successCallback || function () {};
                             // Commit current transaction.
                             cb();
                         } catch (e) {
@@ -18057,7 +18063,7 @@ we should simply use a literal :
                 }
             };
 
-            Transaction.prototype.queryFailed = function(id, reason) {
+            Transaction.prototype.queryFailed = function (id, reason) {
 
                 // The sql queries in this transaction have already been run, since
                 // we really don't have a real transaction implemented in native code.
@@ -18075,7 +18081,7 @@ we should simply use a literal :
                 }
             };
 
-            Transaction.prototype.executeSql = function(sql, params, successCallback, errorCallback) {
+            Transaction.prototype.executeSql = function (sql, params, successCallback, errorCallback) {
                 // Init params array
                 if (typeof params === 'undefined') {
                     params = [];
@@ -18098,11 +18104,11 @@ we should simply use a literal :
                 exec(completeQuery, failQuery, "Storage", "executeSql", [this.db.id, sql, params, query.id, qNoop, tNoop]);
             };
 
-            var Database = function(dbId) {
+            var Database = function (dbId) {
                 this.id = dbId;
             };
 
-            Database.prototype.transaction = function(process, errorCallback, successCallback) {
+            Database.prototype.transaction = function (process, errorCallback, successCallback) {
                 var tx = new Transaction(this);
                 tx.successCallback = successCallback;
                 tx.errorCallback = errorCallback;
@@ -18127,7 +18133,7 @@ we should simply use a literal :
                 }
             };
 
-            var WinStorage = function(dbName) {
+            var WinStorage = function (dbName) {
                 channel.waitForInitialization("winStorage" + dbName);
 
                 try {
@@ -18141,58 +18147,58 @@ we should simply use a literal :
                     }
                     this.db.transaction(
 
-                    function(transaction) {
-                        var i;
-                        transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
-                        transaction.executeSql('SELECT * FROM storage', [], function(tx, result) {
-                            for (var i = 0; i < result.rows.length; i++) {
-                                storage[result.rows.item(i).id] = result.rows.item(i).body;
-                            }
-                            setLength(result.rows.length);
-                            channel.initializationComplete("winStorage" + dbName);
+                        function (transaction) {
+                            var i;
+                            transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
+                            transaction.executeSql('SELECT * FROM storage', [], function (tx, result) {
+                                for (var i = 0; i < result.rows.length; i++) {
+                                    storage[result.rows.item(i).id] = result.rows.item(i).body;
+                                }
+                                setLength(result.rows.length);
+                                channel.initializationComplete("winStorage" + dbName);
+                            });
+
+                        },
+
+                        function (err) {
+                            utils.alert(err.message);
                         });
-
-                    },
-
-                    function(err) {
-                        utils.alert(err.message);
-                    });
-                    this.setItem = function(key, val) {
-                        if (typeof(storage[key]) == 'undefined') {
+                    this.setItem = function (key, val) {
+                        if (typeof (storage[key]) == 'undefined') {
                             this.length++;
                         }
                         storage[key] = val;
                         this.db.transaction(
 
-                        function(transaction) {
-                            transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
-                            transaction.executeSql('REPLACE INTO storage (id, body) values(?,?)', [key, val]);
-                        });
+                            function (transaction) {
+                                transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
+                                transaction.executeSql('REPLACE INTO storage (id, body) values(?,?)', [key, val]);
+                            });
                     };
-                    this.getItem = function(key) {
-                        return (typeof(storage[key]) == 'undefined') ? null : storage[key];
+                    this.getItem = function (key) {
+                        return (typeof (storage[key]) == 'undefined') ? null : storage[key];
                     };
-                    this.removeItem = function(key) {
+                    this.removeItem = function (key) {
                         delete storage[key];
                         this.length--;
                         this.db.transaction(
 
-                        function(transaction) {
-                            transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
-                            transaction.executeSql('DELETE FROM storage where id=?', [key]);
-                        });
+                            function (transaction) {
+                                transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
+                                transaction.executeSql('DELETE FROM storage where id=?', [key]);
+                            });
                     };
-                    this.clear = function() {
+                    this.clear = function () {
                         storage = {};
                         this.length = 0;
                         this.db.transaction(
 
-                        function(transaction) {
-                            transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
-                            transaction.executeSql('DELETE FROM storage', []);
-                        });
+                            function (transaction) {
+                                transaction.executeSql('CREATE TABLE IF NOT EXISTS storage (id NVARCHAR(40) PRIMARY KEY, body NVARCHAR(255))');
+                                transaction.executeSql('DELETE FROM storage', []);
+                            });
                     };
-                    this.key = function(index) {
+                    this.key = function (index) {
                         var i = 0;
                         for (var j in storage) {
                             if (i == index) {
@@ -18227,27 +18233,27 @@ we should simply use a literal :
         });
 
         // file: lib/common/utils.js
-        define("cordova/utils", function(require, exports, module) {
+        define("cordova/utils", function (require, exports, module) {
             var utils = exports;
 
             /**
              * Returns an indication of whether the argument is an array or not
              */
-            utils.isArray = function(a) {
+            utils.isArray = function (a) {
                 return Object.prototype.toString.call(a) == '[object Array]';
             };
 
             /**
              * Returns an indication of whether the argument is a Date or not
              */
-            utils.isDate = function(d) {
+            utils.isDate = function (d) {
                 return Object.prototype.toString.call(d) == '[object Date]';
             };
 
             /**
              * Does a deep clone of the object.
              */
-            utils.clone = function(obj) {
+            utils.clone = function (obj) {
                 if (!obj || typeof obj == 'function' || utils.isDate(obj) || typeof obj != 'object') {
                     return obj;
                 }
@@ -18274,13 +18280,13 @@ we should simply use a literal :
             /**
              * Returns a wrappered version of the function
              */
-            utils.close = function(context, func, params) {
+            utils.close = function (context, func, params) {
                 if (typeof params == 'undefined') {
-                    return function() {
+                    return function () {
                         return func.apply(context, arguments);
                     };
                 } else {
-                    return function() {
+                    return function () {
                         return func.apply(context, params);
                     };
                 }
@@ -18289,7 +18295,7 @@ we should simply use a literal :
             /**
              * Create a UUID
              */
-            utils.createUUID = function() {
+            utils.createUUID = function () {
                 return UUIDcreatePart(4) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(2) + '-' + UUIDcreatePart(6);
             };
 
@@ -18297,11 +18303,11 @@ we should simply use a literal :
              * Extends a child object from a parent object using classical inheritance
              * pattern.
              */
-            utils.extend = (function() {
+            utils.extend = (function () {
                 // proxy used to establish prototype chain
-                var F = function() {};
+                var F = function () {};
                 // extend Child from Parent
-                return function(Child, Parent) {
+                return function (Child, Parent) {
                     F.prototype = Parent.prototype;
                     Child.prototype = new F();
                     Child.__super__ = Parent.prototype;
@@ -18312,7 +18318,7 @@ we should simply use a literal :
             /**
              * Alerts a message in any available way: alert or console.log.
              */
-            utils.alert = function(msg) {
+            utils.alert = function (msg) {
                 if (alert) {
                     alert(msg);
                 } else if (console && console.log) {
@@ -18325,7 +18331,7 @@ we should simply use a literal :
              *
              * see utils.vformat() for more information
              */
-            utils.format = function(formatString /* ,... */ ) {
+            utils.format = function (formatString /* ,... */ ) {
                 var args = [].slice.call(arguments, 1);
                 return utils.vformat(formatString, args);
             };
@@ -18344,7 +18350,7 @@ we should simply use a literal :
              * for rationale, see FireBug's Console API:
              *    http://getfirebug.com/wiki/index.php/Console_API
              */
-            utils.vformat = function(formatString, args) {
+            utils.vformat = function (formatString, args) {
                 if (formatString === null || formatString === undefined) return "";
                 if (arguments.length == 1) return formatString.toString();
                 if (typeof formatString != "string") return formatString.toString();
@@ -18397,11 +18403,11 @@ we should simply use a literal :
 
                 try {
                     switch (formatChar) {
-                        case 'j':
-                        case 'o':
-                            return JSON.stringify(object);
-                        case 'c':
-                            return '';
+                    case 'j':
+                    case 'o':
+                        return JSON.stringify(object);
+                    case 'c':
+                        return '';
                     }
                 } catch (e) {
                     return "error JSON.stringify()ing argument: " + e;
@@ -18420,14 +18426,14 @@ we should simply use a literal :
         window.cordova = require('cordova');
 
         // file: lib/scripts/bootstrap.js
-        (function(context) {
+        (function (context) {
             var channel = require("cordova/channel"),
                 _self = {
-                    boot: function() {
+                    boot: function () {
                         /**
                          * Create all cordova objects once page has fully loaded and native side is ready.
                          */
-                        channel.join(function() {
+                        channel.join(function () {
                             var builder = require('cordova/builder'),
                                 base = require('cordova/common'),
                                 platform = require('cordova/platform');
@@ -18453,7 +18459,7 @@ we should simply use a literal :
 
                             // Fire onDeviceReady event once all constructors have run and
                             // cordova info has been received from native side.
-                            channel.join(function() {
+                            channel.join(function () {
                                 require('cordova').fireDocumentEvent('deviceready');
                             }, channel.deviceReadyChannelsArray);
 

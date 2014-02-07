@@ -1,5 +1,5 @@
 angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-    (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function(sites){
+    (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function (sites) {
         window.smartgeoRightsManager = {
             'report': true,
             'goto': true,
@@ -7,16 +7,16 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             'media': true,
             'logout': true
         };
-        window.smartgeoPersistenceCache  = {};
+        window.smartgeoPersistenceCache = {};
         window.smartgeoPersistenceCache_ = {
-            sites : sites
+            sites: sites
         };
 
-        if(!navigator.userAgent.match(/Android/i)){
-            window.SmartgeoChromium = false ;
+        if (!navigator.userAgent.match(/Android/i)) {
+            window.SmartgeoChromium = false;
         }
 
-        window.ChromiumCallbacks = [] ;
+        window.ChromiumCallbacks = [];
 
         angular.bootstrap(document, ['smartgeomobile']);
     });

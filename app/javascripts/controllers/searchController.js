@@ -1,12 +1,14 @@
-angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n){
+angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n) {
 
-    'use strict' ;
+    'use strict';
 
-    $rootScope.mlPushMenu = new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ),{type : 'cover'});
+    $rootScope.mlPushMenu = new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
+        type: 'cover'
+    });
 
-    $scope.searchIsPerforming = false ;
+    $scope.searchIsPerforming = false;
     $scope.select2Options = {
-        allowClear:true
+        allowClear: true
     };
 
     $scope.selectedCriteriaValues = {};
@@ -24,53 +26,58 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         }
     }
 
-    function closest( e, classname ) {
-        return classie.has( e, classname )? e  : e.parentNode && closest( e.parentNode, classname );
+    function closest(e, classname) {
+        return classie.has(e, classname) ? e : e.parentNode && closest(e.parentNode, classname);
     }
 
-    $scope.backToPreviousLevel = function(event){
+    $scope.backToPreviousLevel = function (event) {
         event.preventDefault();
-        var level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' );
-        if( $scope.mlPushMenu.level <= level ) {
+        var level = closest(event.currentTarget, 'mp-level').getAttribute('data-level');
+        if ($scope.mlPushMenu.level <= level) {
             event.stopPropagation();
-            $scope.mlPushMenu.level = closest( event.currentTarget, 'mp-level' ).getAttribute( 'data-level' ) - 1;
-            $scope.mlPushMenu.level === 0 ? $scope.mlPushMenu._resetMenu() : $scope.mlPushMenu._closeMenu();
+            $scope.mlPushMenu.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
+            if ($scope.mlPushMenu.level === 0) {
+                $scope.mlPushMenu._resetMenu()
+            } else {
+                $scope.mlPushMenu._closeMenu();
+            }
         }
         return false;
     };
 
-    $scope.search = function(event) {
+    $scope.search = function (event) {
 
         event.preventDefault();
 
-        if($scope.searchIsPerforming){
-            window._SMARTGEO_STOP_SEARCH = true ;
+        if ($scope.searchIsPerforming) {
+            window._SMARTGEO_STOP_SEARCH = true;
             $scope.searchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
-            $scope.searchIsPerforming = false ;
-            return ;
+            $scope.searchIsPerforming = false;
+            return;
         }
 
-        $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS' ;
-        $scope.searchIsPerforming = true ;
-        Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function(results){
-            $scope.searchIsPerforming = false ;
+        $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS';
+        $scope.searchIsPerforming = true;
+        Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function (results) {
+            $scope.searchIsPerforming = false;
 
-            if(!results.length){
-                $scope.searchMessage = '_SEARCH_SEARCH_NO_RESULT' ;
-                if(!$scope.$$phase) {
-                	$scope.$apply();
+            if (!results.length) {
+                $scope.searchMessage = '_SEARCH_SEARCH_NO_RESULT';
+                if (!$scope.$$phase) {
+                    $scope.$apply();
                 }
-                return ;
+                return;
             } else {
                 $scope.searchMessage = '';
             }
 
-            var assets = [], asset, asset_;
+            var assets = [],
+                asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = Smartgeo.sanitizeAsset(asset_.asset);
-                asset.label = asset_.label ;
-                asset.geometry = JSON.parse(asset_.geometry) ;
+                asset = Smartgeo.sanitizeAsset(asset_.asset);
+                asset.label = asset_.label;
+                asset.geometry = JSON.parse(asset_.geometry);
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
@@ -79,69 +86,70 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     };
 
 
-    $scope.resetCriteria = function(){
+    $scope.resetCriteria = function () {
         $scope.selectedFamily = null;
         $scope.selectedCriteria = null;
     };
 
-    $scope.selectedCriteriaChangeHandler = function(){
+    $scope.selectedCriteriaChangeHandler = function () {
         var newSelectedCriteriaValues = {};
         for (var i = 0; i < $scope.selectedCriteria.length; i++) {
-            if($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]){
+            if ($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]) {
                 newSelectedCriteriaValues[$scope.selectedCriteria[i]] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i]];
             }
         }
-        $scope.selectedCriteriaValues = newSelectedCriteriaValues ;
-        if(!$scope.$$phase) {
+        $scope.selectedCriteriaValues = newSelectedCriteriaValues;
+        if (!$scope.$$phase) {
             $scope.$$apply();
         }
     };
 
-    $scope.advancedSearch = function(event) {
+    $scope.advancedSearch = function (event) {
         event.preventDefault();
 
         $scope.searchMessage = "";
 
-        if($scope.searchIsPerforming){
-            window._SMARTGEO_STOP_SEARCH = true ;
+        if ($scope.searchIsPerforming) {
+            window._SMARTGEO_STOP_SEARCH = true;
             $scope.advancedSearchMessage = '_SEARCH_SEARCH_HAS_BEEN_CANCELED';
-            $scope.searchIsPerforming = false ;
-            return ;
+            $scope.searchIsPerforming = false;
+            return;
         }
 
-        var advancedSearch ;
+        var advancedSearch;
 
-        if($scope.selectedFamily){
+        if ($scope.selectedFamily) {
             advancedSearch = {
-                criteria : $scope.selectedCriteriaValues,
-                okey : $scope.selectedFamily.okey
+                criteria: $scope.selectedCriteriaValues,
+                okey: $scope.selectedFamily.okey
             };
             $scope.advancedSearchMessage = "_SEARCH_SEARCH_IN_PROGRESS";
         } else {
             $scope.advancedSearchMessage = "_SEARCH_PICK_OBJECT_TYPE";
-            return ;
+            return;
         }
 
-        $scope.searchIsPerforming = true ;
-        Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function(results){
-            $scope.searchIsPerforming = false ;
+        $scope.searchIsPerforming = true;
+        Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function (results) {
+            $scope.searchIsPerforming = false;
 
-            if(!results.length){
-                $scope.advancedSearchMessage = '_SEARCH_SEARCH_NO_RESULT' ;
-                if(!$scope.$$phase) {
+            if (!results.length) {
+                $scope.advancedSearchMessage = '_SEARCH_SEARCH_NO_RESULT';
+                if (!$scope.$$phase) {
                     $scope.$apply();
                 }
-                return ;
+                return;
             } else {
                 $scope.advancedSearchMessage = '';
             }
 
-            var assets = [], asset, asset_;
+            var assets = [],
+                asset, asset_;
             for (var i = 0; i < results.length; i++) {
                 asset_ = results[i];
-                asset  = Smartgeo.sanitizeAsset(asset_.asset);
-                asset.label = asset_.label ;
-                asset.geometry = JSON.parse(asset_.geometry) ;
+                asset = Smartgeo.sanitizeAsset(asset_.asset);
+                asset.label = asset_.label;
+                asset.geometry = JSON.parse(asset_.geometry);
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);

@@ -12,15 +12,10 @@ Prérequis :
 
 `git clone https://github.com/gismartwaredev/smartgeomobile`
 
-### Installation serveur web
+### Lancement des tests smartgeomobile 
 
-`npm install -g httpster`
-
-### Lancement de smartgeomobile 
-
-```bash
-cd smartgeomobile
-httpster ./ -p 12345
+```bash 
+grunt test
 ```
 
 ### Ouverture de Chrome avec l'option `--disable-web-security`
