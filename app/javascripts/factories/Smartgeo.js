@@ -81,11 +81,24 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
          * @const
          * @description
          */
-
         _MAX_ID_FOR_SELECT_REQUEST : 4000,
 
-        _DONT_REALLY_RESET : false ,
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_DONT_REALLY_RESET
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description
+         */
+        _DONT_REALLY_RESET : window.smartgeoRightsManager._DONT_REALLY_RESET ,
 
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_intervals
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description
+         */
         _intervals : {},
 
         /**
