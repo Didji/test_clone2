@@ -549,6 +549,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.toggleAssetsMarkerForMission = function(mission, asset){
         asset.selected = !asset.selected ;
+        if(!mission.selectedAssets){
+            mission.selectedAssets = 0 ;
+        }
         mission.selectedAssets += asset.selected ? 1 : -1   ;
         $rootScope.$broadcast('TOGGLE_ASSET_MARKER_FOR_MISSION', asset);
         $scope.$apply();
