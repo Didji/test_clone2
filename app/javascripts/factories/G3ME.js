@@ -23,7 +23,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         benchmarksLimit: 10,
         benchmarkGeneralStatistics: [],
 
-        filecacheIsEnable:  window.smartgeoRightsManager.tileCache,
+        filecacheIsEnable:  (window.smartgeoRightsManager && window.smartgeoRightsManager.tileCache) || false,
 
         initialize: function (mapDivId, site, target, marker, zoom) {
 
