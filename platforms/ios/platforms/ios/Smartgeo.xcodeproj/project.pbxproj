@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		1101E62B46074E93913C4D51 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A1882A079BA747EF81ADF349 /* CDVLocation.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
@@ -46,7 +47,7 @@
 		7E7966E71810823500FA85AD /* icon-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966DD1810823500FA85AD /* icon-small@2x.png */; };
 		82C22E160CA54B089FA29724 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BACAB082D42479F87ECEBA5 /* ImageIO.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		916C2B0096834BCF924FCF8A /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ACCB4EE8E0A40179FBCD1C2 /* SQLitePlugin.m */; };
-		B6F06239189A52F3002C414F /* GotoPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B6F06238189A52F3002C414F /* GotoPlugin.m */; };
+		B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */; };
 		C41081A7F04949A59553EBEF /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20266776404D27898EAE90 /* CDVFile.m */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		EEF7DB899B0544C29B912B23 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A0CF24AC48463498462332 /* CDVJpegHeaderWriter.m */; };
@@ -126,8 +127,8 @@
 		9E1BE6E77FF9445B916781BE /* CDVVibration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVVibration.m; path = org.apache.cordova.vibration/CDVVibration.m; sourceTree = "<group>"; };
 		A1882A079BA747EF81ADF349 /* CDVLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVLocation.m; path = org.apache.cordova.geolocation/CDVLocation.m; sourceTree = "<group>"; };
 		A2E64C1DC9D245A189ADFF67 /* libsqlite3.dylib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		B6F06237189A52F3002C414F /* GotoPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GotoPlugin.h; path = "../../../../../../../../Library/Caches/TemporaryItems/Outlook Temp/ios/smartgeomobileios/Plugins/GotoPlugin.h"; sourceTree = "<group>"; };
-		B6F06238189A52F3002C414F /* GotoPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GotoPlugin.m; path = "../../../../../../../../Library/Caches/TemporaryItems/Outlook Temp/ios/smartgeomobileios/Plugins/GotoPlugin.m"; sourceTree = "<group>"; };
+		B663D92A18A8DE3200A4E3B3 /* GotoPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GotoPlugin.h; sourceTree = "<group>"; };
+		B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GotoPlugin.m; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
 		D7CC7644B6FA4B3593B736DF /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
 		EA6CF1E57BA244CD9BBB1DA4 /* CDVNotification.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CDVNotification.bundle; sourceTree = "<group>"; };
@@ -258,8 +259,8 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				B6F06237189A52F3002C414F /* GotoPlugin.h */,
-				B6F06238189A52F3002C414F /* GotoPlugin.m */,
+				B663D92A18A8DE3200A4E3B3 /* GotoPlugin.h */,
+				B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */,
 				3ACCB4EE8E0A40179FBCD1C2 /* SQLitePlugin.m */,
 				82A1BE22E216454CA5928ABE /* SQLitePlugin.h */,
 				601CAA6AF7364F4D82E55D46 /* CDVCamera.m */,
@@ -468,7 +469,7 @@
 				C41081A7F04949A59553EBEF /* CDVFile.m in Sources */,
 				1101E62B46074E93913C4D51 /* CDVLocation.m in Sources */,
 				7913398C0F1C493E91520A23 /* CDVVibration.m in Sources */,
-				B6F06239189A52F3002C414F /* GotoPlugin.m in Sources */,
+				B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
