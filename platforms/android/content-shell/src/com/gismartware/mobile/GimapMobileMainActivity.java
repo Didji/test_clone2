@@ -5,6 +5,7 @@
 package com.gismartware.mobile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -203,9 +205,16 @@ public class GimapMobileMainActivity extends Activity {
         	finishActivityInit();
         }
         if(NEED_LOGGER){
-            this.startService(new Intent(this, GiAlarmService.class));
+            ResourceBundle config = null;
+            try {
+                FileInputStream fis = new FileInputStream(getExternalFilesDir(null).getParent() + "/" + "config.properties");
+                config = new PropertyResourceBundle(fis);
+                fis.close();
+                this.startService(new Intent(this, GiAlarmService.class));
+            } catch(Exception e){
+                Log.d(TAG, "Le log est activé mais le fichier de configuration est absent.");
+            }
         }
-
         LocationLibrary.forceLocationUpdate(GimapMobileMainActivity.this);
     }
 
