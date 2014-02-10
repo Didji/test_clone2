@@ -1,12 +1,13 @@
 angular.module("smartgeobootstrap", []).run(function ($rootScope) {
     (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function (sites) {
         window.smartgeoRightsManager = {
-            'report'                : true,
-            'goto'                  : true,
-            'planning'              : true,
-            'media'                 : true,
-            'logout'                : true,
-            '_DONT_REALLY_RESET'    : false
+            'report'                :  true,
+            'goto'                  :  true,
+            'planning'              :  true,
+            'media'                 :  true,
+            'logout'                :  true,
+            '_DONT_REALLY_RESET'    : false,
+            'tileCache'             :  true
         };
         window.smartgeoPersistenceCache = {};
         window.smartgeoPersistenceCache_ = {
