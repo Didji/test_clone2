@@ -9,6 +9,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
     'use strict';
 
+    if(!Smartgeo.getRight('planning')){
+        return ;
+    }
+
     /**
      * @ngdoc property
      * @name planningController#missions
