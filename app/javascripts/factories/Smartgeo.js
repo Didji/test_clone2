@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout) {
+angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
 
     'use strict';
 
@@ -90,7 +90,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description
          */
-        _DONT_REALLY_RESET : window.smartgeoRightsManager._DONT_REALLY_RESET ,
+        _DONT_REALLY_RESET : (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ,
 
         /**
          * @ngdoc property
@@ -201,6 +201,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             if (Smartgeo._DONT_REALLY_RESET) {
                 return;
             }
+            Smartgeo.clearSiteSelection();
+            Smartgeo.clearPersistence();
+            Smartgeo.clearIntervals();
+            Smartgeo.clearPollingRequest();
             localStorage.clear();
             var sites = Smartgeo.get_('sites');
             Smartgeo.unset_('sites');
@@ -795,6 +799,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
+        getVersion: function () {
+            return Smartgeo._SMARTGEO_MOBILE_VERSION;
+        },
+
         selectSiteRemotely: function (site, success, error) {
             if (!site) {
                 Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
@@ -869,10 +877,24 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             if (missions) {
                 Smartgeo.set('missions', missions);
             }
+        },
+        clearSiteSelection : function () {
+            $rootScope.site = null;
+        },
+        clearPollingRequest : function () {
+            $rootScope.STOP_POLLING = true;
         }
     };
 
     Smartgeo._initializeGlobalEvents();
+
+    if (window.SmartgeoChromium) {
+        window.ChromiumCallbacks[13] = function (path) {
+            Smartgeo.set('tileRootPath', path);
+        };
+        SmartgeoChromium.getExtApplicationDirectory();
+    }
+
     window.Smartgeo = Smartgeo;
     $rootScope.rights = window.smartgeoRightsManager;
     return Smartgeo;

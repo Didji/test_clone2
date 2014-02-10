@@ -1,6 +1,6 @@
 var SQLite = {
 
-    DATABASE_SIZE: 1024 * 1024 * 50,
+    DATABASE_SIZE: 1024 * 1024 * 4,
     DATABASE_VERSION: '0.0.1-angular',
 
     databases: {},
