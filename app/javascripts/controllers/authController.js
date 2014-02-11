@@ -21,17 +21,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         Smartgeo.clearPersistence();
         Smartgeo.clearIntervals();
         $rootScope.STOP_POLLING = true ;
-        if(window.SmartgeoChromium){
-
-            if(!window.ChromiumCallbacks){
-                window.ChromiumCallbacks = [] ;
-            }
-
-            window.ChromiumCallbacks[13] = function(path){
-                Smartgeo.set('tileRootPath', path);
-            };
-            SmartgeoChromium.getExtApplicationDirectory();
-        }
 
         if($scope.gimapUrl){
             $scope.ping();
