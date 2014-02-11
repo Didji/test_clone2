@@ -201,10 +201,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             if (Smartgeo._DONT_REALLY_RESET) {
                 return;
             }
+
             Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
             Smartgeo.clearIntervals();
             Smartgeo.clearPollingRequest();
+            Smartgeo.clearCaches();
+
             localStorage.clear();
             var sites = Smartgeo.get_('sites');
             Smartgeo.unset_('sites');
@@ -219,6 +222,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 }
             }
         },
+
+        /**
+         * @ngdoc method
+         * @name smartgeomobile.Smartgeo#reset
+         * @methodOf smartgeomobile.Smartgeo
+         * @description
+         * Clear localStorage
+         */
+        clearCaches: function () {
+            Smartgeo.parametersCache  = {} ;
+            Smartgeo.parametersCache_ = {} ;
+            window.smartgeoPersistenceCache  = {};
+            window.smartgeoPersistenceCache_ = {};
+        },
+
 
         /**
          * @ngdoc method

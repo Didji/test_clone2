@@ -4,7 +4,7 @@
  * @description
  * Controlleur d'authentification.
  */
-angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n, $route) {
+angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n, $route, $timeout) {
 
     'use strict';
 
@@ -92,7 +92,6 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
      */
     $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
 
-
     /**
      * @ngdoc method
      * @name smartgeomobile.authController#initialize
@@ -101,9 +100,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
      */
     $scope.initialize = function () {
 
-        $scope.$on("DEVICE_IS_ONLINE", $scope.ping);
-        $scope.$on("DEVICE_IS_OFFLINE", $scope.ping);
-        $scope.$on('$locationChangeStart', $scope.preventLocationChangeStart);
+        $scope.$on("DEVICE_IS_ONLINE"     , $scope.ping);
+        $scope.$on("DEVICE_IS_OFFLINE"    , $scope.ping);
+        $scope.$on('$locationChangeStart' , $scope.preventLocationChangeStart);
 
         Smartgeo.clearSiteSelection();
         Smartgeo.clearPersistence();
@@ -115,18 +114,100 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         }
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#preventLocationChangeStart
+     * @propertyOf smartgeomobile.authController
+     * @param {Event}  event   Evenenement initial
+     * @param {String} next    Route suivante
+     * @param {String} current Route courante
+     * @description
+     */
     $scope.preventLocationChangeStart = function (event, next, current) {
         if (next.indexOf('/map/') !== -1) {
             event.preventDefault();
         }
     }
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#ping
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
     $scope.ping = function () {
         $scope.readyToLog = false;
         $scope.logMessage = '_AUTH_LOG_MESSAGE_CHECK_';
-        Smartgeo.ping($scope.isServerReachable);
+        Smartgeo.ping($scope.pingCallback);
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#pingCallback
+     * @propertyOf smartgeomobile.authController
+     * @param {Boolean} yes Le serveur distant est il joignable ?
+     * @description
+     */
+    $scope.pingCallback = function(yes){
+        $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (yes ? 'REMOTE' : 'LOCAL') + '_';
+        $scope.readyToLog = true;
+        if (!yes) {
+            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
+        }
+    };
+
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#login
+     * @propertyOf smartgeomobile.authController
+     * @returns {Boolean} false en cas d'echec
+     * @description
+     */
+    $scope.login = function () {
+        $scope.username  = $scope.username.trim();
+        $scope.pwd       = $scope.pwd.trim();
+        if (!$scope.username.length || !$scope.pwd.length) {
+            alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
+            return false;
+        }
+        $scope[Smartgeo.get('online') === true ? "remoteLogin" : "localLogin"]();
+    };
+
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#remoteLogin
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
+    $scope.remoteLogin = function () {
+        $scope.readyToLog = false;
+        $scope.logMessage = "_AUTH_PLEASE_WAIT";
+        Smartgeo.login(encodeURIComponent($scope.username), encodeURIComponent($scope.pwd),$scope.loginSucceed, $scope.loginFailed);
+    };
+
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#localLogin
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
+    $scope.localLogin = function () {
+        var knownUsers = Smartgeo.get('knownUsers') || {};
+        if (knownUsers[$scope.username] === $scope.pwd) {
+            $location.path('sites');
+        } else {
+            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
+        }
+    };
+
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#loginFailed
+     * @propertyOf smartgeomobile.authController
+     * @param {String} response Réponse du serveur
+     * @param {Number} status   Status HTTP de la réponse du serveur
+     * @description
+     */
     $scope.loginFailed = function(response, status) {
         if (status === 403) {
             alertify.alert(i18n.get("_AUTH_INCORRECT_PASSWORD"));
@@ -137,6 +218,12 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         }
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#loginSucceed
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
     $scope.loginSucceed =  function () {
         var knownUsers = Smartgeo.get('knownUsers') || {};
         knownUsers[$scope.username] = $scope.pwd;
@@ -150,29 +237,12 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         $location.path('sites');
     };
 
-    $scope.remoteLogin = function () {
-        $scope.readyToLog = false;
-        $scope.logMessage = "_AUTH_PLEASE_WAIT";
-        Smartgeo.login(encodeURIComponent($scope.username), encodeURIComponent($scope.pwd),$scope.loginSucceed, $scope.loginFailed);
-    };
-
-    $scope.localLogin = function () {
-        var knownUsers = Smartgeo.get('knownUsers') || {};
-        if (knownUsers[$scope.username] === $scope.pwd) {
-            $location.path('sites');
-        } else {
-            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
-        }
-    };
-
-    $scope.isServerReachable = function(yes){
-        $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (yes ? 'REMOTE' : 'LOCAL') + '_';
-        $scope.readyToLog = true;
-        if (!yes) {
-            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
-        }
-    };
-
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#formSubmit
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
     $scope.formSubmit = function(){
         if($scope.firstAuth){
             $scope.initializeGimap();
@@ -181,34 +251,54 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         }
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#initializeGimap
+     * @propertyOf smartgeomobile.authController
+     * @returns {Boolean} false en cas d'echec
+     * @description
+     */
     $scope.initializeGimap = function() {
         if(!$scope.gimapUrl.length || !$scope.username.trim().length || !$scope.pwd.trim().length){
-            return alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
+            alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
+            return false;
         }
-        $scope.gimapUrl  = Smartgeo.setGimapUrl($scope.gimapUrl);
-        Smartgeo.ping(function(yes){
-            if(yes){
-                $scope.login();
-            } else {
-                alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
-            }
-        });
+        $scope.gimapUrl = Smartgeo.setGimapUrl($scope.gimapUrl);
+        Smartgeo.ping($scope.initializeGimapPingCallback);
     }
 
-    $scope.login = function () {
-        $scope.username  = $scope.username.trim();
-        $scope.pwd       = $scope.pwd.trim();
-        if (!$scope.username.length || !$scope.pwd.length) {
-            return alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#initializeGimapPingCallback
+     * @propertyOf smartgeomobile.authController
+     * @param {Boolean} yes Le serveur distant est il joignable ?
+     * @description
+     */
+    $scope.initializeGimapPingCallback = function(yes){
+        if(yes){
+            $scope.login();
+        } else {
+            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
         }
-        $scope[Smartgeo.get('online') === true ? "remoteLogin" : "localLogin"]();
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#resetForm
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
     $scope.resetForm = function () {
         Smartgeo.reset();
-        document.location.reload();
+        $route.reload();
     };
 
+    /**
+     * @ngdoc method
+     * @name smartgeomobile.authController#forgetPassword
+     * @propertyOf smartgeomobile.authController
+     * @description
+     */
     $scope.forgetPassword = function () {
         $scope.username = $scope.pwd = '';
         Smartgeo.unset('user');
