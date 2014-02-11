@@ -847,6 +847,20 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
         }
     };
 
+
+    if(window.SmartgeoChromium){
+
+        if(!window.ChromiumCallbacks){
+            window.ChromiumCallbacks = [] ;
+        }
+
+        window.ChromiumCallbacks[13] = function(path){
+            Smartgeo.set('tileRootPath', path);
+        };
+        SmartgeoChromium.getExtApplicationDirectory();
+    }
+
+
     Smartgeo._initializeGlobalEvents();
     window.Smartgeo = Smartgeo;
     $rootScope.rights = window.smartgeoRightsManager ;
