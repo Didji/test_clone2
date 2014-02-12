@@ -48,25 +48,10 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             }
         }
 
-        // openned = [];
-        // $('.mp-level').each(function(i){
-        //     if( $(this).hasClass('mp-level-open')){
-        //         openned.push(i) ;
-        //     }
-        // });
         Smartgeo.set('persitence.menu.open.level', openned);
 
         return false;
     };
-
-
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-        // if(next.indexOf("/#/report/") === - 1){
-        //     event.preventDefault();
-        //     $scope.backToPreviousLevel();
-        // }
-        // console.log(arguments) ;
-    });
 
     $rootScope.closeLeftMenu = $scope.close = function (event) {
         if (event && event.preventDefault && $(event.target).attr('id') === "mp-pusher") {
@@ -147,8 +132,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     }
 
     restorePreviousState();
-
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
     $scope.$on('_MENU_CLOSE_', $scope.close);
-
 });

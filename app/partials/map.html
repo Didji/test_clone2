@@ -31,6 +31,16 @@
                         </div>
                     </li>
                     <li>
+                        <a href="#">
+                            <span class="icon icon-target"></span>
+                            Rencencement
+                        </a>
+                        <div class="mp-level" >
+                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                            <div ng-include="'partials/census.html'"></div>
+                        </div>
+                    </li>
+                    <li>
                         <a href="#" ng-click='activatePosition($event)'>
                             <span class="icon icon-compass"></span>
                             <i18n>_MENU_MY_POSITION</i18n>
