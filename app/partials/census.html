@@ -1,10 +1,5 @@
 <div ng-controller="censusController">
     <ul>
-        <li ng-repeat=" (key, okey) in dependancies" ng-if="okey.isGraphic" >
-            <a href="#">
-                <span class="icon icon-search"></span>
-                {{site.metamodel[key].label}} : {{okey}}
-            </a>
-        </li>
+        <li ng-repeat=" (key, okey) in dependancies"  ng-include="'partials/census-okey.html'"></li>
     </ul>
 </div>
