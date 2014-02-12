@@ -175,7 +175,7 @@
                     el.querySelector('a').addEventListener(self.eventtype, function (ev) {
                         ev.preventDefault();
                         var level = closest(el, 'mp-level').getAttribute('data-level');
-                        if (self.level <= level) {
+                        if (self.level <= level && level*1 > 1) {
                             ev.stopPropagation();
                             self._openMenu(subLevel);
                         }
