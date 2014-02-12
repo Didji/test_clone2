@@ -184,7 +184,7 @@ if ( typeof define === 'function' && define.amd ) {
 				el.addEventListener( self.eventtype, function( ev ) {
 					ev.stopPropagation();
 					var level = el.getAttribute( 'data-level' );
-					if( self.level > level ) {
+					if( self.level > level && level*1 > 1) {
 						self.level = level;
 						self._closeMenu();
 					}
