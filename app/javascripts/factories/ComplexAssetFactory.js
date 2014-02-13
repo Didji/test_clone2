@@ -24,16 +24,16 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     'use strict';
 
     /**
-     * @class     ComplexAsset
-     * @classdesc Les objets complexes sont utilisés pour le recensement.
-     * @param     {string} okey Okey de l'objet complexe racine à créer.
-     * @desc      Crée l'intégralité de l'arbre jusqu'à son dernier fils.
-     * @property  {string} okey      Okey du noeud
-     * @property  {string} uuid      Identifiant unique du noeud
-     * @property  {Array}  children  Liste des noeuds enfant
-     * @property  {Object} metamodel Metamodel de l'okey concernée
-     * @returns   {ComplexAsset} Objet complexe créé
-     * @throws    [ComplexAsset] You must provide a root okey.
+     * @class       ComplexAsset
+     * @classdesc   Les objets complexes sont utilisés pour le recensement.
+     * @param       {string} okey Okey de l'objet complexe racine à créer.
+     * @desc        Crée l'intégralité de l'arbre jusqu'à son dernier fils.
+     * @property    {string} okey      Okey du noeud
+     * @property    {string} uuid      Identifiant unique du noeud
+     * @property    {Array}  children  Liste des noeuds enfant
+     * @property    {Object} metamodel Metamodel de l'okey concernée
+     * @returns     {ComplexAsset} Objet complexe créé
+     * @throws      [ComplexAsset] You must provide a root okey.
      */
     var ComplexAsset = function(okey){
         this.okey = okey;
