@@ -19,7 +19,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     window.closest = closest;
 
     $rootScope.backToPreviousLevel = $scope.backToPreviousLevel = function (event) {
-        console.log('jere', arguments);
         if (event && event.preventDefault) {
             event.preventDefault();
         }
@@ -38,11 +37,8 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             };
         }
         var level = closest(event.currentTarget, 'mp-level').getAttribute('data-level');
-        console.log(level);
         if ($scope.mlPushMenu.level <= level) {
-        console.log(level);
             if (event.stopPropagation) {
-        console.log(level);
                 event.stopPropagation();
             }
             $scope.mlPushMenu.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
@@ -54,7 +50,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
         }
 
         Smartgeo.set('persitence.menu.open.level', openned);
-        console.log(openned);
         return false;
     };
 
