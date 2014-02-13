@@ -1,0 +1,18 @@
+<span ng-init='father = child'></span>
+
+<li ng-repeat="child in child.children">
+    <label for="">
+        {{child.metamodel.label}}:{{child.uuid}}
+        <button class='btn btn-link' ng-click="asset.addNode(father.uuid)">+</button>
+        <button class='btn btn-link' ng-click="asset.duplicateNode(child.uuid)">cp</button>
+        <button class='btn btn-link' ng-click="asset.deleteNode(child.uuid)">-</button>
+    </label>
+    <ul>
+        <li>
+            <div ng-include="'partials/census-node.html'"></div>
+        </li>
+    </ul>
+</li>
+
+
+    <!-- <li ng-include="'partials/census-node.html'"></li> -->

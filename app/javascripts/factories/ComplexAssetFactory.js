@@ -50,7 +50,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.okey       = okey;
         this.uuid       = Smartgeo.uuid();
         this.children   = [];
-        this.father     = father;
+        // this.father     = father;
         this.metamodel  = window.site.metamodel[this.okey];
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
@@ -215,11 +215,8 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__log = function() {
-        if(this.children.length){
-            console.groupCollapsed(this.metamodel.label + ':' + this.uuid, this);
-        } else {
-            console.log(this.metamodel.label + ':' + this.uuid, this);
-        }
+        console.groupCollapsed(this.metamodel.label + ':' + this.uuid);
+        console.log(this);
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__log();
         }
