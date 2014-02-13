@@ -26,11 +26,20 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function ($templateC
                 placeholder = (field['default'] && field['default'].pkey) ? '{{report.roFields[' + field.id + ']}}' : '';
             switch (field.type) {
             case 'D':
-                str += '<input class="form-control pull-left" \
-                                     ng-required="' + myField + '.required" \
-                                     type="date" name="f" placeholder="' + placeholder + '" \
-                                     ng-model = "' + model + '" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;"></input> \
-                                     <span class="form-control pull-left">{{' + model + ' |  date:"dd/MM/yyyy"}}</span>';
+                if(navigator.userAgent.match(/Android/i)){
+                    str += '<input class="form-control pull-left" \
+                                 ng-required="' + myField + '.required" \
+                                 type="date" name="f" placeholder="' + placeholder + '" \
+                                 ng-model = "' + model + '" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;"></input> \
+                                 <span class="form-control pull-left">{{' + model + ' |  date:"dd/MM/yyyy"}}</span>';
+                } else {
+                    str += '<input class="form-control" \
+                                 ng-required="'+myField+'.required" \
+                                 type="date" \
+                                 name="f" \
+                                 placeholder="'+placeholder+'" \
+                                 ng-model = "'+model+'"></input>';
+                }
                 break;
             case 'T':
                 str += '<input  class="form-control" \
