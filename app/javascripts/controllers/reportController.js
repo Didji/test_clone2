@@ -9,7 +9,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     GiReportBuilder.buildAllTemplates($scope.site.activities);
 
     $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT;
-
+    $scope.activities = angular.copy($rootScope.site.activities);
     $scope.report = Report.new();
     $scope.report.mission = 1 * $routeParams.mission;
     if (!$routeParams.activity && $routeParams.assets) {
@@ -38,6 +38,13 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
     } else if ($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function (assets) {
+            var filteredActivities = [], okey = assets[0].okey ;
+            for (var i = 0; i < $scope.activities.length; i++) {
+                if(okey === $scope.activities[i].okeys[0]){
+                    filteredActivities.push($scope.activities[i]);
+                }
+            }
+            $scope.activities = filteredActivities;
             $scope.report.assets = assets;
             if (!$scope.$$phase) {
                 $scope.$apply();

@@ -11,7 +11,7 @@
                     <select class="form-control"
                             ng-change  = "activityListChangeHandler()"
                             ng-model   = "report.activity"
-                            ng-options = "activity.label for activity in site.activities">
+                            ng-options = "activity.label for activity in activities">
                     </select>
                 </p>
                 <p ng-show="report.activity">
