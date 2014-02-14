@@ -50,7 +50,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.okey       = okey;
         this.uuid       = Smartgeo.uuid();
         this.children   = [];
-        // this.father     = father;
+        this.father     = father && father.uuid;
         this.metamodel  = window.site.metamodel[this.okey];
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
@@ -66,7 +66,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf    ComplexAsset
      *
      * @param       {string} uuid
-     * @param       {bool}   isRoot
      *
      * @returns     {ComplexAsset} Objet complexe créé
      *
@@ -76,11 +75,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      *
      * @desc        Ajoute un noeud à l'uuid renseigné
      */
-    ComplexAsset.prototype.addNode = function(uuid, isRoot) {
-
-        if(isRoot !== false){
-            isRoot = true ;
-        }
+    ComplexAsset.prototype.addNode = function(uuid) {
 
         if(!uuid){
             throw new ComplexAssetError('You must provide node uuid.');
@@ -97,10 +92,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         var found = false ;
 
         for (var i = 0; i < this.children.length; i++) {
-            found = found || this.children[i].addNode(uuid, false);
+            found = found || this.children[i].addNode(uuid);
         }
 
-        if(isRoot && !found){
+        if(!this.father && !found){
             throw new ComplexAssetError('Uuid not found.');
         } else {
             return found ;
@@ -113,7 +108,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf ComplexAsset
      *
      * @param {string} uuid
-     * @param {bool}   isRoot
      *
      * @returns {ComplexAsset} Objet complexe créé
      *
@@ -121,13 +115,9 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @throws {ComplexAssetError} You must provide node uuid.
      * @throws {ComplexAssetError} Uuid not found.
      */
-    ComplexAsset.prototype.duplicateNode = function(uuid, isRoot) {
+    ComplexAsset.prototype.duplicateNode = function(uuid) {
 
-        if(isRoot !== false){
-            isRoot = true ;
-        }
-
-        if(isRoot && this.uuid === uuid){
+        if(!this.father && this.uuid === uuid){
             throw new ComplexAssetError('You cannot duplicate root node.');
         }
 
@@ -147,10 +137,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         var duplicated = false ;
 
         for (i = 0; i < this.children.length; i++) {
-            duplicated = duplicated || this.children[i].duplicateNode(uuid, false);
+            duplicated = duplicated || this.children[i].duplicateNode(uuid);
         }
 
-        if(isRoot && !duplicated){
+        if(!this.father && !duplicated){
             throw new ComplexAssetError('Uuid not found.');
         } else {
             return duplicated ;
@@ -164,7 +154,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf ComplexAsset
      *
      * @param {string} uuid
-     * @param {bool}   isRoot
      *
      * @returns {Boolean} True si l'objet a été supprimé
      *
@@ -172,13 +161,9 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @throws {ComplexAssetError} You must provide node uuid.
      * @throws {ComplexAssetError} Uuid not found.
      */
-    ComplexAsset.prototype.deleteNode = function(uuid, isRoot) {
+    ComplexAsset.prototype.deleteNode = function(uuid) {
 
-        if(isRoot !== false){
-            isRoot = true ;
-        }
-
-        if(isRoot && this.uuid === uuid){
+        if(!this.father && this.uuid === uuid){
             throw new ComplexAssetError('You cannot remove root node.');
         }
 
@@ -197,10 +182,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         var deleted = false ;
 
         for (i = 0; i < this.children.length; i++) {
-            deleted = deleted || this.children[i].deleteNode(uuid, false);
+            deleted = deleted || this.children[i].deleteNode(uuid);
         }
 
-        if(isRoot && !deleted){
+        if(!this.father && !deleted){
             throw new ComplexAssetError('Uuid not found.');
         } else {
             return deleted ;

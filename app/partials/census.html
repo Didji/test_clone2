@@ -1,8 +1,3 @@
-<div ng-controller="censusController" ng-init="child = asset;">
-    <ul ng-include="'partials/census-node.html'"></ul>
-   <!--  {{asset.uuid}}
-    {{asset.metamodel.label}} -->
-    <!-- <ul>
-        <li ng-repeat=" (key, okey) in dependancies"  ng-include="'partials/census-okey.html'"></li>
-    </ul> -->
+<div ng-controller="censusController" ng-init="node = root">
+    <span ng-include="'partials/census-node.html'"></span>
 </div>
