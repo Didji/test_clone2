@@ -369,7 +369,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         // in something like Smartgeo.utils.getLabelWithFieldId()
         for (var i = 0; i < activity.tabs.length; i++) {
             for (var j = 0; j < activity.tabs[i].fields.length; j++) {
-                if (activity.tabs[i].fields[j].id === id) {
+                if (activity.tabs[i].fields[j].id == id) {
                     return activity.tabs[i].fields[j].label;
                 }
             }
