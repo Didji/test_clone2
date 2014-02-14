@@ -26,7 +26,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         filecacheIsEnable:  (window.smartgeoRightsManager && window.smartgeoRightsManager.tileCache) || false,
 
         initialize: function (mapDivId, site, target, marker, zoom) {
-
             this.site = site;
             this.tileUrl = this.site.EXTERNAL_TILEURL;
             this.mapDiv = document.getElementById(mapDivId);
@@ -43,7 +42,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 'imperial': false
             }).addTo(this.map);
 
-            if (!target || !target.length || G3ME.benchMe) {
+            if ( !(target && target.length && G3ME.isLatLngString(target)) || G3ME.benchMe) {
                 target = [
                     [this.site.extent.ymin, this.site.extent.xmin],
                     [this.site.extent.ymax, this.site.extent.xmax]
@@ -142,7 +141,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             if (G3ME.isLatLngString(target)) {
                 // it's a position ! returning [lat, lng]
                 callback(target.split(','));
-            } else {
+            } else if(''+(target*1) === target) {
                 // so maybe it's an asset id ?
                 Smartgeo.findAssetsByGuids(site, target, function (assets) {
                     if (!assets.length) {
@@ -163,11 +162,21 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }, null, null, function () {
                     (error || function () {})();
                 });
+            } else {
+                (error || function () {})();
             }
         },
 
         isLatLngString: function (str) {
-            return ((str ||  "").match(/^-?\d+[.]\d*,-?\d+[.]\d*$/) !== null);
+            if((typeof str === "object") && (typeof (1*str[0]) === "number") && (typeof (1*str[1]) === "number")){
+                return true ;
+            } else if(typeof str === "object"){
+                return false;
+            } else if(typeof str !== "string"){
+                return false ;
+            } else {
+                return ((str ||  "").match(/^-?\d+[.]\d*,-?\d+[.]\d*$/) !== null);
+            }
         },
 
         invalidateMapSize: function (timeout, callback) {

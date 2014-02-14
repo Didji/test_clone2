@@ -104,7 +104,9 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
             }
             tokenAuth($routeParams.token, redirect);
         }, function () {
-            document.location.reload();
+            alertify.alert(i18n.get("_INTENT_TARGET_NOT_VALID",$rootScope.map_target));
+            $location.path('/map/');
+
         });
     } else {
         tokenAuth($routeParams.token, redirect);

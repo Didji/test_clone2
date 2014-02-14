@@ -88,6 +88,7 @@ window.smartgeo_i18n_lang['fr'] = {
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",
     _INTENT_AUTH_FAILED: "L'authentification a échoué (%s)", // status
+    _INTENT_TARGET_NOT_VALID : "La cible fournie est invalide (%s). <br /> Nous ne pouvons vous localiser mais vous pouvez poursuivre la saisie.",
 
     _MAP_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _MAP_ZERO_OBJECT_FOUND: "Aucun patrimoine dans cette zone",

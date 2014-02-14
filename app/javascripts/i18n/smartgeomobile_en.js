@@ -87,6 +87,7 @@ window.smartgeo_i18n_lang['en'] = {
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",
     _INTENT_AUTH_FAILED: "%s", // status
+    _INTENT_TARGET_NOT_VALID : "Object not found",
 
     _MAP_ZERO_SITE_SELECTED: "No site found",
     _MAP_ZERO_OBJECT_FOUND: "No asset in this area",
