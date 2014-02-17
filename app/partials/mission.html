@@ -18,7 +18,7 @@
       <div class="panel-body" ng-show='mission.openned || false'>
 
         <p>
-          <i class="fa fa-clock-o"></i> <i18n>_PLANNING_BEFORE_</i18n> {{mission.end | customDateFilter | date:"h'h'mm le dd/MM/yy" }}
+          <i class="fa fa-clock-o"></i> <i18n>_PLANNING_BEFORE_</i18n> {{mission.end | customDateFilter | date:"HH'h'mm le dd/MM/yy" }}
         </p>
         <p ng-show='mission.city'>
           <i class="fa fa-map-marker"></i> {{mission.city}}
