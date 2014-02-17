@@ -4,13 +4,9 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.state = 'closed';
     $scope.loading = false;
-    console.log('ici');
     angular.element($window).bind("resize", function (e) {
-        console.log($scope.state);
-        // if($scope.state === 'open'){
         $scope.open();
         $scope.close();
-        // }
     });
 
     var PREOPEN_TIMER;
