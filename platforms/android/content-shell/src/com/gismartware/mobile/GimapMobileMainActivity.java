@@ -5,7 +5,6 @@
 package com.gismartware.mobile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,12 +12,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.chromium.base.ChromiumActivity;
 import org.chromium.base.MemoryPressureListener;
 import org.chromium.content.app.LibraryLoader;
 import org.chromium.content.browser.ActivityContentVideoViewClient;
@@ -204,16 +201,15 @@ public class GimapMobileMainActivity extends Activity {
         } else {
         	finishActivityInit();
         }
-        if(NEED_LOGGER){
-            ResourceBundle config = null;
-            try {
-                FileInputStream fis = new FileInputStream(getExternalFilesDir(null).getParent() + "/" + "config.properties");
-                config = new PropertyResourceBundle(fis);
-                fis.close();
-                this.startService(new Intent(this, GiAlarmService.class));
-            } catch(Exception e){
-                Log.d(TAG, "Le log est activé mais le fichier de configuration est absent.");
-            }
+        
+        if (NEED_LOGGER) {
+        	File logCfg = new File(getExternalFilesDir(null).getParent(), "config.properties");
+        	if (logCfg.exists()) {
+        		Log.d(TAG, "Fichier de configuration trouvé. Lancement service reporting...");
+        		this.startService(new Intent(this, GiAlarmService.class));
+        	} else {
+        		Log.w(TAG, "Le log est activé mais le fichier de configuration est absent.");
+        	}
         }
         LocationLibrary.forceLocationUpdate(GimapMobileMainActivity.this);
     }
@@ -542,13 +538,13 @@ public class GimapMobileMainActivity extends Activity {
 		if (intent == null || intent.getData() == null) {
 			return null;
 		}
-
+		
 		StringBuffer url = new StringBuffer(INTENT_DEST_URL_PREFIX);
 
 		//controler en premier..
 		url.append(intent.getData().getHost());
 
-		//ATTENTION!! Rcuprer dataString sinon des caractres sautent avec getData().getQuery() car les valeurs dans l'URL peuvent
+		//ATTENTION!! Récupérer dataString sinon des caractères sautent avec getData().getQuery() car les valeurs dans l'URL peuvent
 		//contenir des #, ce qui fait partie des "fragments" dans la spec de la classe Uri, et non de la query...
 		String[] urlParts = intent.getDataString().split("\\?");
 
@@ -568,7 +564,7 @@ public class GimapMobileMainActivity extends Activity {
 				appendedParams = true;
 
 				Pattern hook = Pattern.compile(MESSAGES.getString("intent.controler.url.params.composite.regexp"));
-
+				
 				for (int i = 0; i < params.length; i++) {
 					String[] param = params[i].split("=");
 
@@ -582,31 +578,33 @@ public class GimapMobileMainActivity extends Activity {
 						paramName = matcher.group(1);
 					}
 
-					//un paramétre source peut etre positionné dans plusieurs paramétres cible :
+					//un paramétre source peut etre positionné dans plusieurs paramètres cibles :
 					String[] destParams = MESSAGES.getString(paramName).split(",");
 					for (int j = 0; j < destParams.length; j++) {
 						url.append(destParams[j]);
 						if (composite) {
 							url.append(matcher.group(2));
 						}
-						url.append("=").append(param[1]);
+						url.append("=");
+						if (param.length > 1) {
+							url.append(param[1]);
+						}
 
-						//ajout du "&" si plusieurs paramétres cible pour le paramétre source courant
+						//ajout du "&" si plusieurs paramètres cible pour le paramètre source courant
 						if (j < (destParams.length - 1)) {
 							url.append("&");
 						}
 					}
 
-					//ajout du "&" s'il reste des paramétres dans la query principale
+					//ajout du "&" s'il reste des paramètres dans la query principale
 					if (i < (params.length - 1)) {
 						url.append("&");
 					}
 				}
 			}
 		}
-
 		//ajout du token à la fin, rien si inexistant
-		if (authPreferences.getToken() != null) {
+		if (authPreferences != null && authPreferences.getToken() != null) {
 			if (appendedParams) {
 				url.append("&token=");
 			} else {
