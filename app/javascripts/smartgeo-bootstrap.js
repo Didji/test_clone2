@@ -9,7 +9,7 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             '_DONT_REALLY_RESET'    :  true,
             'tileCache'             :  true
         };
-        window.smartgeoPersistenceCache = {};
+        window.smartgeoPersistenceCache  = {};
         window.smartgeoPersistenceCache_ = {
             sites: sites
         };
@@ -19,6 +19,12 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
         }
 
         window.ChromiumCallbacks = [];
+
+        window.expirationDate = "02/14/2015" ; // mm/jj/aaaa
+        if((new Date()) > (new Date(window.expirationDate))){
+            alertify.alert("Votre licence a expiré.");
+            return false ;
+        }
 
         angular.bootstrap(document, ['smartgeomobile']);
     });
