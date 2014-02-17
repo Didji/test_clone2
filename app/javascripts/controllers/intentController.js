@@ -4,6 +4,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     $scope.controller = $routeParams.controller;
 
+    Smartgeo.clearPersistence();
 
     function tokenAuth(token, callback) {
 
