@@ -1,3 +1,4 @@
+
 /**
  * @class       authController
  * @classdesc   Controlleur associé à la page d'authentification.
@@ -13,7 +14,8 @@
  * @property {Boolean}  firstAuth    Est ce la première authentification
  * @property {String}   logMessage   Message affiché sur le bouton d'authentification
  */
-angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n, $route, $timeout) {
+
+angular.module('smartgeomobile').controller('authController', function ($scope, $location, Smartgeo, i18n, $route) {
 
     'use strict';
 
@@ -31,7 +33,8 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc        Fonction appelée à l'initialisation du DOM
+     * @desc        Fonction appelée à l'initialisation du DOM, arrête le polling, efface la persistence des menus,
+     *              le site selectionné, clear les intervals, initialize les events listener
      */
     $scope.initialize = function () {
 
@@ -79,6 +82,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
      * @method
      * @memberOf    authController
      * @desc        Appelée par $scope.ping
+     *
      * @param {Boolean} yes Le serveur distant est il joignable ?
      */
     $scope.pingCallback = function(yes){
@@ -92,8 +96,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
+     * @desc        Vérifie les inputs (username/password) et choisi l'authentification en fonction de la connectivité
+     *
      * @returns {Boolean} false en cas d'echec
-     * @desc
      */
     $scope.login = function () {
         $scope.username  = $scope.username.trim();
@@ -108,7 +113,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Authentification distante
      */
     $scope.remoteLogin = function () {
         $scope.readyToLog = false;
@@ -119,27 +124,30 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Authentification locale
      */
     $scope.localLogin = function () {
         var knownUsers = Smartgeo.get('knownUsers') || {};
         if (knownUsers[$scope.username] === $scope.pwd) {
-            $location.path('sites');
+            $scope.loginSucceed();
         } else {
-            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
+            $scope.loginFailed(401);
         }
     };
 
     /**
      * @method
      * @memberOf    authController
+     * @desc        Callback d'echec de l'authentification
+     *
      * @param {String} response Réponse du serveur
      * @param {int} status   Status HTTP de la réponse du serveur
-     * @desc
      */
     $scope.loginFailed = function(response, status) {
         if (status === 403) {
             alertify.alert(i18n.get("_AUTH_INCORRECT_PASSWORD"));
+        } else if (status === 401) {
+            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
         } else if (!status) {
             alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
         } else {
@@ -150,7 +158,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Callback de succès de l'authentification
      */
     $scope.loginSucceed =  function () {
         var knownUsers = Smartgeo.get('knownUsers') || {};
@@ -168,7 +176,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Methode appelé à l'event 'submit' du formulaire
      */
     $scope.formSubmit = function(){
         if($scope.firstAuth){
@@ -181,8 +189,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
+     * @desc        Vérifie l'URL, les credentials, appelle Smartgeo.setGimapUrl puis Smartgeo.ping le serveur
+     *
      * @returns {Boolean} false en cas d'echec
-     * @desc
      */
     $scope.initializeGimap = function() {
         if(!$scope.gimapUrl.length || !$scope.username.trim().length || !$scope.pwd.trim().length){
@@ -196,8 +205,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
+     * @desc        Callback du ping initializeGimap
+     *
      * @param {Boolean} yes Le serveur distant est il joignable ?
-     * @desc
      */
     $scope.initializeGimapPingCallback = function(yes){
         if(yes){
@@ -210,7 +220,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Reset le formulaire
      */
     $scope.resetForm = function () {
         Smartgeo.reset();
@@ -220,7 +230,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     /**
      * @method
      * @memberOf    authController
-     * @desc
+     * @desc        Supprime le mot de passe stocké dans le localStorage
      */
     $scope.forgetPassword = function () {
         $scope.username = $scope.pwd = '';
