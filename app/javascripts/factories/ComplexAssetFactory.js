@@ -39,7 +39,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @property    {string}        okey        Okey du noeud
      * @property    {string}        uuid        Identifiant unique du noeud
      * @property    {Array}         children    Liste des noeuds enfant
-     * @property    {Object}        metamodel   Metamodel de l'okey concernée
      * @property    {ComplexAsset}  father      Noeud père
      *
      * @returns     {ComplexAsset} Objet complexe créé
@@ -51,7 +50,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.uuid       = Smartgeo.uuid();
         this.children   = [];
         this.father     = father && father.uuid;
-        this.metamodel  = window.site.metamodel[this.okey];
+        this.fields     = {};
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
         }
@@ -196,11 +195,24 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     /**
      * @method
      * @memberOf ComplexAsset
+     *
+     * @returns {Boolean} True si l'objet a été supprimé
+     *
+     */
+    ComplexAsset.prototype.post = function() {
+        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.census.json', this, {
+            timeout: 55000
+        });
+    };
+
+    /**
+     * @method
+     * @memberOf ComplexAsset
      * @param {integer} level
      * @private
      */
     ComplexAsset.prototype.__log = function() {
-        console.groupCollapsed(this.metamodel.label + ':' + this.uuid);
+        console.groupCollapsed(window.site.metamodel[this.okey].label + ':' + this.uuid);
         console.log(this);
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__log();

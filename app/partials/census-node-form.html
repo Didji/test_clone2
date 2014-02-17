@@ -1,0 +1,26 @@
+<div ng-repeat='tab in site.metamodel[node.okey].tabs'>
+    <label for="">>{{tab.label}}</label>
+    <div ng-repeat='field in tab.fields'>
+        <label for="">>>>{{field.label}}</label>
+        <div ng-switch on="field.type">
+            <label ng-switch-when="O">
+                <input type="checkbox" ng-model='node.fields[field.key]'></input>
+            </label>
+            <label style="width:90%;margin:0;" ng-switch-when="L">
+                <select  ui-select2 ng-model="node.fields[field.key]">
+                    <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
+                </select>
+            </label>
+            <label ng-switch-when="D">
+                <input type="date" ng-model='node.fields[field.key]'></input>
+            </label>
+            <label ng-switch-when="N">
+                <input type="number" ng-model='node.fields[field.key]'></input>
+            </label>
+            <label ng-switch-default>
+                <input type="text" ng-model='node.fields[field.key]'></input>
+            </label>
+        </div>
+
+    </div>
+</div>
