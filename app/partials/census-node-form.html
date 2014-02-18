@@ -1,31 +1,45 @@
 <div ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin:5%">
-  <div class="panel-heading">
-    <h3 class="panel-title" ng-click="toggleCollapse($event,tab)">{{tab.label}}</h3>
-  </div>
-  <div ng-show='tab.visible'>
-      <div class="panel-body">
-        <div ng-repeat='field in tab.fields'>
-            <label style="color:black" for="">{{field.label}}</label>
-            <div ng-switch on="field.type">
-                <span ng-switch-when="O">
-                    <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
-                </span>
-                <span style="width:90%;margin:0;" ng-switch-when="L">
-                    <select  ui-select2 ng-model="node.fields[field.key]">
-                        <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
-                    </select>
-                </span>
-                <span ng-switch-when="D">
-                    <input class="form-control" type="date" ng-model='node.fields[field.key]'></input>
-                </span>
-                <span ng-switch-when="N">
-                    <input class="form-control" type="number" ng-model='node.fields[field.key]'></input>
-                </span>
-                <span ng-switch-default>
-                    <input class="form-control" type="text" ng-model='node.fields[field.key]'></input>
-                </span>
+    <div class="panel-heading" style="padding: 5px 10px;">
+        <h3 class="panel-title" style="font-size: 1em" ng-click="toggleCollapse($event,tab)">{{tab.label}}</h3>
+    </div>
+    <div ng-show='tab.visible'>
+        <div class="panel-body" style="padding: 10px 0px;">
+            <div ng-repeat='field in tab.fields'>
+                <label ng-if="!field.readonly" style="color:black" for="">{{field.label}}</label>
+                <div   ng-if="!field.readonly" ng-switch on="field.type">
+                    <span ng-switch-when="O">
+                        <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
+                    </span>
+                    <span style="width:90%;margin:0;" ng-switch-when="L">
+                        <select  ui-select2 ng-model="node.fields[field.key]">
+                            <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
+                        </select>
+                    </span>
+                    <span ng-switch-when="D">
+                        <input class="form-control" type="date" ng-model='node.fields[field.key]'></input>
+                    </span>
+                    <span ng-switch-when="N">
+                        <input class="form-control" type="number" ng-model='node.fields[field.key]'></input>
+                    </span>
+                    <span ng-switch-default>
+                        <input class="form-control" type="text" ng-model='node.fields[field.key]'></input>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
-  </div>
+</div>
+<input class="form-control" style="margin:5%" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
+<!-- <p>
+  <button type="button" class="btn btn-primary btn-xs">Position sur la carte</button>
+  <button type="button" class="btn btn-default btn-xs">Position avec GPS</button>
+</p> -->
+<div class="btn-group" style="width:100%">
+  <button type="button" class="btn btn-{{node.geometry ? 'success' : 'danger'}} btn-xs dropdown-toggle" style="width: 90%;margin: 0 5%;" data-toggle="dropdown">
+    {{node.geometry ? 'Géometrie OK' : 'À positionner'}} <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='node.geometry="lol"'>Positionner avec GPS</a></li>
+    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='node.geometry="lol"'>Positionner sur la carte</a></li>
+  </ul>
 </div>

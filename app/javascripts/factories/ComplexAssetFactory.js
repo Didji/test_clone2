@@ -146,6 +146,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             if(father.children[i].uuid === this.uuid){
                 var newNode = father.children[i].__clone();
                 newNode.__updateUuid(father.uuid);
+                newNode.__closeTreeForm();
                 father.children.push(newNode);
                 return newNode ;
             }
@@ -185,6 +186,27 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             }
         }
         return false ;
+    };
+
+    /**
+     * @method
+     * @memberOf ComplexAsset
+     */
+    ComplexAsset.prototype.toggleForm = function() {
+        var visibility = this.formVisible ;
+        this.root.__closeTreeForm();
+        this.formVisible = !visibility;
+    };
+
+    /**
+     * @method
+     * @memberOf ComplexAsset
+     */
+    ComplexAsset.prototype.__closeTreeForm = function() {
+        this.formVisible = false ;
+        for (var i = 0; i < this.children.length; i++) {
+            this.children[i].__closeTreeForm();
+        }
     };
 
     /**
