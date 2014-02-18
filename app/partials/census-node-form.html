@@ -1,26 +1,31 @@
-<div ng-repeat='tab in site.metamodel[node.okey].tabs'>
-    <label for="">>{{tab.label}}</label>
-    <div ng-repeat='field in tab.fields'>
-        <label for="">>>>{{field.label}}</label>
-        <div ng-switch on="field.type">
-            <label ng-switch-when="O">
-                <input type="checkbox" ng-model='node.fields[field.key]'></input>
-            </label>
-            <label style="width:90%;margin:0;" ng-switch-when="L">
-                <select  ui-select2 ng-model="node.fields[field.key]">
-                    <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
-                </select>
-            </label>
-            <label ng-switch-when="D">
-                <input type="date" ng-model='node.fields[field.key]'></input>
-            </label>
-            <label ng-switch-when="N">
-                <input type="number" ng-model='node.fields[field.key]'></input>
-            </label>
-            <label ng-switch-default>
-                <input type="text" ng-model='node.fields[field.key]'></input>
-            </label>
+<div ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin:5%">
+  <div class="panel-heading">
+    <h3 class="panel-title" ng-click="toggleCollapse($event,tab)">{{tab.label}}</h3>
+  </div>
+  <div ng-show='tab.visible'>
+      <div class="panel-body">
+        <div ng-repeat='field in tab.fields'>
+            <label style="color:black" for="">{{field.label}}</label>
+            <div ng-switch on="field.type">
+                <span ng-switch-when="O">
+                    <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
+                </span>
+                <span style="width:90%;margin:0;" ng-switch-when="L">
+                    <select  ui-select2 ng-model="node.fields[field.key]">
+                        <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
+                    </select>
+                </span>
+                <span ng-switch-when="D">
+                    <input class="form-control" type="date" ng-model='node.fields[field.key]'></input>
+                </span>
+                <span ng-switch-when="N">
+                    <input class="form-control" type="number" ng-model='node.fields[field.key]'></input>
+                </span>
+                <span ng-switch-default>
+                    <input class="form-control" type="text" ng-model='node.fields[field.key]'></input>
+                </span>
+            </div>
         </div>
-
     </div>
+  </div>
 </div>

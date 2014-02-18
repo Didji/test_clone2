@@ -1,15 +1,17 @@
-var ComplexAssetTree = {
-    "1": { child:    4},
-    "2": { child: null},
-    "4": { child: null},
-    "5": { child: null},
-    "7": { child:    5},
-    "9": { child:    7}
-};
+
 
 angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope) {
 
     'use strict';
+
+    window.site.dependancies = {
+        "1": { child:    4},
+        "2": { child: undefined},
+        "4": { child: undefined},
+        "5": { child: undefined},
+        "7": { child:    5},
+        "9": { child:    7}
+    };
 
     /**
      * @class       ComplexAssetError
@@ -45,17 +47,18 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      *
      * @throws      {ComplexAssetError} You must provide a root okey.
      */
-    var ComplexAsset = function(okey, father){
+    var ComplexAsset = function(okey, father, root){
         this.okey       = okey;
         this.uuid       = Smartgeo.uuid();
         this.children   = [];
         this.father     = father && father.uuid;
+        this.root       = root || this ;
         this.fields     = {};
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
         }
-        if (ComplexAssetTree[okey].child) {
-            this.children.push(new ComplexAsset(ComplexAssetTree[okey].child, this));
+        if (window.site.dependancies[okey].child) {
+            this.children.push(new ComplexAsset(window.site.dependancies[okey].child, this, this.root));
         }
         return this;
     };
@@ -63,39 +66,55 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     /**
      * @method
      * @memberOf    ComplexAsset
-     *
-     * @param       {string} uuid
+     * @desc        Ajoute un noeud à l'uuid renseigné
      *
      * @returns     {ComplexAsset} Objet complexe créé
      *
-     * @throws      {ComplexAssetError} You cannot duplicate root node.
      * @throws      {ComplexAssetError} This node type has no child type.
+     */
+    ComplexAsset.prototype.add = function() {
+
+        var childType = window.site.dependancies[this.okey].child ;
+
+        if(!childType){
+            throw new ComplexAssetError('This node type has no child type.');
+        } else {
+            return this.children.push(new ComplexAsset(childType, this, this.root)) ;
+        }
+
+    };
+
+
+    /**
+     * @method
+     * @memberOf    ComplexAsset
+     *
+     * @param       {string} uuid
+     *
+     * @returns     {ComplexAsset} Objet correspondant à l'UUID
+     *
      * @throws      {ComplexAssetError} Uuid not found.
      *
-     * @desc        Ajoute un noeud à l'uuid renseigné
+     * @desc        Cherche le noeud correspondant à l'UUID en paramêtre
      */
-    ComplexAsset.prototype.addNode = function(uuid) {
+    ComplexAsset.prototype.get = function(uuid) {
 
         if(!uuid){
             throw new ComplexAssetError('You must provide node uuid.');
         }
 
-        if(this.uuid === uuid && !ComplexAssetTree[this.okey].child){
-            throw new ComplexAssetError('This node type has no child type.');
-        } else if(this.uuid === uuid && ComplexAssetTree[this.okey].child){
-            var newNode = new ComplexAsset(ComplexAssetTree[this.okey].child)
-            this.children.push(newNode);
-            return newNode ;
+        if(this.uuid === uuid){
+            return this ;
         }
 
         var found = false ;
 
         for (var i = 0; i < this.children.length; i++) {
-            found = found || this.children[i].addNode(uuid);
+            found = found || this.children[i].get(uuid);
         }
 
         if(!this.father && !found){
-            throw new ComplexAssetError('Uuid not found.');
+            throw new ComplexAssetError('Uuid '+this.uuid+' not found.');
         } else {
             return found ;
         }
@@ -106,43 +125,30 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @method
      * @memberOf ComplexAsset
      *
-     * @param {string} uuid
-     *
      * @returns {ComplexAsset} Objet complexe créé
      *
      * @throws {ComplexAssetError} You cannot duplicate root node.
-     * @throws {ComplexAssetError} You must provide node uuid.
-     * @throws {ComplexAssetError} Uuid not found.
+     * @throws {ComplexAssetError} Father node not found.
      */
-    ComplexAsset.prototype.duplicateNode = function(uuid) {
+    ComplexAsset.prototype.duplicate = function() {
 
-        if(!this.father && this.uuid === uuid){
+        if(!this.father){
             throw new ComplexAssetError('You cannot duplicate root node.');
         }
 
-        if(!uuid){
-            throw new ComplexAssetError('You must provide node uuid.');
+        var father = this.root.get(this.father);
+
+        if(!father){
+            throw new ComplexAssetError('Father node '+this.father+' not found.');
         }
 
-        for (var i = 0; i < this.children.length; i++) {
-            if(this.children[i].uuid === uuid){
-                var newNode = angular.copy(this.children[i]);
-                newNode.__updateUuid();
-                this.children.push(newNode);
-                return true ;
+        for (var i = 0; i < father.children.length; i++) {
+            if(father.children[i].uuid === this.uuid){
+                var newNode = father.children[i].__clone();
+                newNode.__updateUuid(father.uuid);
+                father.children.push(newNode);
+                return newNode ;
             }
-        }
-
-        var duplicated = false ;
-
-        for (i = 0; i < this.children.length; i++) {
-            duplicated = duplicated || this.children[i].duplicateNode(uuid);
-        }
-
-        if(!this.father && !duplicated){
-            throw new ComplexAssetError('Uuid not found.');
-        } else {
-            return duplicated ;
         }
 
     };
@@ -157,39 +163,28 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @returns {Boolean} True si l'objet a été supprimé
      *
      * @throws {ComplexAssetError} You cannot remove root node.
-     * @throws {ComplexAssetError} You must provide node uuid.
-     * @throws {ComplexAssetError} Uuid not found.
+     * @throws {ComplexAssetError} Father node not found.
      */
-    ComplexAsset.prototype.deleteNode = function(uuid) {
+    ComplexAsset.prototype.delete = function() {
 
-        if(!this.father && this.uuid === uuid){
+        if(!this.father){
             throw new ComplexAssetError('You cannot remove root node.');
         }
 
-        if(!uuid){
-            throw new ComplexAssetError('You must provide node uuid.');
+        var father = this.root.get(this.father);
+
+        if(!father){
+            throw new ComplexAssetError('Father node '+this.father+' not found.');
         }
 
-        for (var i = 0; i < this.children.length; i++) {
-            if(this.children[i].uuid === uuid){
-                delete this.children[i];
-                this.children.splice(i, 1);
+        for (var i = 0; i < father.children.length; i++) {
+            if(father.children[i].uuid === this.uuid){
+                delete father.children[i];
+                father.children.splice(i, 1);
                 return true ;
             }
         }
-
-        var deleted = false ;
-
-        for (i = 0; i < this.children.length; i++) {
-            deleted = deleted || this.children[i].deleteNode(uuid);
-        }
-
-        if(!this.father && !deleted){
-            throw new ComplexAssetError('Uuid not found.');
-        } else {
-            return deleted ;
-        }
-
+        return false ;
     };
 
     /**
@@ -197,12 +192,11 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf ComplexAsset
      *
      * @returns {Boolean} True si l'objet a été supprimé
-     *
+     * A METTRE AILLEURS
      */
     ComplexAsset.prototype.post = function() {
-        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.census.json', this, {
-            timeout: 55000
-        });
+        var node = this.__clone();
+        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.census.json', node.__clean());
     };
 
     /**
@@ -223,12 +217,68 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     /**
      * @method
      * @memberOf ComplexAsset
+     * @param {integer} level
      * @private
      */
-    ComplexAsset.prototype.__updateUuid = function() {
-        this.uuid = Smartgeo.uuid();
+    ComplexAsset.prototype.__clone = function() {
+        var root = this.root;
+        this.__deleteRoot();
+        var newNode = angular.copy(this);
+        this.__restoreRoot(root);
+        newNode.__restoreRoot(root);
+        return newNode ;
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
+     * @private
+     */
+    ComplexAsset.prototype.__deleteRoot = function() {
+        delete this.root;
+        for(var i = 0 ; i < this.children.length ; i++){
+            this.children[i].__deleteRoot();
+        }
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
+     * @param {ComplexAsset} root
+     * @private
+     */
+    ComplexAsset.prototype.__restoreRoot = function(root) {
+        this.root = root ;
+        for(var i = 0 ; i < this.children.length ; i++){
+            this.children[i].__restoreRoot(root);
+        }
+    }
+
+    /**
+     * @method
+     * @memberOf ComplexAsset
+     * @private
+     */
+    ComplexAsset.prototype.__clean = function() {
+        this.__deleteRoot();
+        delete this.father ;
+        delete this.showForm;
         for (var i = 0; i < this.children.length; i++) {
-            this.children[i].__updateUuid();
+            this.children[i].__clean();
+        }
+        return this ;
+    }
+
+    /**
+     * @method
+     * @memberOf ComplexAsset
+     * @private
+     */
+    ComplexAsset.prototype.__updateUuid = function(father) {
+        this.uuid = Smartgeo.uuid();
+        this.father = father ;
+        for (var i = 0; i < this.children.length; i++) {
+            this.children[i].__updateUuid(this.uuid);
         }
     }
 

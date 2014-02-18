@@ -1,0 +1,30 @@
+<div style="margin-left:{{node.father ? '10' : '-1'}}px;">
+    <label style="padding: 13px 0;width: 100%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;">
+        <label ng-click="node.showForm = !node.showForm">
+            <span class="caret"> </span> {{site.metamodel[node.okey].label}}
+        </label>
+        <div class="pull-right" style="padding-right:10px">
+            <button ng-if='site.dependancies[node.okey].child' class='btn btn-default btn-xs' ng-click="node.add()">
+                <span class="icon icon-plus"></span> {{site.metamodel[site.dependancies[node.okey].child].label}}
+            </button>
+            <button ng-if='node.father' class='btn btn-default btn-xs' ng-click="node.duplicate()" >
+                <span class="icon icon-copy"></span>
+            </button>
+            <button ng-if='node.father' class='btn btn-danger  btn-xs' ng-click="node.delete()">
+                <span class="icon icon-remove"></span>
+            </button>
+        </div>
+    </label>
+
+    <div ng-show='node.showForm'>
+        <div ng-include="'partials/census-node-form.html'"></div>
+    </div>
+
+    <span ng-repeat="node in node.children">
+        <div ng-include="'partials/censusDirectiveTemplate.html'"></div>
+    </span>
+
+    <button ng-if='!node.father' class='btn btn-block btn-primary' ng-click="root.post()" style="margin: 10px auto;width: 95%;">
+        <span class="icon icon-save"></span> Enregistrer
+    </button>
+</div>
