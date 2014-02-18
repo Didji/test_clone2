@@ -1,102 +1,40 @@
+
 /**
- * @ngdoc object
- * @name smartgeomobile.authController
- * @description
- * Controlleur d'authentification.
+ * @class       authController
+ * @classdesc   Controlleur associé à la page d'authentification.
+ *
+ * @property {String}   lastuser     Dernier utilisateur loggué
+ * @property {String}   version      Version de Smartgeo (Smartgeo.getVersion())
+ * @property {String}   username     Modèle associé au champs "Utilisateur"
+ * @property {String}   pwd          Modèle associé au champs "Mot de passe"
+ * @property {Boolean}  rememberme   Modèle associé au champs "Se souvenir du mot de passe"
+ * @property {Boolean}  readyToLog   Passe à 'true' lorsque le ping du serveur est terminé
+ * @property {String}   gimapUrl     Url du serveur GiMAP complète
+ * @property {String}   smallUrl     Url du serveur GiMAP raccourcie
+ * @property {Boolean}  firstAuth    Est ce la première authentification
+ * @property {String}   logMessage   Message affiché sur le bouton d'authentification
  */
-angular.module('smartgeomobile').controller('authController', function ($scope, $rootScope, $http, $location, $window, Smartgeo, SQLite, i18n, $route, $timeout) {
+
+angular.module('smartgeomobile').controller('authController', function ($scope, $location, Smartgeo, i18n, $route) {
 
     'use strict';
 
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#lastuser
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.lastuser = Smartgeo.get('user') || {
-        "username"   :   "",
-        "password"   :   "",
-        "rememberme" : true
-    };
+    $scope.lastuser     = Smartgeo.get('user') || {"username":"","password":"","rememberme":true};
+    $scope.version      = Smartgeo.getVersion();
+    $scope.username     = $scope.lastuser.username;
+    $scope.pwd          = $scope.lastuser.password;
+    $scope.readyToLog   = false;
+    $scope.gimapUrl     = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') || "";
+    $scope.smallUrl     = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+    $scope.rememberme   = $scope.lastuser.rememberme;
+    $scope.firstAuth    = $scope.gimapUrl ? false : true ;
+    $scope.logMessage   = '_AUTH_LOG_MESSAGE_INIT_';
 
     /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#version
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.version = Smartgeo.getVersion();
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#username
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.username = $scope.lastuser.username;
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#pwd
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.pwd = $scope.lastuser.password;
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#readyToLog
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.readyToLog = false;
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#gimapUrl
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.gimapUrl = Smartgeo._OVERRIDE_GIMAP_URL || Smartgeo.get('url') || "";
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#smallUrl
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.smallUrl = ($scope.gimapUrl || '').replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#rememberme
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.rememberme = $scope.lastuser.rememberme;
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#firstAuth
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.firstAuth = $scope.gimapUrl ? false : true ;
-
-    /**
-     * @ngdoc property
-     * @name smartgeomobile.authController#logMessage
-     * @propertyOf smartgeomobile.authController
-     * @description
-     */
-    $scope.logMessage = '_AUTH_LOG_MESSAGE_INIT_';
-
-    /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#initialize
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Fonction appelée à l'initialisation du DOM, arrête le polling, efface la persistence des menus,
+     *              le site selectionné, clear les intervals, initialize les events listener
      */
     $scope.initialize = function () {
 
@@ -115,13 +53,13 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#preventLocationChangeStart
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Permet de ne pas revenir à la carte après une déconnexion
+     *
      * @param {Event}  event   Evenenement initial
      * @param {String} next    Route suivante
      * @param {String} current Route courante
-     * @description
      */
     $scope.preventLocationChangeStart = function (event, next, current) {
         if (next.indexOf('/map/') !== -1) {
@@ -130,10 +68,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     }
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#ping
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Ping le serveur et appel $scope.pingCallback dès la réponse
      */
     $scope.ping = function () {
         $scope.readyToLog = false;
@@ -142,11 +79,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#pingCallback
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Appelée par $scope.ping
+     *
      * @param {Boolean} yes Le serveur distant est il joignable ?
-     * @description
      */
     $scope.pingCallback = function(yes){
         $scope.logMessage = '_AUTH_LOG_MESSAGE_' + (yes ? 'REMOTE' : 'LOCAL') + '_';
@@ -157,11 +94,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#login
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Vérifie les inputs (username/password) et choisi l'authentification en fonction de la connectivité
+     *
      * @returns {Boolean} false en cas d'echec
-     * @description
      */
     $scope.login = function () {
         $scope.username  = $scope.username.trim();
@@ -174,10 +111,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#remoteLogin
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Authentification distante
      */
     $scope.remoteLogin = function () {
         $scope.readyToLog = false;
@@ -186,31 +122,32 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#localLogin
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Authentification locale
      */
     $scope.localLogin = function () {
         var knownUsers = Smartgeo.get('knownUsers') || {};
         if (knownUsers[$scope.username] === $scope.pwd) {
-            $location.path('sites');
+            $scope.loginSucceed();
         } else {
-            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
+            $scope.loginFailed(401);
         }
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#loginFailed
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Callback d'echec de l'authentification
+     *
      * @param {String} response Réponse du serveur
-     * @param {Number} status   Status HTTP de la réponse du serveur
-     * @description
+     * @param {int} status   Status HTTP de la réponse du serveur
      */
     $scope.loginFailed = function(response, status) {
         if (status === 403) {
             alertify.alert(i18n.get("_AUTH_INCORRECT_PASSWORD"));
+        } else if (status === 401) {
+            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.username]));
         } else if (!status) {
             alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
         } else {
@@ -219,10 +156,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#loginSucceed
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Callback de succès de l'authentification
      */
     $scope.loginSucceed =  function () {
         var knownUsers = Smartgeo.get('knownUsers') || {};
@@ -238,10 +174,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#formSubmit
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Methode appelé à l'event 'submit' du formulaire
      */
     $scope.formSubmit = function(){
         if($scope.firstAuth){
@@ -252,11 +187,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#initializeGimap
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Vérifie l'URL, les credentials, appelle Smartgeo.setGimapUrl puis Smartgeo.ping le serveur
+     *
      * @returns {Boolean} false en cas d'echec
-     * @description
      */
     $scope.initializeGimap = function() {
         if(!$scope.gimapUrl.length || !$scope.username.trim().length || !$scope.pwd.trim().length){
@@ -268,11 +203,11 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     }
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#initializeGimapPingCallback
-     * @propertyOf smartgeomobile.authController
+     * @method
+     * @memberOf    authController
+     * @desc        Callback du ping initializeGimap
+     *
      * @param {Boolean} yes Le serveur distant est il joignable ?
-     * @description
      */
     $scope.initializeGimapPingCallback = function(yes){
         if(yes){
@@ -283,10 +218,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#resetForm
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Reset le formulaire
      */
     $scope.resetForm = function () {
         Smartgeo.reset();
@@ -294,10 +228,9 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
     };
 
     /**
-     * @ngdoc method
-     * @name smartgeomobile.authController#forgetPassword
-     * @propertyOf smartgeomobile.authController
-     * @description
+     * @method
+     * @memberOf    authController
+     * @desc        Supprime le mot de passe stocké dans le localStorage
      */
     $scope.forgetPassword = function () {
         $scope.username = $scope.pwd = '';
