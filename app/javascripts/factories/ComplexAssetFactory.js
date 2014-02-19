@@ -4,15 +4,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
 
     'use strict';
 
-    window.site.dependancies = {
-        "1": { child:    4},
-        "2": { child: undefined},
-        "4": { child: undefined},
-        "5": { child: undefined},
-        "7": { child:    5},
-        "9": { child:    7}
-    };
-
     /**
      * @class       ComplexAssetError
      *
@@ -57,8 +48,8 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
         }
-        if (window.site.dependancies[okey].child) {
-            this.children.push(new ComplexAsset(window.site.dependancies[okey].child, this, this.root));
+        if (window.site.dependancies[okey]) {
+            this.children.push(new ComplexAsset(window.site.dependancies[okey], this, this.root));
         }
         return this;
     };
@@ -74,7 +65,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.add = function() {
 
-        var childType = window.site.dependancies[this.okey].child ;
+        var childType = window.site.dependancies[this.okey] ;
 
         if(!childType){
             throw new ComplexAssetError('This node type has no child type.');

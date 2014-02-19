@@ -2,6 +2,6 @@ angular.module('smartgeomobile').controller('censusController', function ($scope
 
     'use strict';
 
-    $scope.okey = 9 ;
+    $scope.okey = 10 ;
 
 });

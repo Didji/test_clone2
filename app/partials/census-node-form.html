@@ -29,12 +29,12 @@
         </div>
     </div>
 </div>
-<input class="form-control" style="margin:5%" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
+<input ng-if="site.metamodel[node.okey].is_graphical"  class="form-control" style="margin:5%" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
 <!-- <p>
   <button type="button" class="btn btn-primary btn-xs">Position sur la carte</button>
   <button type="button" class="btn btn-default btn-xs">Position avec GPS</button>
 </p> -->
-<div class="btn-group" style="width:100%">
+<div ng-if="site.metamodel[node.okey].is_graphical"  class="btn-group" style="width:100%">
   <button type="button" class="btn btn-{{node.geometry ? 'success' : 'danger'}} btn-xs dropdown-toggle" style="width: 90%;margin: 0 5%;" data-toggle="dropdown">
     {{node.geometry ? 'Géometrie OK' : 'À positionner'}} <span class="caret"></span>
   </button>
