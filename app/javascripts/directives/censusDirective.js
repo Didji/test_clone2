@@ -37,7 +37,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.putOnMap = function(node){
-                    if($scope.site.metamodel[node.okey].geometry_type !== "LineString"){
+                    if($scope.site.metamodel[node.okey].geometry_type === "LineString"){
                         $scope.putLineStringOnMap(node);
                     } else {
                         $scope.putPointOnMap(node);
