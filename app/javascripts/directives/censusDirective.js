@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory" ,function ($compile, ComplexAssetFactory, $rootScope) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon" ,function ($compile, ComplexAssetFactory, $rootScope, Icon) {
     return {
 
         restrict: 'E',
@@ -6,7 +6,9 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
         replace: true,
 
         scope: {
-            'okey': '='
+            'okey': '=',
+            'site': '=',
+            'map' : '='
         },
 
         templateUrl: 'partials/censusDirectiveTemplate.html',
@@ -20,14 +22,65 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $compile(contents)($scope,function(clone){
                     el.append(clone);
                 });
-
-                $scope.site = window.site ;
                 $scope.root = new ComplexAssetFactory($scope.okey);
                 $scope.node = $scope.root;
                 window.root = $scope.root;
-                $scope.toggleCollapse = function (event, tab) {
-                    event.preventDefault();
+
+                $scope.toggleCollapse = function (e, tab) {
+                    e.preventDefault();
                     tab.visible = !!!tab.visible;
+                };
+
+                $scope.putOnMap = function(node){
+                    if($scope.site.metamodel[node.okey].geometry_type !== "LineString"){
+                        $scope.putLineStringOnMap(node);
+                    } else {
+                        $scope.putPointOnMap(node);
+                    }
+                };
+
+                $scope.putLineStringOnMap = function(node){
+
+                    $scope.map.off('click').on('click',function(event){
+                        var clickLatLng = [event.latlng.lat, event.latlng.lng] ;
+                        if(!node.tmpGeometry){
+                            node.tmpGeometry = [clickLatLng];
+                        } else {
+                            node.tmpGeometry.push(clickLatLng);
+                        }
+                        if(!node.currentPolyline) {
+                            node.currentPolyline = L.polyline([clickLatLng]).addTo($scope.map);
+                            node.currentPolyline.on('click', function(event){
+                                node.geometry = angular.copy(node.tmpGeometry);
+                                delete node.tmpGeometry;
+                                $scope.map.off('click');
+                                node.currentPolyline.off('click');
+                                $scope.$apply();
+                            });
+                        } else {
+                            node.currentPolyline.addLatLng(clickLatLng);
+                        }
+                    });
+
+                };
+
+                $scope.putPointOnMap = function(node){
+
+                    var classindex = 0 ;
+
+                    node.currentPointMarker = node.currentPointMarker || L.marker($scope.map.getCenter(), {icon: L.icon({
+                        iconUrl: $scope.site.symbology[''+node.okey+classindex].style.symbol.icon,
+                        iconAnchor: [16, 16]
+                    })}).addTo($scope.map);
+
+                    $scope.map.off('mousemove click').on('mousemove', function(event){
+                        node.currentPointMarker.setLatLng(event.latlng);
+                    }).on('click',function(event){
+                        node.geometry = [event.latlng.lat, event.latlng.lng] ;
+                        $scope.map.off('mousemove click');
+                        $scope.$apply();
+                    });
+
                 };
             };
 

@@ -30,16 +30,12 @@
     </div>
 </div>
 <input ng-if="site.metamodel[node.okey].is_graphical"  class="form-control" style="margin:5%" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
-<!-- <p>
-  <button type="button" class="btn btn-primary btn-xs">Position sur la carte</button>
-  <button type="button" class="btn btn-default btn-xs">Position avec GPS</button>
-</p> -->
 <div ng-if="site.metamodel[node.okey].is_graphical"  class="btn-group" style="width:100%">
   <button type="button" class="btn btn-{{node.geometry ? 'success' : 'danger'}} btn-xs dropdown-toggle" style="width: 90%;margin: 0 5%;" data-toggle="dropdown">
     {{node.geometry ? 'Géometrie OK' : 'À positionner'}} <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" role="menu">
-    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='node.geometry="lol"'>Positionner avec GPS</a></li>
-    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='node.geometry="lol"'>Positionner sur la carte</a></li>
+    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='node.geometry="KIKOO"'>Positionner avec GPS</a></li>
+    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='putOnMap(node)'>Positionner sur la carte</a></li>
   </ul>
 </div>

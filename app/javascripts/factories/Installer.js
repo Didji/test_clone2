@@ -253,11 +253,11 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
             $http
                 .get(url)
                 .success(function (data) {
-                    Installer._LAST_ID_OKEY[objectType.okey] = data.assets[data.assets.length - 1] ? data.assets[data.assets.length - 1].guid : Installer._LAST_ID_OKEY[objectType.okey];
-                    if (!Installer._LAST_ID_OKEY[objectType.okey]) {
-                        console.log(data.assets.length);
-                        console.log(data.assets);
+                    if(!data.assets || !data.assets.length){
+                        Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback, update);
+                        return ;
                     }
+                    Installer._LAST_ID_OKEY[objectType.okey] = data.assets[data.assets.length - 1] ? data.assets[data.assets.length - 1].guid : Installer._LAST_ID_OKEY[objectType.okey];
                     Installer.save(site, data.assets, function () {
                         $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                             okey: objectType.okey,

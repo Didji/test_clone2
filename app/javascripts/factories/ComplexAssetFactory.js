@@ -1,8 +1,14 @@
-
-
 angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope) {
 
     'use strict';
+
+    window.site.dependancies = {
+        "1": 4,
+        "7": 5,
+        "9": 7
+    };
+
+    window.site.metamodel["7"].is_graphical = true ;
 
     /**
      * @class       ComplexAssetError
@@ -45,12 +51,16 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.father     = father && father.uuid;
         this.root       = root || this ;
         this.fields     = {};
+        this.fields[window.site.metamodel[this.okey].ukey] = window.site.metamodel[this.okey].label
+
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
         }
+
         if (window.site.dependancies[okey]) {
-            this.children.push(new ComplexAsset(window.site.dependancies[okey], this, this.root));
+            this.add() ;
         }
+
         return this;
     };
 
@@ -70,7 +80,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         if(!childType){
             throw new ComplexAssetError('This node type has no child type.');
         } else {
-            return this.children.push(new ComplexAsset(childType, this, this.root)) ;
+            return this.children.push(new ComplexAsset(childType, this, this.root));
         }
 
     };
@@ -93,7 +103,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         if(!uuid){
             throw new ComplexAssetError('You must provide node uuid.');
         }
-
         if(this.uuid === uuid){
             return this ;
         }
@@ -171,6 +180,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
 
         for (var i = 0; i < father.children.length; i++) {
             if(father.children[i].uuid === this.uuid){
+                if(father.children[i].currentPointMarker){
+                    father.children[i].currentPointMarker._map.removeLayer(father.children[i].currentPointMarker);
+                    delete father.children[i].currentPointMarker;
+                }
                 delete father.children[i];
                 father.children.splice(i, 1);
                 return true ;
@@ -234,10 +247,18 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__clone = function() {
-        var root = this.root;
+        var root            = this.root,
+            backupMarker    = this.currentPointMarker,
+            backupPolyline  = this.currentPolyline,
+            backupGeometry  = this.geometry ;
+
+        this.__deleteGeometry();
         this.__deleteRoot();
         var newNode = angular.copy(this);
         this.__restoreRoot(root);
+        this.currentPointMarker = backupMarker ;
+        this.currentPolyline    = backupPolyline ;
+        this.geometry = backupGeometry ;
         newNode.__restoreRoot(root);
         return newNode ;
     }
@@ -251,6 +272,20 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         delete this.root;
         for(var i = 0 ; i < this.children.length ; i++){
             this.children[i].__deleteRoot();
+        }
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
+     * @private
+     */
+    ComplexAsset.prototype.__deleteGeometry = function() {
+        delete this.currentPointMarker;
+        delete this.currentPolyline;
+        delete this.geometry;
+        for(var i = 0 ; i < this.children.length ; i++){
+            this.children[i].__deleteGeometry();
         }
     }
 
@@ -276,6 +311,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.__deleteRoot();
         delete this.father ;
         delete this.showForm;
+        delete this.currentPointMarker;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__clean();
         }

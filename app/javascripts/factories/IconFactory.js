@@ -92,5 +92,33 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
         }
     };
 
+    /**
+     * @method
+     * @memberOf    Icon
+     * @desc        Retourne l'icône associée à l'okey demandé
+     *
+     * @param       {string} okey
+     *
+     * @returns     {L.icon} Icône correspondant
+     *
+     * @throws      {IconError} Icon not found.
+     */
+    Icon.prototype.getOkeyIcon = function (okey, classindex) {
+        classindex = classindex || 0 ;
+        var icon = this['OKEY_'+okey+'_'+classindex] ;
+
+        if(!icon){
+            this['OKEY_'+okey+'_'+classindex] = L.icon({
+                iconUrl: window.site.symbology[''+okey+classindex].style.symbol.icon,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+            });
+        }
+        if(!icon){
+            throw IconError("Icon not found.");
+        }
+        return icon;
+    };
+
     return new Icon();
 });
