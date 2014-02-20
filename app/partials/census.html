@@ -1,3 +1,11 @@
 <div ng-controller="censusController">
-    <census okey='okey' site='site' map='map'></census>
+    <span style="width:90%;margin:0;">
+        <select  ui-select2 ng-model="okey" ng-change="change()">
+            <option ng-repeat="(okey, model) in site.metamodel" value="{{okey}}">{{model.label}}</option>
+            <option value=""></option>
+        </select>
+    </span>
+    <div  style="margin-left:-20px;">
+        <census ng-if='okey' okey='okey' site='site' map='map'></census>
+    </div>
 </div>

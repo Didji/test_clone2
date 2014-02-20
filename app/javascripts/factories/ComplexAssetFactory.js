@@ -3,9 +3,9 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     'use strict';
 
     window.site.dependancies = {
-        "1": 4,
-        "7": 5,
-        "9": 7
+        "1": "4",
+        "7": "5",
+        "9": "7"
     };
 
     window.site.metamodel["7"].is_graphical = true ;

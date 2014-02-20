@@ -13,6 +13,7 @@
                     <span style="width:90%;margin:0;" ng-switch-when="L">
                         <select  ui-select2 ng-model="node.fields[field.key]">
                             <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
+                            <option value=""></option>
                         </select>
                     </span>
                     <span ng-switch-when="D">

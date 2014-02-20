@@ -22,9 +22,14 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $compile(contents)($scope,function(clone){
                     el.append(clone);
                 });
-                $scope.root = new ComplexAssetFactory($scope.okey);
-                $scope.node = $scope.root;
-                window.root = $scope.root;
+
+                $scope.$watch('okey', function(newValue, oldValue) {
+                    if (newValue){
+                        $scope.root = new ComplexAssetFactory(newValue);
+                        window.root = $scope.node = $scope.root;
+                    }
+
+                }, true);
 
                 $scope.toggleCollapse = function (e, tab) {
                     e.preventDefault();
@@ -40,7 +45,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.putLineStringOnMap = function(node){
-
+                    node.geometry = undefined ;
                     $scope.map.off('click').on('click',function(event){
                         var clickLatLng = [event.latlng.lat, event.latlng.lng] ;
                         if(!node.tmpGeometry){
@@ -67,7 +72,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $scope.putPointOnMap = function(node){
 
                     var classindex = 0 ;
-
+                    node.geometry = undefined ;
                     node.currentPointMarker = node.currentPointMarker || L.marker($scope.map.getCenter(), {icon: L.icon({
                         iconUrl: $scope.site.symbology[''+node.okey+classindex].style.symbol.icon,
                         iconAnchor: [16, 16]
