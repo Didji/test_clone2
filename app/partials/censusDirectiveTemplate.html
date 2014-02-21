@@ -1,10 +1,8 @@
-<div style="margin-left:20px}}">
-<!-- <div> -->
+<div style="margin-left:15px">
     <label style="padding: 13px 0;width: 100%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;">
         <label ng-click="node.toggleForm()">
-            <span class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
-<!--                 <input type=text style="border: none;background: transparent;color: white;width: 110px;" ng-model='node.fields[site.metamodel[node.okey].ukey]'></input> -->
-            <span style="padding:13px 0px 16px 7px;">{{node.fields[site.metamodel[node.okey].ukey]}}</span>
+            <span style="margin-left:-9px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
+            <span>{{node.fields[site.metamodel[node.okey].ukey]}}</span>
             <span ng-if="site.metamodel[node.okey].is_graphical" style='display: inline-block;' class="label label-{{node.geometry ? 'success' : 'danger' }}"><span class="icon icon-map-marker"></span></span>
         </label>
         <div class="pull-right" style="padding-right:10px">

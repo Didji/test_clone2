@@ -1,11 +1,24 @@
 <div ng-controller="censusController">
-    <span style="width:90%;margin:0;">
-        <select  ui-select2 ng-model="okey" ng-change="change()">
-            <option ng-repeat="(okey, model) in site.metamodel" value="{{okey}}">{{model.label}}</option>
-            <option value=""></option>
-        </select>
-    </span>
-    <div  style="margin-left:-20px;">
-        <census ng-if='okey' okey='okey' site='site' map='map'></census>
+    <!--
+        <span style="width:90%;margin:0;">
+            <select  ui-select2 ng-model="okey" ng-change="change()">
+                <option ng-repeat="(okey, model) in site.metamodel" value="{{okey}}">{{model.label}}</option>
+                <option value=""></option>
+            </select>
+        </span>
+    -->
+
+    <div  ng-if='okey' style="margin-left:-15px;">
+        <census okey='okey' site='site' map='map'></census>
     </div>
+
+    <ul ng-if='!okey'>
+        <li ng-repeat="(modelOkey, model) in site.metamodel">
+            <a ng-click='startCensus(modelOkey)' ng-if="model.is_census">
+                <img src='{{site.symbology[modelOkey+"0"].style.symbol.icon}}' alt="" />
+                {{model.label}}
+            </a>
+        </li>
+    </ul>
+
 </div>
