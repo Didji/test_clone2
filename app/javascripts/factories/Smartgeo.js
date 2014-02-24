@@ -18,7 +18,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description Smartgeo mobile version, displayed on home page
          */
-        _SMARTGEO_MOBILE_VERSION: "0.12.3r4",
+        _SMARTGEO_MOBILE_VERSION: "0.12.6",
 
         /**
          * @ngdoc property
@@ -384,10 +384,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
-                (callback || function () {})(Smartgeo.parametersCache_[parameter]);
-                return Smartgeo.parametersCache_[parameter];
+                var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
+                (callback || function () {})(value);
+                return value;
             } else {
-                (window.indexedDB ? IndexedDB : SQLite).get(parameter, callback);
+                SQLite.get(parameter, callback);
             }
         },
 
@@ -403,7 +404,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         set_: function (parameter, value, callback) {
             Smartgeo.parametersCache_[parameter] = value;
-            (window.indexedDB ? IndexedDB : SQLite).set(parameter, value, callback);
+            SQLite.set(parameter, value, callback);
         },
 
         /**
@@ -417,7 +418,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         unset_: function (parameter, callback) {
             delete Smartgeo.parametersCache_[parameter];
-            (window.indexedDB ? IndexedDB : SQLite).unset(parameter, callback);
+            SQLite.unset(parameter, callback);
         },
 
         /**
@@ -835,7 +836,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 if (response.data && response.data.sites && response.data.sites.length > 1) {
                     Smartgeo.rustineVeolia(response.data.sites, success, error);
                 } else {
-                    (success ||   function () {})();
+                    (success ||   function () {})();
                 }
             }, error || function () {});
         },
