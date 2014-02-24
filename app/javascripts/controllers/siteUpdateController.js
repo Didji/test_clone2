@@ -49,39 +49,28 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
         }
     }
 
-
-    $scope.site = Smartgeo.get_('sites')[$routeParams.site];
+    $scope.site  = Smartgeo.get_('sites')[$routeParams.site];
+    $scope.sites = Smartgeo.get_('sites') || {};
 
     var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
-    $http.get(url).success(function (sites) {
-        $scope.steps[0].progress = 50;
+    $scope.steps[0].progress = 50;
 
-        $scope.sites = Smartgeo.get_('sites') || {};
-
-        angular.extend($scope.sites, sites);
-
-        for (var i = 0; i < sites.length; i++) {
-            if (sites[i].id === $scope.siteId) {
-                $scope.site = sites[i];
+    $scope.site = $scope.sites[$routeParams.site];
+    Installer.getUpdateJSON($scope.site, function (site) {
+        var update = true;
+        var formatedSite = Installer.formatSiteMetadata(site, update);
+        $scope.steps[0].progress = 100;
+        buildSteps(formatedSite);
+        $scope.site.oldTimestamp = $scope.site.timestamp;
+        angular.extend($scope.site, formatedSite);
+        Installer.update($scope.site, $scope.site.stats, function () {
+            Installer.saveSite($scope.site);
+            $rootScope.site = $scope.site;
+            $location.path('/map/' + $routeParams.site);
+            if (!$scope.$$phase) {
+                $scope.$apply();
             }
-        }
-
-        Installer.getUpdateJSON($scope.site, function (site) {
-            var update = true;
-            var formatedSite = Installer.formatSiteMetadata(site, update);
-            $scope.steps[0].progress = 100;
-            buildSteps(formatedSite);
-            $scope.site.oldTimestamp = $scope.site.timestamp;
-            angular.extend($scope.site, formatedSite);
-            Installer.update($scope.site, $scope.site.stats, function () {
-                Installer.saveSite($scope.site);
-                $rootScope.site = $scope.site;
-                $location.path('/map/' + $routeParams.site);
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            });
         });
     });
 
@@ -92,6 +81,5 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
             $scope.$apply();
         }
     });
-
 
 });
