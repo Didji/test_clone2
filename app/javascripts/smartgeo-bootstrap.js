@@ -1,5 +1,5 @@
 angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-    (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function (sites) {
+    window.smartgeoPersistenceSQLite.get('sites', function (sites) {
         window.smartgeoRightsManager = {
             'report'                :  true,
             'goto'                  :  true,
