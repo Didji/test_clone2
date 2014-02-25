@@ -180,9 +180,9 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
 
         for (var i = 0; i < father.children.length; i++) {
             if(father.children[i].uuid === this.uuid){
-                if(father.children[i].currentPointMarker){
-                    father.children[i].currentPointMarker._map.removeLayer(father.children[i].currentPointMarker);
-                    delete father.children[i].currentPointMarker;
+                if(father.children[i].layer){
+                    father.children[i].layer._map.removeLayer(father.children[i].layer);
+                    delete father.children[i].layer;
                 }
                 delete father.children[i];
                 father.children.splice(i, 1);
@@ -223,8 +223,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         var node = this.__clone(true);
         node.__clean();
         node.geometry = this.geometry ;
-        console.log(this) ;
-        console.log(node) ;
         var deferred = $q.defer();
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
             timeout: 10000
@@ -269,14 +267,13 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.__clone = function(preserveGeometry) {
         var root     = this.root,
-            marker   = this.currentPointMarker,
-            polyline = this.currentPolyline,
+            layer    = this.layer,
             geometry = this.geometry ;
 
         if(!preserveGeometry){
             this.__deleteGeometry();
         }
-        this.__deleteMarker();
+        this.__deleteLayer();
         this.__deleteRoot();
 
         var newNode = angular.copy(this);
@@ -285,7 +282,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             this.__restoreGeometry(geometry);
         }
         this.__restoreRoot(root);
-        this.__restoreMarker(marker,polyline);
+        this.__restoreLayer(layer);
 
         newNode.__restoreRoot(root);
         return newNode ;
@@ -309,8 +306,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__deleteGeometry = function() {
-        delete this.currentPointMarker;
-        delete this.currentPolyline;
         delete this.geometry;
         for(var i = 0 ; i < this.children.length ; i++){
             this.children[i].__deleteGeometry();
@@ -322,11 +317,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__deleteMarker = function() {
-        delete this.currentPointMarker;
-        delete this.currentPolyline;
+    ComplexAsset.prototype.__deleteLayer = function() {
+        delete this.layer;
         for(var i = 0 ; i < this.children.length ; i++){
-            this.children[i].__deleteMarker();
+            this.children[i].__deleteLayer();
         }
     }
 
@@ -337,7 +331,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__restoreGeometry = function(geometry) {
-        this.geometry           = geometry ;
+        this.geometry = geometry ;
     }
 
    /**
@@ -346,9 +340,8 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @param {ComplexAsset} root
      * @private
      */
-    ComplexAsset.prototype.__restoreMarker = function(markers, polyline) {
-        this.currentPointMarker = markers ;
-        this.currentPolyline    = polyline ;
+    ComplexAsset.prototype.__restoreLayer = function(layer) {
+        this.layer = layer ;
     }
 
    /**
@@ -373,7 +366,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.__deleteRoot();
         delete this.father ;
         delete this.showForm;
-        delete this.currentPointMarker;
+        delete this.layer;
         delete this.formVisible;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__clean();
@@ -393,6 +386,24 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             this.children[i].__updateUuid(this.uuid);
         }
     }
+
+    ComplexAsset.prototype.isGeometryOk = function(){
+        if(window.site.metamodel[this.okey].is_graphical && !this.geometry){
+            return false;
+        } else if(!this.children.length){
+            return true;
+        }
+
+        var sons = true ;
+
+        for (var i = 0; i < this.children.length; i++) {
+            sons = sons && this.children[i].isGeometryOk() ;
+        }
+
+        console.log(sons);
+        return sons;
+    }
+
 
     return ComplexAsset;
 });
