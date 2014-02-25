@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon" ,function ($compile, ComplexAssetFactory, $rootScope, Icon) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope" ,function ($compile, ComplexAssetFactory, Icon, Smartgeo,i18n, $rootScope) {
     return {
 
         restrict: 'E',
@@ -55,6 +55,20 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $scope.onsave();
                 $scope.root.save();
                 $scope.removeLayers();
+            };
+
+            $scope.userLocationGeometry = function(node){
+                Smartgeo.getUsersLocation(function(lat, lng){
+                    node.geometry = [lat,lng];
+                    node.layer = L.marker(node.geometry, {icon: L.icon({
+                        iconUrl: $scope.site.symbology[''+node.okey+$scope.defaultClassIndex].style.symbol.icon,
+                        iconAnchor: [16, 16]
+                    })}).addTo($scope.map);
+                    $scope.mapLayers.push(node.layer);
+                    $scope.$apply();
+                }, function(){
+                    alertify.error(i18n.get('_MAP_GPS_FAIL'));
+                });
             };
 
             $scope.draw = function(node){
