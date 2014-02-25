@@ -9,16 +9,25 @@
     -->
 
     <div  ng-if='okey' style="margin-left:-15px;">
-        <census okey='okey' site='site' map='map'></census>
+        <census ui-if='okey' okey='okey' site='site' map='map'></census>
     </div>
 
     <ul ng-if='!okey'>
         <li ng-repeat="(modelOkey, model) in site.metamodel">
             <a ng-click='startCensus(modelOkey)' ng-if="model.is_census">
-                <img src='{{site.symbology[modelOkey+"0"].style.symbol.icon}}' alt="" />
+                <img ng-if= 'site.symbology[modelOkey+"0"]'
+                    ng-src='{{site.symbology[modelOkey+"0"].style.symbol.icon}}' alt="" />
+                <img ng-if='!site.symbology[modelOkey+"0"]'
+                    ng-src='{{site.symbology[site.dependancies[modelOkey]+"0"].style.symbol.icon}}' alt="" />
+                <img ng-if='!site.symbology[site.dependancies[modelOkey]+"0"]'
+                    ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+"0"]]+"0"].style.symbol.icon}}' alt="" />
                 {{model.label}}
             </a>
         </li>
     </ul>
+
+    <button ng-if='okey' class='btn btn-block btn-danger' ng-click="cancel()" style="margin: 10px auto;width: 95%;">
+        <span class="icon icon-remove"></span> Annuler
+    </button>
 
 </div>

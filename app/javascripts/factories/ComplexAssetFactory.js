@@ -220,10 +220,32 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @returns {Boolean} True si l'objet a été supprimé
      * A METTRE AILLEURS
      */
-    ComplexAsset.prototype.post = function() {
+    ComplexAsset.prototype.save = function() {
         var node = this.__clone();
-        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.census.json', node.__clean());
+        node.__clean();
+        node.geometry = this.geometry ;
+
+        var deferred = $q.defer();
+        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
+            timeout: 10
+        }).success(function (data) {
+            deferred.notify();
+            deferred.resolve();
+        }).error(function () {
+            Smartgeo.get_('census', function (census) {
+                census = census || [];
+                census.push(node);
+                Smartgeo.set_('census', census, function () {
+                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                });
+            });
+            deferred.notify();
+            deferred.resolve();
+        });
+        return deferred.promise;
+
     };
+
 
     /**
      * @method
@@ -247,18 +269,16 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__clone = function() {
-        var root            = this.root,
-            backupMarker    = this.currentPointMarker,
-            backupPolyline  = this.currentPolyline,
-            backupGeometry  = this.geometry ;
+        var root     = this.root,
+            marker   = this.currentPointMarker,
+            polyline = this.currentPolyline,
+            geometry = this.geometry ;
 
         this.__deleteGeometry();
         this.__deleteRoot();
         var newNode = angular.copy(this);
         this.__restoreRoot(root);
-        this.currentPointMarker = backupMarker ;
-        this.currentPolyline    = backupPolyline ;
-        this.geometry = backupGeometry ;
+        this.__restoreGeometry(geometry, marker,polyline);
         newNode.__restoreRoot(root);
         return newNode ;
     }
@@ -295,6 +315,18 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @param {ComplexAsset} root
      * @private
      */
+    ComplexAsset.prototype.__restoreGeometry = function(geometry, markers, polyline) {
+        this.geometry           = geometry ;
+        this.currentPointMarker = markers ;
+        this.currentPolyline    = polyline ;
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
+     * @param {ComplexAsset} root
+     * @private
+     */
     ComplexAsset.prototype.__restoreRoot = function(root) {
         this.root = root ;
         for(var i = 0 ; i < this.children.length ; i++){
@@ -312,6 +344,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         delete this.father ;
         delete this.showForm;
         delete this.currentPointMarker;
+        delete this.formVisible;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__clean();
         }
