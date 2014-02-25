@@ -1,8 +1,8 @@
 <div ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin:5%">
     <div class="panel-heading" style="padding: 5px 10px;">
-        <h3 class="panel-title" style="font-size: 1em" ng-click="toggleCollapse($event,tab)">{{tab.label}}</h3>
+        <h3 class="panel-title" style="font-size: 1em" ng-click="toggleCollapse($event,tab, site.metamodel[node.okey].tabs)">{{tab.label}}</h3>
     </div>
-    <div ng-show='tab.visible'>
+    <div ng-show='tab.visible  || (site.metamodel[node.okey].tabs.length == 1)' >
         <div class="panel-body" style="padding: 10px 0px;">
             <div ng-repeat='field in tab.fields'>
                 <label ng-if="!field.readonly" style="color:black" for="">{{field.label}}</label>

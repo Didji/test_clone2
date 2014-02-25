@@ -394,16 +394,11 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             return true;
         }
 
-        var sons = true ;
-
+        var children = true ;
         for (var i = 0; i < this.children.length; i++) {
-            sons = sons && this.children[i].isGeometryOk() ;
+            children = children && this.children[i].isGeometryOk() ;
         }
-
-        console.log(sons);
-        return sons;
+        return children;
     }
-
-
     return ComplexAsset;
 });

@@ -7,7 +7,9 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
             'okey'   : '=',
             'site'   : '=',
             'map'    : '=',
-            'onsave' : '&'
+            'classindex': '=',
+            'onsave'   : '&',
+            'oncancel' : '&'
         },
 
         templateUrl: 'partials/censusDirectiveTemplate.html',
@@ -15,17 +17,34 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
         link: function($scope, element, attrs) {
 
             $scope.mapLayers = [];
+            $scope.defaultClassIndex =  $scope.classindex || "0" ;
 
-            $scope.$watch('okey', function(newValue, oldValue) {
-                if (newValue){
-                    $scope.root = new ComplexAssetFactory(newValue);
-                    window.root = $scope.node = $scope.root;
+            $scope.$watch('okey',function(okey){
+                if(okey){
+                    $scope.root = $scope.node = new ComplexAssetFactory(okey);
                 }
             }, true);
 
-            $scope.toggleCollapse = function (e, tab) {
+            $scope.cancel = function(){
+                $scope.okey = undefined ;
+                $scope.oncancel();
+                $scope.removeLayers();
+            };
+
+            $scope.toggleCollapse = function (e, tab, tabs) {
+                var oldVisible = tab.visible ;
+                for (var i = 0; i < tabs.length; i++) {
+                    tabs[i].visible = false ;
+                }
                 e.preventDefault();
-                tab.visible = !!!tab.visible;
+                tab.visible = !!!oldVisible;
+            };
+
+            $scope.removeLayers = function(){
+                for (var i = 0; i < $scope.mapLayers.length; i++) {
+                    $scope.map.removeLayer($scope.mapLayers[i]);
+                }
+                $scope.mapLayers = [];
             };
 
             $scope.save = function(){
@@ -35,10 +54,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 }
                 $scope.onsave();
                 $scope.root.save();
-                for (var i = 0; i < $scope.mapLayers.length; i++) {
-                    $scope.map.removeLayer($scope.mapLayers[i]);
-                }
-                $scope.mapLayers = [];
+                $scope.removeLayers();
             };
 
             $scope.draw = function(node){
@@ -50,8 +66,11 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
             };
 
             $scope.drawLine = function(node){
-                var classindex = 0 ;
                 node.geometry = undefined ;
+                if(node.layer){
+                    $scope.map.removeLayer(node.layer);
+                    delete node.layer;
+                }
                 $scope.map.off('click').on('click',function(event){
                     var clickLatLng = [event.latlng.lat, event.latlng.lng] ;
                     if(!node.tmpGeometry){
@@ -60,7 +79,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         node.tmpGeometry.push(clickLatLng);
                     }
                     if(!node.layer) {
-                        var style = $scope.site.symbology[''+node.okey+classindex].style ;
+                        var style = $scope.site.symbology[''+node.okey+$scope.defaultClassIndex].style ;
                         node.layer = L.polyline([clickLatLng],{color: style.strokecolor, smoothFactor :0, weight:style.width, opacity:1}).addTo($scope.map);
                         node.layer.on('click', function(event){
                             node.geometry = angular.copy(node.tmpGeometry);
@@ -79,11 +98,10 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
             $scope.drawPoint = function(node){
 
-                var classindex = 0 ;
                 node.geometry = undefined ;
                 if(!node.layer){
                     node.layer = L.marker($scope.map.getCenter(), {icon: L.icon({
-                        iconUrl: $scope.site.symbology[''+node.okey+classindex].style.symbol.icon,
+                        iconUrl: $scope.site.symbology[''+node.okey+$scope.defaultClassIndex].style.symbol.icon,
                         iconAnchor: [16, 16]
                     })}).addTo($scope.map);
                     $scope.mapLayers.push(node.layer);
