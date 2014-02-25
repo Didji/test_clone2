@@ -218,13 +218,13 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @memberOf ComplexAsset
      *
      * @returns {Boolean} True si l'objet a été supprimé
-     * A METTRE AILLEURS
      */
     ComplexAsset.prototype.save = function() {
-        var node = this.__clone();
+        var node = this.__clone(true);
         node.__clean();
         node.geometry = this.geometry ;
-
+        console.log(this) ;
+        console.log(node) ;
         var deferred = $q.defer();
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
             timeout: 10000
@@ -243,7 +243,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             deferred.resolve();
         });
         return deferred.promise;
-
     };
 
 
@@ -268,17 +267,26 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @param {integer} level
      * @private
      */
-    ComplexAsset.prototype.__clone = function() {
+    ComplexAsset.prototype.__clone = function(preserveGeometry) {
         var root     = this.root,
             marker   = this.currentPointMarker,
             polyline = this.currentPolyline,
             geometry = this.geometry ;
 
-        this.__deleteGeometry();
+        if(!preserveGeometry){
+            this.__deleteGeometry();
+        }
+        this.__deleteMarker();
         this.__deleteRoot();
+
         var newNode = angular.copy(this);
+
+        if(!preserveGeometry){
+            this.__restoreGeometry(geometry);
+        }
         this.__restoreRoot(root);
-        this.__restoreGeometry(geometry, marker,polyline);
+        this.__restoreMarker(marker,polyline);
+
         newNode.__restoreRoot(root);
         return newNode ;
     }
@@ -312,11 +320,33 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
    /**
      * @method
      * @memberOf ComplexAsset
+     * @private
+     */
+    ComplexAsset.prototype.__deleteMarker = function() {
+        delete this.currentPointMarker;
+        delete this.currentPolyline;
+        for(var i = 0 ; i < this.children.length ; i++){
+            this.children[i].__deleteMarker();
+        }
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
      * @param {ComplexAsset} root
      * @private
      */
-    ComplexAsset.prototype.__restoreGeometry = function(geometry, markers, polyline) {
+    ComplexAsset.prototype.__restoreGeometry = function(geometry) {
         this.geometry           = geometry ;
+    }
+
+   /**
+     * @method
+     * @memberOf ComplexAsset
+     * @param {ComplexAsset} root
+     * @private
+     */
+    ComplexAsset.prototype.__restoreMarker = function(markers, polyline) {
         this.currentPointMarker = markers ;
         this.currentPolyline    = polyline ;
     }

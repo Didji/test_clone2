@@ -3,16 +3,16 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
         restrict: 'E',
 
-        // replace: true,
-
         scope: {
-            'okey': '=',
-            'site': '=',
-            'map' : '='
+            'okey'   : '=',
+            'site'   : '=',
+            'map'    : '=',
+            'onsave' : '&'
         },
 
         templateUrl: 'partials/censusDirectiveTemplate.html',
         link: function($scope, element, attrs) {
+
             $scope.$watch('okey', function(newValue, oldValue) {
                 if (newValue){
                     $scope.root = new ComplexAssetFactory(newValue);
@@ -34,11 +34,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
             };
 
             $scope.save = function(){
-                console.log('ici') ;
+                $scope.onsave();
                 $scope.root.save();
             };
 
             $scope.putLineStringOnMap = function(node){
+                var classindex = 0 ;
                 node.geometry = undefined ;
                 $scope.map.off('click').on('click',function(event){
                     var clickLatLng = [event.latlng.lat, event.latlng.lng] ;
@@ -48,7 +49,8 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         node.tmpGeometry.push(clickLatLng);
                     }
                     if(!node.currentPolyline) {
-                        node.currentPolyline = L.polyline([clickLatLng]).addTo($scope.map);
+                        var style = $scope.site.symbology[''+node.okey+classindex].style ;
+                        node.currentPolyline = L.polyline([clickLatLng],{color: style.strokecolor, smoothFactor :0, weight:style.width, opacity:1}).addTo($scope.map);
                         node.currentPolyline.on('click', function(event){
                             node.geometry = angular.copy(node.tmpGeometry);
                             delete node.tmpGeometry;
