@@ -148,6 +148,10 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     });
 
                 };
+
+                $scope.confirmDelete = function(node){
+                    alertify.confirm('Supprimer '+node.fields[$scope.site.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
+                };
             }
 
         };

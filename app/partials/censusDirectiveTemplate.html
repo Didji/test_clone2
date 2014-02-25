@@ -9,12 +9,13 @@
         </label>
         <div class="pull-right" style="padding-right:10px">
             <button ng-if='site.dependancies[node.okey]' class='btn btn-default btn-xs' ng-click="node.add()">
-                <span class="icon icon-plus"></span>{{site.metamodel[site.dependancies[node.okey]].label}}
+                <span class="icon icon-plus"></span> {{site.metamodel[site.dependancies[node.okey]].label}}
             </button>
             <button ng-if='node.father' class='btn btn-default btn-xs' ng-click="node.duplicate()">
                 <span class="icon icon-copy"></span>
             </button>
-            <button ng-if='node.father' class='btn btn-danger  btn-xs' ng-click="node.delete()">
+            <button ng-if='node.father' class='btn btn-danger  btn-xs'
+                ng-click="confirmDelete(node)">
                 <span class="icon icon-trash"></span>
             </button>
         </div>
@@ -29,10 +30,10 @@
     </span>
 
     <button ng-if='!node.father' class='btn btn-block btn-primary' ng-click="save()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-save"></span>Enregistrer
+        <span class="icon icon-save"></span> Enregistrer
     </button>
 
     <button ng-if='!node.father' class='btn btn-block btn-danger' ng-click="cancel()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-remove"></span>Annuler
+        <span class="icon icon-remove"></span> Annuler
     </button>
 </div>

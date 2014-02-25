@@ -63,4 +63,18 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
         }
         return activitiesOut;
     };
+}).filter('isGraphical', function ($rootScope) {
+
+    'use strict';
+
+    return function (layers) {
+        var layersOut = [];
+        for (var i = 0; i < layers.length; i++) {
+
+            if(window.site.metamodel[layers[i].okey].is_graphical){
+                layersOut.push(layers[i]);
+            }
+        }
+        return layersOut;
+    };
 });
