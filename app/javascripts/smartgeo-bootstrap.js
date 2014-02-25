@@ -1,5 +1,5 @@
 angular.module("smartgeobootstrap", []).run(function ($rootScope) {
-    (window.indexedDB ? window.smartgeoPersistenceIndexedDB : window.smartgeoPersistenceSQLite).get('sites', function (sites) {
+    window.smartgeoPersistenceSQLite.get('sites', function (sites) {
         window.smartgeoRightsManager = {
             'report'                :  true,
             'goto'                  :  true,
@@ -7,9 +7,10 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             'media'                 :  true,
             'logout'                :  true,
             '_DONT_REALLY_RESET'    : false,
-            'tileCache'             :  true
+            'tileCache'             :  true,
+            'timebomb'              : false
         };
-        window.smartgeoPersistenceCache = {};
+        window.smartgeoPersistenceCache  = {};
         window.smartgeoPersistenceCache_ = {
             sites: sites
         };
@@ -19,6 +20,14 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
         }
 
         window.ChromiumCallbacks = [];
+
+        if(window.smartgeoRightsManager.timebomb){
+            window.expirationDate = "02/14/2015" ; // mm/jj/aaaa
+            if((new Date()) > (new Date(window.expirationDate))){
+                alertify.alert("Votre licence a expiré.");
+                return false ;
+            }
+        }
 
         angular.bootstrap(document, ['smartgeomobile']);
     });
