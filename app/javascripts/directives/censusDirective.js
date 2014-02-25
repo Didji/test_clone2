@@ -12,7 +12,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
         },
 
         templateUrl: 'partials/censusDirectiveTemplate.html',
-        link: function($scope, element, attrs, tabsCtrl) {
+        link: function($scope, element, attrs) {
             $scope.$watch('okey', function(newValue, oldValue) {
                 if (newValue){
                     $scope.root = new ComplexAssetFactory(newValue);

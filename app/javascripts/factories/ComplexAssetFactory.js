@@ -227,7 +227,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
 
         var deferred = $q.defer();
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
-            timeout: 10
+            timeout: 10000
         }).success(function (data) {
             deferred.notify();
             deferred.resolve();
