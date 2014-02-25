@@ -1,17 +1,17 @@
-<div ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin:5%">
+<div ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin: 0 5% 5% 5%;">
     <div class="panel-heading" style="padding: 5px 10px;">
         <h3 class="panel-title" style="font-size: 1em" ng-click="toggleCollapse($event,tab, site.metamodel[node.okey].tabs)">{{tab.label}}</h3>
     </div>
-    <div ng-show='tab.visible  || (site.metamodel[node.okey].tabs.length == 1)' >
+    <div ng-show='tab.visible  || (site.metamodel[node.okey].tabs.length == 1)'>
         <div class="panel-body" style="padding: 10px 0px;">
             <div ng-repeat='field in tab.fields'>
                 <label ng-if="!field.readonly" style="color:black" for="">{{field.label}}</label>
-                <div   ng-if="!field.readonly" ng-switch on="field.type">
+                <div ng-if="!field.readonly" ng-switch on="field.type">
                     <span ng-switch-when="O">
                         <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
                     </span>
                     <span style="width:90%;margin:0;" ng-switch-when="L">
-                        <select  ui-select2 ng-model="node.fields[field.key]">
+                        <select ui-select2 ng-model="node.fields[field.key]">
                             <option ng-repeat="(id, label) in site.lists[field.options]" value="{{id}}">{{label}}</option>
                             <option value=""></option>
                         </select>
@@ -30,13 +30,24 @@
         </div>
     </div>
 </div>
-<input ng-if="site.metamodel[node.okey].is_graphical"  class="form-control" style="margin:5%" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
-<div ng-if="site.metamodel[node.okey].is_graphical"  class="btn-group" style="width:100%">
-  <button type="button" class="btn btn-{{node.geometry ? 'success' : 'danger'}} btn-xs dropdown-toggle" style="width: 90%;margin: 0 5%;" data-toggle="dropdown">
-    {{node.geometry ? 'Géometrie OK' : 'À positionner'}} <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" role="menu">
-    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='userLocationGeometry(node)' ng-if='site.metamodel[node.okey].geometry_type == "Point"'>Positionner avec GPS</a></li>
-    <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='draw(node)'>Positionner sur la carte</a></li>
-  </ul>
+
+
+<button type="button" class="btn btn-primary btn-xs" ng-click="snapPicture(node);" style="width: 90%;margin: 0 5% 5% 5%;">Prendre une photo</button>
+
+<img ng-if="node.photo" style="width: 90%;margin: 0 5% 0 5%;" ng-src="{{node.photo}}" alt="" />
+<button ng-if="node.photo" class="btn btn-default btn-danger btn-block" style="width: 90%;margin: 0 5% 5% 5%;" ng-click="node.photo = undefined">
+    <span class="icon icon-trash" style="text-align: center;display: block;font-size: 2em;"></span>
+</button>
+
+<input ng-if="site.metamodel[node.okey].is_graphical" class="form-control" style="margin:margin: 0 5% 5% 5%;" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
+<div ng-if="site.metamodel[node.okey].is_graphical" class="btn-group" style="width:100%">
+    <button type="button" class="btn btn-{{node.geometry ? 'success' : 'danger'}} btn-xs dropdown-toggle" style="width: 90%;margin: 0 5% 5% 5%;" data-toggle="dropdown">{{node.geometry ? 'Géometrie OK' : 'À positionner'}}
+        <span class="caret"></span>
+    </button>
+    <ul style="margin:-15px 50px" class="dropdown-menu" role="menu">
+        <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='userLocationGeometry(node)' ng-if='site.metamodel[node.okey].geometry_type == "Point"'>Positionner avec GPS</a>
+        </li>
+        <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='draw(node)'>Positionner sur la carte</a>
+        </li>
+    </ul>
 </div>

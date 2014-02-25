@@ -5,7 +5,7 @@
  * Provides global methods
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
+angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
 
     'use strict';
 
@@ -81,7 +81,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description
          */
-        _MAX_ID_FOR_SELECT_REQUEST : 4000,
+        _MAX_ID_FOR_SELECT_REQUEST: 4000,
 
         /**
          * @ngdoc property
@@ -90,7 +90,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description
          */
-        _DONT_REALLY_RESET : (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ,
+        _DONT_REALLY_RESET: (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false,
 
         /**
          * @ngdoc property
@@ -99,7 +99,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description
          */
-        _intervals : {},
+        _intervals: {},
 
         /**
          * @ngdoc method
@@ -110,7 +110,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @param {Integer}  interval
          * @description
          */
-        registerInterval: function (name, f, interval) {
+        registerInterval: function(name, f, interval) {
             if (Smartgeo._intervals[name]) {
                 clearInterval(Smartgeo._intervals[name]);
             }
@@ -123,7 +123,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @methodOf smartgeomobile.Smartgeo
          * @description
          */
-        clearIntervals: function () {
+        clearIntervals: function() {
             for (var interval in Smartgeo._intervals) {
                 clearInterval(Smartgeo._intervals[interval]);
                 delete Smartgeo._intervals[interval];
@@ -137,7 +137,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @param {String}   name
          * @description
          */
-        clearInterval: function (name) {
+        clearInterval: function(name) {
             clearInterval(Smartgeo._intervals[name]);
             delete Smartgeo._intervals[name];
         },
@@ -150,7 +150,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Return true if device width is >= to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
-        isRunningOnBigScreen: function () {
+        isRunningOnBigScreen: function() {
             return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
@@ -162,7 +162,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Return true if device width is < to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
-        isRunningOnLittleScreen: function () {
+        isRunningOnLittleScreen: function() {
             return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
@@ -175,7 +175,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Set Gimap serveur URL on localstorage, add **`http://`** and **`/index.php?service=`** if needed and clear localStorage
          */
-        setGimapUrl: function (url) {
+        setGimapUrl: function(url) {
             if (url === null) {
                 return null;
             }
@@ -197,7 +197,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Clear localStorage
          */
-        reset: function () {
+        reset: function() {
             if (Smartgeo._DONT_REALLY_RESET) {
                 return;
             }
@@ -216,7 +216,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 for (var i = 0; site.zones && i < site.zones.length; i++) {
                     SQLite.openDatabase({
                         name: site.zones[i].database_name
-                    }).transaction(function (transaction) {
+                    }).transaction(function(transaction) {
                         transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
                     });
                 }
@@ -230,10 +230,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Clear localStorage
          */
-        clearCaches: function () {
-            Smartgeo.parametersCache  = {} ;
-            Smartgeo.parametersCache_ = {} ;
-            window.smartgeoPersistenceCache  = {};
+        clearCaches: function() {
+            Smartgeo.parametersCache = {};
+            Smartgeo.parametersCache_ = {};
+            window.smartgeoPersistenceCache = {};
             window.smartgeoPersistenceCache_ = {};
         },
 
@@ -255,7 +255,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * });
          * </pre>
          */
-        getServiceUrl: function (serviceName, GETParameters) {
+        getServiceUrl: function(serviceName, GETParameters) {
             var url = Smartgeo.get('url');
             url += serviceName;
 
@@ -285,15 +285,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * });
          * </pre>
          */
-        ping: function (callback) {
-            callback = callback || function () {};
+        ping: function(callback) {
+            callback = callback || function() {};
             $http.post(Smartgeo.getServiceUrl('global.dcnx.json'), {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             })
-                .success(function (data) {
+                .success(function(data) {
                     Smartgeo.set('online', true);
                     callback(true);
-                }).error(function () {
+                }).error(function() {
                     Smartgeo.set('online', false);
                     callback(false);
                 });
@@ -308,7 +308,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Sanitize asset eg. replace horrible characters
          */
-        sanitizeAsset: function (asset) {
+        sanitizeAsset: function(asset) {
             return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
         },
 
@@ -337,7 +337,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Local storage getter
          */
-        get: function (parameter) {
+        get: function(parameter) {
             if (Smartgeo.parametersCache[parameter]) {
                 return Smartgeo.parametersCache[parameter];
             } else {
@@ -354,7 +354,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Local storage setter
          */
-        set: function (parameter, value) {
+        set: function(parameter, value) {
             Smartgeo.parametersCache[parameter] = value;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
@@ -367,7 +367,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Clear localStorage's value
          */
-        unset: function (parameter) {
+        unset: function(parameter) {
             delete Smartgeo.parametersCache[parameter];
             return localStorage.removeItem(parameter);
         },
@@ -382,10 +382,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * IndexedDB getter
          */
-        get_: function (parameter, callback) {
+        get_: function(parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
-                var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
-                (callback || function () {})(value);
+                var value = angular.copy(Smartgeo.parametersCache_[parameter]);
+                (callback || function() {})(value);
                 return value;
             } else {
                 SQLite.get(parameter, callback);
@@ -402,7 +402,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * IndexedDB setter
          */
-        set_: function (parameter, value, callback) {
+        set_: function(parameter, value, callback) {
             Smartgeo.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },
@@ -416,7 +416,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Clear IndexedDB's value
          */
-        unset_: function (parameter, callback) {
+        unset_: function(parameter, callback) {
             delete Smartgeo.parametersCache_[parameter];
             SQLite.unset(parameter, callback);
         },
@@ -428,7 +428,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Useless log wrapper
          */
-        log: function () {
+        log: function() {
             console.log(arguments);
         },
 
@@ -439,19 +439,19 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @description
          * Polyfill for geolocation api
          */
-        getUsersLocation: function (success, error) {
+        getUsersLocation: function(success, error) {
             if (SmartgeoChromium.locate) {
 
                 var LOCATED_TIMEOUT_FLAG;
 
-                ChromiumCallbacks[0] = function (lng, lat, alt) {
+                ChromiumCallbacks[0] = function(lng, lat, alt) {
                     LOCATED_TIMEOUT_FLAG = true;
                     success(lat, lng, alt);
                 };
 
                 SmartgeoChromium.locate();
 
-                $timeout(function () {
+                $timeout(function() {
                     if (!LOCATED_TIMEOUT_FLAG) {
                         return;
                     }
@@ -460,17 +460,17 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 }, 10000);
 
             } else {
-                navigator.geolocation.getCurrentPosition(function (position) {
+                navigator.geolocation.getCurrentPosition(function(position) {
                     success(position.coords.latitude, position.coords.longitude, position.coords.altitude);
-                }, function () {
+                }, function() {
                     error();
                 });
             }
         },
 
-        _isRunningOnMobile: function () {
+        _isRunningOnMobile: function() {
             var check = false;
-            (function (a) {
+            (function(a) {
                 if (/(android|ipad|playbook|silk|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) {
                     check = true
                 }
@@ -478,22 +478,22 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             return check;
         },
 
-        getRight: function (module) {
+        getRight: function(module) {
             return window.smartgeoRightsManager[module];
         },
 
-        findGeometryByGuids_big: function (site, guids, callback, partial_response) {
+        findGeometryByGuids_big: function(site, guids, callback, partial_response) {
             partial_response = partial_response || [];
             if (guids.length === 0) {
                 return callback(partial_response);
             } else {
-                Smartgeo.findGeometryByGuids(site, guids.slice(0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST), function (assets) {
+                Smartgeo.findGeometryByGuids(site, guids.slice(0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST), function(assets) {
                     Smartgeo.findGeometryByGuids_big(site, guids.slice(Smartgeo._MAX_ID_FOR_SELECT_REQUEST), callback, partial_response.concat(assets));
                 });
             }
         },
 
-        findGeometryByGuids: function (site, guids, callback, zones, partial_response) {
+        findGeometryByGuids: function(site, guids, callback, zones, partial_response) {
 
             if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
                 return Smartgeo.findGeometryByGuids_big(site, guids, callback);
@@ -528,10 +528,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             SQLite.openDatabase({
                 name: zones[0].database_name
-            }).transaction(function (t) {
+            }).transaction(function(t) {
                 t.executeSql('CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)');
                 t.executeSql(request, [],
-                    function (tx, rslt) {
+                    function(tx, rslt) {
                         var asset;
                         for (var i = 0; i < rslt.rows.length; i++) {
                             asset = rslt.rows.item(i);
@@ -547,17 +547,17 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         }
                         _this.findGeometryByGuids(site, guids, callback, zones.slice(1), partial_response);
                     },
-                    function (tx, SqlError) {
+                    function(tx, SqlError) {
                         console.log(SqlError.message);
                         alertify.log(SqlError.message);
                     });
-            }, function (SqlError) {
+            }, function(SqlError) {
                 console.log(SqlError.message);
                 alertify.log(SqlError.message);
             });
         },
 
-        findAssetsByGuids: function (site, guids, callback, zones, partial_response) {
+        findAssetsByGuids: function(site, guids, callback, zones, partial_response) {
 
             if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
                 return Smartgeo.findAssetsByGuids_big(site, guids, callback);
@@ -592,10 +592,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             SQLite.openDatabase({
                 name: zones[0].database_name
-            }).transaction(function (t) {
+            }).transaction(function(t) {
                 t.executeSql('CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)');
                 t.executeSql(request, [],
-                    function (tx, rslt) {
+                    function(tx, rslt) {
                         for (var i = 0; i < rslt.rows.length; i++) {
                             var ast = angular.copy(rslt.rows.item(i));
                             ast.okey = JSON.parse(ast.asset.replace(new RegExp('\n', 'g'), ' ')).okey;
@@ -605,18 +605,18 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         }
                         _this.findAssetsByGuids(site, guids, callback, zones.slice(1), partial_response);
                     },
-                    function (tx, SqlError) {
+                    function(tx, SqlError) {
                         console.log(SqlError.message);
                         console.log(request);
                         alertify.log(SqlError.message);
                     });
-            }, function (SqlError) {
+            }, function(SqlError) {
                 console.log(SqlError);
                 console.log(request);
             });
         },
 
-        findAssetsByOkey: function (site, okey, callback, zones, partial_response) {
+        findAssetsByOkey: function(site, okey, callback, zones, partial_response) {
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
@@ -632,26 +632,26 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             SQLite.openDatabase({
                 name: zones[0].database_name
-            }).transaction(function (t) {
+            }).transaction(function(t) {
                 t.executeSql(request, [okey + "%", okey + "%"],
-                    function (t, results) {
+                    function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
                             asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey;
                             partial_response.push(asset);
                         }
                         _this.findAssetsByOkey(site, okey, callback, zones.slice(1), partial_response);
-                    }, function (tx, SqlError) {
+                    }, function(tx, SqlError) {
                         console.log(SqlError);
-                    }, function (tx, SqlError) {
+                    }, function(tx, SqlError) {
                         console.log(SqlError);
                     });
-            }, function (tx, SqlError) {
+            }, function(tx, SqlError) {
                 console.log(SqlError);
             });
         },
 
-        findAssetsByLabel: function (site, label, callback, zones, partial_response) {
+        findAssetsByLabel: function(site, label, callback, zones, partial_response) {
 
             if (!zones) {
                 zones = site.zones;
@@ -672,26 +672,26 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             SQLite.openDatabase({
                 name: zones[0].database_name
-            }).transaction(function (t) {
+            }).transaction(function(t) {
                 t.executeSql(request, ["%" + label + "%"],
-                    function (t, results) {
+                    function(t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
                             var asset = results.rows.item(i);
                             asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey;
                             partial_response.push(asset);
                         }
                         _this.findAssetsByLabel(site, label, callback, zones.slice(1), partial_response);
-                    }, function (tx, SqlError) {
+                    }, function(tx, SqlError) {
                         console.log(SqlError, request);
-                    }, function (tx, SqlError) {
+                    }, function(tx, SqlError) {
                         console.log(SqlError, request);
                     });
-            }, function (tx, SqlError) {
+            }, function(tx, SqlError) {
                 console.log(SqlError, request);
             });
         },
 
-        findAssetsByCriteria: function (site, search, callback, zones, partial_response, request) {
+        findAssetsByCriteria: function(site, search, callback, zones, partial_response, request) {
 
 
             if (!zones) {
@@ -734,9 +734,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             SQLite.openDatabase({
                 name: zones[0].database_name
-            }).transaction(function (t) {
+            }).transaction(function(t) {
                     t.executeSql(request, [],
-                        function (t, results) {
+                        function(t, results) {
                             console.timeEnd(request);
 
                             for (var i = 0; i < results.rows.length; i++) {
@@ -751,28 +751,28 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                             }
                             Smartgeo.findAssetsByCriteria(site, search, callback, zones.slice(1), partial_response, request);
                         },
-                        function (tx, SqlError) {
+                        function(tx, SqlError) {
                             console.log(SqlError);
                         },
-                        function (tx, SqlError) {
+                        function(tx, SqlError) {
                             console.log(SqlError);
                         });
                 },
-                function (tx, SqlError) {
+                function(tx, SqlError) {
                     console.log(SqlError);
                 });
         },
 
 
-        uuid: function () {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        uuid: function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0,
                     v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         },
 
-        _initializeGlobalEvents: function () {
+        _initializeGlobalEvents: function() {
             window.addEventListener('online', Smartgeo._onlineTask, false);
             window.addEventListener('offline', Smartgeo._offlineTask, false);
 
@@ -784,8 +784,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             window.ChromiumCallbacks[21] = Smartgeo._offlineTask;
         },
 
-        _onlineTask: function () {
-            setTimeout(function () {
+        _onlineTask: function() {
+            setTimeout(function() {
                 Smartgeo.set('online', true);
                 $rootScope.$broadcast("DEVICE_IS_ONLINE");
                 Smartgeo.log(("_SMARTGEO_ONLINE"));
@@ -793,13 +793,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }, 1000);
         },
 
-        _offlineTask: function () {
+        _offlineTask: function() {
             Smartgeo.set('online', false);
             $rootScope.$broadcast("DEVICE_IS_OFFLINE");
             Smartgeo.log(("_SMARTGEO_OFFLINE"));
         },
 
-        silentLogin: function (callback) {
+        silentLogin: function(callback) {
             var user = Smartgeo.get('user') || {};
             if (user.token) {
                 Smartgeo.login(user.token, callback);
@@ -808,7 +808,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
-        rustineVeolia: function (sites, success, error) {
+        rustineVeolia: function(sites, success, error) {
             for (var i in sites) {
                 var site = sites[i];
                 if (site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
@@ -818,11 +818,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
-        getVersion: function () {
+        getVersion: function() {
             return Smartgeo._SMARTGEO_MOBILE_VERSION;
         },
 
-        selectSiteRemotely: function (site, success, error) {
+        selectSiteRemotely: function(site, success, error) {
             if (!site) {
                 Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
                 return;
@@ -832,15 +832,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 'site': site,
                 'auto_load_map': true
             });
-            $http.post(url).then(function (response) {
+            $http.post(url).then(function(response) {
                 if (response.data && response.data.sites && response.data.sites.length > 1) {
                     Smartgeo.rustineVeolia(response.data.sites, success, error);
                 } else {
-                    (success ||   function () {})();
+                    (success ||   function() {})();
                 }
-            }, error || function () {});
+            }, error || function() {});
         },
-        login_o: function (user, success, error) {
+        login_o: function(user, success, error) {
             // TODO : MERGE WITH LOGIN METHOD
             if (user.token) {
                 Smartgeo.login(user.token, success, error);
@@ -848,9 +848,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo.login(user.username, user.password, success, error);
             }
         },
-        login: function (login, password, success, error) {
+        login: function(login, password, success, error) {
             if (Smartgeo._LOGIN_MUTEX) {
-                return (error || function () {})();
+                return (error || function() {})();
             }
             Smartgeo._LOGIN_MUTEX = true;
             var token, url;
@@ -873,19 +873,19 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
             $http.post(url, {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
-            }).success(function () {
+            }).success(function() {
                 Smartgeo._LOGIN_MUTEX = false;
                 if ($rootScope.site) {
                     Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
                 } else {
-                    (success || function () {})();
+                    (success || function() {})();
                 }
-            }).error(function (response, status) {
+            }).error(function(response, status) {
                 Smartgeo._LOGIN_MUTEX = false;
-                (error || function () {})(response, status);
+                (error || function() {})(response, status);
             });
         },
-        clearPersistence: function () {
+        clearPersistence: function() {
             Smartgeo.unset('lastLeafletMapExtent');
             Smartgeo.unset('persitence.menu.open');
             Smartgeo.unset('persitence.menu.open.level');
@@ -897,18 +897,110 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo.set('missions', missions);
             }
         },
-        clearSiteSelection : function () {
+        clearSiteSelection: function() {
             $rootScope.site = null;
         },
-        clearPollingRequest : function () {
+        clearPollingRequest: function() {
             $rootScope.STOP_POLLING = true;
+        },
+
+        snapPicture: function(callback) {
+            navigator.getMedia = (navigator.getUserMedia ||
+                navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia ||
+                navigator.msGetUserMedia);
+
+            if (window.SmartgeoChromium && SmartgeoChromium.launchCamera) {
+                if (!window.ChromiumCallbacks) {
+                    window.ChromiumCallbacks = [];
+                }
+                window.ChromiumCallbacks[1] = function(path) {
+                    var imageElement = document.createElement("img");
+                    imageElement.src = path;
+                    imageElement.onload = function() {
+                        var canvasElement = document.createElement("canvas");
+                        canvasElement.width = imageElement.width;
+                        canvasElement.height = imageElement.height;
+                        canvasElement.getContext("2d").drawImage(imageElement, 0, 0);
+                        callback(canvasElement.toDataURL("image/jpeg", 0.75));
+                    };
+                };
+                SmartgeoChromium.launchCamera(1);
+
+            } else if (navigator.getMedia) {
+                var streaming = false,
+                    video = document.createElement("video"),
+                    canvas = document.createElement("canvas"),
+                    width = 320,
+                    height = 0;
+
+                navigator.getMedia({
+                    video: true,
+                    audio: false
+                }, function(stream) {
+                    if (navigator.mozGetUserMedia) {
+                        video.mozSrcObject = stream;
+                    } else {
+                        var vendorURL = window.URL || window.webkitURL;
+                        video.src = vendorURL.createObjectURL(stream);
+                    }
+                    video.play();
+                }, function(err) {
+                    var imageElement2 = document.createElement("img");
+                    imageElement2.src = "http://placehold.it/350x150";
+                    imageElement2.onload = function() {
+                        var canvasElement = document.createElement("canvas");
+                        canvasElement.width = imageElement2.width;
+                        canvasElement.height = imageElement2.height;
+                        canvasElement.getContext("2d").drawImage(imageElement2, 0, 0);
+                        callback(canvasElement.toDataURL("image/jpeg", 0.75));
+                    };
+                });
+
+                video.addEventListener("canplay", function(ev) {
+                    if (!streaming) {
+                        height = video.videoHeight / (video.videoWidth / width);
+                        video.setAttribute("width", width);
+                        video.setAttribute("height", height);
+                        canvas.setAttribute("width", width);
+                        canvas.setAttribute("height", height);
+                        streaming = true;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext("2d").drawImage(video, 0, 0, width, height);
+                    callback(canvas.toDataURL("image/jpeg", 0.75));
+                }, false);
+
+            } else if (navigator.camera) {
+                navigator.camera.getPicture(function(imageURI) {
+                    callback(imageURI);
+                }, function() {}, {
+                    quality: 100,
+                    sourceType: navigator.camera.PictureSourceType.CAMERA,
+                    mediaType: navigator.camera.MediaType.PICTURE,
+                    destinationType: navigator.camera.DestinationType.FILE_URI,
+                    correctOrientation: false,
+                    saveToPhotoAlbum: true
+                });
+            } else {
+                var img = document.createElement("img");
+                img.src = "http://placehold.it/350x150";
+                img.onload = function() {
+                    var canvasElement2 = document.createElement("canvas");
+                    canvasElement2.width = img.width;
+                    canvasElement2.height = img.height;
+                    canvasElement2.getContext("2d").drawImage(img, 0, 0);
+                    callback(canvas.toDataURL("image/jpeg", 0.75));
+                };
+            }
         }
     };
 
     Smartgeo._initializeGlobalEvents();
 
     if (window.SmartgeoChromium) {
-        window.ChromiumCallbacks[13] = function (path) {
+        window.ChromiumCallbacks[13] = function(path) {
             Smartgeo.set('tileRootPath', path);
         };
         SmartgeoChromium.getExtApplicationDirectory();

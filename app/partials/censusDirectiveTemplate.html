@@ -3,13 +3,15 @@
         <label ng-click="node.toggleForm()">
             <span style="margin-left:-9px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
             <span>{{node.fields[site.metamodel[node.okey].ukey]}}</span>
-            <span ng-if="site.metamodel[node.okey].is_graphical" style='display: inline-block;' class="label label-{{node.geometry ? 'success' : 'danger' }}"><span class="icon icon-map-marker"></span></span>
+            <span ng-if="site.metamodel[node.okey].is_graphical" style='display: inline-block;' class="label label-{{node.geometry ? 'success' : 'danger' }}">
+                <span class="icon icon-map-marker"></span>
+            </span>
         </label>
         <div class="pull-right" style="padding-right:10px">
             <button ng-if='site.dependancies[node.okey]' class='btn btn-default btn-xs' ng-click="node.add()">
-                <span class="icon icon-plus"></span> {{site.metamodel[site.dependancies[node.okey]].label}}
+                <span class="icon icon-plus"></span>{{site.metamodel[site.dependancies[node.okey]].label}}
             </button>
-            <button ng-if='node.father' class='btn btn-default btn-xs' ng-click="node.duplicate()" >
+            <button ng-if='node.father' class='btn btn-default btn-xs' ng-click="node.duplicate()">
                 <span class="icon icon-copy"></span>
             </button>
             <button ng-if='node.father' class='btn btn-danger  btn-xs' ng-click="node.delete()">
@@ -18,9 +20,8 @@
         </div>
     </label>
 
-    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father)'
-        style='padding-bottom: 15px;font-size: 80%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);'>
-        <div ng-include="'partials/census-node-form.html'"></div>
+    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father)' style='font-size: 80%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);'>
+        <div style="padding-top:5%" ng-include="'partials/census-node-form.html'"></div>
     </div>
 
     <span ng-repeat="node in node.children">
@@ -28,10 +29,10 @@
     </span>
 
     <button ng-if='!node.father' class='btn btn-block btn-primary' ng-click="save()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-save"></span> Enregistrer
+        <span class="icon icon-save"></span>Enregistrer
     </button>
 
     <button ng-if='!node.father' class='btn btn-block btn-danger' ng-click="cancel()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-remove"></span> Annuler
+        <span class="icon icon-remove"></span>Annuler
     </button>
 </div>
