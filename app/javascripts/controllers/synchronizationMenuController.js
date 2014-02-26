@@ -122,9 +122,11 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         }
         $scope.census[$index].syncInProgress = true;
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), $scope.census[$index], {
-            timeout: 1
+            timeout: 55000
         })
-            .success(function () {
+            .success(function (data) {
+                console.log(data);
+                // Smartgeo.insert(data);
                 if (!$scope.census[$index]) {
                     return;
                 }

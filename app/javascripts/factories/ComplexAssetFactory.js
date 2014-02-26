@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope) {
+angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope, Installer, AssetFactory) {
 
     'use strict';
 
@@ -217,8 +217,15 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         node.geometry = this.geometry ;
         var deferred = $q.defer();
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
-            timeout: 1
+            timeout: 100000
         }).success(function (data) {
+            var assets = [] ;
+
+            for(var okey in data){
+                for (var i = 0; i < data[okey].length; i++) {
+                    AssetFactory.save(data[okey][i]);
+                }
+            }
             deferred.notify();
             deferred.resolve();
         }).error(function () {

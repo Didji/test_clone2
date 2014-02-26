@@ -994,6 +994,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
                     callback(canvas.toDataURL("image/jpeg", 0.75));
                 };
             }
+        },
+
+        insert : function(data){
+
         }
     };
 

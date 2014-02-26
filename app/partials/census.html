@@ -4,7 +4,40 @@
         <census ui-if='okey' okey='okey' site='site' map='map' onsave='cancel()'  oncancel='cancel()' classindex='classindex'></census>
     </div>
 
-    <ul ng-if='!okey'>
+    <div ng-if='!okey'>
+
+
+<!--         <div class="list-group">
+            <h4 class="list-group-item active">
+                <label class="fullwidth">
+                    Veuillez sélectionner l'objet à recencer (+i18n)
+                </label>
+            </h4>
+            <div>
+                <div ng-repeat="(modelOkey, model) in site.metamodel | isGraphical" class="list-group-item">
+                    <label class="fullwidth">
+                        <a ng-click='startCensus(modelOkey)' ng-if="model.is_census">
+                            <img ng-if= 'site.symbology[modelOkey+classindex]'
+                                ng-src='{{site.symbology[modelOkey+classindex].style.symbol.icon}}' alt="" />
+                            <img ng-if='!site.symbology[modelOkey+classindex]'
+                                ng-src='{{site.symbology[site.dependancies[modelOkey]+classindex].style.symbol.icon}}' alt="" />
+                            <img ng-if='!site.symbology[site.dependancies[modelOkey]+classindex]'
+                                ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+classindex]]+classindex].style.symbol.icon}}' alt="" />
+                            {{model.label}}
+                        </a>
+                    </label>
+                </p>
+            </div>
+        </div>
+ -->
+
+        <div style="margin:10px" class="panel panel-warning">
+            <div class="panel-heading">
+                <i class="fa fa-info-circle"> </i> Recensement
+            </div>
+            <div class="panel-body">Veuillez sélectionner l'objet à recenser (+i18n)</div>
+        </div>
+
         <li ng-repeat="(modelOkey, model) in site.metamodel">
             <a ng-click='startCensus(modelOkey)' ng-if="model.is_census">
                 <img ng-if= 'site.symbology[modelOkey+classindex]'
@@ -16,6 +49,6 @@
                 {{model.label}}
             </a>
         </li>
-    </ul>
+    </div>
 
 </div>

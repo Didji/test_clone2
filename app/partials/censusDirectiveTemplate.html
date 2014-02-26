@@ -1,39 +1,78 @@
 <div style="margin-left:15px">
-    <label style="padding: 13px 0;width: 100%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;">
-        <label ng-click="node.toggleForm()">
-            <span style="margin-left:-9px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
+    <label style='padding: 13px 0;width: 100%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;
+    background-color:{{node.formVisible ? "#fd9122": "transparent" }};border-color:{{node.formVisible ? "#fd9122": "rgb(90, 90, 90)"}}'>
+        <label ng-click="node.toggleForm()" style="width: 90%;">
+            <span style="margin-right:8px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
             <span>{{node.fields[site.metamodel[node.okey].ukey]}}</span>
-            <span ng-if="site.metamodel[node.okey].is_graphical" style='display: inline-block;' class="label label-{{node.geometry ? 'success' : 'danger' }}">
+            <span ng-if="site.metamodel[node.okey].is_graphical" style='background-color:{{node.geometry ? "#5cb85c": "#d9534f" }}' class="badge pull-right">
                 <span class="icon icon-map-marker"></span>
             </span>
         </label>
-        <div class="pull-right" style="padding-right:10px">
-            <button ng-if='site.dependancies[node.okey]' class='btn btn-default btn-xs' ng-click="node.add()">
-                <span class="icon icon-plus"></span> {{site.metamodel[site.dependancies[node.okey]].label}}
-            </button>
-            <button ng-if='node.father' class='btn btn-default btn-xs' ng-click="node.duplicate()">
-                <span class="icon icon-copy"></span>
-            </button>
-            <button ng-if='node.father' class='btn btn-danger  btn-xs'
-                ng-click="confirmDelete(node)">
-                <span class="icon icon-trash"></span>
-            </button>
-        </div>
     </label>
 
-    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father)' style='font-size: 80%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);'>
+    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father)' style='font-size: 80%;border-bottom: 1px solid rgb(90, 90, 90);border-left: 1px solid rgb(90, 90, 90);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);border-color:{{node.formVisible ? "#fd9122": "rgb(90, 90, 90)" }}'>
+        <div style="padding-right:10px;margin: 5% 0 0 5%;">
+            <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group">
+                    <button ng-if='node.father' class='btn-lg btn btn-danger '
+                        ng-click="confirmDelete(node)">
+                        <span class="icon icon-trash"></span>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button ng-if='node.father' class='btn-lg btn btn-default' ng-click="node.duplicate()">
+                        <span class="icon icon-copy"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg" ng-click="snapPicture(node);">
+                        <i class="fa fa-camera"> </i>
+                    </button>
+                    <button
+                        ng-if="site.metamodel[node.okey].is_graphical"
+                        type="button" class="btn btn-default btn-lg dropdown-toggle"
+                        data-toggle="dropdown">
+                            <span class="icon icon-map-marker"></span>
+                            <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='userLocationGeometry(node)' ng-if='site.metamodel[node.okey].geometry_type == "Point"'>
+                            <i class="fa fa-rss"> </i> Position GPS</a>
+                        </li>
+                        <li><a style="color: black;font-size: 1em;padding: 10px;" ng-click='draw(node)'>
+                            <i class="fa fa-thumb-tack"> </i> Pointage</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
         <div style="padding-top:5%" ng-include="'partials/census-node-form.html'"></div>
+        <div class="btn-group" style="width:100%">
+            <button ng-if='site.dependancies[node.okey]' style="width: 90%;margin: 0 5% 5%;"class='btn btn-primary' ng-click="node.add()">
+                <span>
+                    <span class="icon icon-plus"></span> {{site.metamodel[site.dependancies[node.okey]].label}}
+                </span>
+            </button>
+        </div>
     </div>
 
     <span ng-repeat="node in node.children">
         <div ng-include="'partials/censusDirectiveTemplate.html'"></div>
     </span>
 
-    <button ng-if='!node.father' class='btn btn-block btn-primary' ng-click="save()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-save"></span> Enregistrer
-    </button>
+    <div style="width:100%">
+    <div ng-if='!node.father' class="btn-toolbar" style="margin: 10px auto;width: 70%;" role="toolbar">
+        <div class="btn-group">
+            <button class='btn btn-default' ng-click="cancel()" >
+                <span class="icon icon-remove"></span> Annuler
+            </button>
+        </div>
 
-    <button ng-if='!node.father' class='btn btn-block btn-danger' ng-click="cancel()" style="margin: 10px auto;width: 95%;">
-        <span class="icon icon-remove"></span> Annuler
-    </button>
+        <div class="btn-group">
+            <button class='btn btn-primary' ng-click="save()" >
+                <span class="icon icon-save"></span> Enregistrer
+            </button>
+        </div>
+    </div>
+    </div>
+
 </div>
