@@ -102,6 +102,18 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
+
+            Smartgeo.get_('census', function (census) {
+                census = census || [];
+                for (var i = 0; i < census.length; i++) {
+                    if (!census[i].synced) {
+                        $scope.toSyncNumber++;
+                    }
+                }
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
         });
     }
 

@@ -6,11 +6,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
     $scope.initialize = function () {
 
-        $rootScope.site.activities._byId = {};
-        for (var i = 0; i < $rootScope.site.activities.length; i++) {
-            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
-        }
-
         $rootScope.$on("DEVICE_IS_ONLINE", function () {
             $scope.syncAll();
         });
@@ -44,11 +39,35 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             }
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
         });
+        Smartgeo.get_('census', function (census) {
+            census = census || [];
+            var uuids = {} ;
+            $scope.census = [];
+            for (var i = 0; i < census.length; i++) {
+                // if(uuids[census[i].uuid]){
+                //     continue  ;
+                // }
+                // uuids[census[i].uuid] = true
+                if (!census[i].synced) {
+                    $scope.census.push(census[i]);
+                }
+            }
+            Smartgeo.set_('census', $scope.census, function () {
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
+            });
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
+        });
     };
 
     $scope.syncAll = function () {
         for (var i = 0; i < $scope.reports.length; i++) {
             $scope.sync(i);
+        }
+        for (i = 0; i < $scope.census.length; i++) {
+            $scope.syncCensus(i);
         }
     };
 
@@ -90,6 +109,51 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             });
     };
 
+    $scope.syncCensus = function ($index, callback) {
+        if ($scope.census[$index].synced) {
+            return false;
+        }
+        $scope.census[$index].syncInProgress = true;
+        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), $scope.census[$index], {
+            timeout: 55000
+        })
+            .success(function () {
+                if (!$scope.census[$index]) {
+                    return;
+                }
+                $scope.census[$index].syncInProgress = false;
+                $scope.census[$index].synced = true;
+
+                Smartgeo.set_('census', $scope.census, function () {
+                    $timeout(function () {
+                        if ($scope.census[$index]) {
+                            $scope.census[$index].hide = true;
+                        }
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                    }, 3000);
+                });
+            }).error(function (data, code) {
+                if (!$scope.census[$index]) {
+                    return;
+                }
+                if (Smartgeo.get('online') && code !== 0) {
+                    if (data.error) {
+                        alertify.error(data.error.text);
+                    } else {
+                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                    }
+                }
+                $scope.census[$index].syncInProgress = false;
+            });
+    };
+
+    $scope.__deleteCensus = function ($index) {
+        $scope.census = $scope.census.slice(0, $index).concat($scope.census.slice($index + 1, $scope.census.length));
+        Smartgeo.set_('census', $scope.census, function () {
+            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+        });
+    };
+
     $scope.__delete = function ($index) {
         $scope.reports = $scope.reports.slice(0, $index).concat($scope.reports.slice($index + 1, $scope.reports.length));
         Smartgeo.set_('reports', $scope.reports, function () {
@@ -123,6 +187,11 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         var len = 0;
         for (var i = 0; i < $scope.reports.length; i++) {
             if (!$scope.reports[i].synced) {
+                len++;
+            }
+        }
+        for (i = 0; i < $scope.census.length; i++) {
+            if (!$scope.census[i].synced) {
                 len++;
             }
         }
