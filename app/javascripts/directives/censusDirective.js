@@ -26,6 +26,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     }
                 }, true);
 
+                // $scope.$watch('node.fields', function(newRoot, oldRoot) {
+                //     if (newRoot !== oldRoot) {
+                //         console.log('modified !') ;
+                //     }
+                //         console.log('modified !', arguments) ;
+                // }, true);
 
                 $scope.cancel = function() {
                     $scope.okey = undefined;
@@ -55,8 +61,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         return;
                     }
                     $scope.onsave();
-                    $scope.root.save();
                     $scope.removeLayers();
+                    $scope.root.save().then(function(){
+                        for (var i in $scope.map._layers) {
+                            $scope.map._layers[i].redraw();
+                        }
+                    });
                 };
 
                 $scope.snapPicture = function(node) {

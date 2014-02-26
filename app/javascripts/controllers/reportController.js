@@ -17,6 +17,14 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     } else {
         $scope.report.isCall = false;
     }
+
+    if(!$rootScope.site.activities._byId){
+        $rootScope.site.activities._byId = {};
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+        }
+    }
+
     if ($routeParams.activity && $routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
         $scope.fromConsult = true;
         $scope.step = "form";

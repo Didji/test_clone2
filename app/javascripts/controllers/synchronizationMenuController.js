@@ -3,9 +3,13 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     'use strict';
 
     $scope.reports = [];
+    $scope.census = [];
 
     $scope.initialize = function () {
-
+        $rootScope.site.activities._byId = {};
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+        }
         $rootScope.$on("DEVICE_IS_ONLINE", function () {
             $scope.syncAll();
         });
@@ -31,13 +35,14 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                     $scope.reports.push(reports[i]);
                 }
             }
-            Smartgeo.set_('reports', $scope.reports, function () {
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
-            });
+
+            // Smartgeo.set_('reports', $scope.reports, function () {
+            //     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+            // });
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
+            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
         Smartgeo.get_('census', function (census) {
             census = census || [];
@@ -52,13 +57,15 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                     $scope.census.push(census[i]);
                 }
             }
-            Smartgeo.set_('census', $scope.census, function () {
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
-            });
+            // console.log("setting", $scope.census, " to census");
+
+            // Smartgeo.set_('census', $scope.census, function () {
+            //     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
+            // });
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
+            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
     };
 
@@ -115,7 +122,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         }
         $scope.census[$index].syncInProgress = true;
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), $scope.census[$index], {
-            timeout: 55000
+            timeout: 1
         })
             .success(function () {
                 if (!$scope.census[$index]) {
@@ -123,6 +130,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 }
                 $scope.census[$index].syncInProgress = false;
                 $scope.census[$index].synced = true;
+
+                console.log("setting", $scope.census, " to census");
 
                 Smartgeo.set_('census', $scope.census, function () {
                     $timeout(function () {

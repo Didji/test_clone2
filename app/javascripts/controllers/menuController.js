@@ -92,24 +92,21 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
 
     function updateSyncNumber(event) {
         Smartgeo.get_('reports', function (reports) {
-            reports = reports || [];
-            $scope.toSyncNumber = 0;
-            for (var i = 0; i < reports.length; i++) {
-                if (!reports[i].synced) {
-                    $scope.toSyncNumber++;
-                }
-            }
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
-
             Smartgeo.get_('census', function (census) {
-                census = census || [];
-                for (var i = 0; i < census.length; i++) {
-                    if (!census[i].synced) {
-                        $scope.toSyncNumber++;
+                var cpt =  0;
+                census  = census  || [];
+                reports = reports || [];
+                for (var i = 0; i < reports.length; i++) {
+                    if (!reports[i].synced) {
+                        cpt++;
                     }
                 }
+                for (i = 0; i < census.length; i++) {
+                    if (!census[i].synced) {
+                        cpt++;
+                    }
+                }
+                $scope.toSyncNumber = cpt ;
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }

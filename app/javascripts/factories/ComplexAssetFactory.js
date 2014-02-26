@@ -217,7 +217,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         node.geometry = this.geometry ;
         var deferred = $q.defer();
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
-            timeout: 10000
+            timeout: 1
         }).success(function (data) {
             deferred.notify();
             deferred.resolve();
@@ -227,10 +227,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
                 census.push(node);
                 Smartgeo.set_('census', census, function () {
                     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                    deferred.notify();
+                    deferred.resolve();
                 });
             });
-            deferred.notify();
-            deferred.resolve();
         });
         return deferred.promise;
     };
