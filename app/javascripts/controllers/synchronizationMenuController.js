@@ -31,9 +31,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             reports = reports || [];
             $scope.reports = [];
             for (var i = 0; i < reports.length; i++) {
-                if (!reports[i].synced) {
-                    $scope.reports.push(reports[i]);
-                }
+                // if (!reports[i].synced) {
+                $scope.reports.push(reports[i]);
+                // }
             }
 
             // Smartgeo.set_('reports', $scope.reports, function () {
@@ -53,9 +53,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 //     continue  ;
                 // }
                 // uuids[census[i].uuid] = true
-                if (!census[i].synced) {
-                    $scope.census.push(census[i]);
-                }
+                // if (!census[i].synced) {
+                $scope.census.push(census[i]);
+                // }
             }
             // console.log("setting", $scope.census, " to census");
 
@@ -78,84 +78,77 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         }
     };
 
-    $scope.sync = function ($index, callback) {
-        if ($scope.reports[$index].synced) {
+    $scope.sync = function (report, callback) {
+        if (report.synced) {
             return false;
         }
-        $scope.reports[$index].syncInProgress = true;
-        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.report.json', $scope.reports[$index], {
+        report.syncInProgress = true;
+        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.report.json', report, {
             timeout: 55000
-        })
-            .success(function () {
-                if (!$scope.reports[$index]) {
-                    return;
-                }
-                $scope.reports[$index].syncInProgress = false;
-                $scope.reports[$index].synced = true;
-
-                Smartgeo.set_('reports', $scope.reports, function () {
-                    $timeout(function () {
-                        if ($scope.reports[$index]) {
-                            $scope.reports[$index].hide = true;
-                        }
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                    }, 3000);
-                });
-            }).error(function (data, code) {
-                if (!$scope.reports[$index]) {
-                    return;
-                }
-                if (Smartgeo.get('online') && code !== 0) {
-                    if (data.error) {
-                        alertify.error(data.error.text);
-                    } else {
-                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+        }).success(function () {
+            if (!report) {
+                return;
+            }
+            report.syncInProgress = false;
+            report.synced = true;
+            Smartgeo.set_('reports', $scope.reports, function () {
+                $timeout(function () {
+                    if (report) {
+                        report.hide = true;
                     }
-                }
-                $scope.reports[$index].syncInProgress = false;
+                }, 3000);
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
             });
+        }).error(function (data, code) {
+            if (!report) {
+                return;
+            }
+            if (Smartgeo.get('online') && code !== 0) {
+                if (data.error) {
+                    alertify.error(data.error.text);
+                } else {
+                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                }
+            }
+            report.syncInProgress = false;
+        });
     };
 
-    $scope.syncCensus = function ($index, callback) {
-        if ($scope.census[$index].synced) {
+    $scope.syncCensus = function (object, callback) {
+        if (object.synced) {
             return false;
         }
-        $scope.census[$index].syncInProgress = true;
-        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), $scope.census[$index], {
+        object.syncInProgress = true;
+        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), object, {
             timeout: 55000
-        })
-            .success(function (data) {
-                console.log(data);
-                // Smartgeo.insert(data);
-                if (!$scope.census[$index]) {
-                    return;
-                }
-                $scope.census[$index].syncInProgress = false;
-                $scope.census[$index].synced = true;
+        }).success(function (data) {
+            if (!object) {
+                return;
+            }
+            object.syncInProgress = false;
+            object.synced = true;
 
-                console.log("setting", $scope.census, " to census");
-
-                Smartgeo.set_('census', $scope.census, function () {
-                    $timeout(function () {
-                        if ($scope.census[$index]) {
-                            $scope.census[$index].hide = true;
-                        }
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                    }, 3000);
-                });
-            }).error(function (data, code) {
-                if (!$scope.census[$index]) {
-                    return;
-                }
-                if (Smartgeo.get('online') && code !== 0) {
-                    if (data.error) {
-                        alertify.error(data.error.text);
-                    } else {
-                        alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+            Smartgeo.set_('census', $scope.census, function () {
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                $timeout(function () {
+                    if (object) {
+                        object.hide = true;
                     }
-                }
-                $scope.census[$index].syncInProgress = false;
+                }, 3000);
             });
+        }).error(function (data, code) {
+            if (!object) {
+                return;
+            }
+            if (Smartgeo.get('online') && code !== 0) {
+                if (data.error) {
+                    alertify.error(data.error.text);
+                } else {
+                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
+                }
+            }
+            object.syncInProgress = false;
+        });
     };
 
     $scope.__deleteCensus = function ($index) {

@@ -224,8 +224,16 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
                     AssetFactory.save(data[okey][i],window.site);
                 }
             }
-            deferred.notify();
-            deferred.resolve();
+            Smartgeo.get_('census', function (census) {
+                census = census || [];
+                node.synced = true ;
+                census.push(node);
+                Smartgeo.set_('census', census, function () {
+                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                    deferred.notify();
+                    deferred.resolve();
+                });
+            });
         }).error(function () {
             Smartgeo.get_('census', function (census) {
                 census = census || [];

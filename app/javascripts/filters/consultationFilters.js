@@ -77,4 +77,30 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
         }
         return layersOut;
     };
+}).filter('toBeSynchronized', function ($rootScope) {
+
+    'use strict';
+
+    return function (objects) {
+        var objectsOut = [];
+        for (var i = 0; i < objects.length; i++) {
+            if(!objects[i].synced){
+                objectsOut.push(objects[i]);
+            }
+        }
+        return objectsOut;
+    };
+}).filter('synchronized', function ($rootScope) {
+
+    'use strict';
+
+    return function (objects) {
+        var objectsOut = [];
+        for (var i = 0; i < objects.length; i++) {
+            if(objects[i].synced){
+                objectsOut.push(objects[i]);
+            }
+        }
+        return objectsOut;
+    };
 });

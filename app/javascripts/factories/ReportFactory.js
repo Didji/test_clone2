@@ -12,6 +12,14 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                     if (window.SmartgeoChromium) {
                         window.SmartgeoChromium.log(Report.getLog(report, true));
                     }
+                    Smartgeo.get_('reports', function (reports) {
+                        reports = reports || [];
+                        report.synced = true;
+                        reports.push(report);
+                        Smartgeo.set_('reports', reports, function () {
+                            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                        });
+                    });
                     deferred.notify();
                     deferred.resolve();
                 })
