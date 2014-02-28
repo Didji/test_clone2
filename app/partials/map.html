@@ -30,10 +30,10 @@
                             <div ng-include="'partials/search.html'"></div>
                         </div>
                     </li>
-                    <li>
+                    <li ng-show="rights.census">
                         <a href="#">
                             <span class="icon icon-plus"></span>
-                            Recensement
+                            <i18n>_MENU_CENSUS</i18n>
                         </a>
                         <div class="mp-level" >
                             <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>

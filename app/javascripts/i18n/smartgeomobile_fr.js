@@ -45,6 +45,7 @@ window.smartgeo_i18n_lang['fr'] = {
     _MENU_BACK: "Retour",
     _MENU_REPORT: "Compte rendu",
     _MENU_SYNC: "Synchronisation",
+    _MENU_CENSUS: "Recensement",
     _MENU_LOGOUT: "Déconnexion",
 
     _REPORT_REPORT: "Compte rendu",
