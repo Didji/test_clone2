@@ -821,9 +821,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                                                 ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
                                             }
                                         } else {
-                                            console.log(geom);
-                                            console.log(asset);
-
                                             Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", geom.type));
                                         }
                                         if (geom.type === "Polygon") {
@@ -845,7 +842,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
             }
         }
-
     };
     return G3ME;
 });

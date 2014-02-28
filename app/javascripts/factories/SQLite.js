@@ -44,7 +44,6 @@ var SQLite = {
     },
 
     set: function (parameter, value, callback) {
-
         SQLite.parameters().transaction(function (transaction) {
             transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
             transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
