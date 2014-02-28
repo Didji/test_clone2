@@ -403,49 +403,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 });
             }
 
-            // var zones = [],
-            //     initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
-            //     finalargs = [],
-            //     subrequests = [],
-            //     tileExtent = {
-            //         ymin: ymin,
-            //         ymax: ymax,
-            //         xmin: xmin,
-            //         xmax: xmax
-            //     };
-
-            // var request = " SELECT * FROM ASSETS ";
-            // request += " WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) ";
-            // request += "    AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ";
-
-
-            // if (this.active_layers) {
-            //     request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
-            // }
-
-            // for (var i = 0; i < this.site.zones.length; i++) {
-            //     if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
-            //         if (performBench) {
-            //             G3ME.benchStart(this.site.zones[i].database_name);
-            //         }
-            //         (function (zone) {
-            //             if (!G3ME.databases[zone.database_name]) {
-            //                 G3ME.databases[zone.database_name] = SQLite.openDatabase({
-            //                     name: zone.database_name,
-            //                     bgType: 1
-            //                 });
-            //             }
-            //             G3ME.databases[zone.database_name].transaction(function (tx) {
-            //                 tx.executeSql(request, initargs,
-            //                     function (tx, results) {
-            // var rows = results.rows;
-
-            function formatAsset(asset) {
-                return asset ;
-            }
-
             function convertToLinearArray(complexAsset, response) {
                 response = response || [];
+                if(complexAsset.synced){
+                    return ;
+                }
                 if(complexAsset.geometry && !complexAsset.synced){
                     response.push(complexAsset);
                 }

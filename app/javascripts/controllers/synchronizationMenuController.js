@@ -3,7 +3,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     'use strict';
 
     $scope.reports = [];
-    $scope.census = [];
+    $scope.census  = [];
 
     $scope.initialize = function () {
         $rootScope.site.activities._byId = {};
@@ -31,14 +31,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             reports = reports || [];
             $scope.reports = [];
             for (var i = 0; i < reports.length; i++) {
-                // if (!reports[i].synced) {
                 $scope.reports.push(reports[i]);
-                // }
             }
-
-            // Smartgeo.set_('reports', $scope.reports, function () {
-            //     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.reports.length);
-            // });
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -49,19 +43,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             var uuids = {} ;
             $scope.census = [];
             for (var i = 0; i < census.length; i++) {
-                // if(uuids[census[i].uuid]){
-                //     continue  ;
-                // }
-                // uuids[census[i].uuid] = true
-                // if (!census[i].synced) {
                 $scope.census.push(census[i]);
-                // }
             }
-            // console.log("setting", $scope.census, " to census");
-
-            // Smartgeo.set_('census', $scope.census, function () {
-            //     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE", $scope.census.length);
-            // });
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -71,15 +54,15 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
     $scope.syncAll = function () {
         for (var i = 0; i < $scope.reports.length; i++) {
-            $scope.sync(i);
+            $scope.sync($scope.reports[i]);
         }
         for (i = 0; i < $scope.census.length; i++) {
-            $scope.syncCensus(i);
+            $scope.syncCensus($scope.census[i]);
         }
     };
 
-    $scope.sync = function (report, callback) {
-        if (report.synced) {
+    $scope.sync = function (report, force) {
+        if (report.synced && !force) {
             return false;
         }
         report.syncInProgress = true;
@@ -92,11 +75,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             report.syncInProgress = false;
             report.synced = true;
             Smartgeo.set_('reports', $scope.reports, function () {
-                $timeout(function () {
-                    if (report) {
-                        report.hide = true;
-                    }
-                }, 3000);
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
             });
         }).error(function (data, code) {
@@ -114,8 +92,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         });
     };
 
-    $scope.syncCensus = function (object, callback) {
-        if (object.synced) {
+    $scope.syncCensus = function (object, force) {
+        if (object.synced && !force) {
             return false;
         }
         object.syncInProgress = true;
@@ -130,11 +108,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
             Smartgeo.set_('census', $scope.census, function () {
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                $timeout(function () {
-                    if (object) {
-                        object.hide = true;
-                    }
-                }, 3000);
             });
         }).error(function (data, code) {
             if (!object) {
@@ -151,15 +124,15 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         });
     };
 
-    $scope.__deleteCensus = function ($index) {
-        $scope.census = $scope.census.slice(0, $index).concat($scope.census.slice($index + 1, $scope.census.length));
+    $scope.__deleteCensus = function (census) {
+        $scope.census.splice($scope.census.indexOf(census), 1);
         Smartgeo.set_('census', $scope.census, function () {
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
     };
 
-    $scope.__delete = function ($index) {
-        $scope.reports = $scope.reports.slice(0, $index).concat($scope.reports.slice($index + 1, $scope.reports.length));
+    $scope.__delete = function (report) {
+        $scope.reports.splice($scope.reports.indexOf(report), 1);
         Smartgeo.set_('reports', $scope.reports, function () {
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
@@ -174,17 +147,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
                 }
             }
         });
-    };
-
-    $scope.deleteWithUUID = function (uuid) {
-        for (var i = 0; i < $scope.reports.length; i++) {
-            if ($scope.reports[i].uuid === uuid) {
-                $scope.reports.splice(i, 1);
-                console.log('spliced !');
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                break;
-            }
-        }
     };
 
     $scope.toBeSyncLenght = function () {
