@@ -1,7 +1,7 @@
 <div ng-controller="searchController">
     <ul>
         <li>
-            <input class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
+            <input style="margin-bottom:10px;" class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier"></input>
             <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="search($event)">
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
                     <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
@@ -25,11 +25,11 @@
                     </li>
                     <li>
                         <label><i18n>_SEARCH_CRITERIA</i18n></label>
-                        <select ui-select2 ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" multiple>
+                        <select  style="margin-bottom:10px;"  ui-select2 ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" multiple>
                             <option ng-repeat="(value, criter) in criteria[selectedFamily.okey]" value="{{criter.key}}">{{criter.label}}</option>
                         </select>
                     </li>
-                    <li ng-repeat='fieldKey in selectedCriteria'>
+                    <li  style="margin-bottom:10px;"  ng-repeat='fieldKey in selectedCriteria'>
                         <div class="form-group">
                             <label for="adSearchField-{{fieldKey}}">{{criteria[selectedFamily.okey]._byKey[fieldKey].label}}</label>
                             <div class="animate-switch-container" ng-switch on="criteria[selectedFamily.okey]._byKey[fieldKey].type">
