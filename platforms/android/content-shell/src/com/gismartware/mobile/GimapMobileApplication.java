@@ -15,6 +15,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
+import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibraryConstants;
 
 /**
  * Entry point for the content shell application.  Handles initialization of information that needs
@@ -46,7 +47,8 @@ public class GimapMobileApplication extends Application {
         super.onCreate();
         initializeApplicationParameters();
         try {
-            LocationLibrary.initialiseLibrary(getBaseContext(),"com.gismartware.mobile");
+            LocationLibrary.initialiseLibrary(getBaseContext(), 30 * 1000, 30 * 1000,"com.gismartware.mobile");
+            LocationLibrary.useFineAccuracyForRequests(true);
         } catch (UnsupportedOperationException ex) {
             Log.d("TestApplication", "UnsupportedOperationException thrown - the device doesn't have any location providers");
         }
