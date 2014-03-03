@@ -87,7 +87,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         $scope.stopFollowingPosition();
         Smartgeo.registerInterval('WATCH_INTERVAL', function () {
             $scope.whereIAm();
-        }, 3000);
+        }, 2000);
     };
 
     /**
@@ -114,9 +114,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
             $scope.addPositionToTrace(lat, lng);
         }, function () {
-            alertify.error(i18n.get('_MAP_GPS_FAIL'));
-            $scope.isFollowingMe = false;
-            $scope.$apply();
+            alertify.log(i18n.get('_MAP_GPS_FAIL'));
+            // $scope.isFollowingMe = false;
+            // $scope.$apply();
         });
     };
 
