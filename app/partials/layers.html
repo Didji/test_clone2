@@ -15,7 +15,7 @@
                 </h4>
                 <div>
                     <div class="list-group-item" ng-repeat="layer in group.layers | isGraphical">
-                        <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}" ng-if="site.metamodel[layer.okey].is_graphical !== false">
+                        <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}">
                             <span class="icon-check yes" ></span>
                             <span class="icon-check-empty no" ></span>
                             <input

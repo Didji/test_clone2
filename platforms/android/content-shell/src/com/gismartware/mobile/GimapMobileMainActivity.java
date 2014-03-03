@@ -201,7 +201,7 @@ public class GimapMobileMainActivity extends Activity {
         } else {
         	finishActivityInit();
         }
-        
+
         if (NEED_LOGGER) {
         	File logCfg = new File(getExternalFilesDir(null).getParent(), "config.properties");
         	if (logCfg.exists()) {
@@ -410,6 +410,7 @@ public class GimapMobileMainActivity extends Activity {
             final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
 
             if (getActiveShell() != null && getActiveShell().getContentView() != null) {
+                Log.d(TAG, "[window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");]");
                 getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
             }
         }
@@ -538,7 +539,7 @@ public class GimapMobileMainActivity extends Activity {
 		if (intent == null || intent.getData() == null) {
 			return null;
 		}
-		
+
 		StringBuffer url = new StringBuffer(INTENT_DEST_URL_PREFIX);
 
 		//controler en premier..
@@ -564,7 +565,7 @@ public class GimapMobileMainActivity extends Activity {
 				appendedParams = true;
 
 				Pattern hook = Pattern.compile(MESSAGES.getString("intent.controler.url.params.composite.regexp"));
-				
+
 				for (int i = 0; i < params.length; i++) {
 					String[] param = params[i].split("=");
 

@@ -440,29 +440,52 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Polyfill for geolocation api
          */
         getUsersLocation: function (success, error) {
+
+            if(Smartgeo.GET_USER_LOCATION_MUTEX){
+                console.log('Cancelling getUsersLocation request cause of mutex token : '+ Smartgeo.GET_USER_LOCATION_MUTEX);
+                return ;
+            }
+
+            var tokenUuid = Smartgeo.uuid();
+
+            console.log('Taking getUsersLocation mutex token : '+ tokenUuid);
+            Smartgeo.GET_USER_LOCATION_MUTEX = tokenUuid ;
+
             if (SmartgeoChromium.locate) {
 
-                var LOCATED_TIMEOUT_FLAG;
-
                 ChromiumCallbacks[0] = function (lng, lat, alt) {
-                    LOCATED_TIMEOUT_FLAG = true;
+                    console.log('Freeing getUsersLocation mutex : '+tokenUuid+' ('+lng +'|'+ lat+')');
+                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     success(lat, lng, alt);
                 };
 
                 SmartgeoChromium.locate();
 
-                $timeout(function () {
-                    if (!LOCATED_TIMEOUT_FLAG) {
-                        return;
+                $timeout(function(){
+                    if(Smartgeo.GET_USER_LOCATION_MUTEX !== tokenUuid){
+                        return false;
                     }
+                    console.log('Freeing getUsersLocation mutex cause of timeout: '+tokenUuid);
                     ChromiumCallbacks[0] = angular.noop;
+                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     error();
-                }, 10000);
+                }, 30000)
+
+                // $timeout(function () {
+                //     // if(Smartgeo.GET_USER_LOCATION_MUTEX === false){
+                //         // return false;
+                //     // }
+                //     Smartgeo.GET_USER_LOCATION_MUTEX = false;
+                //     // ChromiumCallbacks[0] = angular.noop;
+                //     error();
+                // }, 30000);
 
             } else {
                 navigator.geolocation.getCurrentPosition(function (position) {
+                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     success(position.coords.latitude, position.coords.longitude, position.coords.altitude);
                 }, function () {
+                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     error();
                 });
             }

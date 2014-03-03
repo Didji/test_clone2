@@ -28,7 +28,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 
  public class SmartGeoMobilePlugins {
-	
+
 	private static final String TAG = "GimapMobilePlugins";
 	private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
 
@@ -41,7 +41,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 		this.view = view;
 		pictureFileNameFormater = new SimpleDateFormat(PICTURE_FILE_NAME_PATTERN);
 	}
-	
+
 	@JavascriptInterface
 	public void launchCamera(int callbackId) throws IOException {
 		Log.d(TAG, "Request camera");
@@ -55,41 +55,44 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 		((GimapMobileMainActivity)context).setLastPicturePath(photoFile.getAbsolutePath());
 		act.startActivityForResult(intent, ActivityCode.CAPTURE_IMAGE.getCode());
 	}
-	
+
 	@JavascriptInterface
 	public void goTo(float longOrig, float latOrig, float longDest, float latDest) {
 		String to = "https://maps.google.com/maps?saddr=" + latOrig + "," + longOrig + "&daddr=" + latDest + "," + longDest;
-		
+
 		Log.d(TAG, "Goto " + to);
-		
+
 		Activity act = (Activity)context;
 		Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 		act.startActivity(intent);
 	}
-	
+
 	@JavascriptInterface
 	public void redirect(String url) {
 		Log.d(TAG, "Redirect to URL " + url);
-		
+
 		Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 		Activity act = (Activity)context;
 		act.startActivity(intent);
 	}
-	
+
 	@JavascriptInterface
 	public void locate() {
         LocationLibrary.forceLocationUpdate(context);
+        LocationInfo info = new LocationInfo(context);
+        info.refresh(context);
+        view.evaluateJavaScript("window.ChromiumCallbacks[0](" + info.lastLong + "," +  info.lastLat +");");
         //final LocationInfo locationInfo = new LocationInfo(context) ;
         //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
         //view.evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
 	}
-	
+
 	@JavascriptInterface
 	public void getExtApplicationDirectory() {
 		String tmp = context.getExternalFilesDir(null).getParent();
 		view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + tmp + "\");");
 	}
-	
+
 	@JavascriptInterface
 	public void eraseAllTiles() {
 		File path = new File(context.getExternalFilesDir(null).getParent() + "/tiles/");
@@ -101,13 +104,13 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 		}
 		view.evaluateJavaScript("window.ChromiumCallbacks[12](\"" + ret + "\");");
 	}
-	
+
 	@JavascriptInterface
 	public void writeBase64ToPNG(String base64, String path) {
 		byte[] pngAsByte = Base64.decode(base64, 0);
 		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
         filePath.getParentFile().mkdirs();
-        
+
         boolean result = true;
 		try {
 			FileOutputStream os = new FileOutputStream(filePath, false);
@@ -120,12 +123,12 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 		}
 		view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result + "\");");
 	}
-	
+
 	@JavascriptInterface
 	public void writeJSON(String json, String path) {
 		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
         filePath.getParentFile().mkdirs();
-        
+
         boolean result = true;
 		try {
 			FileOutputStream os = new FileOutputStream(filePath, false);
