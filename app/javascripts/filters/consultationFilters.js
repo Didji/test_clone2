@@ -71,7 +71,7 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
         var layersOut = [];
         for (var i = 0; i < layers.length; i++) {
 
-            if(window.site.metamodel[layers[i].okey].is_graphical){
+            if(window.site.metamodel[layers[i].okey].is_graphical !== false){
                 layersOut.push(layers[i]);
             }
         }
