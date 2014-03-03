@@ -122,7 +122,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         for (i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
             tab = act.tabs[i];
             for (j = 0, numFields = tab.fields.length; j < numFields; j++) {
-                if (tab.fields[j].id === id) {
+                if (tab.fields[j].id == id) {
                     return tab.fields[j];
                 }
             }
