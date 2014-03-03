@@ -282,6 +282,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     $timeout($scope.poll, 5000);
                 }
             }).error(function (data, status) {
+                if(status === 403){
+                    Smartgeo.silentLogin();
+                }
                 $timeout($scope.poll, 5000);
             });
     };
