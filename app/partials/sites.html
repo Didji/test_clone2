@@ -15,7 +15,8 @@
             <div ng-repeat="site in sites | filter:isInstalled">
                 <hr ng-show="$index==0" />
                 <div class="btn-group has-carret" >
-                    <a href="#/map/{{site.id}}" class="btn btn-primary">
+                    <!-- <a href="#/map/{{site.id}}" class="btn btn-primary"> -->
+                    <a ng-click="select(site)" class="btn btn-primary">
                         <span class="icon-star pull-left"></span> {{site.label}}
                     </a>
                     <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">

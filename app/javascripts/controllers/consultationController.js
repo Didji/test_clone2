@@ -155,6 +155,12 @@ angular.module('smartgeomobile').controller('consultationController', function (
         }
         G3ME.fullscreen();
         $scope.state = 'closed';
+        for (var i = 0; i < $scope.assets.length; i++) {
+            if($scope.assets[i].open){
+                // $("a[href='#collapse-2407105']").click();
+                // $scope.toggleAsset($scope.assets[i]);
+            }
+        }
         $(".consultation-panel").first().removeClass('open').css('width', 0);
     };
 

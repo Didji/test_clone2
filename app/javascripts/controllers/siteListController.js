@@ -69,12 +69,23 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
         // S'il est installé, on le charge. Sinon, on l'installe.
         var site = $scope.sites[0];
         if (site && site.installed) {
-            $location.path('/map/' + site.id);
-
+            Smartgeo.selectSiteRemotely(site.id, function(){
+                $location.path('/map/' + site.id);
+            },function(){
+                $location.path('/map/' + site.id);
+            });
         } else {
             $location.path('/sites/install/' + site.id);
         }
     }
+
+    $scope.select = function(site){
+        Smartgeo.selectSiteRemotely(site.id, function(){
+            $location.path('/map/' + site.id);
+        },function(){
+            $location.path('/map/' + site.id);
+        });
+    };
 
     $scope.isInstalled = function (site) {
         return !!site.installed;

@@ -892,6 +892,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     'forcegimaplogin': true
                 });
             }
+            console.log('login', url);
             $http.post(url, {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             }).success(function () {

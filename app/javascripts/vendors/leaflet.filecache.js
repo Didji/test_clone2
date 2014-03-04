@@ -758,14 +758,19 @@ if (navigator.userAgent.match(/Android/i)) {
                 url = this.getTileUrl({
                     x: tileObject.x,
                     y: tileObject.y
-                }, tileObject.z);
+                }, tileObject.z), self = this;
             http.withCredentials = true;
             http.open('HEAD', url, true);
             http.onreadystatechange = function () {
                 if (this.readyState == this.DONE && this.status === 200) {
                     callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    Smartgeo.silentLogin();
+                    Smartgeo.silentLogin(function(){
+                        console.log('refresh');
+                        for (var i in self._map._layers) {
+                            self._map._layers[i].redraw && self._map._layers[i].redraw();
+                        }
+                    });
                     callback(null);
                 }
             };
@@ -779,7 +784,7 @@ if (navigator.userAgent.match(/Android/i)) {
             var raw = window.atob(base64);
             var rawLength = raw.length;
             var array = new Uint8Array(new ArrayBuffer(rawLength));
-            for (i = 0; i < rawLength; i++) {
+            for (var i = 0; i < rawLength; i++) {
                 array[i] = raw.charCodeAt(i);
             }
             return array;
@@ -1577,14 +1582,8 @@ if (navigator.userAgent.match(/Android/i)) {
                             // image.style.border  = 'solid 1px blue';
                             window.URL = window.URL || window.webkitURL;
                             image.src = URL.createObjectURL(blob);
-                            image.onerror = function (event) {
-                                image.onerror = image.onload = null;
-                            };
-                            image.onload = function (event) {
-                                image.onerror = image.onload = null;
-                                image.className += " leaflet-tile-loaded";
-                                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-                            };
+                            image.onerror = this_._tileOnError ;
+                            image.onload = this_._tileOnLoad ;
                             this_.doINeedToReCacheThisTile(tileObject, file, function (yes) {
                                 if (yes) {
                                     var oldTile = image.src;
@@ -1592,12 +1591,9 @@ if (navigator.userAgent.match(/Android/i)) {
                                         x: x,
                                         y: y
                                     }, z);
-                                    image.onerror = function (event) {
-                                        image.src = oldTile;
-                                        image.onerror = image.onload = null;
-                                    };
+                                    image.onerror = this_._tileOnError ;
                                     image.onload = function () {
-                                        image.className += " leaflet-tile-loaded";
+                                        this_._tileOnLoad.call(this);
                                         this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
                                             this_.getRemoteETag(tileObject, function (remoteETag) {
                                                 if (remoteETag !== null) {
@@ -1621,11 +1617,18 @@ if (navigator.userAgent.match(/Android/i)) {
                         y: y
                     }, z);
                     image.onerror = function (event) {
+                        this_._tileOnError.call(this);
                         image.src = oldTile;
                         image.onerror = image.onload = null;
+                        Smartgeo.silentLogin(function(){
+                            console.log('refresh');
+                            for (var i in this_._map._layers) {
+                                this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                            }
+                        });
                     };
                     image.onload = function () {
-                        image.className += " leaflet-tile-loaded";
+                        this_._tileOnLoad.call(this);
                         this_.writeTileToCache(tileObject, this_.getDataURL(image));
                         image.onerror = image.onload = null;
                     };
@@ -1636,14 +1639,16 @@ if (navigator.userAgent.match(/Android/i)) {
                     y: y
                 }, z);
                 image.onerror = function (event) {
-                    image.src = oldTile;
+                    this_._tileOnError.call(this);
                     image.onerror = image.onload = null;
+                    Smartgeo.silentLogin(function(){
+                        console.log('refresh');
+                        for (var i in this_._map._layers) {
+                            this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                        }
+                    });
                 };
-                image.onload = function () {
-                    image.className += " leaflet-tile-loaded";
-                    // this_.writeTileToCache(tileObject, this_.getDataURL(image));
-                    image.onerror = image.onload = null;
-                };
+                image.onload = this_._tileOnLoad ;
             }
         },
 
@@ -1724,15 +1729,24 @@ if (navigator.userAgent.match(/Android/i)) {
                 url = this.getTileUrl({
                     x: tileObject.x,
                     y: tileObject.y
-                }, tileObject.z);
+                }, tileObject.z), self = this ;
             http.withCredentials = true;
             http.open('HEAD', url, true);
             http.onreadystatechange = function () {
                 if (this.readyState == this.DONE && this.status === 200) {
-                    callback(this.getResponseHeader("etag"));
+                   // console.log('ici',this.readyState, this.status);
+                   callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    Smartgeo.silentLogin();
+                   // console.log('ici',this.readyState, this.status);
+                    Smartgeo.silentLogin(function(){
+                        console.log('refresh');
+                        for (var i in self._map._layers) {
+                            self._map._layers[i].redraw && self._map._layers[i].redraw();
+                        }
+                    });
                     callback(null);
+                } else {
+                   // console.log('ici',this.readyState, this.status);
                 }
 
             };
