@@ -645,18 +645,20 @@ if (navigator.userAgent.match(/Android/i)) {
 
             image.src = 'file://' + Smartgeo.get('tileRootPath') + '/' + /* 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + */ this.getTilePath(tileObject);
             image.onerror = function (event) {
+
+                this_._tileOnError.call(this);
+
                 image.src = this_.getTileUrl({
                     x: x,
                     y: y
                 }, z);
-                image.onerror = image.onload = null;
-                image.onerror = function () {
-                    image.onerror = image.onload = null;
-                };
+
+                image.onerror = this_._tileOnError ;
+
                 image.onload = function () {
-                    image.className += " leaflet-tile-loaded";
-                    image.style.webkitTransform = "translate3d(0px, 0px, 0)";
-                    image.onerror = image.onload = null;
+
+                    this_._tileOnLoad.call(this);
+
                     this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
                         this_.getRemoteETag(tileObject, function (remoteETag) {
                             if (remoteETag !== null) {
@@ -670,8 +672,7 @@ if (navigator.userAgent.match(/Android/i)) {
             };
 
             image.onload = function () {
-                image.className += " leaflet-tile-loaded";
-                image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+                this_._tileOnLoad.call(this);
 
                 image.onerror = image.onload = null;
 
@@ -682,13 +683,10 @@ if (navigator.userAgent.match(/Android/i)) {
                             x: x,
                             y: y
                         }, z);
-                        image.onerror = function (event) {
-                            image.src = oldTile;
-                            image.onerror = image.onload = null;
-                        };
+                        image.onerror = this_._tileOnError ;
                         image.onload = function () {
-                            image.className += " leaflet-tile-loaded";
-                            image.style.webkitTransform = "translate3d(0px, 0px, 0)";
+
+                            this_._tileOnLoad.call(this);
 
                             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
                                 this_.getRemoteETag(tileObject, function (remoteETag) {
