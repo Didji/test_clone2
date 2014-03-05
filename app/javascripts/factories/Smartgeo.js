@@ -548,7 +548,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 _this = this,
                 request = 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
                 j;
-
             SQLite.openDatabase({
                 name: zones[0].database_name
             }).transaction(function (t) {
@@ -610,7 +609,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             var arguments_ = [],
                 _this = this,
-                request = 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join(',') + ')',
+                request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] :  'in ( ' + guids.join(',') + ')'),
                 j;
 
             SQLite.openDatabase({

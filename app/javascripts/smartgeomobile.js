@@ -1,6 +1,6 @@
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
-var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner"])
+var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce'])
     .config(["$routeProvider",
         function ($routeProvider) {
             "use strict";

@@ -64,6 +64,17 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     }
 
 
+    var coords, radius_p = 40,
+        baseRequest = " SELECT asset,";
+    baseRequest += "       label,";
+    baseRequest += "       geometry,";
+    baseRequest += "       CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2";
+    baseRequest += "       END AS priority";
+    baseRequest += " FROM ASSETS ";
+    baseRequest += " WHERE ";
+    baseRequest += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
+    baseRequest += "    AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
+
     G3ME.map.on('click', function (e) {
 
         if (!$scope.consultationIsEnabled) {
@@ -71,16 +82,14 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
 
         $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
-        var coords = e.latlng,
-            mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
-            radius_p = 40,
+        coords = e.latlng;
+        var mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
             radius = radius_p * mpp,
             circle = new L.Circle(coords, radius, {
                 color: "#fc9e49",
                 weight: 1
             }).addTo(G3ME.map),
             bounds = circle.getBounds(),
-            // rect = L.rectangle(bounds, {color: "#0000ff", weight: 1}).addTo(G3ME.map),
             nw = bounds.getNorthWest(),
             se = bounds.getSouthEast(),
             xmin = nw.lng,
@@ -89,7 +98,11 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             ymax = nw.lat,
             zone,
             zoom = G3ME.map.getZoom(),
-            request = "";
+            request = baseRequest;
+
+        $(circle._path).fadeOut(1500, function () {
+            G3ME.map.removeLayer(circle);
+        });
 
         for (var i = 0, length_ = $rootScope.site.zones.length; i < length_; i++) {
             zone = $rootScope.site.zones[i];
@@ -103,88 +116,74 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             }
         }
 
-        if (!zone) {
+        if (!zone || (G3ME.active_layers && !G3ME.active_layers.length) ) {
             return noConsultableAssets(coords);
         }
 
-        request += " SELECT asset,";
-        request += "       label,";
-        request += "       geometry,";
-        request += "       CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2";
-        request += "       END AS priority";
-        request += " FROM ASSETS ";
-        request += " WHERE ";
-        request += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
-        request += "    AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
-
         if (G3ME.active_layers) {
-            request += G3ME.active_layers.length ? ' and (symbolId like "' + G3ME.active_layers.join('%" or symbolId like "') + '%" )' : ' and 1=2 ';
+            request += ' and (symbolId REGEXP "^('+G3ME.active_layers.join('|')+')\\d+" )' ;
         }
         request += " order by priority LIMIT 0,100 ";
-
-
-        $(circle._path).fadeOut(1500, function () {
-            G3ME.map.removeLayer(circle);
-        });
-
 
         SQLite.openDatabase({
             name: zone.database_name,
             bgType: 1
         }).transaction(function (t) {
-            t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom],
-                function (t, results) {
-                    if (results.rows.length === 0) {
-                        return noConsultableAssets(coords);
-                    }
-                    // TODO : use filter ?
-
-                    var assets = [],
-                        asset, asset_;
-
-                    for (var i = 0; i < results.rows.length && assets.length < 10; i++) {
-                        asset_ = results.rows.item(i);
-                        asset = Smartgeo.sanitizeAsset(asset_.asset);
-                        asset.label = asset_.label;
-                        asset.geometry = JSON.parse(asset_.geometry);
-                        asset.priority = asset_.priority;
-
-                        if (asset.geometry.type === "LineString") {
-
-                            var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
-                                p2,
-                                p3,
-                                distanceToCenter;
-
-                            for (var j = 0; j < asset.geometry.coordinates.length - 1; j++) {
-                                if (j) {
-                                    p2 = p3;
-                                } else {
-                                    p2 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j]);
-                                }
-                                p3 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j + 1]);
-                                distanceToCenter = L.LineUtil.pointToSegmentDistance(p1, p2, p3);
-
-                                if (distanceToCenter <= radius_p) {
-                                    assets.push(asset);
-                                    break;
-                                }
-                            }
-                        } else {
-                            assets.push(asset);
-                        }
-                    }
-
-                    if (assets.length === 0) {
-                        return noConsultableAssets(coords);
-                    }
-
-                    $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-                }, Smartgeo.log);
+            t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom],  sendResultsToConsultation, Smartgeo.log);
         });
         return false;
     });
 
+    function sendResultsToConsultation(t, results) {
+
+        var numRows = results.rows.length;
+
+        if (numRows === 0) {
+            return noConsultableAssets(coords);
+        }
+
+        var assets = [],
+            asset, asset_;
+
+        for (var i = 0; i < numRows && assets.length < 10; i++) {
+            asset_ = results.rows.item(i);
+            asset = Smartgeo.sanitizeAsset(asset_.asset);
+            asset.label = asset_.label;
+            asset.geometry = JSON.parse(asset_.geometry);
+            asset.priority = asset_.priority;
+
+            if (asset.geometry.type === "LineString") {
+
+                var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
+                    p2,
+                    p3,
+                    distanceToCenter;
+
+                for (var j = 0, length_ = asset.geometry.coordinates.length; j < (length_ - 1); j++) {
+                    if (j) {
+                        p2 = p3;
+                    } else {
+                        p2 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j]);
+                    }
+                    p3 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j + 1]);
+                    distanceToCenter = L.LineUtil.pointToSegmentDistance(p1, p2, p3);
+
+                    if (distanceToCenter <= radius_p) {
+                        assets.push(asset);
+                        break;
+                    }
+                }
+            } else {
+                assets.push(asset);
+            }
+        }
+
+        if (assets.length === 0) {
+            return noConsultableAssets(coords);
+        }
+
+        $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+    }
 
     $scope.$on("__MAP_SETVIEW__", function (event, extent) {
         if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {

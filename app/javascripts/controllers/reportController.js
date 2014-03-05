@@ -6,7 +6,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
     $scope.step = "assets";
     $scope.fromConsult = false;
-    GiReportBuilder.buildAllTemplates($scope.site.activities);
+    // GiReportBuilder.buildAllTemplates($scope.site.activities);
 
     $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT;
     $scope.activities = angular.copy($rootScope.site.activities);
@@ -104,6 +104,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     if ($scope.report.activity) {
+        GiReportBuilder.buildTemplate($scope.report.activity);
         $scope.applyVisibility();
         if (!$scope.fromConsult) {
             $scope.loadAssets();

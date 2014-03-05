@@ -239,7 +239,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
             }
             this.canvasTile.redraw();
-            this.tempAssetTile.redraw();
+            // this.tempAssetTile.redraw();
         },
         getVisibility: function () {
             if (this.active_layers === false) {

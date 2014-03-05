@@ -1,9 +1,12 @@
 angular.module('smartgeomobile').factory('GiReportBuilder', function ($templateCache) {
 
-    'use strict';
 
-    return {
+    'use strict';
+    console.log('GiReportBuilder');
+
+    return  {
         _buildField: function (i, j, field) {
+
             var str, myField = 'report.activity.tabs[' + i + '].fields[' + j + ']';
             if (field.readonly) {
                 str = '<p ng-show="' + myField + '.visible !== false"><b class="ro-label">' + field.label + '</b>';
@@ -113,8 +116,7 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function ($templateC
             str += '           ng-click="toggleCollapse($event)">';
             str += tab.label;
             str += '</a></h4></div>';
-            str += '<div id="report-collapse-' + i + '" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">';
-            str += '<div class="panel-body">';
+            str += '<div class="panel-collapse><div class="panel-body">';
             for (var j in tab.fields) {
                 str += this._buildField(i, j, tab.fields[j]);
             }
@@ -123,24 +125,14 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function ($templateC
         },
 
         buildTemplate: function (activity) {
+            if($templateCache.get('report-' + activity.id + '.html')){
+                return ;
+            }
             var str = '';
             for (var i in activity.tabs) {
                 str += this._buildTab(i, activity.tabs[i]);
             }
-            return str;
-        },
-
-        alreadyBuilt: false,
-
-        buildAllTemplates: function (acts) {
-            if (this.alreadyBuilt) {
-                return;
-            }
-            var activity;
-            for (var i in acts) {
-                activity = acts[i];
-                $templateCache.put('report-' + activity.id + '.html', this.buildTemplate(activity));
-            }
+            $templateCache.put('report-' + activity.id + '.html', str);
         }
     };
 });

@@ -603,9 +603,7 @@ ul.ged-gallery li img {
 }
 
 .leaflet-control .icon {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 19px;
+    font-size: 30px;
     color: #fd9122;
 }
 
