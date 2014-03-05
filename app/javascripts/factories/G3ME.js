@@ -92,17 +92,17 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 minZoom: G3ME._MIN_ZOOM
             }).addTo(this.map);
 
-            this.tempAssetTile = new L.TileLayer.Canvas({
-                maxZoom: G3ME._MAX_ZOOM,
-                minZoom: G3ME._MIN_ZOOM
-            }).addTo(this.map);
+            // this.tempAssetTile = new L.TileLayer.Canvas({
+            //     maxZoom: G3ME._MAX_ZOOM,
+            //     minZoom: G3ME._MIN_ZOOM
+            // }).addTo(this.map);
 
             this.canvasTile.drawTile = function (canvas, tilePoint) {
                 G3ME.drawTile(canvas, tilePoint, G3ME.benchMe);
             };
-            this.tempAssetTile.drawTile = function (canvas, tilePoint) {
-                G3ME.drawTempAssetTile(canvas, tilePoint, G3ME.benchMe);
-            };
+            // this.tempAssetTile.drawTile = function (canvas, tilePoint) {
+            //     G3ME.drawTempAssetTile(canvas, tilePoint, G3ME.benchMe);
+            // };
 
             for (var symbol in this.site.symbology) {
                 if (!this.site.symbology[symbol] || !this.site.symbology[symbol].style) {
@@ -113,9 +113,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 this.site.symbology[symbol].style.image = image;
             }
             this.canvasTile.redraw();
-            this.tempAssetTile.redraw();
+            // this.tempAssetTile.redraw();
 
-            window.test = this.BackgroundTile;
 
             $(window).on('resize', function () {
                 G3ME.tilesOnScreen = ~~ ((window.innerHeight / 256) * (window.innerWidth / 256)) + 1;

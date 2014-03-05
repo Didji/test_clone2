@@ -1,6 +1,6 @@
-<div class="panel-heading">
+<div class="panel-heading" ng-click="toggleAsset(asset)">
   <h4 class="panel-title">
-    <a  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{asset.guid}}" ng-click="toggleAsset(asset)">
+    <a  class="accordion-toggle">
         <div ng-switch on="asset.label" >
             <span ng-switch-when="">{{site.metamodel[okey].label}}</span>
             <span ng-switch-default>{{asset.label}}</span>
@@ -9,7 +9,7 @@
   </h4>
 </div>
 
-<div id="collapse-{{asset.guid}}" class="panel-collapse collapse">
+<div ng-show="asset.open" class="panel-collapse">
     <div class="panel-body">
         <span ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
             <h5>{{tab.label}}</h5>

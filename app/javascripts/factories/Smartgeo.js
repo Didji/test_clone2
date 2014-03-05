@@ -911,12 +911,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo.unset('lastLeafletMapExtent');
             Smartgeo.unset('persitence.menu.open');
             Smartgeo.unset('persitence.menu.open.level');
-            var missions = Smartgeo.get('missions');
+            var missions = Smartgeo.get('missions_'+Smartgeo.get('user').username);
             for (var i in missions) {
                 missions[i].openned = false;
             }
             if (missions) {
-                Smartgeo.set('missions', missions);
+                Smartgeo.set('missions_'+Smartgeo.get('user').username, missions);
             }
         },
         clearSiteSelection: function() {

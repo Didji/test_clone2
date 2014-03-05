@@ -236,7 +236,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * </ul>
      */
     $scope.initialize = function () {
-        $rootScope.missions = Smartgeo.get('missions') || {};
+        $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('user').username) || {};
         Smartgeo.get_('reports', function (reports) {
             $scope.removeObsoleteMission(reports);
             $scope.synchronize();
@@ -246,7 +246,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
         $scope.$watch('missions', function () {
-            Smartgeo.set('missions', $rootScope.missions || {});
+            Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions || {});
         });
         $scope.$watch('dayToDisplay', function () {
             $scope.updateCount();
@@ -340,7 +340,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Reduce mission.assets array considering pending reports
      */
     $scope.removeObsoleteMission = function (reports) {
-        var missions = Smartgeo.get('missions'),
+        var missions = Smartgeo.get('missions_'+Smartgeo.get('user').username),
             index, pendingAssets, mission, i;
         for (i in reports) {
             if (missions[reports[i].mission]) {
@@ -668,7 +668,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             mission.postAddedAssets.assets.push(asset.guid);
         }
 
-        Smartgeo.set('missions', $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
 
         Smartgeo.findGeometryByGuids($scope.site, asset.guid, function (assets) {
 
@@ -707,7 +707,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.removeAssetFromMission = function (asset, mission) {
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-        Smartgeo.set('missions', $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
     };
 
 

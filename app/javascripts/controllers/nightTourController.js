@@ -157,7 +157,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         traces[$scope.mission.id] = currentTrace;
         Smartgeo.set('traces', traces);
         $scope.mission.trace = currentTrace;
-        $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', $scope.mission);
+        $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', $scope.mission, false);
     };
 
     /**

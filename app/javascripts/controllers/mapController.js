@@ -205,7 +205,8 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         } else {
             $scope.myPositionMarker.setLatLng([lat, lng]);
         }
-        G3ME.map.setView([lat, lng]);
+        G3ME.map.panTo([lat, lng],{animate:false});
+        G3ME.invalidateMapSize();
     });
 
     $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function () {
@@ -374,7 +375,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 $scope.myLastPositionMarker.setLatLng([lastPosition[1], lastPosition[0]]);
             }
             if (setView) {
-                G3ME.map.setView([lastPosition[1], lastPosition[0]]);
+                G3ME.map.panTo([lastPosition[1], lastPosition[0]], {animate:false});
             }
         }
 

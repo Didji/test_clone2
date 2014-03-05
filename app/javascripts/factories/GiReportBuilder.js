@@ -68,6 +68,15 @@ angular.module('smartgeomobile').factory('GiReportBuilder', function ($templateC
                                       ng-required="' + myField + '.required" \
                                       ng-model = "report.fields[' + field.id + ']">';
                 str += '<option></option>';
+                field.options.sort(function(a,b){
+                    if(a.label < b.label){
+                        return -1 ;
+                    } else if(a.label > b.label){
+                        return 1 ;
+                    } else {
+                        return 0 ;
+                    }
+                });
                 for (var k in field.options) {
                     str += '<option value="' + field.options[k].value + '">' + field.options[k].label + '</option>';
                 }
