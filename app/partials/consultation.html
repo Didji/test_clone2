@@ -15,6 +15,7 @@
                         <div bindonce ng-repeat='asset in assets' class="panel panel-default">
                             <div class="panel-heading" ng-click="toggleAsset(asset)">
                               <h4 class="panel-title">
+                                <span class="pull-right icon {{asset.open ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
                                 <a  class="accordion-toggle">
                                     <div bindonce bo-switch on="asset.label" >
                                         <span bo-switch-when="" bo-text="site.metamodel[okey].label"></span>

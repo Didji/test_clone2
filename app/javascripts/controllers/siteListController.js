@@ -100,4 +100,16 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
     } else {
         getRemoteSites();
     }
+
+    $scope.uninstallSite = function (site) {
+        alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label), function (e) {
+            if (e) {
+                $location.path('sites/uninstall/' + site.id);
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
+        });
+    };
+
 });

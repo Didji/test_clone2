@@ -47,7 +47,109 @@
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
             </button>
         </p>
-        <div ng-if="report.activity" ng-include="reportTemplate"></div>
+        <div ng-if="report.activity">
+
+            <div bindonce ng-repeat='tab in report.activity.tabs' class="panel panel-default report">
+                <div class="panel-heading report-heading">
+                    <h4 class="panel-title" bo-text="tab.label" ng-click="tab.show = !tab.show"></h4>
+                </div>
+                <div ng-if="tab.show" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">
+                    <div class="panel-body">
+                        <div ng-repeat='field in tab.fields'>
+                            <p ng-if="field.readonly" ng-show="field.visible">
+                                <b class="ro-label" bo-text="field.label"></b>
+                                <span class="ro-value" bo-text="report.roFields[field.id]"></span>
+                            </p>
+                            <p ng-if="!field.readonly && field.visible != false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
+                                <label
+                                  class="control-label"
+                                  bo-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
+                                    <span bo-text="field.label"></span>
+                                    <span class="required-marker icon-asterisk" ng-show="field.required"></span>
+                                    <span ng-switch on="field.type">
+
+                                        <span ng-switch-when="O">
+                                            <span>
+                                                <span class="icon-check pull-left yes" ></span>
+                                                <span class="icon-check-empty pull-left no" ></span>
+                                                <input type="checkbox" class="form-control"
+                                                    ng-model="report.fields[field.id]"
+                                                    ng-click="applyConsequences(field.id)"
+                                                    ng-true-value="Y"
+                                                    ng-false-value="N"></input>
+                                            </span>
+                                        </span>
+                                        <span ng-switch-when="L">
+                                            <select class="form-control" name="f" ng-required="field.required" ng-model = "report.fields[field.id]">
+                                                <option></option>
+                                                <option ng-repeat="options in (field.options | orderBy:'label')"
+                                                    bo-value="options.value" bo-text="options.label"></option>
+                                            </select>
+                                        </span>
+
+                                        <span ng-switch-when="D">
+                                            <input class="form-control pull-left" ng-if="isAndroid && field.default && field.default.pkey"
+                                                 ng-required="field.required" type="date" name="f"
+                                                 ng-model="report.overrides[field.id]"
+                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;">
+                                            </input>
+                                            <span class="form-control pull-left" ng-if="isAndroid && field.default && field.default.pkey">{{report.overrides[field.id]}}</span>
+
+                                            <input class="form-control pull-left" ng-if="isAndroid && (!field.default || !field.default.pkey)"
+                                                 ng-required="field.required" type="date" name="f"
+                                                 ng-model="report.fields[field.id]"
+                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;">
+                                            </input>
+                                            <span class="form-control pull-left" ng-if="isAndroid && (!field.default || !field.default.pkey)">{{report.fields[field.id]}}</span>
+
+                                            <input class="form-control pull-left" ng-if="!isAndroid && field.default && field.default.pkey"
+                                                 ng-required="field.required" type="date" name="f"
+                                                 ng-model="report.overrides[field.id]"
+                                            </input>
+                                            <input class="form-control pull-left" ng-if="!isAndroid && (!field.default || !field.default.pkey)"
+                                                 ng-required="field.required" type="date" name="f"
+                                                 ng-model="report.fields[field.id]"
+                                            </input>
+                                        </span>
+                                        <span ng-switch-when="T">
+                                            <input
+                                                bo-if="field.default && field.default.pkey"
+                                                class="form-control" ng-model='report.overrides[field.id]'
+                                                name="f" ng-required="field.required" type="time"></input>
+
+                                            <input
+                                                bo-if="!field.default || !field.default.pkey"
+                                                class="form-control" ng-model='report.fields[field.id]'
+                                                name="f" ng-required="field.required" type="time"></input>
+                                        </span>
+                                        <span ng-switch-when="N">
+                                            <input bo-if="field.default && field.default.pkey" type="number" ng-click="bidouille($event)"  class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
+                                            <input bo-if="!field.default || !field.default.pkey" type="number" ng-click="bidouille($event)"  class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
+                                            <small class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
+                                        </span>
+
+                                        <span ng-switch-default>
+                                            <input bo-if="field.default && field.default.pkey"
+                                                ng-click="bidouille($event)" ng-required="field.required" class="form-control"
+                                                type="text" name="f"
+                                                ng-model='report.overrides[field.id]'
+                                                placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}"></input>
+                                            <input bo-if="!field.default || !field.default.pkey"
+                                                ng-click="bidouille($event)" ng-required="field.required" class="form-control"
+                                                type="text" name="f"
+                                                ng-model='report.fields[field.id]'
+                                                placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}"></input>
+                                        </span>
+
+                                    </span>
+                                </label>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        </div>
         <div ng-show="!reportForm.$valid" class="container panel text-danger">
             <p ng-show="reportForm.$error.required"><span class="required-marker icon-asterisk"></span> <i18n>_REPORT_REQUIRED_FIELDS</i18n></p>
         </div>

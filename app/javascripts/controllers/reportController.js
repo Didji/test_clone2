@@ -1,6 +1,8 @@
-angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, GiReportBuilder, G3ME, i18n, Report) {
+angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, Report) {
 
     'use strict';
+
+    $scope.isAndroid = navigator.userAgent.match(/Android/i);
 
     $scope.comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
     $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
@@ -29,7 +31,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         $scope.fromConsult = true;
         $scope.step = "form";
         $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
-
+        $scope.report.activity.tabs[0].show = true ;
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function (assets) {
             $scope.report.assets = assets;
             applyDefaultValues();
@@ -104,7 +106,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     if ($scope.report.activity) {
-        GiReportBuilder.buildTemplate($scope.report.activity);
+        // GiReportBuilder.buildTemplate($scope.report.activity);
         $scope.applyVisibility();
         if (!$scope.fromConsult) {
             $scope.loadAssets();

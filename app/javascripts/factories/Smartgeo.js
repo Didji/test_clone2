@@ -910,6 +910,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo.unset('lastLeafletMapExtent');
             Smartgeo.unset('persitence.menu.open');
             Smartgeo.unset('persitence.menu.open.level');
+
+            if(!Smartgeo.get('user')){
+                return ;
+            }
             var missions = Smartgeo.get('missions_'+Smartgeo.get('user').username);
             for (var i in missions) {
                 missions[i].openned = false;
@@ -918,6 +922,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo.set('missions_'+Smartgeo.get('user').username, missions);
             }
         },
+
         clearSiteSelection: function() {
             $rootScope.site = null;
         },
