@@ -387,6 +387,29 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         }
     }
 
+    $scope.containsRequiredFields = function(tab){
+        for(var i in tab.fields){
+            if(tab.fields[i].required){
+                return true ;
+            }
+        }
+        return false;
+    };
+
+    $scope.areEveryRequiredFieldsAreFilled = function(){
+        console.log($scope.report.activity, $scope.report)
+        for(var i in $scope.report.activity.tabs){
+            var tab =  $scope.report.activity.tabs[i] ;
+            for(var j in tab.fields){
+                var field = tab.fields[j];
+                if(field.required && !$scope.report.fields[field.id]){
+                    return false ;
+                }
+            }
+        }
+        return true ;
+    };
+
     $scope.toggleCollapse = function (event) {
         event.preventDefault();
     };
