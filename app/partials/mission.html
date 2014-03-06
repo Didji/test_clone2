@@ -3,7 +3,7 @@
         <h3 class="panel-title">
           <span class="mission-label">
             <span ng-if=" mission.activity">{{mission.activity.label}} n°{{mission.number}}</span>
-            <span ng-if="!mission.activity">Appel n°{{mission.id}} : {{mission.reason}} {{mission.cause?'('+mission.cause+')':''}}</span>
+            <span ng-if="!mission.activity">Appel n°{{mission.number}} : {{mission.reason}} {{mission.cause?'('+mission.cause+')':''}}</span>
           </span>
 
           <span ng-show="!mission.isLoading && !(mission.assets.length == 0 && !mission.activity)" class="badge pull-right mission-assets-count-badge">
