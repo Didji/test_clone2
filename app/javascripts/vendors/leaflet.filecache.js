@@ -613,7 +613,7 @@ if (navigator.userAgent.match(/Android/i)) {
                     window.ChromiumCallbacks = [];
                 }
                 ChromiumCallbacks[10] = function (success) {
-                    if (success) {} else {
+                    if (!success){
                         console.log("Error while writing " + path);
                     }
                     (callback || function () {})();
@@ -623,10 +623,10 @@ if (navigator.userAgent.match(/Android/i)) {
         },
 
         getDataURL: function (img) {
-            canvas = document.createElement("canvas");
+            var canvas = document.createElement("canvas");
             canvas.width = img.width;
             canvas.height = img.height;
-            ctx = canvas.getContext("2d");
+            var ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0);
             return canvas.toDataURL();
         },
@@ -683,12 +683,23 @@ if (navigator.userAgent.match(/Android/i)) {
                             x: x,
                             y: y
                         }, z);
-                        image.onerror = this_._tileOnError ;
+                        image.onerror = function(){
+                            this_._tileOnError.call(this);
+                            image.onload = image.onerror = null;
+                            image.src = oldTile ;
+                        };
+                        // this_._tileOnError ;
                         image.onload = function () {
-
                             this_._tileOnLoad.call(this);
 
+                            if(!this_._tileOnLoad || !this_.getRemoteETag){
+                                return ;
+                            }
+
                             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+                                if(!this_.getRemoteETag){
+                                    return ;
+                                }
                                 this_.getRemoteETag(tileObject, function (remoteETag) {
                                     if (remoteETag !== null) {
                                         this_.writeMetadataTileFile(tileObject, {

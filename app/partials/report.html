@@ -63,22 +63,21 @@
                             <p ng-if="!field.readonly && field.visible != false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
                                 <label
                                   class="control-label"
-                                  bo-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
+                                  ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
                                     <span bo-text="field.label"></span>
                                     <span class="required-marker icon-asterisk" ng-show="field.required"></span>
                                     <span ng-switch on="field.type">
 
                                         <span ng-switch-when="O">
-                                            <span>
-                                                <span class="icon-check pull-left yes" ></span>
-                                                <span class="icon-check-empty pull-left no" ></span>
-                                                <input type="checkbox" class="form-control"
-                                                    ng-model="report.fields[field.id]"
-                                                    ng-click="applyConsequences(field.id)"
-                                                    ng-true-value="Y"
-                                                    ng-false-value="N"></input>
-                                            </span>
+                                            <span class="icon-check pull-left yes"></span>
+                                            <span class="icon-check-empty pull-left no"></span>
+                                            <input type="checkbox" class="form-control"
+                                                ng-model="report.fields[field.id]"
+                                                ng-click="applyConsequences(field.id)"
+                                                ng-true-value="Y"
+                                                ng-false-value="N"></input>
                                         </span>
+
                                         <span ng-switch-when="L">
                                             <select class="form-control" name="f" ng-required="field.required" ng-model = "report.fields[field.id]">
                                                 <option></option>
