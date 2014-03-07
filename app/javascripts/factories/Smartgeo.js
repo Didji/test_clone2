@@ -1025,12 +1025,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
     Smartgeo._initializeGlobalEvents();
 
-    if (window.SmartgeoChromium) {
-        window.ChromiumCallbacks[13] = function (path) {
+    window.ChromiumCallbacks[13] = function (path) {
+        if(path){
             Smartgeo.set('tileRootPath', path);
-        };
-        SmartgeoChromium.getExtApplicationDirectory();
-    }
+        } else {
+            SmartgeoChromium.getExtApplicationDirectory();
+        }
+    };
+    SmartgeoChromium.getExtApplicationDirectory();
 
     window.Smartgeo = Smartgeo;
     $rootScope.rights = window.smartgeoRightsManager;

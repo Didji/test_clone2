@@ -20,7 +20,9 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             window.SmartgeoChromium = false;
         }
 
-        window.ChromiumCallbacks = [];
+        if(!window.ChromiumCallbacks){
+            window.ChromiumCallbacks = [];
+        }
 
         if(window.smartgeoRightsManager.timebomb){
             window.expirationDate = "02/14/2015" ; // mm/jj/aaaa
