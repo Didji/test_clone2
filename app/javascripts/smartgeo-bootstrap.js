@@ -5,7 +5,7 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             'goto'                  :  true,
             'planning'              :  true,
             'media'                 :  true,
-            'census'                :  false,
+            'census'                :  true,
             'logout'                :  true,
             '_DONT_REALLY_RESET'    : false,
             'tileCache'             :  true,
