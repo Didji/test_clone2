@@ -11,12 +11,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     var PREOPEN_TIMER;
 
-    $scope.$watch('loading', function () {
-        var elt = $('.consultation-content')[0];
-        elt.style.display = 'none';
-        elt.offsetHeight = elt.offsetHeight;
-        elt.style.display = 'block';
-    });
+    if(!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)){
+        $scope.$watch('loading', function () {
+            var elt = $('.consultation-content')[0];
+            elt.style.display = 'none';
+            elt.offsetHeight = elt.offsetHeight;
+            elt.style.display = 'block';
+        });
+    }
 
     // Lorsque la carte nous informe qu'une consultation est demandée,
     // on prépare une ouverture du panneau de consultation. S'il n'y a
