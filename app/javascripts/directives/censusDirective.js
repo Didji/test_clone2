@@ -95,6 +95,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 $scope.drawLine = function(node) {
                     node.geometry = undefined;
+                    node.tmpGeometry = undefined;
                     if (node.layer) {
                         $scope.map.removeLayer(node.layer);
                         delete node.layer;
@@ -145,6 +146,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     $scope.map.off('mousemove click').on('mousemove', function(e) {
                         node.layer.setLatLng(e.latlng);
                     }).on('click', function(e) {
+                        node.layer.setLatLng(e.latlng);
                         node.geometry = [e.latlng.lat, e.latlng.lng];
                         $scope.map.off('mousemove click');
                         $scope.$apply();

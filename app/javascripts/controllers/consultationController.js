@@ -150,13 +150,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.close = function () {
+        console.log('close');
         if ($scope.state === 'closed') {
             return;
         }
         G3ME.fullscreen();
         $scope.state = 'closed';
         if(Smartgeo.isRunningOnBigScreen()){
-            for (var i = 0; i < $scope.assets.length; i++) {
+            for (var i = 0; $scope.assets && i < $scope.assets.length; i++) {
                 if($scope.assets[i].open){
                     $scope.toggleAsset($scope.assets[i]);
                 }
@@ -167,6 +168,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.open = function () {
+        console.log('open');
         if ($scope.state === 'open') {
             return;
         }
