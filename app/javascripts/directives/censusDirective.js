@@ -133,18 +133,19 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $scope.drawPoint = function(node) {
 
                     node.geometry = undefined;
-                    if (!node.layer) {
-                        node.layer = L.marker($scope.map.getCenter(), {
-                            icon: L.icon({
-                                iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
-                                iconAnchor: [16, 16]
-                            })
-                        }).addTo($scope.map);
-                        $scope.mapLayers.push(node.layer);
-                    }
 
                     $scope.map.off('mousemove click').on('mousemove', function(e) {
-                        node.layer.setLatLng(e.latlng);
+                        if (!node.layer) {
+                            node.layer = L.marker(e.latlng, {
+                                icon: L.icon({
+                                    iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                                    iconAnchor: [16, 16]
+                                })
+                            }).addTo($scope.map);
+                            $scope.mapLayers.push(node.layer);
+                        } else {
+                            node.layer.setLatLng(e.latlng);
+                        }
                     }).on('click', function(e) {
                         node.layer.setLatLng(e.latlng);
                         node.geometry = [e.latlng.lat, e.latlng.lng];
