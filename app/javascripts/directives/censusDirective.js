@@ -102,6 +102,26 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         } else {
                             node.tmpGeometry.push(clickLatLng);
                         }
+                        if (!$scope.lastPointLayer) {
+
+                            $scope.lastPointLayer = new L.Circle(clickLatLng, 15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)), {
+                                color: "#fc9e49",
+                                weight: 1,
+                                fillOpacity: 1
+                            }).addTo($scope.map);
+                            $scope.lastPointLayer.on('click', function(e) {
+                                node.geometry = angular.copy(node.tmpGeometry);
+                                delete node.tmpGeometry;
+                                $scope.map.off('click', mouseClickHandler);
+                                $scope.map.removeLayer($scope.lastPointLayer);
+                                delete $scope.lastPointLayer ;
+                                $scope.$apply();
+                            });
+                        } else {
+                            $scope.lastPointLayer.setLatLng(clickLatLng);
+                            $scope.lastPointLayer.setRadius(15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)))
+                        }
+
                         if (!node.layer) {
                             var style = $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style;
                             node.layer = L.polyline([clickLatLng], {
@@ -110,13 +130,6 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                                 weight: style.width,
                                 opacity: 1
                             }).addTo($scope.map);
-                            node.layer.on('click', function(e) {
-                                node.geometry = angular.copy(node.tmpGeometry);
-                                delete node.tmpGeometry;
-                                $scope.map.off('click', mouseClickHandler);
-                                node.layer.off('click');
-                                $scope.$apply();
-                            });
                             $scope.mapLayers.push(node.layer);
                         } else {
                             node.layer.addLatLng(clickLatLng);
@@ -131,7 +144,6 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     }
 
                     $scope.map.off('click', mouseClickHandler).on('click',mouseClickHandler);
-
                 };
 
                 $scope.drawPoint = function(node) {
