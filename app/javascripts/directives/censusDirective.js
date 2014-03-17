@@ -94,13 +94,8 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.drawLine = function(node) {
-                    node.geometry = undefined;
-                    node.tmpGeometry = undefined;
-                    if (node.layer) {
-                        $scope.map.removeLayer(node.layer);
-                        delete node.layer;
-                    }
-                    $scope.map.off('click').on('click', function(e) {
+
+                    function mouseClickHandler(e){
                         var clickLatLng = [e.latlng.lat, e.latlng.lng];
                         if (!node.tmpGeometry) {
                             node.tmpGeometry = [clickLatLng];
@@ -118,7 +113,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                             node.layer.on('click', function(e) {
                                 node.geometry = angular.copy(node.tmpGeometry);
                                 delete node.tmpGeometry;
-                                $scope.map.off('click');
+                                $scope.map.off('click', mouseClickHandler);
                                 node.layer.off('click');
                                 $scope.$apply();
                             });
@@ -126,7 +121,16 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         } else {
                             node.layer.addLatLng(clickLatLng);
                         }
-                    });
+                    }
+
+                    node.geometry = undefined;
+                    node.tmpGeometry = undefined;
+                    if (node.layer) {
+                        $scope.map.removeLayer(node.layer);
+                        delete node.layer;
+                    }
+
+                    $scope.map.off('click', mouseClickHandler).on('click',mouseClickHandler);
 
                 };
 
@@ -134,24 +138,41 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                     node.geometry = undefined;
 
-                    $scope.map.off('mousemove click').on('mousemove', function(e) {
-                        if (!node.layer) {
-                            node.layer = L.marker(e.latlng, {
-                                icon: L.icon({
-                                    iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
-                                    iconAnchor: [16, 16]
-                                })
-                            }).addTo($scope.map);
-                            $scope.mapLayers.push(node.layer);
-                        } else {
-                            node.layer.setLatLng(e.latlng);
+                    function initializeNodeLayer(e){
+                        if (node.layer) {
+                            return;
                         }
-                    }).on('click', function(e) {
+                        node.layer = L.marker(e.latlng, {
+                            icon: L.icon({
+                                iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                                iconAnchor: [16, 16]
+                            })
+                        }).addTo($scope.map);
+                        $scope.mapLayers.push(node.layer);
+                    }
+
+                    function resetCensusMapHandler(){
+                        $scope.map.off('mousemove', mouseMoveHandler)
+                                  .off('click'    , mouseClickHandler);
+                    }
+
+                    function mouseMoveHandler(e){
+                        initializeNodeLayer(e);
+                        node.layer.setLatLng(e.latlng);
+                    }
+
+                    function mouseClickHandler(e){
+                        initializeNodeLayer(e);
                         node.layer.setLatLng(e.latlng);
                         node.geometry = [e.latlng.lat, e.latlng.lng];
-                        $scope.map.off('mousemove click');
+                        resetCensusMapHandler();
                         $scope.$apply();
-                    });
+                    }
+
+                    resetCensusMapHandler();
+
+                    $scope.map.on( 'mousemove', mouseMoveHandler)
+                              .on( 'click'    , mouseClickHandler);
 
                 };
 
