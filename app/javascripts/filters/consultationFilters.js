@@ -103,4 +103,18 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
         }
         return objectsOut;
     };
+}).filter('object2Array', function ($rootScope) {
+
+    'use strict';
+
+    return function (objects) {
+        var out = [] ;
+        for(var value in objects){
+            out.push({
+                'value' : value,
+                'label' : objects[value]
+            });
+        }
+        return out;
+    };
 });

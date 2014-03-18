@@ -11,12 +11,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     var PREOPEN_TIMER;
 
-    $scope.$watch('loading', function () {
-        var elt = $('.consultation-content')[0];
-        elt.style.display = 'none';
-        elt.offsetHeight = elt.offsetHeight;
-        elt.style.display = 'block';
-    });
+    if(!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)){
+        $scope.$watch('loading', function () {
+            var elt = $('.consultation-content')[0];
+            elt.style.display = 'none';
+            elt.offsetHeight = elt.offsetHeight;
+            elt.style.display = 'block';
+        });
+    }
 
     // Lorsque la carte nous informe qu'une consultation est demandée,
     // on prépare une ouverture du panneau de consultation. S'il n'y a
@@ -150,13 +152,14 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.close = function () {
+        console.log('close');
         if ($scope.state === 'closed') {
             return;
         }
         G3ME.fullscreen();
         $scope.state = 'closed';
         if(Smartgeo.isRunningOnBigScreen()){
-            for (var i = 0; i < $scope.assets.length; i++) {
+            for (var i = 0; $scope.assets && i < $scope.assets.length; i++) {
                 if($scope.assets[i].open){
                     $scope.toggleAsset($scope.assets[i]);
                 }
@@ -167,6 +170,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.open = function () {
+        console.log('open');
         if ($scope.state === 'open') {
             return;
         }

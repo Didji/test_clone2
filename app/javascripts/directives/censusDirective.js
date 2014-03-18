@@ -94,18 +94,34 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.drawLine = function(node) {
-                    node.geometry = undefined;
-                    if (node.layer) {
-                        $scope.map.removeLayer(node.layer);
-                        delete node.layer;
-                    }
-                    $scope.map.off('click').on('click', function(e) {
+
+                    function mouseClickHandler(e){
                         var clickLatLng = [e.latlng.lat, e.latlng.lng];
                         if (!node.tmpGeometry) {
                             node.tmpGeometry = [clickLatLng];
                         } else {
                             node.tmpGeometry.push(clickLatLng);
                         }
+                        if (!$scope.lastPointLayer) {
+
+                            $scope.lastPointLayer = new L.Circle(clickLatLng, 15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)), {
+                                color: "#fc9e49",
+                                weight: 1,
+                                fillOpacity: 1
+                            }).addTo($scope.map);
+                            $scope.lastPointLayer.on('click', function(e) {
+                                node.geometry = angular.copy(node.tmpGeometry);
+                                delete node.tmpGeometry;
+                                $scope.map.off('click', mouseClickHandler);
+                                $scope.map.removeLayer($scope.lastPointLayer);
+                                delete $scope.lastPointLayer ;
+                                $scope.$apply();
+                            });
+                        } else {
+                            $scope.lastPointLayer.setLatLng(clickLatLng);
+                            $scope.lastPointLayer.setRadius(15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)))
+                        }
+
                         if (!node.layer) {
                             var style = $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style;
                             node.layer = L.polyline([clickLatLng], {
@@ -114,26 +130,31 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                                 weight: style.width,
                                 opacity: 1
                             }).addTo($scope.map);
-                            node.layer.on('click', function(e) {
-                                node.geometry = angular.copy(node.tmpGeometry);
-                                delete node.tmpGeometry;
-                                $scope.map.off('click');
-                                node.layer.off('click');
-                                $scope.$apply();
-                            });
                             $scope.mapLayers.push(node.layer);
                         } else {
                             node.layer.addLatLng(clickLatLng);
                         }
-                    });
+                    }
 
+                    node.geometry = undefined;
+                    node.tmpGeometry = undefined;
+                    if (node.layer) {
+                        $scope.map.removeLayer(node.layer);
+                        delete node.layer;
+                    }
+
+                    $scope.map.off('click', mouseClickHandler).on('click',mouseClickHandler);
                 };
 
                 $scope.drawPoint = function(node) {
 
                     node.geometry = undefined;
-                    if (!node.layer) {
-                        node.layer = L.marker($scope.map.getCenter(), {
+
+                    function initializeNodeLayer(e){
+                        if (node.layer) {
+                            return;
+                        }
+                        node.layer = L.marker(e.latlng, {
                             icon: L.icon({
                                 iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                                 iconAnchor: [16, 16]
@@ -142,13 +163,28 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         $scope.mapLayers.push(node.layer);
                     }
 
-                    $scope.map.off('mousemove click').on('mousemove', function(e) {
+                    function resetCensusMapHandler(){
+                        $scope.map.off('mousemove', mouseMoveHandler)
+                                  .off('click'    , mouseClickHandler);
+                    }
+
+                    function mouseMoveHandler(e){
+                        initializeNodeLayer(e);
                         node.layer.setLatLng(e.latlng);
-                    }).on('click', function(e) {
+                    }
+
+                    function mouseClickHandler(e){
+                        initializeNodeLayer(e);
+                        node.layer.setLatLng(e.latlng);
                         node.geometry = [e.latlng.lat, e.latlng.lng];
-                        $scope.map.off('mousemove click');
+                        resetCensusMapHandler();
                         $scope.$apply();
-                    });
+                    }
+
+                    resetCensusMapHandler();
+
+                    $scope.map.on( 'mousemove', mouseMoveHandler)
+                              .on( 'click'    , mouseClickHandler);
 
                 };
 
