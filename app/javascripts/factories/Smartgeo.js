@@ -1025,7 +1025,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
     Smartgeo._initializeGlobalEvents();
 
-
     if(window.SmartgeoChromium){
         window.ChromiumCallbacks[13] = function (path) {
             if(path){
