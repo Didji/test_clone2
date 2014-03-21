@@ -781,6 +781,8 @@ if (navigator.userAgent.match(/Android/i)) {
                         }
                     });
                     callback(null);
+                } else {
+                    callback(null);
                 }
             };
             http.send();
@@ -1592,30 +1594,35 @@ if (navigator.userAgent.match(/Android/i)) {
                             window.URL = window.URL || window.webkitURL;
                             image.src = URL.createObjectURL(blob);
                             image.onerror = this_._tileOnError ;
-                            image.onload = this_._tileOnLoad ;
-                            this_.doINeedToReCacheThisTile(tileObject, file, function (yes) {
-                                if (yes) {
-                                    var oldTile = image.src;
-                                    image.src = this_.getTileUrl({
-                                        x: x,
-                                        y: y
-                                    }, z);
-                                    image.onerror = this_._tileOnError ;
-                                    image.onload = function () {
-                                        this_._tileOnLoad.call(this);
-                                        this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
-                                            this_.getRemoteETag(tileObject, function (remoteETag) {
-                                                if (remoteETag !== null) {
-                                                    this_.writeMetadataTileFile(tileObject, {
-                                                        etag: remoteETag
-                                                    });
-                                                }
+                            image.onload = function(){
+                                this_._tileOnLoad.call(this) ;
+                                this_.doINeedToReCacheThisTile(tileObject, file, function (yes) {
+                                    if (yes) {
+                                        var oldTile = image.src;
+                                        image.src = this_.getTileUrl({
+                                            x: x,
+                                            y: y
+                                        }, z);
+                                        image.onerror = function () {
+                                            image.src = oldTile;
+                                            this_._tileOnError.call(this);
+                                        }
+                                        image.onload = function () {
+                                            this_._tileOnLoad.call(this);
+                                            this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+                                                this_.getRemoteETag(tileObject, function (remoteETag) {
+                                                    if (remoteETag !== null) {
+                                                        this_.writeMetadataTileFile(tileObject, {
+                                                            etag: remoteETag
+                                                        });
+                                                    }
+                                                });
                                             });
-                                        });
-                                        image.onerror = image.onload = null;
-                                    };
-                                }
-                            });
+                                            image.onerror = image.onload = null;
+                                        };
+                                    }
+                                });
+                            }
                         };
                     });
 
@@ -1719,9 +1726,9 @@ if (navigator.userAgent.match(/Android/i)) {
         doINeedToReCacheThisTile: function (tileObject, file, callback) {
             var _this = this;
             this.readMetadataTileFile(tileObject, function (metadata) {
-                if (!metadata.etag) {
-                    callback(true);
-                } else {
+                // if (!metadata.etag) {
+                //     callback(true);
+                // } else {
                     _this.getRemoteETag(tileObject, function (remoteETag) {
                         if (metadata.etag != remoteETag && remoteETag !== null) {
                             callback(true);
@@ -1729,7 +1736,7 @@ if (navigator.userAgent.match(/Android/i)) {
                             callback(false);
                         }
                     });
-                }
+                // }
             });
         },
 
@@ -1743,10 +1750,8 @@ if (navigator.userAgent.match(/Android/i)) {
             http.open('HEAD', url, true);
             http.onreadystatechange = function () {
                 if (this.readyState == this.DONE && this.status === 200) {
-                   // console.log('ici',this.readyState, this.status);
                    callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                   // console.log('ici',this.readyState, this.status);
                     Smartgeo.silentLogin(function(){
                         console.log('refresh');
                         for (var i in self._map._layers) {
@@ -1755,7 +1760,7 @@ if (navigator.userAgent.match(/Android/i)) {
                     });
                     callback(null);
                 } else {
-                   // console.log('ici',this.readyState, this.status);
+                    callback(null);
                 }
 
             };

@@ -63,8 +63,11 @@
  */
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
-    [NSClassFromString(@"WebView") performSelector:@selector(_enableRemoteInspector)];
-    
+//    //[NSClassFromString(@"WebView") performSelector:@selector(_enableRemoteInspector)];
+//    NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024
+//                                                         diskCapacity:20 * 1024 * 1024
+//                                                             diskPath:nil];
+//    [NSURLCache setSharedURLCache:URLCache];
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
 
 #if __has_feature(objc_arc)

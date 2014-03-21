@@ -121,7 +121,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
 
         if (G3ME.active_layers) {
-            request += ' and (symbolId REGEXP "^('+G3ME.active_layers.join('|')+')\\d+" )' ;
+            request += ' and (symbolId REGEXP "^('+G3ME.active_layers.join('|')+')[0-9]+" )' ;
         }
         request += " order by priority LIMIT 0,100 ";
 

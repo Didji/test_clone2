@@ -77,7 +77,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             // this.tileUrl='http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/999/256/{z}/{x}/{y}.png';
             var BackgroundTile;
 
-            if (this.filecacheIsEnable && !navigator.userAgent.match(/Apple/i)) {
+            if (this.filecacheIsEnable){
+                // && !navigator.userAgent.match(/Apple/i)) {
                 BackgroundTile = L.TileLayer.FileCache;
             } else {
                 BackgroundTile = L.TileLayer;
