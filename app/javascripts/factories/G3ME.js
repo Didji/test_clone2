@@ -33,6 +33,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.map = new L.map(this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
+                zoomAnimation: true,
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM
             }).addControl(L.control.zoom({
@@ -73,7 +74,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 this.tileUrl = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-            this.tileUrl= 'http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/998/256/{z}/{x}/{y}.png';
+            // this.tileUrl= 'http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/998/256/{z}/{x}/{y}.png';
             // this.tileUrl='http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/999/256/{z}/{x}/{y}.png';
             var BackgroundTile;
 
@@ -120,11 +121,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             window.mapmap= this.map ;
 
 
-            this.myWorker = new Worker("javascripts/workers/test.js");
+            // this.myWorker = new Worker("javascripts/workers/test.js");
 
-            this.myWorker.onmessage = function (oEvent) {
-                console.log("Called back by the worker!\n", oEvent);
-            };
+            // this.myWorker.onmessage = function (oEvent) {
+            //     console.log("Called back by the worker!\n", oEvent);
+            // };
 
 
         },
@@ -311,7 +312,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             G3ME.poolRequestExecutorTimeout = setTimeout(function(){
                 G3ME.poolRequestExecutor(angular.copy(G3ME.requestPool));
                 G3ME.requestPool={};
-            }, 10);
+            }, 20);
         },
 
         poolRequestExecutor: function(pool){
@@ -323,13 +324,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     args = args.concat(pool[databaseName][uuid].initargs);
                 }
                 request = request.join(' UNION ALL ') + ' ORDER BY tileUuid, symbolId ' ;
-
-                (function(currentRequestPool, currentDb, req, castle){
+                (function(currentRequestPool, currentDb, req, args){
                     SQLite.openDatabase({name: currentDb, bgType: 1}).transaction(function (tx) {
-                        tx.executeSql(req, castle,
+                        tx.executeSql(req, args,
                             function (tx, results) {
                                 for(var uuid in currentRequestPool){
-
                                     currentRequestPool[uuid].callback(results);
                                 }
                             }, function(){console.log(arguments);})
@@ -340,7 +339,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
     };
 
     function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas, labelCache, drawnLabels) {
-            G3ME.myWorker.postMessage("asset");
 
         var rows = results.rows, previousSymbolId = null, changeContext = false, image, assetSymbology, uuidHasBeenSeen, currentMapBounds = G3ME.map.getBounds();
 
@@ -352,8 +350,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         for (var i = 0, length = rows.length; i < length; i++) {
 
             var asset = rows.item(i);
-            // window.myWorker = G3ME.myWorker ;
-            // window.myResults = results ;
+
             if(asset.tileUuid !== uuid && !uuidHasBeenSeen){
                 continue ;
             } else if(asset.tileUuid === uuid && !uuidHasBeenSeen) {

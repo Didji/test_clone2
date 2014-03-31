@@ -27,15 +27,32 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         $rootScope.map_marker,
         $rootScope.map_zoom || 18);
 
+
+
+    G3ME.lastLeafletMapExtentTimeout = 0 ;
     G3ME.map.on('moveend', function (e) {
-        var extent = G3ME.map.getBounds();
-        if (extent._northEast.lat !== extent._southWest.lat ||
-            extent._northEast.lng !== extent._southWest.lng) {
-            Smartgeo.set('lastLeafletMapExtent', [
-                [extent._northEast.lat, extent._northEast.lng],
-                [extent._southWest.lat, extent._southWest.lng]
-            ]);
-        }
+        clearTimeout(G3ME.lastLeafletMapExtentTimeout);
+        G3ME.lastLeafletMapExtentTimeout = setTimeout(function(){
+            var extent = G3ME.map.getBounds();
+            if (extent._northEast.lat !== extent._southWest.lat ||
+                extent._northEast.lng !== extent._southWest.lng) {
+                Smartgeo.set('lastLeafletMapExtent', [
+                    [extent._northEast.lat, extent._northEast.lng],
+                    [extent._southWest.lat, extent._southWest.lng]
+                ]);
+            }
+        }, 5000);
+        // if(G3ME.lastLeafletMapExtentModulo % 10 === 0){
+        //     var extent = G3ME.map.getBounds();
+        //     if (extent._northEast.lat !== extent._southWest.lat ||
+        //         extent._northEast.lng !== extent._southWest.lng) {
+        //         Smartgeo.set('lastLeafletMapExtent', [
+        //             [extent._northEast.lat, extent._northEast.lng],
+        //             [extent._southWest.lat, extent._southWest.lng]
+        //         ]);
+        //     }
+        // }
+        // G3ME.lastLeafletMapExtentModulo++;
     });
 
     function noConsultableAssets(coords) {
