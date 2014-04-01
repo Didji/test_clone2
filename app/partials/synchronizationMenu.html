@@ -27,7 +27,7 @@
                             </li>
                         </ul>
                     </div>
-                    {{site.activities._byId[report.activity].label}}<br/>
+                    {{site.activities._byId[report.activity].label}} ({{report.site}})<br/>
                     <small>{{report.timestamp | date:'HH:mm dd/MM'}}</small>
                 </div>
 
@@ -54,7 +54,7 @@
         <label style="margin:5%;" ng-click='displaySync = !displaySync'> <i class="fa" ng-class="displaySync ? 'fa-check-circle-o' : 'fa-circle-o' " ></i>  Afficher les comptes-rendus et objets synchronisés</label>
         <li ng-if="displaySync" class="container">
             <div class="list-group" style="margin-bottom:0;">
-                <div class="list-group-item" ng-repeat="report in (reports | synchronized) track by report.uuid " ng-hide="report.hide">
+                <div class="list-group-item" ng-repeat="report in filteredReport = (reports | synchronized) track by report.uuid " ng-hide="report.hide">
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
                             <span class="icon icon-gears"></span> <span  ng-show='!report.syncInProgress' class="caret"></span>
@@ -66,11 +66,11 @@
                             </li>
                         </ul>
                     </div>
-                    {{site.activities._byId[report.activity].label}}<br/>
+                    {{site.activities._byId[report.activity].label}} ({{report.site}})<br/>
                     <small>{{report.timestamp | date:'HH:mm dd/MM'}}</small><br/>
                     <span class="label label-success">Synchronisé</span>
                 </div>
-                <div style="padding-bottom: 25px;" class="list-group-item" ng-repeat="object in (census | synchronized) track by object.uuid " ng-hide="object.hide">
+                <div style="padding-bottom: 25px;" class="list-group-item" ng-repeat="object in filteredCensus = (census | synchronized) track by object.uuid " ng-hide="object.hide">
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
                             <span class="icon icon-gears"></span> <span  ng-show='!object.syncInProgress' class="caret"></span>
@@ -86,7 +86,8 @@
                     <span class="label label-success">Synchronisé</span>
                 </div>
             </div>
-            <button class="btn btn-default" style="width:100%" ng-click="eraseAllSynced()">Vider l'historique de synchronisation</button>
+            <label ng-if="filteredCensus.length+filteredReport.length == 0"  for="">L'historique de synchronisation est vide.</label>
+            <button ng-if="filteredCensus.length+filteredReport.length > 0" class="btn btn-default" style="width:100%; margin-top:10px" ng-click="eraseAllSynced()">Vider l'historique de synchronisation</button>
         </li>
 
 

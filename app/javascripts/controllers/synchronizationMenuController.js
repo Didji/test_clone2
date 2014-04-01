@@ -65,7 +65,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
     $scope.eraseAllSynced = function () {
         alertify.confirm("Êtes vous sûr de vouloir vider l'historique de synchronisation ?", function (yes) {
-            if (!yes) {
+            if (yes) {
                 Smartgeo.get_('reports', function (reports) {
                     reports = reports || [];
                     $scope.reports = [];

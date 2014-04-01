@@ -4,6 +4,11 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
 
     var Report = {
         save: function (report) {
+
+            if(!report.site){
+                report.site = $rootScope.site.label;
+            }
+
             var deferred = $q.defer();
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {
                 timeout: 5000
