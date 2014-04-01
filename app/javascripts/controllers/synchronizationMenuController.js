@@ -63,6 +63,45 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         }
     };
 
+    $scope.eraseAllSynced = function () {
+        alertify.confirm("Êtes vous sûr de vouloir vider l'historique de synchronisation ?", function (yes) {
+            if (!yes) {
+                Smartgeo.get_('reports', function (reports) {
+                    reports = reports || [];
+                    $scope.reports = [];
+                    for (var i = 0; i < reports.length; i++) {
+                        if(!reports[i].synced){
+                            $scope.reports.push(reports[i]);
+                        }
+                    }
+                    Smartgeo.set_('reports', $scope.reports, function () {
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                        if (!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    });
+                });
+                Smartgeo.get_('census', function (census) {
+                    census = census || [];
+                    var uuids = {} ;
+                    $scope.census = [];
+                    for (var i = 0; i < census.length; i++) {
+                        if(!census[i].synced){
+                            $scope.census.push(census[i]);
+                        }
+                    }
+                    Smartgeo.set_('census', $scope.census, function () {
+                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                        if (!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    });
+
+                });
+            }
+        });
+    };
+
     $scope.sync = function (report, force) {
         if (report.synced && !force) {
             return false;
