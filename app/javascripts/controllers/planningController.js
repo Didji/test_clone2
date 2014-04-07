@@ -128,6 +128,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
      */
     $scope.synchronize = function () {
+        return ;
         Mission.query()
             .success(function (data) {
 
