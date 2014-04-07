@@ -410,8 +410,8 @@ public class GimapMobileMainActivity extends Activity {
             final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
 
             if (getActiveShell() != null && getActiveShell().getContentView() != null) {
-                Log.d(TAG, "[window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");]");
-                getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
+                Log.d(TAG, "[window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +", undefined, " +  locationInfo.lastAccuracy +" );]");
+                getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +", undefined, " +  locationInfo.lastAccuracy +"  );");
             }
         }
     };

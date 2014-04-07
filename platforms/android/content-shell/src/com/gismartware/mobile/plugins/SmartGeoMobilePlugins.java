@@ -81,7 +81,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
         LocationLibrary.forceLocationUpdate(context);
         LocationInfo info = new LocationInfo(context);
         info.refresh(context);
-        view.evaluateJavaScript("window.ChromiumCallbacks[0](" + info.lastLong + "," +  info.lastLat +");");
+        view.evaluateJavaScript("window.ChromiumCallbacks[0](" + info.lastLong + "," +  info.lastLat +", undefined, " +  info.lastAccuracy +"  );");
         //final LocationInfo locationInfo = new LocationInfo(context) ;
         //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
         //view.evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");

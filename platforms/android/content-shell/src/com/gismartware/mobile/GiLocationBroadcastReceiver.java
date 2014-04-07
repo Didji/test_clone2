@@ -17,8 +17,6 @@ public class GiLocationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
-
-
         //Log.d("gismartware", "lastlat:"+locationInfo.lastLat);
         //Log.d("gismartware", "lastlong:"+locationInfo.lastLong);
         //Toast.makeText(context, Float.toString(locationInfo.lastLat), Toast.LENGTH_SHORT).show();

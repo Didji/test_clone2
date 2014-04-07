@@ -453,10 +453,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             if (SmartgeoChromium.locate) {
 
-                ChromiumCallbacks[0] = function (lng, lat, alt) {
-                    console.log('Freeing getUsersLocation mutex : '+tokenUuid+' ('+lng +'|'+ lat+')');
+                ChromiumCallbacks[0] = function (lng, lat, alt, accuracy) {
+                    console.log("accuracy:"+accuracy)
+                    console.log('Freeing getUsersLocation mutex : '+tokenUuid+' ('+lng +'|'+ lat+'|'+accuracy+')');
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    success(lat, lng, alt);
+                    ChromiumCallbacks[0] = angular.noop;
+                    success(lat, lng, alt, accuracy);
                 };
 
                 SmartgeoChromium.locate();
@@ -483,7 +485,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             } else {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    success(position.coords.latitude, position.coords.longitude, position.coords.altitude);
+                    console.log(position);
+                    success(position.coords.latitude, position.coords.longitude, position.coords.altitude, position.coords.accuracy);
                 }, function () {
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     error();
