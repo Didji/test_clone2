@@ -44,10 +44,10 @@ public class GimapMobileApplication extends Application {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+        super.onCreate(); 
         initializeApplicationParameters();
         try {
-            LocationLibrary.initialiseLibrary(getBaseContext(), 30 * 1000, 30 * 1000,"com.gismartware.mobile");
+            LocationLibrary.initialiseLibrary(getBaseContext(), 2000, 2000,"com.gismartware.mobile");
             LocationLibrary.useFineAccuracyForRequests(true);
         } catch (UnsupportedOperationException ex) {
             Log.d("TestApplication", "UnsupportedOperationException thrown - the device doesn't have any location providers");
