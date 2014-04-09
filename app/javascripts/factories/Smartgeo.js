@@ -338,7 +338,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Local storage getter
          */
         get: function (parameter) {
-            console.log('get(\''+parameter+'\')');
             if (Smartgeo.parametersCache[parameter]) {
                 return Smartgeo.parametersCache[parameter];
             } else {
@@ -356,7 +355,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Local storage setter
          */
         set: function (parameter, value) {
-            console.log('set(\''+parameter+'\')');
             Smartgeo.parametersCache[parameter] = value;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
@@ -385,7 +383,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * IndexedDB getter
          */
         get_: function (parameter, callback) {
-            console.log('get_(\''+parameter+'\')');
             if (Smartgeo.parametersCache_[parameter]) {
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
@@ -406,7 +403,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * IndexedDB setter
          */
         set_: function (parameter, value, callback) {
-            console.log('set_(\''+parameter+'\')');
             Smartgeo.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },
@@ -446,20 +442,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         getUsersLocation: function (success, error) {
 
             if(Smartgeo.GET_USER_LOCATION_MUTEX){
-                console.log('Cancelling getUsersLocation request cause of mutex token : '+ Smartgeo.GET_USER_LOCATION_MUTEX);
                 return ;
             }
 
             var tokenUuid = Smartgeo.uuid();
 
-            console.log('Taking getUsersLocation mutex token : '+ tokenUuid);
             Smartgeo.GET_USER_LOCATION_MUTEX = tokenUuid ;
 
             if (SmartgeoChromium.locate) {
 
                 ChromiumCallbacks[0] = function (lng, lat, alt, accuracy) {
-                    console.log("accuracy:"+accuracy)
-                    console.log('Freeing getUsersLocation mutex : '+tokenUuid+' ('+lng +'|'+ lat+'|'+accuracy+')');
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     ChromiumCallbacks[0] = angular.noop;
                     success(lat, lng, alt, accuracy);
@@ -471,25 +463,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     if(Smartgeo.GET_USER_LOCATION_MUTEX !== tokenUuid){
                         return false;
                     }
-                    console.log('Freeing getUsersLocation mutex cause of timeout: '+tokenUuid);
                     ChromiumCallbacks[0] = angular.noop;
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
                     error();
                 }, 30000)
 
-                // $timeout(function () {
-                //     // if(Smartgeo.GET_USER_LOCATION_MUTEX === false){
-                //         // return false;
-                //     // }
-                //     Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                //     // ChromiumCallbacks[0] = angular.noop;
-                //     error();
-                // }, 30000);
-
             } else {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    console.log(position);
                     success(position.coords.latitude, position.coords.longitude, position.coords.altitude, position.coords.accuracy);
                 }, function () {
                     Smartgeo.GET_USER_LOCATION_MUTEX = false;
@@ -765,8 +746,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }).transaction(function (t) {
                     t.executeSql(request, [],
                         function (t, results) {
-                            console.timeEnd(request);
-
                             for (var i = 0; i < results.rows.length; i++) {
                                 var asset = results.rows.item(i);
                                 try {
@@ -898,7 +877,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     'forcegimaplogin': true
                 });
             }
-            console.log('login', url);
             $http.post(url, {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             }).success(function () {
