@@ -4,8 +4,10 @@ var SQLite = {
     DATABASE_VERSION: '0.0.1-angular',
 
     databases: {},
+    transactions: {},
 
     openDatabase: function (args) {
+        // console.time('Open database '+args.name );
         if (!SQLite.databases[args.name]) {
             if (window.sqlitePlugin) {
                 SQLite.databases[args.name] = sqlitePlugin.openDatabase({
@@ -16,8 +18,23 @@ var SQLite = {
                 SQLite.databases[args.name] = openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
             }
         }
-
+        // console.timeEnd('Open database '+args.name );
         return SQLite.databases[args.name];
+    },
+
+    getTransaction : function(args, callback){
+        if (!SQLite.transactions[args.name]) {
+            this.openDatabase(args).readTransaction(function (tx) {
+                SQLite.transactions[args.name] = tx ;
+                callback(SQLite.transactions[args.name]);
+                setTimeout(function(){
+                    SQLite.transactions[args.name] = undefined ;
+                }, 1000)
+            });
+        } else {
+            callback(SQLite.transactions[args.name]);
+        }
+
     },
 
     parameters: function () {
@@ -70,6 +87,8 @@ var SQLite = {
     }
 
 };
+
+
 
 window.smartgeoPersistenceSQLite = SQLite;
 

@@ -89,7 +89,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
             $event.stopPropagation();
         }
         $scope[$scope.mlPushMenu.menuState === 'opened' ? 'close' : 'open']();
-
+        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         return false;
     };
 

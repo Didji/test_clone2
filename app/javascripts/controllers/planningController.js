@@ -302,13 +302,16 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Remove trace from localStorage with no mission attached.
      */
     $scope.removeDeprecatedTraces = function () {
-        var traces = Smartgeo.get('traces');
+        var traces = Smartgeo.get('traces'), updated = false;
         for (var i in traces) {
             if (!$rootScope.missions[i]) {
+                updated = true;
                 delete traces[i];
             }
         }
-        Smartgeo.set('traces', traces);
+        if(updated){
+            Smartgeo.set('traces', traces);
+        }
     };
 
     /**

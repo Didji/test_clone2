@@ -338,6 +338,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Local storage getter
          */
         get: function (parameter) {
+            console.log('get(\''+parameter+'\')');
             if (Smartgeo.parametersCache[parameter]) {
                 return Smartgeo.parametersCache[parameter];
             } else {
@@ -355,6 +356,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Local storage setter
          */
         set: function (parameter, value) {
+            console.log('set(\''+parameter+'\')');
             Smartgeo.parametersCache[parameter] = value;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
@@ -383,6 +385,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * IndexedDB getter
          */
         get_: function (parameter, callback) {
+            console.log('get_(\''+parameter+'\')');
             if (Smartgeo.parametersCache_[parameter]) {
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
@@ -403,6 +406,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * IndexedDB setter
          */
         set_: function (parameter, value, callback) {
+            console.log('set_(\''+parameter+'\')');
             Smartgeo.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },
