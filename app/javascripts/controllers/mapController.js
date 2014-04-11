@@ -42,17 +42,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 ]);
             }
         }, 5000);
-        // if(G3ME.lastLeafletMapExtentModulo % 10 === 0){
-        //     var extent = G3ME.map.getBounds();
-        //     if (extent._northEast.lat !== extent._southWest.lat ||
-        //         extent._northEast.lng !== extent._southWest.lng) {
-        //         Smartgeo.set('lastLeafletMapExtent', [
-        //             [extent._northEast.lat, extent._northEast.lng],
-        //             [extent._southWest.lat, extent._southWest.lng]
-        //         ]);
-        //     }
-        // }
-        // G3ME.lastLeafletMapExtentModulo++;
     });
 
     function noConsultableAssets(coords) {
@@ -419,20 +408,37 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     //
     var POSITION_MARKER,
         ANGLE_MARKER,
-        POSITION_CONTROL;
+        POSITION_CONTROL,
+        FOLLOWME_FLAG;
 
     function activatePosition(event) {
+        FOLLOWME_FLAG = true;
+
+        console.log("activatePosition") ;
         if (event) {
             event.preventDefault();
         }
-        stopPosition();
+        updatePosition() ;
+    }
+
+    function updatePosition(event) {
+        if(!FOLLOWME_FLAG){
+            stopPosition();
+            return ;
+        }
+
         if (!POSITION_CONTROL) {
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
+            G3ME.map.addControl(POSITION_CONTROL);
         }
-        G3ME.map.addControl(POSITION_CONTROL);
 
         Smartgeo.getUsersLocation(function(lat, lng, alt, acc){
             setLocationMarker(null, lng, lat, acc);
+            if(FOLLOWME_FLAG){
+                setTimeout(updatePosition, 2000);
+            } else {
+                stopPosition();
+            }
         }, function(){
             alertify.error(i18n.get('_MAP_GPS_FAIL'));
         });
@@ -442,6 +448,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     $scope.$on("ACTIVATE_POSITION", activatePosition);
 
     function stopPosition() {
+        FOLLOWME_FLAG = false ;
         G3ME.map.stopLocate();
         if (POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);

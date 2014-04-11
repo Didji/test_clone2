@@ -431,7 +431,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                         txt: asset.maplabel,
                         x: _middle.x,
                         y: _middle.y,
-                        size: assetSymbology.label.size * 2,
+                        size: assetSymbology.label.size * 3,
                         color: assetSymbology.label.color,
                         angle: _middle.angle
                     });
@@ -477,7 +477,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
     }
 
     function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels_) {
-        console.log('draw!');
         ctx.save();
         var cur;
         if(ctx.fillStyle !== color.toLowerCase()){
