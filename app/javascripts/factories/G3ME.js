@@ -119,16 +119,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             }).on('load', function(){
                 console.timeEnd('Canvas Tile Layer Drawing');
             }).addTo(this.map);
-            window.mapmap= this.map ;
-
-
-            // this.myWorker = new Worker("javascripts/workers/test.js");
-
-            // this.myWorker.onmessage = function (oEvent) {
-            //     console.log("Called back by the worker!\n", oEvent);
-            // };
-
-
         },
 
         getLineStringMiddle: function (lineString) {
@@ -258,7 +248,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 nw = this.crs.project(this.map.unproject(nwPoint, zoom)),
                 se = this.crs.project(this.map.unproject(sePoint, zoom)),
                 nwmerc = this.map.latLngToLayerPoint({lat: nw.y,lng: nw.x}),
-                margin = 0.00001,
+                margin = 0.00005,
                 ymin = se.y - margin,
                 ymax = nw.y + margin,
                 xmin = nw.x - margin,
@@ -271,11 +261,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 initialTopLeftPointX  = this.map._initialTopLeftPoint.x,
                 initialTopLeftPointY = this.map._initialTopLeftPoint.y,
                 delta_x = initialTopLeftPointX - nwmerc.x,
-                delta_y = initialTopLeftPointY - nwmerc.y,
-                drawnLabels = [],
-                labelCache = [];
+                delta_y = initialTopLeftPointY - nwmerc.y;
 
-            var initargs = [xmin, xmax, ymin, ymax, zoom, zoom],
+            var initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                 tileExtent  = { ymin: ymin,ymax: ymax,xmin: xmin,xmax: xmax },
                 uuid        = Smartgeo.uuid(),
                 request     = G3ME.baseRequest.replace("##UUID##", uuid);
@@ -294,11 +282,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     G3ME.requestPool[this.site.zones[i].database_name][uuid] = {
                         request  : request,
                         initargs : initargs,
-                        callback : (function(uuid, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas, labelCache, drawnLabels) {
+                        callback : (function(uuid, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas) {
                             return function(results){
-                                drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas, labelCache, drawnLabels);
+                                drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas);
                             };
-                        })(uuid, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas, labelCache, drawnLabels)
+                        })(uuid, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas)
                     };
                 }
             }
@@ -339,15 +327,14 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         }
     };
 
-    function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas, labelCache, drawnLabels) {
+    function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas) {
 
-        var rows = results.rows, previousSymbolId = null, changeContext = false, image, assetSymbology, uuidHasBeenSeen, currentMapBounds = G3ME.map.getBounds();
+        var rows = results.rows, previousSymbolId = null, changeContext = false, image, assetSymbology, uuidHasBeenSeen, currentMapBounds = G3ME.map.getBounds(), labelCache = [], drawnLabels= [];
 
         if(!G3ME.extents_match({ xmin:xmin,xmax:xmax,ymin:ymin,ymax:ymax},{xmin:currentMapBounds._southWest.lng, xmax:currentMapBounds._northEast.lng,
                 ymin:currentMapBounds._southWest.lat, ymax:currentMapBounds._northEast.lat })  || G3ME.map.getZoom() !== zoom ){
             return G3ME.canvasTile.tileDrawn(canvas);
         }
-
         for (var i = 0, length = rows.length; i < length; i++) {
 
             var asset = rows.item(i);
@@ -357,6 +344,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             } else if(asset.tileUuid === uuid && !uuidHasBeenSeen) {
                 uuidHasBeenSeen = true ;
             } else if(asset.tileUuid !== uuid && uuidHasBeenSeen){
+                if (zoom > 16) {
+                    drawLabels(ctx, labelCache,drawnLabels);
+                }
                 return G3ME.canvasTile.tileDrawn(canvas);
             }
 
@@ -437,7 +427,14 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                         _middle.angle -= 180;
                     }
 
-                    addLabel(asset.maplabel, assetSymbology.label.size * 2, _middle.x, _middle.y, _middle.angle, assetSymbology.label.color, labelCache);
+                    labelCache.push({
+                        txt: asset.maplabel,
+                        x: _middle.x,
+                        y: _middle.y,
+                        size: assetSymbology.label.size * 2,
+                        color: assetSymbology.label.color,
+                        angle: _middle.angle
+                    });
                 }
                 ctx.stroke();
                 if (geometry.type === "Polygon") {
@@ -460,7 +457,14 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 ctx.drawImage(image, -image.width * 0.5, -image.height * 0.5, image.width, image.height);
                 ctx.restore();
                 if (zoom > 16 && asset.maplabel) {
-                    addLabel(asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color, labelCache);
+                    labelCache.push({
+                        txt: asset.maplabel,
+                        x: coord_.x,
+                        y: coord_.y,
+                        size: image.width,
+                        color: assetSymbology.label.color,
+                        angle: null
+                    });
                 }
             }
 
@@ -469,16 +473,18 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             drawLabels(ctx, labelCache,drawnLabels);
         }
         G3ME.canvasTile.tileDrawn(canvas);
+
     }
 
-    function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels) {
+    function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels_) {
+        console.log('draw!');
         ctx.save();
         var cur;
         if(ctx.fillStyle !== color.toLowerCase()){
             ctx.fillStyle = color;
         }
-        for (var i = 0, lim = drawnLabels.length; i < lim; i++) {
-            cur = drawnLabels[i];
+        for (var i = 0, lim = drawnLabels_.length; i < lim; i++) {
+            cur = drawnLabels_[i];
             if ((x < (cur.x + cur.width + G3ME.minDistanceToALabel)) &&
                 (x > (cur.x - G3ME.minDistanceToALabel)) &&
                 (y < (cur.y + cur.width + G3ME.minDistanceToALabel)) &&
@@ -498,7 +504,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             offset_y = -4;
         }
 
-        drawnLabels.push({
+        drawnLabels_.push({
             x: x + offset_x,
             y: y + offset_y,
             width: _width
@@ -513,32 +519,19 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         ctx.restore();
     }
 
-    function drawLabels(ctx, labelCache, drawnLabels) {
+    function drawLabels(ctx, labelCache_, drawnLabels_) {
         var cur;
         var lineWidth = ctx.lineWidth;
         var strokeStyle = ctx.strokeStyle;
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'white';
-        for (var i = 0, lim = labelCache.length; i < lim; i++) {
-            cur = labelCache[i];
-            drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y, cur.angle, cur.color, drawnLabels);
+        for (var i = 0, lim = labelCache_.length; i < lim; i++) {
+            cur = labelCache_[i];
+            drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y, cur.angle, cur.color, drawnLabels_);
         }
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = strokeStyle;
     }
-
-    function addLabel(txt, size, x, y, angle, color, labelCache) {
-        labelCache.push({
-            txt: txt,
-            x: x,
-            y: y,
-            size: size,
-            color: color,
-            angle: angle
-        });
-    }
-
-
 
     return G3ME;
 });

@@ -44,7 +44,7 @@ public class GimapMobileApplication extends Application {
 
     @Override
     public void onCreate() {
-        super.onCreate(); 
+        super.onCreate();
         initializeApplicationParameters();
         try {
             LocationLibrary.initialiseLibrary(getBaseContext(), 2000, 2000,"com.gismartware.mobile");
