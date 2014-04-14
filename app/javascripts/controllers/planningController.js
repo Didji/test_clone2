@@ -236,11 +236,17 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * </ul>
      */
     $scope.initialize = function () {
+
         $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('user').username) || {};
-        Smartgeo.get_('reports', function (reports) {
-            $scope.removeObsoleteMission(reports);
-            $scope.synchronize();
-        });
+
+        // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
+        setTimeout(function() {
+            Smartgeo.get_('reports', function (reports) {
+                $scope.removeObsoleteMission(reports);
+                $scope.synchronize();
+            });
+        }, 500);
+
 
         $scope.$watch('lastUpdate', function () {
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
