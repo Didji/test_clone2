@@ -19,9 +19,9 @@ import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.GimapMobileApplication;
 import com.gismartware.mobile.GimapMobileMainActivity;
 import com.gismartware.mobile.util.FileUtils;
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
@@ -63,7 +63,8 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 		Log.d(TAG, "Goto " + to);
 
 		Activity act = (Activity)context;
-		Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(to))
+			.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 		act.startActivity(intent);
 	}
 
@@ -71,7 +72,8 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 	public void redirect(String url) {
 		Log.d(TAG, "Redirect to URL " + url);
 
-		Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url))
+			.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 		Activity act = (Activity)context;
 		act.startActivity(intent);
 	}
@@ -81,21 +83,18 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
         LocationLibrary.forceLocationUpdate(context);
         LocationInfo info = new LocationInfo(context);
         info.refresh(context);
-        view.evaluateJavaScript("window.ChromiumCallbacks[0](" + info.lastLong + "," +  info.lastLat +", undefined, " +  info.lastAccuracy +"  );");
-        //final LocationInfo locationInfo = new LocationInfo(context) ;
-        //Toast.makeText(context, "locate#lat:" + Float.toString(locationInfo.lastLat) + ";lng:" + Float.toString(locationInfo.lastLong), Toast.LENGTH_SHORT).show();
-        //view.evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +");");
+        view.evaluateJavaScript("window.ChromiumCallbacks[0](" + 
+        		info.lastLong + "," +  info.lastLat + ", undefined, " +  info.lastAccuracy +"  );");
 	}
 
 	@JavascriptInterface
 	public void getExtApplicationDirectory() {
-		String tmp = context.getExternalFilesDir(null).getParent();
-		view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + tmp + "\");");
+		view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + GimapMobileApplication.EXT_APP_DIR.getPath() + "\");");
 	}
 
 	@JavascriptInterface
 	public void eraseAllTiles() {
-		File path = new File(context.getExternalFilesDir(null).getParent() + "/tiles/");
+		File path = new File(GimapMobileApplication.EXT_APP_DIR, "tiles/");
 		boolean ret = FileUtils.delete(path);
 		if (ret) {
 			Log.d(TAG, path.getAbsolutePath() + " deleted!");
@@ -108,7 +107,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 	@JavascriptInterface
 	public void writeBase64ToPNG(String base64, String path) {
 		byte[] pngAsByte = Base64.decode(base64, 0);
-		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+		File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
         filePath.getParentFile().mkdirs();
 
         boolean result = true;
@@ -126,7 +125,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 
 	@JavascriptInterface
 	public void writeJSON(String json, String path) {
-		File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+		File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
         filePath.getParentFile().mkdirs();
 
         boolean result = true;
@@ -154,11 +153,11 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
     public void log(String message) {
         ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
         String fileName = config.getString("logger.filename");
-        String path = context.getExternalFilesDir(null).getParent() + "/" + fileName ;
+        String path = GimapMobileApplication.EXT_APP_DIR.getPath() + "/" + fileName ;
 
         File file = new File(path);
-        if(!file.exists()){
-            Log.e("gismartware", "" + path + " does not exist");
+        if (!file.exists()) {
+            Log.e("gismartware", path + " does not exist");
             file.getParentFile().mkdirs();
             String header = config.getString("logger.header");
             try {
@@ -167,10 +166,10 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
                 os.flush();
                 os.close();
             } catch (IOException e) {
-                Log.e("gismartware", "Error when writing '"+header+"' to " + path, e);
+                Log.e("gismartware", "Error when writing '" + header + "' to " + path, e);
             }
         } else {
-            Log.e("gismartware", "" + path + " does exist");
+            Log.e("gismartware", path + " does exist");
         }
 
         File filePath = new File(path);
@@ -182,7 +181,7 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
             os.flush();
             os.close();
         } catch (IOException e) {
-            Log.e(TAG, "Error when writing '"+message+"' to " + path, e);
+            Log.e(TAG, "Error when writing '" + message + "' to " + path, e);
         }
     }
 }

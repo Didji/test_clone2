@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -71,17 +71,6 @@
                   android:hardwareAccelerated="true"
                   android:windowSoftInputMode="adjustResize"
                   android:theme="@android:style/Theme.Holo.Light.NoActionBar">
-
-
-
-            <service android:name="com.littlefluffytoys.littlefluffylocationlibrary.LocationBroadcastService" />
-            <receiver android:name="com.littlefluffytoys.littlefluffylocationlibrary.StartupBroadcastReceiver" android:exported="true">
-                <intent-filter>
-                    <action android:name="android.intent.action.BOOT_COMPLETED" />
-                </intent-filter>
-            </receiver>
-            <receiver android:name="com.littlefluffytoys.littlefluffylocationlibrary.PassiveLocationChangedReceiver" android:exported="true" />
-
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
