@@ -493,9 +493,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     });
                 }
             } else if (this.positionListerners.indexOf(listener) !== -1){
-                return ;
+                return false ;
             }
             this.positionListerners.push(listener);
+            return true ;
         },
 
         stopWatchingPosition: function(listener){

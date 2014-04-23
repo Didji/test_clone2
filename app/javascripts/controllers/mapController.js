@@ -409,46 +409,37 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
     *
     */
 
-    var POSITION_CIRCLE,
-        POSITION_MARKER,
-        POSITION_CONTROL;
+    var POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL;
 
-    function startPosition(){
-        Smartgeo.startWatchingPosition(setLocationMarker);
-        if (!POSITION_CONTROL) {
+    $scope.$on("ACTIVATE_POSITION", function (){
+        if (Smartgeo.startWatchingPosition(setLocationMarker)) {
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
             G3ME.map.addControl(POSITION_CONTROL);
         }
-        return false ;
-    }
+    });
 
     function stopPosition(event) {
-        event && event.preventDefault();
+
         Smartgeo.stopWatchingPosition(setLocationMarker);
+
         if (POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
-            POSITION_CONTROL = null ;
         }
-        removePositionMarker();
-        return false;
-    }
-
-    $scope.$on("ACTIVATE_POSITION", startPosition);
-
-    function removePositionMarker() {
         if (POSITION_CIRCLE && POSITION_CIRCLE._map) {
             G3ME.map.removeLayer(POSITION_CIRCLE);
-            POSITION_CIRCLE = null ;
         }
         if (POSITION_MARKER && POSITION_MARKER._map) {
             G3ME.map.removeLayer(POSITION_MARKER);
-            POSITION_MARKER = null ;
         }
+
+        POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = null ;
+
+        return false;
     }
 
     function setLocationMarker(lng, lat, alt, acc) {
 
-        G3ME.map.setView([lat, lng], 18);
+        G3ME.map.setView([lat, lng], POSITION_MARKER ? G3ME.map.getZoom() : 18 );
 
         if(POSITION_CIRCLE){
             POSITION_CIRCLE.setLatLng([lat, lng]).setRadius(acc);
@@ -457,15 +448,13 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 color: '#fd9122',
                 opacity: 0.1,
                 fillOpacity: 0.05
-            });
-            POSITION_CIRCLE.addTo(G3ME.map);
+            }).addTo(G3ME.map);
         }
 
         if(POSITION_MARKER){
             POSITION_MARKER.setLatLng([lat, lng]);
         } else {
-            POSITION_MARKER = L.marker([lat, lng]).setIcon(Icon.get('TARGET'))
-            POSITION_MARKER.addTo(G3ME.map);
+            POSITION_MARKER = L.marker([lat, lng]).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
         }
 
         $(POSITION_CIRCLE._path).fadeOut(3000, function () {
@@ -474,6 +463,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
                 POSITION_CIRCLE = null ;
             }
         });
+
     }
 
     //

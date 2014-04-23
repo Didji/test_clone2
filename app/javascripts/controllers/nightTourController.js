@@ -76,6 +76,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         });
     };
 
+    function whereIAm(lng, lat, alt, acc){
+        $scope.whereIAm(lng, lat, alt, acc);
+    }
+
     /**
      * @ngdoc method
      * @name nightTourController#startFollowingPosition
@@ -85,9 +89,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.startFollowingPosition = function () {
         $scope.stopFollowingPosition();
-        Smartgeo.registerInterval('WATCH_INTERVAL', function () {
-            $scope.whereIAm();
-        }, 2000);
+        Smartgeo.startWatchingPosition($scope.whereIAm);
     };
 
     /**
@@ -99,7 +101,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      */
     $scope.stopFollowingPosition = function () {
         $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
-        Smartgeo.clearInterval('WATCH_INTERVAL');
+        Smartgeo.stopWatchingPosition($scope.whereIAm);
     };
 
     /**
@@ -109,15 +111,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
      * @description
      *
      */
-    $scope.whereIAm = function () {
-        Smartgeo.getUsersLocation(function (lat, lng /*, alt*/ ) {
-            $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
-            $scope.addPositionToTrace(lat, lng);
-        }, function () {
-            alertify.log(i18n.get('_MAP_GPS_FAIL'));
-            // $scope.isFollowingMe = false;
-            // $scope.$apply();
-        });
+    $scope.whereIAm = function (lng, lat, alt, acc) {
+        $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
+        $scope.addPositionToTrace(lat, lng);
     };
 
     /**
@@ -146,8 +142,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
 
             if (!force && previousPosition && (distanceFromLastPosition > 500 || distanceFromLastPosition === 0) && timeBetweenLastPositionAndNow < 15000) {
-                console.log('return');
-                return;
+                // console.log('return');
+                // return;
             }
         }
 
