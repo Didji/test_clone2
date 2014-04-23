@@ -403,116 +403,78 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         });
         return new Constr();
     }
+  /*
+    *
+    * Gestion du mode de suivi de la position GPS.
+    *
+    */
 
-    // Gestion du mode de suivi de la position GPS.
-    //
-    var POSITION_MARKER,
-        ANGLE_MARKER,
-        POSITION_CONTROL,
-        FOLLOWME_FLAG;
+    var POSITION_CIRCLE,
+        POSITION_MARKER,
+        POSITION_CONTROL;
 
-    function activatePosition(event) {
-        FOLLOWME_FLAG = true;
-
-        console.log("activatePosition") ;
-        if (event) {
-            event.preventDefault();
-        }
-        updatePosition() ;
-    }
-
-    function updatePosition(event) {
-        if(!FOLLOWME_FLAG){
-            stopPosition();
-            return ;
-        }
-
+    function startPosition(){
+        Smartgeo.startWatchingPosition(setLocationMarker);
         if (!POSITION_CONTROL) {
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
             G3ME.map.addControl(POSITION_CONTROL);
         }
-
-        Smartgeo.getUsersLocation(function(lat, lng, alt, acc){
-            setLocationMarker(null, lng, lat, acc);
-            if(FOLLOWME_FLAG){
-                setTimeout(updatePosition, 2000);
-            } else {
-                stopPosition();
-            }
-        }, function(){
-            alertify.error(i18n.get('_MAP_GPS_FAIL'));
-        });
-
+        return false ;
     }
 
-    $scope.$on("ACTIVATE_POSITION", activatePosition);
-
-    function stopPosition() {
-        FOLLOWME_FLAG = false ;
-        G3ME.map.stopLocate();
+    function stopPosition(event) {
+        event && event.preventDefault();
+        Smartgeo.stopWatchingPosition(setLocationMarker);
         if (POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
+            POSITION_CONTROL = null ;
         }
         removePositionMarker();
         return false;
     }
 
+    $scope.$on("ACTIVATE_POSITION", startPosition);
+
     function removePositionMarker() {
+        if (POSITION_CIRCLE && POSITION_CIRCLE._map) {
+            G3ME.map.removeLayer(POSITION_CIRCLE);
+            POSITION_CIRCLE = null ;
+        }
         if (POSITION_MARKER && POSITION_MARKER._map) {
             G3ME.map.removeLayer(POSITION_MARKER);
-        }
-        if (ANGLE_MARKER && ANGLE_MARKER._map) {
-            G3ME.map.removeLayer(ANGLE_MARKER);
+            POSITION_MARKER = null ;
         }
     }
 
-    function setLocationMarker(event, lng, lat, accuracy) {
-        if (event === null) { /* CallbackChromium */
-            event = {
-                latlng: {
-                    lat: lat,
-                    lng: lng
-                },
-                accuracy: accuracy || 10,
-            };
-            G3ME.map.setView({
-                lat: lat,
-                lng: lng
-            });
+    function setLocationMarker(lng, lat, alt, acc) {
+
+        G3ME.map.setView([lat, lng], 18);
+
+        if(POSITION_CIRCLE){
+            POSITION_CIRCLE.setLatLng([lat, lng]).setRadius(acc);
         } else {
-            G3ME.map.off('locationfound', setLocationMarker);
-        }
-
-        removePositionMarker();
-
-        POSITION_MARKER = new L.Circle(event.latlng,
-            event.accuracy, {
-                clickable: false,
+            POSITION_CIRCLE = new L.Circle([lat, lng], acc, {
                 color: '#fd9122',
                 opacity: 0.1,
                 fillOpacity: 0.05
             });
-
-        POSITION_MARKER.addTo(G3ME.map);
-
-        $(POSITION_MARKER._path).fadeOut(3000, function () {
-            G3ME.map.removeLayer(POSITION_MARKER);
-        });
-
-        ANGLE_MARKER = new L.Marker(event.latlng, {
-            icon: Icon.get('TARGET')
-        });
-        ANGLE_MARKER.addTo(G3ME.map);
-        if ('heading' in event) {
-            ANGLE_MARKER._icon.innerHTML = '<div></div>';
-            ANGLE_MARKER._icon.firstChild.style.WebkitTransform = 'rotate(' + event.heading + 'deg)';
-        } else {
-            $(ANGLE_MARKER._path).fadeOut(5000, function () {
-                G3ME.map.removeLayer(ANGLE_MARKER);
-            });
+            POSITION_CIRCLE.addTo(G3ME.map);
         }
-    }
 
+        if(POSITION_MARKER){
+            POSITION_MARKER.setLatLng([lat, lng]);
+        } else {
+            POSITION_MARKER = L.marker([lat, lng]).setIcon(Icon.get('TARGET'))
+            POSITION_MARKER.addTo(G3ME.map);
+        }
+
+        $(POSITION_CIRCLE._path).fadeOut(3000, function () {
+            if(POSITION_CIRCLE){
+                G3ME.map.removeLayer(POSITION_CIRCLE);
+                POSITION_CIRCLE = null ;
+            }
+        });
+    }
 
     //
     // Gestion de la consultation.

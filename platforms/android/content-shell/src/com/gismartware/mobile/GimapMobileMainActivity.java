@@ -57,9 +57,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.gismartware.mobile.util.FileUtils;
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibraryConstants;
 
 
 /**
@@ -211,7 +208,6 @@ public class GimapMobileMainActivity extends Activity {
         		Log.w(TAG, "Le log est activé mais le fichier de configuration est absent.");
         	}
         }
-        LocationLibrary.forceLocationUpdate(GimapMobileMainActivity.this);
     }
 
     private void oauthRequestAccount() {
@@ -367,17 +363,11 @@ public class GimapMobileMainActivity extends Activity {
 
         super.onPause();
         unregisterReceiver(mReceiver);
-        unregisterReceiver(lftBroadcastReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // This demonstrates how to dynamically create a receiver to listen to the location updates.
-        // You could also register a receiver in your manifest.
-        final IntentFilter lftIntentFilter = new IntentFilter(LocationLibraryConstants.getLocationChangedPeriodicBroadcastAction());
-        registerReceiver(lftBroadcastReceiver, lftIntentFilter);
 
         ContentView view = getActiveContentView();
         if (view != null) view.onActivityResume();
@@ -403,19 +393,6 @@ public class GimapMobileMainActivity extends Activity {
         };
         registerReceiver(mReceiver, intentFilter);
     }
-
-    private final BroadcastReceiver lftBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final LocationInfo locationInfo = (LocationInfo) intent.getSerializableExtra(LocationLibraryConstants.LOCATION_BROADCAST_EXTRA_LOCATIONINFO);
-
-            if (getActiveShell() != null && getActiveShell().getContentView() != null) {
-                Log.d(TAG, "[window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +", undefined, " +  locationInfo.lastAccuracy +" );]");
-                getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[0](" + locationInfo.lastLong + "," +  locationInfo.lastLat +", undefined, " +  locationInfo.lastAccuracy +"  );");
-            }
-        }
-    };
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

@@ -33,14 +33,6 @@
         		android:label="Smartgeo"
         		android:icon="@drawable/icon">
 
-        <service android:name="com.littlefluffytoys.littlefluffylocationlibrary.LocationBroadcastService" />
-        <receiver android:name="com.littlefluffytoys.littlefluffylocationlibrary.StartupBroadcastReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.littlefluffytoys.littlefluffylocationlibrary.PassiveLocationChangedReceiver" android:exported="true" />
-
 
         <service
             android:name=".GiAlarmService">
@@ -56,12 +48,6 @@
                 </action>
                 <category android:name="android.intent.category.HOME">
                 </category>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".GiLocationBroadcastReceiver">
-            <intent-filter>
-                <action android:name="com.littlefluffytoys.littlefluffylocationlibrary.LOCATION_CHANGED" android:exported="false"/>
             </intent-filter>
         </receiver>
 
@@ -84,9 +70,6 @@
                 <data android:scheme="gimap" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.gismartware.mobile.plugins.GeoLocation"
-                  android:launchMode="singleTop" />
 
         <!-- The following service entries exist in order to allow us to
              start more than one sandboxed process. -->

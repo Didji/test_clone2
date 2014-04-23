@@ -19,7 +19,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 
 /**
  * Entry point for the content shell application.  Handles initialization of information that needs
@@ -54,12 +53,6 @@ public class GimapMobileApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initializeApplicationParameters();
-        try {
-            LocationLibrary.initialiseLibrary(getBaseContext(), 2000, 2000,"com.gismartware.mobile");
-            LocationLibrary.useFineAccuracyForRequests(true);
-        } catch (UnsupportedOperationException ex) {
-            Log.e(TAG, "The device doesn't have any location providers");
-        }
 
         context = getApplicationContext();
         //specific initialization for gimap mobile web app:
@@ -67,11 +60,11 @@ public class GimapMobileApplication extends Application {
         WEB_ROOT = getCacheDir().getAbsolutePath() + File.separator + config.getString("application.directory");
 		DEFAULT_URL = WEB_ROOT + File.separator + config.getString("application.page.default");
 		
-		//initialise le chemin vers les tuiles stockées sur la carte SD externe si elle existe, interne sinon
+		//initialise le chemin vers les tuiles stockï¿½es sur la carte SD externe si elle existe, interne sinon
 		File extSdCardSlot = new File(getExtSdCard());
-		if (extSdCardSlot.canWrite()) { //carte SD "montée" si on peut écrire ou lire dedans..
+		if (extSdCardSlot.canWrite()) { //carte SD "montï¿½e" si on peut ï¿½crire ou lire dedans..
 			Log.d(TAG, "External SD Card detected @ " + extSdCardSlot.getPath() + "...");
-			//TODO: gérer plusieurs cartes SD
+			//TODO: gï¿½rer plusieurs cartes SD
 			EXT_APP_DIR = new File(extSdCardSlot, "Android/data/com.gismartware.mobile/");
 			if (!EXT_APP_DIR.exists()) {
 				EXT_APP_DIR.mkdirs();

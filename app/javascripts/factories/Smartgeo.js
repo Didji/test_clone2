@@ -479,6 +479,45 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
+
+        positionListerners : [],
+        locationWatchIdentifier: null,
+
+        startWatchingPosition: function(listener){
+            if(!this.positionListerners.length){
+                if(window.SmartgeoChromium){
+                    SmartgeoChromium.startWatchingPosition();
+                } else {
+                    Smartgeo.locationWatchIdentifier = navigator.geolocation.watchPosition(function(position){
+                        Smartgeo.positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
+                    });
+                }
+            } else if (this.positionListerners.indexOf(listener) !== -1){
+                return ;
+            }
+            this.positionListerners.push(listener);
+        },
+
+        stopWatchingPosition: function(listener){
+            var index = this.positionListerners.indexOf(listener);
+            if(index !== -1){
+                this.positionListerners.splice(index);
+            }
+            if(!this.positionListerners.length){
+                if(window.SmartgeoChromium){
+                    SmartgeoChromium.stopWatchingPosition();
+                } else {
+                    navigator.geolocation.clearWatch(Smartgeo.locationWatchIdentifier);
+                }
+            }
+        },
+
+        positionListernersDispatchor: function(lng, lat, alt, acc){
+            for( var i=0 ; i < this.positionListerners.length ; i++){
+                this.positionListerners[i](lng, lat, alt, acc);
+            }
+        },
+
         _isRunningOnMobile: function () {
             var check = false;
             (function (a) {
@@ -1019,6 +1058,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         };
         SmartgeoChromium.getExtApplicationDirectory();
+        window.ChromiumCallbacks[0] = function(lng, lat, alt, acc){
+            Smartgeo.positionListernersDispatchor(lng, lat, alt, acc) ;
+        }
     }
 
     window.Smartgeo = Smartgeo;
