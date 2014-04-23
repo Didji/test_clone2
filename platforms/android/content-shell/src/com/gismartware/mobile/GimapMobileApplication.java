@@ -4,7 +4,11 @@
 
 package com.gismartware.mobile;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.chromium.base.PathUtils;
@@ -12,6 +16,7 @@ import org.chromium.content.browser.ResourceExtractor;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
@@ -63,17 +68,17 @@ public class GimapMobileApplication extends Application {
 		DEFAULT_URL = WEB_ROOT + File.separator + config.getString("application.page.default");
 		
 		//initialise le chemin vers les tuiles stockées sur la carte SD externe si elle existe, interne sinon
-		File extSdCardSlot = new File("/mnt/extSdCard/");
+		File extSdCardSlot = new File(getExtSdCard());
 		if (extSdCardSlot.canWrite()) { //carte SD "montée" si on peut écrire ou lire dedans..
-			Log.d(TAG, "External SD Card detected...");
+			Log.d(TAG, "External SD Card detected @ " + extSdCardSlot.getPath() + "...");
 			//TODO: gérer plusieurs cartes SD
-			EXT_APP_DIR = new File("/mnt/extSdCard/Android/data/com.gismartware.mobile/");
+			EXT_APP_DIR = new File(extSdCardSlot, "Android/data/com.gismartware.mobile/");
 			if (!EXT_APP_DIR.exists()) {
 				EXT_APP_DIR.mkdirs();
 			}
 		} else {
 			EXT_APP_DIR = context.getExternalFilesDir(null).getParentFile();
-			Log.d(TAG, "No external SD Card detected, use internal...");
+			Log.d(TAG, "No external SD Card detected, use internal @ " + EXT_APP_DIR.getPath() + "...");
 		}
     }
 
@@ -84,9 +89,45 @@ public class GimapMobileApplication extends Application {
     
     public GimapMobileMainActivity getCurrentActivity( ){
         return mCurrentActivity;
-  }
+	}
   
-  public void setCurrentActivity(GimapMobileMainActivity mCurrentActivity) {
-        this.mCurrentActivity = mCurrentActivity;
-  }
+    public void setCurrentActivity(GimapMobileMainActivity mCurrentActivity) {
+    	this.mCurrentActivity = mCurrentActivity;
+    }
+    
+    private String getExtSdCard() {
+    	File file = new File("/system/etc/vold.fstab");
+        FileReader fr = null;
+        BufferedReader br = null;
+        
+        String path = null;
+        try {
+            fr = new FileReader(file);
+            if (fr != null) {
+                br = new BufferedReader(fr);
+                String s = br.readLine();
+                while (s != null) {
+                    if (s.startsWith("dev_mount")) {
+                        String[] tokens = s.split("\\s");                        
+                        if (!Environment.getExternalStorageDirectory().getAbsolutePath().equals(tokens[2])) {
+                        	path = tokens[2];
+                        	break;
+                        }
+                    }
+                    s = br.readLine();
+                }
+            } 
+            if (fr != null) {
+                fr.close();
+            }            
+            if (br != null) {
+                br.close();
+            }
+        } catch (FileNotFoundException e) {
+        	Log.e(TAG, e.getMessage(), e);
+        } catch (IOException e) {
+        	Log.e(TAG, e.getMessage(), e);
+        }
+        return path;
+    }
 }
