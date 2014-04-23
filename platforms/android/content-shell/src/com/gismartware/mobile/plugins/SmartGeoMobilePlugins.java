@@ -87,7 +87,9 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void stopWatchingPosition() {
-        this.locationManager.removeUpdates(this.locationListener);
+        if(this.locationManager != null && this.locationListener != null){
+            this.locationManager.removeUpdates(this.locationListener);
+        }
         this.locationManager = null ;
         this.lastLocation = null ;
     }

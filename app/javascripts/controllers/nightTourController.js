@@ -76,9 +76,9 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         });
     };
 
-    function whereIAm(lng, lat, alt, acc){
-        $scope.whereIAm(lng, lat, alt, acc);
-    }
+    // function whereIAm(lng, lat, alt, acc){
+    //     $scope.whereIAm(lng, lat, alt, acc);
+    // }
 
     /**
      * @ngdoc method

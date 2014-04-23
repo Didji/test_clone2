@@ -737,4 +737,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             $rootScope.$broadcast("ZOOM_ON_ASSET", assets[0]);
         });
     };
+
+    $scope.activateConsultation = function (event) {
+        $rootScope.$broadcast("ACTIVATE_CONSULTATION");
+        return false;
+    };
+
 });
