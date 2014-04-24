@@ -255,9 +255,12 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             activity: $scope.mission.activity.id,
             uuid: Smartgeo.uuid()
         };
+        applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
         Report.save(report).then(null, null, callback);
     };
+
+
 
     /**
      * @ngdoc method
@@ -278,9 +281,76 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
             activity: $scope.mission.activity.id,
             uuid: Smartgeo.uuid()
         };
+        applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
         Report.save(report).then(null, null, callback);
     };
+
+    function applyDefaultValues(report, act) {
+        var fields = report.fields,
+            assets = report.assets,
+            def, i, numTabs, j, numFields, tab, field, date;
+
+        function pad(number) {
+            if (number < 10) {
+                return '0' + number;
+            }
+            return number;
+        }
+
+        function getList(pkey, okey) {
+            var mm = $rootScope.site.metamodel[okey];
+            for (var i in mm.tabs) {
+                for (var j in mm.tabs[i].fields) {
+                    if (mm.tabs[i].fields[j].key === pkey) {
+                        return mm.tabs[i].fields[j].options;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function getValueFromAssets(pkey, okey) {
+            var rv = {}, val;
+            for (var i = 0, lim = assets.length; i < lim; i++) {
+                var a = JSON.parse(assets[i].asset).attributes,
+                    list = getList(pkey, okey);
+
+                val = a[pkey];
+                if (list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
+                    val = $rootScope.site.lists[list][val];
+                }
+
+                rv[assets[i].id] = val;
+            }
+            return rv;
+        }
+
+        for (i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
+            tab = act.tabs[i];
+            for (j = 0, numFields = tab.fields.length; j < numFields; j++) {
+                field = tab.fields[j];
+                def = field['default'];
+                if (!def) {
+                    continue;
+                }
+                if ('string' === typeof def) {
+                    if (field.type === 'D' && def === '#TODAY#') {
+                        date = new Date();
+                        def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                    }
+                } else {
+                    def = getValueFromAssets(def.pkey, act.okeys[0]);
+                }
+                if (!def) {
+                    continue;
+                }
+                fields[field.id] = def;
+            }
+        }
+    }
+
+
 
 
     /**
