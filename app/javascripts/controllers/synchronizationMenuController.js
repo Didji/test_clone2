@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, AssetFactory, G3ME) {
 
     'use strict';
 
@@ -6,7 +6,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     $scope.census  = [];
 
     $scope.initialize = function () {
-
         $rootScope.site.activities._byId = {};
         for (var i = 0; i < $rootScope.site.activities.length; i++) {
             $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
@@ -138,6 +137,18 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), object, {
             timeout: 55000
         }).success(function (data) {
+            for(var okey in data){
+                for (var i = 0; i < data[okey].length; i++) {
+                    AssetFactory.save(data[okey][i],window.site);
+                }
+            }
+            setTimeout(function() {
+                for (var i in G3ME.map._layers) {
+                    G3ME.map._layers[i].redraw && G3ME.map._layers[i].redraw();
+                }
+            }, 1000);
+
+
             if (!object) {
                 return;
             }
