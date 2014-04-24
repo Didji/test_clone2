@@ -93,10 +93,19 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 async : true
-            })
+            });
+
+            this.tempAssetTile = new L.TileLayer.Canvas({
+                maxZoom: G3ME._MAX_ZOOM,
+                minZoom: G3ME._MIN_ZOOM
+            });
 
             this.canvasTile.drawTile = function (canvas, tilePoint) {
                 G3ME.drawTile(canvas, tilePoint);
+            };
+
+            this.tempAssetTile.drawTile = function (canvas, tilePoint) {
+                G3ME.drawTempAssetTile(canvas, tilePoint, G3ME.benchMe);
             };
 
             for (var symbol in this.site.symbology) {
@@ -119,6 +128,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             }).on('load', function(){
                 console.timeEnd('Canvas Tile Layer Drawing');
             }).addTo(this.map);
+            this.tempAssetTile.addTo(this.map);
         },
 
         getLineStringMiddle: function (lineString) {
@@ -226,6 +236,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
             }
             this.canvasTile.redraw();
+            this.tempAssetTile.redraw();
         },
         getVisibility: function () {
             if (this.active_layers === false) {
@@ -236,6 +247,277 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 rv[this.active_layers[i]] = true;
             }
             return rv;
+        },
+
+        drawTempAssetTile: function (canvas, tilePoint, performBench) {
+            var ctx = canvas.getContext('2d');
+            var zoom = this.map.getZoom(),
+                crs = L.CRS.EPSG4326,
+                nwPoint = tilePoint.multiplyBy(256),
+                sePoint = nwPoint.add(new L.Point(256, 256)),
+                nw = crs.project(this.map.unproject(nwPoint, zoom)),
+                se = crs.project(this.map.unproject(sePoint, zoom)),
+                nwmerc = this.map.latLngToLayerPoint({
+                    lat: nw.y,
+                    lng: nw.x
+                }),
+                margin = 0.00005,
+                ymin = se.y - margin,
+                ymax = nw.y + margin,
+                xmin = nw.x - margin,
+                xmax = se.x + margin,
+                _2pi = 2 * Math.PI,
+                _pi4 = Math.PI / 4,
+                dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
+                parse = window.JSON.parse,
+                symbology = this.site.symbology,
+                imageFactor = 1,
+                // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
+                imageFactor_2 = 0.5,
+                scale = 256 * Math.pow(2, zoom),
+                xscale = canvas.width / Math.abs(xmax - xmin),
+                yscale = canvas.height / Math.abs(ymax - ymin),
+                initialTopLeftPointX = this.map._initialTopLeftPoint.x,
+                initialTopLeftPointY = this.map._initialTopLeftPoint.y,
+                delta_x = initialTopLeftPointX - nwmerc.x,
+                delta_y = initialTopLeftPointY - nwmerc.y,
+                DEG_TO_RAD = Math.PI / 180,
+                buffer = 100 / xscale,
+                drawnLabels = [],
+                labelCache = [],
+                minDistanceToALabel = 15;
+
+
+            function drawLabel(ctx, txt, size, x, y, angle, color) {
+
+                ctx.save();
+
+                // Anticollision primaire.
+                var cur;
+                ctx.fillStyle = color;
+                for (var i = 0, lim = drawnLabels.length; i < lim; i++) {
+                    cur = drawnLabels[i];
+                    if ((x < (cur.x + cur.width + minDistanceToALabel)) &&
+                        (x > (cur.x - minDistanceToALabel)) &&
+                        (y < (cur.y + cur.width + minDistanceToALabel)) &&
+                        (y > (cur.y - minDistanceToALabel))) {
+                        return;
+                    }
+                }
+                var _width = ctx.measureText(txt).width;
+
+
+                ctx.translate(x, y);
+                var offset_x = size * imageFactor_2 + 1;
+                var offset_y = 0;
+                if (angle) {
+                    ctx.rotate(angle * DEG_TO_RAD);
+                    offset_x = -_width / 2;
+                    offset_y = -4;
+                }
+
+                drawnLabels.push({
+                    x: x + offset_x,
+                    y: y + offset_y,
+                    width: _width
+                });
+
+                ctx.font = (size / 2) + 'px Arial';
+                ctx.strokeText(txt, offset_x, offset_y);
+                ctx.fillText(txt, offset_x, offset_y);
+                ctx.restore();
+            }
+
+            function drawLabels(ctx) {
+                var cur;
+                var lineWidth = ctx.lineWidth;
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'white';
+                for (var i = 0, lim = labelCache.length; i < lim; i++) {
+                    cur = labelCache[i];
+                    drawLabel(ctx, cur.txt, cur.size, cur.x, cur.y, cur.angle, cur.color);
+                }
+                ctx.lineWidth = lineWidth;
+            }
+
+            function addLabel(txt, size, x, y, angle, color) {
+                labelCache.push({
+                    txt: txt,
+                    x: x,
+                    y: y,
+                    size: size,
+                    color: color,
+                    angle: angle
+                });
+            }
+
+            function convertToLinearArray(complexAsset, response) {
+                response = response || [];
+                if(complexAsset.synced){
+                    return ;
+                }
+                if(complexAsset.geometry && !complexAsset.synced){
+                    response.push(complexAsset);
+                }
+                for (var i = 0; i < complexAsset.children.length; i++) {
+                    convertToLinearArray(complexAsset.children[i], response);
+                }
+            }
+
+            function swap(ar) {
+                var b = ar[0];
+                ar[0] = ar[1];
+                ar[1] = b;
+                return ar;
+            }
+            Smartgeo.get_('census', function(census){
+
+                if(!census || (census && !census.length)) {
+                    return ;
+                }
+
+                var assets = [] ;
+
+                for (var k = 0; k < census.length; k++) {
+                    convertToLinearArray(census[k], assets);
+                }
+
+                if(!assets.length){
+                    return;
+                }
+
+                for (var i = 0, length = assets.length; i < length; i++) {
+                    var prevX = false,
+                        prevY = false,
+                        asset = assets[i],
+                        assetSymbology = symbology[asset.okey+"0"],
+                        coord, coord_ = {}, x, y, image;
+
+                    if(G3ME.active_layers && G3ME.active_layers.indexOf(asset.okey) < 0){
+                        continue ;
+                    }
+                    if( ! ((assetSymbology.minzoom <= zoom || assetSymbology.minzoom === null )
+                        && ( assetSymbology.maxzoom >= zoom || assetSymbology.maxzoom  === null ))){
+                        continue ;
+                    }
+
+                    asset.angle    = 0 ;
+                    asset.maplabel = '('+asset.fields[window.site.metamodel[asset.okey].ukey]+')';
+
+                    var geom = {};
+                    if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){
+                        geom.type = "Point" ;
+                        geom.coordinates = swap(asset.geometry);
+                    } else {
+                        geom.coordinates = [];
+                        geom.type = "LineString" ;
+                        for (var z = 0; z < asset.geometry.length; z++) {
+                            geom.coordinates.push(swap(asset.geometry[z]));
+                        }
+                    }
+                    if (geom.type === "LineString" || geom.type === "MultiLineString" || geom.type === "Polygon") {
+                        ctx.beginPath();
+                        for (var j = 0, l = geom.coordinates.length; j < l; j++) {
+                            coord = geom.coordinates[j];
+                            if (zoom < 15) {
+                                coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));
+                                coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));
+                            } else {
+                                coord_.x = coord[0] * 0.017453292519943295;
+                                coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));
+
+                                coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                                coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+
+                                coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                                coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+                            }
+
+                            if (prevX === false) {
+                                ctx.moveTo(coord_.x, coord_.y);
+                            } else if (coord_.x === prevX && coord_.y === prevY) {
+                                continue;
+                            } else {
+                                ctx.lineTo(coord_.x, coord_.y);
+                            }
+
+                            prevX = coord_.x;
+                            prevY = coord_.y;
+                        }
+                        if ((geom.type === "LineString" || geom.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
+                            var middle = G3ME.getLineStringMiddle(geom),
+                                _middle = {}, _segmentBegin = {};
+
+                            _middle.x = middle[1] * 0.017453292519943295;
+                            _middle.y = Math.log(Math.tan(_pi4 + (middle[0] * 0.008726646259971648)));
+
+                            _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
+                            _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
+
+                            _middle.x = Math.floor(0.5 + _middle.x) - initialTopLeftPointX - nwmerc.x;
+                            _middle.y = Math.floor(0.5 + _middle.y) - initialTopLeftPointY - nwmerc.y;
+
+                            _segmentBegin.x = middle[2][0] * 0.017453292519943295;
+                            _segmentBegin.y = Math.log(Math.tan(_pi4 + (middle[2][1] * 0.008726646259971648)));
+
+                            _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
+                            _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
+
+                            _segmentBegin.x = Math.floor(0.5 + _segmentBegin.x) - initialTopLeftPointX - nwmerc.x;
+                            _segmentBegin.y = Math.floor(0.5 + _segmentBegin.y) - initialTopLeftPointY - nwmerc.y;
+
+
+                            var dx = _middle.x - _segmentBegin.x,
+                                dy = _middle.y - _segmentBegin.y;
+                            if (dy < 0) {
+                                dx = -dx;
+                            }
+                            _middle.angle = Math.acos(dx / Math.sqrt(dx * dx + dy * dy)) * (180 / Math.PI);
+
+                            if (_middle.angle > 90) {
+                                _middle.angle -= 180;
+                            }
+
+                            addLabel(asset.maplabel, assetSymbology.label.size * 2, _middle.x, _middle.y, _middle.angle, assetSymbology.label.color);
+                        }
+                        ctx.strokeStyle = assetSymbology.style.strokecolor;
+                        ctx.stroke();
+                    } else if (geom.type === "Point") {
+                        coord_.x = geom.coordinates[0] * 0.017453292519943295;
+                        coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));
+
+                        coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                        coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+
+                        coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                        coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+
+                        image = assetSymbology.style.image;
+
+                        if (image) {
+                            ctx.save();
+                            ctx.translate(coord_.x, coord_.y);
+                            ctx.rotate(-asset.angle * DEG_TO_RAD);
+                            ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,
+                                image.width * imageFactor,
+                                image.height * imageFactor);
+                            ctx.restore();
+                            if (zoom > 16 && asset.maplabel) {
+                                addLabel(asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color);
+                            }
+                        } else {
+                            ctx.beginPath();
+                            ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
+                            ctx.fillStyle = assetSymbology.style.fillcolor;
+                            ctx.fill();
+                            ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
+                        }
+                    }
+                }
+                if (zoom > 16) {
+                    drawLabels(ctx);
+                }
+            });
         },
 
         baseRequest : " SELECT '##UUID##' as tileUuid, geometry, symbolId, maplabel, angle FROM ASSETS  WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ",
