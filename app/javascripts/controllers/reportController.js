@@ -397,7 +397,9 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     $scope.areEveryRequiredFieldsAreFilled = function(){
-        console.log($scope.report.activity, $scope.report)
+        if(!$scope.report.activity){
+            return ;
+        }
         for(var i in $scope.report.activity.tabs){
             var tab =  $scope.report.activity.tabs[i] ;
             for(var j in tab.fields){

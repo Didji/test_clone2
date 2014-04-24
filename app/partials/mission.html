@@ -8,10 +8,10 @@
 
           <span ng-show="!mission.isLoading && !(mission.assets.length == 0 && !mission.activity)" class="badge pull-right mission-assets-count-badge">
               <span ng-if="mission.assets.length == 0 &&  mission.activity"><i18n>_PLANNING_FINISH_</i18n></span>
-              <span ng-if="mission.assets.length > 0">{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
+              <span ng-if="mission.assets.length > 0 && !(!mission.isLoading && !mission.activity && mission.done.length > 0)">{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
           </span>
           <span ng-show="!mission.isLoading && !mission.activity && mission.done.length > 0" class="badge pull-right mission-assets-count-badge">
-              {{mission.done.length}} CR saisi{{mission.done.length>1?'s':''}}
+              {{mission.done.length}} CR saisi{{mission.done.length>1?'s':''}} sur {{mission.done.length + mission.assets.length}}
           </span>
           <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
         </h3>
@@ -63,7 +63,7 @@
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
-        <button ng-click="activateConsultation()" style="margin-top:3px;" class="btn btn-block">Consultation</button>
+        <button ng-click="activateConsultation()" style="margin-top:3px;" class="btn btn-block btn-primary"><span class="icon-info-sign"></span> Activer la consultation</button>
         <p ng-show='mission.postAddedAssets.assets.length'>
           <table ng-show='mission.postAddedAssets.assets.length' class="table table-condensed" style="margin-bottom: -15px;">
             <thead>

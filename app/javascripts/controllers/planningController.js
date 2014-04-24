@@ -161,10 +161,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                         mission.postAddedAssets = postAddedAssetsMission[i];
                         // TODO: à tester avec la fonctionnalité côté serveur.
                         for (var j = 0, length = mission.postAddedAssets.assets.length; j < length; j++) {
-                            if (mission.done.indexOf(mission.postAddedAssets.assets[j]) !== -1) {
+                            if (mission.done.indexOf(1*mission.postAddedAssets.assets[j]) !== -1) {
                                 mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
-                                // mission.postAddedAssets.assets.splice(j--, 1);
-                                // length--;
+                                mission.postAddedAssets.assets.splice(j--, 1);
+                                length--;
                             }
                         }
                         mission.assets = mission.assets.concat(mission.postAddedAssets.assets);
@@ -621,11 +621,9 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.showDoneAssets = function ($index) {
         var mission = $rootScope.missions[$index];
-
         mission.isLoading = mission.displayDone = true;
-
         // if(!$rootScope.doneAssetsCache[mission.id]){
-        if (!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length)) {
+        if (!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) {
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function (assets) {
                 $rootScope.doneAssetsCache[mission.id] = assets;
                 $scope.showDoneAssets($index);
