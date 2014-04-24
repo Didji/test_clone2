@@ -384,6 +384,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
+            if(parameter === 'sites') console.log(Smartgeo.parametersCache_[parameter]);
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
@@ -403,6 +404,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * IndexedDB setter
          */
         set_: function (parameter, value, callback) {
+            // Nettoyage "magique" des références cycliques.
+            // Ce qui est magique cassera un jour où le charme rompra.
+            value = JSON.parse(JSON.stringify(value));
+            
             Smartgeo.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },

@@ -1,7 +1,6 @@
 angular.module('smartgeomobile').controller('siteUpdateController', function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
 
     'use strict';
-
     $scope.steps = [{
         color: '#fd9122',
         progress: 0,
@@ -49,14 +48,14 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
         }
     }
 
-    $scope.site  = Smartgeo.get_('sites')[$routeParams.site];
-    $scope.sites = Smartgeo.get_('sites') || {};
+    var allSites = Smartgeo.get_('sites') || {};
+    $scope.site  = allSites[$routeParams.site];
+    $scope.sites = allSites;
 
     var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
     $scope.steps[0].progress = 50;
 
-    $scope.site = $scope.sites[$routeParams.site];
     Installer.getUpdateJSON($scope.site, function (site) {
         var update = true;
         var formatedSite = Installer.formatSiteMetadata(site, update);

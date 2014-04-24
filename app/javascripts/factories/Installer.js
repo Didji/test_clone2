@@ -112,6 +112,9 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
 
         saveSite: function (site, callback) {
             var sites = Smartgeo.get_('sites') || {};
+            delete site.number;
+            delete site.obsoletes;
+            delete site.stats;
             sites[site.id] = site;
             Smartgeo.set_('sites', sites, callback);
         },
