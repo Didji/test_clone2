@@ -239,6 +239,28 @@ public class SmartGeoMobilePlugins {
         return false;
     }
 
+   @JavascriptInterface
+   public void log(String message) {
+       ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
+       String fileName = config.getString("logger.filename");
+       String path = GimapMobileApplication.EXT_APP_DIR.getPath() + "/" + fileName ;
+       File file = new File(path);
+       if (!file.exists()) {
+           Log.e("gismartware", path + " does not exist");
+           file.getParentFile().mkdirs();
+           String header = config.getString("logger.header");
+           try {
+               FileOutputStream os = new FileOutputStream(path, true);
+               os.write(header.getBytes());
+               os.flush();
+               os.close();
+           } catch (IOException e) {
+               Log.e("gismartware", "Error when writing '" + header + "' to " + path, e);
+           }
+       } else {
+           Log.e("gismartware", path + " does exist");
+    }
+
     /** Checks whether two providers are the same */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
