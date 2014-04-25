@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
@@ -24,6 +25,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.GimapMobileApplication;
 import com.gismartware.mobile.GimapMobileMainActivity;
 import com.gismartware.mobile.util.FileUtils;
 
@@ -259,7 +261,8 @@ public class SmartGeoMobilePlugins {
            }
        } else {
            Log.e("gismartware", path + " does exist");
-    }
+       }
+   }
 
     /** Checks whether two providers are the same */
     private boolean isSameProvider(String provider1, String provider2) {
