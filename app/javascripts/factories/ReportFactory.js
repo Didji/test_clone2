@@ -14,7 +14,7 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                 timeout: 5000
             })
                 .success(function (data) {
-                    if (window.SmartgeoChromium) {
+                    if (window.SmartgeoChromium && window.SmartgeoChromium.log) {
                         window.SmartgeoChromium.log(Report.getLog(report, true));
                     }
                     Smartgeo.get_('reports', function (reports) {
@@ -29,7 +29,7 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                     deferred.resolve();
                 })
                 .error(function () {
-                    if (window.SmartgeoChromium) {
+                    if (window.SmartgeoChromium && window.SmartgeoChromium.log) {
                         window.SmartgeoChromium.log(Report.getLog(report, false));
                     }
                     Smartgeo.get_('reports', function (reports) {
