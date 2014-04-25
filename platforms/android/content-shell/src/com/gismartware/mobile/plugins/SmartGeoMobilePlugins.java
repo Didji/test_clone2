@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,7 @@ public class SmartGeoMobilePlugins {
 
     private static final String TAG = "GimapMobilePlugins";
     private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
+    private static final String TILE_DIRECTORY_NAME = "tiles";
 
     private Context context;
     private ContentView view;
@@ -41,7 +43,8 @@ public class SmartGeoMobilePlugins {
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
 
-    public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
+    @SuppressLint("SimpleDateFormat")
+	public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
         this.context = mContext;
 
         this.view = mView;
@@ -53,7 +56,7 @@ public class SmartGeoMobilePlugins {
         this.locationListener = new LocationListener() {
 
             public void onLocationChanged(Location location) {
-                if(!isBetterLocation(location, lastLocation)){
+                if (!isBetterLocation(location, lastLocation)) {
                     return ;
                 }
                 lastLocation = location;
@@ -64,7 +67,7 @@ public class SmartGeoMobilePlugins {
                         + lastLocation.getAccuracy()  + ")" +
                         "};";
                 view.evaluateJavaScript(javascriptCode);
-                Log.d("com.gismartware.smartgeo.mobile",javascriptCode);
+                Log.d(TAG, javascriptCode);
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {}
             public void onProviderEnabled(String provider) {}
@@ -78,22 +81,21 @@ public class SmartGeoMobilePlugins {
 
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        if(this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        if (this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this.locationListener);
         }
-        if(this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        if (this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             this.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this.locationListener);
         }
-
     }
 
     @JavascriptInterface
     public void stopWatchingPosition() {
-        if(this.locationManager != null && this.locationListener != null){
+        if (this.locationManager != null && this.locationListener != null) {
             this.locationManager.removeUpdates(this.locationListener);
         }
-        this.locationManager = null ;
-        this.lastLocation = null ;
+        this.locationManager = null;
+        this.lastLocation = null;
     }
 
     @JavascriptInterface
@@ -117,14 +119,16 @@ public class SmartGeoMobilePlugins {
         Log.d(TAG, "Goto " + to);
 
         Activity act = (Activity)context;
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
+        		Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         act.startActivity(intent);
     }
 
     @JavascriptInterface
     public void redirect(String url) {
         Log.d(TAG, "Redirect to URL " + url);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  
+        		Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         Activity act = (Activity)context;
         act.startActivity(intent);
     }
@@ -138,7 +142,7 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void eraseAllTiles() {
-        File path = new File(context.getExternalFilesDir(null).getParent() + "/tiles/");
+        File path = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME);
         boolean ret = FileUtils.delete(path);
         if (ret) {
             Log.d(TAG, path.getAbsolutePath() + " deleted!");
@@ -151,7 +155,7 @@ public class SmartGeoMobilePlugins {
     @JavascriptInterface
     public void writeBase64ToPNG(String base64, String path) {
         byte[] pngAsByte = Base64.decode(base64, 0);
-        File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
         filePath.getParentFile().mkdirs();
 
         boolean result = true;
@@ -169,7 +173,7 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void writeJSON(String json, String path) {
-        File filePath = new File(context.getExternalFilesDir(null).getParent() + "/" + path);
+        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
         filePath.getParentFile().mkdirs();
 
         boolean result = true;
@@ -248,7 +252,7 @@ public class SmartGeoMobilePlugins {
        String path = GimapMobileApplication.EXT_APP_DIR.getPath() + "/" + fileName ;
        File file = new File(path);
        if (!file.exists()) {
-           Log.e("gismartware", path + " does not exist");
+           Log.e(TAG, path + " does not exist");
            file.getParentFile().mkdirs();
            String header = config.getString("logger.header");
            try {
@@ -257,10 +261,10 @@ public class SmartGeoMobilePlugins {
                os.flush();
                os.close();
            } catch (IOException e) {
-               Log.e("gismartware", "Error when writing '" + header + "' to " + path, e);
+               Log.e(TAG, "Error when writing '" + header + "' to " + path, e);
            }
        } else {
-           Log.e("gismartware", path + " does exist");
+           Log.e(TAG, path + " does exist");
        }
    }
 
