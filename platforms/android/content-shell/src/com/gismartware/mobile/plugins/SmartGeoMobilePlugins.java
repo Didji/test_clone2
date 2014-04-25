@@ -136,8 +136,7 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void getExtApplicationDirectory() {
-        String tmp = context.getExternalFilesDir(null).getParent();
-        view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + tmp + "\");");
+        view.evaluateJavaScript("window.ChromiumCallbacks[13](\"" + GimapMobileApplication.EXT_APP_DIR.getPath() + "\");");
     }
 
     @JavascriptInterface
