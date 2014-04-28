@@ -710,7 +710,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     }
 
                     labelCache.push({
-                        txt: asset.maplabel,
+                        txt: asset.maplabel.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"),
                         x: _middle.x,
                         y: _middle.y,
                         size: assetSymbology.label.size * 3,
@@ -740,7 +740,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 ctx.restore();
                 if (zoom > 16 && asset.maplabel) {
                     labelCache.push({
-                        txt: asset.maplabel,
+                        txt: asset.maplabel.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"),
                         x: coord_.x,
                         y: coord_.y,
                         size: image.width,

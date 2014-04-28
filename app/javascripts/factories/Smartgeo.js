@@ -309,7 +309,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Sanitize asset eg. replace horrible characters
          */
         sanitizeAsset: function (asset) {
-            return JSON.parse(asset.replace(/&#039/g, "'").replace(/\\\\/g, "\\"));
+            // console.log(JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")));
+            return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
         },
 
         /**
@@ -407,7 +408,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             // Nettoyage "magique" des références cycliques.
             // Ce qui est magique cassera un jour où le charme rompra.
             value = JSON.parse(JSON.stringify(value));
-            
+
             Smartgeo.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },
@@ -731,7 +732,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 t.executeSql(request, ["%" + label + "%"],
                     function (t, results) {
                         for (var i = 0; i < results.rows.length; i++) {
-                            var asset = results.rows.item(i);
+                            var asset = angular.copy(results.rows.item(i));
+                            asset.label= asset.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\");
                             asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey;
                             partial_response.push(asset);
                         }

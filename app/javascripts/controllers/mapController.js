@@ -154,10 +154,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         for (var i = 0; i < numRows && assets.length < 10; i++) {
             asset_ = results.rows.item(i);
             asset = Smartgeo.sanitizeAsset(asset_.asset);
-            asset.label = asset_.label;
+            asset.label =  asset_.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\");
             asset.geometry = JSON.parse(asset_.geometry);
             asset.priority = asset_.priority;
-
             if (asset.geometry.type === "LineString") {
 
                 var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
