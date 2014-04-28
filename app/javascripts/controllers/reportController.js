@@ -30,7 +30,7 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     if ($routeParams.activity && $routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
         $scope.fromConsult = true;
         $scope.step = "form";
-        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
         $scope.report.activity.tabs[0].show = true ;
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function (assets) {
             $scope.report.assets = assets;
@@ -40,12 +40,14 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
             }
         });
     } else if ($routeParams.activity && $routeParams.assets && G3ME.isLatLngString($routeParams.assets)) {
-        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
+        $scope.report.activity.tabs[0].show = true ;
         $scope.fromConsult = true;
         $scope.report.latlng = $routeParams.assets;
         $scope.step = 'form';
     } else if ($routeParams.activity && !$routeParams.assets) {
-        $scope.report.activity = $rootScope.site.activities._byId[$routeParams.activity];
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
+        $scope.report.activity.tabs[0].show = true ;
     } else if ($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
         Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function (assets) {
             var filteredActivities = [], okey = assets[0].okey ;
@@ -74,7 +76,8 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         $scope.reportTemplate = 'report-' + $scope.report.activity.id + '.html';
         for (var i = 0; i < $rootScope.site.activities.length; i++) {
             if ($rootScope.site.activities[i].id === $scope.report.activity.id) {
-                $scope.report.activity = $rootScope.site.activities[i];
+                $scope.report.activity = angular.copy($rootScope.site.activities[i]);
+                $scope.report.activity.tabs[0].show = true ;
                 var act = $scope.report.activity;
                 // We have to flag fields which have visibility consequences
                 // to enable a correct layout.
@@ -106,7 +109,6 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
     };
 
     if ($scope.report.activity) {
-        // GiReportBuilder.buildTemplate($scope.report.activity);
         $scope.applyVisibility();
         if (!$scope.fromConsult) {
             $scope.loadAssets();
