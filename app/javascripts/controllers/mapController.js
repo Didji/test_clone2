@@ -279,6 +279,14 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         }
         for (var i = 0; i < assetsCache.length; i++) {
             if (assetsCache[i].marker) {
+                if(     mission.assets.indexOf(assetsCache[i].guid) === -1
+                    &&  mission.done.indexOf(assetsCache[i].guid) === -1
+                    &&  mission.postAddedAssets.assets.indexOf(assetsCache[i].guid)
+                    &&  mission.postAddedAssets.done.indexOf(assetsCache[i].guid)
+                    ){
+                    $scope.missionsClusters[mission.id].removeLayer(assetsCache[i].marker);
+                    continue;
+                }
                 continue;
             }
             assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);

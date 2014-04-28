@@ -720,6 +720,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
         Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
+        $scope.highlightMission(mission);
     };
 
 

@@ -4,7 +4,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
     var G3ME = {
 
-        _MAX_ZOOM: 22,
+        _MAX_ZOOM: 21,
         _MIN_ZOOM: 0,
 
         active_layers: false,
