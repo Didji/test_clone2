@@ -667,9 +667,15 @@ ul.ged-gallery li img {
     border: none;
     outline: none;
     background: transparent;
+    padding-right: 15px;
 }
 /*
 canvas{
     border: 1px solid rgba(255, 0, 0, 0.3) ;
 }
 */
+
+
+.select2-results .select2-result-label {
+    padding: 13px 7px 12px;
+}
