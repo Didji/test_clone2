@@ -14,14 +14,14 @@
         </button>
     </form>
 
-    <div  class="btn-group bottom-right dropup">
+    <div ng-show="!firstAuth" class="btn-group bottom-right dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             <span class="icon icon-gears"></span> <i18n>_AUTH_SETTINGS_</i18n> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu pull-right" role="menu">
-            <li ng-show="gimapServer.length > 0">
-                <a id="changeGimapUrl" ng-click="reset()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{gimapServer | urlShortener}})</small></a></li>
-            <li><a ng-click="forgetPassword()"><i18n>_AUTH_FORGET_PASSWORD_</i18n></a></li>
+            <li ng-show="!firstAuth">
+                <a ng-click="reset()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{gimapServer | urlShortener}})</small></a>
+            </li>
         </ul>
     </div>
 

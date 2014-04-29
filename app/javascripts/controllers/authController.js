@@ -157,18 +157,55 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
      * @memberOf    authController
      * @desc        Callback de succès de l'authentification
      */
-    // $scope.loginSucceed = function() {
-    //     var users = Smartgeo.get('users') || {};
-    //     users[$scope.username] = $scope.pwd;
-    //     Smartgeo.set('users', users);
-    //     $scope.user = {
-    //         password: $scope.rememberme ? $scope.pwd : '',
-    //         rememberme: $scope.rememberme
-    //     };
-    //     $scope.user.username = $scope.username;
-    //     Smartgeo.set('user', $scope.user);
-    //     $location.path('sites');
-    // };
+    $scope.loginSuccess = function(data, status) {
+
+        if($scope.user.rememberme){
+            Smartgeo.set('lastUser', $scope.user.username);
+        } else if(Smartgeo.get('lastUser') === $scope.user.username){
+            Smartgeo.unset('lastUser');
+        }
+        var users = Smartgeo.get('users') || {};
+        users[$scope.user.username] = $scope.user;
+        Smartgeo.set('users', users);
+        $scope.loginInProgress = false;
+
+        // data.sites est la liste des sites de l'utilisateur
+        // tester si 1 seul ET installé, on redirige vers MAP directement (après une authentification selection du site remotely)
+
+        $location.path('sites');
+    };
+
+    /**
+     * @method
+     * @memberOf    authController
+     * @desc        Callback d'erreur de l'authentification
+     */
+    $scope.loginError = function(response, status) {
+        var sites = [], storedSites = Smartgeo.get_('sites') ;
+
+        for(var site in storedSites){
+            sites.push(storedSites[site]);
+        }
+
+        if(status >= 400 && status < 500){
+            alertify.alert(i18n.get("_AUTH_INCORRECT_PASSWORD"));
+        } else if($scope.firstAuth){
+            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
+        } else if(sites.length === 0){
+            alertify.alert(i18n.get('_AUTH_INIT_WITHOUT_NETWORK_ERROR_', [$scope.user.username]));
+        } else if(sites.length > 0){
+            var users = Smartgeo.get('users') || {};
+            console.log(users[$scope.user.username],$scope.user.password)
+            if (users[$scope.user.username].password === $scope.user.password) {
+                return $scope.loginSuccess({sites:sites}, 0);
+            } else {
+                alertify.alert(i18n.get("_AUTH_INCORRECT_PASSWORD"));
+            }
+        }
+        $scope.loginInProgress = false;
+    };
+
+
 
     /**
      * @method
@@ -188,38 +225,9 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
             'forcegimaplogin': true
         });
 
-        $http.post(url, {}, {
-            timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
-        }).success(function () {
-
-            if($scope.user.rememberme){
-                Smartgeo.set('lastUser', $scope.user.username);
-            } else if(Smartgeo.get('lastUser') === $scope.user.username){
-                Smartgeo.unset('lastUser');
-            }
-
-            var users = Smartgeo.get('users') || {};
-            users[$scope.user.username] = $scope.user;
-            Smartgeo.set('users', users);
-
-            $location.path('sites');
-
-        }).error(function (response, status) {
-            if(status >= 500){
-                // ERREUR SERVEUR
-            } else if(status >= 400){
-                // ERREUR CLIENT (AUTHENTIFICATION)
-            } else if((Object.keys(Smartgeo.get_('sites')||{})).length === 0){
-
-                // ERREUR RESEAU
-            }
-            console.log();
-            // 403
-            // MAUVAISE ADDRESSE (si firstAuth)
-            //( SERVEUR EN RADE || OFFLINE) (si !firstAuth)
-                // AUTH LOCAL si sites.length > 0
-                // ERREUR SINON
-        });
+        $http.post(url, {}, { timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD })
+            .success($scope.loginSuccess)
+            .error($scope.loginError);
 
     };
 
@@ -233,12 +241,6 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
         if ($scope.firstAuth) {
             $scope.gimapServer = Smartgeo.setGimapUrl($scope.gimapServer);
         }
-
-
-
-        // else {
-        //     $scope.login();
-        // }
     };
 
     /**
@@ -248,14 +250,14 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
      *
      * @returns {Boolean} false en cas d'echec
      */
-    $scope.initializeGimap = function() {
-        if (!$scope.gimapServer.length || !$scope.username.trim().length || !$scope.pwd.trim().length) {
-            alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
-            return false;
-        }
-        $scope.gimapServer = Smartgeo.setgimapServer($scope.gimapServer);
-        Smartgeo.ping($scope.initializeGimapPingCallback);
-    }
+    // $scope.initializeGimap = function() {
+    //     if (!$scope.gimapServer.length || !$scope.username.trim().length || !$scope.pwd.trim().length) {
+    //         alertify.alert(i18n.get("_AUTH_REQUIRED_FIELD_EMPTY"));
+    //         return false;
+    //     }
+    //     $scope.gimapServer = Smartgeo.setgimapServer($scope.gimapServer);
+    //     Smartgeo.ping($scope.initializeGimapPingCallback);
+    // }
 
     /**
      * @method
@@ -264,13 +266,13 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
      *
      * @param {Boolean} yes Le serveur distant est il joignable ?
      */
-    $scope.initializeGimapPingCallback = function(yes) {
-        if (yes) {
-            $scope.login();
-        } else {
-            alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
-        }
-    };
+    // $scope.initializeGimapPingCallback = function(yes) {
+    //     if (yes) {
+    //         $scope.login();
+    //     } else {
+    //         alertify.alert(i18n.get("_AUTH_SERVER_UNREACHABLE"));
+    //     }
+    // };
 
     /**
      * @method
@@ -287,10 +289,10 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
      * @memberOf    authController
      * @desc        Supprime le mot de passe stocké dans le localStorage
      */
-    $scope.forgetPassword = function() {
-        $scope.username = $scope.pwd = '';
-        Smartgeo.unset('user');
-    };
+    // $scope.forgetPassword = function() {
+    //     $scope.username = $scope.pwd = '';
+    //     Smartgeo.unset('user');
+    // };
 
 }).filter('urlShortener', function() {
     return function(url) {
