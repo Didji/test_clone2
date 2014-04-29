@@ -3,6 +3,7 @@ window.smartgeo_i18n_lang['fr'] = {
     _AUTH_LOG_MESSAGE_REMOTE_: "Connexion distante",
     _AUTH_LOG_MESSAGE_LOCAL_: "Connexion locale",
     _AUTH_LOG_MESSAGE_CHECK_: "Vérification du serveur",
+    _AUTH_LOG_MESSAGE_LOGIN_: "Connexion",
     _AUTH_FORGET_PASSWORD_: "Oublier le mot de passe enregistré",
     _AUTH_SETTINGS_: "Paramètres",
     _AUTH_CHANGE_GIMAP_URL_: "Changer de serveur",

@@ -2,6 +2,7 @@ window.smartgeo_i18n_lang['en'] = {
     _AUTH_LOG_MESSAGE_INIT_: "Initialization",
     _AUTH_LOG_MESSAGE_REMOTE_: "Remote login",
     _AUTH_LOG_MESSAGE_LOCAL_: "Local login",
+    _AUTH_LOG_MESSAGE_LOGIN_: "Login",
     _AUTH_LOG_MESSAGE_CHECK_: "Checking server",
     _AUTH_FORGET_PASSWORD_: "Forget saved password",
     _AUTH_SETTINGS_: "Settings",
