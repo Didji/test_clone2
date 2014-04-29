@@ -70,6 +70,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.userLocationGeometry = function(node) {
+
+                    Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
+                        console.log(arguments);
+                    });
+
+
                     Smartgeo.getUsersLocation(function(lat, lng) {
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {

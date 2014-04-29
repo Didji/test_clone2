@@ -501,12 +501,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             } else if (this.positionListerners.indexOf(listener) !== -1){
                 return false ;
             }
-            this.positionListerners.push(listener);
-            return true ;
+            return this.positionListerners.push(listener) ;
         },
 
         stopWatchingPosition: function(listener){
-            var index = this.positionListerners.indexOf(listener);
+            var index = (typeof listener === "function") ? this.positionListerners.indexOf(listener) : listener ;
+            console.log(index, this.positionListerners);
             if(index !== -1){
                 this.positionListerners.splice(index);
             }
@@ -518,6 +518,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 }
             }
         },
+
+        getCurrentLocation: function(listener){
+            var index = this.startWatchingPosition(function(lng, lat, alt, acc){
+                Smartgeo.stopWatchingPosition(index-1);
+                listener(lng, lat, alt, acc);
+            });
+        },
+
 
         positionListernersDispatchor: function(lng, lat, alt, acc){
             for( var i=0 ; i < this.positionListerners.length ; i++){
