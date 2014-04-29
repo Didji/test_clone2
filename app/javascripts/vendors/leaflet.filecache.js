@@ -600,7 +600,7 @@ if (navigator.userAgent.match(/Android/i)) {
 
 
         getTilePath: function (tile) {
-            return 'tiles/' + tile.z + '/' + tile.x + '_' + tile.y + '.png';
+            return 'tiles/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
         },
 
 
@@ -735,7 +735,7 @@ if (navigator.userAgent.match(/Android/i)) {
         },
 
         readMetadataTileFile: function (tileObject, callback) {
-            var path = 'file:///storage/sdcard0/Android/data/com.gismartware.mobile/' + this.getTilePath(tileObject) + '.metadata';
+            var path = 'file://' + Smartgeo.get('tileRootPath') + '/' + this.getTilePath(tileObject) + '.metadata';
             $.getJSON(path, function (metadata) {
                 (callback || function () {})(metadata);
             }).fail(function () {
