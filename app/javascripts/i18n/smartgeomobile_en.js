@@ -2,6 +2,7 @@ window.smartgeo_i18n_lang['en'] = {
     _AUTH_LOG_MESSAGE_INIT_: "Initialization",
     _AUTH_LOG_MESSAGE_REMOTE_: "Remote login",
     _AUTH_LOG_MESSAGE_LOCAL_: "Local login",
+    _AUTH_LOG_MESSAGE_LOGIN_: "Login",
     _AUTH_LOG_MESSAGE_CHECK_: "Checking server",
     _AUTH_FORGET_PASSWORD_: "Forget saved password",
     _AUTH_SETTINGS_: "Settings",
@@ -14,7 +15,7 @@ window.smartgeo_i18n_lang['en'] = {
     _AUTH_SERVER_ERROR: "%s", // status
     _AUTH_INCORRECT_PASSWORD: "Invalid password", //Mot de passe incorrect",
     _AUTH_ERROR_: "Connection error",
-
+    _AUTH_UNKNOWN_ERROR_OCCURED_ : "Unknown error occured",
     _SMARTGEO_ONLINE: "Smartgeo is online",
     _SMARTGEO_OFFLINE: "Smartgeo is offline",
     _SMARTGEO_ZERO_SITE_SELECTED: "No site found",

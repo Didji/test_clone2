@@ -385,7 +385,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
-            if(parameter === 'sites') console.log(Smartgeo.parametersCache_[parameter]);
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
@@ -506,7 +505,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         stopWatchingPosition: function(listener){
             var index = (typeof listener === "function") ? this.positionListerners.indexOf(listener) : listener ;
-            console.log(index, this.positionListerners);
             if(index !== -1){
                 this.positionListerners.splice(index);
             }
@@ -1081,6 +1079,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
     window.Smartgeo = Smartgeo;
     $rootScope.rights = window.smartgeoRightsManager;
+    $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
     return Smartgeo;
 
 });

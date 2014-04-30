@@ -1,33 +1,30 @@
 <div ng-init="initialize()" class="container" ng-controller="authController">
-    <form ng-submit="formSubmit()" class="panel floating-form">
+    <form ng-submit="login()" class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
         <hr />
-        <p><input class="form-control" type='text' ng-model="gimapUrl" ng-show='firstAuth' placeholder='Adresse du serveur' /></p>
-        <p><input class="form-control" type='text' ng-model="username" placeholder='Utilisateur' /></p>
-        <p><input class="form-control" type='password' ng-model="pwd" placeholder='Mot de passe'/></p>
-        <label><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="rememberme"></label>
-        <hr>
+        <p><input class="form-control" type='text' ng-model="gimapServer" ng-show='firstAuth' placeholder='Adresse du serveur' /></p>
+        <p><input class="form-control" type='text' ng-model="user.username" placeholder='Utilisateur' /></p>
+        <p><input class="form-control" type='password' ng-model="user.password" placeholder='Mot de passe'/></p>
+        <label><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="user.rememberme"></label>
+        <div ng-if='errorMessage' class="alert alert-danger">{{errorMessage}}</div>
+        <hr  ng-if='!errorMessage' >
         <button
+            ng-class    = "{active : loginInProgress}"
             class       = "btn btn-lg btn-primary btn-block has-spinner"
-            ng-show     = "firstAuth"
-            ng-disabled = "!gimapUrl.length"><span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
-            <i18n>_AUTH_LOG_MESSAGE_INIT_</i18n>
-        </button>
-        <button
-            class       = "btn btn-lg btn-primary btn-block has-spinner"
-            ng-class    = "{active:!readyToLog && !firstAuth}"
-            type        = "submit"
-            ng-show     = "!firstAuth"><span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
-            {{ logMessage | i18n }}
+            ng-disabled = "(!gimapServer.length || !user.username.length || !user.password.length) || loginInProgress"><span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+            <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
         </button>
     </form>
-    <div  class="btn-group bottom-right dropup">
+
+    <div ng-show="!firstAuth" class="btn-group bottom-right dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             <span class="icon icon-gears"></span> <i18n>_AUTH_SETTINGS_</i18n> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu pull-right" role="menu">
-            <li ng-show="smallUrl.length > 0"><a id="changeGiMapUrl" ng-click="resetForm()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{smallUrl}})</small></a></li>
-            <li><a ng-click="forgetPassword()"><i18n>_AUTH_FORGET_PASSWORD_</i18n></a></li>
+            <li ng-show="!firstAuth">
+                <a ng-click="reset()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{gimapServer | urlShortener}})</small></a>
+            </li>
         </ul>
     </div>
+
 </div>
