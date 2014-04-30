@@ -13,8 +13,9 @@ window.smartgeo_i18n_lang['fr'] = {
     _AUTH_PLEASE_WAIT: "Veuillez patienter ...",
     _AUTH_REQUIRED_FIELD_EMPTY: "Veuillez renseigner les champs utilisateur et mot de passe.",
     _AUTH_SERVER_ERROR: "Une erreur est survenue (%s)", // status
-    _AUTH_INCORRECT_PASSWORD: "Mot de passe incorrect",
+    _AUTH_INCORRECT_PASSWORD: "Authentification incorrecte",
     _AUTH_ERROR_: "Connexion impossible",
+    _AUTH_UNKNOWN_ERROR_OCCURED_ : "Connexion impossible",
 
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
 

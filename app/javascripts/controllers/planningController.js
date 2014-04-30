@@ -237,7 +237,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.initialize = function () {
 
-        $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('user').username) || {};
+        $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')) || {};
 
         // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
         setTimeout(function() {
@@ -252,7 +252,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
         $scope.$watch('missions', function () {
-            Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions || {});
+            Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions || {});
         });
         $scope.$watch('dayToDisplay', function () {
             $scope.updateCount();
@@ -354,7 +354,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * Reduce mission.assets array considering pending reports
      */
     $scope.removeObsoleteMission = function (reports) {
-        var missions = Smartgeo.get('missions_'+Smartgeo.get('user').username),
+        var missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')),
             index, pendingAssets, mission, i;
         for (i in reports) {
             if (missions[reports[i].mission]) {
@@ -680,7 +680,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             mission.postAddedAssets.assets.push(asset.guid);
         }
 
-        Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
 
         Smartgeo.findGeometryByGuids($scope.site, asset.guid, function (assets) {
 
@@ -719,7 +719,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.removeAssetFromMission = function (asset, mission) {
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-        Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
         $scope.highlightMission(mission);
     };
 

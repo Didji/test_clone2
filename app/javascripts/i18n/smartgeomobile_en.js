@@ -15,7 +15,7 @@ window.smartgeo_i18n_lang['en'] = {
     _AUTH_SERVER_ERROR: "%s", // status
     _AUTH_INCORRECT_PASSWORD: "Invalid password", //Mot de passe incorrect",
     _AUTH_ERROR_: "Connection error",
-
+    _AUTH_UNKNOWN_ERROR_OCCURED_ : "Unknown error occured",
     _SMARTGEO_ONLINE: "Smartgeo is online",
     _SMARTGEO_OFFLINE: "Smartgeo is offline",
     _SMARTGEO_ZERO_SITE_SELECTED: "No site found",

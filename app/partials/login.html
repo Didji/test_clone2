@@ -6,8 +6,10 @@
         <p><input class="form-control" type='text' ng-model="user.username" placeholder='Utilisateur' /></p>
         <p><input class="form-control" type='password' ng-model="user.password" placeholder='Mot de passe'/></p>
         <label><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="user.rememberme"></label>
-        <hr>
+        <div ng-if='errorMessage' class="alert alert-danger">{{errorMessage}}</div>
+        <hr  ng-if='!errorMessage' >
         <button
+            ng-class    = "{active : loginInProgress}"
             class       = "btn btn-lg btn-primary btn-block has-spinner"
             ng-disabled = "(!gimapServer.length || !user.username.length || !user.password.length) || loginInProgress"><span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
             <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
