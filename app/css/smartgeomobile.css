@@ -35,6 +35,84 @@ body {
     user-select: none;
 }
 
+/** Login */
+
+.login-errorMessage{
+    font-size:0.8em;
+}
+
+.rememberMeCheckbox{
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+
+.floating-form {
+    width: 300px;
+    margin: 100px auto 10px auto;
+    padding: 10px;
+    text-align: center;
+}
+
+@media(max-height:444px) {
+    .floating-form {
+        margin-top: 10px;
+    }
+}
+
+@media(max-height:350px) {
+    .floating-form img {
+        max-height: 20px;
+    }
+
+    .floating-form h2 {
+        margin: 0;
+        padding: 0;
+    }
+
+    .floating-form small,
+    .floating-form hr {
+        display: none;
+    }
+}
+
+@media(max-height:250px) {
+    .bottom-right {
+        display: none;
+    }
+}
+
+.floating-form small {
+    float: right;
+}
+
+.container_s {
+    font-weight: normal!important;
+}
+
+.floating-form img {
+    max-width: 250px;
+}
+
+.floating-form a.btn {
+    width: 278px;
+}
+
+.floating-form .has-carret a.btn {
+    width: 253px;
+}
+
+.floating-form .dropdown-menu {
+    text-align: left;
+}
+
+.bottom-right {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+
 /** Vue principale */
 
 #mainview {
@@ -205,71 +283,6 @@ body {
 .select2-container {
     width: 90%;
     margin: 0 5%;
-}
-
-.floating-form {
-    width: 300px;
-    margin: 100px auto 10px auto;
-    padding: 10px;
-    text-align: center;
-}
-
-@media(max-height:444px) {
-    .floating-form {
-        margin-top: 10px;
-    }
-}
-
-@media(max-height:350px) {
-    .floating-form img {
-        max-height: 20px;
-    }
-
-    .floating-form h2 {
-        margin: 0;
-        padding: 0;
-    }
-
-    .floating-form small,
-    .floating-form hr {
-        display: none;
-    }
-}
-
-@media(max-height:250px) {
-    .bottom-right {
-        display: none;
-    }
-}
-
-.floating-form small {
-    float: right;
-}
-
-.container_s {
-    font-weight: normal!important;
-}
-
-.floating-form img {
-    max-width: 250px;
-}
-
-.floating-form a.btn {
-    width: 278px;
-}
-
-.floating-form .has-carret a.btn {
-    width: 253px;
-}
-
-.floating-form .dropdown-menu {
-    text-align: left;
-}
-
-.bottom-right {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
 }
 
 .big-button {

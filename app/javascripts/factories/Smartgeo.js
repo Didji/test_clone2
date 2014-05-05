@@ -1,10 +1,3 @@
-/**
- * @ngdoc service
- * @name smartgeomobile.Smartgeo
- * @description
- * Provides global methods
- */
-
 angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
 
     'use strict';
@@ -62,7 +55,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description Timeout, in milliseconds, for ping and login method
          */
-        _SERVER_UNREACHABLE_THRESHOLD: 15000,
+        _SERVER_UNREACHABLE_THRESHOLD: 10000,
 
         /**
          * @ngdoc property
@@ -1059,27 +1052,48 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 };
             }
         },
+
+        initialize : function(){
+
+            Smartgeo._initializeGlobalEvents();
+            Smartgeo.clearSiteSelection();
+            Smartgeo.clearPersistence();
+            Smartgeo.clearIntervals();
+            Smartgeo.clearPollingRequest();
+
+            if(window.SmartgeoChromium){
+                window.ChromiumCallbacks[13] = function (path) {
+                    if(path){
+                        Smartgeo.set('tileRootPath', path);
+                    } else {
+                        SmartgeoChromium.getExtApplicationDirectory();
+                    }
+                };
+                SmartgeoChromium.getExtApplicationDirectory();
+                window.ChromiumCallbacks[0] = function(lng, lat, alt, acc){
+                    Smartgeo.positionListernersDispatchor(lng, lat, alt, acc) ;
+                }
+            }
+
+            window.Smartgeo = Smartgeo;
+            window.Kernel   = Smartgeo;
+
+            $rootScope.rights = window.smartgeoRightsManager;
+            $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+        }
     };
 
-    Smartgeo._initializeGlobalEvents();
+    Smartgeo.initialize();
 
-    if(window.SmartgeoChromium){
-        window.ChromiumCallbacks[13] = function (path) {
-            if(path){
-                Smartgeo.set('tileRootPath', path);
-            } else {
-                SmartgeoChromium.getExtApplicationDirectory();
-            }
-        };
-        SmartgeoChromium.getExtApplicationDirectory();
-        window.ChromiumCallbacks[0] = function(lng, lat, alt, acc){
-            Smartgeo.positionListernersDispatchor(lng, lat, alt, acc) ;
-        }
-    }
+    return Smartgeo;
 
-    window.Smartgeo = Smartgeo;
-    $rootScope.rights = window.smartgeoRightsManager;
-    $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+});
+
+
+angular.module('smartgeomobile').factory('Kernel', function (Smartgeo) {
+
+    'use strict';
+
     return Smartgeo;
 
 });
