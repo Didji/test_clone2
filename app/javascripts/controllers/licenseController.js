@@ -1,7 +1,11 @@
 /**
  * @class       licenseController
- * @classdesc
+ * @desc Controlleur de la page d'enregistrement du terminal.
+
+ * @param {LicenseManager} LicenseManager
+ * @param {i18n} i18n
  *
+ * @property {string} errorMessage Message affiché en cas d'erreur
  * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
  */
 
@@ -12,7 +16,7 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Lance l'enregistrement de la licence
      */
     $scope.register = function() {
         LicenseManager.register($scope.licenseNumber, $scope.registerSuccess, $scope.registerError);
@@ -22,7 +26,7 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Callback de succès de l'enregistrement qui va rediriger l'utilisateur vers la page d'authentification
      */
     $scope.registerSuccess = function() {
         $location.path('/');
@@ -32,7 +36,8 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Callback d'erreur de l'enregistrement qui va afficher le message d'erreur en conséquence
+     * @param       {object} response Réponse d'un objet angular $resource
      */
     $scope.registerError = function(response) {
         switch (response.status) {

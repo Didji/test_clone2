@@ -1,8 +1,12 @@
 /**
- * @class       licenseController
- * @classdesc
+ * @class       licenseRevokedController
+ * @desc Controlleur de la page de révokation d'une licence.
  *
- * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
+ * @param {LicenseManager} LicenseManager
+ * @param {i18n} i18n
+ *
+ * @property {string} licenseNumber Numéro de série fourni par l'utilisateur
+ * @property {string} errorMessage Message affiché en cas d'erreur
  */
 
 angular.module('smartgeomobile').controller('licenseRevokedController', function($scope, $location, i18n, LicenseManager) {
@@ -14,7 +18,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Lance la mise à jour de la licence
      */
     $scope.update = function() {
         LicenseManager.update($scope.updateSuccess, $scope.updateError);
@@ -24,7 +28,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Callback de succès de la mise à jour qui va rediriger l'utilisateur vers la page d'authentification
      */
     $scope.updateSuccess = function() {
         $location.path('/');
@@ -34,7 +38,8 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
     /**
      * @method
      * @memberOf    licenseController
-     * @desc
+     * @desc        Callback d'erreur de la mise à jour qui va afficher le message d'erreur en conséquence
+     * @param       {object} response Réponse d'un objet angular $resource
      */
     $scope.updateError = function(response) {
         switch (response.status) {
