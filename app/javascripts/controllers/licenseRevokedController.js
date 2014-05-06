@@ -9,7 +9,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
 
     'use strict';
 
-    $scope.errorMessage = (i18n.get("_REGISTER_LICENSE_REVOKED"));
+    $scope.errorMessage = i18n.get("_REGISTER_LICENSE_REVOKED");
 
     /**
      * @method
@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
             $scope.errorMessage = (i18n.get("_REGISTER_ERROR_NO_MORE_LICENSE"));
             break;
         case 404:
-            $scope.errorMessage = (i18n.get("_REGISTER_ERROR_NOT_FOUND"));
+            $scope.errorMessage = (i18n.get("_REGISTER_LICENSE_REVOKED"));
             break;
         case 409:
             $scope.errorMessage = (i18n.get("_REGISTER_ERROR_CONFLICT"));

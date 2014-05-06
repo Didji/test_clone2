@@ -28,9 +28,8 @@ window.smartgeo_i18n_lang['en'] = {
     _REGISTER_ERROR_UNKNOWN : "Une erreur inconnue s'est produite, veuillez contacter le support",
     _REGISTER_LICENSE_REVOKED : "La license n'est plus valide, contactez le service commercial",
     _REGISTER_MUST_CHECK_: "Limite d'utilisation hors ligne atteinte, veuillez vous connecter à internet.",
-    _REGISTER_CAREFUL_:"Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté.",
+    _REGISTER_CAREFUL_:"Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté (%s restante(s))",
     _REGISTER_UPDATE_LICENSE_ :"Vérifier la licence",
-
 
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)", // geom
 

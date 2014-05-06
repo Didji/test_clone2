@@ -138,7 +138,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
                 alertify.log(i18n.get("_REGISTER_MUST_CHECK_"));
                 $location.path('licenseRevoked');
             } else if(license.offline_verification >= this.__offline_verification_warn_threshold){
-                alertify.log(i18n.get("_REGISTER_CAREFUL_"));
+                alertify.log(i18n.get("_REGISTER_CAREFUL_", (this.__offline_verification_block_threshold - license.offline_verification)));
             }
             this.__setLicense(license);
             break;
