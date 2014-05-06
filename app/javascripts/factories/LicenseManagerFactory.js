@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('LicenseManager', function ($location, $rootScope, G3lic) {
+angular.module('smartgeomobile').factory('LicenseManager', function ($location, $rootScope, G3lic, i18n ) {
 
     'use strict';
 
@@ -27,6 +27,27 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * }
      */
     LicenseManager.prototype.__rights = {} ;
+
+    /**
+     * @memberOf LicenseManager
+     * @member {number} __offline_verification_block_threshold
+     * @desc Nombre de vérification hors ligne à atteindre avant de bloquer l'utilisation de l'application
+     */
+    LicenseManager.prototype.__offline_verification_block_threshold = 10 ;
+
+    /**
+     * @memberOf LicenseManager
+     * @member {number} __offline_verification_block_threshold
+     * @desc Nombre de vérification hors ligne à atteindre avant d'avertir l'utilisateur
+     */
+    LicenseManager.prototype.__offline_verification_warn_threshold = 7 ;
+
+    /**
+     * @memberOf LicenseManager
+     * @member {number} __max_time_between_check
+     * @desc Temps max entre 2 vérifications de licence en millisecond (86400000 === 1 jour)
+     */
+    LicenseManager.prototype.__max_time_between_check = 86400000 ;
 
     /**
      * @method
@@ -102,32 +123,62 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
         return JSON.parse(localStorage['LicenseManager.license'] || "{}") ;
     }
 
+
+    /**
+     * @method
+     * @memberOf LicenseManager
+     * @desc Callback d'erreur de la mise à jour d'une licence
+     */
+    LicenseManager.prototype.__updateErrorCallback = function(response) {
+        switch (response.status) {
+        case 0:
+            var license = this.__getLicense();
+            license.offline_verification = (license.offline_verification || 0) + 1 ;
+            if(license.offline_verification >= this.__offline_verification_block_threshold){
+                alertify.log(i18n.get("_REGISTER_MUST_CHECK_"));
+                $location.path('licenseRevoked');
+            } else if(license.offline_verification >= this.__offline_verification_warn_threshold){
+                alertify.log(i18n.get("_REGISTER_CAREFUL_"));
+            }
+            this.__setLicense(license);
+            break;
+        case 404:
+            // TODO/UGLYALERT: return something more explicit from g3lic (like 403) (@gulian)
+            $location.path('licenseRevoked');
+            return;
+        default:
+            console.error(response);
+            break;
+        }
+    }
+
     /**
      * @method
      * @memberOf LicenseManager
      * @desc Vérifie la validité de la licence, et redirige ou non l'utilisateur en conséquence
+     * @param {function} success Callback de succès
+     * @param {function} error Callback d'erreur
      * @returns {LicenseManager} LicenseManager
      */
-    LicenseManager.prototype.update = function() {
-        var this_ = this, license = this.__getLicense();
-        G3lic.check(license, function(options, status){
+    LicenseManager.prototype.update = function(success, error) {
+        var this_ = this, license = this.__getLicense(), now = new Date();
+
+        if((now - new Date(license.lastcheck)) < this.__max_time_between_check){
+            return this ;
+        }
+
+        G3lic.check(license, function(options){
             license.registered = true;
+            license.lastcheck  = now;
+            license.offline_verification = 0 ;
             this_.__setRights(this_.__parseG3licResponse(options));
             this_.__setLicense(license);
-        }, function(data, status){
-            switch (status) {
-            case 0:
-                // on incrémente un compteur jusqu'a un seuil puis boom
-                break;
-            case 404:
-                // TODO: return something more explicit from g3lic (like 403) (@gulian)
-                $location.path('licenseRevoked');
-                break;
-            default:
-                console.error(data, status);
-                break;
-            }
+            (success || angular.noop)();
+        }, function(response){
+            this_.__updateErrorCallback(response);
+            (error||angular.noop)(response);
         });
+
         return this ;
     }
 
@@ -140,14 +191,15 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @returns {LicenseManager} LicenseManager
      */
     LicenseManager.prototype.register = function(licenseNumber, success, error) {
-        var this_   = this;
+        var this_   = this, now = new Date();
         var license = {
             'serial'        : licenseNumber,
             'device_serial' : 'xxxx'+Math.random(),  // TODO: get device serial from native (@gulian)
             'device_name'   : 'deviceName'           // TODO: get device name from native (@gulian)
         };
-        G3lic.register(license, function(options, status){
+        G3lic.register(license, function(options){
             license.registered = true;
+            license.lastcheck  = now;
             this_.__setRights(this_.__parseG3licResponse(options));
             this_.__setLicense(license);
             success();
