@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
+angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route, LicenseManager) {
 
     'use strict';
 
@@ -1078,7 +1078,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             window.Smartgeo = Smartgeo;
             window.Kernel   = Smartgeo;
 
-            $rootScope.rights = window.smartgeoRightsManager;
+            $rootScope.rights = LicenseManager.rights;
             $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
         }
     };

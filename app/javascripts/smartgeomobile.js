@@ -29,6 +29,13 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
                 templateUrl: "partials/report.html"
             }).
 
+            when("/register", {
+                templateUrl: "partials/register.html"
+            }).
+            when("/licenseRevoked", {
+                templateUrl: "partials/licenseRevoked.html"
+            }).
+
             when("/sites/install/:site", {
                 templateUrl: "partials/installation.html"
             }).

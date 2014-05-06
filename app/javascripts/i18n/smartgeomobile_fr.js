@@ -16,7 +16,14 @@ window.smartgeo_i18n_lang['fr'] = {
     _AUTH_INCORRECT_PASSWORD: "Authentification incorrecte",
     _AUTH_ERROR_: "Connexion impossible",
     _AUTH_UNKNOWN_ERROR_OCCURED_ : "Connexion impossible",
-
+    _REGISTER_REGISTER_ : "Enregister le terminal",
+    _REGISTER_ERROR_OFFLINE  : "Vous devez être connecté à internet pour enregister le terminal",
+    _REGISTER_ERROR_NOT_FOUND : "Le numéro de licence fourni n'existe pas",
+    _REGISTER_ERROR_CONFLICT : "Cette licence a déjà été enregistée avec un autre terminal",
+    _REGISTER_ERROR_G3LIC   :  "Une erreur 500 s'est produite, veuillez contacter le support",
+    _REGISTER_ERROR_UNKNOWN : "Une erreur inconnue s'est produite, veuillez contacter le support",
+    _REGISTER_ERROR_NO_MORE_LICENSE : "Le nombre d'utilisation maximal de cette licence a été atteint.",
+    _REGISTER_LICENSE_REVOKED : "La license n'est plus valide. Contactez le service commercial.",
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
 
     _SMARTGEO_ONLINE: "Smartgeo est connecté",

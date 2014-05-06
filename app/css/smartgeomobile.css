@@ -111,7 +111,11 @@ body {
     right: 10px;
     bottom: 10px;
 }
+.floating-form > .form-group{
+    text-align: left ;
+    padding: 0 5px ;
 
+}
 
 /** Vue principale */
 
