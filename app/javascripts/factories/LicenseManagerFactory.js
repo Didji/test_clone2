@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('LicenseManager', function ($http, $location, $rootScope) {
+angular.module('smartgeomobile').factory('LicenseManager', function ($location, $rootScope, G3lic) {
 
     'use strict';
 
@@ -10,20 +10,12 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($http, $loc
      */
     var LicenseManager = function(){
         if(!this.__isDeviceRegistered()){
-            return $location.path('register');
+            $location.path('register');
+            return this;
         }
         this.__rights = this.__getRights();
         return this.update();
     };
-
-    /**
-     * @memberOf LicenseManager
-     * @member {string} __g3lic
-     * @static
-     * @desc URL du serveur G3LIC
-     * @example LicenseManager.prototype.__g3lic = "http://localhost:3000"
-     */
-    LicenseManager.prototype.__g3lic = "http://localhost:3000" ;
 
     /**
      * @memberOf LicenseManager
@@ -118,11 +110,11 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($http, $loc
      */
     LicenseManager.prototype.update = function() {
         var this_ = this, license = this.__getLicense();
-        $http.post( this.__g3lic + "/licenses/check", license ).success(function(options, status){
+        G3lic.check(license, function(options, status){
             license.registered = true;
             this_.__setRights(this_.__parseG3licResponse(options));
             this_.__setLicense(license);
-        }).error(function(data, status){
+        }, function(data, status){
             switch (status) {
             case 0:
                 // on incrémente un compteur jusqu'a un seuil puis boom
@@ -143,24 +135,23 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($http, $loc
      * @method
      * @memberOf LicenseManager
      * @param {string} licenseNumber Numero de la licence
-     * @param {string} deviceName Nom du terminal
      * @param {function} success Callback de succès
      * @param {function} error Callback d'erreur
      * @returns {LicenseManager} LicenseManager
      */
-    LicenseManager.prototype.register = function(licenseNumber, deviceName, success, error) {
+    LicenseManager.prototype.register = function(licenseNumber, success, error) {
         var this_   = this;
         var license = {
             'serial'        : licenseNumber,
-            'device_serial' : 'xxxx:xxxx:xxxx:xxxx'+Math.random(), // TEMP
-            'device_name'   : deviceName
+            'device_serial' : 'xxxx'+Math.random(),  // TODO: get device serial from native (@gulian)
+            'device_name'   : 'deviceName'           // TODO: get device name from native (@gulian)
         };
-        $http.post( this.__g3lic + "/licenses/register", license ).success(function(options, status){
+        G3lic.register(license, function(options, status){
             license.registered = true;
             this_.__setRights(this_.__parseG3licResponse(options));
             this_.__setLicense(license);
             success();
-        }).error(error);
+        }, error)
         return this;
     }
 

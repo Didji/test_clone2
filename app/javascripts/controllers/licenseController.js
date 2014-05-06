@@ -3,7 +3,6 @@
  * @classdesc
  *
  * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
- * @property {String} deviceName    Nom du terminal fourni par l'utilisateur
  */
 
 angular.module('smartgeomobile').controller('licenseController', function($scope, $rootScope, $location, Smartgeo, i18n, LicenseManager) {
@@ -15,17 +14,8 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
      * @memberOf    licenseController
      * @desc
      */
-    $scope.initialize = function() {
-
-    };
-
-    /**
-     * @method
-     * @memberOf    licenseController
-     * @desc
-     */
     $scope.register = function() {
-        LicenseManager.register($scope.licenseNumber, $scope.deviceName, $scope.registerSuccess, $scope.registerError);
+        LicenseManager.register($scope.licenseNumber, $scope.registerSuccess, $scope.registerError);
     };
 
 
@@ -44,8 +34,8 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
      * @memberOf    licenseController
      * @desc
      */
-    $scope.registerError = function(response, status) {
-        switch (status) {
+    $scope.registerError = function(response) {
+        switch (response.status) {
         case 0:
             $scope.errorMessage = (i18n.get("_REGISTER_ERROR_OFFLINE"));
             break;
