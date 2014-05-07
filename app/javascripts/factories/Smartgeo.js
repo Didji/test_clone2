@@ -1078,7 +1078,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             window.Smartgeo = Smartgeo;
             window.Kernel   = Smartgeo;
 
-            $rootScope.rights = LicenseManager.rights;
             $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
         }
     };

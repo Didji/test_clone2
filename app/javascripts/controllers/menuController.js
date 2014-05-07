@@ -7,7 +7,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     });
     $(".mp-menu").css('width', Smartgeo._SIDE_MENU_WIDTH);
 
-
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
     function closest(e, classname) {

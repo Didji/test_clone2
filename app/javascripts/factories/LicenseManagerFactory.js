@@ -14,6 +14,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             return this;
         }
         this.__rights = this.__getRights();
+        this.__dispatchRights();
         return this.update();
     };
 
@@ -84,10 +85,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.__setRights = function(rights) {
         localStorage['LicenseManager.rights'] = JSON.stringify(rights || {});
-        $rootScope.rights = this.__rights = rights ;
-        if (!$rootScope.$$phase) {
-            $rootScope.$apply();
-        }
+        this.__dispatchRights(rights);
         return this ;
     }
 
@@ -99,6 +97,18 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.__getRights = function() {
         return JSON.parse(localStorage['LicenseManager.rights'] || "{}" );
+    }
+
+    /**
+     * @method
+     * @memberOf LicenseManager
+     * @param {object} rights Droits à dispatcher
+     * @desc Dispatche les droits vers le $rootScope
+     * @returns {LicenseManager} LicenseManager
+     */
+    LicenseManager.prototype.__dispatchRights = function(rights) {
+        $rootScope.rights = this.__rights = (rights || this.__rights) ;
+        return this;
     }
 
     /**
@@ -160,10 +170,22 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @param {function} error Callback d'erreur
      * @returns {LicenseManager} LicenseManager
      */
-    LicenseManager.prototype.update = function(success, error) {
+    LicenseManager.prototype.update = function(force, success, error) {
+
+        if(typeof force !== "boolean"){
+            error   = success || function(){} ;
+            success = force   || function(){} ;
+            force   = false ;
+        } else {
+            error   = error   || function(){} ;
+            success = success || function(){} ;
+        }
+
+        console.log(force, success, error);
+
         var this_ = this, license = this.__getLicense(), now = new Date();
 
-        if((now - new Date(license.lastcheck)) < this.__max_time_between_check){
+        if(!force && (now - new Date(license.lastcheck)) < this.__max_time_between_check){
             return this ;
         }
 
@@ -173,10 +195,10 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             license.offline_verification = 0 ;
             this_.__setRights(this_.__parseG3licResponse(options));
             this_.__setLicense(license);
-            (success || angular.noop)();
+            success();
         }, function(response){
             this_.__updateErrorCallback(response);
-            (error||angular.noop)(response);
+            error(response);
         });
 
         return this ;

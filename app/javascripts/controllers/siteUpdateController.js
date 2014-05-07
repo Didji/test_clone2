@@ -1,13 +1,18 @@
-angular.module('smartgeomobile').controller('siteUpdateController', function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteUpdateController', function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n, LicenseManager) {
 
     'use strict';
+
+    LicenseManager.update(true) ;
+
     $scope.steps = [{
         color: '#fd9122',
         progress: 0,
         target: 100
     }];
+
     $scope.totalProgress = 100;
     $scope.Math = Math;
+
     var stepsByOkey = {};
 
     function buildSteps(site) {
