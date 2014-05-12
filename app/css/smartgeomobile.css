@@ -140,13 +140,6 @@ body {
 /** Panneaux de droite */
 
 .consultation-panel {
-/*
-    -webkit-transition: width  -webkit-transform 0.5s;
-    transition:  width transform 0.5s;
-    -webkit-transform: translate3d(100%, 0, 0);
-    transform: translate3d(100%, 0, 0);*/
-
-
     z-index: 1000;
     position: absolute;
     position: absolute;
@@ -463,9 +456,6 @@ label.prettycheckbox,
 }
 
 label.prettycheckbox {
-/*    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;*/
-
 
     display: block;
     width: 100%;
@@ -545,12 +535,6 @@ ul.ged-gallery li img {
 }
 
 .spinnerb {
-/*  -webkit-transition: opacity 0.25s, width 0.25s;
-  -moz-transition: opacity 0.25s, width 0.25s;
-  -o-transition: opacity 0.25s, width 0.25s;
-  transition: opacity 0.25s, width 0.25s;*/
-
-
     display: inline-block;
     width: 0;
     opacity: 0;
@@ -682,12 +666,6 @@ ul.ged-gallery li img {
     background: transparent;
     padding-right: 15px;
 }
-/*
-canvas{
-    border: 1px solid rgba(255, 0, 0, 0.3) ;
-}
-*/
-
 
 .select2-results .select2-result-label {
     padding: 13px 7px 12px;

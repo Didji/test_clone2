@@ -1,5 +1,4 @@
 /**
- * @ngdoc object
  * @name planningController
  * @description
  * Planning controller
@@ -14,7 +13,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     }
 
     /**
-     * @ngdoc property
      * @name planningController#missions
      * @propertyOf planningController
      * @description List of missions, displayed on planning
@@ -22,7 +20,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $rootScope.missions = {};
 
     /**
-     * @ngdoc property
      * @name planningController#_DAY_TO_MS
      * @propertyOf planningController
      * @const
@@ -31,7 +28,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope._DAY_TO_MS = 86400000;
 
     /**
-     * @ngdoc property
      * @name planningController#_SYNCHRONIZE_INTERVAL
      * @propertyOf planningController
      * @const
@@ -39,7 +35,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope._SYNCHRONIZE_INTERVAL = 60000;
     /**
-     * @ngdoc property
      * @name planningController#dayToDisplay
      * @propertyOf planningController
      * @description Current displayed day on planning
@@ -47,7 +42,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.dayToDisplay = 0;
 
     /**
-     * @ngdoc property
      * @name planningController#beforeToday
      * @propertyOf planningController
      * @description Amount of mission before {@link planningController#dayToDisplay $scope.dayToDisplay}
@@ -55,7 +49,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.beforeToday = 0;
 
     /**
-     * @ngdoc property
      * @name planningController#afterToday
      * @propertyOf planningController
      * @description Amount of mission after {@link planningController#dayToDisplay $scope.dayToDisplay}
@@ -63,7 +56,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.afterToday = 0;
 
     /**
-     * @ngdoc property
      * @name planningController#assetsCache
      * @propertyOf planningController
      * @const
@@ -72,7 +64,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.assetsCache = [];
 
     /**
-     * @ngdoc property
      * @name planningController#doneAssetsCache
      * @propertyOf planningController
      * @const
@@ -81,7 +72,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $rootScope.doneAssetsCache = [];
 
     /**
-     * @ngdoc property
      * @name planningController#doneAssetsCache
      * @propertyOf planningController
      * @const
@@ -90,7 +80,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.lastUpdate = Smartgeo.get('lastUpdate');
 
     /**
-     * @ngdoc method
      * @name planningController#today
      * @methodOf planningController
      * @description
@@ -102,7 +91,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#move
      * @methodOf planningController
      * @param {integer} delta Amount of day to move. Negative or positive number.
@@ -121,7 +109,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#synchronize
      * @methodOf planningController
      * @description
@@ -221,7 +208,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#initialize
      * @methodOf planningController
      * @description
@@ -247,7 +233,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             });
         }, 500);
 
-
         $scope.$watch('lastUpdate', function () {
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
@@ -265,15 +250,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         Smartgeo.registerInterval("_SYNCHRONIZE_INTERVAL", function () {
             $scope.synchronize();
         }, $scope._SYNCHRONIZE_INTERVAL);
-
-        // $rootScope.STOP_POLLING = false;
-        // $scope.poll();
-        // $scope.();
     };
 
 
     /**
-     * @ngdoc method
      * @name planningController#poll
      * @methodOf planningController
      * @description
@@ -301,7 +281,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#removeDeprecatedTraces
      * @methodOf planningController
      * @description
@@ -321,7 +300,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#removeDeprecatedMarkers
      * @methodOf planningController
      * @description
@@ -333,7 +311,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
 
     /**
-     * @ngdoc method
      * @name planningController#getMidnightTimestamp
      * @methodOf planningController
      * @description
@@ -346,7 +323,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#removeObsoleteMission
      * @methodOf planningController
      * @param {array} reports list of pending reports
@@ -386,7 +362,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#updateCount
      * @methodOf planningController
      * @description
@@ -410,7 +385,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#toggleMission
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $rootScope.missions attribute
@@ -490,7 +464,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#locateMission
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $rootScope.missions attribute
@@ -506,7 +479,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#showReport
      * @methodOf planningController
      * @param {Object} mission concerned mission
@@ -528,7 +500,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#launchNightTour
      * @methodOf planningController
      * @param {Object} mission concerned mission
@@ -541,7 +512,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
 
     /**
-     * @ngdoc method
      * @name planningController#highlightMission
      * @methodOf planningController
      * @param {Object} mission concerned mission
@@ -555,7 +525,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#markerClickHandler
      * @methodOf planningController
      * @param {integer} missionId Concerned mission identifier
@@ -570,7 +539,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#toggleAssetsMarkerForMission
      * @methodOf planningController
      * @param {object} mission Concerned mission
@@ -588,7 +556,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#toggleAssetsMarkerForNightTour
      * @methodOf planningController
      * @param {object} mission Concerned mission
@@ -600,7 +567,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#toggleDoneAssetsVisibility
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $rootScope.missions attribute
@@ -613,7 +579,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#showDoneAssets
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $rootScope.missions attribute
@@ -622,7 +587,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.showDoneAssets = function ($index) {
         var mission = $rootScope.missions[$index];
         mission.isLoading = mission.displayDone = true;
-        // if(!$rootScope.doneAssetsCache[mission.id]){
         if (!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) {
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function (assets) {
                 $rootScope.doneAssetsCache[mission.id] = assets;
@@ -640,7 +604,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     };
 
     /**
-     * @ngdoc method
      * @name planningController#hideDoneAssets
      * @methodOf planningController
      * @param {integer} $index index of concerned mission in $rootScope.missions attribute
@@ -654,7 +617,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
 
     /**
-     * @ngdoc method
      * @name planningController#addAssetToMission
      * @methodOf planningController
      * @param {Object} asset
@@ -709,7 +671,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
 
     /**
-     * @ngdoc method
      * @name planningController#removeAssetFromMission
      * @methodOf planningController
      * @param {Object} asset
@@ -725,7 +686,6 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
 
 
     /**
-     * @ngdoc method
      * @name planningController#locateAsset
      * @methodOf planningController
      * @param {Object} asset

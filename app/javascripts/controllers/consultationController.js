@@ -81,12 +81,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
             toggle: false
         });
 
-        // $(document).on('show.bs.collapse', ".collapse", function(){
-        //     $rootScope.$broadcast("HIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
-        // }).on('hide.bs.collapse', ".collapse", function(){
-        //     console.log('icii', $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
-        //     $rootScope.$broadcast("UNHIGHLIGHT_ASSET", $scope.assets._byGuid[this.id.match(/collapse-(.*)/)[1]]);
-        // });
     });
 
     $scope.gotoAsset = function (asset) {

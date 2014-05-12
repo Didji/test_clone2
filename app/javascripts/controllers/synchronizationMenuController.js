@@ -34,7 +34,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-            // $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
         Smartgeo.get_('census', function (census) {
             census = census || [];
@@ -46,7 +45,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-            // $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         });
     };
 

@@ -76,10 +76,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         });
     };
 
-    // function whereIAm(lng, lat, alt, acc){
-    //     $scope.whereIAm(lng, lat, alt, acc);
-    // }
-
     /**
      * @ngdoc method
      * @name nightTourController#startFollowingPosition
@@ -142,8 +138,6 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                 timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
 
             if (!force && previousPosition && (distanceFromLastPosition > 500 || distanceFromLastPosition === 0) && timeBetweenLastPositionAndNow < 15000) {
-                // console.log('return');
-                // return;
             }
         }
 
