@@ -622,12 +622,31 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.showDoneAssets = function ($index) {
         var mission = $rootScope.missions[$index];
         mission.isLoading = mission.displayDone = true;
-        // if(!$rootScope.doneAssetsCache[mission.id]){
-        if (!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) {
+        if ((!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
+            $scope.stopCacheLoop = true ;
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function (assets) {
-                $rootScope.doneAssetsCache[mission.id] = assets;
+                if(!$rootScope.doneAssetsCache[mission.id] || !$rootScope.doneAssetsCache[mission.id].length){
+                    $rootScope.doneAssetsCache[mission.id] = assets;
+                } else {
+                    for (var i = 0; i < assets.length; i++) {
+                        var toBeAdded = true ;
+                        for (var j = 0; j < $rootScope.doneAssetsCache[mission.id].length; j++) {
+                            if($rootScope.doneAssetsCache[mission.id][j].id === assets[i].id){
+                                toBeAdded = false ;
+                                break;
+                            }
+                        }
+                        if(toBeAdded){
+                            $rootScope.doneAssetsCache[mission.id].push(assets[i]);
+                        }
+                    }
+                }
                 $scope.showDoneAssets($index);
             });
+        }
+
+        if($scope.stopCacheLoop){
+            delete $scope.stopCacheLoop ;
         }
 
         $rootScope.$broadcast('HIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission, $rootScope.doneAssetsCache[mission.id]);
