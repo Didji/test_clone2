@@ -83,7 +83,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @const
          * @description
          */
-        _DONT_REALLY_RESET : (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ,
+        _DONT_REALLY_RESET : $rootScope.rights._DONT_REALLY_RESET || false ,
 
         /**
          * @ngdoc property
@@ -226,8 +226,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         clearCaches: function () {
             Smartgeo.parametersCache  = {} ;
             Smartgeo.parametersCache_ = {} ;
-            window.smartgeoPersistenceCache  = {};
-            window.smartgeoPersistenceCache_ = {};
         },
 
 
@@ -302,7 +300,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * Sanitize asset eg. replace horrible characters
          */
         sanitizeAsset: function (asset) {
-            // console.log(JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")));
             return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
         },
 
@@ -312,7 +309,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @propertyOf smartgeomobile.Smartgeo
          * @description Setter and getter cache
          */
-        parametersCache: window.smartgeoPersistenceCache || {},
+        parametersCache: {},
 
         /**
          * @ngdoc property
@@ -532,10 +529,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 }
             })(navigator.userAgent || navigator.vendor || window.opera);
             return check;
-        },
-
-        getRight: function (module) {
-            return window.smartgeoRightsManager[module];
         },
 
         findGeometryByGuids_big: function (site, guids, callback, partial_response) {
@@ -1060,6 +1053,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo.clearPersistence();
             Smartgeo.clearIntervals();
             Smartgeo.clearPollingRequest();
+
+            if (!navigator.userAgent.match(/Android/i)) {
+                window.SmartgeoChromium = false;
+            }
+
+            window.ChromiumCallbacks = window.ChromiumCallbacks || [] ;
 
             if(window.SmartgeoChromium){
                 window.ChromiumCallbacks[13] = function (path) {

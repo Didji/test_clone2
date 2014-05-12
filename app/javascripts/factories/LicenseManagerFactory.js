@@ -181,8 +181,6 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             success = success || function(){} ;
         }
 
-        console.log(force, success, error);
-
         var this_ = this, license = this.__getLicense(), now = new Date();
 
         if(!force && (now - new Date(license.lastcheck)) < this.__max_time_between_check){

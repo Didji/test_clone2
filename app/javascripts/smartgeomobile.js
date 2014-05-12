@@ -1,5 +1,13 @@
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
+angular.module("smartgeobootstrap", []).run(function () {
+    window.smartgeoPersistenceSQLite.get('sites', function (sites) {
+        window.smartgeoPersistenceCache_ = { sites: sites };
+        angular.bootstrap(document, ['smartgeomobile']);
+    });
+});
+
+
 var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce','ngResource'])
     .config(["$routeProvider",
         function ($routeProvider) {
@@ -293,3 +301,4 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
             return $.trim([prefix, words, suffix].join(separator));
         };
     });
+
