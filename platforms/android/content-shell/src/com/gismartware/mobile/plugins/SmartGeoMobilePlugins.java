@@ -9,9 +9,10 @@ import java.util.ResourceBundle;
 
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
-
+import android.provider.Settings.Secure;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -186,6 +187,21 @@ public class SmartGeoMobilePlugins {
             result = false;
         }
         view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+    }
+
+    @JavascriptInterface
+    public void getDeviceId() {
+        String name ;
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null){
+            name = "" ;
+        } else {
+            name = mBluetoothAdapter.getName();
+        }
+        if(name == null){
+            name = "Aucun nom trouvé";
+        }
+        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '"+Secure.getString(this.context.getContentResolver(),Secure.ANDROID_ID) +"');");
     }
 
     @JavascriptInterface

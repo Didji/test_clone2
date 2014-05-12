@@ -214,18 +214,50 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.register = function(licenseNumber, success, error) {
         var this_   = this, now = new Date();
-        var license = {
-            'serial'        : licenseNumber,
-            'device_serial' : 'xxxx'+Math.random(),  // TODO: get device serial from native (@gulian)
-            'device_name'   : 'deviceName'           // TODO: get device name from native (@gulian)
-        };
-        G3lic.register(license, function(options){
-            license.registered = true;
-            license.lastcheck  = now;
-            this_.__setRights(this_.__parseG3licResponse(options));
-            this_.__setLicense(license);
-            success();
-        }, error)
+
+        this.__getDeviceId(function(name, serial){
+
+            var license = {
+                'serial'        : licenseNumber,
+                'device_serial' : serial,
+                'device_name'   : name
+            };
+
+            G3lic.register(license, function(options){
+                license.registered = true;
+                license.lastcheck  = now;
+                this_.__setRights(this_.__parseG3licResponse(options));
+                this_.__setLicense(license);
+                success();
+            }, error)
+
+        });
+
+
+        return this;
+    }
+
+    /**
+     * @method
+     * @memberOf LicenseManager
+     * @param {function} callback Callback appelé avec (name, serial)
+     * @returns {LicenseManager} LicenseManager
+     */
+    LicenseManager.prototype.__getDeviceId = function(callback) {
+
+        if(window.SmartgeoChromium){
+            ChromiumCallbacks[666] = callback ;
+            SmartgeoChromium.getDeviceId() ;
+        } else if(cordova) {
+            cordova.exec(function(args) {
+                callback(args[0], args[1]);
+            }, function(error) {
+                window.alert(error);
+            }, "gotoPlugin",  "getDeviceId", []);
+        } else {
+            callback('name', 'xxxx'+Math.random());
+        }
+
         return this;
     }
 

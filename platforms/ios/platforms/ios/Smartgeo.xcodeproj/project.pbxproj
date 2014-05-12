@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		1101E62B46074E93913C4D51 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A1882A079BA747EF81ADF349 /* CDVLocation.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
@@ -49,6 +48,7 @@
 		916C2B0096834BCF924FCF8A /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ACCB4EE8E0A40179FBCD1C2 /* SQLitePlugin.m */; };
 		B6246AB818D2070B0023622F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B6246AB718D2070B0023622F /* Images.xcassets */; };
 		B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */; };
+		B67E8305191A67B100AF2F88 /* GetDeviceId.m in Sources */ = {isa = PBXBuildFile; fileRef = B67E8304191A67B100AF2F88 /* GetDeviceId.m */; };
 		C41081A7F04949A59553EBEF /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20266776404D27898EAE90 /* CDVFile.m */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		EEF7DB899B0544C29B912B23 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A0CF24AC48463498462332 /* CDVJpegHeaderWriter.m */; };
@@ -131,6 +131,8 @@
 		B6246AB718D2070B0023622F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Smartgeo/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		B663D92A18A8DE3200A4E3B3 /* GotoPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GotoPlugin.h; sourceTree = "<group>"; };
 		B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GotoPlugin.m; sourceTree = "<group>"; };
+		B67E8303191A67B100AF2F88 /* GetDeviceId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetDeviceId.h; sourceTree = "<group>"; };
+		B67E8304191A67B100AF2F88 /* GetDeviceId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetDeviceId.m; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
 		D7CC7644B6FA4B3593B736DF /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
 		EA6CF1E57BA244CD9BBB1DA4 /* CDVNotification.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CDVNotification.bundle; sourceTree = "<group>"; };
@@ -279,6 +281,8 @@
 				809C492E41BB4927A2681563 /* CDVLocation.h */,
 				9E1BE6E77FF9445B916781BE /* CDVVibration.m */,
 				8E05498332204DACAD6A27EC /* CDVVibration.h */,
+				B67E8303191A67B100AF2F88 /* GetDeviceId.h */,
+				B67E8304191A67B100AF2F88 /* GetDeviceId.m */,
 			);
 			name = Plugins;
 			path = Smartgeo/Plugins;
@@ -473,6 +477,7 @@
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
 				916C2B0096834BCF924FCF8A /* SQLitePlugin.m in Sources */,
 				5B85883F875C4BA68EF08E4C /* CDVCamera.m in Sources */,
+				B67E8305191A67B100AF2F88 /* GetDeviceId.m in Sources */,
 				EEF7DB899B0544C29B912B23 /* CDVJpegHeaderWriter.m in Sources */,
 				37F2879D81414ABEB1E6FF93 /* CDVNotification.m in Sources */,
 				C41081A7F04949A59553EBEF /* CDVFile.m in Sources */,

@@ -4,11 +4,10 @@
 
 #import "AppDelegate.h"
 
-@interface GotoPlugin : CDVPlugin {
+@interface GetDeviceId : CDVPlugin {
     
 }
 
--(void) goto:(CDVInvokedUrlCommand*)command;
 -(void) getDeviceId:(CDVInvokedUrlCommand*)command;
 
 
