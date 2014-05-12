@@ -1,38 +1,43 @@
+/**
+ * @class       nightTourController
+ * @classdesc   Controlleur du mode tournée de nuit
+ *
+ * @property {number} _DRAG_THRESHOLD Seuil de drag pour l'arrêt de la fonction de suivi (en pixel)
+ * @property {L.icon} _OK_ASSET_ICON Cache d'icône pour les objets de type OK
+ * @property {L.icon} _KO_ASSET_ICON Cache d'icône pour les objets de type KO
+ * @property {L.icon} _DONE_ASSET_ICON Cache d'icône pour les objets de type DONE
+ * @property {boolean} nightTourInProgress Une tournée est elle en cours
+ * @property {string} state Status du panneau latéral ('open' ou 'closed')
+ */
+
 angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report) {
 
     'use strict';
 
     /**
-     * @ngdoc property
-     * @name nightTourController#_DRAG_THRESHOLD
-     * @propertyOf nightTourController
-     * @description
-     */
-    $scope._DRAG_THRESHOLD = 50;
-
-    $scope._OK_ASSET_ICON = L.icon({
-        iconUrl: 'javascripts/vendors/images/night-tour-ok.png',
-        iconSize: [65, 89],
-        iconAnchor: [32, 89],
-    });
-    $scope._KO_ASSET_ICON = L.icon({
-        iconUrl: 'javascripts/vendors/images/night-tour-ko.png',
-        iconSize: [65, 89],
-        iconAnchor: [32, 89],
-    });
-    $scope._DONE_ASSET_ICON = L.icon({
-        iconUrl: 'javascripts/vendors/images/night-tour-done.png',
-        iconSize: [30, 42],
-        iconAnchor: [15, 42],
-    });
-
-    /**
-     * @ngdoc method
-     * @name nightTourController#initialize
-     * @methodOf nightTourController
-     * @description
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.initialize = function () {
+
+        $scope._DRAG_THRESHOLD = 50;
+
+        $scope._OK_ASSET_ICON = L.icon({
+            iconUrl: 'javascripts/vendors/images/night-tour-ok.png',
+            iconSize: [65, 89],
+            iconAnchor: [32, 89],
+        });
+        $scope._KO_ASSET_ICON = L.icon({
+            iconUrl: 'javascripts/vendors/images/night-tour-ko.png',
+            iconSize: [65, 89],
+            iconAnchor: [32, 89],
+        });
+        $scope._DONE_ASSET_ICON = L.icon({
+            iconUrl: 'javascripts/vendors/images/night-tour-done.png',
+            iconSize: [30, 42],
+            iconAnchor: [15, 42],
+        });
+
         $rootScope.nightTourInProgress = false;
         $scope.state = 'closed';
         $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
@@ -77,11 +82,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#startFollowingPosition
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.startFollowingPosition = function () {
         $scope.stopFollowingPosition();
@@ -89,11 +91,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#stopFollowingPosition
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.stopFollowingPosition = function () {
         $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
@@ -101,11 +100,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#whereIAm
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.whereIAm = function (lng, lat, alt, acc) {
         $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
@@ -113,13 +109,10 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#addPositionToTrace
-     * @methodOf nightTourController
+     * @memberOf nightTourController
      * @param {float} lat Point's latitude
      * @param {float} lng Point's longitude
-     * @description
-     *
+     * @desc
      */
     $scope.addPositionToTrace = function (lat, lng, force) {
         if (!$scope.mission) {
@@ -151,11 +144,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#resumeNightTour
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.resumeNightTour = function () {
         $rootScope.nightTourRecording = true;
@@ -163,22 +153,16 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#pauseNightTour
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.pauseNightTour = function () {
         $rootScope.nightTourRecording = false;
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#closeNightTour
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.closeNightTour = function () {
         alertify.confirm('Clôturer la tournée de nuit ?', function (yes) {
@@ -198,11 +182,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#stopNightTour
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.stopNightTour = function (ok, ko) {
         $rootScope.nightTourInProgress = false;
@@ -229,11 +210,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#sendOkReports
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.sendOkReports = function (ok, callback) {
         callback = callback || function () {};
@@ -257,11 +235,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
 
     /**
-     * @ngdoc method
-     * @name nightTourController#sendKoReports
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.sendKoReports = function (ko, callback) {
         callback = callback || function () {};
@@ -348,14 +323,11 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
 
     /**
-     * @ngdoc method
-     * @name nightTourController#startNightTour
-     * @methodOf nightTourController
+     * @memberOf nightTourController
      * @param {object} event        This method is called by event, so first argument is this event
      * @param {object} mission      This parameter MUST BE a night tour
      * @param {array}  assetsCache  Array of mission's assets, fetched from database
-     * @description
-     *
+     * @desc
      */
     $scope.startNightTour = function (event, mission, assetsCache) {
 
@@ -408,22 +380,16 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
 
     /**
-     * @ngdoc method
-     * @name nightTourController#togglePanel
-     * @methodOf nightTourController
-     * @description
-     *
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.togglePanel = function () {
         $scope[($scope.state === 'open' ? 'close' : 'open')]();
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#locateMission
-     * @methodOf nightTourController
-     * @description
-     * Set map view to the mission's extent. If mission has no extent yet, it set it.
+     * @memberOf nightTourController
+     * @desc
      */
     $scope.locateMission = function () {
         if (!$scope.mission.extent) {
@@ -433,14 +399,11 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
     };
 
     /**
-     * @ngdoc method
-     * @name nightTourController#toggleAsset
-     * @methodOf nightTourController
+     * @memberOf nightTourController
      * @param {object} event        This method is called by event, so first argument is this event
      * @param {object} mission      This parameter MUST BE a night tour
      * @param {array}  asset        Clicked asset on map (contains marker)
-     * @description
-     *
+     * @desc
      */
     $scope.toggleAsset = function (event, mission, asset) {
         if (!$rootScope.nightTourRecording) {

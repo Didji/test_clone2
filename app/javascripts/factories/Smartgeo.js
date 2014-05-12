@@ -1,107 +1,82 @@
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, IndexedDB, $timeout, $route) {
+/**
+ * @class       Smartgeo
+ * @classdesc   Noyau et fourre tout
+ *
+ * @property {string}   _SMARTGEO_MOBILE_VERSION
+ * @property {number}   _BIG_SCREEN_THRESHOLD
+ * @property {number}   _SIDE_MENU_WIDTH
+ * @property {number}   _MAX_RESULTS_PER_SEARCH
+ * @property {number}   _SERVER_UNREACHABLE_THRESHOLD
+ * @property {number}   _MAX_MEDIA_PER_REPORT
+ * @property {number}   _MAX_ID_FOR_SELECT_REQUEST
+ * @property {boolean}  _DONT_REALLY_RESET
+ * @property {object}   _intervals
+ * @property {object}   parametersCache
+ * @property {object}   parametersCache_
+ * @property {array}    positionListerners
+ * @property {number}   locationWatchIdentifier
+ */
+
+angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, $timeout, $route) {
 
     'use strict';
 
     var Smartgeo = {
 
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_SMARTGEO_MOBILE_VERSION
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Smartgeo mobile version, displayed on home page
-         */
-        _SMARTGEO_MOBILE_VERSION: "0.15.0r",
+        initialize : function(){
+
+            this._SMARTGEO_MOBILE_VERSION = "0.15.0r" ;
+            this._BIG_SCREEN_THRESHOLD = 361;
+            this._SIDE_MENU_WIDTH = $window.screen.width > 361 ? 300 : $window.screen.width * 0.8;
+            this._MAX_RESULTS_PER_SEARCH = 10;
+            this._SERVER_UNREACHABLE_THRESHOLD = 10000;
+            this._MAX_MEDIA_PER_REPORT = 3;
+            this._MAX_ID_FOR_SELECT_REQUEST = 4000;
+            this._DONT_REALLY_RESET = (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ;
+            this._intervals = {};
+            this.parametersCache = {};
+            this.parametersCache_ = window.smartgeoPersistenceCache_ || {};
+            this.positionListerners = [];
+            this.locationWatchIdentifier = null;
+
+            Smartgeo._initializeGlobalEvents();
+            Smartgeo.clearSiteSelection();
+            Smartgeo.clearPersistence();
+            Smartgeo.clearIntervals();
+            Smartgeo.clearPollingRequest();
+
+            if(window.SmartgeoChromium){
+                window.ChromiumCallbacks[13] = function (path) {
+                    if(path){
+                        Smartgeo.set('tileRootPath', path);
+                    } else {
+                        SmartgeoChromium.getExtApplicationDirectory();
+                    }
+                };
+                SmartgeoChromium.getExtApplicationDirectory();
+                window.ChromiumCallbacks[0] = function(lng, lat, alt, acc){
+                    Smartgeo.positionListernersDispatchor(lng, lat, alt, acc) ;
+                }
+            }
+
+            window.Smartgeo = Smartgeo;
+            window.Kernel   = Smartgeo;
+
+            $rootScope.rights = window.smartgeoRightsManager;
+            $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
+
+            return this ;
+        },
+
+
+
 
         /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Width threshold which describes big screen
-         */
-        _BIG_SCREEN_THRESHOLD: 361,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_SIDE_MENU_WIDTH
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Width threshold which describes big screen
-         */
-        _SIDE_MENU_WIDTH: $window.screen.width > 361 ? 300 : $window.screen.width * 0.8,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_MAX_RESULTS_PER_SEARCH
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Define max results per search (and advanced search)
-         */
-        _MAX_RESULTS_PER_SEARCH: 10,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#localStorageCache
-         * @propertyOf smartgeomobile.Smartgeo
-         * @description Used for setter and getter best perf
-         */
-        localStorageCache: {},
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_SERVER_UNREACHABLE_THRESHOLD
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Timeout, in milliseconds, for ping and login method
-         */
-        _SERVER_UNREACHABLE_THRESHOLD: 10000,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_MAX_MEDIA_PER_REPORT
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description Max media per report
-         */
-
-        _MAX_MEDIA_PER_REPORT: 3,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_MAX_ID_FOR_SELECT_REQUEST
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description
-         */
-        _MAX_ID_FOR_SELECT_REQUEST : 4000,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_DONT_REALLY_RESET
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description
-         */
-        _DONT_REALLY_RESET : (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ,
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_intervals
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description
-         */
-        _intervals : {},
-
-        /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#registerInterval
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String}   name
          * @param {function} f
          * @param {Integer}  interval
-         * @description
+         * @desc
          */
         registerInterval: function (name, f, interval) {
             if (Smartgeo._intervals[name]) {
@@ -111,10 +86,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#clearIntervals
-         * @methodOf smartgeomobile.Smartgeo
-         * @description
+         * @memberOf Smartgeo
+         * @desc
          */
         clearIntervals: function () {
             for (var interval in Smartgeo._intervals) {
@@ -124,11 +97,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#clearInterval
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String}   name
-         * @description
+         * @desc
          */
         clearInterval: function (name) {
             clearInterval(Smartgeo._intervals[name]);
@@ -136,37 +107,28 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#isRunningOnBigScreen
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @returns {boolean} is smartgeo running on big screen
-         * @description
-         * Return true if device width is >= to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
+         * @desc Return true if device width is >= to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
         isRunningOnBigScreen: function () {
             return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#isRunningOnLittleScreen
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @returns {boolean} is smartgeo running on little screen
-         * @description
-         * Return true if device width is < to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
+         * @desc Return true if device width is < to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
         isRunningOnLittleScreen: function () {
             return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#setGimapUrl
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {string} url gimap server url
          * @returns {string} url setted server url
-         * @description
-         * Set Gimap serveur URL on localstorage, add **`http://`** and **`/index.php?service=`** if needed and clear localStorage
+         * @desc Set Gimap serveur URL on localstorage, add **`http://`** and **`/index.php?service=`** if needed and clear localStorage
          */
         setGimapUrl: function (url) {
             if (url === null) {
@@ -184,11 +146,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#reset
-         * @methodOf smartgeomobile.Smartgeo
-         * @description
-         * Clear localStorage
+         * @memberOf Smartgeo
+         * @desc Clear localStorage
          */
         reset: function () {
             if (Smartgeo._DONT_REALLY_RESET) {
@@ -217,11 +176,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#reset
-         * @methodOf smartgeomobile.Smartgeo
-         * @description
-         * Clear localStorage
+         * @memberOf Smartgeo
+         * @desc Clear localStorage
          */
         clearCaches: function () {
             Smartgeo.parametersCache  = {} ;
@@ -232,21 +188,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#getServiceUrl
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {string} serviceName Name of called Service
          * @param {Object} GETParameters Associative array of get parameters name=>value
          * @returns {string} url Well formatted URL
-         * @description
-         * Get ready to call URL with a service's name and list of parameters
+         * @desc Get ready to call URL with a service's name and list of parameters
          * @example
-         * <pre>
          * Smartgeo.getServiceUrl('gi.maintenance.mobility.installation.json', {
          *     'site'      : site.id,
          *     'timestamp' : site.timestamp
          * });
-         * </pre>
          */
         getServiceUrl: function (serviceName, GETParameters) {
             var url = Smartgeo.get('url');
@@ -262,21 +213,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#ping
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {function} callback Called with boolean which depends on gimap reachability
-         * @description
-         * Call global.dcnx.json gimap service to know if it is reachable. So this method logout current user.
+         * @desc Call global.dcnx.json gimap service to know if it is reachable. So this method logout current user.
          * It may be refactored when a real ping service will be available on gimap
          * @example
-         * <pre>
          * Smartgeo.ping(function(gimapIsReachable){
          *     if(gimapIsReachable){
          *         // do things
          *     }
          * });
-         * </pre>
          */
         ping: function (callback) {
             callback = callback || function () {};
@@ -293,43 +239,21 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#sanitizeAsset
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {string} asset serialized asset
          * @returns {Object} Satitized parsed asset
-         * @description
-         * Sanitize asset eg. replace horrible characters
+         * @desc Sanitize asset eg. replace horrible characters
          */
         sanitizeAsset: function (asset) {
-            // console.log(JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")));
             return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
         },
 
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#parametersCache
-         * @propertyOf smartgeomobile.Smartgeo
-         * @description Setter and getter cache
-         */
-        parametersCache: window.smartgeoPersistenceCache || {},
 
         /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#parametersCache_
-         * @propertyOf smartgeomobile.Smartgeo
-         * @description Setter and getter cache for async functions
-         */
-        parametersCache_: window.smartgeoPersistenceCache_ || {},
-
-        /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#get
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
          * @returns {*} Parameter's value
-         * @description
-         * Local storage getter
+         * @desc Local storage getter
          */
         get: function (parameter) {
             if (Smartgeo.parametersCache[parameter]) {
@@ -340,13 +264,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#set
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
          * @param {*} value Parameter's value
-         * @description
-         * Local storage setter
+         * @desc Local storage setter
          */
         set: function (parameter, value) {
             Smartgeo.parametersCache[parameter] = value;
@@ -354,12 +275,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#unset
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
-         * @description
-         * Clear localStorage's value
+         * @desc Clear localStorage's value
          */
         unset: function (parameter) {
             delete Smartgeo.parametersCache[parameter];
@@ -367,14 +285,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#get_
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
          * @param {function} callback Called with parameter's value
          * @returns {*} Parameter's value
-         * @description
-         * IndexedDB getter
+         * @desc WebSQL getter
          */
         get_: function (parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
@@ -387,14 +302,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#set_
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
          * @param {function} callback Called when value is setted
          * @returns {*} Parameter's value
-         * @description
-         * IndexedDB setter
+         * @desc WebSQL setter
          */
         set_: function (parameter, value, callback) {
             // Nettoyage "magique" des références cycliques.
@@ -406,13 +318,10 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#unset_
-         * @methodOf smartgeomobile.Smartgeo
+         * @memberOf Smartgeo
          * @param {String} parameter Parameter's name
          * @param {function} callback Called when value is unsetted
-         * @description
-         * Clear IndexedDB's value
+         * @desc Clear WebSQL's value
          */
         unset_: function (parameter, callback) {
             delete Smartgeo.parametersCache_[parameter];
@@ -420,22 +329,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#log
-         * @methodOf smartgeomobile.Smartgeo
-         * @description
-         * Useless log wrapper
+         * @memberOf Smartgeo
+         * @desc Useless log wrapper
          */
         log: function () {
             console.log(arguments);
         },
 
         /**
-         * @ngdoc method
-         * @name smartgeomobile.Smartgeo#getUsersLocation
-         * @methodOf smartgeomobile.Smartgeo
-         * @description
-         * Polyfill for geolocation api
+         * @memberOf Smartgeo
+         * @desc Polyfill for geolocation api
          */
         getUsersLocation: function (success, error) {
 
@@ -477,9 +380,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
-
-        positionListerners : [],
-        locationWatchIdentifier: null,
 
         startWatchingPosition: function(listener){
             if(!this.positionListerners.length){
@@ -1051,41 +951,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     callback(canvas.toDataURL("image/jpeg", 0.75));
                 };
             }
-        },
-
-        initialize : function(){
-
-            Smartgeo._initializeGlobalEvents();
-            Smartgeo.clearSiteSelection();
-            Smartgeo.clearPersistence();
-            Smartgeo.clearIntervals();
-            Smartgeo.clearPollingRequest();
-
-            if(window.SmartgeoChromium){
-                window.ChromiumCallbacks[13] = function (path) {
-                    if(path){
-                        Smartgeo.set('tileRootPath', path);
-                    } else {
-                        SmartgeoChromium.getExtApplicationDirectory();
-                    }
-                };
-                SmartgeoChromium.getExtApplicationDirectory();
-                window.ChromiumCallbacks[0] = function(lng, lat, alt, acc){
-                    Smartgeo.positionListernersDispatchor(lng, lat, alt, acc) ;
-                }
-            }
-
-            window.Smartgeo = Smartgeo;
-            window.Kernel   = Smartgeo;
-
-            $rootScope.rights = window.smartgeoRightsManager;
-            $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
         }
     };
 
-    Smartgeo.initialize();
 
-    return Smartgeo;
+    return Smartgeo.initialize();
 
 });
 
