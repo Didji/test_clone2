@@ -69,8 +69,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             return this ;
         },
 
-
-
+        /**
+         * @ngdoc property
+         * @name smartgeomobile.Smartgeo#_DONT_REALLY_RESET
+         * @propertyOf smartgeomobile.Smartgeo
+         * @const
+         * @description
+         */
+        _DONT_REALLY_RESET : $rootScope.rights._DONT_REALLY_RESET || false ,
 
         /**
          * @memberOf Smartgeo
@@ -183,8 +189,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         clearCaches: function () {
             Smartgeo.parametersCache  = {} ;
             Smartgeo.parametersCache_ = {} ;
-            window.smartgeoPersistenceCache  = {};
-            window.smartgeoPersistenceCache_ = {};
         },
 
 
@@ -248,7 +252,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         sanitizeAsset: function (asset) {
             return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
         },
-
 
         /**
          * @memberOf Smartgeo
@@ -439,10 +442,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 }
             })(navigator.userAgent || navigator.vendor || window.opera);
             return check;
-        },
-
-        getRight: function (module) {
-            return window.smartgeoRightsManager[module];
         },
 
         findGeometryByGuids_big: function (site, guids, callback, partial_response) {

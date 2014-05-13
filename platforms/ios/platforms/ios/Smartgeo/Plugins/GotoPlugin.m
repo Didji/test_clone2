@@ -16,4 +16,21 @@
     [[UIApplication sharedApplication] openURL:url];
 }
 
+
+-(void) getDeviceId:(CDVInvokedUrlCommand*)command
+{
+    NSString *uuidString = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    NSString *uuidName   = [[UIDevice currentDevice] name];
+    NSMutableArray    *resultsArray      = [[NSMutableArray alloc]init];
+    
+    [resultsArray addObject:uuidName];
+    [resultsArray addObject:uuidString];
+    
+    CDVPluginResult* pluginResult = nil;
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:resultsArray ];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end

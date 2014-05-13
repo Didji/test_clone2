@@ -1,10 +1,11 @@
 <div id="mainmenu" class="container_s" ng-controller="menuController">
     <div class="mp-pusher" id="mp-pusher" ng-click='close($event)'>
         <nav id="mp-menu" class="mp-menu">
+            {{rights}}
             <div class="mp-level">
                 <h2><img class="logo_gi" src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"><span id='smartgeo-version'>{{version}}</span></h2>
                 <ul>
-                    <li>
+                    <li ng-show="rights.consultation">
                         <a href="#" ng-click='activateConsultation($event)'>
                             <span class="icon icon-info-sign"></span>
                             <i18n>_MENU_CONSULTATION</i18n>
@@ -20,7 +21,7 @@
                             <div ng-include="'partials/planning.html'"></div>
                         </div>
                     </li>
-                    <li>
+                    <li ng-show="rights.search">
                         <a href="#">
                             <span class="icon icon-search"></span>
                             <i18n>_MENU_SEARCH</i18n>
@@ -40,13 +41,13 @@
                             <div ng-include="'partials/census.html'"></div>
                         </div>
                     </li>
-                    <li>
+                    <li ng-show="rights.myposition">
                         <a href="#" ng-click='activatePosition($event)'>
                             <span class="icon icon-compass"></span>
                             <i18n>_MENU_MY_POSITION</i18n>
                         </a>
                     </li>
-                    <li>
+                    <li ng-show="rights.activelayers">
                         <a href="#">
                             <span class="icon icon-list-ul"></span>
                             <i18n>_MENU_ACTIVE_LAYERS</i18n>
@@ -56,24 +57,7 @@
                             <div ng-include="'partials/layers.html'"></div>
                         </div>
                     </li>
-                    <!-- <li ng-show="rights.report">
-                        <a href="#">
-                            <span class="icon icon-edit"></span>
-                            <i18n>_MENU_REPORT</i18n>
-                        </a>
-                        <div class="mp-level">
-                            <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
-                            <ul>
-                                <li ng-repeat='activity in site.activities'>
-                                    <a style='padding-left: 1em;font-size:1em;' href="#/report/{{site.id}}/{{activity.id}}">
-                                        <span class="icon icon-chevron-right" ></span>
-                                        {{activity.label}}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li> -->
-                    <li>
+                    <li ng-show="rights.synccenter">
                         <a href="#">
                             <span class="icon icon-refresh"></span>
                             <i18n>_MENU_SYNC</i18n>

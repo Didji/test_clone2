@@ -16,7 +16,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         requestPool : {},
 
-        filecacheIsEnable: window.smartgeoRightsManager && window.smartgeoRightsManager.tileCache,
+        filecacheIsEnable: $rootScope.rights.tileCache || false ,
 
         initialize: function (mapDivId, site, target, marker, zoom) {
             this.site = site;
