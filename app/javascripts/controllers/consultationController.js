@@ -85,9 +85,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
 
     $scope.gotoAsset = function (asset) {
 
-        //   /!\ REFACTOR ALERT /!\
-        // TODO : make polyfill class
-
         var coords = asset.geometry.type === "Point" ? {
             x: asset.geometry.coordinates[0],
             y: asset.geometry.coordinates[1]
@@ -96,31 +93,15 @@ angular.module('smartgeomobile').controller('consultationController', function (
             y: asset.geometry.coordinates[0][1]
         };
 
-        if (window.SmartgeoChromium && SmartgeoChromium.goTo && SmartgeoChromium.locate) {
-
-            ChromiumCallbacks[0] = function (lng, lat, alt) {
+        Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
+            if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                 SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
-            };
-
-            ChromiumCallbacks[2] = function () {
-                alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
-            };
-
-            SmartgeoChromium.locate();
-
-        } else {
-            Smartgeo.getUsersLocation(function (fromLat, fromLng) {
-                if (!navigator.userAgent.match(/Android/i) && !navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)) {
-                    window.open("http://maps.apple.com/?saddr=" + fromLat + "," + fromLng + "&daddr=" + coords.y + "," + coords.x);
-                } else {
-                    cordova.exec(null, function () {
-                        alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
-                    }, "gotoPlugin", "goto", [fromLat, fromLng, coords.y, coords.x]);
-                }
-            }, function () {
-                alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
-            });
-        }
+            } else if(cordova){
+                cordova.exec(null, function () {
+                    alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
+                }, "gotoPlugin", "goto", [lat, lng, coords.y, coords.x]);
+            }
+        });
 
     };
 

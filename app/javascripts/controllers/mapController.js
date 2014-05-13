@@ -332,7 +332,7 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
             maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
         });
-        for (var i = 0; i < assetsCache.length; i++) {
+        for (var i = 0; assetsCache && i < assetsCache.length; i++) {
             assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
             var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
