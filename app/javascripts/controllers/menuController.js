@@ -112,7 +112,6 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
                     }
                 }
                 if(cpt !== 1*$scope.toSyncNumber){
-                    console.log('OULALA ON UPDATE');
                     $rootScope.syncCenterUpdateReportList();
                 }
                 $scope.toSyncNumber = cpt ;
