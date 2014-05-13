@@ -46,6 +46,7 @@ angular.module('smartgeomobile').controller('authController', function ($scope, 
         Smartgeo.clearPersistence();
         Smartgeo.clearIntervals();
         Smartgeo.clearPollingRequest();
+        Smartgeo.emptyPositionListerners();
 
         if ($scope.gimapUrl) {
             $scope.ping();

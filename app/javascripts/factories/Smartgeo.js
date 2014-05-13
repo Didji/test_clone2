@@ -506,7 +506,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         stopWatchingPosition: function(listener){
             var index = (typeof listener === "function") ? this.positionListerners.indexOf(listener) : listener ;
-            console.log(index, this.positionListerners);
             if(index !== -1){
                 this.positionListerners.splice(index);
             }
@@ -530,6 +529,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         positionListernersDispatchor: function(lng, lat, alt, acc){
             for( var i=0 ; i < this.positionListerners.length ; i++){
                 this.positionListerners[i](lng, lat, alt, acc);
+            }
+        },
+
+        emptyPositionListerners: function(){
+            for( var i=0 ; i < this.positionListerners.length ; i++){
+                this.stopWatchingPosition(this.positionListerners[i]);
             }
         },
 
