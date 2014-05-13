@@ -96,7 +96,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
             if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                 SmartgeoChromium.goTo(lng, lat, coords.x, coords.y);
-            } else if(cordova){
+            } else if(window.cordova){
                 cordova.exec(null, function () {
                     alertify.error(i18n.get("_CONSULTATION_GPS_FAIL"));
                 }, "gotoPlugin", "goto", [lat, lng, coords.y, coords.x]);

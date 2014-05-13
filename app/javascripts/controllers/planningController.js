@@ -49,7 +49,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.initialize = function () {
 
-        if(!Smartgeo.getRight('planning')){
+        if(!$rootScope.rights.planning){
             return ;
         }
 

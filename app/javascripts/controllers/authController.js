@@ -6,7 +6,7 @@
  * @property {Boolean}  firstAuth   Est ce la première authentification ?
  */
 
-angular.module('smartgeomobile').controller('authController', function($scope, $rootScope, $location, Smartgeo, i18n, $route, $http, Kernel) {
+angular.module('smartgeomobile').controller('authController', function($scope, $rootScope, $location, Smartgeo, i18n, $route, $http) {
 
     'use strict';
 

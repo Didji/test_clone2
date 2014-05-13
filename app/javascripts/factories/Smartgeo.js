@@ -17,7 +17,7 @@
  * @property {number}   locationWatchIdentifier
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, $location, SQLite, $timeout, $route) {
+angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, SQLite/*, LicenseManager*/) {
 
     'use strict';
 
@@ -32,7 +32,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             this._SERVER_UNREACHABLE_THRESHOLD = 10000;
             this._MAX_MEDIA_PER_REPORT = 3;
             this._MAX_ID_FOR_SELECT_REQUEST = 4000;
-            this._DONT_REALLY_RESET = (window.smartgeoRightsManager && window.smartgeoRightsManager._DONT_REALLY_RESET) || false ;
+            this._DONT_REALLY_RESET = $rootScope.rights._DONT_REALLY_RESET;
             this._intervals = {};
             this.parametersCache = {};
             this.parametersCache_ = window.smartgeoPersistenceCache_ || {};
@@ -61,22 +61,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
 
             window.Smartgeo = Smartgeo;
-            window.Kernel   = Smartgeo;
 
-            $rootScope.rights = window.smartgeoRightsManager;
             $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
 
             return this ;
         },
-
-        /**
-         * @ngdoc property
-         * @name smartgeomobile.Smartgeo#_DONT_REALLY_RESET
-         * @propertyOf smartgeomobile.Smartgeo
-         * @const
-         * @description
-         */
-        _DONT_REALLY_RESET : $rootScope.rights._DONT_REALLY_RESET || false ,
 
         /**
          * @memberOf Smartgeo
@@ -339,51 +328,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         log: function () {
             console.log(arguments);
         },
-
-        /**
-         * @memberOf Smartgeo
-         * @desc Polyfill for geolocation api
-         */
-        getUsersLocation: function (success, error) {
-
-            if(Smartgeo.GET_USER_LOCATION_MUTEX){
-                return ;
-            }
-
-            var tokenUuid = Smartgeo.uuid();
-
-            Smartgeo.GET_USER_LOCATION_MUTEX = tokenUuid ;
-
-            if (SmartgeoChromium.locate) {
-
-                ChromiumCallbacks[0] = function (lng, lat, alt, accuracy) {
-                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    ChromiumCallbacks[0] = angular.noop;
-                    success(lat, lng, alt, accuracy);
-                };
-
-                SmartgeoChromium.locate();
-
-                $timeout(function(){
-                    if(Smartgeo.GET_USER_LOCATION_MUTEX !== tokenUuid){
-                        return false;
-                    }
-                    ChromiumCallbacks[0] = angular.noop;
-                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    error();
-                }, 30000)
-
-            } else {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    success(position.coords.latitude, position.coords.longitude, position.coords.altitude, position.coords.accuracy);
-                }, function () {
-                    Smartgeo.GET_USER_LOCATION_MUTEX = false;
-                    error();
-                });
-            }
-        },
-
 
         startWatchingPosition: function(listener){
             if(!this.positionListerners.length){
