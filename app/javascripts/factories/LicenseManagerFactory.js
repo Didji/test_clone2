@@ -10,6 +10,8 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     var LicenseManager = function(){
         if(!this.__isDeviceRegistered()){
+            this.__rights = {};
+            this.__dispatchRights();
             $location.path('register');
             return this;
         }
