@@ -51,6 +51,7 @@
 
             <div bindonce ng-repeat='tab in report.activity.tabs' class="panel panel-default report">
                 <div class="panel-heading report-heading">
+                    <span class="pull-right icon {{tab.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
                     <h4 class="panel-title" bo-text="tab.label + (containsRequiredFields(tab) ? ' *' : '')" ng-click="tab.show = !tab.show"></h4>
                 </div>
                 <div ng-if="tab.show" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">
