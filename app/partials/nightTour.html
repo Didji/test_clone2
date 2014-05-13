@@ -34,17 +34,17 @@
                   <i class="fa fa-exclamation-triangle"></i> <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
                 </p>
 
-                <button class="btn btn-block" ng-click="whereIAm()" ng-disabled='isFollowingMe'><i class="fa fa-map-marker"></i> Ma position</button>
-                <button class="btn btn-block" ng-class="{'btn-primary':isFollowingMe}" ng-click="isFollowingMe =! isFollowingMe">
+                <!-- <button class="btn btn-block" ng-click="whereIAm()" ng-disabled='isFollowingMe'><i class="fa fa-map-marker"></i> Ma position</button> -->
+                <button class="btn btn-block" style="margin-bottom: 5px;" ng-class="{'btn-primary':isFollowingMe}" ng-click="isFollowingMe =! isFollowingMe">
                   <i class="fa fa-location-arrow"></i> Suivi de position {{isFollowingMe ? 'activé' : ''}}
                 </button>
-                <hr>
-                <button type="button" ng-show='!nightTourRecording' class="btn btn-default btn-lg" ng-click='resumeNightTour()'><i class="fa fa-play"></i></button>
-                <button type="button" ng-show='nightTourRecording' class="btn btn-default btn-lg" ng-click='pauseNightTour()'><i class="fa fa-pause"></i></button>
-                <button type="button" class="btn btn-default btn-lg" ng-click='stopNightTour()'><i class="fa fa-stop"> </i></button>
-                <button type="button" class="btn btn-default btn-lg" ng-click='closeNightTour()'><i class="fa fa-check"> </i> Clôturer</button>
+                <!-- <hr> -->
+<!--                 <button type="button" ng-show='!nightTourRecording' class="btn btn-default btn-lg" ng-click='resumeNightTour()'><i class="fa fa-play"></i></button>
+                <button type="button" ng-show='nightTourRecording' class="btn btn-default btn-lg" ng-click='pauseNightTour()'><i class="fa fa-pause"></i></button> -->
+                <button type="button" style="width:49%;" class="btn btn-default" ng-click='stopNightTour()'  ><i class="fa fa-stop" > </i> Arrêter </button>
+                <button type="button" style="width:49%;" class="btn btn-default" ng-click='closeNightTour()' ><i class="fa fa-check"> </i> Clôturer</button>
 
-                <div ng-show='nightTourRecording'>
+                <!-- <div ng-show='nightTourRecording'>
                   <h4 style="text-align: center;margin-top: 25px;">
                     <i style='color:red' class="fa fa-circle"></i> Tournée en cours
                   </h4>
@@ -54,10 +54,9 @@
                     <i class="fa fa-pause"></i> Tournée en pause
                   </h4>
                 </div>
-
+ -->
               </div>
         </div>
     </div>
 
 </div>
-
