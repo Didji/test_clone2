@@ -23,10 +23,10 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                         reports.push(report);
                         Smartgeo.set_('reports', reports, function () {
                             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                            deferred.notify();
+                            deferred.resolve();
                         });
                     });
-                    deferred.notify();
-                    deferred.resolve();
                 })
                 .error(function () {
                     if (window.SmartgeoChromium && window.SmartgeoChromium.log) {
@@ -37,10 +37,10 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                         reports.push(report);
                         Smartgeo.set_('reports', reports, function () {
                             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                            deferred.notify();
+                            deferred.resolve();
                         });
                     });
-                    deferred.notify();
-                    deferred.resolve();
                 });
             return deferred.promise;
         },

@@ -93,6 +93,7 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     };
 
     function updateSyncNumber(event) {
+        var old = $scope.toSyncNumber ;
         Smartgeo.get_('reports', function (reports) {
 
             Smartgeo.get_('census', function (census) {
@@ -108,6 +109,10 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
                     if (!census[i].synced) {
                         cpt++;
                     }
+                }
+                if(cpt !== 1*$scope.toSyncNumber){
+                    console.log('OULALA ON UPDATE');
+                    $rootScope.syncCenterUpdateReportList();
                 }
                 $scope.toSyncNumber = cpt ;
                 if (!$scope.$$phase) {

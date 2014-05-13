@@ -24,7 +24,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
 
     };
 
-    $scope.updateReportList = function () {
+    $rootScope.syncCenterUpdateReportList = $scope.updateReportList = function () {
         Smartgeo.get_('reports', function (reports) {
             reports = reports || [];
             $scope.reports = [];
