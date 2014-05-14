@@ -127,7 +127,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.close = function () {
-        console.log('close');
         if ($scope.state === 'closed') {
             return;
         }
@@ -145,7 +144,6 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.open = function () {
-        console.log('open');
         if ($scope.state === 'open') {
             return;
         }
