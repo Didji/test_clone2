@@ -385,7 +385,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (Smartgeo.parametersCache_[parameter]) {
-            if(parameter === 'sites') console.log(Smartgeo.parametersCache_[parameter]);
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
