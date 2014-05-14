@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('searchController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n) {
+angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n) {
 
     'use strict';
 
@@ -157,4 +157,4 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         });
     };
 
-});
+}]);

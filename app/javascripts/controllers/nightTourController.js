@@ -10,7 +10,7 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module('smartgeomobile').controller('nightTourController', function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report) {
+angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Report", function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report) {
 
     'use strict';
 
@@ -414,4 +414,4 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         asset.marker.setIcon(asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON);
     };
 
-});
+}]);

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('siteListController', function ($scope, $rootScope, $http, $location, Smartgeo, i18n) {
+angular.module('smartgeomobile').controller('siteListController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", function ($scope, $rootScope, $http, $location, Smartgeo, i18n) {
 
     'use strict';
 
@@ -112,4 +112,4 @@ angular.module('smartgeomobile').controller('siteListController', function ($sco
         });
     };
 
-});
+}]);

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('menuController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", "$timeout", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout) {
 
     'use strict';
 
@@ -151,4 +151,4 @@ angular.module('smartgeomobile').controller('menuController', function ($scope, 
     $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
     $scope.$on('_MENU_CLOSE_', $scope.close);
 
-});
+}]);

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('siteUpdateController', function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n, LicenseManager) {
+angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "SQLite", "$location", "G3ME", "Installer", "i18n", "LicenseManager", function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n, LicenseManager) {
 
     'use strict';
 
@@ -86,4 +86,4 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
         }
     });
 
-});
+}]);

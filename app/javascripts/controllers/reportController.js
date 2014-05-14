@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('reportController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, Report) {
+angular.module('smartgeomobile').controller('reportController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "Report", function ($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, Report) {
 
     'use strict';
 
@@ -432,4 +432,4 @@ angular.module('smartgeomobile').controller('reportController', function ($scope
         var dataURL = canvas.toDataURL("image/png");
         return dataURL;
     }
-});
+}]);

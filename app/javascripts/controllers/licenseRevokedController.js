@@ -9,7 +9,7 @@
  * @property {string} errorMessage Message affiché en cas d'erreur
  */
 
-angular.module('smartgeomobile').controller('licenseRevokedController', function($scope, $location, i18n, LicenseManager) {
+angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope", "$location", "i18n", "LicenseManager", function($scope, $location, i18n, LicenseManager) {
 
     'use strict';
 
@@ -65,4 +65,4 @@ angular.module('smartgeomobile').controller('licenseRevokedController', function
     };
 
 
-});
+}]);

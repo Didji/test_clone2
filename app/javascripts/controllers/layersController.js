@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('layersController', function ($scope, $rootScope, G3ME, i18n) {
+angular.module('smartgeomobile').controller('layersController', ["$scope", "$rootScope", "G3ME", "i18n", function ($scope, $rootScope, G3ME, i18n) {
 
     'use strict';
 
@@ -58,4 +58,4 @@ angular.module('smartgeomobile').controller('layersController', function ($scope
         $scope.refreshView();
     };
 
-});
+}]);

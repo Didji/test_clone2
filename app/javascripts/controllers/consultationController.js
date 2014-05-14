@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('consultationController', function ($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME) {
+angular.module('smartgeomobile').controller('consultationController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", function ($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME) {
 
     'use strict';
 
@@ -166,7 +166,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
         $rootScope.addAssetToMission(asset, mission);
     };
 
-}).filter('prettifyField', function () {
+}]).filter('prettifyField', function () {
 
     'use strict';
 

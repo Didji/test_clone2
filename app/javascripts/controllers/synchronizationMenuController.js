@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, AssetFactory, G3ME) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, AssetFactory, G3ME) {
 
     'use strict';
 
@@ -211,4 +211,4 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         return len;
     };
 
-});
+}]);

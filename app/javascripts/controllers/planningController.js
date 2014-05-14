@@ -25,7 +25,7 @@ var DAY_TO_MS = 86400000;
  * @property {date} lastUpdate Date de dernière synchronisation
  */
 
-angular.module('smartgeomobile').controller('planningController', function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $timeout, $filter, G3ME, i18n) {
+angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, Mission, $location, $timeout, $filter, G3ME, i18n) {
 
     'use strict';
 
@@ -696,7 +696,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
         return false;
     };
 
-}) .filter('customDateFilter', function () {
+}]) .filter('customDateFilter', function () {
         return sanitizeDate;
     }).filter('dateForInput', function () {
         return function (date) {

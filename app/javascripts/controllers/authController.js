@@ -6,7 +6,7 @@
  * @property {Boolean}  firstAuth   Est ce la première authentification ?
  */
 
-angular.module('smartgeomobile').controller('authController', function($scope, $rootScope, $location, Smartgeo, i18n, $route, $http) {
+angular.module('smartgeomobile').controller('authController', ["$scope", "$rootScope", "$location", "Smartgeo", "i18n", "$route", "$http", function($scope, $rootScope, $location, Smartgeo, i18n, $route, $http) {
 
     'use strict';
 
@@ -129,7 +129,7 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
         $route.reload();
     };
 
-}).filter('urlShortener', function() {
+}]).filter('urlShortener', function() {
 
     /**
      * @method
@@ -141,4 +141,4 @@ angular.module('smartgeomobile').controller('authController', function($scope, $
     }
 
     return urlShortener ;
-})
+});

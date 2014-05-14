@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('siteUninstallController', function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteUninstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "SQLite", "$location", "G3ME", "Installer", "i18n", function ($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
 
     'use strict';
 
@@ -13,4 +13,4 @@ angular.module('smartgeomobile').controller('siteUninstallController', function 
         }
     });
 
-});
+}]);

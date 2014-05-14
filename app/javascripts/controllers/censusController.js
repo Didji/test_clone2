@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('censusController', function ($scope, $rootScope, ComplexAssetFactory, G3ME) {
+angular.module('smartgeomobile').controller('censusController', ["$scope", "$rootScope", "ComplexAssetFactory", "G3ME", function ($scope, $rootScope, ComplexAssetFactory, G3ME) {
 
     'use strict';
 
@@ -13,4 +13,4 @@ angular.module('smartgeomobile').controller('censusController', function ($scope
         $scope.okey = null;
     };
 
-});
+}]);

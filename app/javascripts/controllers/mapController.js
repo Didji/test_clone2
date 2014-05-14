@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('mapController', function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout) {
+angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", function ($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout) {
 
     'use strict';
 
@@ -585,4 +585,4 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
         G3ME.invalidateMapSize();
     };
 
-});
+}]);

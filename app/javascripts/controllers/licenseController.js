@@ -9,7 +9,7 @@
  * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
  */
 
-angular.module('smartgeomobile').controller('licenseController', function($scope, $rootScope, $location, Smartgeo, i18n, LicenseManager) {
+angular.module('smartgeomobile').controller('licenseController', ["$scope", "$rootScope", "$location", "Smartgeo", "i18n", "LicenseManager", function($scope, $rootScope, $location, Smartgeo, i18n, LicenseManager) {
 
     'use strict';
 
@@ -63,4 +63,4 @@ angular.module('smartgeomobile').controller('licenseController', function($scope
     };
 
 
-});
+}]);
