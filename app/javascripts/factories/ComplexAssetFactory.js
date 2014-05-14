@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope, Installer, AssetFactory) {
+angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope, Installer, AssetFactory, G3ME) {
 
     'use strict';
 
@@ -212,10 +212,26 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @returns {Boolean} True si l'objet a été supprimé
      */
     ComplexAsset.prototype.save = function() {
+
         var node = this.__clone(true);
         node.__clean();
         node.geometry = this.geometry ;
         var deferred = $q.defer();
+
+        Smartgeo.get_('census', function (census) {
+            census = census || [];
+            census.push(node);
+            Smartgeo.set_('census', census, function () {
+                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                for (var i in G3ME.map._layers) {
+                    if(G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url && G3ME.map._layers[i].isTemp){
+                        G3ME.map._layers[i].redraw();
+                    }
+                }
+                deferred.resolve();
+            });
+        });
+
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
             timeout: 100000
         }).success(function (data) {
@@ -226,25 +242,32 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             }
             Smartgeo.get_('census', function (census) {
                 census = census || [];
-                node.synced = true ;
-                census.push(node);
+                var alreadySaved = false ;
+                for(var i=0 ; i < census.length ; i++){
+                    if(census[i].uuid === node.uuid){
+                        alreadySaved = true ;
+                        break;
+                    }
+                }
+                if(alreadySaved){
+                    census[i].synced = true ;
+                } else {
+                    node.synced = true ;
+                    census.push(node);
+                }
+
                 Smartgeo.set_('census', census, function () {
                     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                    deferred.notify();
-                    deferred.resolve();
-                });
-            });
-        }).error(function () {
-            Smartgeo.get_('census', function (census) {
-                census = census || [];
-                census.push(node);
-                Smartgeo.set_('census', census, function () {
-                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                    deferred.notify();
+                    for (var i in G3ME.map._layers) {
+                        if(G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url){
+                            G3ME.map._layers[i].redraw();
+                        }
+                    }
                     deferred.resolve();
                 });
             });
         });
+
         return deferred.promise;
     };
 

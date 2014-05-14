@@ -55,11 +55,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     }
                     $scope.onsave();
                     $scope.removeLayers();
-                    $scope.root.save().then(function(){
-                        for (var i in $scope.map._layers) {
-                            $scope.map._layers[i].redraw && $scope.map._layers[i].redraw();
-                        }
-                    });
+                    $scope.root.save();
                 };
 
                 $scope.snapPicture = function(node) {
@@ -72,11 +68,6 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 $scope.userLocationGeometry = function(node) {
 
                     Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
-                        console.log(arguments);
-                    });
-
-
-                    Smartgeo.getUsersLocation(function(lat, lng) {
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
@@ -86,9 +77,8 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         }).addTo($scope.map);
                         $scope.mapLayers.push(node.layer);
                         $scope.$apply();
-                    }, function() {
-                        alertify.error(i18n.get('_MAP_GPS_FAIL'));
                     });
+
                 };
 
                 $scope.draw = function(node) {
@@ -160,10 +150,16 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         if (node.layer) {
                             return;
                         }
+
+                        var iconUrl =  $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                            image   = new Image();
+
+                        image.src = iconUrl;
+
                         node.layer = L.marker(e.latlng, {
                             icon: L.icon({
-                                iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
-                                iconAnchor: [16, 16]
+                                iconUrl:iconUrl,
+                                iconAnchor: [image.width/2, image.height/2]
                             })
                         }).addTo($scope.map);
                         $scope.mapLayers.push(node.layer);

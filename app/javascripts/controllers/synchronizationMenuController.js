@@ -175,6 +175,11 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         $scope.census.splice($scope.census.indexOf(census), 1);
         Smartgeo.set_('census', $scope.census, function () {
             $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+            for (var i in G3ME.map._layers) {
+                if(G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url && G3ME.map._layers[i].isTemp){
+                    G3ME.map._layers[i].redraw();
+                }
+            }
         });
     };
 
