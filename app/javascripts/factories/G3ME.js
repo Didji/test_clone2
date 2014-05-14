@@ -100,6 +100,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 minZoom: G3ME._MIN_ZOOM
             });
 
+            this.tempAssetTile.isTemp = true ;
+
             this.canvasTile.drawTile = function (canvas, tilePoint) {
                 G3ME.drawTile(canvas, tilePoint);
             };
@@ -813,6 +815,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = strokeStyle;
     }
-
+    window.G3ME = G3ME ;
     return G3ME;
 });
