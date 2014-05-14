@@ -41,7 +41,8 @@
             <button ng-hide="fromConsult" class="btn btn-default" ng-click="step='assets'">
                 <span class="icon-chevron-left"></span> <i18n>_REPORT_PREVIOUS</i18n>
             </button>
-            <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)" >
+            <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}'
+                ng-disabled="!reportForm.$valid || sendingReport || !areEveryRequiredFieldsAreFilled()" ng-click="sendReport($event)" >
                 <span class="icon-save"></span>
                 <i18n>_REPORT_SAVE</i18n>
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
