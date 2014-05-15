@@ -263,6 +263,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
     });
 
     $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
+        // debugger ;
         if (!$scope.missionsClusters[mission.id]) {
             $scope.missionsClusters[mission.id] = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {

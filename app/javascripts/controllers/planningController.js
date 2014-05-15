@@ -629,7 +629,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 assets: [asset.guid]
             };
         } else {
-            mission.postAddedAssets.assets.push(asset.guid);
+            mission.postAddedAssets.assets.push(1*asset.guid);
         }
 
         Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
