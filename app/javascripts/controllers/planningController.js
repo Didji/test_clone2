@@ -169,7 +169,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                             }
                         }
                         mission.assets = mission.assets.concat(mission.postAddedAssets.assets);
-                        mission.done = mission.done.concat(mission.postAddedAssets.done);
+                        // mission.done = mission.done.concat(mission.postAddedAssets.done);
                     }
 
                     newMissionCount += (mission.assets.length && previous.indexOf(i) === -1) ? 1 : 0;
@@ -322,7 +322,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         continue;
                     }
                     mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
-                    mission.done.push(mission.postAddedAssets.assets[j]);
+                    // mission.done.push(mission.postAddedAssets.assets[j]);
                     mission.postAddedAssets.assets.splice(index, 1);
                 }
             }
@@ -615,6 +615,8 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
      */
     $rootScope.addAssetToMission = $scope.addAssetToMission = function (asset, mission) {
 
+        asset.guid = 1*asset.guid;
+
         if (mission.assets.indexOf(asset.guid) !== -1 || mission.done.indexOf(asset.guid) !== -1) {
             return;
         }
@@ -629,7 +631,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 assets: [asset.guid]
             };
         } else {
-            mission.postAddedAssets.assets.push(1*asset.guid);
+            mission.postAddedAssets.assets.push(asset.guid);
         }
 
         Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
@@ -644,7 +646,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             }
 
             $scope.assetsCache[mission.id].push(assets[0]);
-            $scope.assetsCache[mission.id]._byId[assets[0].guid] = assets[0];
+            $scope.assetsCache[mission.id]._byId[1*assets[0].guid] = assets[0];
 
             $scope.highlightMission(mission);
 
