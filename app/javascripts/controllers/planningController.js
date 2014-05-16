@@ -377,7 +377,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                         continue;
                     }
                     mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
-                    mission.done.push(mission.postAddedAssets.assets[j]);
+                    // mission.done.push(mission.postAddedAssets.assets[j]);
                     mission.postAddedAssets.assets.splice(index, 1);
                 }
             }
