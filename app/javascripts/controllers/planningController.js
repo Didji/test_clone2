@@ -168,7 +168,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                             }
                         }
                         mission.assets = mission.assets.concat(mission.postAddedAssets.assets);
-                        mission.done = mission.done.concat(mission.postAddedAssets.done);
+                        // mission.done = mission.done.concat(mission.postAddedAssets.done);
                     }
 
                     newMissionCount += (mission.assets.length && previous.indexOf(i) === -1) ? 1 : 0;
