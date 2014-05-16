@@ -682,6 +682,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $rootScope.addAssetToMission = $scope.addAssetToMission = function (asset, mission) {
 
+        asset.guid = 1*asset.guid;
+
         if (mission.assets.indexOf(asset.guid) !== -1 || mission.done.indexOf(asset.guid) !== -1) {
             return;
         }
@@ -696,7 +698,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 assets: [asset.guid]
             };
         } else {
-            mission.postAddedAssets.assets.push(1*asset.guid);
+            mission.postAddedAssets.assets.push(asset.guid);
         }
 
         Smartgeo.set('missions_'+Smartgeo.get('user').username, $rootScope.missions);
@@ -711,7 +713,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             }
 
             $scope.assetsCache[mission.id].push(assets[0]);
-            $scope.assetsCache[mission.id]._byId[assets[0].guid] = assets[0];
+            $scope.assetsCache[mission.id]._byId[1*assets[0].guid] = assets[0];
 
             $scope.highlightMission(mission);
 
