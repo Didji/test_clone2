@@ -248,7 +248,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
         if(window.SmartgeoChromium){
             ChromiumCallbacks[666] = callback ;
             SmartgeoChromium.getDeviceId() ;
-        } else if(cordova) {
+        } else if(window.cordova) {
             cordova.exec(function(args) {
                 callback(args[0], args[1]);
             }, function(error) {

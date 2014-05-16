@@ -146,6 +146,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Clear localStorage
          */
         reset: function () {
+
             if (Smartgeo._DONT_REALLY_RESET) {
                 return;
             }
@@ -156,7 +157,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo.clearPollingRequest();
             Smartgeo.clearCaches();
 
-            localStorage.clear();
+            for(var val in localStorage){
+                if(val.indexOf("LicenseManager")!==0){
+                    localStorage.removeItem(val);
+                }
+            }
+
             var sites = Smartgeo.get_('sites');
             Smartgeo.unset_('sites');
             for (var k in sites) {
