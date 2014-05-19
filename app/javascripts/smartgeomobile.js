@@ -89,7 +89,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
             activelayers : true,
             goto : true,
             synccenter : true,
-            _DONT_REALLY_RESET : true
+            _DONT_REALLY_RESET : false
         };
 
     }).directive("camera", function() {
