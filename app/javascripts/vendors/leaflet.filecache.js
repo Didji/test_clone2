@@ -11,9 +11,7 @@ if (navigator.userAgent.match(/Android/i)) {
             errorTileUrl: '',
             attribution: '',
             zoomOffset: 0,
-            opacity: 1,
-            unloadInvisibleTiles: L.Browser.mobile,
-            updateWhenIdle: L.Browser.mobile
+            opacity: 1
         },
 
         _loadTile: function (tile, tilePoint, zoom) {
@@ -21,8 +19,49 @@ if (navigator.userAgent.match(/Android/i)) {
             tile.onload = this._tileOnLoad;
             tile.onerror = this._tileOnError;
 
+            var this_ = this ;
+
             this._adjustTilePoint(tilePoint);
-            this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
+
+            if(window.SmartgeoChromium){
+                ChromiumCallbacks[15] = function(response){
+                    this_._handleChromiumReponse(response,tile, zoom, tilePoint.x, tilePoint.y);
+                };
+                SmartgeoChromium.getTileURL(this._url, tilePoint.x, tilePoint.y, zoom);
+            }
+
+            // this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
+        },
+
+        _handleChromiumReponse: function(response,image, z, x, y){
+            var path ;
+            if(1*response === response || !response){
+                console.log('ERREUR');
+                return console.log(response);
+            } else {
+                path = response ;
+            }
+            var this_ = this,
+                tileObject = {
+                    image: image,
+                    provider: this.id,
+                    x: x,
+                    y: y,
+                    z: z,
+                    src: null,
+                    tiles: this
+                };
+
+            image.src = path;
+
+            image.onerror = function (event) {
+                this_._tileOnError.call(this);
+                image.onerror = image.onload = null;
+            }
+            image.onload = function () {
+                this_._tileOnLoad.call(this);
+                image.onerror = image.onload = null;
+            }
         },
 
         _addTile: function (tilePoint, container) {
@@ -52,117 +91,117 @@ if (navigator.userAgent.match(/Android/i)) {
             }, this.options));
         },
 
-        writeTileToCache: function (tileObject, dataUrl, callback) {
-            var this_ = this;
-            var path = this.getTilePath(tileObject);
+        // writeTileToCache: function (tileObject, dataUrl, callback) {
+        //     var this_ = this;
+        //     var path = this.getTilePath(tileObject);
 
-            if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
-                if (!window.ChromiumCallbacks) {
-                    window.ChromiumCallbacks = [];
-                }
-                ChromiumCallbacks[10] = function (success) {
-                    if (!success){
-                        console.log("Error while writing " + path);
-                    }
-                    (callback || function () {})();
-                };
-                SmartgeoChromium.writeBase64ToPNG(dataUrl.split(',')[1], path);
-            }
-        },
+        //     if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
+        //         if (!window.ChromiumCallbacks) {
+        //             window.ChromiumCallbacks = [];
+        //         }
+        //         ChromiumCallbacks[10] = function (success) {
+        //             if (!success){
+        //                 console.log("Error while writing " + path);
+        //             }
+        //             (callback || function () {})();
+        //         };
+        //         SmartgeoChromium.writeBase64ToPNG(dataUrl.split(',')[1], path);
+        //     }
+        // },
 
-        getDataURL: function (img) {
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            return canvas.toDataURL();
-        },
+        // getDataURL: function (img) {
+        //     var canvas = document.createElement("canvas");
+        //     canvas.width = img.width;
+        //     canvas.height = img.height;
+        //     var ctx = canvas.getContext("2d");
+        //     ctx.drawImage(img, 0, 0);
+        //     return canvas.toDataURL();
+        // },
 
-        fetchTileFromCache: function (image, z, x, y) {
+        // fetchTileFromCache: function (image, z, x, y) {
 
-            var this_ = this,
-                tileObject = {
-                    image: image,
-                    provider: this.id,
-                    x: x,
-                    y: y,
-                    z: z,
-                    src: null,
-                    tiles: this
-                };
+        //     var this_ = this,
+        //         tileObject = {
+        //             image: image,
+        //             provider: this.id,
+        //             x: x,
+        //             y: y,
+        //             z: z,
+        //             src: null,
+        //             tiles: this
+        //         };
 
-            image.src = this.getTilePath(tileObject);
+        //     image.src = this.getTilePath(tileObject);
 
-            image.onerror = function (event) {
+        //     image.onerror = function (event) {
 
-                // this_._tileOnError.call(this);
+        //         // this_._tileOnError.call(this);
 
-                image.src = this_.getTileUrl({
-                    x: x,
-                    y: y
-                }, z);
+        //         image.src = this_.getTileUrl({
+        //             x: x,
+        //             y: y
+        //         }, z);
 
-                image.onerror = this_._tileOnError ;
+        //         image.onerror = this_._tileOnError ;
 
-                image.onload = function () {
-                    this_._tileOnLoad.call(this);
-                    this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {});
-                    //     this_.getRemoteETag(tileObject, function (remoteETag) {
-                    //         if (remoteETag !== null) {
-                    //             this_.writeMetadataTileFile(tileObject, {
-                    //                 etag: remoteETag
-                    //             });
-                    //         }
-                    //     });
-                    // });
-                };
-            };
+        //         image.onload = function () {
+        //             this_._tileOnLoad.call(this);
+        //             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {});
+        //             //     this_.getRemoteETag(tileObject, function (remoteETag) {
+        //             //         if (remoteETag !== null) {
+        //             //             this_.writeMetadataTileFile(tileObject, {
+        //             //                 etag: remoteETag
+        //             //             });
+        //             //         }
+        //             //     });
+        //             // });
+        //         };
+        //     };
 
-            image.onload = function () {
-                this_._tileOnLoad.call(this);
-                image.onerror = image.onload = null;
+        //     image.onload = function () {
+        //         this_._tileOnLoad.call(this);
+        //         image.onerror = image.onload = null;
 
-                // this_.doINeedToReCacheThisTile(tileObject, function (yes) {
-                //     if (yes) {
-                //         var oldTile = image.src;
-                //         image.src = this_.getTileUrl({
-                //             x: x,
-                //             y: y
-                //         }, z);
-                //         image.onerror = function(){
-                //             this_._tileOnError.call(this);
-                //             image.onload = image.onerror = null;
-                //             image.src = oldTile ;
-                //         };
-                //         // this_._tileOnError ;
-                //         image.onload = function () {
-                //             this_._tileOnLoad.call(this);
+        //         // this_.doINeedToReCacheThisTile(tileObject, function (yes) {
+        //         //     if (yes) {
+        //         //         var oldTile = image.src;
+        //         //         image.src = this_.getTileUrl({
+        //         //             x: x,
+        //         //             y: y
+        //         //         }, z);
+        //         //         image.onerror = function(){
+        //         //             this_._tileOnError.call(this);
+        //         //             image.onload = image.onerror = null;
+        //         //             image.src = oldTile ;
+        //         //         };
+        //         //         // this_._tileOnError ;
+        //         //         image.onload = function () {
+        //         //             this_._tileOnLoad.call(this);
 
-                //             if(!this_._tileOnLoad || !this_.getRemoteETag){
-                //                 return ;
-                //             }
+        //         //             if(!this_._tileOnLoad || !this_.getRemoteETag){
+        //         //                 return ;
+        //         //             }
 
-                //             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
-                //                 if(!this_.getRemoteETag){
-                //                     return ;
-                //                 }
-                //                 this_.getRemoteETag(tileObject, function (remoteETag) {
-                //                     if (remoteETag !== null) {
-                //                         this_.writeMetadataTileFile(tileObject, {
-                //                             etag: remoteETag
-                //                         });
-                //                     }
-                //                 });
-                //             });
-                //             image.onerror = image.onload = null;
-                //         };
-                //     }
-                // });
+        //         //             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
+        //         //                 if(!this_.getRemoteETag){
+        //         //                     return ;
+        //         //                 }
+        //         //                 this_.getRemoteETag(tileObject, function (remoteETag) {
+        //         //                     if (remoteETag !== null) {
+        //         //                         this_.writeMetadataTileFile(tileObject, {
+        //         //                             etag: remoteETag
+        //         //                         });
+        //         //                     }
+        //         //                 });
+        //         //             });
+        //         //             image.onerror = image.onload = null;
+        //         //         };
+        //         //     }
+        //         // });
 
 
-            };
-        },
+        //     };
+        // },
 
         // doINeedToReCacheThisTile: function (tileObject, callback) {
         //     var _this = this;
@@ -235,18 +274,18 @@ if (navigator.userAgent.match(/Android/i)) {
         //     http.send();
         // },
 
-        convertDataURIToBinary: function (dataURI) {
-            var BASE64_MARKER = ';base64,';
-            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-            var base64 = dataURI.substring(base64Index);
-            var raw = window.atob(base64);
-            var rawLength = raw.length;
-            var array = new Uint8Array(new ArrayBuffer(rawLength));
-            for (var i = 0; i < rawLength; i++) {
-                array[i] = raw.charCodeAt(i);
-            }
-            return array;
-        }
+        // convertDataURIToBinary: function (dataURI) {
+        //     var BASE64_MARKER = ';base64,';
+        //     var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+        //     var base64 = dataURI.substring(base64Index);
+        //     var raw = window.atob(base64);
+        //     var rawLength = raw.length;
+        //     var array = new Uint8Array(new ArrayBuffer(rawLength));
+        //     for (var i = 0; i < rawLength; i++) {
+        //         array[i] = raw.charCodeAt(i);
+        //     }
+        //     return array;
+        // }
     });
 
 } else {

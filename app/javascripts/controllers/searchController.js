@@ -2,7 +2,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
     'use strict';
 
-    $rootScope.mlPushMenu = new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
+    window.mlPushMenu_ = new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
         type: 'cover'
     });
 
@@ -15,13 +15,13 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
     // On index les critères en fonction des okeys, en les sortant des "tabs", pour faire un joli ng-repeat/ng-options
     $scope.criteria = {};
-    for (var i in $rootScope.site.metamodel) {
+    for (var i in window.currentSite.metamodel) {
         $scope.criteria[i] = [];
         $scope.criteria[i]._byKey = [];
-        for (var j = 0; j < $rootScope.site.metamodel[i].tabs.length; j++) {
-            for (var k = 0; k < $rootScope.site.metamodel[i].tabs[j].fields.length; k++) {
-                $scope.criteria[i].push($rootScope.site.metamodel[i].tabs[j].fields[k]);
-                $scope.criteria[i]._byKey[$rootScope.site.metamodel[i].tabs[j].fields[k].key] = $rootScope.site.metamodel[i].tabs[j].fields[k];
+        for (var j = 0; j < window.currentSite.metamodel[i].tabs.length; j++) {
+            for (var k = 0; k < window.currentSite.metamodel[i].tabs[j].fields.length; k++) {
+                $scope.criteria[i].push(window.currentSite.metamodel[i].tabs[j].fields[k]);
+                $scope.criteria[i]._byKey[window.currentSite.metamodel[i].tabs[j].fields[k].key] = window.currentSite.metamodel[i].tabs[j].fields[k];
             }
         }
     }
@@ -33,13 +33,13 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
     $scope.backToPreviousLevel = function (event) {
         event.preventDefault();
         var level = closest(event.currentTarget, 'mp-level').getAttribute('data-level');
-        if ($scope.mlPushMenu.level <= level) {
+        if (window.mlPushMenu_.level <= level) {
             event.stopPropagation();
-            $scope.mlPushMenu.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
-            if ($scope.mlPushMenu.level === 0) {
-                $scope.mlPushMenu._resetMenu()
+            window.mlPushMenu_.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
+            if (window.mlPushMenu_.level === 0) {
+                window.mlPushMenu_._resetMenu()
             } else {
-                $scope.mlPushMenu._closeMenu();
+                window.mlPushMenu_._closeMenu();
             }
         }
         return false;
@@ -58,7 +58,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
 
         $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS';
         $scope.searchIsPerforming = true;
-        Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function (results) {
+        Smartgeo.findAssetsByLabel(window.currentSite, angular.copy($scope.searchTerms), function (results) {
             $scope.searchIsPerforming = false;
 
             if (!results.length) {
@@ -81,7 +81,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-            $scope.mlPushMenu._resetMenu();
+            window.mlPushMenu_._resetMenu();
         });
     };
 
@@ -130,7 +130,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
         }
 
         $scope.searchIsPerforming = true;
-        Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function (results) {
+        Smartgeo.findAssetsByCriteria(window.currentSite, advancedSearch, function (results) {
             $scope.searchIsPerforming = false;
 
             if (!results.length) {
@@ -153,7 +153,7 @@ angular.module('smartgeomobile').controller('searchController', function ($scope
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-            $scope.mlPushMenu._resetMenu();
+            window.mlPushMenu_._resetMenu();
         });
     };
 

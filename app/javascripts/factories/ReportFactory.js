@@ -6,7 +6,7 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
         save: function (report) {
 
             if(!report.site){
-                report.site = $rootScope.site.label;
+                report.site = window.currentSite.label;
             }
 
             var deferred = $q.defer();

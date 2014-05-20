@@ -268,7 +268,7 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
         }
 
         function getList(pkey, okey) {
-            var mm = $rootScope.site.metamodel[okey];
+            var mm = window.currentSite.metamodel[okey];
             for (var i in mm.tabs) {
                 for (var j in mm.tabs[i].fields) {
                     if (mm.tabs[i].fields[j].key === pkey) {
@@ -286,8 +286,8 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
                     list = getList(pkey, okey);
 
                 val = a[pkey];
-                if (list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
-                    val = $rootScope.site.lists[list][val];
+                if (list && window.currentSite.lists[list] && window.currentSite.lists[list][val]) {
+                    val = window.currentSite.lists[list][val];
                 }
 
                 rv[assets[i].id] = val;
@@ -335,11 +335,11 @@ angular.module('smartgeomobile').controller('nightTourController', function ($sc
 
         if ($rootScope.nightTourInProgress) {
             return alertify.error("Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée.");
-        } else if ($rootScope.site.activities._byId[mission.activity.id].type !== "night_tour") {
+        } else if (window.currentSite.activities._byId[mission.activity.id].type !== "night_tour") {
             return alertify.error("Erreur : L'activité de cette mission n'est pas une tournée de nuit.");
         }
 
-        $scope.activity = $rootScope.site.activities._byId[mission.activity.id];
+        $scope.activity = window.currentSite.activities._byId[mission.activity.id];
 
         $scope.assetsCache = assetsCache;
         $scope.mission = mission;

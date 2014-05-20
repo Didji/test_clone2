@@ -39,10 +39,10 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
             if (asset.attributes[fieldsIn[i].key] ||
                 (
                     fieldsIn[i].options &&
-                    $rootScope.site.lists &&
+                    window.currentSite.lists &&
                     asset.attributes[fieldsIn[i].key] &&
-                    $rootScope.site.lists[fieldsIn[i].options] &&
-                    $rootScope.site.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
+                    window.currentSite.lists[fieldsIn[i].options] &&
+                    window.currentSite.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
                 )
             ) {
                 fieldsOut.push(fieldsIn[i]);
@@ -71,7 +71,7 @@ angular.module('smartgeomobile').filter('prettifyField', function () {
         var layersOut = [];
         for (var i = 0; i < layers.length; i++) {
 
-            if(window.site.metamodel[layers[i].okey].is_graphical !== false){
+            if(window.currentSite.metamodel[layers[i].okey].is_graphical !== false){
                 layersOut.push(layers[i]);
             }
         }

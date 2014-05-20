@@ -65,7 +65,7 @@ angular.module('smartgeomobile').controller('siteUpdateController', function ($s
         angular.extend($scope.site, formatedSite);
         Installer.update($scope.site, $scope.site.stats, function () {
             Installer.saveSite($scope.site);
-            $rootScope.site = $scope.site;
+            window.currentSite = $scope.site;
             $location.path('/map/' + $routeParams.site);
             if (!$scope.$$phase) {
                 $scope.$apply();

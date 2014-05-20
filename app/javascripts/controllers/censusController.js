@@ -2,7 +2,7 @@ angular.module('smartgeomobile').controller('censusController', function ($scope
 
     'use strict';
 
-    $scope.map  = G3ME.map ;
+    // $scope.map  = G3ME.map ;
     $scope.classindex  = "0";
 
     $scope.startCensus = function(okey){

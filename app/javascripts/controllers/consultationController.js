@@ -112,7 +112,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
     };
 
     $scope.openLocatedReport = function (lat, lng) {
-        $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
+        $location.path('report/' + window.currentSite.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
     };
 
     $scope.zoomOnAsset = function (asset) {

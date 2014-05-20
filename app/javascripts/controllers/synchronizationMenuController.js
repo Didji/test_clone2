@@ -6,9 +6,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     $scope.census  = [];
 
     $scope.initialize = function () {
-        $rootScope.site.activities._byId = {};
-        for (var i = 0; i < $rootScope.site.activities.length; i++) {
-            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+        window.currentSite.activities._byId = {};
+        for (var i = 0; i < window.currentSite.activities.length; i++) {
+            window.currentSite.activities._byId[window.currentSite.activities[i].id] = window.currentSite.activities[i];
         }
 
         $rootScope.$on("DEVICE_IS_ONLINE", function () {
@@ -139,7 +139,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
         }).success(function (data) {
             for(var okey in data){
                 for (var i = 0; i < data[okey].length; i++) {
-                    AssetFactory.save(data[okey][i],window.site);
+                    AssetFactory.save(data[okey][i],window.currentSite);
                 }
             }
             setTimeout(function() {
@@ -193,9 +193,9 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', fun
     };
 
     $scope.uninstallCurrentSite = function () {
-        alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', $rootScope.site.label), function (e) {
+        alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', window.currentSite.label), function (e) {
             if (e) {
-                $location.path('sites/uninstall/' + $rootScope.site.id);
+                $location.path('sites/uninstall/' + window.currentSite.id);
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
