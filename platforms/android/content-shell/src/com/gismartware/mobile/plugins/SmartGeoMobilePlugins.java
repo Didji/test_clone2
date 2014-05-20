@@ -3,10 +3,18 @@ package com.gismartware.mobile.plugins;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
@@ -43,6 +51,8 @@ public class SmartGeoMobilePlugins {
     private LocationManager locationManager ;
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
+    
+    private static String PHPSESSIONID = null;
 
     @SuppressLint("SimpleDateFormat")
 	public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
@@ -186,8 +196,6 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void writeJSON(final String json, final String path) {
-
-
         Runnable runnable = new Runnable() {
           @Override
           public void run() {
@@ -211,8 +219,6 @@ public class SmartGeoMobilePlugins {
           }
         };
         new Thread(runnable).start();
-
-
     }
 
     @JavascriptInterface
@@ -301,5 +307,127 @@ public class SmartGeoMobilePlugins {
         }
         return provider1.equals(provider2);
     }
+    
+    @JavascriptInterface
+    public void getTileURL(String url, String x, String y, String z) {
+    	new GetTileURL().execute(url, x, y, z);
+    }
+    
+    private class GetTileURL extends AsyncTask<String, Void, String> {
+    	
+    	@Override
+    	/**
+    	 * Paramètres :
+    	 * <ul>
+    	 * <li>1. Cookie de session
+    	 * <li>2. Url du serveur</li>
+    	 * <li>3. Coordonnée X</li>
+    	 * <li>4. Coordonnée Y</li>
+    	 * <li>5. Coordonnée Z</li>
+    	 * </ul>
+    	 */
+        protected String doInBackground(String... params) {
+    		final DefaultHttpClient client = new DefaultHttpClient();
+    		
+    		//construction de l'URL
+    		String url = params[1];
+    		url = url.replace("{x}", params[2]);
+    		url = url.replace("{y}", params[3]);
+    		url = url.replace("{z}", params[4]);
+    		
+    		final HttpGet request = new HttpGet(url);
+    		if(PHPSESSIONID != null) {
+    			request.setHeader("Cookie", "PHPSESSID=" + PHPSESSIONID + ";");
+    		} else {
+    			Log.e(TAG, "No PHPSESSID!");
+    			return null;
+    		}
+    		
+    		try {
+    			HttpResponse response = client.execute(request);
+    			final int statusCode = response.getStatusLine().getStatusCode();
+    			if (statusCode != HttpStatus.SC_OK) {
+    				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + params[0]);
+    				return String.valueOf(statusCode);
+    			}
+    			
+    			final HttpEntity entity = response.getEntity();
+    			if(entity != null) {
+    				InputStream is = entity.getContent();
+    				File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[4] + "/" + params[2] + "/" + params[3] + ".png");
+    				OutputStream os = new FileOutputStream(pictureFile, false);
+    				byte[] b = new byte[1024];
+    				int length;
+    				while ((length = is.read(b)) != -1) {
+    					os.write(b, 0, length);
+    				}
+    				os.flush();
+    				os.close();
+    				is.close();
+    				return pictureFile.getPath();
+    			} else {
+    				Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
+    				return null;
+    			}
+    		} catch(Exception e) {
+    			Log.e(TAG, "Error while downloading " + params[0]);
+    			request.abort();
+    			return null;
+    		}
+    	}
 
+		@Override
+		protected void onPostExecute(String result) {
+			view.evaluateJavaScript("window.ChromiumCallbacks[15](\"" + result + "\");");
+		}
+    }
+    
+    @JavascriptInterface
+    public void authenticate(String url, String user, String password, String site) {
+    	new Authenticate().execute(url, user, password, site);
+    }
+    
+	private class Authenticate extends AsyncTask<String, Void, Boolean> {
+	    	
+    	@Override
+        protected Boolean doInBackground(String... params) {
+    		final DefaultHttpClient client = new DefaultHttpClient();
+    		
+    		StringBuffer url = new StringBuffer(params[0]);
+    		url.append("&login=").append(params[1]).append("&pwd=").append(params[2]).append("&forcegimaplogin=true");
+    		
+    		HttpPost req = new HttpPost(url.toString());
+            try {
+	            HttpResponse response = client.execute(req);
+	            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	//auth OK, on recupere l'identifiant de session
+	            	PHPSESSIONID = response.getHeaders("Set-Cookie").toString();
+	        		
+	            	//nouvelle requete à effectuer : sélection du site
+	            	url = new StringBuffer(params[0]);
+	            	url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
+	            	req = new HttpPost(url.toString());
+	            	response = client.execute(req);
+	            	if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            		Log.i(TAG, "User " + params[1] + " authenticated on " + params[0]);
+	            		return true;
+	            	} else {
+	            		Log.e(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
+		            	return false;
+	            	}
+	            } else {
+	            	Log.e(TAG, "Bad supplied credentials!");
+	            	return false;
+	            }
+            } catch (Exception e) {
+            	Log.e(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
+            }
+            return false;
+    	}
+    	
+    	@Override
+		protected void onPostExecute(Boolean result) {
+			view.evaluateJavaScript("window.ChromiumCallbacks[16](\"" + result.booleanValue() + "\");");
+		}
+	}
 }
