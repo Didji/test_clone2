@@ -92,7 +92,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.canvasTile = new L.TileLayer.Canvas({
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
-                async : true
+                async : true,
+                updateWhenIdle: true
             });
 
             this.tempAssetTile = new L.TileLayer.Canvas({
@@ -597,19 +598,24 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     args = args.concat(pool[databaseName][uuid].initargs);
                 }
                 request = request.join(' UNION ALL ') + ' ORDER BY tileUuid, symbolId ' ;
-                (function(currentRequestPool, currentDb, req, args){
-                    SQLite.openDatabase({name: currentDb, bgType: 1}).transaction(function (tx) {
-                        tx.executeSql(req, args,
-                            function (tx, results) {
-                                for(var uuid in currentRequestPool){
-                                    currentRequestPool[uuid].callback(results);
-                                }
-                            }, function(){console.log(arguments);})
-                    });
-                })(pool[databaseName], databaseName, request, args);
+                G3ME.prevAnonFunction(pool[databaseName], databaseName, request, args);
             }
+        },
+
+        prevAnonFunction: function(currentRequestPool, currentDb, req, args){
+            SQLite.openDatabase({name: currentDb, bgType: 1}).transaction(function (tx) {
+                tx.executeSql(req, args,
+                    function (tx, results) {
+                        for(var uuid in currentRequestPool){
+                            currentRequestPool[uuid].callback(results);
+                        }
+                    }, function(){console.log(arguments);})
+            });
         }
+
     };
+
+
 
     function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas) {
 

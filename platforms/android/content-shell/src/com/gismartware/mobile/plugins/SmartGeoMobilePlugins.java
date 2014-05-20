@@ -18,6 +18,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -119,7 +120,7 @@ public class SmartGeoMobilePlugins {
         Log.d(TAG, "Goto " + to);
 
         Activity act = (Activity)context;
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
         		Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         act.startActivity(intent);
     }
@@ -127,7 +128,7 @@ public class SmartGeoMobilePlugins {
     @JavascriptInterface
     public void redirect(String url) {
         Log.d(TAG, "Redirect to URL " + url);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
         		Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         Activity act = (Activity)context;
         act.startActivity(intent);
@@ -151,41 +152,67 @@ public class SmartGeoMobilePlugins {
         view.evaluateJavaScript("window.ChromiumCallbacks[12](\"" + ret + "\");");
     }
 
-    @JavascriptInterface
-    public void writeBase64ToPNG(String base64, String path) {
-        byte[] pngAsByte = Base64.decode(base64, 0);
-        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
-        filePath.getParentFile().mkdirs();
+    private class WriteBase64FileToPNG extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            byte[] pngAsByte = Base64.decode(params[0], 0);
+            File filePath = new File(GimapMobileApplication.EXT_APP_DIR, params[1]);
+            filePath.getParentFile().mkdirs();
 
-        boolean result = true;
-        try {
-            FileOutputStream os = new FileOutputStream(filePath, false);
-            os.write(pngAsByte);
-            os.flush();
-            os.close();
-        } catch (IOException e) {
-            Log.d(TAG, "Error when writing base64 data to " + path, e);
-            result = false;
+            boolean result = true;
+            try {
+                FileOutputStream os = new FileOutputStream(filePath, false);
+                os.write(pngAsByte);
+                os.flush();
+                os.close();
+            } catch (IOException e) {
+                Log.d(TAG, "Error when writing base64 data to " + params[1], e);
+                result = false;
+            }
+
+            return result;
         }
-        view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result + "\");");
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result.booleanValue() + "\");");
+        }
     }
 
     @JavascriptInterface
-    public void writeJSON(String json, String path) {
-        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
-        filePath.getParentFile().mkdirs();
+    public void writeBase64ToPNG(String base64, String path) {
+        new WriteBase64FileToPNG().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,base64, path );
+    }
 
-        boolean result = true;
-        try {
-            FileOutputStream os = new FileOutputStream(filePath, false);
-            os.write(json.getBytes());
-            os.flush();
-            os.close();
-        } catch (IOException e) {
-            Log.d(TAG, "Error when writing base64 data to " + path, e);
-            result = false;
-        }
-        view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+    @JavascriptInterface
+    public void writeJSON(final String json, final String path) {
+
+
+        Runnable runnable = new Runnable() {
+          @Override
+          public void run() {
+
+              android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+              File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
+                filePath.getParentFile().mkdirs();
+
+                boolean result = true;
+                try {
+                    FileOutputStream os = new FileOutputStream(filePath, false);
+                    os.write(json.getBytes());
+                    os.flush();
+                    os.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Error when writing base64 data to " + path, e);
+                    result = false;
+                }
+                view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+          }
+        };
+        new Thread(runnable).start();
+
+
     }
 
     @JavascriptInterface

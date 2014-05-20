@@ -1299,6 +1299,11 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
  */
 - (void)write:(CDVInvokedUrlCommand*)command
 {
+    
+    
+    [self.commandDelegate runInBackground:^{
+
+
     NSString* callbackId = command.callbackId;
     NSArray* arguments = command.arguments;
 
@@ -1326,11 +1331,14 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid parameter type"];
         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
-
+    }];
+    
 }
 
 - (void)writeToFile:(NSString*)filePath withData:(NSData*)encData append:(BOOL)shouldAppend callback:(NSString*)callbackId
 {
+    
+        [self.commandDelegate runInBackground:^{
     CDVPluginResult* result = nil;
     CDVFileError errCode = INVALID_MODIFICATION_ERR;
     int bytesWritten = 0;
@@ -1361,6 +1369,9 @@ NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
     }
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+            
+        }];
+
 }
 
 - (void)writeToFile:(NSString*)filePath withString:(NSString*)stringData encoding:(NSStringEncoding)encoding append:(BOOL)shouldAppend callback:(NSString*)callbackId
