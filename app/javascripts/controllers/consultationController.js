@@ -3,6 +3,7 @@ angular.module('smartgeomobile').controller('consultationController', function (
     'use strict';
 
     $scope.state = 'closed';
+    $scope.site = window.currentSite;
     $scope.loading = false;
     angular.element($window).bind("resize", function (e) {
         $scope.open();

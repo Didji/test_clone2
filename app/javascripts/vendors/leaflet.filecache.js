@@ -24,8 +24,36 @@ if (navigator.userAgent.match(/Android/i)) {
             this._adjustTilePoint(tilePoint);
 
             if(window.SmartgeoChromium){
-                ChromiumCallbacks[15] = function(response){
-                    this_._handleChromiumReponse(response,tile, zoom, tilePoint.x, tilePoint.y);
+                var path ,image= tile, z=zoom, x=tilePoint.x, y=tilePoint.y;
+                ChromiumCallbacks["15|"+x+"|"+y+"|"+z] = function(response){
+                    if(1*response === response || !response){
+                        return console.log(response);
+                    } else {
+                        path = response ;
+                    }
+                    var tileObject = {
+                            image: image,
+                            provider: this.id,
+                            x: x,
+                            y: y,
+                            z: z,
+                            src: null,
+                            tiles: this
+                        };
+
+                    image.src = path;
+
+                    image.onerror = function (event) {
+                        this_._tileOnError.call(this);
+                        delete ChromiumCallbacks["15|"+x+"|"+y+"|"+z] ;
+                        image.onerror = image.onload = null;
+                    }
+                    image.onload = function () {
+                        this_._tileOnLoad.call(this);
+                        delete ChromiumCallbacks["15|"+x+"|"+y+"|"+z] ;
+                        image.onerror = image.onload = null;
+                    }
+                            //this_._handleChromiumReponse(response,tile, zoom, tilePoint.x, tilePoint.y);
                 };
                 SmartgeoChromium.getTileURL(this._url, tilePoint.x, tilePoint.y, zoom);
             }

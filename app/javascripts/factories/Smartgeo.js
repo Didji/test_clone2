@@ -901,8 +901,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             // Authentification JAVA pour gestion des tuiles
             if(window.SmartgeoChromium) {
                 var user = Smartgeo.get('user') ;
-                ChromiumCallbacks[16] = function(){console.log(arguments);};
-                SmartgeoChromium.authenticate(Smartgeo.get('url'), user.username, user.password, site);
+                ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
+                SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
             }
 
             if (!site) {

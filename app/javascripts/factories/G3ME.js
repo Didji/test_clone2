@@ -34,6 +34,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 attributionControl: false,
                 zoomControl: false,
                 zoomAnimation: true,
+                inertia:false ,
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM
             }).addControl(L.control.zoom({
@@ -74,7 +75,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 this.tileUrl = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-            this.tileUrl= 'http://tile.openstreetmap.org/{z}/{x}/{y}.png';
+            // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
 
             var BackgroundTile;
 

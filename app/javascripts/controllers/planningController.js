@@ -19,7 +19,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @propertyOf planningController
      * @description List of missions, displayed on planning
      */
-    window.missions = {};
+    window.missions = $scope.missions = {};
 
     /**
      * @ngdoc property
@@ -112,8 +112,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.move = function (delta) {
         $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
         $scope.dayToDisplay += delta * $scope._DAY_TO_MS;
-        if (Object.keys($filter('todaysMissions')(window.missions, $scope.dayToDisplay)).length +
-            Object.keys($filter('moreThanOneDayButTodaysMissions')(window.missions, $scope.dayToDisplay)).length === 0) {
+        if (Object.keys($filter('todaysMissions')($scope.missions, $scope.dayToDisplay)).length +
+            Object.keys($filter('moreThanOneDayButTodaysMissions')($scope.missions, $scope.dayToDisplay)).length === 0) {
             $scope.move(delta);
         } else {
             Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
@@ -138,10 +138,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     i, postAddedAssetsMission = {}, newMissionCount = 0,
                     mission, missionsExtents = {};
 
-                for (i in window.missions) {
+                for (i in $scope.missions) {
                     i *= 1;
                     previous.push(i);
-                    mission = window.missions[i];
+                    mission = $scope.missions[i];
                     if (mission.openned) {
                         open.push(i);
                     }
@@ -153,10 +153,10 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                     missionsExtents[i] = mission.extent;
                 }
 
-                window.missions = data.results;
-                for (i in window.missions) {
+                $scope.missions = data.results;
+                for (i in $scope.missions) {
                     i *= 1;
-                    mission = window.missions[i];
+                    mission = $scope.missions[i];
                     if (postAddedAssetsMission[i]) {
                         mission.postAddedAssets = postAddedAssetsMission[i];
                         // TODO: à tester avec la fonctionnalité côté serveur.
@@ -205,8 +205,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 if (Smartgeo.get('online') && message !== "" && code !== 0) {
                     alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
                 }
-                for (var i in window.missions) {
-                    var mission = window.missions[i];
+                for (var i in $scope.missions) {
+                    var mission = $scope.missions[i];
                     if (mission.openned && mission.assets.length) {
                         // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
                         mission.openned = false;
@@ -237,7 +237,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      */
     $scope.initialize = function () {
 
-        window.missions = Smartgeo.get('missions_'+Smartgeo.get('user').username) || {};
+        $scope.missions = Smartgeo.get('missions_'+Smartgeo.get('user').username) || {};
 
         // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
         setTimeout(function() {
@@ -252,7 +252,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
         $scope.$watch('missions', function () {
-            Smartgeo.set('missions_'+Smartgeo.get('user').username, window.missions || {});
+            Smartgeo.set('missions_'+Smartgeo.get('user').username, $scope.missions || {});
         });
         $scope.$watch('dayToDisplay', function () {
             $scope.updateCount();
@@ -310,7 +310,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.removeDeprecatedTraces = function () {
         var traces = Smartgeo.get('traces'), updated = false;
         for (var i in traces) {
-            if (!window.missions[i]) {
+            if (!$scope.missions[i]) {
                 updated = true;
                 delete traces[i];
             }
@@ -328,7 +328,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      *
      */
     $scope.removeDeprecatedMarkers = function () {
-        $rootScope.$broadcast('UNHIGHLIGHT_DEPRECATED_MARKERS', window.missions);
+        $rootScope.$broadcast('UNHIGHLIGHT_DEPRECATED_MARKERS', $scope.missions);
     };
 
 
@@ -382,7 +382,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
                 }
             }
         }
-        window.missions = missions;
+        $scope.missions = missions;
     };
 
     /**
@@ -398,8 +398,8 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.updateCount = function () {
         $scope.dayToDisplay = (new Date($scope.dayToDisplay).getTime());
         $scope.beforeToday = $scope.afterToday = 0;
-        for (var i in window.missions) {
-            var mission = window.missions[i],
+        for (var i in $scope.missions) {
+            var mission = $scope.missions[i],
                 f = $filter('customDateFilter');
             if (!mission.assets.length) {
                 continue;
@@ -413,7 +413,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @ngdoc method
      * @name planningController#toggleMission
      * @methodOf planningController
-     * @param {integer} $index index of concerned mission in window.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @param {boolean} locate if true, set view to mission extent
      * @description
      * Opens mission in planning, fetch list of related assets in database, and put it in cache (if cache does not exist).
@@ -424,7 +424,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * </ul>
      */
     $scope.toggleMission = function ($index, locate) {
-        var mission = window.missions[$index];
+        var mission = $scope.missions[$index];
         mission.isLoading = true;
         mission.openned = !mission.openned;
 
@@ -493,12 +493,12 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @ngdoc method
      * @name planningController#locateMission
      * @methodOf planningController
-     * @param {integer} $index index of concerned mission in window.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @description
      * Set map view to the mission's extent. If mission has no extent yet, it set it.
      */
     $scope.locateMission = function ($index) {
-        var mission = window.missions[$index];
+        var mission = $scope.missions[$index];
         if (!mission.extent) {
             mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]);
         }
@@ -563,7 +563,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @description This method is called when click event is performed on marker
      */
     $scope.markerClickHandler = function (missionId, assetId) {
-        var mission = window.missions[missionId],
+        var mission = $scope.missions[missionId],
             asset = $scope.assetsCache[missionId][assetId],
             method = (mission.activity && window.currentSite.activities._byId[mission.activity.id].type === "night_tour") ? "NightTour" : "Mission";
         $scope["toggleAssetsMarkerFor" + method](mission, asset);
@@ -603,11 +603,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @ngdoc method
      * @name planningController#toggleDoneAssetsVisibility
      * @methodOf planningController
-     * @param {integer} $index index of concerned mission in window.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @description Toggle done assets visibility
      */
     $scope.toggleDoneAssetsVisibility = function ($index) {
-        var mission = window.missions[$index];
+        var mission = $scope.missions[$index];
         mission.displayDone = !! !mission.displayDone;
         $scope[(mission.displayDone ? 'show' : 'hide') + 'DoneAssets']($index);
     };
@@ -616,11 +616,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @ngdoc method
      * @name planningController#showDoneAssets
      * @methodOf planningController
-     * @param {integer} $index index of concerned mission in window.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @description Show done assets
      */
     $scope.showDoneAssets = function ($index) {
-        var mission = window.missions[$index];
+        var mission = $scope.missions[$index];
         mission.isLoading = mission.displayDone = true;
         if ((!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
             $scope.stopCacheLoop = true ;
@@ -662,11 +662,11 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * @ngdoc method
      * @name planningController#hideDoneAssets
      * @methodOf planningController
-     * @param {integer} $index index of concerned mission in window.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @description hide done assets
      */
     $scope.hideDoneAssets = function ($index) {
-        var mission = window.missions[$index];
+        var mission = $scope.missions[$index];
         mission.displayDone = false;
         $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
     };
@@ -701,7 +701,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
             mission.postAddedAssets.assets.push(asset.guid);
         }
 
-        Smartgeo.set('missions_'+Smartgeo.get('user').username, window.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('user').username, $scope.missions);
 
         Smartgeo.findGeometryByGuids(window.currentSite, asset.guid, function (assets) {
 
@@ -740,7 +740,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
     $scope.removeAssetFromMission = function (asset, mission) {
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-        Smartgeo.set('missions_'+Smartgeo.get('user').username, window.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('user').username, $scope.missions);
         $scope.highlightMission(mission);
     };
 

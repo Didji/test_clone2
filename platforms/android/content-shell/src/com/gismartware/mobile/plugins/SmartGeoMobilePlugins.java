@@ -310,52 +310,69 @@ public class SmartGeoMobilePlugins {
     
     @JavascriptInterface
     public void getTileURL(String url, String x, String y, String z) {
-    	new GetTileURL().execute(url, x, y, z);
+    	new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
     }
     
     private class GetTileURL extends AsyncTask<String, Void, String> {
     	
     	@Override
     	/**
-    	 * Paramètres :
+    	 * ParamÃ¨tres :
     	 * <ul>
     	 * <li>1. Cookie de session
     	 * <li>2. Url du serveur</li>
-    	 * <li>3. Coordonnée X</li>
-    	 * <li>4. Coordonnée Y</li>
-    	 * <li>5. Coordonnée Z</li>
+    	 * <li>3. CoordonnÃ©e X</li>
+    	 * <li>4. CoordonnÃ©e Y</li>
+    	 * <li>5. CoordonnÃ©e Z</li>
     	 * </ul>
     	 */
         protected String doInBackground(String... params) {
+
+            File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[3] + "/" + params[1] + "/" + params[2] + ".png");
+
+            if(pictureFile.exists()){
+
+                Log.e(TAG, "From local path : " + pictureFile.getPath());
+                String resultJavascript = "window.ChromiumCallbacks['15"
+                        +"|" + params[1]
+                        +"|" + params[2]
+                        +"|" + params[3]
+                        +"'](\"" + pictureFile.getPath() + "\");";
+                return resultJavascript;
+            }
+            Log.e(TAG, "From server");
+
     		final DefaultHttpClient client = new DefaultHttpClient();
     		
     		//construction de l'URL
-    		String url = params[1];
-    		url = url.replace("{x}", params[2]);
-    		url = url.replace("{y}", params[3]);
-    		url = url.replace("{z}", params[4]);
+    		String url = params[0];
+    		url = url.replace("{x}", params[1]);
+    		url = url.replace("{y}", params[2]);
+    		url = url.replace("{z}", params[3]);
     		
     		final HttpGet request = new HttpGet(url);
     		if(PHPSESSIONID != null) {
-    			request.setHeader("Cookie", "PHPSESSID=" + PHPSESSIONID + ";");
+    			request.setHeader("Cookie", PHPSESSIONID);
     		} else {
     			Log.e(TAG, "No PHPSESSID!");
     			return null;
     		}
-    		
-    		try {
+
+            Log.e(TAG, PHPSESSIONID);
+
+            try {
     			HttpResponse response = client.execute(request);
     			final int statusCode = response.getStatusLine().getStatusCode();
     			if (statusCode != HttpStatus.SC_OK) {
-    				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + params[0]);
+    				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
     				return String.valueOf(statusCode);
     			}
     			
     			final HttpEntity entity = response.getEntity();
     			if(entity != null) {
     				InputStream is = entity.getContent();
-    				File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[4] + "/" + params[2] + "/" + params[3] + ".png");
-    				OutputStream os = new FileOutputStream(pictureFile, false);
+    				pictureFile.getParentFile().mkdirs();
+                    OutputStream os = new FileOutputStream(pictureFile, false);
     				byte[] b = new byte[1024];
     				int length;
     				while ((length = is.read(b)) != -1) {
@@ -364,13 +381,18 @@ public class SmartGeoMobilePlugins {
     				os.flush();
     				os.close();
     				is.close();
-    				return pictureFile.getPath();
+                    String resultJavascript = "window.ChromiumCallbacks['15"
+                            +"|" + params[1]
+                            +"|" + params[2]
+                            +"|" + params[3]
+                            +"'](\"" + pictureFile.getPath() + "\");";
+    				return resultJavascript;
     			} else {
     				Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
     				return null;
     			}
     		} catch(Exception e) {
-    			Log.e(TAG, "Error while downloading " + params[0]);
+    			Log.e(TAG, "Error while downloading " + params[0], e);
     			request.abort();
     			return null;
     		}
@@ -378,7 +400,7 @@ public class SmartGeoMobilePlugins {
 
 		@Override
 		protected void onPostExecute(String result) {
-			view.evaluateJavaScript("window.ChromiumCallbacks[15](\"" + result + "\");");
+			view.evaluateJavaScript(result);
 		}
     }
     
@@ -401,9 +423,9 @@ public class SmartGeoMobilePlugins {
 	            HttpResponse response = client.execute(req);
 	            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 	            	//auth OK, on recupere l'identifiant de session
-	            	PHPSESSIONID = response.getHeaders("Set-Cookie").toString();
+	            	PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
 	        		
-	            	//nouvelle requete à effectuer : sélection du site
+	            	//nouvelle requete ï¿½ effectuer : sï¿½lection du site
 	            	url = new StringBuffer(params[0]);
 	            	url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
 	            	req = new HttpPost(url.toString());
