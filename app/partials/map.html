@@ -1,5 +1,5 @@
 <div id="mainmenu" class="container_s" ng-controller="menuController">
-    <div class="mp-pusher" id="mp-pusher" ng-click='close($event)'>
+    <div sly-prevent-evaluation-when-hidden class="mp-pusher" id="mp-pusher" ng-click='close($event)'>
         <nav id="mp-menu" class="mp-menu">
             {{rights}}
             <div class="mp-level">
@@ -77,7 +77,7 @@
                 </ul>
             </div>
         </nav>
-        <div class="scroller">
+        <div sly-prevent-evaluation-when-hidden class="scroller">
             <p>
                 <a href="#" id="trigger" ng-click="toggle($event)" ng-show="!nightTourInProgress">
                     <span class="icon-ellipsis-vertical"></span>
@@ -87,9 +87,9 @@
     </div>
 </div>
 
-<span id="mainmap" ng-controller="mapController">
+<span sly-prevent-evaluation-when-hidden id="mainmap" ng-controller="mapController">
     <div id="smartgeo-map"></div>
 </span>
 
-<div ng-include="'partials/consultation.html'"></div>
-<div ng-include="'partials/nightTour.html'"></div>
+<div sly-prevent-evaluation-when-hidden ng-include="'partials/consultation.html'"></div>
+<div sly-prevent-evaluation-when-hidden ng-include="'partials/nightTour.html'"></div>

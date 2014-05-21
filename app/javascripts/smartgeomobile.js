@@ -13,6 +13,7 @@ angular.module("smartgeobootstrap", []).run(function() {
 var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce', 'ngResource'])
     .config(["$routeProvider", "$rootScopeProvider", "$httpProvider",
         function($routeProvider, $rootScope, $httpProvider) {
+
             "use strict";
 
             $routeProvider.

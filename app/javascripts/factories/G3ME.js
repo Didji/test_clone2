@@ -34,6 +34,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 attributionControl: false,
                 zoomControl: false,
                 zoomAnimation: true,
+                inertia:false ,
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM
             }).addControl(L.control.zoom({
@@ -74,8 +75,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 this.tileUrl = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-            // this.tileUrl= 'http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/998/256/{z}/{x}/{y}.png';
-            // this.tileUrl='http://{s}.tile.cloudmade.com/4f5c5233516d4c39a218425764d98def/999/256/{z}/{x}/{y}.png';
+            // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
+
             var BackgroundTile;
 
             if (this.filecacheIsEnable){
@@ -92,7 +93,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.canvasTile = new L.TileLayer.Canvas({
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
-                async : true
+                async : true,
+                updateWhenIdle: true
             });
 
             this.tempAssetTile = new L.TileLayer.Canvas({
@@ -238,7 +240,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
             }
             this.canvasTile.redraw();
-            this.tempAssetTile.redraw();
+            // this.tempAssetTile.redraw();
         },
         getVisibility: function () {
             if (this.active_layers === false) {
@@ -252,6 +254,13 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         },
 
         drawTempAssetTile: function (canvas, tilePoint, performBench) {
+
+            var census = Smartgeo.get_('census');
+
+            if(!census || (census && !census.length)) {
+                return ;
+            }
+
             var ctx = canvas.getContext('2d');
             var zoom = this.map.getZoom(),
                 crs = L.CRS.EPSG4326,
@@ -372,154 +381,152 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 ar[1] = b;
                 return ar;
             }
-            Smartgeo.get_('census', function(census){
 
-                if(!census || (census && !census.length)) {
-                    return ;
+            if(!census || (census && !census.length)) {
+                return ;
+            }
+
+            var assets = [] ;
+
+            for (var k = 0; k < census.length; k++) {
+                convertToLinearArray(census[k], assets);
+            }
+
+            if(!assets.length){
+                return;
+            }
+
+            for (var i = 0, length = assets.length; i < length; i++) {
+                var prevX = false,
+                    prevY = false,
+                    asset = assets[i],
+                    assetSymbology = symbology[asset.okey+"0"],
+                    coord, coord_ = {}, x, y, image;
+
+                if(G3ME.active_layers && G3ME.active_layers.indexOf(asset.okey) < 0){
+                    continue ;
+                }
+                if( ! ((assetSymbology.minzoom <= zoom || assetSymbology.minzoom === null )
+                    && ( assetSymbology.maxzoom >= zoom || assetSymbology.maxzoom  === null ))){
+                    continue ;
                 }
 
-                var assets = [] ;
+                asset.angle    = 0 ;
+                asset.maplabel = '('+asset.fields[window.currentSite.metamodel[asset.okey].ukey]+')';
 
-                for (var k = 0; k < census.length; k++) {
-                    convertToLinearArray(census[k], assets);
+                var geom = {};
+                if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){
+                    geom.type = "Point" ;
+                    geom.coordinates = swap(asset.geometry);
+                } else {
+                    geom.coordinates = [];
+                    geom.type = "LineString" ;
+                    for (var z = 0; z < asset.geometry.length; z++) {
+                        geom.coordinates.push(swap(asset.geometry[z]));
+                    }
                 }
-
-                if(!assets.length){
-                    return;
-                }
-
-                for (var i = 0, length = assets.length; i < length; i++) {
-                    var prevX = false,
-                        prevY = false,
-                        asset = assets[i],
-                        assetSymbology = symbology[asset.okey+"0"],
-                        coord, coord_ = {}, x, y, image;
-
-                    if(G3ME.active_layers && G3ME.active_layers.indexOf(asset.okey) < 0){
-                        continue ;
-                    }
-                    if( ! ((assetSymbology.minzoom <= zoom || assetSymbology.minzoom === null )
-                        && ( assetSymbology.maxzoom >= zoom || assetSymbology.maxzoom  === null ))){
-                        continue ;
-                    }
-
-                    asset.angle    = 0 ;
-                    asset.maplabel = '('+asset.fields[window.site.metamodel[asset.okey].ukey]+')';
-
-                    var geom = {};
-                    if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){
-                        geom.type = "Point" ;
-                        geom.coordinates = swap(asset.geometry);
-                    } else {
-                        geom.coordinates = [];
-                        geom.type = "LineString" ;
-                        for (var z = 0; z < asset.geometry.length; z++) {
-                            geom.coordinates.push(swap(asset.geometry[z]));
-                        }
-                    }
-                    if (geom.type === "LineString" || geom.type === "MultiLineString" || geom.type === "Polygon") {
-                        ctx.beginPath();
-                        for (var j = 0, l = geom.coordinates.length; j < l; j++) {
-                            coord = geom.coordinates[j];
-                            if (zoom < 15) {
-                                coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));
-                                coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));
-                            } else {
-                                coord_.x = coord[0] * 0.017453292519943295;
-                                coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));
-
-                                coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                                coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                                coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
-                                coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
-                            }
-
-                            if (prevX === false) {
-                                ctx.moveTo(coord_.x, coord_.y);
-                            } else if (coord_.x === prevX && coord_.y === prevY) {
-                                continue;
-                            } else {
-                                ctx.lineTo(coord_.x, coord_.y);
-                            }
-
-                            prevX = coord_.x;
-                            prevY = coord_.y;
-                        }
-                        if ((geom.type === "LineString" || geom.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
-                            var middle = G3ME.getLineStringMiddle(geom),
-                                _middle = {}, _segmentBegin = {};
-
-                            _middle.x = middle[1] * 0.017453292519943295;
-                            _middle.y = Math.log(Math.tan(_pi4 + (middle[0] * 0.008726646259971648)));
-
-                            _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
-                            _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
-
-                            _middle.x = Math.floor(0.5 + _middle.x) - initialTopLeftPointX - nwmerc.x;
-                            _middle.y = Math.floor(0.5 + _middle.y) - initialTopLeftPointY - nwmerc.y;
-
-                            _segmentBegin.x = middle[2][0] * 0.017453292519943295;
-                            _segmentBegin.y = Math.log(Math.tan(_pi4 + (middle[2][1] * 0.008726646259971648)));
-
-                            _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
-                            _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
-
-                            _segmentBegin.x = Math.floor(0.5 + _segmentBegin.x) - initialTopLeftPointX - nwmerc.x;
-                            _segmentBegin.y = Math.floor(0.5 + _segmentBegin.y) - initialTopLeftPointY - nwmerc.y;
-
-
-                            var dx = _middle.x - _segmentBegin.x,
-                                dy = _middle.y - _segmentBegin.y;
-                            if (dy < 0) {
-                                dx = -dx;
-                            }
-                            _middle.angle = Math.acos(dx / Math.sqrt(dx * dx + dy * dy)) * (180 / Math.PI);
-
-                            if (_middle.angle > 90) {
-                                _middle.angle -= 180;
-                            }
-
-                            addLabel(asset.maplabel, assetSymbology.label.size * 2, _middle.x, _middle.y, _middle.angle, assetSymbology.label.color);
-                        }
-                        ctx.strokeStyle = assetSymbology.style.strokecolor;
-                        ctx.stroke();
-                    } else if (geom.type === "Point") {
-                        coord_.x = geom.coordinates[0] * 0.017453292519943295;
-                        coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));
-
-                        coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                        coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                        coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
-                        coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
-
-                        image = assetSymbology.style.image;
-
-                        if (image) {
-                            ctx.save();
-                            ctx.translate(coord_.x, coord_.y);
-                            ctx.rotate(-asset.angle * DEG_TO_RAD);
-                            ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,
-                                image.width * imageFactor,
-                                image.height * imageFactor);
-                            ctx.restore();
-                            if (zoom > 16 && asset.maplabel) {
-                                addLabel(asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color);
-                            }
+                if (geom.type === "LineString" || geom.type === "MultiLineString" || geom.type === "Polygon") {
+                    ctx.beginPath();
+                    for (var j = 0, l = geom.coordinates.length; j < l; j++) {
+                        coord = geom.coordinates[j];
+                        if (zoom < 15) {
+                            coord_.x = Math.floor(0.5 + ((coord[0] - xmin) * xscale));
+                            coord_.y = Math.floor(0.5 + ((ymax - coord[1]) * yscale));
                         } else {
-                            ctx.beginPath();
-                            ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
-                            ctx.fillStyle = assetSymbology.style.fillcolor;
-                            ctx.fill();
-                            ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
+                            coord_.x = coord[0] * 0.017453292519943295;
+                            coord_.y = Math.log(Math.tan(_pi4 + (coord[1] * 0.008726646259971648)));
+
+                            coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                            coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+
+                            coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                            coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
                         }
+
+                        if (prevX === false) {
+                            ctx.moveTo(coord_.x, coord_.y);
+                        } else if (coord_.x === prevX && coord_.y === prevY) {
+                            continue;
+                        } else {
+                            ctx.lineTo(coord_.x, coord_.y);
+                        }
+
+                        prevX = coord_.x;
+                        prevY = coord_.y;
+                    }
+                    if ((geom.type === "LineString" || geom.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
+                        var middle = G3ME.getLineStringMiddle(geom),
+                            _middle = {}, _segmentBegin = {};
+
+                        _middle.x = middle[1] * 0.017453292519943295;
+                        _middle.y = Math.log(Math.tan(_pi4 + (middle[0] * 0.008726646259971648)));
+
+                        _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
+                        _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
+
+                        _middle.x = Math.floor(0.5 + _middle.x) - initialTopLeftPointX - nwmerc.x;
+                        _middle.y = Math.floor(0.5 + _middle.y) - initialTopLeftPointY - nwmerc.y;
+
+                        _segmentBegin.x = middle[2][0] * 0.017453292519943295;
+                        _segmentBegin.y = Math.log(Math.tan(_pi4 + (middle[2][1] * 0.008726646259971648)));
+
+                        _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
+                        _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
+
+                        _segmentBegin.x = Math.floor(0.5 + _segmentBegin.x) - initialTopLeftPointX - nwmerc.x;
+                        _segmentBegin.y = Math.floor(0.5 + _segmentBegin.y) - initialTopLeftPointY - nwmerc.y;
+
+
+                        var dx = _middle.x - _segmentBegin.x,
+                            dy = _middle.y - _segmentBegin.y;
+                        if (dy < 0) {
+                            dx = -dx;
+                        }
+                        _middle.angle = Math.acos(dx / Math.sqrt(dx * dx + dy * dy)) * (180 / Math.PI);
+
+                        if (_middle.angle > 90) {
+                            _middle.angle -= 180;
+                        }
+
+                        addLabel(asset.maplabel, assetSymbology.label.size * 2, _middle.x, _middle.y, _middle.angle, assetSymbology.label.color);
+                    }
+                    ctx.strokeStyle = assetSymbology.style.strokecolor;
+                    ctx.stroke();
+                } else if (geom.type === "Point") {
+                    coord_.x = geom.coordinates[0] * 0.017453292519943295;
+                    coord_.y = Math.log(Math.tan(_pi4 + (geom.coordinates[1] * 0.008726646259971648)));
+
+                    coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
+                    coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
+
+                    coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
+                    coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
+
+                    image = assetSymbology.style.image;
+
+                    if (image) {
+                        ctx.save();
+                        ctx.translate(coord_.x, coord_.y);
+                        ctx.rotate(-asset.angle * DEG_TO_RAD);
+                        ctx.drawImage(image, -image.width * imageFactor_2, -image.height * imageFactor_2,
+                            image.width * imageFactor,
+                            image.height * imageFactor);
+                        ctx.restore();
+                        if (zoom > 16 && asset.maplabel) {
+                            addLabel(asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color);
+                        }
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(coord_.x, coord_.y, dotSize, 0, _2pi, true);
+                        ctx.fillStyle = assetSymbology.style.fillcolor;
+                        ctx.fill();
+                        ctx.fillText(asset.maplabel, coord_.x + 1, coord_.y + 1);
                     }
                 }
-                if (zoom > 16) {
-                    drawLabels(ctx);
-                }
-            });
+            }
+            if (zoom > 16) {
+                drawLabels(ctx);
+            }
         },
 
         baseRequest : " SELECT '##UUID##' as tileUuid, geometry, symbolId, maplabel, angle FROM ASSETS  WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ",
@@ -597,19 +604,24 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     args = args.concat(pool[databaseName][uuid].initargs);
                 }
                 request = request.join(' UNION ALL ') + ' ORDER BY tileUuid, symbolId ' ;
-                (function(currentRequestPool, currentDb, req, args){
-                    SQLite.openDatabase({name: currentDb, bgType: 1}).transaction(function (tx) {
-                        tx.executeSql(req, args,
-                            function (tx, results) {
-                                for(var uuid in currentRequestPool){
-                                    currentRequestPool[uuid].callback(results);
-                                }
-                            }, function(){console.log(arguments);})
-                    });
-                })(pool[databaseName], databaseName, request, args);
+                G3ME.prevAnonFunction(pool[databaseName], databaseName, request, args);
             }
+        },
+
+        prevAnonFunction: function(currentRequestPool, currentDb, req, args){
+            SQLite.openDatabase({name: currentDb, bgType: 1}).transaction(function (tx) {
+                tx.executeSql(req, args,
+                    function (tx, results) {
+                        for(var uuid in currentRequestPool){
+                            currentRequestPool[uuid].callback(results);
+                        }
+                    }, function(){console.log(arguments);})
+            });
         }
+
     };
+
+
 
     function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas) {
 

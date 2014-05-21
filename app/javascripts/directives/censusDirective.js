@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope",
-    function($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "G3ME",
+    function($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, G3ME) {
         return {
 
             restrict: 'E',
@@ -7,7 +7,6 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
             scope: {
                 'okey': '=',
                 'site': '=',
-                'map': '=',
                 'classindex': '=',
                 'onsave': '&',
                 'oncancel': '&'
@@ -43,7 +42,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 $scope.removeLayers = function() {
                     for (var i = 0; i < $scope.mapLayers.length; i++) {
-                        $scope.map.removeLayer($scope.mapLayers[i]);
+                        G3ME.map.removeLayer($scope.mapLayers[i]);
                     }
                     $scope.mapLayers = [];
                 };
@@ -71,10 +70,10 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
-                                iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                                iconUrl: window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                                 iconAnchor: [16, 16]
                             })
-                        }).addTo($scope.map);
+                        }).addTo(G3ME.map);
                         $scope.mapLayers.push(node.layer);
                         $scope.$apply();
                     });
@@ -82,7 +81,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.draw = function(node) {
-                    if ($scope.site.metamodel[node.okey].geometry_type === "LineString") {
+                    if (window.currentSite.metamodel[node.okey].geometry_type === "LineString") {
                         $scope.drawLine(node);
                     } else {
                         $scope.drawPoint(node);
@@ -100,32 +99,32 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         }
                         if (!$scope.lastPointLayer) {
 
-                            $scope.lastPointLayer = new L.Circle(clickLatLng, 15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)), {
+                            $scope.lastPointLayer = new L.Circle(clickLatLng, 15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, (G3ME.map.getZoom() + 8)), {
                                 color: "#fc9e49",
                                 weight: 1,
                                 fillOpacity: 1
-                            }).addTo($scope.map);
+                            }).addTo(G3ME.map);
                             $scope.lastPointLayer.on('click', function(e) {
                                 node.geometry = angular.copy(node.tmpGeometry);
                                 delete node.tmpGeometry;
-                                $scope.map.off('click', mouseClickHandler);
-                                $scope.map.removeLayer($scope.lastPointLayer);
+                                G3ME.map.off('click', mouseClickHandler);
+                                G3ME.map.removeLayer($scope.lastPointLayer);
                                 delete $scope.lastPointLayer ;
                                 $scope.$apply();
                             });
                         } else {
                             $scope.lastPointLayer.setLatLng(clickLatLng);
-                            $scope.lastPointLayer.setRadius(15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, ($scope.map.getZoom() + 8)))
+                            $scope.lastPointLayer.setRadius(15 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * clickLatLng[0]) / Math.pow(2, (G3ME.map.getZoom() + 8)))
                         }
 
                         if (!node.layer) {
-                            var style = $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style;
+                            var style = window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style;
                             node.layer = L.polyline([clickLatLng], {
                                 color: style.strokecolor,
                                 smoothFactor: 0,
                                 weight: style.width,
                                 opacity: 1
-                            }).addTo($scope.map);
+                            }).addTo(G3ME.map);
                             $scope.mapLayers.push(node.layer);
                         } else {
                             node.layer.addLatLng(clickLatLng);
@@ -135,11 +134,11 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     node.geometry = undefined;
                     node.tmpGeometry = undefined;
                     if (node.layer) {
-                        $scope.map.removeLayer(node.layer);
+                        G3ME.map.removeLayer(node.layer);
                         delete node.layer;
                     }
 
-                    $scope.map.off('click', mouseClickHandler).on('click',mouseClickHandler);
+                    G3ME.map.off('click', mouseClickHandler).on('click',mouseClickHandler);
                 };
 
                 $scope.drawPoint = function(node) {
@@ -151,7 +150,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                             return;
                         }
 
-                        var iconUrl =  $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                        var iconUrl =  window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                             image   = new Image();
 
                         image.src = iconUrl;
@@ -161,12 +160,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                                 iconUrl:iconUrl,
                                 iconAnchor: [image.width/2, image.height/2]
                             })
-                        }).addTo($scope.map);
+                        }).addTo(G3ME.map);
                         $scope.mapLayers.push(node.layer);
                     }
 
                     function resetCensusMapHandler(){
-                        $scope.map.off('mousemove', mouseMoveHandler)
+                        G3ME.map.off('mousemove', mouseMoveHandler)
                                   .off('click'    , mouseClickHandler);
                     }
 
@@ -185,13 +184,13 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                     resetCensusMapHandler();
 
-                    $scope.map.on( 'mousemove', mouseMoveHandler)
+                    G3ME.map.on( 'mousemove', mouseMoveHandler)
                               .on( 'click'    , mouseClickHandler);
 
                 };
 
                 $scope.confirmDelete = function(node){
-                    alertify.confirm('Supprimer '+node.fields[$scope.site.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
+                    alertify.confirm('Supprimer '+node.fields[window.currentSite.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
                 };
             }
 

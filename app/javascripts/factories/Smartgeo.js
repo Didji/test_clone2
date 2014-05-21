@@ -255,6 +255,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Local storage getter
          */
         get: function (parameter) {
+            // console.log('get', parameter) ;
             if (Smartgeo.parametersCache[parameter]) {
                 return Smartgeo.parametersCache[parameter];
             } else {
@@ -269,6 +270,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Local storage setter
          */
         set: function (parameter, value) {
+            // console.log('set', parameter, value) ;
+
             Smartgeo.parametersCache[parameter] = value;
             return localStorage.setItem(parameter, JSON.stringify(value));
         },
@@ -291,12 +294,17 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc WebSQL getter
          */
         get_: function (parameter, callback) {
+            // console.log('get_', parameter) ;
             if (Smartgeo.parametersCache_[parameter]) {
+                // console.log('from parametersCache_');
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
             } else {
-                SQLite.get(parameter, callback);
+                SQLite.get(parameter, function(value){
+                    Smartgeo.parametersCache_[parameter] = value;
+                    (callback || function () {})(value);
+                });
             }
         },
 
@@ -308,6 +316,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc WebSQL setter
          */
         set_: function (parameter, value, callback) {
+            // console.log('set_', parameter, value) ;
             // Nettoyage "magique" des références cycliques.
             // Ce qui est magique cassera un jour où le charme rompra.
             value = JSON.parse(JSON.stringify(value));
@@ -719,7 +728,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         rustineVeolia: function (sites, success, error) {
             for (var i in sites) {
                 var site = sites[i];
-                if (site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
+                if (site && (site.id === window.currentSite.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
                     var url = (Smartgeo.get('url') || '').replace(/^(https?:\/\/.+)index\.php.*$/, '$1') + site.url;
                     $http.get(url).then(success, error);
                 }
@@ -731,6 +740,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         selectSiteRemotely: function (site, success, error) {
+
+            // Authentification JAVA pour gestion des tuiles
+            if(window.SmartgeoChromium) {
+                var user = Smartgeo.get('user') ;
+                ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
+                SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
+            }
+
             if (!site) {
                 Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
                 return;
@@ -783,8 +800,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             }).success(function () {
                 Smartgeo._LOGIN_MUTEX = false;
-                if ($rootScope.site) {
-                    Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
+                if (window.currentSite) {
+                    Smartgeo.selectSiteRemotely(window.currentSite.id, success, error);
                 } else {
                     (success || function () {})();
                 }
@@ -811,7 +828,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         clearSiteSelection: function() {
-            $rootScope.site = null;
+            window.currentSite = null;
         },
         clearPollingRequest: function() {
             $rootScope.STOP_POLLING = true;

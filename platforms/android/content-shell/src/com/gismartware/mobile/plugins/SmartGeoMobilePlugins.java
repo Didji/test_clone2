@@ -3,10 +3,18 @@ package com.gismartware.mobile.plugins;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 import android.provider.Settings.Secure;
@@ -19,6 +27,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -43,6 +52,8 @@ public class SmartGeoMobilePlugins {
     private LocationManager locationManager ;
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
+    
+    private static String PHPSESSIONID = null;
 
     @SuppressLint("SimpleDateFormat")
 	public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
@@ -120,7 +131,7 @@ public class SmartGeoMobilePlugins {
         Log.d(TAG, "Goto " + to);
 
         Activity act = (Activity)context;
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
         		Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         act.startActivity(intent);
     }
@@ -128,7 +139,7 @@ public class SmartGeoMobilePlugins {
     @JavascriptInterface
     public void redirect(String url) {
         Log.d(TAG, "Redirect to URL " + url);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
         		Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         Activity act = (Activity)context;
         act.startActivity(intent);
@@ -152,41 +163,63 @@ public class SmartGeoMobilePlugins {
         view.evaluateJavaScript("window.ChromiumCallbacks[12](\"" + ret + "\");");
     }
 
-    @JavascriptInterface
-    public void writeBase64ToPNG(String base64, String path) {
-        byte[] pngAsByte = Base64.decode(base64, 0);
-        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
-        filePath.getParentFile().mkdirs();
+    private class WriteBase64FileToPNG extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            byte[] pngAsByte = Base64.decode(params[0], 0);
+            File filePath = new File(GimapMobileApplication.EXT_APP_DIR, params[1]);
+            filePath.getParentFile().mkdirs();
 
-        boolean result = true;
-        try {
-            FileOutputStream os = new FileOutputStream(filePath, false);
-            os.write(pngAsByte);
-            os.flush();
-            os.close();
-        } catch (IOException e) {
-            Log.d(TAG, "Error when writing base64 data to " + path, e);
-            result = false;
+            boolean result = true;
+            try {
+                FileOutputStream os = new FileOutputStream(filePath, false);
+                os.write(pngAsByte);
+                os.flush();
+                os.close();
+            } catch (IOException e) {
+                Log.d(TAG, "Error when writing base64 data to " + params[1], e);
+                result = false;
+            }
+
+            return result;
         }
-        view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result + "\");");
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result.booleanValue() + "\");");
+        }
     }
 
     @JavascriptInterface
-    public void writeJSON(String json, String path) {
-        File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
-        filePath.getParentFile().mkdirs();
+    public void writeBase64ToPNG(String base64, String path) {
+        new WriteBase64FileToPNG().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,base64, path );
+    }
 
-        boolean result = true;
-        try {
-            FileOutputStream os = new FileOutputStream(filePath, false);
-            os.write(json.getBytes());
-            os.flush();
-            os.close();
-        } catch (IOException e) {
-            Log.d(TAG, "Error when writing base64 data to " + path, e);
-            result = false;
-        }
-        view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+    @JavascriptInterface
+    public void writeJSON(final String json, final String path) {
+        Runnable runnable = new Runnable() {
+          @Override
+          public void run() {
+
+              android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+              File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
+                filePath.getParentFile().mkdirs();
+
+                boolean result = true;
+                try {
+                    FileOutputStream os = new FileOutputStream(filePath, false);
+                    os.write(json.getBytes());
+                    os.flush();
+                    os.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Error when writing base64 data to " + path, e);
+                    result = false;
+                }
+                view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+          }
+        };
+        new Thread(runnable).start();
     }
 
     @JavascriptInterface
@@ -290,5 +323,149 @@ public class SmartGeoMobilePlugins {
         }
         return provider1.equals(provider2);
     }
+    
+    @JavascriptInterface
+    public void getTileURL(String url, String x, String y, String z) {
+    	new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+    }
+    
+    private class GetTileURL extends AsyncTask<String, Void, String> {
+    	
+    	@Override
+    	/**
+    	 * Paramètres :
+    	 * <ul>
+    	 * <li>1. Cookie de session
+    	 * <li>2. Url du serveur</li>
+    	 * <li>3. Coordonnée X</li>
+    	 * <li>4. Coordonnée Y</li>
+    	 * <li>5. Coordonnée Z</li>
+    	 * </ul>
+    	 */
+        protected String doInBackground(String... params) {
 
+            File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[3] + "/" + params[1] + "/" + params[2] + ".png");
+
+            if(pictureFile.exists()){
+
+                Log.e(TAG, "From local path : " + pictureFile.getPath());
+                String resultJavascript = "window.ChromiumCallbacks['15"
+                        +"|" + params[1]
+                        +"|" + params[2]
+                        +"|" + params[3]
+                        +"'](\"" + pictureFile.getPath() + "\");";
+                return resultJavascript;
+            }
+            Log.e(TAG, "From server");
+
+    		final DefaultHttpClient client = new DefaultHttpClient();
+    		
+    		//construction de l'URL
+    		String url = params[0];
+    		url = url.replace("{x}", params[1]);
+    		url = url.replace("{y}", params[2]);
+    		url = url.replace("{z}", params[3]);
+    		
+    		final HttpGet request = new HttpGet(url);
+    		if(PHPSESSIONID != null) {
+    			request.setHeader("Cookie", PHPSESSIONID);
+    		} else {
+    			Log.e(TAG, "No PHPSESSID!");
+    			return null;
+    		}
+
+            Log.e(TAG, PHPSESSIONID);
+
+            try {
+    			HttpResponse response = client.execute(request);
+    			final int statusCode = response.getStatusLine().getStatusCode();
+    			if (statusCode != HttpStatus.SC_OK) {
+    				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
+    				return String.valueOf(statusCode);
+    			}
+    			
+    			final HttpEntity entity = response.getEntity();
+    			if(entity != null) {
+    				InputStream is = entity.getContent();
+    				pictureFile.getParentFile().mkdirs();
+                    OutputStream os = new FileOutputStream(pictureFile, false);
+    				byte[] b = new byte[1024];
+    				int length;
+    				while ((length = is.read(b)) != -1) {
+    					os.write(b, 0, length);
+    				}
+    				os.flush();
+    				os.close();
+    				is.close();
+                    String resultJavascript = "window.ChromiumCallbacks['15"
+                            +"|" + params[1]
+                            +"|" + params[2]
+                            +"|" + params[3]
+                            +"'](\"" + pictureFile.getPath() + "\");";
+    				return resultJavascript;
+    			} else {
+    				Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
+    				return null;
+    			}
+    		} catch(Exception e) {
+    			Log.e(TAG, "Error while downloading " + params[0], e);
+    			request.abort();
+    			return null;
+    		}
+    	}
+
+		@Override
+		protected void onPostExecute(String result) {
+			view.evaluateJavaScript(result);
+		}
+    }
+    
+    @JavascriptInterface
+    public void authenticate(String url, String user, String password, String site) {
+    	new Authenticate().execute(url, user, password, site);
+    }
+    
+	private class Authenticate extends AsyncTask<String, Void, Boolean> {
+	    	
+    	@Override
+        protected Boolean doInBackground(String... params) {
+    		final DefaultHttpClient client = new DefaultHttpClient();
+    		
+    		StringBuffer url = new StringBuffer(params[0]);
+    		url.append("&login=").append(params[1]).append("&pwd=").append(params[2]).append("&forcegimaplogin=true");
+    		
+    		HttpPost req = new HttpPost(url.toString());
+            try {
+	            HttpResponse response = client.execute(req);
+	            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	//auth OK, on recupere l'identifiant de session
+	            	PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
+	        		
+	            	//nouvelle requete � effectuer : s�lection du site
+	            	url = new StringBuffer(params[0]);
+	            	url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
+	            	req = new HttpPost(url.toString());
+	            	response = client.execute(req);
+	            	if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            		Log.i(TAG, "User " + params[1] + " authenticated on " + params[0]);
+	            		return true;
+	            	} else {
+	            		Log.e(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
+		            	return false;
+	            	}
+	            } else {
+	            	Log.e(TAG, "Bad supplied credentials!");
+	            	return false;
+	            }
+            } catch (Exception e) {
+            	Log.e(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
+            }
+            return false;
+    	}
+    	
+    	@Override
+		protected void onPostExecute(Boolean result) {
+			view.evaluateJavaScript("window.ChromiumCallbacks[16](\"" + result.booleanValue() + "\");");
+		}
+	}
 }

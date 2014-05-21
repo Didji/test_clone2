@@ -14,8 +14,8 @@ angular.module('smartgeomobile').controller('layersController', ["$scope", "$roo
 
     var groups = {}, o, layers = {}, layer,
         vis = G3ME.getVisibility();
-    for (var i in $scope.site.metamodel) {
-        o = $scope.site.metamodel[i];
+    for (var i in window.currentSite.metamodel) {
+        o = window.currentSite.metamodel[i];
         if (!(o.group in groups)) {
             groups[o.group] = {
                 label: o.group,
