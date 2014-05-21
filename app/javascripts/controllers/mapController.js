@@ -2,7 +2,9 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
     'use strict';
 
-    window.currentSite = window.currentSite || Smartgeo.get_('sites')[$routeParams.site];
+    var sites = Smartgeo.get_('sites') || [] ;
+
+    window.currentSite = sites[$routeParams.site] || window.currentSite;
 
     $scope.missionsClusters = {};
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
