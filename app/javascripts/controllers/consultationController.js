@@ -240,7 +240,7 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
         var layersOut = [];
         for (var i = 0; i < layers.length; i++) {
 
-            if(window.site.metamodel[layers[i].okey].is_graphical !== false){
+            if(window.currentSite.metamodel[layers[i].okey].is_graphical !== false){
                 layersOut.push(layers[i]);
             }
         }

@@ -54,9 +54,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             return ;
         }
 
-        window.missions = $scope.missions = {};
-
-        $rootScope.missions = {};
         $scope._DAY_TO_MS = 86400000;
         $scope._SYNCHRONIZE_INTERVAL = 60000;
         $scope.dayToDisplay = 0;
@@ -66,7 +63,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         $rootScope.doneAssetsCache = [];
         $scope.lastUpdate = Smartgeo.get('lastUpdate');
 
-        $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')) || {};
+        $scope.missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')) || {};
 
         // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
         setTimeout(function() {
@@ -80,7 +77,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
         $scope.$watch('missions', function () {
-            Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions || {});
+            Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions || {});
         });
         $scope.$watch('dayToDisplay', function () {
             $scope.updateCount();
@@ -359,7 +356,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @param {boolean} locate if true, set view to mission extent
      * @desc
      * Opens mission in planning, fetch list of related assets in database, and put it in cache (if cache does not exist).
@@ -438,7 +435,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @desc
      * Set map view to the mission's extent. If mission has no extent yet, it set it.
      */
@@ -541,7 +538,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @desc Toggle done assets visibility
      */
     $scope.toggleDoneAssetsVisibility = function ($index) {
@@ -553,7 +550,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @desc Show done assets
      */
     $scope.showDoneAssets = function ($index) {
@@ -599,7 +596,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
+     * @param {integer} $index index of concerned mission in $scope.missions attribute
      * @desc hide done assets
      */
     $scope.hideDoneAssets = function ($index) {
@@ -637,7 +634,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             mission.postAddedAssets.assets.push(asset.guid);
         }
 
-        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions);
 
         Smartgeo.findGeometryByGuids(window.currentSite, asset.guid, function (assets) {
 
@@ -674,7 +671,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     $scope.removeAssetFromMission = function (asset, mission) {
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions);
         $scope.highlightMission(mission);
     };
 
