@@ -277,7 +277,8 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
     $scope.sendReport = function(event) {
         $scope.sendingReport = true;
         var report = angular.copy($scope.report);
-        for (var i = 0; i < report.assets.length; i++) {
+
+        for (i = 0; i < report.assets.length; i++) {
             if (report.assets[i].id) {
                 report.assets[i] = report.assets[i].id;
             }

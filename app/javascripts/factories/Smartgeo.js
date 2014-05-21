@@ -182,6 +182,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Clear localStorage
          */
         clearCaches: function () {
+            console.log('clearCaches');
             Smartgeo.parametersCache  = {} ;
             Smartgeo.parametersCache_ = {} ;
         },

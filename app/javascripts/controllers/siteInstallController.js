@@ -86,6 +86,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
                 Installer.install($scope.site, $scope.site.stats, function () {
                     $scope.site.installed = true;
                     Installer.saveSite($scope.site, function () {
+                        window.currentSite = $scope.site ;
                         $location.path('/map/' + $routeParams.site);
                         if (!$scope.$$phase) {
                             $scope.$apply();
