@@ -207,6 +207,11 @@ body {
     margin: 0 5%;
 }
 
+.control-label .select2-container{
+     width: 100%;
+     margin: 0;
+ }
+
 .floating-form {
     width: 300px;
     margin: 100px auto 10px auto;
