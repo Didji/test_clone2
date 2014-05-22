@@ -82,20 +82,16 @@
 
                                         <span ng-switch-when="L">
 
-                                            <input ui-select2="groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="report.fields[field.id]"/>
-
-
-                                            <!-- <select ui-select2 ng-model="report.fields[field.id]" data-placeholder="Pick a number">
-                                                <option value=""></option>
-                                                <option ng-repeat="number in selectDatasources" value="{{number.id}}">{{number.label}}</option>
-                                            </select> -->
-
-<!--
-                                            <select class="form-control" name="f" ng-required="field.required" ng-model = "report.fields[field.id]">
-                                                <option></option>
-                                                <option ng-repeat="options in (field.options | orderBy:'label')"
-                                                    bo-value="options.value" bo-text="options.label"></option>
-                                            </select> -->
+                                            <span ng-if='field.options.length > 15'>
+                                                <input ui-select2="groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="report.fields[field.id]"/>
+                                            </span>
+                                            <span ng-if='field.options.length <= 15'>
+                                                <select class="form-control" name="f" ng-required="field.required" ng-model = "report.fields[field.id]">
+                                                    <option></option>
+                                                    <option ng-repeat="options in (field.options | orderBy:'label')"
+                                                        bo-value="options.value" bo-text="options.label"></option>
+                                                </select>
+                                            </span>
                                         </span>
 
                                         <span ng-switch-when="D">

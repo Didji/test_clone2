@@ -19,19 +19,19 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         $scope.report.isCall = false;
     }
 
-    if (!window.currentSite.activities._byId) {
-        window.currentSite.activities._byId = {};
-        for (var i = 0; i < window.currentSite.activities.length; i++) {
-            window.currentSite.activities._byId[window.currentSite.activities[i].id] = window.currentSite.activities[i];
+    if (!$rootScope.site.activities._byId) {
+        $rootScope.site.activities._byId = {};
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
         }
     }
 
     if ($routeParams.activity && $routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
         $scope.fromConsult = true;
         $scope.step = "form";
-        $scope.report.activity = angular.copy(window.currentSite.activities._byId[$routeParams.activity]);
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
         $scope.report.activity.tabs[0].show = true;
-        Smartgeo.findAssetsByGuids(window.currentSite, $routeParams.assets.split(','), function(assets) {
+        Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets) {
             $scope.report.assets = assets;
             applyDefaultValues();
             if (!$scope.$$phase) {
@@ -39,16 +39,16 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
             }
         });
     } else if ($routeParams.activity && $routeParams.assets && G3ME.isLatLngString($routeParams.assets)) {
-        $scope.report.activity = angular.copy(window.currentSite.activities._byId[$routeParams.activity]);
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
         $scope.report.activity.tabs[0].show = true;
         $scope.fromConsult = true;
         $scope.report.latlng = $routeParams.assets;
         $scope.step = 'form';
     } else if ($routeParams.activity && !$routeParams.assets) {
-        $scope.report.activity = angular.copy(window.currentSite.activities._byId[$routeParams.activity]);
+        $scope.report.activity = angular.copy($rootScope.site.activities._byId[$routeParams.activity]);
         $scope.report.activity.tabs[0].show = true;
     } else if ($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
-        Smartgeo.findAssetsByGuids(window.currentSite, $routeParams.assets.split(','), function(assets) {
+        Smartgeo.findAssetsByGuids($rootScope.site, $routeParams.assets.split(','), function(assets) {
             var filteredActivities = [],
                 okey = assets[0].okey;
             for (var i = 0; i < $scope.activities.length; i++) {
@@ -74,9 +74,9 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
 
     $scope.applyVisibility = function() {
         $scope.reportTemplate = 'report-' + $scope.report.activity.id + '.html';
-        for (var i = 0; i < window.currentSite.activities.length; i++) {
-            if (window.currentSite.activities[i].id === $scope.report.activity.id) {
-                $scope.report.activity = angular.copy(window.currentSite.activities[i]);
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            if ($rootScope.site.activities[i].id === $scope.report.activity.id) {
+                $scope.report.activity = angular.copy($rootScope.site.activities[i]);
                 $scope.report.activity.tabs[0].show = true;
                 var act = $scope.report.activity;
                 // We have to flag fields which have visibility consequences
@@ -100,7 +100,7 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
     };
 
     $scope.loadAssets = function() {
-        Smartgeo.findAssetsByOkey(window.currentSite, $scope.report.activity.okeys[0], function(assets) {
+        Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets) {
             $scope.assets = assets;
             if (!$scope.$$phase) {
                 $scope.$apply();
@@ -271,7 +271,7 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
     };
 
     $scope.cancel = function() {
-        $location.path('map/' + window.currentSite.id);
+        $location.path('map/' + $rootScope.site.id);
     };
 
     $scope.sendReport = function(event) {
@@ -281,6 +281,12 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         for (i = 0; i < report.assets.length; i++) {
             if (report.assets[i].id) {
                 report.assets[i] = report.assets[i].id;
+            }
+        }
+
+        for (i in report.fields) {
+            if (typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+                report.fields[i] = report.fields[i].id;
             }
         }
 
@@ -442,9 +448,9 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
     $scope.groupSelectOptions = {
         minimumInputLength: 2,
         query: function (query) {
-            for (var j = 0; j < window.currentSite.activities._byId[$scope.report.activity.id].tabs.length; j++) {
-                if(query.element.data('tabid') === window.currentSite.activities._byId[$scope.report.activity.id].tabs[j].id){
-                    var tab = window.currentSite.activities._byId[$scope.report.activity.id].tabs[j] ;
+            for (var j = 0; j < $rootScope.site.activities._byId[$scope.report.activity.id].tabs.length; j++) {
+                if(query.element.data('tabid') === $rootScope.site.activities._byId[$scope.report.activity.id].tabs[j].id){
+                    var tab = $rootScope.site.activities._byId[$scope.report.activity.id].tabs[j] ;
                     for (var i = 0; i < tab.fields.length; i++) {
                         if(tab.fields[i].id === query.element.data('field')){
                             var field = tab.fields[i], data = {results: []};
@@ -453,6 +459,15 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
                                     data.results.push({id: field.options[k].value , text: field.options[k].label});
                                 }
                             }
+                            data.results.sort(function(a, b){
+                                if(a.text < b.text){
+                                    return -1;
+                                } else if(a.text > b.text) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });
                             return query.callback(data);
                         }
                     }
