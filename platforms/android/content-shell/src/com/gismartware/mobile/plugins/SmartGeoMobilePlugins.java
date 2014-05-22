@@ -363,7 +363,7 @@ public class SmartGeoMobilePlugins {
             try {
     			HttpResponse response = client.execute(request);
     			final int statusCode = response.getStatusLine().getStatusCode();
-    			if (statusCode >= 200 && statusCode < 300) {
+    			if (!(statusCode >= 200 && statusCode < 300)) {
     				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
     				return String.valueOf(statusCode);
     			}
