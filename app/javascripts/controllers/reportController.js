@@ -285,7 +285,7 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         }
 
         for (i in report.fields) {
-            if (typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+            if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                 report.fields[i] = report.fields[i].id;
             }
         }
