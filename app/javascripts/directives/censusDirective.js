@@ -70,7 +70,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
-                                iconUrl: window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                                iconUrl: $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                                 iconAnchor: [16, 16]
                             })
                         }).addTo(G3ME.map);
@@ -81,7 +81,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.draw = function(node) {
-                    if (window.currentSite.metamodel[node.okey].geometry_type === "LineString") {
+                    if ($scope.site.metamodel[node.okey].geometry_type === "LineString") {
                         $scope.drawLine(node);
                     } else {
                         $scope.drawPoint(node);
@@ -118,7 +118,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         }
 
                         if (!node.layer) {
-                            var style = window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style;
+                            var style = $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style;
                             node.layer = L.polyline([clickLatLng], {
                                 color: style.strokecolor,
                                 smoothFactor: 0,
@@ -150,7 +150,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                             return;
                         }
 
-                        var iconUrl =  window.currentSite.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                        var iconUrl =  $scope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                             image   = new Image();
 
                         image.src = iconUrl;
@@ -190,7 +190,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.confirmDelete = function(node){
-                    alertify.confirm('Supprimer '+node.fields[window.currentSite.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
+                    alertify.confirm('Supprimer '+node.fields[$scope.site.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
                 };
             }
 

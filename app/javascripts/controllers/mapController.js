@@ -2,15 +2,13 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
 
     'use strict';
 
-    var sites = Smartgeo.get_('sites') || [] ;
-
-    window.currentSite = sites[$routeParams.site] || window.currentSite;
+    window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
     $scope.missionsClusters = {};
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;
 
-    if (!window.currentSite) {
+    if (!$rootScope.site) {
         alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
         $location.path("#");
         return false;
@@ -24,7 +22,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
     });
 
     G3ME.initialize('smartgeo-map',
-        window.currentSite,
+        $rootScope.site,
         $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
         $rootScope.map_marker,
         $rootScope.map_zoom || 18);
@@ -43,7 +41,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
                     [extent._southWest.lat, extent._southWest.lng]
                 ]);
             }
-        }, 10000);
+        }, 5000);
     });
 
     function noConsultableAssets(coords) {
@@ -51,7 +49,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
         if ($rootScope.report_activity) {
             popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
             $(document).on('click', '.openLocateReportButton', function () {
-                $location.path('report/' + window.currentSite.id + '/' + $rootScope.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
+                $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
@@ -112,8 +110,8 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
             G3ME.map.removeLayer(circle);
         });
 
-        for (var i = 0, length_ = window.currentSite.zones.length; i < length_; i++) {
-            zone = window.currentSite.zones[i];
+        for (var i = 0, length_ = $rootScope.site.zones.length; i < length_; i++) {
+            zone = $rootScope.site.zones[i];
             if (G3ME.extents_match(zone.extent, {
                 xmin: xmin,
                 ymin: ymin,
@@ -295,7 +293,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
             }
             console.log(assetsCache[i].geometry)
             assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-            var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && window.currentSite.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
+            var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
             (function (i, marker) {
                 marker.on('click', function () {
@@ -340,7 +338,7 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
         });
         for (var i = 0; assetsCache && i < assetsCache.length; i++) {
             assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-            var icon = !mission.activity || mission.activity && window.currentSite.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
+            var icon = !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);
             $scope.missionsClusters['done-' + mission.id].addLayer(assetsCache[i].marker);
         }

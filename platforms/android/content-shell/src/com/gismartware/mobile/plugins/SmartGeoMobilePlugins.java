@@ -52,11 +52,11 @@ public class SmartGeoMobilePlugins {
     private LocationManager locationManager ;
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
-    
+
     private static String PHPSESSIONID = null;
 
     @SuppressLint("SimpleDateFormat")
-	public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
+    public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
         this.context = mContext;
 
         this.view = mView;
@@ -132,7 +132,7 @@ public class SmartGeoMobilePlugins {
 
         Activity act = (Activity)context;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-        		Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         act.startActivity(intent);
     }
 
@@ -140,7 +140,7 @@ public class SmartGeoMobilePlugins {
     public void redirect(String url) {
         Log.d(TAG, "Redirect to URL " + url);
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-        		Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         Activity act = (Activity)context;
         act.startActivity(intent);
     }
@@ -323,25 +323,25 @@ public class SmartGeoMobilePlugins {
         }
         return provider1.equals(provider2);
     }
-    
+
     @JavascriptInterface
     public void getTileURL(String url, String x, String y, String z) {
-    	new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+        new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
     }
-    
+
     private class GetTileURL extends AsyncTask<String, Void, String> {
-    	
-    	@Override
-    	/**
-    	 * Paramètres :
-    	 * <ul>
-    	 * <li>1. Cookie de session
-    	 * <li>2. Url du serveur</li>
-    	 * <li>3. Coordonnée X</li>
-    	 * <li>4. Coordonnée Y</li>
-    	 * <li>5. Coordonnée Z</li>
-    	 * </ul>
-    	 */
+
+        @Override
+        /**
+         * Paramètres :
+         * <ul>
+         * <li>1. Cookie de session
+         * <li>2. Url du serveur</li>
+         * <li>3. Coordonnée X</li>
+         * <li>4. Coordonnée Y</li>
+         * <li>5. Coordonnée Z</li>
+         * </ul>
+         */
         protected String doInBackground(String... params) {
 
             File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[3] + "/" + params[1] + "/" + params[2] + ".png");
@@ -358,114 +358,114 @@ public class SmartGeoMobilePlugins {
             }
             Log.e(TAG, "From server");
 
-    		final DefaultHttpClient client = new DefaultHttpClient();
-    		
-    		//construction de l'URL
-    		String url = params[0];
-    		url = url.replace("{x}", params[1]);
-    		url = url.replace("{y}", params[2]);
-    		url = url.replace("{z}", params[3]);
-    		
-    		final HttpGet request = new HttpGet(url);
-    		if(PHPSESSIONID != null) {
-    			request.setHeader("Cookie", PHPSESSIONID);
-    		} else {
-    			Log.e(TAG, "No PHPSESSID!");
-    			return null;
-    		}
+            final DefaultHttpClient client = new DefaultHttpClient();
+
+            //construction de l'URL
+            String url = params[0];
+            url = url.replace("{x}", params[1]);
+            url = url.replace("{y}", params[2]);
+            url = url.replace("{z}", params[3]);
+
+            final HttpGet request = new HttpGet(url);
+            if(PHPSESSIONID != null) {
+                request.setHeader("Cookie", PHPSESSIONID);
+            } else {
+                Log.e(TAG, "No PHPSESSID!");
+                return null;
+            }
 
             Log.e(TAG, PHPSESSIONID);
 
             try {
-    			HttpResponse response = client.execute(request);
-    			final int statusCode = response.getStatusLine().getStatusCode();
-    			if (statusCode != HttpStatus.SC_OK) {
-    				Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
-    				return String.valueOf(statusCode);
-    			}
-    			
-    			final HttpEntity entity = response.getEntity();
-    			if(entity != null) {
-    				InputStream is = entity.getContent();
-    				pictureFile.getParentFile().mkdirs();
+                HttpResponse response = client.execute(request);
+                final int statusCode = response.getStatusLine().getStatusCode();
+                if (!(statusCode >= 200 && statusCode < 300)) {
+                    Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
+                    return String.valueOf(statusCode);
+                }
+
+                final HttpEntity entity = response.getEntity();
+                if(entity != null) {
+                    InputStream is = entity.getContent();
+                    pictureFile.getParentFile().mkdirs();
                     OutputStream os = new FileOutputStream(pictureFile, false);
-    				byte[] b = new byte[1024];
-    				int length;
-    				while ((length = is.read(b)) != -1) {
-    					os.write(b, 0, length);
-    				}
-    				os.flush();
-    				os.close();
-    				is.close();
+                    byte[] b = new byte[1024];
+                    int length;
+                    while ((length = is.read(b)) != -1) {
+                        os.write(b, 0, length);
+                    }
+                    os.flush();
+                    os.close();
+                    is.close();
                     String resultJavascript = "window.ChromiumCallbacks['15"
                             +"|" + params[1]
                             +"|" + params[2]
                             +"|" + params[3]
                             +"'](\"" + pictureFile.getPath() + "\");";
-    				return resultJavascript;
-    			} else {
-    				Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
-    				return null;
-    			}
-    		} catch(Exception e) {
-    			Log.e(TAG, "Error while downloading " + params[0], e);
-    			request.abort();
-    			return null;
-    		}
-    	}
+                    return resultJavascript;
+                } else {
+                    Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
+                    return null;
+                }
+            } catch(Exception e) {
+                Log.e(TAG, "Error while downloading " + params[0], e);
+                request.abort();
+                return null;
+            }
+        }
 
-		@Override
-		protected void onPostExecute(String result) {
-			view.evaluateJavaScript(result);
-		}
+        @Override
+        protected void onPostExecute(String result) {
+            view.evaluateJavaScript(result);
+        }
     }
-    
+
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site) {
-    	new Authenticate().execute(url, user, password, site);
+        new Authenticate().execute(url, user, password, site);
     }
-    
-	private class Authenticate extends AsyncTask<String, Void, Boolean> {
-	    	
-    	@Override
+
+    private class Authenticate extends AsyncTask<String, Void, Boolean> {
+
+        @Override
         protected Boolean doInBackground(String... params) {
-    		final DefaultHttpClient client = new DefaultHttpClient();
-    		
-    		StringBuffer url = new StringBuffer(params[0]);
-    		url.append("&login=").append(params[1]).append("&pwd=").append(params[2]).append("&forcegimaplogin=true");
-    		
-    		HttpPost req = new HttpPost(url.toString());
+            final DefaultHttpClient client = new DefaultHttpClient();
+
+            StringBuffer url = new StringBuffer(params[0]);
+            url.append("&login=").append(params[1]).append("&pwd=").append(params[2]).append("&forcegimaplogin=true");
+
+            HttpPost req = new HttpPost(url.toString());
             try {
-	            HttpResponse response = client.execute(req);
-	            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	//auth OK, on recupere l'identifiant de session
-	            	PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
-	        		
-	            	//nouvelle requete � effectuer : s�lection du site
-	            	url = new StringBuffer(params[0]);
-	            	url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
-	            	req = new HttpPost(url.toString());
-	            	response = client.execute(req);
-	            	if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            		Log.i(TAG, "User " + params[1] + " authenticated on " + params[0]);
-	            		return true;
-	            	} else {
-	            		Log.e(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
-		            	return false;
-	            	}
-	            } else {
-	            	Log.e(TAG, "Bad supplied credentials!");
-	            	return false;
-	            }
+                HttpResponse response = client.execute(req);
+                if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    //auth OK, on recupere l'identifiant de session
+                    PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
+
+                    //nouvelle requete  effectuer : slection du site
+                    url = new StringBuffer(params[0]);
+                    url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
+                    req = new HttpPost(url.toString());
+                    response = client.execute(req);
+                    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                        Log.i(TAG, "User " + params[1] + " authenticated on " + params[0]);
+                        return true;
+                    } else {
+                        Log.e(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
+                        return false;
+                    }
+                } else {
+                    Log.e(TAG, "Bad supplied credentials!");
+                    return false;
+                }
             } catch (Exception e) {
-            	Log.e(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
+                Log.e(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
             }
             return false;
-    	}
-    	
-    	@Override
-		protected void onPostExecute(Boolean result) {
-			view.evaluateJavaScript("window.ChromiumCallbacks[16](\"" + result.booleanValue() + "\");");
-		}
-	}
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            view.evaluateJavaScript("window.ChromiumCallbacks[16](\"" + result.booleanValue() + "\");");
+        }
+    }
 }

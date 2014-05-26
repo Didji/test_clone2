@@ -1,5 +1,6 @@
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
+
 angular.module("smartgeobootstrap", []).run(function() {
     window.smartgeoPersistenceSQLite.get('sites', function(sites) {
         window.smartgeoPersistenceCache_ = {
@@ -13,6 +14,7 @@ angular.module("smartgeobootstrap", []).run(function() {
 var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce', 'ngResource'])
     .config(["$routeProvider", "$rootScopeProvider", "$httpProvider",
         function($routeProvider, $rootScope, $httpProvider) {
+
 
             "use strict";
 

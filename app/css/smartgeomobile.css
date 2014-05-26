@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: 'robotolight';
     font-style: normal;
@@ -140,14 +141,22 @@ body {
     background-color: rgb(92,92,92);
     background-image: url(../images/bg-square.png);
 }
-
 img.leaflet-tile{
     background-color: white ;
 }
-
 /** Panneaux de droite */
 
 .consultation-panel {
+<<<<<<< HEAD
+=======
+/*
+    -webkit-transition: width  -webkit-transform 0.5s;
+    transition:  width transform 0.5s;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);*/
+
+
+>>>>>>> releases/0.15.0
     z-index: 1000;
     position: absolute;
     position: absolute;
@@ -287,9 +296,10 @@ img.leaflet-tile{
 }
 
 .control-label .select2-container{
-        width: 100%;
-    margin: 0;
-}
+     width: 100%;
+     margin: 0;
+ }
+
 .floating-form {
     width: 300px;
     margin: 100px auto 10px auto;

@@ -109,7 +109,7 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
 
         if(!icon){
             this['OKEY_'+okey+'_'+classindex] = L.icon({
-                iconUrl: window.currentSite.symbology[''+okey+classindex].style.symbol.icon,
+                iconUrl: window.site.symbology[''+okey+classindex].style.symbol.icon,
                 iconSize: [32, 32],
                 iconAnchor: [16, 16],
             });

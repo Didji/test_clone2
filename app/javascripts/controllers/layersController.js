@@ -2,6 +2,13 @@ angular.module('smartgeomobile').controller('layersController', ["$scope", "$roo
 
     'use strict';
 
+    // $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
+    //     type: 'cover'
+    // });
+
+    // Initialisation du scope.
+
+
     function checkGroup(g) {
         var stat = false,
             lays = g.layers;
@@ -14,8 +21,8 @@ angular.module('smartgeomobile').controller('layersController', ["$scope", "$roo
 
     var groups = {}, o, layers = {}, layer,
         vis = G3ME.getVisibility();
-    for (var i in window.currentSite.metamodel) {
-        o = window.currentSite.metamodel[i];
+    for (var i in $scope.site.metamodel) {
+        o = $scope.site.metamodel[i];
         if (!(o.group in groups)) {
             groups[o.group] = {
                 label: o.group,

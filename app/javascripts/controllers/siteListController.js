@@ -2,7 +2,7 @@ angular.module('smartgeomobile').controller('siteListController', ["$scope", "$r
 
     'use strict';
 
-    window.currentSite = undefined;
+    window.site = $rootScope.site = undefined;
 
     $scope.ready = false;
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;

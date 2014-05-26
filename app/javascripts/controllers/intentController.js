@@ -24,14 +24,14 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     function redirect() {
         switch ($scope.controller) {
         case 'map':
-            $location.path('map/' + window.currentSite.id);
+            $location.path('map/' + $rootScope.site.id);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
             break;
 
         case 'report':
-            $location.path('report/' + window.currentSite.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
+            $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -53,18 +53,18 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     }
 
     if ($routeParams.site) {
-        window.currentSite = window.currentSite || Smartgeo.get_('sites')[$routeParams.site];
+        $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
     } else {
         var sites = Smartgeo.get_('sites');
         for (var siteId in sites) {
             if (sites.hasOwnProperty(siteId)) {
-                window.currentSite = sites[siteId];
+                $rootScope.site = sites[siteId];
                 break;
             }
         }
     }
 
-    if (!window.currentSite) {
+    if (!$rootScope.site) {
         alertify.alert(i18n.get("_INTENT_ZERO_SITE_SELECTED"));
         $location.path("#");
         return false;
@@ -80,7 +80,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     if ($rootScope.map_target) {
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
-        G3ME.parseTarget(window.currentSite, $rootScope.map_target, function (assets) {
+        G3ME.parseTarget($rootScope.site, $rootScope.map_target, function (assets) {
             if (!assets.length) {
                 alertify.alert(i18n.get("_INTENT_OBJECT_NOT_FOUND"));
                 return tokenAuth($routeParams.token, redirect);
@@ -92,7 +92,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 });
                 if ($rootScope.report_target && $rootScope.report_activity) {
                     $rootScope.map_marker.on('click', function () {
-                        $location.path('/report/' + window.currentSite.id + "/" + $rootScope.report_activity + "/" + $rootScope.report_target);
+                        $location.path('/report/' + $rootScope.site.id + "/" + $rootScope.report_activity + "/" + $rootScope.report_target);
                         $scope.$apply();
                         if (!$scope.$$phase) {
                             $scope.$apply();

@@ -12,6 +12,6 @@ angular.module('smartgeomobile').controller('censusController', ["$scope", "$roo
         $scope.okey = null;
     };
 
-    $scope.site = window.currentSite;
+    $scope.site = window.site;
 
 }]);

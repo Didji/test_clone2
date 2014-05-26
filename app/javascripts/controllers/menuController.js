@@ -2,7 +2,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
     'use strict';
 
-    window.mlPushMenu_ = window.mlPushMenu_ || new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
+    $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
         type: 'cover'
     });
     $(".mp-menu").css('width', Smartgeo._SIDE_MENU_WIDTH);
@@ -38,15 +38,15 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             };
         }
         var level = closest(event.currentTarget, 'mp-level').getAttribute('data-level');
-        if (window.mlPushMenu_.level <= level) {
+        if ($scope.mlPushMenu.level <= level) {
             if (event.stopPropagation) {
                 event.stopPropagation();
             }
-            window.mlPushMenu_.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
-            if (window.mlPushMenu_.level === 0) {
-                window.mlPushMenu_._resetMenu();
+            $scope.mlPushMenu.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
+            if ($scope.mlPushMenu.level === 0) {
+                $scope.mlPushMenu._resetMenu();
             } else {
-                window.mlPushMenu_._closeMenu();
+                $scope.mlPushMenu._closeMenu();
             }
         }
 
@@ -58,10 +58,10 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
     $rootScope.closeLeftMenu = $scope.close = function (event) {
         if (event && event.preventDefault && $(event.target).attr('id') === "mp-pusher") {
             event.preventDefault();
-            window.mlPushMenu_._resetMenu();
+            $scope.mlPushMenu._resetMenu();
             Smartgeo.set('persitence.menu.open', false);
         } else if (!event) {
-            window.mlPushMenu_._resetMenu();
+            $scope.mlPushMenu._resetMenu();
             Smartgeo.set('persitence.menu.open', false);
         }
         return false;
@@ -76,8 +76,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
         if (Smartgeo.isRunningOnLittleScreen()) {
             $rootScope.$broadcast("CONSULTATION_CLOSE_PANEL");
         }
-        window.mlPushMenu_._openMenu();
-        window.mlPushMenu_.menuState = 'opened';
+
+        $scope.mlPushMenu._openMenu();
+        $scope.mlPushMenu.menuState = 'opened';
         return false;
     };
 
@@ -86,7 +87,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             $event.preventDefault();
             $event.stopPropagation();
         }
-        $scope[window.mlPushMenu_.menuState === 'opened' ? 'close' : 'open']();
+        $scope[$scope.mlPushMenu.menuState === 'opened' ? 'close' : 'open']();
         $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
         return false;
     };

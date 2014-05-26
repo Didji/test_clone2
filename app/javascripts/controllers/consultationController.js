@@ -3,7 +3,6 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
     'use strict';
 
     $scope.state = 'closed';
-    $scope.site = window.currentSite;
     $scope.loading = false;
     angular.element($window).bind("resize", function (e) {
         $scope.open();
@@ -107,7 +106,7 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
     };
 
     $scope.openLocatedReport = function (lat, lng) {
-        $location.path('report/' + window.currentSite.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
+        $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
     };
 
     $scope.zoomOnAsset = function (asset) {

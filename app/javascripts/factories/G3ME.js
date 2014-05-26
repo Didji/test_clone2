@@ -72,11 +72,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             G3ME.invalidateMapSize();
 
+            this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
             if (!this.tileUrl) {
                 this.tileUrl = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
-            this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
             var BackgroundTile;
 
             if (this.filecacheIsEnable){
@@ -571,7 +571,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             for (var i = 0, zones_length = this.site.zones.length, j = 0 ; i < zones_length; i++) {
                 if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
                     j++ ;
-                    G3ME.requestPool[this.site.zones[i].database_name] = G3ME.requestPool[this.site.zones[i].database_name] || {} ;
+                    G3ME.requestPool[this.site.zones[i].database_name] = G3ME.requestPool[this.site.zones[i].database_name] || {} ;
                     G3ME.requestPool[this.site.zones[i].database_name][uuid] = {
                         request  : request,
                         initargs : initargs,

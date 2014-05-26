@@ -1,356 +1,7 @@
-if (navigator.userAgent.match(/Android/i)) {
-
+if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
     L.TileLayer.FileCache = L.TileLayer.extend({
-        includes: L.Mixin.Events,
 
-        options: {
-            minZoom: 0,
-            maxZoom: 18,
-            tileSize: 256,
-            subdomains: 'abc',
-            errorTileUrl: '',
-            attribution: '',
-            zoomOffset: 0,
-            opacity: 1
-        },
-
-        _loadTile: function (tile, tilePoint, zoom) {
-            tile._layer = this;
-            tile.onload = this._tileOnLoad;
-            tile.onerror = this._tileOnError;
-
-            var this_ = this ;
-
-            this._adjustTilePoint(tilePoint);
-
-            if(window.SmartgeoChromium){
-                var path ,image= tile, z=zoom, x=tilePoint.x, y=tilePoint.y;
-                ChromiumCallbacks["15|"+x+"|"+y+"|"+z] = function(response){
-                    if(1*response === response || !response){
-                        return console.log(response);
-                    } else {
-                        path = response ;
-                    }
-                    var tileObject = {
-                            image: image,
-                            provider: this.id,
-                            x: x,
-                            y: y,
-                            z: z,
-                            src: null,
-                            tiles: this
-                        };
-
-                    image.src = path;
-
-                    image.onerror = function (event) {
-                        this_._tileOnError.call(this);
-                        delete ChromiumCallbacks["15|"+x+"|"+y+"|"+z] ;
-                        image.onerror = image.onload = null;
-                    }
-                    image.onload = function () {
-                        this_._tileOnLoad.call(this);
-                        delete ChromiumCallbacks["15|"+x+"|"+y+"|"+z] ;
-                        image.onerror = image.onload = null;
-                    }
-                            //this_._handleChromiumReponse(response,tile, zoom, tilePoint.x, tilePoint.y);
-                };
-                SmartgeoChromium.getTileURL(this._url, tilePoint.x, tilePoint.y, zoom);
-            }
-
-            // this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
-        },
-
-        _handleChromiumReponse: function(response,image, z, x, y){
-            var path ;
-            if(1*response === response || !response){
-                console.log('ERREUR');
-                return console.log(response);
-            } else {
-                path = response ;
-            }
-            var this_ = this,
-                tileObject = {
-                    image: image,
-                    provider: this.id,
-                    x: x,
-                    y: y,
-                    z: z,
-                    src: null,
-                    tiles: this
-                };
-
-            image.src = path;
-
-            image.onerror = function (event) {
-                this_._tileOnError.call(this);
-                image.onerror = image.onload = null;
-            }
-            image.onload = function () {
-                this_._tileOnLoad.call(this);
-                image.onerror = image.onload = null;
-            }
-        },
-
-        _addTile: function (tilePoint, container) {
-            var tilePos = this._getTilePos(tilePoint);
-            var tile = this._getTile(),
-                zoom = this._map.getZoom();
-
-            L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
-            this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
-            this._loadTile(tile, tilePoint, zoom);
-            if (tile.parentNode !== this._tileContainer) {
-                container.appendChild(tile);
-            }
-        },
-
-        getTilePath: function (tile) {
-            this.tileRootPath = this.tileRootPath || Smartgeo.get('tileRootPath');
-            return 'file://' + this.tileRootPath + '/tiles/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
-        },
-
-        getTileUrl: function (tilePoint, zoom) {
-            return L.Util.template(this._url, L.extend({
-                s: this._getSubdomain(tilePoint),
-                z: zoom,
-                x: tilePoint.x,
-                y: tilePoint.y
-            }, this.options));
-        },
-
-        // writeTileToCache: function (tileObject, dataUrl, callback) {
-        //     var this_ = this;
-        //     var path = this.getTilePath(tileObject);
-
-        //     if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
-        //         if (!window.ChromiumCallbacks) {
-        //             window.ChromiumCallbacks = [];
-        //         }
-        //         ChromiumCallbacks[10] = function (success) {
-        //             if (!success){
-        //                 console.log("Error while writing " + path);
-        //             }
-        //             (callback || function () {})();
-        //         };
-        //         SmartgeoChromium.writeBase64ToPNG(dataUrl.split(',')[1], path);
-        //     }
-        // },
-
-        // getDataURL: function (img) {
-        //     var canvas = document.createElement("canvas");
-        //     canvas.width = img.width;
-        //     canvas.height = img.height;
-        //     var ctx = canvas.getContext("2d");
-        //     ctx.drawImage(img, 0, 0);
-        //     return canvas.toDataURL();
-        // },
-
-        // fetchTileFromCache: function (image, z, x, y) {
-
-        //     var this_ = this,
-        //         tileObject = {
-        //             image: image,
-        //             provider: this.id,
-        //             x: x,
-        //             y: y,
-        //             z: z,
-        //             src: null,
-        //             tiles: this
-        //         };
-
-        //     image.src = this.getTilePath(tileObject);
-
-        //     image.onerror = function (event) {
-
-        //         // this_._tileOnError.call(this);
-
-        //         image.src = this_.getTileUrl({
-        //             x: x,
-        //             y: y
-        //         }, z);
-
-        //         image.onerror = this_._tileOnError ;
-
-        //         image.onload = function () {
-        //             this_._tileOnLoad.call(this);
-        //             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {});
-        //             //     this_.getRemoteETag(tileObject, function (remoteETag) {
-        //             //         if (remoteETag !== null) {
-        //             //             this_.writeMetadataTileFile(tileObject, {
-        //             //                 etag: remoteETag
-        //             //             });
-        //             //         }
-        //             //     });
-        //             // });
-        //         };
-        //     };
-
-        //     image.onload = function () {
-        //         this_._tileOnLoad.call(this);
-        //         image.onerror = image.onload = null;
-
-        //         // this_.doINeedToReCacheThisTile(tileObject, function (yes) {
-        //         //     if (yes) {
-        //         //         var oldTile = image.src;
-        //         //         image.src = this_.getTileUrl({
-        //         //             x: x,
-        //         //             y: y
-        //         //         }, z);
-        //         //         image.onerror = function(){
-        //         //             this_._tileOnError.call(this);
-        //         //             image.onload = image.onerror = null;
-        //         //             image.src = oldTile ;
-        //         //         };
-        //         //         // this_._tileOnError ;
-        //         //         image.onload = function () {
-        //         //             this_._tileOnLoad.call(this);
-
-        //         //             if(!this_._tileOnLoad || !this_.getRemoteETag){
-        //         //                 return ;
-        //         //             }
-
-        //         //             this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
-        //         //                 if(!this_.getRemoteETag){
-        //         //                     return ;
-        //         //                 }
-        //         //                 this_.getRemoteETag(tileObject, function (remoteETag) {
-        //         //                     if (remoteETag !== null) {
-        //         //                         this_.writeMetadataTileFile(tileObject, {
-        //         //                             etag: remoteETag
-        //         //                         });
-        //         //                     }
-        //         //                 });
-        //         //             });
-        //         //             image.onerror = image.onload = null;
-        //         //         };
-        //         //     }
-        //         // });
-
-
-        //     };
-        // },
-
-        // doINeedToReCacheThisTile: function (tileObject, callback) {
-        //     var _this = this;
-        //     this.readMetadataTileFile(tileObject, function (metadata) {
-        //         if (metadata && !metadata.etag) {
-        //             callback(true);
-        //         } else {
-        //             _this.getRemoteETag(tileObject, function (remoteETag) {
-        //                 if (metadata.etag != remoteETag && remoteETag !== null) {
-        //                     callback(true);
-        //                 } else {
-        //                     callback(false);
-        //                 }
-        //             });
-        //         }
-        //     });
-        // },
-
-        // readMetadataTileFile: function (tileObject, callback) {
-        //     var path = 'file://' + Smartgeo.get('tileRootPath') + '/' + this.getTilePath(tileObject) + '.metadata';
-        //     $.getJSON(path, function (metadata) {
-        //         (callback || function () {})(metadata);
-        //     }).fail(function () {
-        //         (callback || function () {})({
-        //             etag: undefined
-        //         });
-        //     });
-        // },
-
-        // writeMetadataTileFile: function (tileObject, metadata, callback) {
-        //     var _this = this;
-        //     var path = this.getTilePath(tileObject) + '.metadata';
-        //     if (window.SmartgeoChromium && SmartgeoChromium.writeBase64ToPNG) {
-        //         if (!window.ChromiumCallbacks) {
-        //             window.ChromiumCallbacks = [];
-        //         }
-        //         ChromiumCallbacks[11] = function (success) {
-        //             if (!success){
-        //                 console.log("writeJSONError while writing " + path);
-        //             }
-        //             (callback || function () {})();
-        //         };
-        //         SmartgeoChromium.writeJSON(JSON.stringify(metadata), path);
-        //     }
-        // },
-
-        // getRemoteETag: function (tileObject, callback) {
-        //     var http = new XMLHttpRequest(),
-        //         url = this.getTileUrl({
-        //             x: tileObject.x,
-        //             y: tileObject.y
-        //         }, tileObject.z), self = this;
-        //     http.withCredentials = true;
-        //     http.open('HEAD', url, true);
-        //     http.onreadystatechange = function () {
-        //         if (this.readyState == this.DONE && this.status === 200) {
-        //             callback(this.getResponseHeader("etag"));
-        //         } else if (this.readyState == this.DONE && this.status === 403) {
-        //             Smartgeo.silentLogin(function(){
-        //                 console.log('refresh');
-        //                 for (var i in self._map._layers) {
-        //                     self._map._layers[i].redraw && self._map._layers[i].redraw();
-        //                 }
-        //             });
-        //             callback(null);
-        //         } else {
-        //             callback(null);
-        //         }
-        //     };
-        //     http.send();
-        // },
-
-        // convertDataURIToBinary: function (dataURI) {
-        //     var BASE64_MARKER = ';base64,';
-        //     var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-        //     var base64 = dataURI.substring(base64Index);
-        //     var raw = window.atob(base64);
-        //     var rawLength = raw.length;
-        //     var array = new Uint8Array(new ArrayBuffer(rawLength));
-        //     for (var i = 0; i < rawLength; i++) {
-        //         array[i] = raw.charCodeAt(i);
-        //     }
-        //     return array;
-        // }
-    });
-
-} else {
-
-
-    /*
-     * L.TileLayer is used for standard xyz-numbered tile layers.
-     */
-
-    L.TileLayer.FileCache = L.TileLayer.extend({
-        includes: L.Mixin.Events,
-
-        options: {
-            minZoom: 0,
-            maxZoom: 18,
-            tileSize: 256,
-            subdomains: 'abc',
-            errorTileUrl: '',
-            attribution: '',
-            zoomOffset: 0,
-            opacity: 1,
-            /*
-        maxNativeZoom: null,
-        zIndex: null,
-        tms: false,
-        continuousWorld: false,
-        noWrap: false,
-        zoomReverse: false,
-        detectRetina: false,
-        reuseTiles: false,
-        bounds: false,
-        */
-            unloadInvisibleTiles: L.Browser.mobile,
-            updateWhenIdle: L.Browser.mobile
-        },
-
-        initialize: function (url, options) {
+        initialize: function(url, options) {
             options = L.setOptions(this, options);
 
             // detecting retina displays, adjusting tileSize and zoom levels
@@ -382,7 +33,7 @@ if (navigator.userAgent.match(/Android/i)) {
 
         },
 
-        onAdd: function (map) {
+        onAdd: function(map) {
             this._map = map;
             this._animated = map._zoomAnimated;
 
@@ -411,12 +62,12 @@ if (navigator.userAgent.match(/Android/i)) {
             this._update();
         },
 
-        addTo: function (map) {
+        addTo: function(map) {
             map.addLayer(this);
             return this;
         },
 
-        onRemove: function (map) {
+        onRemove: function(map) {
             this._container.parentNode.removeChild(this._container);
 
             map.off({
@@ -439,7 +90,7 @@ if (navigator.userAgent.match(/Android/i)) {
             this._map = null;
         },
 
-        bringToFront: function () {
+        bringToFront: function() {
             var pane = this._map._panes.tilePane;
 
             if (this._container) {
@@ -450,7 +101,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return this;
         },
 
-        bringToBack: function () {
+        bringToBack: function() {
             var pane = this._map._panes.tilePane;
 
             if (this._container) {
@@ -461,15 +112,15 @@ if (navigator.userAgent.match(/Android/i)) {
             return this;
         },
 
-        getAttribution: function () {
+        getAttribution: function() {
             return this.options.attribution;
         },
 
-        getContainer: function () {
+        getContainer: function() {
             return this._container;
         },
 
-        setOpacity: function (opacity) {
+        setOpacity: function(opacity) {
             this.options.opacity = opacity;
 
             if (this._map) {
@@ -479,14 +130,14 @@ if (navigator.userAgent.match(/Android/i)) {
             return this;
         },
 
-        setZIndex: function (zIndex) {
+        setZIndex: function(zIndex) {
             this.options.zIndex = zIndex;
             this._updateZIndex();
 
             return this;
         },
 
-        setUrl: function (url, noRedraw) {
+        setUrl: function(url, noRedraw) {
             this._url = url;
 
             if (!noRedraw) {
@@ -496,7 +147,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return this;
         },
 
-        redraw: function () {
+        redraw: function() {
             if (this._map) {
                 this._reset({
                     hard: true
@@ -506,13 +157,13 @@ if (navigator.userAgent.match(/Android/i)) {
             return this;
         },
 
-        _updateZIndex: function () {
+        _updateZIndex: function() {
             if (this._container && this.options.zIndex !== undefined) {
                 this._container.style.zIndex = this.options.zIndex;
             }
         },
 
-        _setAutoZIndex: function (pane, compare) {
+        _setAutoZIndex: function(pane, compare) {
 
             var layers = pane.children,
                 edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
@@ -533,7 +184,7 @@ if (navigator.userAgent.match(/Android/i)) {
                 (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
         },
 
-        _updateOpacity: function () {
+        _updateOpacity: function() {
             var i,
                 tiles = this._tiles;
 
@@ -546,7 +197,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        _initContainer: function () {
+        _initContainer: function() {
             var tilePane = this._map._panes.tilePane;
 
             if (!this._container) {
@@ -572,7 +223,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        _reset: function (e) {
+        _reset: function(e) {
             for (var key in this._tiles) {
                 this.fire('tileunload', {
                     tile: this._tiles[key]
@@ -595,7 +246,7 @@ if (navigator.userAgent.match(/Android/i)) {
             this._initContainer();
         },
 
-        _getTileSize: function () {
+        _getTileSize: function() {
             var map = this._map,
                 zoom = map.getZoom(),
                 zoomN = this.options.maxNativeZoom,
@@ -608,7 +259,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return tileSize;
         },
 
-        _update: function () {
+        _update: function() {
 
             if (!this._map) {
                 return;
@@ -634,7 +285,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        _addTilesFromCenterOut: function (bounds) {
+        _addTilesFromCenterOut: function(bounds) {
             var queue = [],
                 center = bounds.getCenter();
 
@@ -657,7 +308,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
 
             // load tiles in order of their distance to center
-            queue.sort(function (a, b) {
+            queue.sort(function(a, b) {
                 return a.distanceTo(center) - b.distanceTo(center);
             });
 
@@ -677,7 +328,7 @@ if (navigator.userAgent.match(/Android/i)) {
             this._tileContainer.appendChild(fragment);
         },
 
-        _tileShouldBeLoaded: function (tilePoint) {
+        _tileShouldBeLoaded: function(tilePoint) {
             if ((tilePoint.x + ':' + tilePoint.y) in this._tiles) {
                 return false; // already loaded
             }
@@ -716,7 +367,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return true;
         },
 
-        _removeOtherTiles: function (bounds) {
+        _removeOtherTiles: function(bounds) {
             var kArr, x, y, key;
 
             for (key in this._tiles) {
@@ -731,7 +382,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        _removeTile: function (key) {
+        _removeTile: function(key) {
             var tile = this._tiles[key];
 
             this.fire('tileunload', {
@@ -756,7 +407,7 @@ if (navigator.userAgent.match(/Android/i)) {
             delete this._tiles[key];
         },
 
-        _addTile: function (tilePoint, container) {
+        _addTile: function(tilePoint, container) {
             var tilePos = this._getTilePos(tilePoint);
 
             // get unused tile - or create a new tile
@@ -773,14 +424,13 @@ if (navigator.userAgent.match(/Android/i)) {
 
             this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
-            this._loadTile(tile, tilePoint, zoom);
-
+            this._loadTile(tile, tilePoint);
             if (tile.parentNode !== this._tileContainer) {
                 container.appendChild(tile);
             }
         },
 
-        _getZoomForUrl: function () {
+        _getZoomForUrl: function() {
 
             var options = this.options,
                 zoom = this._map.getZoom();
@@ -794,7 +444,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
         },
 
-        _getTilePos: function (tilePoint) {
+        _getTilePos: function(tilePoint) {
             var origin = this._map.getPixelOrigin(),
                 tileSize = this._getTileSize();
 
@@ -803,7 +453,7 @@ if (navigator.userAgent.match(/Android/i)) {
 
         // image-specific code (override to implement e.g. Canvas or SVG tile layer)
 
-        getTileUrl: function (tilePoint, zoom) {
+        getTileUrl: function(tilePoint, zoom) {
             return L.Util.template(this._url, L.extend({
                 s: this._getSubdomain(tilePoint),
                 z: zoom,
@@ -812,12 +462,12 @@ if (navigator.userAgent.match(/Android/i)) {
             }, this.options));
         },
 
-        _getWrapTileNum: function () {
+        _getWrapTileNum: function() {
             // TODO refactor, limit is not valid for non-standard projections
             return Math.pow(2, this._getZoomForUrl());
         },
 
-        _adjustTilePoint: function (tilePoint) {
+        _adjustTilePoint: function(tilePoint) {
 
             var limit = this._getWrapTileNum();
 
@@ -833,12 +483,12 @@ if (navigator.userAgent.match(/Android/i)) {
             tilePoint.z = this._getZoomForUrl();
         },
 
-        _getSubdomain: function (tilePoint) {
+        _getSubdomain: function(tilePoint) {
             var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
             return this.options.subdomains[index];
         },
 
-        _getTile: function () {
+        _getTile: function() {
             if (this.options.reuseTiles && this._unusedTiles.length > 0) {
                 var tile = this._unusedTiles.pop();
                 this._resetTile(tile);
@@ -848,9 +498,9 @@ if (navigator.userAgent.match(/Android/i)) {
         },
 
         // Override if data stored on a tile needs to be cleaned up before reuse
-        _resetTile: function ( /*tile*/ ) {},
+        _resetTile: function( /*tile*/ ) {},
 
-        _createTile: function () {
+        _createTile: function() {
             var tile = L.DomUtil.create('img', 'leaflet-tile');
             tile.style.width = tile.style.height = this._getTileSize() + 'px';
             tile.galleryimg = 'no';
@@ -863,7 +513,7 @@ if (navigator.userAgent.match(/Android/i)) {
             return tile;
         },
 
-        _loadTile: function (tile, tilePoint, zoom) {
+        _loadTile: function(tile, tilePoint, zoom) {
             tile._layer = this;
             tile.onload = this._tileOnLoad;
             tile.onerror = this._tileOnError;
@@ -871,10 +521,10 @@ if (navigator.userAgent.match(/Android/i)) {
             this._adjustTilePoint(tilePoint);
             // tile.src     = this.getTileUrl(tilePoint);
             // this._getTile(tile, tilePoint,zoom);
-            this.fetchTileFromCache(tile, zoom, tilePoint.x, tilePoint.y);
+            this.fetchTileFromCache(tile, tilePoint.z, tilePoint.x, tilePoint.y);
         },
 
-        _tileLoaded: function () {
+        _tileLoaded: function() {
             this._tilesToLoad--;
             if (!this._tilesToLoad) {
                 this.fire('load');
@@ -887,7 +537,7 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        _tileOnLoad: function () {
+        _tileOnLoad: function() {
             var layer = this._layer;
 
             //Only if we are loading an actual image
@@ -903,7 +553,7 @@ if (navigator.userAgent.match(/Android/i)) {
             layer._tileLoaded();
         },
 
-        _tileOnError: function () {
+        _tileOnError: function() {
             var layer = this._layer;
 
             layer.fire('tileerror', {
@@ -920,13 +570,13 @@ if (navigator.userAgent.match(/Android/i)) {
         },
 
 
-        initFS: function (grantedBytes) {
+        initFS: function(grantedBytes) {
             grantedBytes = grantedBytes || 100 * 1024 * 1024;
             var this_ = this;
 
-            this.requestQuota(function () {
+            this.requestQuota(function() {
                 if (window.requestFileSystem || window.webkitRequestFileSystem) {
-                    (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, grantedBytes, function (fs) {
+                    (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, grantedBytes, function(fs) {
                         this_.filesystem = fs;
                     }, this_.log_fs_error);
                 } else {
@@ -935,32 +585,32 @@ if (navigator.userAgent.match(/Android/i)) {
             });
         },
 
-        log_fs_error: function (e) {
+        log_fs_error: function(e) {
             var msg = '';
             switch (e.code) {
-            case FileError.QUOTA_EXCEEDED_ERR:
-                msg = 'QUOTA_EXCEEDED_ERR';
-                break;
-            case FileError.NOT_FOUND_ERR:
-                msg = 'NOT_FOUND_ERR';
-                break;
-            case FileError.SECURITY_ERR:
-                msg = 'SECURITY_ERR';
-                break;
-            case FileError.INVALID_MODIFICATION_ERR:
-                msg = 'INVALID_MODIFICATION_ERR';
-                break;
-            case FileError.INVALID_STATE_ERR:
-                msg = 'INVALID_STATE_ERR';
-                break;
-            default:
-                msg = 'Unknown Error';
-                break;
+                case FileError.QUOTA_EXCEEDED_ERR:
+                    msg = 'QUOTA_EXCEEDED_ERR';
+                    break;
+                case FileError.NOT_FOUND_ERR:
+                    msg = 'NOT_FOUND_ERR';
+                    break;
+                case FileError.SECURITY_ERR:
+                    msg = 'SECURITY_ERR';
+                    break;
+                case FileError.INVALID_MODIFICATION_ERR:
+                    msg = 'INVALID_MODIFICATION_ERR';
+                    break;
+                case FileError.INVALID_STATE_ERR:
+                    msg = 'INVALID_STATE_ERR';
+                    break;
+                default:
+                    msg = 'Unknown Error';
+                    break;
             }
             console.log('Error: ' + msg);
         },
 
-        requestQuota: function (callback) {
+        requestQuota: function(callback) {
             window.requestFileSystem
             if (navigator.webkitPersistentStorage) {
                 navigator.webkitPersistentStorage.requestQuota(1024 * 1024 * 500, callback);
@@ -972,11 +622,11 @@ if (navigator.userAgent.match(/Android/i)) {
             }
         },
 
-        getTilePath: function (tile) {
+        getTilePath: function(tile) {
             return 'tiles/' + tile.z; //+'/'+tile.x ;
         },
 
-        createDirectory: function (path, callback, step) {
+        createDirectory: function(path, callback, step) {
             step = step || 1;
 
             if (step > path.length)
@@ -986,25 +636,25 @@ if (navigator.userAgent.match(/Android/i)) {
 
             this.filesystem.root.getDirectory(path.split('/').slice(0, step).join('/'), {
                 create: true
-            }, function (dirEntry) {
+            }, function(dirEntry) {
                 this_.createDirectory(path, callback, ++step);
             }, this_.log_fs_error);
 
         },
 
 
-        writeTileToCache: function (tileObject, dataUrl, callback) {
+        writeTileToCache: function(tileObject, dataUrl, callback) {
             var this_ = this;
             var path = this.getTilePath(tileObject);
             var data = this.convertDataURIToBinary(dataUrl);
 
-            this.createDirectory(path, function () {
+            this.createDirectory(path, function() {
                 this_.filesystem.root.getFile(path + '/' + tileObject.x + '_' + tileObject.y + '.png', {
                     create: true
-                }, function (fileEntry) {
-                    fileEntry.createWriter(function (writer) {
-                        writer.onwriteend = (callback || function () {});
-                        writer.onerror = function (e) {
+                }, function(fileEntry) {
+                    fileEntry.createWriter(function(writer) {
+                        writer.onwriteend = (callback || function() {});
+                        writer.onerror = function(e) {
                             console.log('Write failed: ' + e.toString());
                         };
 
@@ -1021,10 +671,10 @@ if (navigator.userAgent.match(/Android/i)) {
                             if (e.name == 'TypeError' && window.BlobBuilder) {
                                 // Android browser
                                 cordova.exec(
-                                    function () {
+                                    function() {
                                         console.log('Fichier écrit avec succes');
                                     },
-                                    function (error) {
+                                    function(error) {
                                         console.log(JSON.stringify(error));
                                     },
                                     "WriteFilePlugin",
@@ -1046,7 +696,7 @@ if (navigator.userAgent.match(/Android/i)) {
             });
         },
 
-        getDataURL: function (img) {
+        getDataURL: function(img) {
             var canvas = document.createElement("canvas");
             canvas.width = img.width;
             canvas.height = img.height;
@@ -1055,13 +705,13 @@ if (navigator.userAgent.match(/Android/i)) {
             return canvas.toDataURL();
         },
 
-        fetchTileFromCache: function (image, z, x, y) {
+        fetchTileFromCache: function(image, z, x, y) {
             // console.log("fetchTileFromCache")
 
             var this_ = this;
 
             if (!this.filesystem) {
-                return setTimeout(function () {
+                return setTimeout(function() {
                     this_.fetchTileFromCache(image, z, x, y);
                 }, 400);
             }
@@ -1078,11 +728,11 @@ if (navigator.userAgent.match(/Android/i)) {
 
 
             if (this.filesystem !== true) {
-                this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function (fileEntry) {
-                    fileEntry.file(function (file) {
+                this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function(fileEntry) {
+                    fileEntry.file(function(file) {
                         var reader = new FileReader();
                         reader.readAsArrayBuffer(file);
-                        reader.onloadend = function (event) {
+                        reader.onloadend = function(event) {
                             var data = event.target.result,
                                 datatype = "image/png",
                                 blob, bb;
@@ -1107,24 +757,24 @@ if (navigator.userAgent.match(/Android/i)) {
                             // image.style.border  = 'solid 1px blue';
                             window.URL = window.URL || window.webkitURL;
                             image.src = URL.createObjectURL(blob);
-                            image.onerror = this_._tileOnError ;
-                            image.onload = function(){
-                                this_._tileOnLoad.call(this) ;
-                                this_.doINeedToReCacheThisTile(tileObject, file, function (yes) {
+                            image.onerror = this_._tileOnError;
+                            image.onload = function() {
+                                this_._tileOnLoad.call(this);
+                                this_.doINeedToReCacheThisTile(tileObject, file, function(yes) {
                                     if (yes) {
                                         var oldTile = image.src;
                                         image.src = this_.getTileUrl({
                                             x: x,
                                             y: y
                                         }, z);
-                                        image.onerror = function () {
+                                        image.onerror = function() {
                                             image.src = oldTile;
                                             this_._tileOnError.call(this);
                                         }
-                                        image.onload = function () {
+                                        image.onload = function() {
                                             this_._tileOnLoad.call(this);
-                                            this_.writeTileToCache(tileObject, this_.getDataURL(image), function () {
-                                                this_.getRemoteETag(tileObject, function (remoteETag) {
+                                            this_.writeTileToCache(tileObject, this_.getDataURL(image), function() {
+                                                this_.getRemoteETag(tileObject, function(remoteETag) {
                                                     if (remoteETag !== null) {
                                                         this_.writeMetadataTileFile(tileObject, {
                                                             etag: remoteETag
@@ -1140,24 +790,24 @@ if (navigator.userAgent.match(/Android/i)) {
                         };
                     });
 
-                }, function (fileError) {
+                }, function(fileError) {
                     var oldTile = image.src;
                     image.src = this_.getTileUrl({
                         x: x,
                         y: y
                     }, z);
-                    image.onerror = function (event) {
+                    image.onerror = function(event) {
                         this_._tileOnError.call(this);
                         image.src = oldTile;
                         image.onerror = image.onload = null;
-                        Smartgeo.silentLogin(function(){
-                            console.log('refresh');
-                            for (var i in this_._map._layers) {
-                                this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                            }
-                        });
+                        // Smartgeo.silentLogin(function() {
+                        //     console.log('refresh');
+                        //     for (var i in this_._map._layers) {
+                        //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                        //     }
+                        // });
                     };
-                    image.onload = function () {
+                    image.onload = function() {
                         this_._tileOnLoad.call(this);
                         this_.writeTileToCache(tileObject, this_.getDataURL(image));
                         image.onerror = image.onload = null;
@@ -1168,27 +818,27 @@ if (navigator.userAgent.match(/Android/i)) {
                     x: x,
                     y: y
                 }, z);
-                image.onerror = function (event) {
+                image.onerror = function(event) {
                     this_._tileOnError.call(this);
                     image.onerror = image.onload = null;
-                    Smartgeo.silentLogin(function(){
+                    Smartgeo.silentLogin(function() {
                         console.log('refresh');
                         for (var i in this_._map._layers) {
                             this_._map._layers[i].redraw && this_._map._layers[i].redraw();
                         }
                     });
                 };
-                image.onload = this_._tileOnLoad ;
+                image.onload = this_._tileOnLoad;
             }
         },
 
-        readMetadataTileFile: function (tileObject, callback) {
+        readMetadataTileFile: function(tileObject, callback) {
             this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
                 create: true
-            }, function (fileEntry) {
-                fileEntry.file(function (file) {
+            }, function(fileEntry) {
+                fileEntry.file(function(file) {
                     var reader = new FileReader();
-                    reader.onloadend = function () {
+                    reader.onloadend = function() {
                         var metadata;
                         try {
                             metadata = JSON.parse(reader.result || '{}');
@@ -1204,14 +854,14 @@ if (navigator.userAgent.match(/Android/i)) {
             });
         },
 
-        writeMetadataTileFile: function (tileObject, metadata, callback) {
+        writeMetadataTileFile: function(tileObject, metadata, callback) {
             var _this = this;
             this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
                 create: true
-            }, function (fileEntry) {
-                fileEntry.createWriter(function (writer) {
-                    writer.onwriteend = function () {
-                        writer.onwriteend = (callback || function () {});
+            }, function(fileEntry) {
+                fileEntry.createWriter(function(writer) {
+                    writer.onwriteend = function() {
+                        writer.onwriteend = (callback || function() {});
                         var blob, datatype = 'text/plain';
                         try {
                             // Chrome browser
@@ -1230,43 +880,44 @@ if (navigator.userAgent.match(/Android/i)) {
                         }
                     }
                     writer.truncate(0);
-                    writer.onerror = function (e) {
+                    writer.onerror = function(e) {
                         console.log('Write failed: ' + e.toString());
                     }
                 }, _this.log_fs_error);
             });
         },
 
-        doINeedToReCacheThisTile: function (tileObject, file, callback) {
+        doINeedToReCacheThisTile: function(tileObject, file, callback) {
             var _this = this;
-            this.readMetadataTileFile(tileObject, function (metadata) {
+            this.readMetadataTileFile(tileObject, function(metadata) {
                 // if (!metadata.etag) {
                 //     callback(true);
                 // } else {
-                    _this.getRemoteETag(tileObject, function (remoteETag) {
-                        if (metadata.etag != remoteETag && remoteETag !== null) {
-                            callback(true);
-                        } else {
-                            callback(false);
-                        }
-                    });
+                _this.getRemoteETag(tileObject, function(remoteETag) {
+                    if (metadata.etag != remoteETag && remoteETag !== null) {
+                        callback(true);
+                    } else {
+                        callback(false);
+                    }
+                });
                 // }
             });
         },
 
-        getRemoteETag: function (tileObject, callback) {
+        getRemoteETag: function(tileObject, callback) {
             var http = new XMLHttpRequest(),
                 url = this.getTileUrl({
                     x: tileObject.x,
                     y: tileObject.y
-                }, tileObject.z), self = this ;
+                }, tileObject.z),
+                self = this;
             http.withCredentials = true;
             http.open('HEAD', url, true);
-            http.onreadystatechange = function () {
+            http.onreadystatechange = function() {
                 if (this.readyState == this.DONE && this.status === 200) {
-                   callback(this.getResponseHeader("etag"));
+                    callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    Smartgeo.silentLogin(function(){
+                    Smartgeo.silentLogin(function() {
                         console.log('refresh');
                         for (var i in self._map._layers) {
                             self._map._layers[i].redraw && self._map._layers[i].redraw();
@@ -1281,7 +932,7 @@ if (navigator.userAgent.match(/Android/i)) {
             http.send();
         },
 
-        convertDataURIToBinary: function (dataURI) {
+        convertDataURIToBinary: function(dataURI) {
             var BASE64_MARKER = ';base64,';
             var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
             var base64 = dataURI.substring(base64Index);
