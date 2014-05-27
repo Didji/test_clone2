@@ -34,7 +34,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 // attributionControl: false,
                 zoomControl: false,
                 zoomAnimation: true,
-                inertia:false ,
+                inertia: navigator.userAgent.match(/Android/i) ? false : true ,
                 maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 attribution: ''
