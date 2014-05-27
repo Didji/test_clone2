@@ -889,14 +889,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         selectSiteRemotely: function (site, success, error) {
 
-            var EXTERNAL_TILEURL = Smartgeo.get_('sites')[site].EXTERNAL_TILEURL ;
-
-            // TODO : réactiver l'authentification dès que le proxy Gimap retourne une URL externe provenant du mapfile (ou non) (@gulian)
-            // if(window.SmartgeoChromium && (!EXTERNAL_TILEURL || ( EXTERNAL_TILEURL && Smartgeo.get('url').indexOf(EXTERNAL_TILEURL) !== -1))) {
-            //     var user = Smartgeo.get('user') ;
-            //     ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
-            //     SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
-            // }
+            if(window.SmartgeoChromium && !Smartgeo.get_('sites')[site].EXTERNAL_TILEURL) {
+                var user = Smartgeo.get('user') ;
+                ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
+                SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
+            }
 
             if (!site) {
                 Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
