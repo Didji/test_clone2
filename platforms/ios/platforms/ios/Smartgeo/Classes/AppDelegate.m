@@ -27,6 +27,8 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import "./RNCachingURLProtocol.h"
+
 
 #import <Cordova/CDVPlugin.h>
 
@@ -92,7 +94,7 @@
 
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
-
+    [NSURLProtocol registerClass:[RNCachingURLProtocol class]];
     return YES;
 }
 

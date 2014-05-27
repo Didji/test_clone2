@@ -49,6 +49,9 @@
 		916C2B0096834BCF924FCF8A /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ACCB4EE8E0A40179FBCD1C2 /* SQLitePlugin.m */; };
 		B6246AB818D2070B0023622F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B6246AB718D2070B0023622F /* Images.xcassets */; };
 		B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */; };
+		B6E36D001934981F00AFB775 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E36CFF1934981F00AFB775 /* SystemConfiguration.framework */; };
+		B6E36D03193498AE00AFB775 /* RNCachingURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E36D02193498AE00AFB775 /* RNCachingURLProtocol.m */; };
+		B6E36D06193498F300AFB775 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E36D05193498F300AFB775 /* Reachability.m */; };
 		C41081A7F04949A59553EBEF /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20266776404D27898EAE90 /* CDVFile.m */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		EEF7DB899B0544C29B912B23 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A0CF24AC48463498462332 /* CDVJpegHeaderWriter.m */; };
@@ -131,6 +134,11 @@
 		B6246AB718D2070B0023622F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Smartgeo/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		B663D92A18A8DE3200A4E3B3 /* GotoPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GotoPlugin.h; sourceTree = "<group>"; };
 		B663D92B18A8DE3200A4E3B3 /* GotoPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GotoPlugin.m; sourceTree = "<group>"; };
+		B6E36CFF1934981F00AFB775 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		B6E36D01193498AE00AFB775 /* RNCachingURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNCachingURLProtocol.h; sourceTree = "<group>"; };
+		B6E36D02193498AE00AFB775 /* RNCachingURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNCachingURLProtocol.m; sourceTree = "<group>"; };
+		B6E36D04193498F300AFB775 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		B6E36D05193498F300AFB775 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
 		D7CC7644B6FA4B3593B736DF /* CDVExif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = org.apache.cordova.camera/CDVExif.h; sourceTree = "<group>"; };
 		EA6CF1E57BA244CD9BBB1DA4 /* CDVNotification.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CDVNotification.bundle; sourceTree = "<group>"; };
@@ -143,6 +151,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6E36D001934981F00AFB775 /* SystemConfiguration.framework in Frameworks */,
 				5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */,
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -165,6 +174,10 @@
 				302D95F014D2391D003F00A1 /* MainViewController.xib */,
 				1D3623240D0F684500981E51 /* AppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
+				B6E36D01193498AE00AFB775 /* RNCachingURLProtocol.h */,
+				B6E36D02193498AE00AFB775 /* RNCachingURLProtocol.m */,
+				B6E36D04193498F300AFB775 /* Reachability.h */,
+				B6E36D05193498F300AFB775 /* Reachability.m */,
 			);
 			name = Classes;
 			path = Smartgeo/Classes;
@@ -240,6 +253,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B6E36CFF1934981F00AFB775 /* SystemConfiguration.framework */,
 				5AEE5B34173C68D80009041E /* CoreLocation.framework */,
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
@@ -468,6 +482,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6E36D06193498F300AFB775 /* Reachability.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
@@ -479,6 +494,7 @@
 				1101E62B46074E93913C4D51 /* CDVLocation.m in Sources */,
 				7913398C0F1C493E91520A23 /* CDVVibration.m in Sources */,
 				B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */,
+				B6E36D03193498AE00AFB775 /* RNCachingURLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,7 +579,7 @@
 				PRODUCT_NAME = Smartgeo;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -601,7 +617,7 @@
 				PRODUCT_NAME = Smartgeo;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};
@@ -648,7 +664,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -694,7 +710,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};
