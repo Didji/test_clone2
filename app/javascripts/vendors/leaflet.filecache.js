@@ -800,12 +800,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                         this_._tileOnError.call(this);
                         image.src = oldTile;
                         image.onerror = image.onload = null;
-                        // Smartgeo.silentLogin(function() {
-                        //     console.log('refresh');
-                        //     for (var i in this_._map._layers) {
-                        //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                        //     }
-                        // });
+                        if(window.site.EXTERNAL_TILEURL){
+                            Smartgeo.silentLogin(function() {
+                                for (var i in this_._map._layers) {
+                                    this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                                }
+                            });
+                        }
                     };
                     image.onload = function() {
                         this_._tileOnLoad.call(this);
@@ -821,12 +822,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 image.onerror = function(event) {
                     this_._tileOnError.call(this);
                     image.onerror = image.onload = null;
-                    Smartgeo.silentLogin(function() {
-                        console.log('refresh');
-                        for (var i in this_._map._layers) {
-                            this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                        }
-                    });
+                    if(window.site.EXTERNAL_TILEURL){
+                        Smartgeo.silentLogin(function() {
+                            for (var i in this_._map._layers) {
+                                this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                            }
+                        });
+                    }
                 };
                 image.onload = this_._tileOnLoad;
             }
@@ -917,12 +919,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 if (this.readyState == this.DONE && this.status === 200) {
                     callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    Smartgeo.silentLogin(function() {
-                        console.log('refresh');
-                        for (var i in self._map._layers) {
-                            self._map._layers[i].redraw && self._map._layers[i].redraw();
-                        }
-                    });
+                    if(window.site.EXTERNAL_TILEURL){
+                        Smartgeo.silentLogin(function() {
+                            for (var i in self._map._layers) {
+                                self._map._layers[i].redraw && self._map._layers[i].redraw();
+                            }
+                        });
+                    }
                     callback(null);
                 } else {
                     callback(null);
