@@ -165,13 +165,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     }
 
                     function resetCensusMapHandler(){
-                        G3ME.map.off('mousemove', mouseMoveHandler)
-                                  .off('click'    , mouseClickHandler);
-                    }
-
-                    function mouseMoveHandler(e){
-                        initializeNodeLayer(e);
-                        node.layer.setLatLng(e.latlng);
+                        G3ME.map.off('click', mouseClickHandler);
                     }
 
                     function mouseClickHandler(e){
@@ -184,8 +178,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                     resetCensusMapHandler();
 
-                    G3ME.map.on( 'mousemove', mouseMoveHandler)
-                              .on( 'click'    , mouseClickHandler);
+                    G3ME.map.on('click', mouseClickHandler);
 
                 };
 
