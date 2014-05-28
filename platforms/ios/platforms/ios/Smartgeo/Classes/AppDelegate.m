@@ -94,7 +94,7 @@
 
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
-    [NSURLProtocol registerClass:[RNCachingURLProtocol class]];
+    //[NSURLProtocol registerClass:[RNCachingURLProtocol class]];
     return YES;
 }
 

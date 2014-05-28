@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.gismartware.smartgeo.mobile" version="0.13.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Hello Cordova</name>
-    <description>
-        A sample Apache Cordova application that responds to the deviceready event.
-    </description>
+    <preference name="AutoHideSplashScreen" value="true" />
+    <preference name="FadeSplashScreen" value="true" />
+    <preference name="FadeSplashScreenDuration" value=".25" />
+    <preference name="ShowSplashScreenSpinner" value="true" />
     <name>Smartgeo</name>
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="BackupWebStorage" value="cloud" />
@@ -30,6 +30,7 @@
         <param name="ios-package" value="CDVNotification" />
     </feature>
     <feature name="File">
+        <param name="onload" value="true" />
         <param name="ios-package" value="CDVFile" />
     </feature>
     <feature name="Geolocation">
