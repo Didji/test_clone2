@@ -53,6 +53,8 @@
 
         <activity android:name=".GimapMobileMainActivity"
                   android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+                  android:hardwareAccelerated="true"
                   android:theme="@android:style/Theme.Holo.Light.NoActionBar">
 
             <intent-filter>
