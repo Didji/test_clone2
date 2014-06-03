@@ -32,7 +32,7 @@
             </button>
         </p>
     </div>
-    <div ng-show="step==='form'">
+    <div style="margin-bottom: 400px;" ng-show="step==='form'">
         <p>
             <button class="btn btn-default" ng-click="cancel()">
                 <i18n>_REPORT_CANCEL</i18n>
@@ -132,18 +132,20 @@
                                                 name="f" ng-required="field.required" type="time"></input> -->
                                         </span>
                                         <span ng-switch-when="N">
-                                            <input bo-if="field.default && field.default.pkey" type="number" class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
-                                            <input bo-if="!field.default || !field.default.pkey" type="number" class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
+                                            <input bo-if="field.default && field.default.pkey" type="number" class="form-control" ng-click="bidouille($event)" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
+                                            <input bo-if="!field.default || !field.default.pkey" type="number" class="form-control" ng-click="bidouille($event)" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
                                             <small class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
                                         </span>
 
                                         <span ng-switch-default>
                                             <input bo-if="field.default && field.default.pkey"
+                                                ng-click="bidouille($event)"
                                                 ng-required="field.required" class="form-control"
                                                 type="text" name="f"
                                                 ng-model='report.overrides[field.id]'
                                                 placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}"></input>
                                             <input bo-if="!field.default || !field.default.pkey"
+                                                ng-click="bidouille($event)"
                                                 ng-required="field.required" class="form-control"
                                                 type="text" name="f"
                                                 ng-model='report.fields[field.id]'

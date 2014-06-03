@@ -430,6 +430,13 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         $scope.report.ged.splice($index, 1);
     };
 
+    $scope.bidouille = function(event) {
+        document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).closest('label')[0].offsetTop - 7;
+        if (window.screen.height <= 640) {
+            document.querySelector('.reportForm').style.paddingBottom = "280px";
+        }
+    };
+
     function getBase64Image(src) {
         var img = document.createElement("img");
         img.src = src;
@@ -441,6 +448,16 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         var dataURL = canvas.toDataURL("image/png");
         return dataURL;
     }
+
+    var sortFunction = function(a, b){
+        if(a.text < b.text){
+            return -1;
+        } else if(a.text > b.text) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
 
     $scope.groupSelectOptions = {
         allowClear:true,
@@ -458,15 +475,8 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
                                 }
                             }
                             data.results.push({id: null , text: ""});
-                            data.results.sort(function(a, b){
-                                if(a.text < b.text){
-                                    return -1;
-                                } else if(a.text > b.text) {
-                                    return 1;
-                                } else {
-                                    return 0;
-                                }
-                            });
+                            data.results.sort(sortFunction);
+                            // data.results = data.results.slice(0,10);
                             return query.callback(data);
                         }
                     }
@@ -476,3 +486,4 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
     };
 
 });
+
