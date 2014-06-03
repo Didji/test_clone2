@@ -9,7 +9,7 @@
             </h2>
         </li>
 
-        <li class="container">
+        <li  style="width: 90%;margin: 0 0 0 5%;">
             <div class="list-group" style="margin-bottom:0;">
                 <div class="list-group-item" ng-repeat="report in (reports | toBeSynchronized) track by report.uuid " ng-hide="report.hide">
                     <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
@@ -52,7 +52,7 @@
             </div>
         </li>
         <label style="margin:5%;" ng-click='displaySync = !displaySync'> <i class="fa" ng-class="displaySync ? 'fa-check-circle-o' : 'fa-circle-o' " ></i>  Afficher les comptes-rendus et objets synchronisés</label>
-        <li ng-if="displaySync" class="container">
+        <li ng-if="displaySync"  style="width: 90%;margin: 0 0 0 5%;">
             <div class="list-group" style="margin-bottom:0;">
                 <div class="list-group-item" ng-repeat="report in filteredReport = (reports | synchronized) track by report.uuid " ng-hide="report.hide">
                     <div class="btn-group pull-right">

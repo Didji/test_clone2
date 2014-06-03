@@ -291,7 +291,6 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
             if(assetsCache[i].geometry.type === "LineString"){
                 assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
             }
-            console.log(assetsCache[i].geometry)
             assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
             var icon = assetsCache[i].selected ? Icon.get('SELECTED_MISSION') : !mission.activity || mission.activity && $rootScope.site.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('NON_SELECTED_MISSION') : Icon.get('NON_SELECTED_NIGHTTOUR');
             assetsCache[i].marker.setIcon(icon);

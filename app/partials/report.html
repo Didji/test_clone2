@@ -119,7 +119,9 @@
                                             </input>
                                         </span>
                                         <span ng-switch-when="T">
-                                            <input
+                                            <timepicker bo-if="field.default && field.default.pkey" show-meridian="false" ng-model="report.overrides[field.id]"></timepicker>
+                                            <timepicker bo-if="!field.default || !field.default.pkey" show-meridian="false" ng-model="report.fields[field.id]"></timepicker>
+                                           <!--  <input
                                                 bo-if="field.default && field.default.pkey"
                                                 class="form-control" ng-model='report.overrides[field.id]'
                                                 name="f" ng-required="field.required" type="time"></input>
@@ -127,22 +129,22 @@
                                             <input
                                                 bo-if="!field.default || !field.default.pkey"
                                                 class="form-control" ng-model='report.fields[field.id]'
-                                                name="f" ng-required="field.required" type="time"></input>
+                                                name="f" ng-required="field.required" type="time"></input> -->
                                         </span>
                                         <span ng-switch-when="N">
-                                            <input bo-if="field.default && field.default.pkey" type="number" ng-click="bidouille($event)"  class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
-                                            <input bo-if="!field.default || !field.default.pkey" type="number" ng-click="bidouille($event)"  class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
+                                            <input bo-if="field.default && field.default.pkey" type="number" class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
+                                            <input bo-if="!field.default || !field.default.pkey" type="number" class="form-control" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
                                             <small class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
                                         </span>
 
                                         <span ng-switch-default>
                                             <input bo-if="field.default && field.default.pkey"
-                                                ng-click="bidouille($event)" ng-required="field.required" class="form-control"
+                                                ng-required="field.required" class="form-control"
                                                 type="text" name="f"
                                                 ng-model='report.overrides[field.id]'
                                                 placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}"></input>
                                             <input bo-if="!field.default || !field.default.pkey"
-                                                ng-click="bidouille($event)" ng-required="field.required" class="form-control"
+                                                ng-required="field.required" class="form-control"
                                                 type="text" name="f"
                                                 ng-model='report.fields[field.id]'
                                                 placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}"></input>

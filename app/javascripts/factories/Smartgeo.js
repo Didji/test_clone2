@@ -495,6 +495,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 } else {
                     Smartgeo.locationWatchIdentifier = navigator.geolocation.watchPosition(function(position){
                         Smartgeo.positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
+                    }, function(){}, {
+                        enableHighAccuracy: false,
+                        maximumAge: 0
                     });
                 }
             } else if (this.positionListerners.indexOf(listener) !== -1){
@@ -563,7 +566,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         findGeometryByGuids: function (site, guids, callback, zones, partial_response) {
-
             if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
                 return Smartgeo.findGeometryByGuids_big(site, guids, callback);
             }

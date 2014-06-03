@@ -424,6 +424,12 @@ fieldset[disabled] .btn-primary.active {
     overflow: auto;
 }
 
+
+
+.reportForm .glyphicon-chevron-up, .reportForm .glyphicon-chevron-down {
+    color: #fd9122;
+}
+
 .reportForm h3 {
     color: white;
 }
