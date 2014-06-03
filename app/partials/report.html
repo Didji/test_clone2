@@ -98,24 +98,26 @@
                                             <input class="form-control pull-left" ng-if="isAndroid && field.default && field.default.pkey"
                                                  ng-required="field.required" type="date" name="f"
                                                  ng-model="report.overrides[field.id]"
-                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;">
+                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;margin-bottom:10px">
                                             </input>
                                             <span class="form-control pull-left" ng-if="isAndroid && field.default && field.default.pkey">{{report.overrides[field.id]}}</span>
 
                                             <input class="form-control pull-left" ng-if="isAndroid && (!field.default || !field.default.pkey)"
                                                  ng-required="field.required" type="date" name="f"
                                                  ng-model="report.fields[field.id]"
-                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;">
+                                                 style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:1px;z-index:-1;margin-bottom:10px">
                                             </input>
                                             <span class="form-control pull-left" ng-if="isAndroid && (!field.default || !field.default.pkey)">{{report.fields[field.id]}}</span>
 
                                             <input class="form-control pull-left" ng-if="!isAndroid && field.default && field.default.pkey"
                                                  ng-required="field.required" type="date" name="f"
                                                  ng-model="report.overrides[field.id]"
+                                                 style="margin-bottom:10px">
                                             </input>
                                             <input class="form-control pull-left" ng-if="!isAndroid && (!field.default || !field.default.pkey)"
                                                  ng-required="field.required" type="date" name="f"
-                                                 ng-model="report.fields[field.id]"
+                                                 style="margin-bottom:10px"
+                                                 ng-model="report.fields[field.id]">
                                             </input>
                                         </span>
                                         <span ng-switch-when="T">
