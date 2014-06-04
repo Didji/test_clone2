@@ -239,10 +239,11 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
             act = field.actions[i];
             targetField = fieldById(act.target);
             if (!targetField) {
+                console.log('continue');
                 continue;
             }
 
-            cond = ($scope.report.fields[srcId] === act.condition);
+            cond = ($scope.report.fields[srcId] !== act.condition);
             switch (act.type) {
             case "show":
                 targetField.visible = cond;
