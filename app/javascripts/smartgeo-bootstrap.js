@@ -8,8 +8,8 @@ angular.module("smartgeobootstrap", []).run(function ($rootScope) {
             'census'                :  true,
             'logout'                :  true,
             '_DONT_REALLY_RESET'    : false,
-            // 'tileCache'             : navigator.userAgent.match(/Android/i) ? true : false,
-            'tileCache'             : true,
+            'tileCache'             : navigator.userAgent.match(/Android/i) ? true : false,
+            // 'tileCache'             : true,
             'timebomb'              : false
         };
         window.smartgeoPersistenceCache  = {};

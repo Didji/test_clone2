@@ -418,7 +418,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
 
                 asset.angle    = 0 ;
-                asset.maplabel = '('+asset.fields[window.currentSite.metamodel[asset.okey].ukey]+')';
+                asset.maplabel = '('+asset.fields[window.site.metamodel[asset.okey].ukey]+')';
 
                 var geom = {};
                 if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){
