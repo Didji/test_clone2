@@ -239,11 +239,10 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
             act = field.actions[i];
             targetField = fieldById(act.target);
             if (!targetField) {
-                console.log('continue');
                 continue;
             }
 
-            cond = ($scope.report.fields[srcId] !== act.condition);
+            cond = ($scope.report.fields[srcId] === act.condition);
             switch (act.type) {
             case "show":
                 targetField.visible = cond;
@@ -284,10 +283,12 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
         }
 
         for (i in report.fields) {
+            console.log("need to set", report.fields[i] ,"to", report.fields[i] && report.fields[i].id);
             if( report.fields[i] instanceof Date ){
                 report.fields[i] = report.fields[i].getHours() + ":" + report.fields[i].getMinutes()
             }
             if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+                console.log("set", report.fields[i] ,"to", report.fields[i].id);
                 report.fields[i] = report.fields[i].id;
             }
         }
@@ -477,7 +478,6 @@ angular.module('smartgeomobile').controller('reportController', function($scope,
                             }
                             data.results.push({id: null , text: ""});
                             data.results.sort(sortFunction);
-                            // data.results = data.results.slice(0,10);
                             return query.callback(data);
                         }
                     }

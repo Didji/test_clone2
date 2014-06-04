@@ -2,13 +2,6 @@ angular.module('smartgeomobile').controller('layersController', function ($scope
 
     'use strict';
 
-    // $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
-    //     type: 'cover'
-    // });
-
-    // Initialisation du scope.
-
-
     function checkGroup(g) {
         var stat = false,
             lays = g.layers;

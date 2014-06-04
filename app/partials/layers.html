@@ -9,7 +9,7 @@
                         <input
                                 type="checkbox"
                                 ng-model="group.status"
-                                ng-click="updateGroups(group.label)"></input>
+                                ng-change="updateGroups(group.label)"></input>
                         {{group.label}}
                     </label>
                 </h4>
@@ -21,7 +21,7 @@
                             <input
                                     type="checkbox"
                                     ng-model="layers[layer.okey].status"
-                                    ng-click="refreshView()"></input>
+                                    ng-change="refreshView()"></input>
                             <img ng-if= 'site.symbology[layer.okey+"0"]'
                                 ng-src='{{site.symbology[layer.okey+"0"].style.symbol.icon}}' alt="" />
                             {{layer.label}}

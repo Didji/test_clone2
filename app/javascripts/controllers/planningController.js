@@ -396,7 +396,7 @@ angular.module('smartgeomobile').controller('planningController', function ($sco
      * </ul>
      */
     $scope.updateCount = function () {
-        $scope.dayToDisplay = (new Date($scope.dayToDisplay).getTime());
+        // $scope.dayToDisplay = (new Date($scope.dayToDisplay).getTime());
         $scope.beforeToday = $scope.afterToday = 0;
         for (var i in $rootScope.missions) {
             var mission = $rootScope.missions[i],

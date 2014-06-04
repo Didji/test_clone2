@@ -29,10 +29,10 @@ angular.module('smartgeomobile').controller('mapController', function ($scope, $
 
 
 
-    G3ME.lastLeafletMapExtentTimeout = 0 ;
+    Smartgeo.lastLeafletMapExtentTimeout = 0 ;
     G3ME.map.on('moveend', function (e) {
-        clearTimeout(G3ME.lastLeafletMapExtentTimeout);
-        G3ME.lastLeafletMapExtentTimeout = setTimeout(function(){
+        clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
+        Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function(){
             var extent = G3ME.map.getBounds();
             if (extent._northEast.lat !== extent._southWest.lat ||
                 extent._northEast.lng !== extent._southWest.lng) {
