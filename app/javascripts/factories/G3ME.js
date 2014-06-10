@@ -31,11 +31,13 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.DEG_TO_RAD = Math.PI / 180;
             this.minDistanceToALabel = 15;
             this.map = new L.map(this.mapDiv, {
-                // attributionControl: false,
+                attributionControl: false,
+                // attributionControl: true,
                 zoomControl: false,
                 zoomAnimation: true,
-                inertia:false ,
-                maxZoom: 19, //G3ME._MAX_ZOOM,
+                inertia: navigator.userAgent.match(/Android/i) ? false : true ,
+                maxZoom: G3ME._MAX_ZOOM,
+                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 attribution: ''
             }).addControl(L.control.zoom({
@@ -72,7 +74,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             G3ME.invalidateMapSize();
 
-            this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
+            // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
             if (!this.tileUrl) {
                 this.tileUrl = Smartgeo.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
@@ -86,14 +88,16 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 BackgroundTile = L.TileLayer;
             }
             this.BackgroundTile = new BackgroundTile(this.tileUrl, {
-                maxZoom: 19, //G3ME._MAX_ZOOM,
+                maxZoom: G3ME._MAX_ZOOM,
+                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
-                maxNativeZoom: 19,
-                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
+                // maxNativeZoom: 19,
+                // attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
             }).addTo(this.map);
 
             this.canvasTile = new L.TileLayer.Canvas({
-                maxZoom: 19, //G3ME._MAX_ZOOM,
+                maxZoom: G3ME._MAX_ZOOM,
+                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 async : true,
                 updateWhenIdle: true
@@ -414,7 +418,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
 
                 asset.angle    = 0 ;
-                asset.maplabel = '('+asset.fields[window.currentSite.metamodel[asset.okey].ukey]+')';
+                asset.maplabel = '('+asset.fields[window.site.metamodel[asset.okey].ukey]+')';
 
                 var geom = {};
                 if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){

@@ -82,7 +82,7 @@ public class GimapMobileMainActivity extends Activity {
 
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {
-        "--allow-file-access-from-files", "--disable-web-security", "--no-sandbox", "--enable-accelerated-2d-canvas"};
+        "--allow-file-access-from-files", "--disable-web-security", "--no-sandbox"};
 
     private static final String TAG = "GimapMobile";
 

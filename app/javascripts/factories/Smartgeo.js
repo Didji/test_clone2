@@ -342,6 +342,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 } else {
                     Smartgeo.locationWatchIdentifier = navigator.geolocation.watchPosition(function(position){
                         Smartgeo.positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
+                    }, function(){}, {
+                        enableHighAccuracy: false,
+                        maximumAge: 0
                     });
                 }
             } else if (this.positionListerners.indexOf(listener) !== -1){
@@ -406,7 +409,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         findGeometryByGuids: function (site, guids, callback, zones, partial_response) {
-
             if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
                 return Smartgeo.findGeometryByGuids_big(site, guids, callback);
             }
@@ -732,9 +734,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         selectSiteRemotely: function (site, success, error) {
 
-            var EXTERNAL_TILEURL = Smartgeo.get_('sites')[site].EXTERNAL_TILEURL ;
-
-            if(window.SmartgeoChromium && (!EXTERNAL_TILEURL || ( EXTERNAL_TILEURL && Smartgeo.get('url').indexOf(EXTERNAL_TILEURL) !== -1))) {
+            if(window.SmartgeoChromium && !Smartgeo.get_('sites')[site].EXTERNAL_TILEURL) {
                 var user = Smartgeo.get('user') ;
                 ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
                 SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
@@ -804,6 +804,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             });
         },
         clearPersistence: function () {
+            clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             Smartgeo.unset('lastLeafletMapExtent');
             Smartgeo.unset('persitence.menu.open');
             Smartgeo.unset('persitence.menu.open.level');

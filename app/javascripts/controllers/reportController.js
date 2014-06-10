@@ -93,13 +93,6 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         }
     };
 
-    $scope.bidouille = function(event) {
-        document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).closest('label')[0].offsetTop - 7;
-        if (window.screen.height <= 640) {
-            document.querySelector('.reportForm').style.paddingBottom = "280px";
-        }
-    };
-
     $scope.loadAssets = function() {
         Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets) {
             $scope.assets = assets;
@@ -194,10 +187,15 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                 if ($scope['report_fields[$' + field.id + ']']) {
                     def = $scope['report_fields[$' + field.id + ']'];
                 }
-                if (!def) {
+
+                if(field.type === 'T' && !def){
+                    var d = new Date();
+                    d.setHours( 0 );
+                    d.setMinutes( 0 );
+                    fields[field.id] = d;
+                } else if (!def) {
                     continue;
-                }
-                if ('string' === typeof def) {
+                } else if ('string' === typeof def) {
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
                         def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
@@ -246,21 +244,21 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
 
             cond = ($scope.report.fields[srcId] === act.condition);
             switch (act.type) {
-                case "show":
-                    targetField.visible = cond;
+            case "show":
+                targetField.visible = cond;
 
-                    // Si targetField est une case à cocher, elle a peut-être
-                    // aussi des conséquences. Si une case à cocher devient invisible,
-                    // il faut qu'on la décoche et qu'on applique ses conséquences.
-                    if (cond === false && targetField.type === 'O') {
-                        $scope.report.fields[act.target] = 'N';
-                        $scope.applyConsequences(act.target);
-                    }
+                // Si targetField est une case à cocher, elle a peut-être
+                // aussi des conséquences. Si une case à cocher devient invisible,
+                // il faut qu'on la décoche et qu'on applique ses conséquences.
+                if (cond === false && targetField.type === 'O') {
+                    $scope.report.fields[act.target] = 'N';
+                    $scope.applyConsequences(act.target);
+                }
 
-                    break;
-                case "require":
-                    targetField.required = cond;
-                    break;
+                break;
+            case "require":
+                targetField.required = cond;
+                break;
             }
         }
     };
@@ -285,7 +283,12 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         }
 
         for (i in report.fields) {
+            console.log("need to set", report.fields[i] ,"to", report.fields[i] && report.fields[i].id);
+            if( report.fields[i] instanceof Date ){
+                report.fields[i] = report.fields[i].getHours() + ":" + report.fields[i].getMinutes()
+            }
             if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+                console.log("set", report.fields[i] ,"to", report.fields[i].id);
                 report.fields[i] = report.fields[i].id;
             }
         }
@@ -429,6 +432,13 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         $scope.report.ged.splice($index, 1);
     };
 
+    $scope.bidouille = function(event) {
+        document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).siblings('label')[0].offsetTop - 7;
+        if (window.screen.height <= 640) {
+            document.querySelector('.reportForm').style.paddingBottom = "280px";
+        }
+    };
+
     function getBase64Image(src) {
         var img = document.createElement("img");
         img.src = src;
@@ -441,11 +451,18 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         return dataURL;
     }
 
-    var fetchGroups = function(queryParams) {
-        return $http.post("http://backend.com/search/", queryParams.data).then(queryParams.success);
+    var sortFunction = function(a, b){
+        if(a.text < b.text){
+            return -1;
+        } else if(a.text > b.text) {
+            return 1;
+        } else {
+            return 0;
+        }
     };
 
     $scope.groupSelectOptions = {
+        allowClear:true,
         minimumInputLength: 2,
         query: function (query) {
             for (var j = 0; j < $rootScope.site.activities._byId[$scope.report.activity.id].tabs.length; j++) {
@@ -459,15 +476,8 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                                     data.results.push({id: field.options[k].value , text: field.options[k].label});
                                 }
                             }
-                            data.results.sort(function(a, b){
-                                if(a.text < b.text){
-                                    return -1;
-                                } else if(a.text > b.text) {
-                                    return 1;
-                                } else {
-                                    return 0;
-                                }
-                            });
+                            data.results.push({id: null , text: ""});
+                            data.results.sort(sortFunction);
                             return query.callback(data);
                         }
                     }

@@ -47,6 +47,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                         } else {
                             model = select2_data;
                         }
+                        // console.log(model);
                         return model;
                     };
 
@@ -149,7 +150,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                                 }
                                 scope.$apply(function () {
                                     controller.$setViewValue(
-                                        convertToAngularModel(elm.select2('data')));
+                                        convertToAngularModel(elm.select2('data').id));
                                 });
                             });
 

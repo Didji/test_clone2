@@ -295,7 +295,7 @@ img.leaflet-tile{
     margin: 0 5%;
 }
 
-.control-label .select2-container{
+.panel-body .select2-container{
      width: 100%;
      margin: 0;
  }
@@ -508,6 +508,12 @@ fieldset[disabled] .btn-primary.active {
     left: 0;
     padding: 15px;
     overflow: auto;
+}
+
+
+
+.reportForm .glyphicon-chevron-up, .reportForm .glyphicon-chevron-down {
+    color: #fd9122;
 }
 
 .reportForm h3 {
