@@ -447,7 +447,7 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         canvas.height = img.height;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");
+        var dataURL = canvas.toDataURL("image/jpeg", 50);
         return dataURL;
     }
 
