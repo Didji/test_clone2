@@ -1,193 +1,122 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, AssetFactory, G3ME) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "Report", "$filter", function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, Report, $filter) {
 
     'use strict';
 
-    $scope.reports = [];
-    $scope.census  = [];
+    var synchronizationCheckTimeout             = 1000 * 60 * 10,
+        reportsSynchronizationCheckTimeoutId    = false,
+        assetsSynchronizationCheckTimeoutId     = false,
+        synchronizationTimeout                  = 1000 * 60,
+        reportsSynchronizationTimeoutId         = false,
+        assetsSynchronizationTimeoutId          = false;
 
     $scope.initialize = function () {
-        $rootScope.site.activities._byId = {};
-        for (var i = 0; i < $rootScope.site.activities.length; i++) {
-            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
-        }
 
-        $rootScope.$on("DEVICE_IS_ONLINE", function () {
-            $scope.syncAll();
-        });
+        reportsSynchronizationCheckTimeoutId = setInterval(Report.checkSynchronizedReports,synchronizationCheckTimeout);
 
-        $scope.updateReportList();
+        Report.getAll(function (reports) {
+            $rootScope.reports          = reports || [];
+            $rootScope.reports._byUUID  = {};
 
-        Smartgeo.registerInterval("UPDATE_SYNCCENTER", function () {
-            $scope.updateReportList();
-            $scope.syncAll();
-        }, 60000);
-
-    };
-
-    $rootScope.syncCenterUpdateReportList = $scope.updateReportList = function () {
-        Smartgeo.get_('reports', function (reports) {
-            reports = reports || [];
-            $scope.reports = [];
             for (var i = 0; i < reports.length; i++) {
-                $scope.reports.push(reports[i]);
+                var report = $rootScope.reports[i] ;
+                $rootScope.reports._byUUID[report.uuid] = report ;
+                if(report.synced && !report.hide){
+                   $scope.hideReport(report);
+                }
             }
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
+
+            $scope.synchronizeReports();
+            Report.checkSynchronizedReports();
         });
-        Smartgeo.get_('census', function (census) {
-            census = census || [];
-            var uuids = {} ;
-            $scope.census = [];
-            for (var i = 0; i < census.length; i++) {
-                $scope.census.push(census[i]);
-            }
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
+
+        // TODO: handle census assets (@gulian)
+
     };
 
-    $scope.syncAll = function () {
-        for (var i = 0; i < $scope.reports.length; i++) {
-            $scope.sync($scope.reports[i]);
-        }
-        for (i = 0; i < $scope.census.length; i++) {
-            $scope.syncCensus($scope.census[i]);
-        }
-    };
-
-    $scope.eraseAllSynced = function () {
-        alertify.confirm("Êtes vous sûr de vouloir vider l'historique de synchronisation ?", function (yes) {
-            if (yes) {
-                Smartgeo.get_('reports', function (reports) {
-                    reports = reports || [];
-                    $scope.reports = [];
-                    for (var i = 0; i < reports.length; i++) {
-                        if(!reports[i].synced){
-                            $scope.reports.push(reports[i]);
-                        }
-                    }
-                    Smartgeo.set_('reports', $scope.reports, function () {
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                        if (!$scope.$$phase) {
-                            $scope.$apply();
-                        }
-                    });
-                });
-                Smartgeo.get_('census', function (census) {
-                    census = census || [];
-                    var uuids = {} ;
-                    $scope.census = [];
-                    for (var i = 0; i < census.length; i++) {
-                        if(!census[i].synced){
-                            $scope.census.push(census[i]);
-                        }
-                    }
-                    Smartgeo.set_('census', $scope.census, function () {
-                        $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-                        if (!$scope.$$phase) {
-                            $scope.$apply();
-                        }
-                    });
-
-                });
+    $scope.synchronizeReport  = function (UIreport, callback) {
+        return Report.synchronize(UIreport, function(report){
+            UIreport = report || UIreport ;
+            if(report.synced && !report.hide){
+                $scope.hideReport(report, 0);
             }
+            (callback||function(){})()
         });
     };
 
-    $scope.sync = function (report, force) {
-        if (report.synced && !force) {
-            return false;
+    $scope.synchronizeReports = function (i) {
+
+        if($scope.globalSynchronizationIsInProgress && !i){
+            return false ;
         }
-        report.syncInProgress = true;
-        $http.post(Smartgeo.get('url') + 'gi.maintenance.mobility.report.json', report, {
-            timeout: 55000
-        }).success(function () {
-            if (!report) {
-                return;
+
+        clearTimeout(reportsSynchronizationTimeoutId);
+
+        $scope.globalSynchronizationIsInProgress = true ;
+
+        Report.getAll(function(reports){
+
+            for (i = i || 0  ; i< reports.length; i++) {
+                if(!$rootScope.reports._byUUID[reports[i].uuid].synced){
+                    return $scope.synchronizeReport($rootScope.reports._byUUID[reports[i].uuid], function(){
+                        $scope.synchronizeReports(i+1);
+                    })
+                }
             }
-            report.syncInProgress = false;
-            report.synced = true;
-            Smartgeo.set_('reports', $scope.reports, function () {
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+
+            $scope.$apply(function(){
+                $scope.globalSynchronizationIsInProgress = false ;
             });
-        }).error(function (data, code) {
-            if (!report) {
-                return;
-            }
-            if (Smartgeo.get('online') && code !== 0) {
-                if (data.error) {
-                    alertify.error(data.error.text);
-                } else {
-                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
-                }
-            }
-            report.syncInProgress = false;
+
+            reportsSynchronizationTimeoutId = setTimeout($scope.synchronizeReports, synchronizationTimeout);
         });
+
     };
 
-    $scope.syncCensus = function (object, force) {
-        if (object.synced && !force) {
-            return false;
+    $scope.synchronizeAsset  = function (UIasset, callback) {
+        // TODO: implement function (@gulian)
+    };
+
+    $scope.synchronizeAssets = function (i) {
+        // TODO: implement function (@gulian)
+    };
+
+    $scope.deleteReport = function(report, $index){
+        var text ;
+        try {
+            text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + site.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré." ;
+        } catch(e){
+            text = 'Êtes vous sûr de vouloir supprimer le compte-rendu saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré." ;
         }
-        object.syncInProgress = true;
-        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), object, {
-            timeout: 55000
-        }).success(function (data) {
-            for(var okey in data){
-                for (var i = 0; i < data[okey].length; i++) {
-                    AssetFactory.save(data[okey][i],window.site);
-                }
-            }
-            setTimeout(function() {
-                for (var i in G3ME.map._layers) {
-                    G3ME.map._layers[i].redraw && G3ME.map._layers[i].redraw();
-                }
-            }, 1000);
 
-
-            if (!object) {
-                return;
-            }
-            object.syncInProgress = false;
-            object.synced = true;
-
-            Smartgeo.set_('census', $scope.census, function () {
-                $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-            });
-        }).error(function (data, code) {
-            if (!object) {
-                return;
-            }
-            if (Smartgeo.get('online') && code !== 0) {
-                if (data.error) {
-                    alertify.error(data.error.text);
-                } else {
-                    alertify.error(i18n.get('_SYNC_UNKNOWN_ERROR_'));
-                }
-            }
-            object.syncInProgress = false;
+        alertify.confirm( text, function (yes) {
+            if (!yes) {  return; }
+            $rootScope.reports.splice($index, 1);
+            $scope.$apply();
+            Report.deleteInDatabase(report);
         });
     };
 
-    $scope.__deleteCensus = function (census) {
-        $scope.census.splice($scope.census.indexOf(census), 1);
-        Smartgeo.set_('census', $scope.census, function () {
-            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-            for (var i in G3ME.map._layers) {
-                if(G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url && G3ME.map._layers[i].isTemp){
-                    G3ME.map._layers[i].redraw();
-                }
-            }
-        });
+    $scope.deleteAsset = function(asset, $index){
+        // TODO: implement function (@gulian)
     };
 
-    $scope.__delete = function (report) {
-        $scope.reports.splice($scope.reports.indexOf(report), 1);
-        Smartgeo.set_('reports', $scope.reports, function () {
-            $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
-        });
+    $scope.hideReport = function(report, timeout){
+        $timeout(function() {
+            $rootScope.reports._byUUID[report.uuid].hide = true ;
+            Report.updateInDatabase($rootScope.reports._byUUID[report.uuid]);
+            $scope.$apply();
+        }, timeout || 3000) ;
+    };
+
+    $scope.hideAsset = function(asset){
+        // TODO: implement function (@gulian)
+    };
+
+    $scope.toBeSyncLength = function () {
+        // TODO: handle census assets (@gulian)
+        var reports = $rootScope.reports || [] , size = 0;
+        for (var i = 0; i < reports.length; i++) if (!reports[i].synced)  size++;
+        return size;
     };
 
     $scope.uninstallCurrentSite = function () {
@@ -199,21 +128,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 }
             }
         });
-    };
-
-    $scope.toBeSyncLenght = function () {
-        var len = 0;
-        for (var i = 0; i < $scope.reports.length; i++) {
-            if (!$scope.reports[i].synced) {
-                len++;
-            }
-        }
-        for (i = 0; i < $scope.census.length; i++) {
-            if (!$scope.census[i].synced) {
-                len++;
-            }
-        }
-        return len;
     };
 
 }]);

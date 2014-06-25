@@ -12,7 +12,19 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
 
     $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT;
     $scope.activities = angular.copy($rootScope.site.activities);
-    $scope.report = Report.new();
+
+    $scope.report = {
+                assets: [],
+                fields: {},
+                roFields: {},
+                overrides: {},
+                ged: [],
+                site: $rootScope.site.label,
+                mission: null,
+                activity: null,
+                uuid:Smartgeo.uuid()
+            };
+
     $scope.report.mission = 1 * $routeParams.mission;
     if (!$routeParams.activity && $routeParams.assets) {
         $scope.report.isCall = true;
@@ -312,12 +324,13 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         report.timestamp = new Date().getTime();
         report.mission = 1 * $rootScope.report_mission || report.mission;
 
-        Report.save(report).then(null, null, function() {
-            $scope.sendingReport = false;
-            if (!$scope.comesFromIntent) {
-                endOfReport();
-            }
-        });
+
+        Report.synchronize(report, function(){
+              $scope.sendingReport = false;
+              if (!$scope.comesFromIntent) {
+                  endOfReport();
+              }
+        }, 5000)
 
         if ($scope.comesFromIntent) {
             endOfReport();

@@ -15,12 +15,12 @@ angular.module('smartgeomobile').factory('i18n', function () {
             return this.CACHE ||
                 (this.label[this.OVERRIDE_LANGUAGE] && (this.CACHE = this.OVERRIDE_LANGUAGE)) ||
                 (this.label[this.SELECTED_LANGUAGE] && (this.CACHE = this.SELECTED_LANGUAGE)) ||
-                (this.label[this.SYSTEM_LANGUAGE] && (this.CACHE = this.SYSTEM_LANGUAGE)) ||
+                (this.label[this.SYSTEM_LANGUAGE]   && (this.CACHE = this.SYSTEM_LANGUAGE))   ||
                 (this.label[this.FALLBACK_LANGUAGE] && (this.CACHE = this.FALLBACK_LANGUAGE));
         },
         label: window.smartgeo_i18n_lang,
         get: function (key) {
-            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key],
+            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key.trim()],
                 i = 0,
                 args = [];
             for (var j = 1; j < arguments.length; j++) {

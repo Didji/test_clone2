@@ -1,114 +1,59 @@
 <div ng-controller="synchronizationMenuController" ng-init="initialize()">
     <ul>
-        <li ng-show="toBeSyncLenght() > 0;">
-            <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='syncAll()'>
-                <button class="btn btn-primary">
-                    <span class="icon-refresh"></span>
-                    <i18n>_SYNC_SYNC_EVERYTHING</i18n>
+        <li ng-show="toBeSyncLength() > 0;">
+            <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='synchronizeReports(0);synchronizeAssets(0);'>
+                <button ng-class="{active:globalSynchronizationIsInProgress}" class="btn btn-primary has-spinner btn-block" ng-disabled="globalSynchronizationIsInProgress">
+                    <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+                    <i18n ng-if=" globalSynchronizationIsInProgress">_SYNC_SYNC_IN_PROGRESS</i18n>
+                    <i18n ng-if="!globalSynchronizationIsInProgress">_SYNC_SYNC_EVERYTHING </i18n>
                 </button>
             </h2>
         </li>
 
         <li  style="width: 90%;margin: 0 0 0 5%;">
-            <div class="list-group" style="margin-bottom:0;">
-                <div class="list-group-item" ng-repeat="report in (reports | toBeSynchronized) track by report.uuid " ng-hide="report.hide">
+            <div class="list-group">
+
+                <!-- Reports Section -->
+                <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
                     <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
                     <div class="btn-group pull-right" ng-show="!report.synced">
-                        <button ng-show='!report.syncInProgress' type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
-                            <span class="icon icon-gears"></span> <span  ng-show='!report.syncInProgress' class="caret"></span>
+                        <button ng-show='!report.syncInProgress' type="button" class="btn btn-default  btn-s dropdown-toggle" data-toggle="dropdown"  ng-disabled="globalSynchronizationIsInProgress">
+                            <span ng-show='!report.syncInProgress' class="icon icon-gears"></span> <span  ng-show='!report.syncInProgress' class="caret"></span>
                         </button>
-                        <span ng-show="report.syncInProgress" style="padding: 0px 1px;" us-spinner="{radius:5, width: 2, length: 5, hwaccel:true, color:'orange'}"></span>
+                        <span ng-show='report.syncInProgress' class="label label-warning has-spinner" ng-class="{active:report.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span> Envoi</span>
                         <ul  ng-show='!report.syncInProgress' class="dropdown-menu" role="menu">
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='sync(report)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
-                            </li>
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='__delete(report)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button>
-                            </li>
+                            <li><button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='synchronizeReport(report)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button></li>
+                            <li><button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='deleteReport(report, $index)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button></li>
                         </ul>
                     </div>
                     {{site.activities._byId[report.activity].label}} ({{report.site}})<br/>
                     <small>{{report.timestamp | date:'HH:mm dd/MM'}}</small>
+                    <br/>
+                    <small ng-if=report.error ng-class='{"text-muted":report.syncInProgress, "text-danger":!report.syncInProgress}'>{{report.error}} <a ng-if='!report.syncInProgress' ng-click='synchronizeReport(report)'>Réessayer ?</a></small>
                 </div>
 
-                <div style="padding-bottom: 25px;" class="list-group-item" ng-repeat="object in (census  | toBeSynchronized) track by object.uuid" ng-hide="object.hide">
-                    <span class="label label-success pull-right" ng-show="object.synced">Synchronisé</span>
-                    <div class="btn-group pull-right" ng-show="!object.synced">
-                        <button ng-show='!object.syncInProgress' type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
-                            <span class="icon icon-gears"></span> <span  ng-show='!object.syncInProgress' class="caret"></span>
+                <!-- Census Assets Section -->
+                <div class="list-group-item" ng-repeat="asset in censusAssets track by asset.uuid" ng-hide="asset.hide">
+                    <span class="label label-success pull-right" ng-show="asset.synced">Synchronisé</span>
+                    <div class="btn-group pull-right" ng-show="!asset.synced">
+                        <button ng-show='!asset.syncInProgress' type="button" class="btn btn-default  btn-s dropdown-toggle" data-toggle="dropdown"  ng-disabled="globalSynchronizationIsInProgress">
+                            <span ng-show='!asset.syncInProgress' class="icon icon-gears"></span> <span  ng-show='!asset.syncInProgress' class="caret"></span>
                         </button>
-                        <span ng-show="object.syncInProgress" style="padding: 0px 1px;" us-spinner="{radius:5, width: 2, length: 5, hwaccel:true, color:'orange'}"></span>
-                        <ul  ng-show='!object.syncInProgress' class="dropdown-menu" role="menu">
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='syncCensus(object)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
-                            </li>
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='__deleteCensus(object)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button>
-                            </li>
+                        <span ng-show='asset.syncInProgress' class="label label-warning has-spinner" ng-class="{active:asset.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span> Envoi</span>
+                        <ul  ng-show='!asset.syncInProgress' class="dropdown-menu" role="menu">
+                            <li><button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='synchronizeAsset(asset)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button></li>
+                            <li><button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='deleteAsset(asset, $index)'><span class="icon icon-remove"></span> <i18n>_SYNC_DELETE</i18n></button></li>
                         </ul>
                     </div>
-                    {{object.fields[site.metamodel[object.okey].ukey]}}
+                    <small>{{asset.timestamp | date:'HH:mm dd/MM'}}</small>
+                    <br/>
+                    <small ng-if=asset.error ng-class='{"text-muted":asset.syncInProgress, "text-danger":!asset.syncInProgress}'>{{asset.error}} <a ng-if='!asset.syncInProgress' ng-click='synchronizeAsset(asset)'>Réessayer ?</a></small>
                 </div>
             </div>
         </li>
-        <label style="margin:5%;" ng-click='displaySync = !displaySync'> <i class="fa" ng-class="displaySync ? 'fa-check-circle-o' : 'fa-circle-o' " ></i>  Afficher les comptes-rendus et objets synchronisés</label>
-        <li ng-if="displaySync"  style="width: 90%;margin: 0 0 0 5%;">
-            <div class="list-group" style="margin-bottom:0;">
-                <div class="list-group-item" ng-repeat="report in filteredReport = (reports | synchronized) track by report.uuid " ng-hide="report.hide">
-                    <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
-                            <span class="icon icon-gears"></span> <span  ng-show='!report.syncInProgress' class="caret"></span>
-                        </button>
-                        <span ng-show="report.syncInProgress" style="padding: 0px 1px;" us-spinner="{radius:5, width: 2, length: 5, hwaccel:true, color:'orange'}"></span>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='sync(report, true)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
-                            </li>
-                        </ul>
-                    </div>
-                    {{site.activities._byId[report.activity].label}} ({{report.site}})<br/>
-                    <small>{{report.timestamp | date:'HH:mm dd/MM'}}</small><br/>
-                    <span class="label label-success">Synchronisé</span>
-                </div>
-                <div style="padding-bottom: 25px;" class="list-group-item" ng-repeat="object in filteredCensus = (census | synchronized) track by object.uuid " ng-hide="object.hide">
-                    <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-primary  btn-s dropdown-toggle" data-toggle="dropdown">
-                            <span class="icon icon-gears"></span> <span  ng-show='!object.syncInProgress' class="caret"></span>
-                        </button>
-                        <span ng-show="object.syncInProgress" style="padding: 0px 1px;" us-spinner="{radius:5, width: 2, length: 5, hwaccel:true, color:'orange'}"></span>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <button class="btn-link btn" style="width: 100%;margin: 0;color: #d58512;" ng-click='syncCensus(object, true)'><span class="icon icon-gears"></span> <i18n>_SYNC_SYNC</i18n></button>
-                            </li>
-                        </ul>
-                    </div>
-                    {{object.fields[site.metamodel[object.okey].ukey]}} <br/>
-                    <span class="label label-success">Synchronisé</span>
-                </div>
-            </div>
-            <label ng-if="filteredCensus.length+filteredReport.length == 0"  for="">L'historique de synchronisation est vide.</label>
-            <button ng-if="filteredCensus.length+filteredReport.length > 0" class="btn btn-default" style="width:100%; margin-top:10px" ng-click="eraseAllSynced()">Vider l'historique de synchronisation</button>
-        </li>
 
-
-        <li ng-show="toBeSyncLenght() <= 0;">
-            <a style='padding-left: 1em;font-size:1em;'>
-                <span class="icon-check"></span>
-                <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n>
-            </a>
-        </li>
-        <li>
-            <a style='padding-left: 1em;font-size:1em;' href="#/sites/update/{{site.id}}">
-                <span class="icon-refresh"></span>
-                <i18n>_SYNC_UPDATE</i18n> {{site.label}}
-            </a>
-        </li>
-        <li>
-            <a style='padding-left: 1em;font-size:1em;' ng-click="uninstallCurrentSite()" >
-                <!-- href="#/"> -->
-                <span class="icon-trash"></span>
-                <i18n>_SYNC_UNINSTALL</i18n> {{site.label}}
-            </a>
-        </li>
+        <li ng-show="toBeSyncLenght() <= 0;"> <a style='padding-left: 1em;font-size:1em;'><span class="icon-check"></span><i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></a></li>
+        <li><a style='padding-left: 1em;font-size:1em;' href="#/sites/update/{{site.id}}"><span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{site.label}}</a></li>
+        <li><a style='padding-left: 1em;font-size:1em;' ng-click="uninstallCurrentSite()" > <span class="icon-trash"></span> <i18n>_SYNC_UNINSTALL</i18n> {{site.label}} </a></li>
     </ul>
 </div>

@@ -4,6 +4,13 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
+    if(!$rootScope.site.activities._byId){
+        $rootScope.site.activities._byId = {};
+        for (var i = 0; i < $rootScope.site.activities.length; i++) {
+            $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+        }
+    }
+
     $scope.missionsClusters = {};
     $scope.DISABLE_CLUSTER_AT_ZOOM = 19;
     $scope.MAX_CLUSTER_RADIUS = 50;

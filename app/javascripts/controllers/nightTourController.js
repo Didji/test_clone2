@@ -229,7 +229,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
         };
         applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-        Report.save(report).then(null, null, callback);
+        Report.synchronize(report, callback);
     };
 
 
@@ -252,7 +252,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
         };
         applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-        Report.save(report).then(null, null, callback);
+        Report.synchronize(report, callback);
     };
 
     function applyDefaultValues(report, act) {

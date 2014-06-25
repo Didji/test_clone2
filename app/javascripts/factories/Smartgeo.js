@@ -291,7 +291,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc WebSQL getter
          */
         get_: function (parameter, callback) {
-            if (Smartgeo.parametersCache_[parameter]) {
+            if (Smartgeo.parametersCache_[parameter] && parameter !== "reports") {
                 var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
@@ -309,7 +309,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         set_: function (parameter, value, callback) {
             // Nettoyage "magique" des références cycliques.
-            // Ce qui est magique cassera un jour où le charme rompra.
+            // @fabriceds: Ce qui est magique cassera un jour où le charme rompra.
+            // @gulian: Perso j'y crois pas.
             value = JSON.parse(JSON.stringify(value));
 
             Smartgeo.parametersCache_[parameter] = value;
@@ -826,6 +827,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
         clearPollingRequest: function() {
             $rootScope.STOP_POLLING = true;
+        },
+        sleep: function(millis, callback) {
+            setTimeout(callback, millis);
         },
 
         snapPicture: function(callback) {

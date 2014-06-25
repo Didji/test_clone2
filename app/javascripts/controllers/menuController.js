@@ -93,32 +93,23 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
     };
 
     function updateSyncNumber(event) {
-        var old = $scope.toSyncNumber ;
-        Smartgeo.get_('reports', function (reports) {
 
-            Smartgeo.get_('census', function (census) {
-                var cpt =  0;
-                census  = census  || [];
-                reports = reports || [];
-                for (var i = 0; i < reports.length; i++) {
-                    if (!reports[i].synced) {
-                        cpt++;
-                    }
+        $scope.toSyncNumber = 0;
+
+        if($rootScope.reports && $rootScope.reports._byUUID){
+            for (var uuid in $rootScope.reports._byUUID) {
+                if (!$rootScope.reports._byUUID[uuid].synced) {
+                    $scope.toSyncNumber++;
                 }
-                for (i = 0; i < census.length; i++) {
-                    if (!census[i].synced) {
-                        cpt++;
-                    }
+            }
+        }
+        if($rootScope.tempAssets && $rootScope.tempAssets._byUUID){
+            for (var uuid in $rootScope.tempAssets._byUUID) {
+                if (!$rootScope.tempAssets._byUUID[uuid].synced) {
+                    $scope.toSyncNumber++;
                 }
-                if(cpt !== 1*$scope.toSyncNumber){
-                    $rootScope.syncCenterUpdateReportList();
-                }
-                $scope.toSyncNumber = cpt ;
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            });
-        });
+            }
+        }
     }
 
     $scope.activateConsultation = function (event) {
@@ -148,7 +139,10 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
     }
 
     restorePreviousState();
-    $scope.$on('REPORT_LOCAL_NUMBER_CHANGE', updateSyncNumber);
+
+    $rootScope.$watch('reports', updateSyncNumber);
+
+
     $scope.$on('_MENU_CLOSE_', $scope.close);
 
 }]);
