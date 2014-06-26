@@ -103,9 +103,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 }
             }
         }
-        if($rootScope.tempAssets && $rootScope.tempAssets._byUUID){
-            for (var uuid in $rootScope.tempAssets._byUUID) {
-                if (!$rootScope.tempAssets._byUUID[uuid].synced) {
+        if($rootScope.censusAssets && $rootScope.censusAssets._byUUID){
+            for (var uuid in $rootScope.censusAssets._byUUID) {
+                if (!$rootScope.censusAssets._byUUID[uuid].synced) {
                     $scope.toSyncNumber++;
                 }
             }

@@ -214,6 +214,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     ComplexAsset.prototype.save = function() {
 
         var node = this.__clone(true);
+        node.timestamp = (new Date()).getTime();
         node.__clean();
         node.geometry = this.geometry ;
         var deferred = $q.defer();
@@ -228,6 +229,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
                         G3ME.map._layers[i].redraw();
                     }
                 }
+                $rootScope.refreshSyncCenter();
                 deferred.resolve();
             });
         });
@@ -263,6 +265,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
                             G3ME.map._layers[i].redraw();
                         }
                     }
+                    $rootScope.refreshSyncCenter();
                     deferred.resolve();
                 });
             });

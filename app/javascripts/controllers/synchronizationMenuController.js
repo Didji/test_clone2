@@ -3,15 +3,16 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
     'use strict';
 
     var synchronizationCheckTimeout             = 1000 * 60 * 10,
+        synchronizationTimeout                  = 1000 * 60,
         reportsSynchronizationCheckTimeoutId    = false,
         assetsSynchronizationCheckTimeoutId     = false,
-        synchronizationTimeout                  = 1000 * 60,
         reportsSynchronizationTimeoutId         = false,
         assetsSynchronizationTimeoutId          = false;
 
-    $scope.initialize = function () {
+    reportsSynchronizationCheckTimeoutId = setInterval(Report.checkSynchronizedReports ,synchronizationCheckTimeout);
+    reportsSynchronizationCheckTimeoutId = setInterval( Asset.checkSynchronizedAssets  ,synchronizationCheckTimeout);
 
-        reportsSynchronizationCheckTimeoutId = setInterval(Report.checkSynchronizedReports,synchronizationCheckTimeout);
+    $scope.initialize = function (justRefresh) {
 
         Report.getAll(function (reports) {
             $rootScope.reports          = reports || [];
@@ -24,13 +25,34 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                    $scope.hideReport(report);
                 }
             }
-
-            $scope.synchronizeReports();
-            Report.checkSynchronizedReports();
+            if(!justRefresh){
+                $scope.synchronizeReports();
+                Report.checkSynchronizedReports();
+            }
         });
 
-        // TODO: handle census assets (@gulian)
+         Asset.getAll(function (assets) {
+            $rootScope.censusAssets          = assets || [];
+            $rootScope.censusAssets._byUUID  = {};
 
+            for (var i = 0; i < assets.length; i++) {
+                var asset = $rootScope.censusAssets[i] ;
+                $rootScope.censusAssets._byUUID[asset.uuid] = asset ;
+                if(asset.synced && !asset.hide){
+                   $scope.hideAsset(asset);
+                }
+            }
+            if(!justRefresh){
+                $scope.synchronizeAssets();
+                // Asset.checkSynchronizedAssets();
+            }
+
+        });
+
+    };
+
+    $rootScope.refreshSyncCenter = function(){
+        $scope.initialize(true);
     };
 
     $scope.synchronizeReport  = function (UIreport, callback) {
@@ -43,15 +65,15 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         });
     };
 
-    $scope.synchronizeReports = function (i) {
+    $scope.synchronizeReports = function (i, callback) {
 
-        if($scope.globalSynchronizationIsInProgress && !i){
+        if($scope.globalReportsSynchronizationIsInProgress && !i){
             return false ;
         }
 
         clearTimeout(reportsSynchronizationTimeoutId);
 
-        $scope.globalSynchronizationIsInProgress = true ;
+        $scope.globalReportsSynchronizationIsInProgress = true ;
 
         Report.getAll(function(reports){
 
@@ -64,20 +86,52 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             }
 
             $scope.$apply(function(){
-                $scope.globalSynchronizationIsInProgress = false ;
+                $scope.globalReportsSynchronizationIsInProgress = false ;
             });
 
+            (callback || function(){})();
             reportsSynchronizationTimeoutId = setTimeout($scope.synchronizeReports, synchronizationTimeout);
         });
 
     };
 
     $scope.synchronizeAsset  = function (UIasset, callback) {
-        // TODO: implement function (@gulian)
+        return Asset.synchronize(UIasset, function(asset){
+            UIasset = asset || UIasset ;
+            if(asset.synced && !asset.hide){
+                $scope.hideReport(asset, 0);
+            }
+            (callback||function(){})()
+        });
     };
 
-    $scope.synchronizeAssets = function (i) {
-        // TODO: implement function (@gulian)
+    $scope.synchronizeAssets = function (i, callback) {
+        if($scope.globalAssetsSynchronizationIsInProgress && !i){
+            return false ;
+        }
+
+        clearTimeout(assetsSynchronizationTimeoutId);
+
+        $scope.globalAssetsSynchronizationIsInProgress = true ;
+
+        Asset.getAll(function(assets){
+
+            for (i = i || 0  ; i< assets.length; i++) {
+                if(!$rootScope.censusAssets._byUUID[assets[i].uuid].synced){
+                    return $scope.synchronizeAsset($rootScope.censusAssets._byUUID[assets[i].uuid], function(){
+                        $scope.synchronizeAssets(i+1);
+                    })
+                }
+            }
+
+            $scope.$apply(function(){
+                $scope.globalAssetsSynchronizationIsInProgress = false ;
+            });
+
+            (callback || function(){})();
+            assetsSynchronizationTimeoutId = setTimeout($scope.synchronizeAssets, synchronizationTimeout);
+        });
+
     };
 
     $scope.deleteReport = function(report, $index){
@@ -97,7 +151,14 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
     };
 
     $scope.deleteAsset = function(asset, $index){
-        // TODO: implement function (@gulian)
+        var text = "Êtes vous sûr de vouloir supprimer cet objet ? Cette action est définitive. L'objet ne pourra être récupéré." ;
+
+        alertify.confirm( text, function (yes) {
+            if (!yes) {  return; }
+            $rootScope.censusAssets.splice($index, 1);
+            $scope.$apply();
+            Asset.deleteInDatabase(asset);
+        });
     };
 
     $scope.hideReport = function(report, timeout){
@@ -108,14 +169,18 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         }, timeout || 3000) ;
     };
 
-    $scope.hideAsset = function(asset){
-        // TODO: implement function (@gulian)
+    $scope.hideAsset = function(asset, timeout){
+        $timeout(function() {
+            $rootScope.censusAssets._byUUID[asset.uuid].hide = true ;
+            Asset.updateInDatabase($rootScope.censusAssets._byUUID[asset.uuid]);
+            $scope.$apply();
+        }, timeout || 3000) ;
     };
 
     $scope.toBeSyncLength = function () {
-        // TODO: handle census assets (@gulian)
-        var reports = $rootScope.reports || [] , size = 0;
-        for (var i = 0; i < reports.length; i++) if (!reports[i].synced)  size++;
+        var reports = $rootScope.reports || [] ,censusAssets = $rootScope.censusAssets || [] , size = 0;
+        for (var i = 0; i < reports.length; i++)        if (!reports[i].synced)       size++;
+        for (var i = 0; i < censusAssets.length; i++)   if (!censusAssets[i].synced)  size++;
         return size;
     };
 

@@ -20,7 +20,7 @@ angular.module('smartgeomobile').factory('i18n', function () {
         },
         label: window.smartgeo_i18n_lang,
         get: function (key) {
-            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key.trim()],
+            var s = i18n.label[i18n.lang()] && i18n.label[i18n.lang()][key && key.trim()],
                 i = 0,
                 args = [];
             for (var j = 1; j < arguments.length; j++) {

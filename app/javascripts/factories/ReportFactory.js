@@ -37,7 +37,11 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                 report.synced = true ;
                 report.error  = undefined ;
             }).error(function (data, code) {
-                report.error  = data && data.error && data.error.text ;
+                if(code){
+                    report.error  = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+                } else {
+                    report.error  = "Erreur réseau.";
+                }
             }).finally(function(){
                 Report.m.release();
                 Report.log(report);

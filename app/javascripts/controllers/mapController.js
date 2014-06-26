@@ -4,6 +4,8 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
 
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
+    var LAST_USERS_LOCATION = [];
+
     if(!$rootScope.site.activities._byId){
         $rootScope.site.activities._byId = {};
         for (var i = 0; i < $rootScope.site.activities.length; i++) {
@@ -429,6 +431,11 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
     var POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL;
 
     $scope.$on("ACTIVATE_POSITION", function (){
+        if(LAST_USERS_LOCATION.length){
+            G3ME.map.setView(LAST_USERS_LOCATION,18);
+            G3ME.invalidateMapSize();
+
+        }
         if (Smartgeo.startWatchingPosition(setLocationMarker)) {
             POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
             G3ME.map.addControl(POSITION_CONTROL);
@@ -438,6 +445,8 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
     function stopPosition(event) {
 
         Smartgeo.stopWatchingPosition(setLocationMarker);
+
+        LAST_USERS_LOCATION = [];
 
         if (POSITION_CONTROL && POSITION_CONTROL._map) {
             G3ME.map.removeControl(POSITION_CONTROL);
@@ -456,7 +465,12 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
 
     function setLocationMarker(lng, lat, alt, acc) {
 
-        G3ME.map.panTo([lat, lng], POSITION_MARKER ? G3ME.map.getZoom() : 18 );
+
+        if(!LAST_USERS_LOCATION.length){
+            G3ME.map.panTo([lat, lng]).setZoom(18);
+        }
+
+        LAST_USERS_LOCATION = [lat, lng] ;
 
         if(POSITION_CIRCLE){
             POSITION_CIRCLE.setLatLng([lat, lng]).setRadius(acc);
