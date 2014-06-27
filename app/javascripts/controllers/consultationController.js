@@ -1,6 +1,7 @@
-angular.module('smartgeomobile').controller('consultationController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", function ($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME) {
+angular.module('smartgeomobile').controller('consultationController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME" , "AssetFactory",  function ($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, Asset) {
 
     'use strict';
+
 
     $scope.state = 'closed';
     $scope.loading = false;
@@ -166,6 +167,14 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
         $rootScope.addAssetToMission(asset, mission);
     };
 
+    $scope.getHistory = function(asset){
+        Asset.fetchAssetsHistory(asset, function(reports){
+            asset.reports = reports ;
+        })
+    }
+
+
+
 }]).filter('prettifyField', function () {
 
     'use strict';
@@ -211,6 +220,48 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
                     asset.attributes[fieldsIn[i].key] &&
                     $rootScope.site.lists[fieldsIn[i].options] &&
                     $rootScope.site.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
+                )
+            ) {
+                fieldsOut.push(fieldsIn[i]);
+            }
+        }
+        return fieldsOut;
+    };
+}).filter('reportTabsFilter', function () {
+
+    'use strict';
+
+    return function (tabsIn, report) {
+        var tabsOut = [];
+        for (var i = 0; i < tabsIn.length; i++) {
+            for (var j = 0; j < tabsIn[i].fields.length; j++) {
+                var field = tabsIn[i].fields[j];
+                if (report.fields[field.id]) {
+                    tabsIn[i].nonBlankField = (tabsIn[i].nonBlankField || 0) + 1;
+                }
+            }
+        }
+        for (i = 0; i < tabsIn.length; i++) {
+            if ((tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0)) {
+                tabsOut.push(tabsIn[i]);
+            }
+        }
+        return tabsOut;
+    };
+}).filter('reportFieldsFilter', function ($rootScope) {
+
+    'use strict';
+
+    return function (fieldsIn, report) {
+        var fieldsOut = [];
+        for (var i = 0; i < fieldsIn.length; i++) {
+            if (report.fields[fieldsIn[i].id] ||
+                (
+                    fieldsIn[i].options &&
+                    $rootScope.site.lists &&
+                    report.fields[fieldsIn[i].id] &&
+                    $rootScope.site.lists[fieldsIn[i].options] &&
+                    $rootScope.site.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]]
                 )
             ) {
                 fieldsOut.push(fieldsIn[i]);

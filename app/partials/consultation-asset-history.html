@@ -1,0 +1,27 @@
+<button class="btn btn-block" ng-if="!asset.reports" ng-click="getHistory(asset)">Historique de maintenance</button>
+<!-- <br ng-if="asset.reports"/> -->
+<span ng-repeat='report in asset.reports'>
+  <span style="border-bottom: 3px solid rgb(255, 133, 0);display: block;" ng-click="report.show = !report.show">
+    <h5 style="border-bottom:none;margin-top: 25px;margin-bottom: -8px;">CR {{report.id}} <span class="pull-right icon {{report.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span></h5>
+    <small>{{site.activities._byId[report.activity].label}} - {{report.timestamp | date:'dd/MM/yyyy'}}</small>
+  </span>
+  <span style="display:block; border: 1px solid rgb(255, 133, 0);">
+    <span ng-show="report.show" bindonce ng-repeat='tab in site.activities._byId[report.activity].tabs | reportTabsFilter:report'>
+        <span>
+          <h5 bo-text="tab.label" style="padding-left: 7px;margin-top: 4px;"></h5>
+          <table style="font-size: 0.8em;margin-bottom: 10px;" class="table table-striped">
+              <tbody>
+                  <tr ng-repeat='field in tab.fields  | reportFieldsFilter:report'>
+                      <td bo-text="field.label"></td>
+                      <td bo-text="report.fields[field.id]"></td>
+                      <!-- <td bo-switch on="site.lists[field.options][asset.attributes[field.id]]">
+                          <span bo-switch-when="undefined" bo-text="asset.attributes[field.id] | prettifyField"></span>
+                          <span bo-switch-default bo-text="site.lists[field.options][asset.attributes[field.id]] | prettifyField"></span>
+                      </td> -->
+                  </tr>
+              </tbody>
+          </table>
+        </span>
+    </span>
+  </span>
+</span>

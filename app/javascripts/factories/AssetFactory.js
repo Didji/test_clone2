@@ -394,6 +394,51 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
     /**
      * @method
      * @memberOf Asset
+     */
+    Asset.fetchAssetsHistory = function(asset, callback) {
+        callback([{
+                "id" : 1235459,
+                "assets": 1114562,
+                "fields": {"1":"2014-06-27","2":"0:0","3":"ddd","387":"Pipouyou","388":"Je suis une constante","389":{},"390":"ddd","391":"Y","392":"ddd","397":"3","398":"Y","399":"ddd","400":12,"401":"3:1","404":{},"405":{}},
+                "activity": 15,
+                "timestamp": 1403852654621
+            },{
+                "id" : 1235455,
+                "assets": 1114562,
+                "fields": {"1":"2014-06-27","2":"0:0","3":"ddd","387":"Pipouyou","388":"Je suis une constante","389":{},"390":"ddd","391":"Y","392":"ddd","397":"3","398":"Y","399":"ddd","400":12,"401":"3:1","404":{},"405":{}},
+                "activity": 15,
+                "timestamp": 1303852754621
+            },{
+                "id" : 1235455,
+                "assets": 1114562,
+                "fields": {"1":"2014-06-27","2":"0:0","3":"ddd","387":"Pipouyou","388":"Je suis une constante","389":{},"390":"ddd","391":"Y","392":"ddd","397":"3","398":"Y","399":"ddd","400":12,"401":"3:1","404":{},"405":{}},
+                "activity": 15,
+                "timestamp": 1413852754621
+            },{
+                "id" : 1235455,
+                "assets": 1114562,
+                "fields": {
+                    "1": "2014-06-28",
+                    "2": "0:01",
+                },
+                "activity": 15,
+                "timestamp": 1403352754621
+            },{
+                "id" : 1235455,
+                "assets": 1114562,
+                "fields": {
+                    "1": "2014-06-28",
+                    "2": "0:01",
+                },
+                "activity": 15,
+                "timestamp": 1403852554621
+            }
+        ]);
+    };
+
+    /**
+     * @method
+     * @memberOf Asset
      * @private
      */
     Asset.prototype.__log   = function() {};
