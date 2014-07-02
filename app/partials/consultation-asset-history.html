@@ -1,6 +1,7 @@
 <button class="btn btn-block" ng-if="!asset.reports" ng-click="getHistory(asset)">Historique de maintenance</button>
+<button class="btn btn-link btn-block" ng-if="asset.reports" ng-click="asset.hideHistory = !asset.hideHistory">{{asset.hideHistory? 'Afficher' : 'Cacher'}} l'historique</button>
 <!-- <br ng-if="asset.reports"/> -->
-<span ng-repeat='report in asset.reports'>
+<span ng-repeat='report in asset.reports' ng-if='!asset.hideHistory'>
   <span style="border-bottom: 3px solid rgb(255, 133, 0);display: block;" ng-click="report.show = !report.show">
     <h5 style="border-bottom:none;margin-top: 25px;margin-bottom: -8px;">CR {{report.id}} <span class="pull-right icon {{report.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span></h5>
     <small>{{site.activities._byId[report.activity].label}} - {{report.timestamp | date:'dd/MM/yyyy'}}</small>
