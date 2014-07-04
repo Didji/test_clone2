@@ -60,7 +60,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
                 templateUrl: "partials/update.html"
             }).
             when("/map/:site", {
-                templateUrl: "partials/map.html"
+                templateUrl: "partials/main.html"
             }).
             when("/intent/:controller/?:args", {
                 templateUrl: "partials/intent.html"

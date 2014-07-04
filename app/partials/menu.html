@@ -1,0 +1,146 @@
+<div ng-controller="menuController" id="left_panel">
+    <div id="left_panel_content">
+        <h2 id="left_panel_header">
+            <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img>
+            <span id='smartgeo-version'>{{version}}</span>
+        </h2>
+        <ul>
+            <li ng-show="rights.consultation">
+                <a href="#" ng-click='activateConsultation($event)'>
+                    <span class="icon icon-info-sign"></span>
+                    <i18n>_MENU_CONSULTATION</i18n>
+                </a>
+            </li>
+            <li ng-show="rights.planning">
+                <a href="#">
+                    <span class="icon icon-calendar"></span>
+                    <i18n>_MENU_PLANNING</i18n>
+                </a>
+                <!-- <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/planning.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.search">
+                <a href="#">
+                    <span class="icon icon-search"></span>
+                    <i18n>_MENU_SEARCH</i18n>
+                </a>
+                <!-- <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/search.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.census">
+                <a href="#">
+                    <span class="icon icon-plus"></span>
+                    <i18n>_MENU_CENSUS</i18n>
+                </a>
+               <!--  <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/census.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.census">
+                <a href="#">
+                    <span class="icon icon-plus"></span>
+                    <i18n>_MENU_CENSUS</i18n>
+                </a>
+               <!--  <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/census.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.census">
+                <a href="#">
+                    <span class="icon icon-plus"></span>
+                    <i18n>_MENU_CENSUS</i18n>
+                </a>
+               <!--  <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/census.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.census">
+                <a href="#">
+                    <span class="icon icon-plus"></span>
+                    <i18n>_MENU_CENSUS</i18n>
+                </a>
+               <!--  <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/census.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.myposition">
+                <a href="#" ng-click='activatePosition($event)'>
+                    <span class="icon icon-compass"></span>
+                    <i18n>_MENU_MY_POSITION</i18n>
+                </a>
+            </li>
+            <li ng-show="rights.activelayers">
+                <a href="#">
+                    <span class="icon icon-list-ul"></span>
+                    <i18n>_MENU_ACTIVE_LAYERS</i18n>
+                </a>
+                <!-- <div class="mp-level" >
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/layers.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.synccenter">
+                <a href="#">
+                    <span class="icon icon-refresh"></span>
+                    <i18n>_MENU_SYNC</i18n>
+                    <span ng-if="toSyncNumber" class="badge pull-right">{{toSyncNumber}}</span>
+                </a>
+             <!--    <div class="mp-level">
+                    <a class="mp-back" href="#" ng-click='backToPreviousLevel($event)'><i18n>_MENU_BACK</i18n></a>
+                    <div ng-include="'partials/synchronizationMenu.html'"></div>
+                </div> -->
+            </li>
+            <li ng-show="rights.logout && siteSelectionEnable">
+                <a href="#/sites/">
+                    <span class="icon icon-exchange"></span>
+                    <i18n>_MENU_CHANGE_SITE</i18n>
+                </a>
+            </li>
+            <li ng-show="rights.logout">
+                <a href="#/">
+                    <span class="icon icon-power-off"></span>
+                    <i18n>_MENU_LOGOUT</i18n>
+                </a>
+            </li>
+        </ul>
+        <div id="left_panel_bottom_fixed">
+            <ul>
+                <li>
+                    <a href="#/sites/">
+                        <span class="icon icon-exchange"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/sites/">
+                        <span class="icon icon-exchange"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/sites/">
+                        <span class="icon icon-exchange"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/sites/">
+                        <span class="icon icon-exchange"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="left_panel_toggle_bar">
+        <a id="left_panel_toggle_button">
+            <span class="icon icon-ellipsis-vertical"></span>
+        </a>
+    </div>
+
+</div>

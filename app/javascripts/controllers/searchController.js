@@ -2,10 +2,6 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
     'use strict';
 
-    $rootScope.mlPushMenu = new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
-        type: 'cover'
-    });
-
     $scope.searchIsPerforming = false;
     $scope.select2Options = {
         allowClear: true
@@ -30,20 +26,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         return classie.has(e, classname) ? e : e.parentNode && closest(e.parentNode, classname);
     }
 
-    $scope.backToPreviousLevel = function (event) {
-        event.preventDefault();
-        var level = closest(event.currentTarget, 'mp-level').getAttribute('data-level');
-        if ($scope.mlPushMenu.level <= level) {
-            event.stopPropagation();
-            $scope.mlPushMenu.level = closest(event.currentTarget, 'mp-level').getAttribute('data-level') - 1;
-            if ($scope.mlPushMenu.level === 0) {
-                $scope.mlPushMenu._resetMenu()
-            } else {
-                $scope.mlPushMenu._closeMenu();
-            }
-        }
-        return false;
-    };
+
 
     $scope.search = function (event) {
 
@@ -81,7 +64,6 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-            $scope.mlPushMenu._resetMenu();
         });
     };
 
@@ -153,7 +135,6 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
-            $scope.mlPushMenu._resetMenu();
         });
     };
 
