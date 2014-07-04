@@ -1,6 +1,8 @@
-angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", "$timeout", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", "$timeout" , "$http",  function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout, $http) {
 
     'use strict';
+
+    $scope.siteSelectionEnable = false ;
 
     $rootScope.mlPushMenu = $rootScope.mlPushMenu || new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'), {
         type: 'cover'
@@ -17,6 +19,18 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
     }
 
     window.closest = closest;
+
+    function checkIfMoreThanOneSiteIsAvailable(){
+        $scope.siteSelectionEnable =  (  Smartgeo.get('availableLocalSites')  > 1 ) || (  Smartgeo.get('online') && Smartgeo.get('availableRemoteSites') > 1 );
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    }
+
+    $rootScope.$on('DEVICE_IS_ONLINE',checkIfMoreThanOneSiteIsAvailable);
+    $rootScope.$on('DEVICE_IS_OFFLINE',checkIfMoreThanOneSiteIsAvailable);
+
+    checkIfMoreThanOneSiteIsAvailable();
 
     $rootScope.backToPreviousLevel = $scope.backToPreviousLevel = function (event) {
 

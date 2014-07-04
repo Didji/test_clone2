@@ -68,6 +68,12 @@
                             <div ng-include="'partials/synchronizationMenu.html'"></div>
                         </div>
                     </li>
+                    <li ng-show="rights.logout && siteSelectionEnable">
+                        <a href="#/sites/">
+                            <span class="icon icon-exchange"></span>
+                            <i18n>_MENU_CHANGE_SITE</i18n>
+                        </a>
+                    </li>
                     <li ng-show="rights.logout">
                         <a href="#/">
                             <span class="icon icon-power-off"></span>

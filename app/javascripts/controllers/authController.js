@@ -34,10 +34,16 @@ angular.module('smartgeomobile').controller('authController', ["$scope", "$rootS
      */
     $scope.loginSuccess = function(data, status) {
 
-        var localSites = [] , tmp = Smartgeo.get_('sites'), remoteSites = data.sites ;
+        var localSites = [] , tmp = Smartgeo.get_('sites'), remoteSites = [] ;
 
         for(var site in tmp){
             localSites.push(tmp[site]);
+        }
+
+        for(var site in data.sites){
+            if( !data.sites[site].isAdmin && !data.sites[site].isAdminCarto){
+                remoteSites.push(data.sites[site]);
+            }
         }
 
         if($scope.user.rememberme){
@@ -48,6 +54,14 @@ angular.module('smartgeomobile').controller('authController', ["$scope", "$rootS
         var users = Smartgeo.get('users') || {};
         users[$scope.user.username] = $scope.user;
         Smartgeo.set('users', users);
+
+        if(remoteSites.length){
+            Smartgeo.set('availableRemoteSites', remoteSites.length);
+            Smartgeo.set('online', true);
+        } else {
+            Smartgeo.set('online', false);
+        }
+        Smartgeo.set('availableLocalSites', localSites.length);
 
         if(remoteSites.length === 0 && localSites.length === 1 && localSites[0].installed === true) {
             // Offline avec un site installé

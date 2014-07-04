@@ -59,6 +59,7 @@ window.smartgeo_i18n_lang['en'] = {
     _MENU_SYNC: "Synchronization",
     _MENU_LOGOUT: "Log out",
     _MENU_CENSUS: "Census",
+    _MENU_CHANGE_SITE: "Change area",
 
     _REPORT_REPORT: "Report",
     _REPORT_CANCEL: "Cancel",

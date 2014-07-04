@@ -722,11 +722,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         rustineVeolia: function (sites, success, error) {
             for (var i in sites) {
                 var site = sites[i];
-                if (site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
+                if ($rootScope.site && site && (site.id === $rootScope.site.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
                     var url = (Smartgeo.get('url') || '').replace(/^(https?:\/\/.+)index\.php.*$/, '$1') + site.url;
                     $http.get(url).then(success, error);
                 }
             }
+
         },
 
         getVersion: function () {
@@ -752,11 +753,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 'auto_load_map': true
             });
             $http.post(url).then(function (response) {
-                if (response.data && response.data.sites && response.data.sites.length > 1) {
-                    Smartgeo.rustineVeolia(response.data.sites, success, error);
-                } else {
+                // if (response.data && response.data.sites && response.data.sites.length > 1) {
+                    // Smartgeo.rustineVeolia(response.data.sites, success, error);
+                // } else {
                     (success ||   function () {})();
-                }
+                // }
             }, error || function () {});
         },
         login_o: function (user, success, error) {
