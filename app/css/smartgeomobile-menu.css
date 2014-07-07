@@ -152,3 +152,11 @@
     margin-bottom: 10px
 }
 /** Fin de Recherche **/
+
+/** Couches actives **/
+#left_panel_layers {
+    padding: 5%;
+}
+#left_panel_layers label {
+    padding: 0;
+}
