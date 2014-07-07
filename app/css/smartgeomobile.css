@@ -227,6 +227,10 @@ img.leaflet-tile{
 
 }
 
+#left_panel {
+    height: 100%;
+    position: absolute;
+}
 
 #left_panel_content {
     overflow: auto;
@@ -234,9 +238,9 @@ img.leaflet-tile{
     width: 250px;
     padding: 0;
     margin: 0;
-    position: absolute;
-    bottom: 0;
-    top: 0;
+    position: relative;
+    height: inherit;
+    float: left;
 }
 
 #left_panel_content #left_panel_header {
@@ -260,17 +264,14 @@ img.leaflet-tile{
 
 #left_panel_toggle_bar {
     width: 30px;
-    position: absolute;
+    position: relative;
     height: 100%;
+    float: left;
 }
 
-#left_panel_toggle_bar.openbar {
-    left: 250px;
+#left_panel_toggle_shadow {
+    height: inherit;
     background: linear-gradient( to left, white, rgba(46, 46, 46, 0.35));
-}
-
-#left_panel_toggle_bar.closebar{
-    left: 0px;
 }
 
 #left_panel_toggle_button{
@@ -326,10 +327,10 @@ img.leaflet-tile{
 }
 
 #left_panel_content > ul > li > a > .icon {
-color: #FD9122;
-float: left;
-margin: 3px;
-width: 25px;
+    color: #FD9122;
+    float: left;
+    margin: 3px;
+    width: 25px;
 }
 
 #left_panel_content #left_panel_bottom_fixed > ul {
@@ -344,6 +345,9 @@ width: 25px;
     font-size: 20px;
 }
 
+#left_panel_bottom_fixed > ul > li > a{
+    text-decoration:none;
+}
 
 .select2-container {
     width: 90%;

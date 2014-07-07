@@ -137,10 +137,12 @@
         </div>
     </div>
 
-    <div id="left_panel_toggle_bar" ng-click="display = !display" class="{{display ? 'openbar' : 'closebar'}}">
-        <a id="left_panel_toggle_button">
+    <div id="left_panel_toggle_bar">
+        <div id="left_panel_toggle_shadow" ng-show="display" ng-click="display = !display"></div>
+        <a id="left_panel_toggle_button"  ng-click="display = !display" >
             <span class="icon icon-ellipsis-vertical"></span>
         </a>
+
     </div>
 
 </div>

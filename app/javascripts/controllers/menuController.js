@@ -1,7 +1,6 @@
 angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", "$timeout" , "$http",  function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout, $http) {
 
     'use strict';
-
     $scope.siteSelectionEnable = false ;
 
     $scope.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
