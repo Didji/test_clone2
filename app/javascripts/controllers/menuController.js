@@ -185,7 +185,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Demande la confirmation de déconnexion pour se rendre à la page d'accueil'
          */
         $scope.logout = function() {
-            alertify.confirm("Voulez vous QOUITTER l'application", function(yes) {
+            alertify.confirm(i18n.get('_CONFIRM_DISCONNECT_'), function(yes) {
                 if (!yes) {
                     return;
                 }
@@ -202,7 +202,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Demande la confirmation de déconnexion pour se rendre à la page de sélection de site
          */
         $scope.changeSite = function() {
-            alertify.confirm("Voulez vous QOUITTER l'application ou changer de site", function(yes) {
+            alertify.confirm(i18n.get('_CONFIRM_CHANGE_SITE_'), function(yes) {
                 if (!yes) {
                     return;
                 }

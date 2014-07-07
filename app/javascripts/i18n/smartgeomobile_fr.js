@@ -27,6 +27,8 @@ window.smartgeo_i18n_lang['fr'] = {
     _REGISTER_MUST_CHECK_: "Limite d'utilisation hors ligne atteinte, veuillez vous connecter à Internet.",
     _REGISTER_CAREFUL_:"Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté (%s restante(s))",
     _REGISTER_UPDATE_LICENSE_ :"Vérifier la licence",
+    _CONFIRM_CHANGE_SITE_ : "Voulez-vous vraiment changer de site ?",
+    _CONFIRM_DISCONNECT_ : "Voulez-vous vraiment quitter l'application ?",
 
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
 
