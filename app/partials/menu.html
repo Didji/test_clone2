@@ -1,5 +1,5 @@
 <div ng-controller="menuController" id="left_panel">
-    <div id="left_panel_content">
+    <div id="left_panel_content" ng-show="display">
         <h2 id="left_panel_header">
             <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img>
             <span id='smartgeo-version'>{{version}}</span>
@@ -138,9 +138,11 @@
     </div>
 
     <div id="left_panel_toggle_bar">
-        <a id="left_panel_toggle_button">
+        <div id="left_panel_toggle_shadow" ng-show="display" ng-click="display = !display"></div>
+        <a id="left_panel_toggle_button"  ng-click="display = !display" >
             <span class="icon icon-ellipsis-vertical"></span>
         </a>
+
     </div>
 
 </div>
