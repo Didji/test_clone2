@@ -1,4 +1,4 @@
-/** Menu général **/
+/** Menu gÃ©nÃ©ral **/
 
 #left_panel {
     height: 100%;
@@ -79,7 +79,7 @@
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
-#left_panel_menu_items, #left_panel_content #left_panel_bottom_fixed, #left_panel_census ul {
+#left_panel_menu_items, #left_panel_content #left_panel_bottom_fixed, #left_panel_census ul, #left_panel_synchronization ul {
     padding: 0;
     margin: 0;
     list-style:none;
@@ -91,7 +91,7 @@
     height: calc(100% - 90px);
     position: relative;
 }
-#left_panel_menu_items > div > li, #left_panel_census ul > li {
+#left_panel_menu_items > div > li, #left_panel_census ul > li, #left_panel_synchronization ul li {
     padding: 12px;
     font-size: 1.4em;
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
@@ -150,8 +150,7 @@
          color: #FD9122;
  }
 
-
-/** Fin de Menu général **/
+/** Fin de Menu gÃ©nÃ©ral **/
 
 /** Recherche **/
 #left_panel_search {
@@ -187,3 +186,11 @@
     margin: 0 5%;
 }
 /** Fin de Recensement **/
+
+/** Synchronisation **/
+#left_panel_synchronization ul li > a {
+    text-decoration: none;
+    outline: none;
+    color: #f7f7f7;
+}
+/** Fin de Synchronisation **/

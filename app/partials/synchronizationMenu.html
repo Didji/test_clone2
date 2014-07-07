@@ -1,7 +1,7 @@
-<div ng-controller="synchronizationMenuController" ng-init="initialize()">
+<div id="left_panel_synchronization" ng-controller="synchronizationMenuController" ng-init="initialize()">
     <ul>
         <li ng-show="toBeSyncLength() > 0;">
-            <h2 style='padding-left: 1em;font-size:1em;' href="#" ng-click='synchronizeReports(0);synchronizeAssets(0);'>
+            <h2 style='font-size: 15px;' href="#" ng-click='synchronizeReports(0);synchronizeAssets(0);'>
                 <button ng-class="{active:globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress}" class="btn btn-primary has-spinner btn-block" ng-disabled="globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress">
                     <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
                     <i18n ng-if=" globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress">_SYNC_SYNC_IN_PROGRESS</i18n>
@@ -10,9 +10,8 @@
             </h2>
         </li>
 
-        <li  style="width: 90%;margin: 0 0 0 5%;">
+        <li ng-show="toBeSyncLength() > 0;" style="width: 90%;margin: 0 0 0 5%;">
             <div class="list-group">
-
                 <!-- Reports Section -->
                 <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
                     <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
@@ -35,8 +34,8 @@
             </div>
         </li>
 
-        <li ng-show="toBeSyncLength() <= 0;"> <a style='padding-left: 1em;font-size:1em;margin-top: -20px;'><span class="icon-check"></span> <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></a></li>
-        <li><a style='padding-left: 1em;font-size:1em;' href="#/sites/update/{{site.id}}"><span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{site.label}}</a></li>
-        <li><a style='padding-left: 1em;font-size:1em;' ng-click="uninstallCurrentSite()" > <span class="icon-trash"></span> <i18n>_SYNC_UNINSTALL</i18n> {{site.label}} </a></li>
+        <li ng-show="toBeSyncLength() <= 0;"> <a style='font-size: 15px;margin-top: -20px;'><span class="icon-check"></span> <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></a></li>
+        <li><a style='font-size: 15px;' href="#/sites/update/{{site.id}}"><span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{site.label}}</a></li>
+        <li><a style='font-size: 15px;' ng-click="uninstallCurrentSite()" > <span class="icon-trash"></span> <i18n>_SYNC_UNINSTALL</i18n> {{site.label}} </a></li>
     </ul>
 </div>
