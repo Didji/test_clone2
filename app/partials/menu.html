@@ -3,7 +3,7 @@
         <h2 id="left_panel_header">
             <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img> <span id='smartgeo-version'>{{version}}</span>
         </h2>
-        <ul>
+        <ul id="left_panel_menu_items">
             <div ng-repeat="item in menuItems">
                 <li ng-if="item.displayMenuItem" ng-click='execute(item)' >
                         <span ng-class="item.icon"></span> {{item.label}}
@@ -15,7 +15,6 @@
                 <div ng-if="item.displayItemContent && !item.forceLoadDOM" ng-include="item.template"></div>
             </div>
         </ul>
-
         <ul id="left_panel_bottom_fixed">
              <li ng-repeat="item in bottomMenuItems" ng-if="item.displayMenuItem" ng-click='execute(item)' >
                 <span ng-class="item.icon"></span>

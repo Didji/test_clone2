@@ -75,32 +75,33 @@
     background: #3C3C3C;
     position: fixed;
     width: inherit;
+    height: initial;
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
-#left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed {
+#left_panel_menu_items, #left_panel_content #left_panel_bottom_fixed {
     padding: 0;
     margin: 0;
     list-style:none;
 }
 
-#left_panel_content > ul  {
+#left_panel_menu_items  {
     top: 52px;
     overflow: auto;
     height: calc(100% - 90px);
     position: relative;
 }
-#left_panel_content > ul > div > li {
+#left_panel_menu_items > div > li {
     padding: 12px;
     font-size: 1.4em;
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
 }
 
-#left_panel_content > ul > div > li {
+#left_panel_menu_items > div > li {
     color :white ;
 }
 
-#left_panel_content > ul > div > li > .icon {
+#left_panel_menu_items > div > li > .icon {
     color: #FD9122;
     float: left;
     margin: 3px;
@@ -163,6 +164,11 @@
 
 #left_panel_search_advanced {
     margin-bottom: 10px
+}
+
+#left_panel_search .select2-container {
+    width: 100%;
+    margin: 0;
 }
 /** Fin de Recherche **/
 
