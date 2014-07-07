@@ -1,36 +1,32 @@
 <div ng-controller="menuController" id="left_panel" ng-init='initialize()'>
-    <div id="left_panel_content" ng-show="display">
+    <div id="left_panel_content" ng-if="display">
         <h2 id="left_panel_header">
-            <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img>
-            <span id='smartgeo-version'>{{version}}</span>
+            <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img> <span id='smartgeo-version'>{{version}}</span>
         </h2>
         <ul>
             <div ng-repeat="item in menuItems">
-                <li ng-show="item.displayMenuItem" ng-click='execute(item)' >
-                        <span ng-class="item.icon"></span>
-                        {{item.label}}
+                <li ng-if="item.displayMenuItem" ng-click='execute(item)' >
+                        <span ng-class="item.icon"></span> {{item.label}}
                 </li>
-                <li class='left_panel_back_menu' ng-show="item.displayItemContent" ng-click='home()'>
-                    <span><i class="fa fa-arrow-circle-left"></i> RETOUR</span>
+                <li class='left_panel_back_menu' ng-if="item.displayItemContent" ng-click='home()'>
+                    <span><i class="fa fa-arrow-circle-left"></i> <i18n>_MENU_BACK</i18n></span>
                 </li>
-                <div ng-show="item.displayItemContent" ng-include="item.template"></div>
+                <div ng-if="item.forceLoadDOM" ng-show="item.displayItemContent" ng-include="item.template"></div>
+                <div ng-if="item.displayItemContent && !item.forceLoadDOM" ng-include="item.template"></div>
             </div>
         </ul>
 
-        <div id="left_panel_bottom_fixed">
-                <ul>
-                     <li ng-repeat="item in bottomMenuItems" ng-show="item.displayMenuItem" ng-click='execute(item)' >
-                        <span ng-class="item.icon"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <ul id="left_panel_bottom_fixed">
+             <li ng-repeat="item in bottomMenuItems" ng-if="item.displayMenuItem" ng-click='execute(item)' >
+                <span ng-class="item.icon"></span>
+            </li>
+        </ul>
+    </div>
 
-        <div id="left_panel_toggle_bar">
-            <div id="left_panel_toggle_shadow" ng-show="display" ng-click="display = !display"></div>
-            <a id="left_panel_toggle_button"  ng-click="display = !display" >
-                <span class="icon icon-ellipsis-vertical"></span>
-            </a>
-        </div>
+    <div id="left_panel_toggle_bar">
+        <div id="left_panel_toggle_shadow" ng-if="display" ng-click="display = !display"></div>
+        <a id="left_panel_toggle_button"  ng-click="display = !display" >
+            <span class="icon icon-ellipsis-vertical"></span>
+        </a>
     </div>
 </div>

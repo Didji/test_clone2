@@ -29,26 +29,31 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 label: i18n.get('_MENU_SEARCH'),
                 icon: "icon icon-search",
                 template: 'partials/search.html',
+                forceLoadDOM: false
             }, {
                 id: 'planning',
                 label: i18n.get('_MENU_PLANNING'),
                 icon: "icon icon-calendar",
                 template: 'partials/planning.html',
+                forceLoadDOM: true
             }, {
                 id: 'census',
                 label: i18n.get('_MENU_CENSUS'),
                 icon: "icon icon-plus",
                 template: 'partials/census.html',
+                forceLoadDOM: false
             }, {
                 id: 'activelayers',
                 label: i18n.get('_MENU_ACTIVE_LAYERS'),
                 icon: "icon icon-list-ul",
                 template: 'partials/layers.html',
+                forceLoadDOM: false
             }, {
                 id: 'synccenter',
                 label: i18n.get('_MENU_SYNC'),
                 icon: "icon icon-refresh",
                 template: 'partials/synchronizationMenu.html',
+                forceLoadDOM: true
             }];
 
             $scope.bottomMenuItems = [{

@@ -78,7 +78,7 @@
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
-#left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed > ul {
+#left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed {
     padding: 0;
     margin: 0;
     list-style:none;
@@ -107,11 +107,11 @@
     width: 25px;
 }
 
-#left_panel_content #left_panel_bottom_fixed > ul {
+#left_panel_content #left_panel_bottom_fixed {
     text-align:center;
 }
 
-#left_panel_bottom_fixed > ul > li{
+#left_panel_bottom_fixed > li{
     float: left ;
     width: 25%;
     background: #3C3C3C;
@@ -119,16 +119,20 @@
     font-size: 20px;
 }
 
-#left_panel_bottom_fixed > ul > li > span{
+#left_panel_bottom_fixed > li > span{
     text-decoration:none;
     color: #FD9122;
 }
-#left_panel_bottom_fixed > ul > li:hover{
+#left_panel_bottom_fixed > li:hover{
     text-decoration:none;
     background:#FD9122;
 }
-#left_panel_bottom_fixed > ul > li:hover > span {
+#left_panel_bottom_fixed > li:hover > span {
     color:#3C3C3C;
+}
+
+#left_panel_bottom_fixed > li > span.redicon{
+    color: red;
 }
 
 .left_panel_back_menu > span {
