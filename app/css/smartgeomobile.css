@@ -241,11 +241,12 @@ img.leaflet-tile{
 
 #left_panel_content #left_panel_header {
     width: inherit;
-    background:#3C3C3C;
+    background: #3C3C3C;
     margin: 0;
     padding: 15px 10px;
     border-bottom: 1px solid #FD9122;
     position: fixed;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
 #left_panel_content #smartgeo-version {
@@ -258,11 +259,36 @@ img.leaflet-tile{
 }
 
 #left_panel_toggle_bar {
-    background: red;
     width: 30px;
     position: absolute;
     height: 100%;
+}
+
+#left_panel_toggle_bar.openbar {
     left: 250px;
+    background: linear-gradient( to left, white, rgba(46, 46, 46, 0.35));
+}
+
+#left_panel_toggle_bar.closebar{
+    left: 0px;
+}
+
+#left_panel_toggle_button{
+    display: block;
+    width: 30px;
+    height: 55px;
+    border: 1px solid #858585;
+    border-radius: 0 8px 8px 0;
+    text-decoration: none;
+    font-size: 30px;
+    color: white;
+    background: #3F3F3F;
+    box-shadow: 1px 0 5px 1px rgba(0,0,0,0.10);
+    position: absolute;
+    bottom: 10px;
+    line-height: 55px;
+    padding-left: 10px;
+    border: none;
 }
 
 #left_panel_content #left_panel_header img {
@@ -276,6 +302,7 @@ img.leaflet-tile{
     background: green;
     position: fixed;
     width: inherit;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
 #left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed > ul {
