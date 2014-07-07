@@ -29,7 +29,6 @@ angular.module('smartgeomobile').factory('i18n', function () {
             while (args && s && s.indexOf('%s') !== -1 && i < args.length) {
                 s = s.replace('%s', args[i++] || this.MISSING_ARG_CHAR);
             }
-            console.log(s === undefined && key !== undefined ? this.UNTRANSLATED_CHAR : s);
             return (s === undefined && key !== undefined ? this.UNTRANSLATED_CHAR : s);
         },
         select: function (lang) {
