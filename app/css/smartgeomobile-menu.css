@@ -96,11 +96,11 @@
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
 }
 
-#left_panel_content > ul > div > li > span {
+#left_panel_content > ul > div > li {
     color :white ;
 }
 
-#left_panel_content > ul > div > li > span > .icon {
+#left_panel_content > ul > div > li > .icon {
     color: #FD9122;
     float: left;
     margin: 3px;
@@ -130,11 +130,19 @@
 #left_panel_bottom_fixed > ul > li:hover > span {
     color:#3C3C3C;
 }
+
 .left_panel_back_menu > span {
     text-transform: uppercase;
     font-weight: 700;
     font-size: 15px;
     padding: 1em;
+}
+
+.left_panel_back_menu {
+    background-color:#3C3C3C;
+}
+.left_panel_back_menu i{
+        color: #FD9122;
 }
 
 /** Fin de Menu général **/
@@ -151,4 +159,10 @@
 #left_panel_search_advanced {
     margin-bottom: 10px
 }
+
+#left_panel_search .select2-container {
+    width: 100%;
+    margin: 0;
+}
+
 /** Fin de Recherche **/

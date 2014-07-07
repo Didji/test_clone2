@@ -33,7 +33,7 @@
                                             <tbody>
                                                 <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
                                                     <td bo-text="field.label"></td>
-                                                    <td bo-switch on="site.lists[field.options][asset.attributes[field.key]]">
+                                                    <td bo-switch="site.lists[field.options][asset.attributes[field.key]]">
                                                         <span bo-switch-when="undefined" bo-text="asset.attributes[field.key] | prettifyField"></span>
                                                         <span bo-switch-default bo-text="site.lists[field.options][asset.attributes[field.key]] | prettifyField"></span>
                                                     </td>

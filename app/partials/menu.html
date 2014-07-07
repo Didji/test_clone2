@@ -6,14 +6,12 @@
         </h2>
         <ul>
             <div ng-repeat="item in menuItems">
-                <li ng-show="item.displayMenuItem">
-                    <span ng-click='execute(item)' >
+                <li ng-show="item.displayMenuItem" ng-click='execute(item)' >
                         <span ng-class="item.icon"></span>
                         {{item.label}}
-                    </span>
                 </li>
-                <li class='left_panel_back_menu' ng-show="item.displayItemContent" >
-                    <span ng-click='home()'>RETOUR</span>
+                <li class='left_panel_back_menu' ng-show="item.displayItemContent" ng-click='home()'>
+                    <span><i class="fa fa-arrow-circle-left"></i> RETOUR</span>
                 </li>
                 <div ng-show="item.displayItemContent" ng-include="item.template"></div>
             </div>
@@ -21,10 +19,8 @@
 
         <div id="left_panel_bottom_fixed">
                 <ul>
-                     <li ng-repeat="item in bottomMenuItems" ng-show="item.displayMenuItem">
-                        <span ng-click='execute(item)' >
-                            <span ng-class="item.icon"></span>
-                        </span>
+                     <li ng-repeat="item in bottomMenuItems" ng-show="item.displayMenuItem" ng-click='execute(item)' >
+                        <span ng-class="item.icon"></span>
                     </li>
                 </ul>
             </div>

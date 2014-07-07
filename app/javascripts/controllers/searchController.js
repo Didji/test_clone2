@@ -74,11 +74,10 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
     $scope.resetCriteria = function () {
         $scope.selectedFamily = null;
-        console.log($scope.selectedCriteria);
-//        $scope.selectedCriteria.select2("val", "");
-//        $('[ng-model=selectedCriteria]').select2("val", "");
-        $scope.selectedCriteria = null;
+        $scope.selectedCriteria = [];
         $scope.selectedCriteriaChangeHandler();
+       $('[ng-model=selectedCriteria]').select2("val", "");
+
     };
 
     $scope.selectedCriteriaChangeHandler = function () {
@@ -90,8 +89,9 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         }
         $scope.selectedCriteriaValues = newSelectedCriteriaValues;
         if (!$scope.$$phase) {
-            $scope.$$apply();
+            $scope.$apply();
         }
+        console.log($scope);
     };
 
     $scope.advancedSearch = function (event) {
