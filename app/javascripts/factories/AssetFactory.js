@@ -145,6 +145,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
         Smartgeo.get_('census', function(assets){
             Asset.m.release();
+            assets = assets || [];
             var asset;
             for (var i = 0; i < assets.length; i++) {
                 if(assets[i].uuid !== uuid){
