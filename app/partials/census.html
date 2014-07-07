@@ -1,4 +1,4 @@
-<div ng-controller="censusController">
+<div id="left_panel_census" ng-controller="censusController">
 
     <div  ng-if='okey' style="margin-left:-15px;">
         <census ui-if='okey' okey='okey' site='site' onsave='cancel()'  oncancel='cancel()' classindex='classindex'></census>
@@ -8,9 +8,9 @@
 
         <div style="margin:10px" class="panel panel-warning">
             <div class="panel-heading">
-                <i class="fa fa-info-circle"> </i> Recensement
+                <i class="fa fa-info-circle"> </i><i18n>_CENSUS_INFORMATION_</i18n>
             </div>
-            <div class="panel-body">Veuillez sélectionner l'objet à recenser</div>
+            <div class="panel-body"><i18n>_CENSUS_CHOOSE_OBJECT_</i18n></div>
         </div>
 
         <li ng-repeat="(modelOkey, model) in site.metamodel">
