@@ -12,7 +12,7 @@
                         {{item.label}}
                     </span>
                 </li>
-                <li ng-show="item.displayItemContent" >
+                <li class='left_panel_back_menu' ng-show="item.displayItemContent" >
                     <span ng-click='home()'>RETOUR</span>
                 </li>
                 <div ng-show="item.displayItemContent" ng-include="item.template"></div>

@@ -26,8 +26,12 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         return classie.has(e, classname) ? e : e.parentNode && closest(e.parentNode, classname);
     }
 
-
-
+    $scope.sendCriteria = function (event) {
+        if ($scope.advancedSearchDisplay) {
+            return $scope.advancedSearch(event);
+        }
+        return $scope.search(event);
+    };
     $scope.search = function (event) {
 
         event.preventDefault();
@@ -70,7 +74,11 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
     $scope.resetCriteria = function () {
         $scope.selectedFamily = null;
+        console.log($scope.selectedCriteria);
+//        $scope.selectedCriteria.select2("val", "");
+//        $('[ng-model=selectedCriteria]').select2("val", "");
         $scope.selectedCriteria = null;
+        $scope.selectedCriteriaChangeHandler();
     };
 
     $scope.selectedCriteriaChangeHandler = function () {
@@ -137,5 +145,4 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
         });
     };
-
 }]);
