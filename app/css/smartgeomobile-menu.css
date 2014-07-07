@@ -78,19 +78,19 @@
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
 }
 
-#left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed {
+#left_panel_content > ul, #left_panel_content #left_panel_bottom_fixed, #left_panel_census ul {
     padding: 0;
     margin: 0;
     list-style:none;
 }
 
-#left_panel_content > ul  {
+#left_panel_content > ul {
     top: 52px;
     overflow: auto;
     height: calc(100% - 90px);
     position: relative;
 }
-#left_panel_content > ul > div > li {
+#left_panel_content > ul > div > li, #left_panel_census ul > li {
     padding: 12px;
     font-size: 1.4em;
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
@@ -173,3 +173,11 @@
 #left_panel_layers label {
     padding: 0;
 }
+/** Fin de Couches actives **/
+
+/** Recensement **/
+#left_panel_census label {
+    color: white;
+    margin: 0 5%;
+}
+/** Fin de Recensement **/

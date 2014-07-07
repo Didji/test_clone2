@@ -12,18 +12,18 @@
             </div>
             <div class="panel-body"><i18n>_CENSUS_CHOOSE_OBJECT_</i18n></div>
         </div>
-
-        <li ng-repeat="(modelOkey, model) in site.metamodel">
-            <a ng-click='startCensus(modelOkey)' ng-if="model.is_census">
-                <img ng-if= 'site.symbology[modelOkey+classindex]'
-                    ng-src='{{site.symbology[modelOkey+classindex].style.symbol.icon}}' alt="" />
-                <img ng-if='!site.symbology[modelOkey+classindex]'
-                    ng-src='{{site.symbology[site.dependancies[modelOkey]+classindex].style.symbol.icon}}' alt="" />
-                <img ng-if='!site.symbology[site.dependancies[modelOkey]+classindex]'
-                    ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+classindex]]+classindex].style.symbol.icon}}' alt="" />
-                {{model.label}}
-            </a>
-        </li>
+        <ul>
+            <li ng-repeat="(modelOkey, model) in site.metamodel" ng-if="model.is_census">
+                <a ng-click='startCensus(modelOkey)'>
+                    <img ng-if= 'site.symbology[modelOkey+classindex]'
+                        ng-src='{{site.symbology[modelOkey+classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!site.symbology[modelOkey+classindex]'
+                        ng-src='{{site.symbology[site.dependancies[modelOkey]+classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!site.symbology[site.dependancies[modelOkey]+classindex]'
+                        ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+classindex]]+classindex].style.symbol.icon}}' alt="" />
+                    <label>{{model.label}}</label>
+                </a>
+            </li>
+        </ul>
     </div>
-
 </div>
