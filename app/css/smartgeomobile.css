@@ -233,7 +233,6 @@ img.leaflet-tile{
 }
 
 #left_panel_content {
-    overflow: auto;
     background: #525252;
     width: 250px;
     padding: 0;
@@ -313,7 +312,10 @@ img.leaflet-tile{
 }
 
 #left_panel_content > ul  {
-   padding-top: 52px;
+    top: 52px;
+    overflow: auto;
+    height: calc(100% - 90px);
+    position: relative;
 }
 #left_panel_content > ul > div > li {
     padding: 12px;
