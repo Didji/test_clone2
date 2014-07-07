@@ -76,8 +76,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         $scope.selectedFamily = null;
         $scope.selectedCriteria = [];
         $scope.selectedCriteriaChangeHandler();
-       $('[ng-model=selectedCriteria]').select2("val", "");
-
+        $('[ng-model=selectedCriteria]').select2("val", "");
     };
 
     $scope.selectedCriteriaChangeHandler = function () {
