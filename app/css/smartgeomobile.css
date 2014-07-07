@@ -227,6 +227,10 @@ img.leaflet-tile{
 
 }
 
+#left_panel {
+    height: 100%;
+    position: absolute;
+}
 
 #left_panel_content {
     overflow: auto;
@@ -234,9 +238,9 @@ img.leaflet-tile{
     width: 250px;
     padding: 0;
     margin: 0;
-    position: absolute;
-    bottom: 0;
-    top: 0;
+    position: relative;
+    height: inherit;
+    float: left;
 }
 
 #left_panel_content #left_panel_header {
@@ -260,9 +264,9 @@ img.leaflet-tile{
 #left_panel_toggle_bar {
     background: red;
     width: 30px;
-    position: absolute;
+    position: relative;
     height: 100%;
-    left: 250px;
+    float: left;
 }
 
 #left_panel_content #left_panel_header img {
