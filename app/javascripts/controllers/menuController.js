@@ -252,4 +252,5 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
         };
 
     }
+
 ]);

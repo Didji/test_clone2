@@ -96,11 +96,11 @@
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
 }
 
-#left_panel_content > ul > div > li {
+#left_panel_content > ul > div > li > span {
     color :white ;
 }
 
-#left_panel_content > ul > div > li > .icon {
+#left_panel_content > ul > div > li > span > .icon {
     color: #FD9122;
     float: left;
     margin: 3px;
@@ -142,13 +142,6 @@
     padding: 1em;
 }
 
-.left_panel_back_menu {
-    background-color:#3C3C3C;
-}
-.left_panel_back_menu i{
-        color: #FD9122;
-}
-
 /** Fin de Menu général **/
 
 /** Recherche **/
@@ -163,10 +156,12 @@
 #left_panel_search_advanced {
     margin-bottom: 10px
 }
-
-#left_panel_search .select2-container {
-    width: 100%;
-    margin: 0;
-}
-
 /** Fin de Recherche **/
+
+/** Couches actives **/
+#left_panel_layers {
+    padding: 5%;
+}
+#left_panel_layers label {
+    padding: 0;
+}
