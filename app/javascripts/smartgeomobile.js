@@ -92,6 +92,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
             activelayers : true,
             goto : true,
             synccenter : true,
+            siteselection: true,
             _DONT_REALLY_RESET : false
         };
 

@@ -300,7 +300,7 @@ img.leaflet-tile{
 
 #left_panel_bottom_fixed{
     bottom: 0;
-    background: green;
+    background: #3C3C3C;
     position: fixed;
     width: inherit;
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
@@ -315,18 +315,17 @@ img.leaflet-tile{
 #left_panel_content > ul  {
    padding-top: 52px;
 }
-#left_panel_content > ul > li {
+#left_panel_content > ul > div > li {
     padding: 12px;
     font-size: 1.4em;
     border-bottom: 1px solid rgba(0,0,0,0.2) ;
 }
 
-#left_panel_content > ul > li > a {
-    text-decoration: none;
+#left_panel_content > ul > div > li > span {
     color :white ;
 }
 
-#left_panel_content > ul > li > a > .icon {
+#left_panel_content > ul > div > li > span > .icon {
     color: #FD9122;
     float: left;
     margin: 3px;
@@ -345,8 +344,20 @@ img.leaflet-tile{
     font-size: 20px;
 }
 
-#left_panel_bottom_fixed > ul > li > a{
+#left_panel_bottom_fixed > ul > li > span{
     text-decoration:none;
+    color: #FD9122;
+}
+#left_panel_bottom_fixed > ul > li:hover{
+    text-decoration:none;
+    background:#FD9122;
+}
+#left_panel_bottom_fixed > ul > li:hover > span {
+    color:#3C3C3C;
+}
+
+.redicon{
+    color: red;
 }
 
 .select2-container {
