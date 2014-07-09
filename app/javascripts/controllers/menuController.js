@@ -22,6 +22,8 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
             $scope.display = true;
 
+            $scope.homeIsDisplayed = true ;
+
             $scope.siteSelectionEnable = false;
 
             $scope.menuItems = [{
@@ -160,6 +162,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Ouvre un élement du menu
          */
         $scope.showItem = function(item) {
+            $scope.homeIsDisplayed = false ;
             for (var menuItem in $scope.menuItems) {
                 $scope.menuItems[menuItem].displayMenuItem = false;
                 $scope.menuItems[menuItem].displayItemContent = false;
@@ -173,6 +176,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Retourne à la racine du menu
          */
         $scope.home = function() {
+            $scope.homeIsDisplayed = true ;
             for (var menuItem in $scope.menuItems) {
                 $scope.menuItems[menuItem].displayMenuItem = true;
                 $scope.menuItems[menuItem].displayItemContent = false;

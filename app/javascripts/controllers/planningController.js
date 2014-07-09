@@ -1,25 +1,9 @@
-
-function sanitizeDate(date) {
-    if (!date) {
-        return '';
-    }
-    var dateOut = date.slice(3, 5) + '/' + date.slice(0, 2) + '/' + date.slice(6);
-    dateOut = new Date(dateOut);
-    return dateOut.getTime();
-}
-
-var DAY_TO_MS = 86400000;
-
 /**
  * @class       planningController
  * @classdesc   Controlleur du planning
  *
  * @property {object} missions Liste de missions
- * @property {number} _DAY_TO_MS Nombre de millisecondes dans une journée
  * @property {number} _SYNCHRONIZE_INTERVAL Interval entre 2 synchronisations
- * @property {number} dayToDisplay Jour à afficher
- * @property {number} beforeToday Nombre de mission avant dayToDisplay
- * @property {number} afterToday Nombre de mission après dayToDisplay
  * @property {array} assetsCache Cache d'objets à réaliser
  * @property {array} doneAssetsCache Cache d'objets réalisés
  * @property {date} lastUpdate Date de dernière synchronisation
@@ -28,10 +12,6 @@ var DAY_TO_MS = 86400000;
 angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", function ($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n) {
 
     'use strict';
-
-    if(!$rootScope.rights.planning){
-        return ;
-    }
 
     /**
      * @method
@@ -44,29 +24,26 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
      *     <li>Send pending missions related reports (TODO)</li>
      *     <li>Get remote mission(s) ({@link planningController#synchronize $scope.synchronize}) </li>
      *     <li>Set current day : today at midnight or last viewed day ({@link planningController#getMidnightTimestamp $scope.getMidnightTimestamp})</li>
-     *     <li>Initialize counts ({@link planningController#updateCount $scope.updateCount}) </li>
      * </ul>
      */
 
     $scope.initialize = function () {
 
-        if(!$rootScope.rights.planning){
-            return ;
-        }
-
-        $scope._DAY_TO_MS = 86400000;
         $scope._SYNCHRONIZE_INTERVAL = 60000;
-        $scope.dayToDisplay = 0;
-        $scope.beforeToday = 0;
-        $scope.afterToday = 0;
         $scope.assetsCache = [];
-        $rootScope.doneAssetsCache = [];
+        $scope.doneAssetsCache = [];
         $scope.lastUpdate = Smartgeo.get('lastUpdate');
+        $scope.currentNextDay = $scope.getMidnightTimestamp((new Date()).getTime());
+        $rootScope.missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')) || {};
+        $rootScope.$watch('missions', function () {
+            Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions || {});
+        });
+        $scope.nextMissions = {};
 
-        $scope.missions = Smartgeo.get('missions_'+Smartgeo.get('lastUser')) || {};
+        $scope.applyFilterOnMission();
 
         // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
-        setTimeout(function() {
+        $timeout(function() {
             Smartgeo.get_('reports', function (reports) {
                 $scope.removeObsoleteMission(reports);
                 $scope.synchronize();
@@ -76,50 +53,46 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         $scope.$watch('lastUpdate', function () {
             Smartgeo.set('lastUpdate', $scope.lastUpdate);
         });
-        $scope.$watch('missions', function () {
-            Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions || {});
-        });
-        $scope.$watch('dayToDisplay', function () {
-            $scope.updateCount();
-        });
+
         $scope.$on('SYNC_MISSION', function () {
             $scope.synchronize();
         });
-        $scope.dayToDisplay = Smartgeo.get('lastUsedPlanningDate') || $scope.getMidnightTimestamp();
 
         Smartgeo.registerInterval("_SYNCHRONIZE_INTERVAL", function () {
             $scope.synchronize();
         }, $scope._SYNCHRONIZE_INTERVAL);
     };
 
-
     /**
      * @method
      * @memberOf planningController
      * @desc
-     * Go to current day
      */
-    $scope.today = function () {
-        $scope.dayToDisplay = (new Date()).getTime();
-        Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
+    $scope.findNextMissions = function () {
+
+        if($scope.currentNextDay > $scope.maxBeginDate){
+            return ;
+        }
+
+        var nextDayMission = $filter('specificDayMissions')($rootScope.missions,$scope.currentNextDay += 86400000) ;
+
+        if(!nextDayMission.length){
+            return $scope.findNextMissions();
+        }
+
+        $scope.nextMissions[$scope.currentNextDay] =  nextDayMission;
+
     };
 
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} delta Amount of day to move. Negative or positive number.
      * @desc
-     * Move to other day
      */
-    $scope.move = function (delta) {
-        $scope.dayToDisplay = new Date($scope.dayToDisplay).getTime();
-        $scope.dayToDisplay += delta * $scope._DAY_TO_MS;
-        if (Object.keys($filter('todaysMissions')($rootScope.missions, $scope.dayToDisplay)).length +
-            Object.keys($filter('moreThanOneDayButTodaysMissions')($rootScope.missions, $scope.dayToDisplay)).length === 0) {
-            $scope.move(delta);
-        } else {
-            Smartgeo.set('lastUsedPlanningDate', $scope.dayToDisplay);
-        }
+    $scope.applyFilterOnMission = function () {
+        $scope.lateMissionsLength   = Object.keys($filter('lateMissions')($rootScope.missions)).length;
+        $scope.todayMissionsLength  = Object.keys($filter('todayMissions')($rootScope.missions)).length;
+        $scope.doneMissionsLength   = Object.keys($filter('doneMissions')($rootScope.missions)).length;
     };
 
     /**
@@ -155,12 +128,13 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 }
 
                 $rootScope.missions = data.results;
+                $scope.maxBeginDate = 0;
                 for (i in $rootScope.missions) {
                     i *= 1;
                     mission = $rootScope.missions[i];
+                    $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                     if (postAddedAssetsMission[i]) {
                         mission.postAddedAssets = postAddedAssetsMission[i];
-                        // TODO: à tester avec la fonctionnalité côté serveur.
                         for (var j = 0, length = mission.postAddedAssets.assets.length; j < length; j++) {
                             if (mission.done.indexOf(1*mission.postAddedAssets.assets[j]) !== -1) {
                                 mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
@@ -169,17 +143,16 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                             }
                         }
                         mission.assets = mission.assets.concat(mission.postAddedAssets.assets);
-                        // mission.done = mission.done.concat(mission.postAddedAssets.done);
                     }
 
                     newMissionCount += (mission.assets.length && previous.indexOf(i) === -1) ? 1 : 0;
 
                     if (open.indexOf(i) >= 0) {
                         mission.openned = false;
-                        $scope.toggleMission(i, false);
+                        $scope.toggleMission(mission, false);
                         if (done.indexOf(i) >= 0) {
                             mission.displayDone = false;
-                            $scope.showDoneAssets(i);
+                            $scope.showDoneAssets(mission);
                         }
                     }
                     mission.extent = missionsExtents[i];
@@ -197,55 +170,32 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         SmartgeoChromium.vibrate(500);
                     }
                 }
-                $scope.updateCount();
                 $scope.removeDeprecatedTraces();
                 $scope.removeDeprecatedMarkers();
+
                 $scope.lastUpdate = (new Date()).getTime();
+
+                $scope.applyFilterOnMission();
             })
             .error(function (message, code) {
                 if (Smartgeo.get('online') && message !== "" && code !== 0) {
                     alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
                 }
+                $scope.maxBeginDate = 0;
                 for (var i in $rootScope.missions) {
                     var mission = $rootScope.missions[i];
+                    $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                     if (mission.openned && mission.assets.length) {
                         // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
                         mission.openned = false;
-                        $scope.toggleMission(i, false);
+                        $scope.toggleMission(mission, false);
                         if (mission.displayDone) {
                             mission.displayDone = false;
-                            $scope.showDoneAssets(i);
+                            $scope.showDoneAssets(mission);
                         }
                     }
                 }
-            });
-    };
-
-
-    /**
-     * @method
-     * @memberOf planningController
-     * @desc
-     *
-     */
-    $scope.poll = function () {
-        if ($rootScope.STOP_POLLING === true) {
-            return;
-        }
-        Mission.poll()
-            .success(function (data) {
-                try {
-                    JSON.parse(data);
-                    $scope.synchronize();
-                    $scope.poll();
-                } catch (itsnotajson) {
-                    $timeout($scope.poll, 5000);
-                }
-            }).error(function (data, status) {
-                if(status === 403){
-                    Smartgeo.silentLogin();
-                }
-                $timeout($scope.poll, 5000);
+                $scope.applyFilterOnMission();
             });
     };
 
@@ -285,8 +235,8 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
      * @desc
      * @returns {Date} This morning midnight timestamp
      */
-    $scope.getMidnightTimestamp = function () {
-        var n = (new Date());
+    $scope.getMidnightTimestamp = function (n) {
+        n = (new Date(n)) || (new Date());
         n -= (n.getMilliseconds() + n.getSeconds() * 1000 + n.getMinutes() * 60000 + n.getHours() * 3600000);
         return (new Date(n).getTime());
     };
@@ -322,7 +272,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         continue;
                     }
                     mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
-                    // mission.done.push(mission.postAddedAssets.assets[j]);
                     mission.postAddedAssets.assets.splice(index, 1);
                 }
             }
@@ -333,30 +282,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @desc
-     * <ul>
-     *  <li>Format date to the right format, if it's comes from datepicker, it should be not weel formatted</li>
-     *  <li>Process and update number in left and right arrows </li>
-     * </ul>
-     */
-    $scope.updateCount = function () {
-        // $scope.dayToDisplay = (new Date($scope.dayToDisplay).getTime());
-        $scope.beforeToday = $scope.afterToday = 0;
-        for (var i in $rootScope.missions) {
-            var mission = $rootScope.missions[i],
-                f = $filter('customDateFilter');
-            if (!mission.assets.length) {
-                continue;
-            }
-            $scope.beforeToday += f(mission.begin) < ($scope.dayToDisplay - $scope._DAY_TO_MS) ? 1 : 0;
-            $scope.afterToday += f(mission.end) > ($scope.dayToDisplay + $scope._DAY_TO_MS) ? 1 : 0;
-        }
-    };
-
-    /**
-     * @method
-     * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $scope.missions attribute
+     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
      * @param {boolean} locate if true, set view to mission extent
      * @desc
      * Opens mission in planning, fetch list of related assets in database, and put it in cache (if cache does not exist).
@@ -366,8 +292,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
      *  <li>if it's not : displays clusters on map by sending {@link mapController#UNHIGHLIGHT_ASSETS_FOR_MISSION UNHIGHLIGHT\_ASSETS\_FOR\_MISSION} event to the {@link mapController mapController} </li>
      * </ul>
      */
-    $scope.toggleMission = function ($index, locate) {
-        var mission = $rootScope.missions[$index];
+    $scope.toggleMission = function (mission, locate) {
         mission.isLoading = true;
         mission.openned = !mission.openned;
 
@@ -401,7 +326,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
                 }
                 if (mission.displayDone) {
-                    $scope.showDoneAssets($index);
+                    $scope.showDoneAssets(mission);
                 }
                 for (i in $scope.assetsCache[mission.id]) {
                     delete $scope.assetsCache[mission.id][i].xmin;
@@ -416,7 +341,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         } else if (mission.openned && $scope.assetsCache[mission.id] && mission.assets.length) {
             $scope.highlightMission(mission);
             if (mission.displayDone) {
-                $scope.showDoneAssets($index);
+                $scope.showDoneAssets(mission);
             }
             if (mission.activity && $rootScope.site.activities._byId[mission.activity.id].type === "night_tour") {
                 $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
@@ -435,12 +360,11 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $scope.missions attribute
+     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
      * @desc
      * Set map view to the mission's extent. If mission has no extent yet, it set it.
      */
-    $scope.locateMission = function ($index) {
-        var mission = $rootScope.missions[$index];
+    $scope.locateMission = function (mission) {
         if (!mission.extent) {
             mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[mission.id]);
         }
@@ -538,45 +462,43 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $scope.missions attribute
+     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
      * @desc Toggle done assets visibility
      */
-    $scope.toggleDoneAssetsVisibility = function ($index) {
-        var mission = $rootScope.missions[$index];
+    $scope.toggleDoneAssetsVisibility = function (mission) {
         mission.displayDone = !! !mission.displayDone;
-        $scope[(mission.displayDone ? 'show' : 'hide') + 'DoneAssets']($index);
+        $scope[(mission.displayDone ? 'show' : 'hide') + 'DoneAssets'](mission);
     };
 
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $scope.missions attribute
+     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
      * @desc Show done assets
      */
-    $scope.showDoneAssets = function ($index) {
-        var mission = $rootScope.missions[$index];
+    $scope.showDoneAssets = function (mission) {
         mission.isLoading = mission.displayDone = true;
 
-        if ((!$rootScope.doneAssetsCache[mission.id] || ($rootScope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
+        if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
             $scope.stopCacheLoop = true ;
             return Smartgeo.findAssetsByGuids($scope.site, mission.done, function (assets) {
-                if(!$rootScope.doneAssetsCache[mission.id] || !$rootScope.doneAssetsCache[mission.id].length){
-                    $rootScope.doneAssetsCache[mission.id] = assets;
+                if(!$scope.doneAssetsCache[mission.id] || !$scope.doneAssetsCache[mission.id].length){
+                    $scope.doneAssetsCache[mission.id] = assets;
                 } else {
                     for (var i = 0; i < assets.length; i++) {
                         var toBeAdded = true ;
-                        for (var j = 0; j < $rootScope.doneAssetsCache[mission.id].length; j++) {
-                            if($rootScope.doneAssetsCache[mission.id][j].id === assets[i].id){
+                        for (var j = 0; j < $scope.doneAssetsCache[mission.id].length; j++) {
+                            if($scope.doneAssetsCache[mission.id][j].id === assets[i].id){
                                 toBeAdded = false ;
                                 break;
                             }
                         }
                         if(toBeAdded){
-                            $rootScope.doneAssetsCache[mission.id].push(assets[i]);
+                            $scope.doneAssetsCache[mission.id].push(assets[i]);
                         }
                     }
                 }
-                $scope.showDoneAssets($index);
+                $scope.showDoneAssets(mission);
             });
         }
 
@@ -584,7 +506,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             delete $scope.stopCacheLoop ;
         }
 
-        $rootScope.$broadcast('HIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission, $rootScope.doneAssetsCache[mission.id]);
+        $rootScope.$broadcast('HIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission, $scope.doneAssetsCache[mission.id]);
 
         mission.isLoading = false;
 
@@ -596,11 +518,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     /**
      * @method
      * @memberOf planningController
-     * @param {integer} $index index of concerned mission in $scope.missions attribute
+     * @param {integer} $index index of concerned mission in $rootScope.missions attribute
      * @desc hide done assets
      */
-    $scope.hideDoneAssets = function ($index) {
-        var mission = $rootScope.missions[$index];
+    $scope.hideDoneAssets = function (mission) {
         mission.displayDone = false;
         $rootScope.$broadcast('UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission);
     };
@@ -634,8 +555,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             mission.postAddedAssets.assets.push(asset.guid);
         }
 
-        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions);
-
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
 
         Smartgeo.findGeometryByGuids($scope.site, asset.guid, function (assets) {
 
@@ -659,7 +579,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             mission.isLoading = false;
             $scope.$apply();
         });
-
     };
 
     /**
@@ -672,7 +591,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     $scope.removeAssetFromMission = function (asset, mission) {
         mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
         mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $scope.missions);
+        Smartgeo.set('missions_'+Smartgeo.get('lastUser'), $rootScope.missions);
         $scope.highlightMission(mission);
     };
 
@@ -688,153 +607,76 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         });
     };
 
-    /**
-     * @method
-     * @memberOf planningController
-     * @param {Event} event
-     * @desc
-     */
-    $scope.activateConsultation = function (event) {
-        $rootScope.$broadcast("ACTIVATE_CONSULTATION");
-        return false;
-    };
-
-}]) .filter('customDateFilter', function () {
-        return sanitizeDate;
-    }).filter('dateForInput', function () {
-        return function (date) {
-            date = new Date(date);
-            console.log((date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate());
-            return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        };
-    }).filter('todaysMissions', function () {
-        return function (missionsIn, date) {
-            date = new Date(date);
-            var missionsOut = {}, mission, missionbegin, missionend,
-                daybegin = new Date((date.getMonth() + 1) + '/' + date.getDate() + '/' + (date.getYear() + 1900)).getTime(),
-                dayend = daybegin + DAY_TO_MS;
-
-            for (var i in missionsIn) {
-                mission = missionsIn[i];
-                missionbegin = sanitizeDate(mission.begin);
-                missionend = sanitizeDate(mission.end);
-                if (
-                    (mission.assets.length || !mission.activity) && (
-                        /* mission du jour */
-                        (missionbegin >= daybegin && missionend <= dayend) ||
-                        /* mission qui commencent aujourdhui et finissent un autre jour */
-                        (missionbegin >= daybegin && missionbegin <= dayend && missionend >= dayend)
-                    )
-                ) {
-                    missionsOut[mission.id] = mission;
+}]) .filter('todayMissions', function ($filter) {
+        return function (in_) {
+            var out = {}, mission, now = (new Date()).getTime();
+            for (var id in in_) {
+                mission = in_[id];
+                if (    $filter('sanitizeDate')(mission.end)    > now
+                    &&  $filter('sanitizeDate')(mission.begin) <= now
+                    &&  mission.assets.length) {
+                    out[id] = mission;
                 }
             }
-            return missionsOut;
+            return out;
         };
-    }).filter('moreThanOneDayButTodaysMissions', function () {
-        return function (missionsIn, date) {
-            date = new Date(date);
-            var missionsOut = {}, mission, missionbegin, missionend,
-                daybegin = new Date((date.getMonth() + 1) + '/' + date.getDate() + '/' + (date.getYear() + 1900)).getTime(),
-                dayend = daybegin + DAY_TO_MS;
-
-            for (var i in missionsIn) {
-                mission = missionsIn[i];
-                missionbegin = sanitizeDate(mission.begin);
-                missionend = sanitizeDate(mission.end);
-                if ((mission.assets.length || !mission.activity) && missionbegin < daybegin && missionend > daybegin) {
-                    missionsOut[mission.id] = mission;
+    })
+    .filter('specificDayMissions', function ($filter) {
+        return function (in_, day) {
+            var out = [], mission;
+            day *= 1 ;
+            for (var id in in_) {
+                mission = in_[id];
+                if (   $filter('sanitizeDate')(mission.end  ) > day
+                    && $filter('sanitizeDate')(mission.begin) > day
+                    && $filter('sanitizeDate')(mission.begin) < (day + 86400000)
+                    && mission.assets.length) {
+                    out.push(mission);
                 }
             }
-            return missionsOut;
+            return out;
         };
-    }).filter('todaysMissionsOrMoreThanOneDayButTodaysMissionsButNotLate', function () {
-        return function (missionsIn, date) {
-            date = new Date(date);
-            var missionsOut = {}, mission, missionbegin, missionend,
-                daybegin = new Date((date.getMonth() + 1) + '/' + date.getDate() + '/' + (date.getYear() + 1900)).getTime(),
-                dayend = daybegin + DAY_TO_MS;
-            var now = (new Date()).getTime();
-
-            for (var i in missionsIn) {
-                mission = missionsIn[i];
-                missionbegin = sanitizeDate(mission.begin);
-                missionend = sanitizeDate(mission.end);
-                if (((mission.assets.length || !mission.activity) && missionend > now) &&
-                    (((mission.assets.length || !mission.activity) && missionbegin < daybegin && missionend > daybegin) ||
-                        ((mission.assets.length || !mission.activity) && (
-                            /* mission du jour */
-                            (missionbegin >= daybegin && missionend <= dayend) ||
-                            /* mission qui commencent aujourdhui et finissent un autre jour */
-                            (missionbegin >= daybegin && missionbegin <= dayend && missionend >= dayend))))
-
-                ) {
-                    missionsOut[mission.id] = mission;
-                }
-            }
-            return missionsOut;
-        };
-    }).filter('lateMission', function () {
-        return function (missionsIn, date) {
-            date = new Date(date);
-            var missionsOut = {}, mission, missionbegin, missionend,
-                daybegin = new Date((date.getMonth() + 1) + '/' + date.getDate() + '/' + (date.getYear() + 1900)).getTime(),
-                dayend = daybegin + DAY_TO_MS;
-            var now = (new Date()).getTime();
-            for (var i in missionsIn) {
-                mission = missionsIn[i];
-                missionend = sanitizeDate(mission.end);
-                if ((mission.assets.length || !mission.activity) && missionend < now) {
+    })
+    .filter('lateMissions', function ($filter) {
+        return function (in_) {
+            var out = {}, mission, now = (new Date()).getTime();
+            for (var id in in_) {
+                mission = in_[id];
+                if ($filter('sanitizeDate')(mission.end) < now && mission.assets.length) {
                     mission.isLate = true;
-                    missionsOut[mission.id] = mission;
+                    out[id] = mission;
                 }
             }
-            return missionsOut;
+            return out;
         };
-    }).filter('todaysMissionsButFinished', function () {
-        return function (missionsIn, date) {
-            date = new Date(date);
-            var missionsOut = {}, mission, missionbegin, missionend,
-                daybegin = new Date((date.getMonth() + 1) + '/' + date.getDate() + '/' + (date.getYear() + 1900)).getTime(),
-                dayend = daybegin + DAY_TO_MS;
-            var now = (new Date()).getTime(),
-                j = 0;
-            for (var i in missionsIn) {
-                mission = missionsIn[i];
-                missionbegin = sanitizeDate(mission.begin);
-                missionend = sanitizeDate(mission.end);
-
-                if (
-                    (!(mission.assets.length || !mission.activity)) &&
-                    (
-                        (missionbegin < daybegin && missionend > daybegin) ||
-                        /* mission du jour */
-                        (missionbegin >= daybegin && missionend <= dayend) ||
-                        /* mission qui commencent aujourdhui et finissent un autre jour */
-                        (missionbegin >= daybegin && missionbegin <= dayend && missionend >= dayend)
-                    )
-                ) {
-                    // console.log(mission)
+    })
+    .filter('doneMissions', function ($filter) {
+        return function (in_) {
+            var out = {}, mission, now = (new Date()).getTime();
+            for (var id in in_) {
+                mission = in_[id];
+                if (!mission.assets.length) {
                     mission.isLate = false;
-                    missionsOut[mission.id] = mission;
-                    j++;
+                    out[id] = mission;
                 }
             }
-            // console.log(j);
-            return j > 0 ? missionsOut : [];
+            return out;
         };
-    }).filter('sanitizeDate', function () {
-        return function (dateIn) {
-            return sanitizeDate(dateIn);
-        };
-    }).filter('opennedMissions', function () {
-        return function (missionsIn, asset, site) {
-            var missionsOut = [];
-            for (var i in missionsIn) {
-                if (!missionsIn[i].activity) {
+    })
+    .filter('sanitizeDate', function () {
+        // 01/12/1988 -> 12/01/1988 -> timestamp (14XXXXXXXXXXXX)
+        return function(date) {
+            return date && (new Date(date.slice(3, 5) + '/' + date.slice(0, 2) + '/' + date.slice(6))).getTime() || '';
+        }
+    })
+    .filter('opennedMissions', function () {
+        return function (in_, asset, site) {
+            var out = [];
+            for (var i in in_) {
+                if (!in_[i].activity) {
                     continue;
                 }
-                var missionsOkeys = site.activities._byId[missionsIn[i].activity.id].okeys,
+                var missionsOkeys = site.activities._byId[in_[i].activity.id].okeys,
                     isCompatible = false;
                 for (var j in missionsOkeys) {
                     if (missionsOkeys[j].indexOf(asset.okey) !== -1) {
@@ -842,24 +684,21 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         break;
                     }
                 }
-                if (isCompatible && missionsIn[i].openned) {
-                    missionsOut.push(missionsIn[i]);
+                if (isCompatible && in_[i].openned) {
+                    out.push(in_[i]);
                 }
             }
-            return missionsOut;
+            return out;
         };
-    }).filter('opennedCalls', function () {
-        return function (missionsIn, asset, site) {
-            var missionsOut = [];
-            for (var i in missionsIn) {
-                if (missionsIn[i].activity) {
-                    continue;
-                }
-                if (missionsIn[i].openned) {
-                    missionsOut.push(missionsIn[i]);
+    })
+    .filter('opennedCalls', function () {
+        return function (in_, asset, site) {
+            var out = [];
+            for (var i in in_) {
+                if (!in_[i].activity && in_[i].openned) {
+                    out.push(in_[i]);
                 }
             }
-            return missionsOut;
+            return out;
         };
     });
-

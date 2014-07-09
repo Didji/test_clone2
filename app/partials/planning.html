@@ -1,35 +1,67 @@
-<div ng-controller="planningController" ng-init="initialize();">
-
-
-    <p style="color: rgb(138, 138, 138);font-size: 12px;margin-left: 15px;margin-top: 6px;width: 265px;">
-         <i18n>_PLANNING_REFRESHED_</i18n> {{lastUpdate | timeago}} <button class="btn btn-link"  style="margin:-10px; color:orange" ng-click="synchronize()"><i class="fa fa-refresh" style="margin:0"></i></button></p>
-
-    <div class="btn-group btn-block btn-custom-block" style="margin-left:15px;margin-bottom: 5px;">
-      <button style='min-width: 70px;' type="button" ng-click="move(-1)" ng-disabled="beforeToday <= 0" class="btn btn-default">
-        <span class="icon icon-arrow-left"/>
-        <span class="label label-warning" ng-show="beforeToday > 0">{{beforeToday}}</span>
-      </button>
-      <button type="button" class="btn btn-default" style="padding: 1px;width: 115px;">
-        <span style="margin-right: -43px;">{{dayToDisplay |  date:"dd/MM/yy"}}<i style="position: relative;left: 7px;" class="fa fa-calendar"></i></span>
-        <input id="dayToDisplay" type="date" ng-model='dayToDisplay' ng-change="updateCount();">
-      </button>
-      <button style='min-width: 70px;' type="button" ng-click="move(1)" ng-disabled="afterToday <= 0" class="btn btn-default">
-        <span class="label label-warning" style='margin-right: 3px;' ng-show="afterToday > 0">{{afterToday}}</span>
-        <span class="icon icon-arrow-right" />
-      </button>
-    </div>
-    <div ng-repeat="(key,mission) in (missions | lateMission)">
-      <ng-include src="'partials/mission.html'"/>
-    </div>
-    <div ng-repeat="(key,mission) in (missions | todaysMissionsOrMoreThanOneDayButTodaysMissionsButNotLate:dayToDisplay)">
-      <ng-include src="'partials/mission.html'"/>
-    </div>
-    <p ng-show="( filteredFinishedMission = (missions | todaysMissionsButFinished:dayToDisplay)).length != 0 " style="color: rgb(138, 138, 138);font-size: 12px;">
-      <label style="color: rgb(138, 138, 138);font-size: 12px;"><i18n>_PLANNING_DISPLAY_FINISHED_</i18n> <input type="checkbox" name="displayFinishedMission" ng-model='displayFinishedMission'/></label>
+<div id="left_panel_planning" ng-controller="planningController" ng-init="initialize();">
+    <p id='refreshPlanning'  ng-click="synchronize()">
+         <i18n>_PLANNING_REFRESHED_</i18n> {{lastUpdate | timeago}}
+         <button class="btn btn-link"  style="margin:-10px; color:orange"><i class="fa fa-refresh" style="margin:0"></i></button>
     </p>
-    <div ng-show="displayFinishedMission">
-      <div ng-repeat="(key,mission) in filteredFinishedMission">
-        <ng-include src="'partials/mission.html'"/>
+
+    <div id='lateMission' class="mission_group" ng-show="lateMissionsLength>0">
+      <h5 class="planning_section_header" ng-click='hideLate = !hideLate'>
+        <span>En retard ({{lateMissionsLength}})</span><small>{{hideLate ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{hideLate ? 'down' : 'up'}}"></span></small>
+      </h5>
+      <div ng-repeat="(key,mission) in (missions|lateMissions)" ng-hide="hideLate">
+        <ng-include src="'partials/mission.html'"></ng-include>
       </div>
     </div>
+
+    <div id='todaysMission' class="mission_group" ng-show="todayMissionsLength>0">
+      <h5 class="planning_section_header" ng-click='hideToday = !hideToday'>
+        <span>Aujourd'hui ({{todayMissionsLength}})</span><small>{{hideToday ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{hideToday ? 'down' : 'up'}}"></span></small>
+      </h5>
+      <div ng-repeat="(key,mission) in (missions|todayMissions)" ng-hide="hideToday">
+        <ng-include src="'partials/mission.html'"></ng-include>
+      </div>
+    </div>
+
+    <div class='nextDaysMissions mission_group' ng-repeat='(day,missions_) in nextMissions'>
+      <h5 class="planning_section_header" ng-click='missions_.hide = !missions_.hide'>
+        <span>{{day|date:'EEE d MMM'}} ({{missions_.length}})</span><small>{{missions_.hide ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{missions_.hide ? 'down' : 'up'}}"></span></small>
+      </h5>
+      <div ng-repeat="(key,mission) in (missions | specificDayMissions:day)" ng-hide="missions_.hide">
+        <ng-include src="'partials/mission.html'"></ng-include>
+      </div>
+    </div>
+
+    <div class='mission_group' ng-click='findNextMissions()' ng-if="currentNextDay<=maxBeginDate">
+      <h5 class="planning_section_header">
+        <span>Afficher plus</span><small><span class="icon icon-plus"></span></small>
+      </h5>
+    </div>
+
+    <div class='mission_group doneMission' ng-if="currentNextDay>maxBeginDate">
+      <h5 class="planning_section_header">
+        <span>Plus de mission à afficher</span>
+      </h5>
+    </div>
+
+    <div class="mission_group doneMission" ng-if="doneMissionsLength>0">
+      <h5 class="planning_section_header" ng-click='showDone = !showDone'>
+        <span>Terminés ({{doneMissionsLength}})</span><small>{{showDone ? 'masquer' : 'afficher'}} <span class="icon icon-caret-{{showDone ? 'down' : 'up'}}"></span></small>
+      </h5>
+        <table class="table table-condensed table-hover doneTable" ng-if="showDone">
+            <tr>
+                <th>Mission</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="(key,mission) in (missions|doneMissions)">
+                <td ng-if=" mission.activity">
+                    {{mission.activity.label}} n°{{mission.number}}
+                </td>
+                <td ng-if="!mission.activity">
+                    Appel n°{{mission.number}} : {{mission.reason}} {{mission.cause?'('+mission.cause+')':''}}
+                </td>
+                <td>{{mission.done.length}}</td>
+            </tr>
+        </table>
+    </div>
+
 </div>
