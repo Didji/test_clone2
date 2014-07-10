@@ -7,7 +7,7 @@
 
 #left_panel_content {
     background: #525252;
-    width: 250px;
+    width: 300px;
     padding: 0;
     margin: 0;
     position: relative;
@@ -19,7 +19,7 @@
     width: inherit;
     background: #3C3C3C;
     margin: 0;
-    padding: 15px 10px;
+    padding:10px;
     border-bottom: 1px solid #FD9122;
     position: fixed;
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
@@ -43,7 +43,7 @@
 
 #left_panel_toggle_shadow {
     height: inherit;
-    background: linear-gradient( to left, white, rgba(46, 46, 46, 0.35));
+    background: linear-gradient( to left, rgba(255, 255, 255, 0), rgba(46, 46, 46, 0.35))
 }
 
 #left_panel_toggle_button{
@@ -64,9 +64,25 @@
     border: none;
 }
 
+#left_panel_content #left_panel_header.onHome > .left_panel_back_menu{
+    display : none;
+}
+
+#left_panel_content #left_panel_header.notOnHome > .left_panel_back_menu{
+    font-size: 22px;
+}
+
+#left_panel_content #left_panel_header.notOnHome > img{
+    width:35%;
+}
+
+#left_panel_content #left_panel_header.notOnHome > #smartgeo-version{
+    display : none;
+}
+
 #left_panel_content #left_panel_header img {
     width: 50%;
-    margin: 0 auto;
+    margin: 3px auto;
     display: block;
 }
 
@@ -86,7 +102,7 @@
 }
 
 #left_panel_menu_items  {
-    top: 52px;
+    top: 55px;
     overflow: auto;
     height: calc(100% - 90px);
     position: relative;
@@ -136,11 +152,19 @@
     color: red;
 }
 
+
+
 .left_panel_back_menu > span {
     text-transform: uppercase;
     font-weight: 700;
     font-size: 15px;
     padding: 1em;
+}
+
+.left_panel_back_menu {
+    float: left;
+    margin-right: -1000px;
+    margin-left: 20px;
 }
 
 .left_panel_back_menu {
@@ -194,3 +218,59 @@
     color: #f7f7f7;
 }
 /** Fin de Synchronisation **/
+
+/** Planning **/
+#left_panel_planning h5.planning_section_header {
+    color: white;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    font-size: 1.35em;
+}
+
+#left_panel_planning h5.planning_section_header:after {
+    content: " ";
+    display: block;
+    margin-top: -6px;
+    width: 90%;
+    border-bottom: 1px solid white;
+}
+
+#left_panel_planning h5.planning_section_header small{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+#left_panel_planning h5.planning_section_header span, #left_panel_planning h5.planning_section_header small{
+    background: #525252;
+    padding: 0px 5px;
+}
+
+#left_panel_planning .mission_group{
+    margin-bottom:20px;
+}
+
+#left_panel_planning .doneMission.mission_group h5{
+    color : gray;
+    font-size :1em;
+}
+#left_panel_planning .doneMission.mission_group h5.planning_section_header:after{
+    border-bottom: 1px solid gray;
+}
+
+#refreshPlanning{
+    color: rgb(138, 138, 138);
+    font-size: 15px;
+    margin-left: 15px;
+    margin-top: 6px;
+    width: 265px;
+}
+
+.doneTable {
+    background: white;
+    margin: 0 auto;
+    width: 90%;
+    font-size: 11px;
+}
+
+/** Fin de Planning **/
