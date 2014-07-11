@@ -257,6 +257,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         callback = callback || function(){};
 
         Smartgeo.get_('census', function(assets){
+            assets = assets || [];
             for (var i = 0; i < assets.length; i++) {
                 if(assets[i].uuid === asset.uuid){
                     assets.splice(i, 1);
@@ -396,7 +397,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.fetchAssetsHistory = function(asset, callback) {
+   Asset.fetchAssetsHistory = function(asset, callback) {
         callback([{
                 "id" : 1235459,
                 "assets": 1114562,

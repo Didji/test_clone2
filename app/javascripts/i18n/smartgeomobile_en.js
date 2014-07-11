@@ -31,7 +31,7 @@ window.smartgeo_i18n_lang['en'] = {
     _REGISTER_CAREFUL_:"Caution, you've nearly reached the maximum use of this license while offline (%s left)",
     _REGISTER_UPDATE_LICENSE_ :"Check the license",
     _CONFIRM_CHANGE_SITE_ : "Do you really want to change site?",
-    _CONFIRM_DISCONNECT_ : "Do you really want to exit?"
+    _CONFIRM_DISCONNECT_ : "Do you really want to exit?",
 
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)", // geom
 

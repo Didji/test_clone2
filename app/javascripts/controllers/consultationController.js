@@ -255,14 +255,15 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
     return function (fieldsIn, report) {
         var fieldsOut = [];
         for (var i = 0; i < fieldsIn.length; i++) {
-            if (report.fields[fieldsIn[i].id] ||
-                (
-                    fieldsIn[i].options &&
-                    $rootScope.site.lists &&
-                    report.fields[fieldsIn[i].id] &&
-                    $rootScope.site.lists[fieldsIn[i].options] &&
-                    $rootScope.site.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]]
-                )
+            if (((report.fields[fieldsIn[i].id] ||
+                            (
+                                fieldsIn[i].options &&
+                                $rootScope.site.lists &&
+                                report.fields[fieldsIn[i].id] &&
+                                $rootScope.site.lists[fieldsIn[i].options] &&
+                                $rootScope.site.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]] )
+                            )) &&
+                    JSON.stringify(report.fields[fieldsIn[i].id]) !== '{}'
             ) {
                 fieldsOut.push(fieldsIn[i]);
             }

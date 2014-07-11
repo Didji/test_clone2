@@ -10,7 +10,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         assetsSynchronizationTimeoutId          = false;
 
     reportsSynchronizationCheckTimeoutId = setInterval(Report.checkSynchronizedReports ,synchronizationCheckTimeout);
-    reportsSynchronizationCheckTimeoutId = setInterval( Asset.checkSynchronizedAssets  ,synchronizationCheckTimeout);
+    // reportsSynchronizationCheckTimeoutId = setInterval( Asset.checkSynchronizedAssets  ,synchronizationCheckTimeout);
 
     $scope.initialize = function (justRefresh) {
 

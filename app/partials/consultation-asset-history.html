@@ -14,11 +14,10 @@
               <tbody>
                   <tr ng-repeat='field in tab.fields  | reportFieldsFilter:report'>
                       <td bo-text="field.label"></td>
-                      <td bo-text="report.fields[field.id]"></td>
-                      <!-- <td bo-switch on="site.lists[field.options][asset.attributes[field.id]]">
-                          <span bo-switch-when="undefined" bo-text="asset.attributes[field.id] | prettifyField"></span>
-                          <span bo-switch-default bo-text="site.lists[field.options][asset.attributes[field.id]] | prettifyField"></span>
-                      </td> -->
+                      <td bo-if="!field.options" bo-text="report.fields[field.id]"></td>
+                      <td ng-repeat="(key,option) in field.options" ng-if="option.value == report.fields[field.id]" >
+                        <span bo-text='option.label'></span>
+                      </td>
                   </tr>
               </tbody>
           </table>
