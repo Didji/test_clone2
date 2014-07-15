@@ -56,6 +56,12 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 icon: "icon icon-refresh",
                 template: 'partials/synchronizationMenu.html',
                 forceLoadDOM: true
+            }, {
+                id: 'parameters',
+                label: i18n.get('_MENU_PARAMETERS'),
+                icon: "icon icon-cogs",
+                template: 'partials/parameters.html',
+                forceLoadDOM: false
             }];
 
             $scope.bottomMenuItems = [{

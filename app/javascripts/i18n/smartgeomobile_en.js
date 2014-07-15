@@ -62,7 +62,7 @@ window.smartgeo_i18n_lang['en'] = {
     _MENU_LOGOUT: "Log out",
     _MENU_CENSUS: "Census",
     _MENU_CHANGE_SITE: "Change area",
-
+    _MENU_PARAMETERS : "Parameters",
     _REPORT_REPORT: "Report",
     _REPORT_CANCEL: "Cancel",
     _REPORT_NEXT: "Next",
@@ -100,6 +100,7 @@ window.smartgeo_i18n_lang['en'] = {
     _SYNC_UPDATE: "Update ",
     _SYNC_UNINSTALL: "Uninstall ",
     _SYNC_UNKNOWN_ERROR_: "Unknown error while synchronizing reports",
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s", // sitename
 
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",

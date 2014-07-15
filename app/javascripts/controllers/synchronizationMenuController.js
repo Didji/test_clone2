@@ -124,9 +124,11 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 }
             }
 
-            $scope.$apply(function(){
-                $scope.globalAssetsSynchronizationIsInProgress = false ;
-            });
+            $scope.globalAssetsSynchronizationIsInProgress = false ;
+
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
 
             (callback || function(){})();
             assetsSynchronizationTimeoutId = setTimeout($scope.synchronizeAssets, synchronizationTimeout);
@@ -182,17 +184,6 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         for (var i = 0; i < reports.length; i++)        if (!reports[i].synced)       size++;
         for (var i = 0; i < censusAssets.length; i++)   if (!censusAssets[i].synced)  size++;
         return size;
-    };
-
-    $scope.uninstallCurrentSite = function () {
-        alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', $rootScope.site.label), function (e) {
-            if (e) {
-                $location.path('sites/uninstall/' + $rootScope.site.id);
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            }
-        });
     };
 
 }]);

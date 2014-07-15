@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout) {
+angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout, $route) {
 
     'use strict';
 
@@ -97,7 +97,10 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
             });
 
             $http.get(url)
-                .success(callback);
+                .success(callback)
+                .error(function(response, code){
+                    console.log(response, code);
+                });
         },
 
         getUpdateJSON: function (site, callback) {
@@ -107,7 +110,16 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
             });
 
             $http.get(url)
-                .success(callback);
+                .success(callback)
+                .error(function(response, code){
+                    if(code === 403){
+                        console.log('silentLogin');
+                        Smartgeo.silentLogin(function(){
+                        console.log('silentLogin');
+                            $route.reload() ;
+                        });
+                    }
+                });
         },
 
         saveSite: function (site, callback) {

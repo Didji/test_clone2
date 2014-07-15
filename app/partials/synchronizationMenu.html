@@ -1,41 +1,34 @@
 <div id="left_panel_synchronization" ng-controller="synchronizationMenuController" ng-init="initialize()">
-    <ul>
-        <li ng-show="toBeSyncLength() > 0;">
-            <h2 style='font-size: 15px;' href="#" ng-click='synchronizeReports(0);synchronizeAssets(0);'>
-                <button ng-class="{active:globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress}" class="btn btn-primary has-spinner btn-block" ng-disabled="globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress">
-                    <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
-                    <i18n ng-if=" globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress">_SYNC_SYNC_IN_PROGRESS</i18n>
-                    <i18n ng-if="!(globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress)">_SYNC_SYNC_EVERYTHING </i18n>
-                </button>
-            </h2>
-        </li>
-
-        <li ng-show="toBeSyncLength() > 0;" style="width: 90%;margin: 0 0 0 5%;">
-            <div class="list-group">
-                <!-- Reports Section -->
-                <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
-                    <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
-                    <button ng-click="deleteReport(report, $index)" ng-show='!report.syncInProgress && !report.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <span ng-show='report.syncInProgress' class="has-spinner pull-right" ng-class="{active:report.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
-                    <small class="label label-default" style="margin-bottom:5px;">Compte-rendu</small>
-                    <h6>{{site.activities._byId[report.activity].label}} <span ng-if='report.site'>({{report.site}})</span> <small>{{report.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
-                    <small ng-if=report.error ng-class='{"text-muted":report.syncInProgress, "text-danger":!report.syncInProgress}'>{{report.error}} <a ng-if="!report.syncInProgress && !globalReportsSynchronizationIsInProgress" ng-click='synchronizeReport(report)'>Réessayer ?</a></small>
-                </div>
-
-                <!-- Census Assets Section -->
-                <div class="list-group-item" ng-repeat="asset in censusAssets track by asset.uuid" ng-hide="asset.hide">
-                    <span class="label label-success pull-right" ng-show="asset.synced">Synchronisé</span>
-                    <button ng-click="deleteAsset(asset, $index)" ng-show='!asset.syncInProgress && !asset.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <span ng-show='asset.syncInProgress' class="has-spinner pull-right" ng-class="{active:asset.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
-                    <small class="label label-default" style="margin-bottom:5px;">Recensement</small>
-                    <h6>{{asset.fields[site.metamodel[asset.okey].ukey]}} <small>{{asset.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
-                    <small ng-if=asset.error ng-class='{"text-muted":asset.syncInProgress, "text-danger":!asset.syncInProgress}'>{{asset.error}} <a ng-if='!asset.syncInProgress && !globalAssetsSynchronizationIsInProgress' ng-click='synchronizeAsset(asset)'>Réessayer ?</a></small>
-                </div>
-            </div>
-        </li>
-
-        <li ng-show="toBeSyncLength() <= 0;"> <a style='font-size: 15px;margin-top: -20px;'><span class="icon-check"></span> <i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></a></li>
-        <li><a style='font-size: 15px;' href="#/sites/update/{{site.id}}"><span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{site.label}}</a></li>
-        <li><a style='font-size: 15px;' ng-click="uninstallCurrentSite()" > <span class="icon-trash"></span> <i18n>_SYNC_UNINSTALL</i18n> {{site.label}} </a></li>
-    </ul>
+    <button
+        ng-if="toBeSyncLength()"
+        ng-click='synchronizeReports(0);synchronizeAssets(0);'
+        ng-class="{active:globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress}"
+        class="btn btn-primary has-spinner btn-block"
+        ng-disabled="globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress || !toBeSyncLength()">
+            <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+            <i18n ng-if=" (globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress)">_SYNC_SYNC_IN_PROGRESS</i18n>
+            <i18n ng-if="!(globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress)">_SYNC_SYNC_EVERYTHING </i18n>
+            <i18n ng-if="!toBeSyncLength()"> </i18n>
+    </button>
+    <div class="list-group" ng-show="toBeSyncLength()">
+        <!-- Reports Section -->
+        <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
+            <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
+            <button ng-click="deleteReport(report, $index)" ng-show='!report.syncInProgress && !report.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span ng-show='report.syncInProgress' class="has-spinner pull-right" ng-class="{active:report.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
+            <small class="label label-default">Compte-rendu</small>
+            <h6>{{site.activities._byId[report.activity].label}} <span ng-if='report.site'>({{report.site}})</span> <small>{{report.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
+            <small ng-if=report.error ng-class='{"text-muted":report.syncInProgress, "text-danger":!report.syncInProgress}'>{{report.error}} <a ng-if="!report.syncInProgress && !globalReportsSynchronizationIsInProgress" ng-click='synchronizeReport(report)'>Réessayer ?</a></small>
+        </div>
+        <!-- Census Assets Section -->
+        <div class="list-group-item" ng-repeat="asset in censusAssets track by asset.uuid" ng-hide="asset.hide">
+            <span class="label label-success pull-right" ng-show="asset.synced">Synchronisé</span>
+            <button ng-click="deleteAsset(asset, $index)" ng-show='!asset.syncInProgress && !asset.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span ng-show='asset.syncInProgress' class="has-spinner pull-right" ng-class="{active:asset.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
+            <small class="label label-default">Recensement</small>
+            <h6>{{asset.fields[site.metamodel[asset.okey].ukey]}} <small>{{asset.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
+            <small ng-if=asset.error ng-class='{"text-muted":asset.syncInProgress, "text-danger":!asset.syncInProgress}'>{{asset.error}} <a ng-if='!asset.syncInProgress && !globalAssetsSynchronizationIsInProgress' ng-click='synchronizeAsset(asset)'>Réessayer ?</a></small>
+        </div>
+    </div>
+    <p ng-if="!toBeSyncLength()" class="nothing-to-sync"><i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></p>
 </div>

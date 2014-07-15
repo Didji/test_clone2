@@ -73,9 +73,38 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
                 }
             });
 
+            var interceptor = ['$rootScope', '$q', '$injector', function (scope, $q, $injector) {
+
+                function success(response) {
+                    return response;
+                }
+
+                function error(response) {
+                    var $location = $injector.get('$location');
+                    var Smartgeo = $injector.get('Smartgeo');
+                    var $http = $injector.get('$http');
+                    if(response.status === 403 && $location.path() !== "/"){
+                        Smartgeo.silentLogin();
+                        return $http(response.config);
+                    }
+                    return $q.reject(response);
+
+                }
+
+                return function (promise) {
+                    return promise.then(success, error);
+                }
+
+            }];
+            $httpProvider.responseInterceptors.push(interceptor);
+
             $httpProvider.defaults.withCredentials = true;
             $httpProvider.defaults.useXDomain = true;
             $httpProvider.defaults.cache = false;
+
+
+
+
 
         }
     ]).run(function($rootScope/*, LicenseManager*/) {
@@ -86,6 +115,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
             search : true,
             logout : true,
             report : true,
+            parameters : true,
             planning : true,
             photo : true,
             myposition : true,

@@ -1,34 +1,27 @@
-<ul id="left_panel_layers" ng-controller="layersController">
-    <li>
-        <div class="list-group">
-            <div ng-repeat="group in groups">
-                <h4 class="list-group-item active">
-                    <label class="fullwidth" ng-class="{checked: !!group.status}">
-                        <span class="icon-check yes" ></span>
-                        <span class="icon-check-empty no" ></span>
-                        <input
-                                type="checkbox"
-                                ng-model="group.status"
-                                ng-change="updateGroups(group.label)"></input>
-                        {{group.label}}
-                    </label>
-                </h4>
-                <div>
-                    <div class="list-group-item" ng-repeat="layer in group.layers | isGraphical">
-                        <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}">
-                            <span class="icon-check yes" ></span>
-                            <span class="icon-check-empty no" ></span>
-                            <input
-                                    type="checkbox"
-                                    ng-model="layers[layer.okey].status"
-                                    ng-change="refreshView()"></input>
-                            <img ng-if= 'site.symbology[layer.okey+"0"]'
-                                ng-src='{{site.symbology[layer.okey+"0"].style.symbol.icon}}' alt="" />
-                            {{layer.label}}
-                        </label>
-                    </p>
-                </div>
-            </div>
+<div id="left_panel_layers" ng-controller="layersController">
+    <div class="list-group" ng-repeat="group in groups">
+        <h4 class="list-group-item active">
+            <label class="fullwidth" ng-class="{checked: !!group.status}">
+                <span class="icon-check yes" ></span>
+                <span class="icon-check-empty no" ></span>
+                <input
+                        type="checkbox"
+                        ng-model="group.status"
+                        ng-change="updateGroups(group.label)"></input>
+                {{group.label}}
+            </label>
+        </h4>
+        <div class="list-group-item" ng-repeat="layer in group.layers | isGraphical">
+            <label class="fullwidth" ng-class="{checked: !!layers[layer.okey].status}">
+                <span class="icon-check yes" ></span>
+                <span class="icon-check-empty no" ></span>
+                <input  type="checkbox"
+                        ng-model="layers[layer.okey].status"
+                        ng-change="refreshView()"></input>
+                <img ng-if= 'site.symbology[layer.okey+"0"]'
+                    ng-src='{{site.symbology[layer.okey+"0"].style.symbol.icon}}' alt="" />
+                {{layer.label}}
+            </label>
         </div>
-    </li>
-</ul>
+    </div>
+</div>

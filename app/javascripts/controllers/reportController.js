@@ -295,7 +295,6 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         }
 
         for (i in report.fields) {
-            console.log("need to set", report.fields[i] ,"to", report.fields[i] && report.fields[i].id);
             if( report.fields[i] instanceof Date ){
                 report.fields[i] = report.fields[i].getHours() + ":" + report.fields[i].getMinutes()
             }
