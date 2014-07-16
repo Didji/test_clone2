@@ -118,6 +118,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
             parameters : true,
             planning : true,
             photo : true,
+            media : true,
             myposition : true,
             activelayers : true,
             goto : true,
