@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# USAGE PRINTING
+usage()
+{
+cat << EOF
+usage: $0 options
+
+OPTIONS:
+   -h      display help
+   -t      git tag [default: current commit]
+   -i      install on terminal [default: false]
+   -m      release or debug [default: debug]
+   -u      upload to github [default: false]
+EOF
+}
+
+# INITIALIZATION
+SCRIPT_BASE_DIR=$PWD
+SMARTGEOMOBILE_VERSION=
+SMARTGEOMOBILE_MODE="debug"
+SMARTGEOMOBILE_INSTALL_FLAG=false
+SMARTGEOMOBILE_UPLOAD_FLAG=false
+SMARTGEOMOBILE_GRADLEW_COMMAND="gradlew --continue --no-rebuild --parallel --quiet --stacktrace build"
+SMARTGEOMOBILE_GITHUB_TOKEN="795651ffa00f9618e67caf71782c793b5ee2d4d9"
+
+# ARGUMENTS PARSING
+while getopts “t:m:h:i:u” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         t)
+             SMARTGEOMOBILE_VERSION=$OPTARG
+             ;;
+         m)
+             SMARTGEOMOBILE_MODE=$OPTARG
+             ;;
+         u)
+             SMARTGEOMOBILE_UPLOAD_FLAG=true
+             ;;
+         i)
+             SMARTGEOMOBILE_GRADLEW_COMMAND=$SMARTGEOMOBILE_GRADLEW_COMMAND" installDebug"
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+if [[ -n $SMARTGEOMOBILE_VERSION ]]
+then
+    # CHECKOUT CODE IF VERSION PROVIDED
+    git checkout $SMARTGEOMOBILE_VERSION
+else
+    # GET HASH IF NO VERSION PROVIDED
+    SMARTGEOMOBILE_VERSION=$(git rev-parse HEAD)
+fi
+
+# CLEAN
+cd app/
+rm ../platforms/android/content-shell/assets/gimap-mobile.zip
+
+# ZIP APP/ FOLDER INTO GIMAP-MOBILE.ZIP FILE
+zip -r ../platforms/android/content-shell/assets/gimap-mobile.zip ./*
+cd ../platforms/android/content-shell/
+
+# GENERATE APK FILE WITH GRADLE
+$SMARTGEOMOBILE_GRADLEW_COMMAND
+cp "build/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$HOME/Desktop/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"
+
+# UPLOAD RELEASE TO GITHUB
+if $SMARTGEOMOBILE_UPLOAD_FLAG
+then
+    # GO BACK TO INITIAL DIRECTORY
+    cd $SCRIPT_BASE_DIR
+    # CALL EXTERNAL NODEJS SCRIPT FOR FETCHING GITHUB RELEASE ID
+    SMARTGEOMOBILE_RELEASE_ID=$(./get-release-id $SMARTGEOMOBILE_VERSION $SMARTGEOMOBILE_GITHUB_TOKEN)
+    if [[ -z $SMARTGEOMOBILE_RELEASE_ID ]]
+    then
+        # IF NO RELEASE ID FOUND, EXIT
+        echo "Release $SMARTGEOMOBILE_VERSION does not exists. Exiting ..."
+        exit
+    fi
+    curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$HOME/Desktop/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"
+fi
