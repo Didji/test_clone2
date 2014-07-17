@@ -65,26 +65,26 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             }];
 
             $scope.bottomMenuItems = [{
-                id: 'consultation',
-                label: 'Consultation',
-                icon: "icon icon-info-sign",
-                action: 'activateConsultation',
-            }, {
-                id: 'myposition',
-                label: 'Ma position',
-                icon: "icon icon-compass",
-                action: 'activatePosition',
-            }, {
+                id: 'logout',
+                label: 'Déconnexion',
+                icon: "icon icon-power-off redicon",
+                action: 'logout',
+            },{
                 id: 'siteselection',
                 label: 'Selection de site',
                 icon: "icon icon-exchange",
                 action: 'changeSite',
                 specialVisibility: 'checkIfMoreThanOneSiteIsAvailable'
-            }, {
-                id: 'logout',
-                label: 'Déconnexion',
-                icon: "icon icon-power-off redicon",
-                action: 'logout',
+            },{
+                id: 'myposition',
+                label: 'Ma position',
+                icon: "icon icon-compass",
+                action: 'activatePosition',
+            },{
+                id: 'consultation',
+                label: 'Consultation',
+                icon: "icon icon-info-sign",
+                action: 'activateConsultation',
             }];
 
 

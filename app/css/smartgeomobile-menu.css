@@ -69,15 +69,15 @@
 }
 
 #left_panel_content #left_panel_header.notOnHome > .left_panel_back_menu{
-    font-size: 22px;
+    /*font-size: 22px;*/
 }
 
 #left_panel_content #left_panel_header.notOnHome > img{
-    width:35%;
+    /*width:35%;*/
 }
 
 #left_panel_content #left_panel_header.notOnHome > #smartgeo-version{
-    display : none;
+    /*display : none;*/
 }
 
 #left_panel_content #left_panel_header img {
@@ -133,7 +133,7 @@
     width: 25%;
     background: #3C3C3C;
     padding: 5px;
-    font-size: 20px;
+    font-size: 30px;
 }
 
 #left_panel_bottom_fixed > li > span{
@@ -152,8 +152,6 @@
     color: red;
 }
 
-
-
 .left_panel_back_menu > span {
     text-transform: uppercase;
     font-weight: 700;
@@ -163,6 +161,7 @@
 
 .left_panel_back_menu {
     float: left;
+    height: 20px;
     margin-right: -1000px;
     margin-left: 20px;
 }
