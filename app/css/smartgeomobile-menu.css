@@ -238,6 +238,13 @@
 #left_panel_parameters {
     margin: 2px 10px ;
 }
+
+#left_panel_parameters button {
+    margin-top: 15px;
+    padding: 10px;
+    white-space: normal;
+}
+
 /** Fin de Parametres **/
 
 /** Planning **/
