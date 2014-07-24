@@ -191,6 +191,7 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
             for (j = 0, numFields = tab.fields.length; j < numFields; j++) {
                 field = tab.fields[j];
                 def = field['default'];
+                
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
                 // fixées dans le scope par les intents.
                 if ($scope['report_fields[' + field.label + ']']) {
