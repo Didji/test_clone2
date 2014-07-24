@@ -81,7 +81,40 @@ then
     # GO BACK TO INITIAL DIRECTORY
     cd $SCRIPT_BASE_DIR
     # CALL EXTERNAL NODEJS SCRIPT FOR FETCHING GITHUB RELEASE ID
-    SMARTGEOMOBILE_RELEASE_ID=$(./get-release-id $SMARTGEOMOBILE_VERSION $SMARTGEOMOBILE_GITHUB_TOKEN)
+
+    SCRIPT_JS="var tag = '$SMARTGEOMOBILE_VERSION',
+        token = '$SMARTGEOMOBILE_GITHUB_TOKEN',
+        http = require('https'),
+        body = '',
+        options = {
+        host: 'api.github.com',
+            headers: {
+                'Authorization': 'token ' + token,
+                'user-agent': 'Mozilla/5.0',
+            },
+            path: '/repos/gismartwaredev/smartgeomobile/releases'
+        };
+
+    http.get(options, function(resp) {
+        resp.setEncoding('utf8');
+        resp.on('data', function(chunk) {
+            body += chunk;
+        });
+        resp.on('end', function() {
+            body = JSON.parse(body);
+            for (var i = 0; i < body.length; i++) {
+                if (body[i].tag_name === tag) {
+                    return console.log(body[i].id);
+                }
+                return ;
+            }
+        });
+    }).on('error', function(e) {
+        console.log('Got error: ' + e.message);
+    });"
+
+    # SMARTGEOMOBILE_RELEASE_ID=$(./get-release-id $SMARTGEOMOBILE_VERSION $SMARTGEOMOBILE_GITHUB_TOKEN)
+    SMARTGEOMOBILE_RELEASE_ID=$(echo $SCRIPT_JS | node)
     if [[ -z $SMARTGEOMOBILE_RELEASE_ID ]]
     then
         # IF NO RELEASE ID FOUND, EXIT
