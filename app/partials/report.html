@@ -58,11 +58,11 @@
                 <div ng-if="tab.show" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">
                     <div class="panel-body">
                         <div ng-repeat='field in tab.fields'>
-                            <p ng-if="field.readonly" ng-show="field.visible">
+                            <p ng-if="field.readonly" ng-show="field.visible !== false">
                                 <b class="ro-label" bo-text="field.label"></b>
                                 <span class="ro-value" bo-text="report.roFields[field.id]"></span>
                             </p>
-                            <p ng-if="!field.readonly && field.visible != false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
+                            <p ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
                                 <label
                                   class="control-label"
                                   ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
