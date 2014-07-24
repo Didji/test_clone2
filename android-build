@@ -70,7 +70,10 @@ cd ../platforms/android/content-shell/
 
 # GENERATE APK FILE WITH GRADLE
 $SMARTGEOMOBILE_GRADLEW_COMMAND
-cp "build/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$HOME/Desktop/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"
+# cp "build/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$HOME/Desktop/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"
+
+# ZIP ALIGN IT
+zipalign -f 4 "build/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$HOME/Desktop/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"
 
 # UPLOAD RELEASE TO GITHUB
 if $SMARTGEOMOBILE_UPLOAD_FLAG
