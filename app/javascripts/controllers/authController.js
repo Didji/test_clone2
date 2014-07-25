@@ -20,9 +20,10 @@ angular.module('smartgeomobile').controller('authController', ["$scope", "$rootS
 
         Smartgeo.initialize();
 
-        $scope.user         = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] || {"rememberme": true};
-        $scope.gimapServer  = (Smartgeo.get('url')   || "");
-        $scope.firstAuth    = $scope.gimapServer.length ? Smartgeo.ping() && false : true ;
+        $rootScope.currentPage  = "Authentification";
+        $scope.user             = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] || {"rememberme": true};
+        $scope.gimapServer      = (Smartgeo.get('url')   || "");
+        $scope.firstAuth        = $scope.gimapServer.length ? Smartgeo.ping() && false : true ;
 
     };
 

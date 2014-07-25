@@ -2,6 +2,8 @@ angular.module('smartgeomobile').controller('mapController', ["$scope", "$routeP
 
     'use strict';
 
+    $rootScope.currentPage = "Cartographie";
+
     window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
     var LAST_USERS_LOCATION = [];
