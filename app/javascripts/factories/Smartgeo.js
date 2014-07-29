@@ -25,7 +25,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         initialize : function(){
 
-            this._SMARTGEO_MOBILE_VERSION = $rootScope.version = "0.16.0.2507140" ;
+            this._SMARTGEO_MOBILE_VERSION = $rootScope.version = smargeomobileversion+"-"+smargeomobilebuild ;
             this._BIG_SCREEN_THRESHOLD = 361;
             this._SIDE_MENU_WIDTH = $window.screen.width > 361 ? 300 : $window.screen.width * 0.8;
             this._MAX_RESULTS_PER_SEARCH = 10;

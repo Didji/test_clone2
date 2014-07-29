@@ -1,4 +1,4 @@
-$angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$routeParams", "$http", "Smartgeo", "SQLite", "$location", "G3ME", "Installer", "i18n", function ($scope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteInstallController', ["$scope","$rootScope", "$routeParams", "$http", "Smartgeo", "SQLite", "$location", "G3ME", "Installer", "i18n", function ($scope,$rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
 
     'use strict';
 

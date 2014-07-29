@@ -1,15 +1,4 @@
 #!/bin/bash
-# SMARTGEOMOBILE_VERSION=$(git rev-parse HEAD)
-#  PAYLOAD='{
-#           "tag_name": "snapshot/'$SMARTGEOMOBILE_VERSION'",
-#           "target_commitish": "'$SMARTGEOMOBILE_VERSION'",
-#           "name": "smartgeomobile-snapshot-'$SMARTGEOMOBILE_VERSION'",
-#           "body": "smartgeomobile-snapshot-'$SMARTGEOMOBILE_VERSION'",
-#           "draft": false,
-#           "prerelease": true
-#         }'
-#         echo $PAYLOAD
-#         exit
 
 # USAGE PRINTING
 usage()
@@ -149,6 +138,7 @@ then
     # [IOS] UPLOAD IPA
     echo "Upload de l'IPA"
     curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa"  >> /dev/null
+
     # [ANDROID] UPLOAD APK
     echo "Upload de l'APK"
     curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
