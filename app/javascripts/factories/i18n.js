@@ -5,7 +5,7 @@ angular.module('smartgeomobile').factory('i18n', function () {
     'use strict';
 
     var i18n = {
-        OVERRIDE_LANGUAGE: 'fr',
+        // OVERRIDE_LANGUAGE: 'fr',
         SELECTED_LANGUAGE: null,
         SYSTEM_LANGUAGE: navigator.language.slice(0, 2),
         FALLBACK_LANGUAGE: 'fr',
