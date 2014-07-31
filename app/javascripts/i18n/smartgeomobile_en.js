@@ -30,6 +30,7 @@ window.smartgeo_i18n_lang['en'] = {
     _REGISTER_MUST_CHECK_: "You've reached the maximum offline use of this license, please connect to Internet.",
     _REGISTER_CAREFUL_:"Caution, you've nearly reached the maximum use of this license while offline (%s left)",
     _REGISTER_UPDATE_LICENSE_ :"Check the license",
+    _REGISTER_RECORD_ID_ :"Your license has been accepted. Please, record the following ID in case of loss or theft: ",
     _CONFIRM_CHANGE_SITE_ : "Do you really want to change site?",
     _CONFIRM_DISCONNECT_ : "Do you really want to exit?",
 

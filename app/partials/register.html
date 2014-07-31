@@ -1,5 +1,5 @@
 <div ng-controller="licenseController">
-    <form ng-submit="register()" class="panel floating-form">
+    <form ng-show='!successMessage' ng-submit="register()" class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
         <hr/>
         <div class="form-group">
@@ -11,5 +11,9 @@
             ng-disabled = "!licenseNumber.length  || registerInProgress">
             <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span> <i18n>_REGISTER_REGISTER_</i18n>
         </button>
+    </form>
+    <form ng-show='successMessage' ng-submit="continue()" class="panel floating-form">
+        <div class="alert alert-success">{{successMessage}}</div>
+        <button class="btn btn-lg btn-primary btn-block" >Continuer</button>
     </form>
 </div>

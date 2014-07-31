@@ -28,10 +28,18 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$ro
      * @memberOf    licenseController
      * @desc        Callback de succès de l'enregistrement qui va rediriger l'utilisateur vers la page d'authentification
      */
-    $scope.registerSuccess = function() {
-        $location.path('/');
+    $scope.registerSuccess = function(licence) {
+        $scope.successMessage = (i18n.get("_REGISTER_RECORD_ID_")) + licence.device_serial ;
     };
 
+    /**
+     * @method
+     * @memberOf    licenseController
+     * @desc        Redirige l'utilisateur vers la page d'authentification
+     */
+    $scope.continue = function() {
+        $location.path('/');
+    };
 
     /**
      * @method
@@ -61,6 +69,5 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$ro
             break;
         }
     };
-
 
 }]);

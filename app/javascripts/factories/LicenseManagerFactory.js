@@ -228,7 +228,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
                 license.lastcheck  = now;
                 this_.__setRights(this_.__parseG3licResponse(options));
                 this_.__setLicense(license);
-                success();
+                success(license);
             }, error)
 
         });
