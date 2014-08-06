@@ -16,7 +16,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         requestPool : {},
 
-        filecacheIsEnable: $rootScope.rights.tileCache || false ,
+        filecacheIsEnable: $rootScope.rights.tileCache || true ,
 
         initialize: function (mapDivId, site, target, marker, zoom) {
             this.site = site;
@@ -139,6 +139,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 console.timeEnd('Canvas Tile Layer Drawing');
             }).addTo(this.map);
             this.tempAssetTile.addTo(this.map);
+            window.G3ME = this ;
         },
 
         getLineStringMiddle: function (lineString) {
@@ -559,7 +560,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 initialTopLeftPointY = this.map._initialTopLeftPoint.y,
                 delta_x = initialTopLeftPointX - nwmerc.x,
                 delta_y = initialTopLeftPointY - nwmerc.y;
-
+ctx.lineWidth=10;
             var initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                 tileExtent  = { ymin: ymin,ymax: ymax,xmin: xmin,xmax: xmax },
                 uuid        = Smartgeo.uuid(),
