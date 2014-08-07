@@ -65,7 +65,7 @@
                                     <button class="btn btn-primary btn-block" bo-if="rights.goto" ng-click="gotoAsset(asset)" style="margin-bottom:5px;"><i18n>_CONSULTATION_GOTO</i18n></button>
                                     <ng-include src="'partials/consultation-asset-missions.html'"></ng-include>
                                     <ng-include src="'partials/consultation-asset-calls.html'"></ng-include>
-                                    <ng-include src="'partials/consultation-asset-history.html'"></ng-include>
+                                    <ng-include ng-if="rights.history" src="'partials/consultation-asset-history.html'"></ng-include>
                                 </div>
                             </div>
 
