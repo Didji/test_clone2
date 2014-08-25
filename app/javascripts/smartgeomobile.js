@@ -146,7 +146,7 @@ var smartgeomobile = angular.module("smartgeomobile", ["ngRoute", "ui.bootstrap"
 
                     if (window.SmartgeoChromium && SmartgeoChromium.launchCamera) {
                         if (!window.ChromiumCallbacks) {
-                            window.ChromiumCallbacks = [];
+                            window.ChromiumCallbacks = {};
                         }
                         window.ChromiumCallbacks[1] = function(path) {
                             var imageElement = document.createElement("img");

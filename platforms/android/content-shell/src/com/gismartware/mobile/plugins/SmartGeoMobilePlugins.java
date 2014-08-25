@@ -9,14 +9,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.ByteArrayBuffer;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.Settings.Secure;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -322,6 +329,29 @@ public class SmartGeoMobilePlugins {
             return provider2 == null;
         }
         return provider1.equals(provider2);
+    }
+
+
+    @JavascriptInterface
+    public void getTileURLFromDB(String z, String x, String y) {
+
+        String DB_I    = Character.toString(x.charAt(x.length() - 1));
+        SQLiteDatabase TILES_DATABASE = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + DB_I ,  null, 0);
+        Cursor cursor = TILES_DATABASE.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  ", new String[]{z, x, y}) ;
+
+        if (cursor.getCount() > 0){
+            cursor.moveToFirst();
+            String resultJavascript = "window.ChromiumCallbacks['15"
+                    +"|" + z
+                    +"|" + x
+                    +"|" + y
+                    +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
+            view.evaluateJavaScript(resultJavascript);
+            cursor.close();
+        } else {
+            Log.e(TAG, "Non trouvé : SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  "+z+":"+x+":"+y+" -> " + "/g3tiles-" + DB_I);
+        }
+
     }
 
     @JavascriptInterface

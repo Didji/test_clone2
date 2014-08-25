@@ -688,7 +688,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             window.addEventListener('offline', Smartgeo._offlineTask, false);
 
             if (!window.ChromiumCallbacks) {
-                window.ChromiumCallbacks = [];
+                window.ChromiumCallbacks = {};
             }
 
             window.ChromiumCallbacks[20] = Smartgeo._onlineTask;
@@ -841,7 +841,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             if (window.SmartgeoChromium && SmartgeoChromium.launchCamera) {
                 if (!window.ChromiumCallbacks) {
-                    window.ChromiumCallbacks = [];
+                    window.ChromiumCallbacks = {};
                 }
                 window.ChromiumCallbacks[1] = function(path) {
                     var imageElement = document.createElement("img");

@@ -8,7 +8,7 @@ if ((navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 z = tilePoint.z,
                 x = tilePoint.x,
                 y = tilePoint.y,
-                callback_id = "15|" + x + "|" + y + "|" + z ;
+                callback_id = "15|" + z + "|" + x + "|" + y ;
 
             tile.onerror = function(event) {
                 this_._tileOnError.call(this);
@@ -29,7 +29,7 @@ if ((navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 }
                 tile.src = path;
             };
-            SmartgeoChromium.getTileURL(this._url, x, y, z);
+            SmartgeoChromium.getTileURLFromDB(z,x,y);
         }
     });
 }
