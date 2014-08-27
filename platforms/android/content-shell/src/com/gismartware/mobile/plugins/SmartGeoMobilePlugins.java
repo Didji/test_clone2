@@ -1,5 +1,6 @@
 package com.gismartware.mobile.plugins;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,11 +20,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.ByteArrayBuffer;
+import org.apache.http.util.EntityUtils;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.http.AndroidHttpClient;
 import android.provider.Settings.Secure;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -139,7 +142,7 @@ public class SmartGeoMobilePlugins {
 
         Activity act = (Activity)context;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                Uri.parse(to)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         act.startActivity(intent);
     }
 
@@ -147,7 +150,7 @@ public class SmartGeoMobilePlugins {
     public void redirect(String url) {
         Log.d(TAG, "Redirect to URL " + url);
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         Activity act = (Activity)context;
         act.startActivity(intent);
     }
@@ -333,31 +336,113 @@ public class SmartGeoMobilePlugins {
 
 
     @JavascriptInterface
-    public void getTileURLFromDB(String z, String x, String y) {
+    public void getTileURLFromDB(String url, String z, String x, String y) {
 
-        String DB_I    = Character.toString(x.charAt(x.length() - 1));
-        SQLiteDatabase TILES_DATABASE = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + DB_I ,  null, 0);
-        Cursor cursor = TILES_DATABASE.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  ", new String[]{z, x, y}) ;
+        final String databaseIndex   = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
+        SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex ,  null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
+        tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
+        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_row = ? AND tile_column = ?  ", new String[]{z, x, y});
 
         if (cursor.getCount() > 0){
             cursor.moveToFirst();
+            Log.e(TAG, "[G3DB] Tuile trouvée.");
             String resultJavascript = "window.ChromiumCallbacks['15"
                     +"|" + z
                     +"|" + x
                     +"|" + y
                     +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
-            view.evaluateJavaScript(resultJavascript);
-            cursor.close();
-        } else {
-            Log.e(TAG, "Non trouvé : SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  "+z+":"+x+":"+y+" -> " + "/g3tiles-" + DB_I);
-        }
 
+            view.evaluateJavaScript(resultJavascript);
+        } else {
+            Log.e(TAG, "[G3DB] Tuile non trouvée ("+z+":"+x+":"+y+") on requête le serveur avec GetTileFromURLAndSetItToDatabase");
+            new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+        }
+        cursor.close();
+        tilesDatabase.close();
     }
 
     @JavascriptInterface
     public void getTileURL(String url, String x, String y, String z) {
         new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
     }
+
+    private class GetTileFromURLAndSetItToDatabase extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return  request(params);
+        }
+
+        protected String request(String... params){
+
+            String url = params[0], x = params[1], y = params[2], z = params[3] ;
+
+            url = url.replace("{x}", x);
+            url = url.replace("{y}", y);
+            url = url.replace("{z}", z);
+
+            final HttpGet request           = new HttpGet(url);
+            DefaultHttpClient client = new DefaultHttpClient();
+
+            //AndroidHttpClient client = AndroidHttpClient.newInstance("Smartgeo 0.16.1 beta");
+            request.setHeader("User-Agent", "Smartgeo 0.16.1 beta");
+
+            if(PHPSESSIONID != null) {
+                Log.e(TAG, "[G3DB] Ajout du cookie " + PHPSESSIONID);
+                request.setHeader("Cookie", PHPSESSIONID);
+            }
+            try {
+                Log.e(TAG, "[G3DB] GET "+url);
+                HttpResponse  response = client.execute(request);
+                final int   statusCode = response.getStatusLine().getStatusCode();
+                final HttpEntity image = response.getEntity();
+
+                if ( statusCode == 403 && PHPSESSIONID != null) {
+                    Log.e(TAG, "[G3DB] Erreur HTTP 403. Essai sans PHPSESSID");
+                    PHPSESSIONID = null ;
+                    return request(params);
+                } else if ( statusCode >= 300 ) {
+                    Log.e(TAG, "[G3DB] Erreur HTTP "+statusCode);
+                    return String.valueOf(statusCode);
+                } else if(image == null) {
+                    Log.e(TAG, "[G3DB] Tuile non trouvée sur le serveur ("+z+":"+x+":"+y+")");
+                    return null;
+                }
+
+                Log.e(TAG, "[G3DB] Tuile trouvée sur le serveur ("+z+":"+x+":"+y+")");
+                byte[] bytes = EntityUtils.toByteArray(image);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+                String imageEncoded = Base64.encodeToString(baos.toByteArray(),Base64.NO_WRAP);
+
+                final String         databaseIndex = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
+                final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+
+                Log.e(TAG, "[G3DB] Exécution des requêtes SQL ("+z+":"+x+":"+y+")");
+                tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, y, x, imageEncoded});
+                tilesDatabase.close();
+
+                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + z +"|" + x +"|" + y +"'](\"data:image/png;base64," + imageEncoded + "\");";
+
+                return resultJavascript;
+
+            } catch(Exception e) {
+                Log.e(TAG, "Error while downloading " + params[0], e);
+                request.abort();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            view.evaluateJavaScript(result);
+        }
+    }
+
+
 
     private class GetTileURL extends AsyncTask<String, Void, String> {
 

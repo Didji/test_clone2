@@ -560,7 +560,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 initialTopLeftPointY = this.map._initialTopLeftPoint.y,
                 delta_x = initialTopLeftPointX - nwmerc.x,
                 delta_y = initialTopLeftPointY - nwmerc.y;
-ctx.lineWidth=10;
+
             var initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                 tileExtent  = { ymin: ymin,ymax: ymax,xmin: xmin,xmax: xmax },
                 uuid        = Smartgeo.uuid(),
