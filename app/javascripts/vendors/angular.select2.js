@@ -7,7 +7,7 @@
  */
 angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelect2', ['uiSelect2Config', '$timeout',
     function (uiSelect2Config, $timeout) {
-        var options = {};
+        var options = {}, lastTextValue;
         if (uiSelect2Config) {
             angular.extend(options, uiSelect2Config);
         }
@@ -32,11 +32,14 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
 
                 return function (scope, elm, attrs, controller) {
                     // instance-specific options
-                    var opts = angular.extend({}, options, scope.$eval(attrs.uiSelect2));
 
-                    /*
-        Convert from Select2 view-model to Angular view-model.
-        */
+                    var opts = angular.extend({
+                        initSelection : function (element, callback) {
+                            // debugger;
+                            callback(controller.$modelValue);
+                        }
+                    }, options, scope.$eval(attrs.uiSelect2));
+
                     var convertToAngularModel = function (select2_data) {
                         var model;
                         if (opts.simple_tags) {
@@ -47,13 +50,9 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                         } else {
                             model = select2_data;
                         }
-                        // console.log(model);
-                        return model;
+                        return (model || controller.$modelValue);
                     };
 
-                    /*
-        Convert from Angular view-model to Select2 view-model.
-        */
                     var convertToSelect2Model = function (angular_data) {
                         var model = [];
                         if (!angular_data) {
@@ -86,48 +85,59 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
 
                     if (controller) {
                         // Watch the model for programmatic changes
-                        scope.$watch(tAttrs.ngModel, function (current, old) {
-                            if (!current) {
-                                return;
-                            }
-                            if (current === old) {
-                                return;
-                            }
-                            controller.$render();
-                        }, true);
-                        controller.$render = function () {
-                            if (isSelect) {
-                                elm.select2('val', controller.$viewValue);
-                            } else {
-                                if (opts.multiple) {
-                                    elm.select2(
-                                        'data', convertToSelect2Model(controller.$viewValue));
-                                } else {
-                                    if (angular.isObject(controller.$viewValue)) {
-                                        elm.select2('data', controller.$viewValue);
-                                    } else if (!controller.$viewValue) {
-                                        elm.select2('data', null);
-                                    } else {
-                                        elm.select2('val', controller.$viewValue);
-                                    }
-                                }
-                            }
-                        };
+                        // scope.$watch(tAttrs.ngModel, function (current, old) {
+                        //     if (!current) {
+                        //         return;
+                        //     }
+                        //     // if (current === old) {
+                        //     //     console.log('bah alors on render pas ?');
+                        //     //     return;
+                        //     // }
+                        //     // controller.$render();
+                        // }, true);
+                        // controller.$render = function () {
+                        //     debugger;
+                        //         console.log('bah alors on render pas ?');
+                        //     if (isSelect) {
+                        //         console.log('bah alors on render pas ?');
+                        //         elm.select2('val', controller.$viewValue);
+                        //     } else {
+                        //         console.log('bah alors on render pas ?');
+                        //         if (opts.multiple) {
+                        //             elm.select2(
+                        //                 'data', convertToSelect2Model(controller.$viewValue));
+                        //         } else {
+                        //             if (angular.isObject(controller.$viewValue)) {
+                        //         console.log('bah alors on render pas ?');
+                        //                 elm.select2('data', controller.$viewValue);
+                        //             } else if (!controller.$viewValue) {
+                        //         console.log('bah alors on render pas ?');
+                        //                 elm.select2('data', null);
+                        //             } else {
+                        //         console.log('bah alors on render pas ?');
+                        //                 elm.select2('val', controller.$viewValue);
+                        //             }
+                        //         }
+                        //     }
+                        // };
 
                         // Watch the options dataset for changes
-                        if (watch) {
+                        // if (watch) {
                             scope.$watch(watch, function (newVal, oldVal, scope) {
                                 if (!newVal) {
+                                // if (!newVal && !controller.$modelValue) {
                                     return;
                                 }
                                 // Delayed so that the options have time to be rendered
                                 $timeout(function () {
+                                    // elm.select2('val', "1");
+                                    // console.log(controller.$viewValue) ;
                                     elm.select2('val', controller.$viewValue);
                                     // Refresh angular to remove the superfluous option
                                     elm.trigger('change');
                                 });
                             });
-                        }
+                        // }
 
                         // Update valid and dirty statuses
                         controller.$parsers.push(function (value) {
@@ -144,13 +154,15 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
 
                         if (!isSelect) {
                             // Set the view and model value and update the angular template manually for the ajax/multiple select2.
-                            elm.bind("change", function () {
+                            elm.bind("change", function (event) {
+                                lastTextValue = event.added.text ;
                                 if (scope.$$phase) {
                                     return;
                                 }
                                 scope.$apply(function () {
-                                    controller.$setViewValue(
-                                        convertToAngularModel(elm.select2('data').id));
+                                    // console.log(elm.select2('val'));
+                                    // controller.$setViewValue(convertToAngularModel(elm.select2('data').id));
+                                    controller.$setViewValue(convertToAngularModel(elm.select2('val')));
                                 });
                             });
 
@@ -159,7 +171,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                                 opts.initSelection = function (element, callback) {
                                     initSelection(element, function (value) {
                                         controller.$setViewValue(convertToAngularModel(value));
-                                        callback(value);
+                                        callback({id:value, text:value ? lastTextValue :""});
                                     });
                                 };
                             }

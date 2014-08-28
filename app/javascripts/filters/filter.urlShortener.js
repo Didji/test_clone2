@@ -1,15 +1,22 @@
-angular.module('smartgeomobile').filter('urlShortener', urlShortener);
+(function(){
 
-function urlShortener() {
+    'use strict';
 
-    /**
-     * @method
-     * @memberOf    authController
-     * @desc        Translate "http://smartgeo.fr/index.php?service=" to "smartgeo.fr"
-     */
-    function shortener(url) {
-        return url.replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+    angular
+        .module('smartgeomobile')
+        .filter('urlShortener', urlShortener);
+
+    function urlShortener() {
+
+        /**
+         * @name shortener
+         * @desc Translate "http://smartgeo.fr/index.php?service=" to "smartgeo.fr"
+         */
+        function shortener(url) {
+            return url.replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
+        }
+
+        return shortener ;
     }
 
-    return shortener ;
-}
+})();

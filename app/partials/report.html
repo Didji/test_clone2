@@ -79,14 +79,22 @@
                                             ng-false-value="'N'"></input>
                                     </span>
                                 </label>
+<span ng-if='field.type=="L" && field.options.length == 3'>
+                                        {{report.fields}}
+                                    </span>
+                                <input
+                                    bo-if='field.type=="L"'
+                                    ui-select2="groupSelectOptions"
+                                    data-field="{{field.id}}"
+                                    data-tabid="{{tab.id}}"
+                                    ng-model="report.fields[field.id]"/>
 
-                                <input  bo-if='field.type=="L" && field.options.length > 15' ui-select2="groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="report.fields[field.id]"/>
 
-                                <select bo-if='field.type=="L" && field.options.length <= 15' class="form-control" name="f" ng-required="field.required" ng-model = "report.fields[field.id]">
-                                    <option></option>
-                                    <option ng-repeat="options in (field.options | orderBy:'label')"
-                                        bo-value="options.value" bo-text="options.label"></option>
-                                </select>
+                               <!--  <select class="form-control" name="f"
+                                    ng-model="report.fields[field.id]"
+                                    ng-if='field.type=="L" && field.options.length <= 15'
+                                    ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
+                                    </select> -->
 
                                 <input class="form-control pull-left" bo-if="field.type=='D' && isAndroid && field.default && field.default.pkey"
                                      ng-required="field.required" type="date" name="f"
