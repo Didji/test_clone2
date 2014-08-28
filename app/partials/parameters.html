@@ -1,3 +1,5 @@
-<div id="left_panel_parameters" ng-controller="parametersController">
-    <button class="btn btn-primary btn-small btn-block" ng-click="update()"><span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{site.label}}</button>
+<div id="left_panel_parameters" ng-controller="ParametersController as parametersController">
+    <button class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirm()">
+        <span class="icon-refresh"></span> <i18n>_SYNC_UPDATE</i18n> {{::site.label}}
+    </button>
 </div>

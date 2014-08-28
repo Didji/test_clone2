@@ -46,6 +46,9 @@ body {
     margin-bottom: 15px;
 }
 
+.loginForm .form-control{
+    margin-bottom : 5px ;
+}
 
 .floating-form {
     width: 300px;

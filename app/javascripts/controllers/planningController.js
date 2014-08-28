@@ -9,7 +9,7 @@
  * @property {date} lastUpdate Date de dernière synchronisation
  */
 
-angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", function ($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n) {
+angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", "$interval", function ($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n, $interval) {
 
     'use strict';
 
@@ -58,9 +58,14 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             $scope.synchronize();
         });
 
-        Smartgeo.registerInterval("_SYNCHRONIZE_INTERVAL", function () {
+        $scope._SYNCHRONIZE_INTERVAL_ID = $interval(function(){
             $scope.synchronize();
         }, $scope._SYNCHRONIZE_INTERVAL);
+
+        $scope.$on("$destroy", function( event ) {
+                $interval.cancel( $scope._SYNCHRONIZE_INTERVAL_ID );
+            }
+        );
     };
 
     /**

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "Report", "$filter", function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, Report, $filter) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "Report", "$filter", "$interval", function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, Report, $filter, $interval) {
 
     'use strict';
 
@@ -9,8 +9,12 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         reportsSynchronizationTimeoutId         = false,
         assetsSynchronizationTimeoutId          = false;
 
-    reportsSynchronizationCheckTimeoutId = setInterval(Report.checkSynchronizedReports ,synchronizationCheckTimeout);
-    // reportsSynchronizationCheckTimeoutId = setInterval( Asset.checkSynchronizedAssets  ,synchronizationCheckTimeout);
+    reportsSynchronizationCheckTimeoutId = $interval(Report.checkSynchronizedReports ,synchronizationCheckTimeout);
+
+    $scope.$on("$destroy", function( event ) {
+            $interval.cancel( reportsSynchronizationCheckTimeoutId );
+        }
+    );
 
     $scope.initialize = function (justRefresh) {
 

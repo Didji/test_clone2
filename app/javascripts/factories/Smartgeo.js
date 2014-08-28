@@ -10,7 +10,6 @@
  * @property {number}   _MAX_MEDIA_PER_REPORT
  * @property {number}   _MAX_ID_FOR_SELECT_REQUEST
  * @property {boolean}  _DONT_REALLY_RESET
- * @property {object}   _intervals
  * @property {object}   parametersCache
  * @property {object}   parametersCache_
  * @property {array}    positionListerners
@@ -33,7 +32,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             this._MAX_MEDIA_PER_REPORT = 3;
             this._MAX_ID_FOR_SELECT_REQUEST = 4000;
             this._DONT_REALLY_RESET = $rootScope.rights._DONT_REALLY_RESET;
-            this._intervals = {};
             this.parametersCache = {};
             this.parametersCache_ = window.smartgeoPersistenceCache_ || {};
             this.positionListerners = [];
@@ -42,8 +40,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo._initializeGlobalEvents();
             Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
-            Smartgeo.clearIntervals();
-            Smartgeo.clearPollingRequest();
             Smartgeo.emptyPositionListerners();
 
             if(window.SmartgeoChromium){
@@ -65,41 +61,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             $rootScope.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
 
             return this ;
-        },
-
-        /**
-         * @memberOf Smartgeo
-         * @param {String}   name
-         * @param {function} f
-         * @param {Integer}  interval
-         * @desc
-         */
-        registerInterval: function (name, f, interval) {
-            if (Smartgeo._intervals[name]) {
-                clearInterval(Smartgeo._intervals[name]);
-            }
-            Smartgeo._intervals[name] = setInterval(f, interval);
-        },
-
-        /**
-         * @memberOf Smartgeo
-         * @desc
-         */
-        clearIntervals: function () {
-            for (var interval in Smartgeo._intervals) {
-                clearInterval(Smartgeo._intervals[interval]);
-                delete Smartgeo._intervals[interval];
-            }
-        },
-
-        /**
-         * @memberOf Smartgeo
-         * @param {String}   name
-         * @desc
-         */
-        clearInterval: function (name) {
-            clearInterval(Smartgeo._intervals[name]);
-            delete Smartgeo._intervals[name];
         },
 
         /**
@@ -153,8 +114,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
-            Smartgeo.clearIntervals();
-            Smartgeo.clearPollingRequest();
             Smartgeo.clearCaches();
 
             for(var val in localStorage){
@@ -752,13 +711,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 'site': site,
                 'auto_load_map': true
             });
-            $http.post(url).then(function (response) {
-                // if (response.data && response.data.sites && response.data.sites.length > 1) {
-                    // Smartgeo.rustineVeolia(response.data.sites, success, error);
-                // } else {
-                    (success ||   function () {})();
-                // }
-            }, error || function () {});
+            $http.post(url).then(success ||   function () {}, error || function () {});
         },
         login_o: function (user, success, error) {
             // TODO : MERGE WITH LOGIN METHOD
@@ -826,9 +779,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         clearSiteSelection: function() {
             $rootScope.site = null;
         },
-        clearPollingRequest: function() {
-            $rootScope.STOP_POLLING = true;
-        },
+
         sleep: function(millis, callback) {
             setTimeout(callback, millis);
         },
