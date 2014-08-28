@@ -1,10 +1,16 @@
-<div id="left_panel_census" ng-controller="censusController">
+<div id="left_panel_census" ng-controller="CensusController as censusController">
 
-    <div  ng-if='okey' style="margin-left:-15px;">
-        <census ui-if='okey' okey='okey' site='site' onsave='cancel()'  oncancel='cancel()' classindex='classindex'></census>
+    <div ng-if='censusController.okey' style="margin-left:-15px;">
+        <census
+            ng-if='censusController.okey'
+            okey='censusController.okey'
+            onsave='censusController.cancel()'
+            oncancel='censusController.cancel()'
+            classindex='censusController.classindex'>
+        </census>
     </div>
 
-    <div ng-if='!okey'>
+    <div ng-if='!censusController.okey'>
 
         <div style="margin:10px" class="panel panel-warning">
             <div class="panel-heading">
@@ -14,13 +20,13 @@
         </div>
         <ul>
             <li ng-repeat="(modelOkey, model) in site.metamodel" ng-if="model.is_census">
-                <a ng-click='startCensus(modelOkey)'>
-                    <img ng-if= 'site.symbology[modelOkey+classindex]'
-                        ng-src='{{site.symbology[modelOkey+classindex].style.symbol.icon}}' alt="" />
-                    <img ng-if='!site.symbology[modelOkey+classindex]'
-                        ng-src='{{site.symbology[site.dependancies[modelOkey]+classindex].style.symbol.icon}}' alt="" />
-                    <img ng-if='!site.symbology[site.dependancies[modelOkey]+classindex]'
-                        ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+classindex]]+classindex].style.symbol.icon}}' alt="" />
+                <a ng-click='censusController.startCensus(modelOkey)'>
+                    <img ng-if= 'site.symbology[modelOkey+censusController.classindex]'
+                        ng-src='{{site.symbology[modelOkey+censusController.classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!site.symbology[modelOkey+censusController.classindex]'
+                        ng-src='{{site.symbology[site.dependancies[modelOkey]+censusController.classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!site.symbology[site.dependancies[modelOkey]+censusController.classindex]'
+                        ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+censusController.classindex]]+censusController.classindex].style.symbol.icon}}' alt="" />
                     <label>{{model.label}}</label>
                 </a>
             </li>
