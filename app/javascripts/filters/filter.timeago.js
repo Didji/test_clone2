@@ -3,12 +3,16 @@
     'use strict';
 
     angular
-        .module("smartgeomobile")
-        .filter("timeago", timeago);
+        .module('smartgeomobile')
+        .filter('timeago', Timeago);
 
-    function timeago() {
-        "use strict";
-        return function(input, PAllowFuture) {
+    function Timeago() {
+
+        /**
+         * @name timeago
+         * @desc Timeago filter
+         */
+        function timeago(input, PAllowFuture) {
             var nowTime = (new Date()).getTime(),
                 date = (new Date(input)).getTime(),
                 dateDifference = nowTime - date,
@@ -65,7 +69,10 @@
                 substitute(strings.years, Math.round(years), strings);
 
             return $.trim([prefix, words, suffix].join(separator));
-        };
+        }
+
+        return timeago ;
+
     }
 
 })();
