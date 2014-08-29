@@ -18,7 +18,9 @@ function config($routeProvider, $rootScope, $httpProvider) {
         controller: 'AuthController'
     }).
     when("/sites/", {
-        templateUrl: "partials/sites.html"
+        templateUrl: "partials/sites.html",
+        controllerAs: 'siteListController',
+        controller: 'SiteListController'
     }).
 
     when("/report/:site", {
