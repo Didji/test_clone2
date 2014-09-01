@@ -566,7 +566,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         findAssetsByCriteria: function (site, search, callback, zones, partial_response, request) {
-            console.log(arguments);
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];

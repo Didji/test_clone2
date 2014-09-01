@@ -1,3 +1,4 @@
+window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {} ;
 window.smartgeo_i18n_lang['en'] = {
     _AUTH_LOG_MESSAGE_INIT_: "Initialization",
     _AUTH_LOG_MESSAGE_REMOTE_: "Remote login",

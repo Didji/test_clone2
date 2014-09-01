@@ -1,3 +1,4 @@
+window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {} ;
 window.smartgeo_i18n_lang['fr'] = {
     _MENU_PARAMETERS : "Paramètres",
     _AUTH_LOG_MESSAGE_INIT_: "Initialisation",

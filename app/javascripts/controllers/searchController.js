@@ -90,7 +90,6 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         if (!$scope.$$phase) {
             $scope.$apply();
         }
-        console.log($scope);
     };
 
     $scope.advancedSearch = function (event) {
