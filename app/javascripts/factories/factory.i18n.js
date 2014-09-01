@@ -49,8 +49,7 @@
          */
         i18n.get = function(key) {
             var s = i18n.labels[i18n.lang()] && i18n.labels[i18n.lang()][key && key.trim()],
-                i = 0, j=1;
-                args = [];
+                i = 0, j=1, args = [];
             for (; j < arguments.length; j++) {
                 args.push(arguments[j]);
             }

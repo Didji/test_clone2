@@ -491,7 +491,7 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                                     data.results.push({id: field.options[k].value , text: field.options[k].label});
                                 }
                             }
-                            data.results.push({id: null , text: ""});
+                            // data.results.push({id: null , text: "Vider le champ"});
                             data.results.sort(sortFunction);
                             return query.callback(data);
                         }

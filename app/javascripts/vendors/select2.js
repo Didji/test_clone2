@@ -1085,7 +1085,6 @@ the specific language governing permissions and limitations under the Apache Lic
             else if (typeof(opts.createSearchChoicePosition) !== "function")  {
                 throw "invalid createSearchChoicePosition option must be 'top', 'bottom' or a custom function";
             }
-
             return opts;
         },
 
@@ -2467,7 +2466,8 @@ the specific language governing permissions and limitations under the Apache Lic
 
             this.selection.removeClass("select2-default");
 
-            if (this.opts.allowClear && this.getPlaceholder() !== undefined) {
+            // if (this.opts.allowClear && this.getPlaceholder() !== undefined) {
+            if (this.opts.allowClear) {
                 this.container.addClass("select2-allowclear");
             }
         },

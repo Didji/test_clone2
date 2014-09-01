@@ -880,12 +880,3 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
     return Smartgeo.initialize();
 
 });
-
-
-angular.module('smartgeomobile').factory('Kernel', function (Smartgeo) {
-
-    'use strict';
-
-    return Smartgeo;
-
-});

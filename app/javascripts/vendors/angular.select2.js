@@ -7,7 +7,9 @@
  */
 angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelect2', ['uiSelect2Config', '$timeout',
     function (uiSelect2Config, $timeout) {
-        var options = {}, lastTextValue;
+        var options = {
+            allowClear : true
+        }, lastTextValue;
         if (uiSelect2Config) {
             angular.extend(options, uiSelect2Config);
         }
@@ -84,60 +86,16 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                     }
 
                     if (controller) {
-                        // Watch the model for programmatic changes
-                        // scope.$watch(tAttrs.ngModel, function (current, old) {
-                        //     if (!current) {
-                        //         return;
-                        //     }
-                        //     // if (current === old) {
-                        //     //     console.log('bah alors on render pas ?');
-                        //     //     return;
-                        //     // }
-                        //     // controller.$render();
-                        // }, true);
-                        // controller.$render = function () {
-                        //     debugger;
-                        //         console.log('bah alors on render pas ?');
-                        //     if (isSelect) {
-                        //         console.log('bah alors on render pas ?');
-                        //         elm.select2('val', controller.$viewValue);
-                        //     } else {
-                        //         console.log('bah alors on render pas ?');
-                        //         if (opts.multiple) {
-                        //             elm.select2(
-                        //                 'data', convertToSelect2Model(controller.$viewValue));
-                        //         } else {
-                        //             if (angular.isObject(controller.$viewValue)) {
-                        //         console.log('bah alors on render pas ?');
-                        //                 elm.select2('data', controller.$viewValue);
-                        //             } else if (!controller.$viewValue) {
-                        //         console.log('bah alors on render pas ?');
-                        //                 elm.select2('data', null);
-                        //             } else {
-                        //         console.log('bah alors on render pas ?');
-                        //                 elm.select2('val', controller.$viewValue);
-                        //             }
-                        //         }
-                        //     }
-                        // };
 
-                        // Watch the options dataset for changes
-                        // if (watch) {
-                            scope.$watch(watch, function (newVal, oldVal, scope) {
-                                if (!newVal) {
-                                // if (!newVal && !controller.$modelValue) {
-                                    return;
-                                }
-                                // Delayed so that the options have time to be rendered
-                                $timeout(function () {
-                                    // elm.select2('val', "1");
-                                    // console.log(controller.$viewValue) ;
-                                    elm.select2('val', controller.$viewValue);
-                                    // Refresh angular to remove the superfluous option
-                                    elm.trigger('change');
-                                });
+                        scope.$watch(watch, function (newVal, oldVal, scope) {
+                            if (!newVal) {
+                                return;
+                            }
+                            $timeout(function () {
+                                elm.select2('val', controller.$viewValue);
+                                elm.trigger('change');
                             });
-                        // }
+                        });
 
                         // Update valid and dirty statuses
                         controller.$parsers.push(function (value) {
@@ -155,7 +113,11 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                         if (!isSelect) {
                             // Set the view and model value and update the angular template manually for the ajax/multiple select2.
                             elm.bind("change", function (event) {
-                                lastTextValue = event.added.text ;
+                                if(event.added){
+                                    lastTextValue = event.added.text ;
+                                } else {
+                                    lastTextValue = "" ;
+                                }
                                 if (scope.$$phase) {
                                     return;
                                 }
