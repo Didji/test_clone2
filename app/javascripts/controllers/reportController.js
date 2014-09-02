@@ -143,6 +143,12 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
         return false;
     }
 
+    function pad(number) {
+        if (number < 10) {
+            return '0' + number;
+        }
+        return number;
+    }
     function applyDefaultValues() {
         var report = $scope.report,
             act = report.activity,
@@ -153,12 +159,6 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
             tab, field,
             date;
 
-        function pad(number) {
-            if (number < 10) {
-                return '0' + number;
-            }
-            return number;
-        }
 
         function getList(pkey, okey) {
             var mm = $rootScope.site.metamodel[okey];
@@ -299,7 +299,7 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
 
         for (i in report.fields) {
             if( report.fields[i] instanceof Date ){
-                report.fields[i] = report.fields[i].getHours() + ":" + report.fields[i].getMinutes()
+                report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes())
             }
             if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                 console.log("set", report.fields[i] ,"to", report.fields[i].id);
