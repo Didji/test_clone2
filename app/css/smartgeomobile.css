@@ -695,3 +695,16 @@ ul.ged-gallery li img {
 .select2-results .select2-result-label {
     padding: 13px 7px 12px;
 }
+
+.select2-container .select2-choice abbr{
+    background :none;
+    margin-top: -10px;
+}
+
+.select2-container .select2-choice abbr:after{
+    content:"\2A09";
+    color: gray;
+    font-size:20px;
+    top:auto;
+    color:black;
+}
