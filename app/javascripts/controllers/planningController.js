@@ -124,7 +124,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     if (mission.openned) {
                         open.push(i);
                     }
-                    if (mission.displayDone && mission.assets.length) {
+                    if (mission.displayDone && ( mission.assets.length || !mission.activity )) {
                         done.push(i);
                     }
                     selectedAssets[i] = mission.selectedAssets;
@@ -150,7 +150,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         mission.assets = mission.assets.concat(mission.postAddedAssets.assets);
                     }
 
-                    newMissionCount += (mission.assets.length && previous.indexOf(i) === -1) ? 1 : 0;
+                    newMissionCount += ((( mission.assets.length || !mission.activity )) && previous.indexOf(i) === -1) ? 1 : 0;
 
                     if (open.indexOf(i) >= 0) {
                         mission.openned = false;
@@ -190,7 +190,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 for (var i in $rootScope.missions) {
                     var mission = $rootScope.missions[i];
                     $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
-                    if (mission.openned && mission.assets.length) {
+                    if (mission.openned && ( mission.assets.length || !mission.activity )) {
                         // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
                         mission.openned = false;
                         $scope.toggleMission(mission, false);
@@ -301,7 +301,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         mission.isLoading = true;
         mission.openned = !mission.openned;
 
-        if (mission.openned && !$scope.assetsCache[mission.id] && mission.assets.length) {
+        if (mission.openned && !$scope.assetsCache[mission.id] && ( mission.assets.length || !mission.activity )) {
             return Smartgeo.findGeometryByGuids($scope.site, mission.assets, function (assets) {
                 if (!assets.length) {
                     mission.isLoading = false;
@@ -343,7 +343,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 $scope.$apply();
             });
 
-        } else if (mission.openned && $scope.assetsCache[mission.id] && mission.assets.length) {
+        } else if (mission.openned && $scope.assetsCache[mission.id] && ( mission.assets.length || !mission.activity )) {
             $scope.highlightMission(mission);
             if (mission.displayDone) {
                 $scope.showDoneAssets(mission);
@@ -619,7 +619,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 mission = in_[id];
                 if (    $filter('sanitizeDate')(mission.end)    > now
                     &&  $filter('sanitizeDate')(mission.begin) <= now
-                    &&  mission.assets.length) {
+                    &&  ( mission.assets.length || !mission.activity )) {
                     out[id] = mission;
                 }
             }
@@ -635,7 +635,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 if (   $filter('sanitizeDate')(mission.end  ) > day
                     && $filter('sanitizeDate')(mission.begin) > day
                     && $filter('sanitizeDate')(mission.begin) < (day + 86400000)
-                    && mission.assets.length) {
+                    && ( mission.assets.length || !mission.activity )) {
                     out.push(mission);
                 }
             }
@@ -647,7 +647,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             var out = {}, mission, now = (new Date()).getTime();
             for (var id in in_) {
                 mission = in_[id];
-                if ($filter('sanitizeDate')(mission.end) < now && mission.assets.length) {
+                if ($filter('sanitizeDate')(mission.end) < now && ( mission.assets.length || !mission.activity )) {
                     mission.isLate = true;
                     out[id] = mission;
                 }
@@ -660,7 +660,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             var out = {}, mission, now = (new Date()).getTime();
             for (var id in in_) {
                 mission = in_[id];
-                if (!mission.assets.length) {
+                if (!( mission.assets.length || !mission.activity )) {
                     mission.isLate = false;
                     out[id] = mission;
                 }
