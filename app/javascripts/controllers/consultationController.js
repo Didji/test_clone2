@@ -173,6 +173,14 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
         })
     }
 
+    $scope.openInApp = function(url, event){
+        event.preventDefault();
+        if (window.SmartgeoChromium && window.SmartgeoChromium.redirect) {
+             SmartgeoChromium.redirect(url);
+        } else {
+            window.open(url, '_system');
+        }
+    }
 
 
 }]).filter('prettifyField', function () {

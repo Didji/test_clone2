@@ -49,4 +49,7 @@
     <feature name="GotoPlugin">
         <param name="ios-package" value="GotoPlugin" />
     </feature>
+    <feature name="InAppBrowser">
+        <param name="ios-package" value="CDVInAppBrowser" />
+    </feature>
 </widget>

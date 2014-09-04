@@ -70,6 +70,7 @@
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		EEF7DB899B0544C29B912B23 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 85A0CF24AC48463498462332 /* CDVJpegHeaderWriter.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
+		C89FB4C128164CC29A48CD7F /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B88406AA13614D9695702A0F /* CDVInAppBrowser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,6 +165,8 @@
 		EA6CF1E57BA244CD9BBB1DA4 /* CDVNotification.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CDVNotification.bundle; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = Smartgeo/config.xml; sourceTree = "<group>"; };
 		FE20266776404D27898EAE90 /* CDVFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVFile.m; path = org.apache.cordova.file/CDVFile.m; sourceTree = "<group>"; };
+		B88406AA13614D9695702A0F /* CDVInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVInAppBrowser.m"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		CA612CD51AE7465EB45E9F5D /* CDVInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVInAppBrowser.h"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +322,8 @@
 				18D61F560F2147F4A8D82C60 /* CDVAssetLibraryFilesystem.m */,
 				41E52500BD954FF2B8E33D84 /* CDVLocalFilesystem.h */,
 				38D9F9090A9648208703F1EE /* CDVAssetLibraryFilesystem.h */,
+				B88406AA13614D9695702A0F /* CDVInAppBrowser.m */,
+				CA612CD51AE7465EB45E9F5D /* CDVInAppBrowser.h */,
 			);
 			name = Plugins;
 			path = Smartgeo/Plugins;
@@ -535,6 +540,7 @@
 				B663D92C18A8DE3200A4E3B3 /* GotoPlugin.m in Sources */,
 				B6E36D03193498AE00AFB775 /* RNCachingURLProtocol.m in Sources */,
 				2534AFA9FBBE40ECBE62068C /* CDVAssetLibraryFilesystem.m in Sources */,
+				C89FB4C128164CC29A48CD7F /* CDVInAppBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

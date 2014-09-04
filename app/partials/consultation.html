@@ -34,7 +34,14 @@
                                                 <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
                                                     <td bo-text="field.label"></td>
                                                     <td bo-switch="site.lists[field.options][asset.attributes[field.key]]">
-                                                        <span bo-switch-when="undefined" bo-text="asset.attributes[field.key] | prettifyField"></span>
+                                                        <span bo-switch-when="undefined">
+                                                            <span bo-switch="asset.attributes[field.key] | isLink">
+                                                                <span bo-switch-when="-1">{{asset.attributes[field.key] | prettifyField}}</span>
+                                                                <span bo-switch-default>
+                                                                    <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{asset.attributes[field.key]}}</a>
+                                                                <span>
+                                                            </span>
+                                                        </span>
                                                         <span bo-switch-default bo-text="site.lists[field.options][asset.attributes[field.key]] | prettifyField"></span>
                                                     </td>
                                                 </tr>
