@@ -18,10 +18,8 @@
 
         var Marker = {};
 
-        Marker.getMarkerFromAsset = function(asset) {
-
+        Marker.getMarkerFromAsset = function(asset, clickHandler) {
             var marker;
-
             switch (asset.geometry.type) {
                 case "Point":
                     var coords = asset.geometry.coordinates;
@@ -39,25 +37,7 @@
                     });
                     break;
             }
-
-            marker.on('click', function() {
-                var coords = asset.geometry.coordinates,
-                    center;
-                switch (asset.geometry.type) {
-                    case "Point":
-                        center = [coords[1], coords[0]];
-                        break;
-                    case "LineString":
-                        center = [coords[0][1], coords[0][0]];
-                        break;
-                    default:
-                        center = [coords[0][0][1], coords[0][0][0]];
-                }
-                G3ME.map.setView(center, 18);
-            });
-
-            return marker;
-
+            return marker.on('click', clickHandler || angular.noop);
         }
 
         return Marker;

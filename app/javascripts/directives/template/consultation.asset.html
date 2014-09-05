@@ -1,6 +1,6 @@
-<div class="panel-heading" ng-click="toggleAsset(asset);">
+<div class="panel-heading" ng-click="asset.toggleMapVisibility()">
   <h4 class="panel-title">
-    <span class="pull-right icon {{asset.open ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
+    <span class="pull-right icon {{asset.onMap ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
     <a  class="accordion-toggle">
         <div bindonce ng-switch on="asset.label" >
             <span ng-switch-when="" bo-text="site.metamodel[okey].label"></span>
@@ -10,7 +10,7 @@
   </h4>
 </div>
 
-<div bindonce ng-if="asset.open" class="panel-collapse">
+<div bindonce ng-if="asset.onMap" class="panel-collapse">
     <div class="panel-body">
         <span bindonce ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
             <h5 bo-text="tab.label"></h5>
@@ -51,8 +51,8 @@
                 </li>
           </ul>
         </div>
-        <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
-        <button class="btn btn-primary btn-block" bo-if="rights.goto" ng-click="gotoAsset(asset)" style="margin-bottom:5px;"><i18n>_CONSULTATION_GOTO</i18n></button>
+        <button class="btn btn-primary btn-block" ng-click="asset.zoomOn()"><i18n>_CONSULTATION_LOCATE</i18n></button>
+        <button class="btn btn-primary btn-block" ng-click="asset.goTo()"  bo-if="rights.goto" style="margin-bottom:5px;"><i18n>_CONSULTATION_GOTO</i18n></button>
         <ng-include src="'partials/consultation-asset-missions.html'"></ng-include>
         <ng-include src="'partials/consultation-asset-calls.html'"></ng-include>
         <ng-include ng-if="rights.history" src="'partials/consultation-asset-history.html'"></ng-include>

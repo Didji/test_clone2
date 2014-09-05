@@ -350,7 +350,6 @@ angular.module('smartgeomobile').controller('consultationController', ["$scope",
     'use strict';
 
     return function (s) {
-        console.log(s, ((s + '') || '').search(/(https?:\/\/.*)$/));
         return ((s + '') || '').search(/(https?:\/\/.*)$/);
     };
 });

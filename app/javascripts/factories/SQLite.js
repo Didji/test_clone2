@@ -84,6 +84,18 @@ var SQLite = {
                 (callback || function () {})();
             });
         });
+    },
+
+    exec : function(database, request, args, callback){
+        SQLite.openDatabase({ name: database }).transaction(function (t) {
+            t.executeSql( request ,args ||  [], function (t,r) {
+                callback(r.rows);
+            }, function(){
+                console.log(arguments);
+            });
+        }, function(){
+            console.log(arguments);
+        });
     }
 
 };

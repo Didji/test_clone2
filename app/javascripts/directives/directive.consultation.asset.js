@@ -24,13 +24,6 @@
 			scope.site   = $rootScope.site ;
 			scope.rights = $rootScope.rights ;
 
-			scope.toggleAsset = toggleAsset ;
-
-			function toggleAsset(){
-				scope.asset.open = !scope.asset.open;
-		       	scope.asset.toggleMapVisibility() ;
-			}
-
 		}
 
 	}
