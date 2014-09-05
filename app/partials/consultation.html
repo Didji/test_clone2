@@ -13,69 +13,7 @@
                     <h4 class="family-title" bo-text="site.metamodel[okey].label"></h4>
                     <div class="panel-group" id="accordion">
                         <div bindonce ng-repeat='asset in assets' class="panel panel-default">
-                            <div class="panel-heading" ng-click="toggleAsset(asset)">
-                              <h4 class="panel-title">
-                                <span class="pull-right icon {{asset.open ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
-                                <a  class="accordion-toggle">
-                                    <div bindonce ng-switch on="asset.label" >
-                                        <span ng-switch-when="" bo-text="site.metamodel[okey].label"></span>
-                                        <span ng-switch-default bo-text="asset.label"></span>
-                                    </div>
-                                </a>
-                              </h4>
-                            </div>
-
-                            <div bindonce ng-if="asset.open" class="panel-collapse">
-                                <div class="panel-body">
-                                    <span bindonce ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
-                                        <h5 bo-text="tab.label"></h5>
-                                        <table style="font-size: 0.8em;" class="table table-striped">
-                                            <tbody>
-                                                <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
-                                                    <td bo-text="field.label"></td>
-                                                    <td bo-switch="site.lists[field.options][asset.attributes[field.key]]">
-                                                        <span bo-switch-when="undefined">
-                                                            <span bo-switch="asset.attributes[field.key] | isLink">
-                                                                <span bo-switch-when="-1">{{asset.attributes[field.key] | prettifyField}}</span>
-                                                                <span bo-switch-default>
-                                                                    <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{asset.attributes[field.key]}}</a>
-                                                                <span>
-                                                            </span>
-                                                        </span>
-                                                        <span bo-switch-default bo-text="site.lists[field.options][asset.attributes[field.key]] | prettifyField"></span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </span>
-
-                                    <hr bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
-
-                                    <a  style="margin-bottom: 5px;" class="btn btn-primary btn-block"
-                                        bo-href="'#/report/'+site.id+'/'+site.activities._byId[map_activity||report_activity].id+'/'+asset.guid"
-                                        bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'
-                                        bo-text="site.activities._byId[map_activity||report_activity].label"></a>
-
-                                    <div bo-if="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)"
-                                        class="btn-group dropup"
-                                        style="width:100%; margin-bottom: 5px;">
-                                      <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                        <i18n>_CONSULTATION_REPORT</i18n><span class="caret"></span>
-                                      </button>
-                                      <ul class="dropdown-menu" role="menu">
-                                            <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
-                                                <a bo-href="'#/report/'+site.id+'/'+activity.id+'/'+asset.guid" bo-text="activity.label"></a>
-                                            </li>
-                                      </ul>
-                                    </div>
-                                    <button class="btn btn-primary btn-block" ng-click="zoomOnAsset(asset)"><i18n>_CONSULTATION_LOCATE</i18n></button>
-                                    <button class="btn btn-primary btn-block" bo-if="rights.goto" ng-click="gotoAsset(asset)" style="margin-bottom:5px;"><i18n>_CONSULTATION_GOTO</i18n></button>
-                                    <ng-include src="'partials/consultation-asset-missions.html'"></ng-include>
-                                    <ng-include src="'partials/consultation-asset-calls.html'"></ng-include>
-                                    <ng-include ng-if="rights.history" src="'partials/consultation-asset-history.html'"></ng-include>
-                                </div>
-                            </div>
-
+                            <asset-consultation asset=asset><asset-consultation>
                         </div>
                     </div>
                 </div>
