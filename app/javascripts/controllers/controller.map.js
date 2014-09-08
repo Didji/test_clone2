@@ -435,7 +435,7 @@
                 onAdd: function (map) {
                     var container = L.DomUtil.create('div', 'leaflet-bar');
                     $(container)
-                        .html('<a href="#" title="' + title + '"><span class="icon ' + icon + '"></span></a>')
+                        .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
                         .on('click', onclick);
                     return container;
                 }
@@ -533,7 +533,7 @@
             stopConsultation();
             $scope.consultationIsEnabled = true;
             if (!CONSULTATION_CONTROL) {
-                CONSULTATION_CONTROL = makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "icon-info-sign", stopConsultation);
+                CONSULTATION_CONTROL = makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "fa-info-circle", stopConsultation);
             }
 
             G3ME.map.addControl(CONSULTATION_CONTROL);

@@ -6,7 +6,7 @@
 
     <div id='lateMission' class="mission_group" ng-show="lateMissionsLength>0">
       <h5 class="planning_section_header" ng-click='hideLate = !hideLate'>
-        <span>En retard ({{lateMissionsLength}})</span><small>{{hideLate ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{hideLate ? 'down' : 'up'}}"></span></small>
+        <span>En retard ({{lateMissionsLength}})</span><small>{{hideLate ? 'afficher' : 'masquer'}} <span class="fa fa-caret-{{hideLate ? 'down' : 'up'}}"></span></small>
       </h5>
       <div ng-repeat="(key,mission) in (missions|lateMissions)" ng-hide="hideLate">
         <ng-include src="'partials/mission.html'"></ng-include>
@@ -15,7 +15,7 @@
 
     <div id='todaysMission' class="mission_group" ng-show="todayMissionsLength>0">
       <h5 class="planning_section_header" ng-click='hideToday = !hideToday'>
-        <span>Aujourd'hui ({{todayMissionsLength}})</span><small>{{hideToday ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{hideToday ? 'down' : 'up'}}"></span></small>
+        <span>Aujourd'hui ({{todayMissionsLength}})</span><small>{{hideToday ? 'afficher' : 'masquer'}} <span class="fa fa-caret-{{hideToday ? 'down' : 'up'}}"></span></small>
       </h5>
       <div ng-repeat="(key,mission) in (missions|todayMissions)" ng-hide="hideToday">
         <ng-include src="'partials/mission.html'"></ng-include>
@@ -24,7 +24,7 @@
 
     <div class='nextDaysMissions mission_group' ng-repeat='(day,missions_) in nextMissions'>
       <h5 class="planning_section_header" ng-click='missions_.hide = !missions_.hide'>
-        <span>{{day|date:'EEE d MMM'}} ({{missions_.length}})</span><small>{{missions_.hide ? 'afficher' : 'masquer'}} <span class="icon icon-caret-{{missions_.hide ? 'down' : 'up'}}"></span></small>
+        <span>{{day|date:'EEE d MMM'}} ({{missions_.length}})</span><small>{{missions_.hide ? 'afficher' : 'masquer'}} <span class="fa fa-caret-{{missions_.hide ? 'down' : 'up'}}"></span></small>
       </h5>
       <div ng-repeat="(key,mission) in (missions | specificDayMissions:day)" ng-hide="missions_.hide">
         <ng-include src="'partials/mission.html'"></ng-include>
@@ -33,7 +33,7 @@
 
     <div class='mission_group' ng-click='findNextMissions()' ng-if="currentNextDay<=maxBeginDate">
       <h5 class="planning_section_header">
-        <span>Afficher plus</span><small><span class="icon icon-plus"></span></small>
+        <span>Afficher plus</span><small><span class="fa fa-plus"></span></small>
       </h5>
     </div>
 
@@ -45,7 +45,7 @@
 
     <div class="mission_group doneMission" ng-if="doneMissionsLength>0">
       <h5 class="planning_section_header" ng-click='showDone = !showDone'>
-        <span>Terminés ({{doneMissionsLength}})</span><small>{{showDone ? 'masquer' : 'afficher'}} <span class="icon icon-caret-{{showDone ? 'down' : 'up'}}"></span></small>
+        <span>Terminés ({{doneMissionsLength}})</span><small>{{showDone ? 'masquer' : 'afficher'}} <span class="fa fa-caret-{{showDone ? 'down' : 'up'}}"></span></small>
       </h5>
         <table class="table table-condensed table-hover doneTable" ng-if="showDone">
             <tr>

@@ -45,6 +45,7 @@ window.smartgeo_i18n_lang['en'] = {
     _CONSULTATION_GPS_FAIL: "Error while retrieving GPS coordinates",
     _CONSULTATION_ADD_TO_: "Add to",
     _CONSULTATION_WRITE_FOR_: "Write for ",
+    _CONSULTATION_ADD_TO_SELECTION: "Add to current selection",
 
     _INSTALL_INSTALLING: "Installing ",
     _INSTALL_IN_PROGRESS: " in progress",

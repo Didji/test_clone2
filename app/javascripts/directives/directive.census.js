@@ -47,7 +47,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 $scope.save = function() {
                     if (!$scope.root.isGeometryOk()) {
-                        alertify.alert('Veuillez remplir toutes les géometries <span ng-if="site.metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="icon icon-map-marker"></span></span>');
+                        alertify.alert('Veuillez remplir toutes les géometries <span ng-if="site.metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
                         return;
                     }
                     $scope.onsave();

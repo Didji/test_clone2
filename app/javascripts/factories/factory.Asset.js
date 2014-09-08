@@ -6,22 +6,25 @@
         .module('smartgeomobile')
         .factory('Asset', AssetFactory);
 
-    AssetFactory.$inject = ["G3ME", "Icon", "Marker", "SQLite", "$rootScope", "Smartgeo"];
+    AssetFactory.$inject = ["G3ME", "Icon", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http"];
 
-    /**
-     * @class AssetFactory
-     * @desc Factory de la classe Asset
-     *
-     * @property {Boolean} onMap L'objet est il affiché sur la carte ?
-     * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
-     */
 
-    function AssetFactory(G3ME, Icon, Marker, SQLite, $rootScope, Smartgeo) {
+    function AssetFactory(G3ME, Icon, Marker, SQLite, $rootScope, Smartgeo, $http) {
 
-        function Asset(asset, callback) {
+        /**
+         * @class AssetFactory
+         * @desc Factory de la classe Asset
+         *
+         * @property {Boolean} onMap L'objet est il affiché sur la carte ?
+         * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
+         */
+        function Asset(asset) {
             var self = this ;
             if(typeof asset === "object"){
                 angular.extend(this, asset);
+                if(!this.attributes){
+                    this.attributes = JSON.parse(this.asset).attributes ;  //TODO(@gulian): Utiliser Asset.convertRawRow() dans reportController pour eviter ça.
+                }
             } else {
                 Asset.findOne(asset, function(asset){
                     angular.extend(self, asset);
@@ -40,7 +43,9 @@
             var self = this ;
             this.onMap = true;
             this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset(this, function(){self.zoomOn()});
-            this.consultationMarker.addTo(G3ME.map);
+            if(G3ME.map){
+                this.consultationMarker.addTo(G3ME.map);
+            }
         };
 
         /**
@@ -49,7 +54,9 @@
          */
          Asset.prototype.hideFromMap = function() {
             this.onMap = false;
-            G3ME.map.removeLayer(this.consultationMarker);
+            if(G3ME.map){
+                G3ME.map.removeLayer(this.consultationMarker);
+            }
         };
 
         /**
@@ -57,7 +64,7 @@
          * @desc
          */
         Asset.prototype.toggleMapVisibility = function() {
-            this[this.onMap ? "hideFromMap" : "showOnMap"]();
+                this[this.onMap ? "hideFromMap" : "showOnMap"]();
         };
 
         /**
@@ -66,6 +73,23 @@
          */
         Asset.prototype.zoomOn = function(){
             G3ME.map.setView(this.getCenter(), 18);
+        };
+
+        /**
+         * @name fetchHistory
+         * @desc
+         */
+        Asset.prototype.fetchHistory = function(){
+            var self = this ;
+            $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.history', {
+                id : this.guid,
+                limit: 5
+            })).success(function(data){
+                self.reports = data ;
+            }).error(function(error){
+                self.reports = [] ;
+                console.error(error);
+            });
         };
 
         /**
@@ -88,18 +112,38 @@
          * @desc
          */
         Asset.prototype.getCenter  = function(){
-            var coords = this.geometry.coordinates, center;
-            switch (this.geometry.type) {
-                case "Point":
-                    center = [coords[1], coords[0]];
-                    break;
-                case "LineString":
-                    center = [coords[0][1], coords[0][0]];
-                    break;
-                default:
-                    center = [coords[0][0][1], coords[0][0][0]];
+            var coordinates = this.geometry.coordinates;
+
+            if(this.geometry.type === "Point"){
+                return [coordinates[1], coordinates[0]];
+            } else {
+                return Asset.getLineStringMiddle(coordinates);
             }
-            return center ;
+        };
+
+        /**
+         * @name getLineStringMiddle
+         * @desc Retourne le milieu d'un LineString
+         * @param {Array[]} coordinates Géometrie de l'objet
+         */
+        Asset.getLineStringMiddle = function (coordinates) {
+            var length = 0, a, b, i, raptor , middle ;
+            for (i = 0; i < coordinates.length - 1; i++) {
+                a = coordinates[i];
+                b = coordinates[i + 1];
+                a[2] = length;
+                length += Math.sqrt(Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2));   //TODO(@gulian): Factory Geometry ? Vector ?
+            }
+            coordinates[coordinates.length - 1][2] = length;
+            middle = length / 2;
+            for (i = 0; i < coordinates.length - 1; i++) {
+                a = coordinates[i];
+                b = coordinates[i + 1];
+                if (a[2] <= middle && middle <= b[2]) {
+                    raptor = (middle - a[2]) / (b[2] - a[2]);
+                    return [a[1] + raptor * (b[1] - a[1]), a[0] + raptor * (b[0] - a[0]), a];
+                }
+            }
         };
 
         /**

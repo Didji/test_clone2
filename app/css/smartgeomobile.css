@@ -160,8 +160,6 @@ img.leaflet-tile{
     background-color: #3F3F3F;
 }
 
-.consultation-panel.open {
-}
 
 #toggleConsultationPanelButton {
     -webkit-transform: translate3d(0%,0,0);
@@ -224,6 +222,25 @@ img.leaflet-tile{
     display: inline-block;
     margin-top: 12px;
     margin-left: 7px;
+}
+
+.consultation-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 40px;
+    border: none;
+    float: right;
+    margin: 0 8px 10px 0;
+    border-color: #fd9122;
+    color: #FFF;
+    background-color: #fd9122;
+    font-size: 2em;
+    line-height: 40px;
+}
+
+
+.consultation-small-table {
+    font-size:0.75em;
 }
 
 
@@ -386,7 +403,7 @@ fieldset[disabled] .btn-primary.active {
     text-align: center;
 }
 
-.mp-menu ul li > a span.icon {
+.mp-menu ul li > a span.fa {
     text-decoration: none;
     outline: none;
     color: #fd9122;
@@ -631,7 +648,7 @@ ul.ged-gallery li img {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0) !important; /* Désolé, pris par le temps */
 }
 
-.leaflet-control .icon {
+.leaflet-control .fa {
     font-size: 30px;
     color: #fd9122;
 }

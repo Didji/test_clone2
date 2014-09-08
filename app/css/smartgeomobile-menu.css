@@ -117,7 +117,7 @@
     color :white ;
 }
 
-#left_panel_menu_items > div > li > .icon {
+#left_panel_menu_items > div > li > .fa {
     color: #FD9122;
     float: left;
     margin: 3px;

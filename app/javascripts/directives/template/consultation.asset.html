@@ -1,30 +1,23 @@
 <div class="panel-heading" ng-click="asset.toggleMapVisibility()">
   <h4 class="panel-title">
-    <span class="pull-right icon {{asset.onMap ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
-    <a  class="accordion-toggle">
-        <div bindonce ng-switch on="asset.label" >
-            <span ng-switch-when="" bo-text="site.metamodel[okey].label"></span>
-            <span ng-switch-default bo-text="asset.label"></span>
-        </div>
-    </a>
+    <span class="pull-right fa fa-caret-{{asset.onMap ? 'up' : 'down'}}"></span>
+    <a  class="accordion-toggle">{{::(asset.label || site.metamodel[okey].label)}}</a>
   </h4>
 </div>
 
 <div bindonce ng-if="asset.onMap" class="panel-collapse">
     <div class="panel-body">
         <span bindonce ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
-            <h5 bo-text="tab.label"></h5>
-            <table style="font-size: 0.8em;" class="table table-striped">
+            <h5>{{::tab.label}}</h5>
+            <table class="table table-striped consultation-small-table ">
                 <tbody>
                     <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
-                        <td bo-text="field.label"></td>
-                        <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined">
-                            <span bo-switch="asset.attributes[field.key] | isLink">
-                                <span bo-switch-when="-1">{{asset.attributes[field.key] | prettifyField}}</span>
-                                <span bo-switch-default>
-                                    <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{:: asset.attributes[field.key]}}</a>
-                                <span>
-                            </span>
+                        <td>{{::field.label}}</td>
+                        <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) == -1 ">
+                            {{::(asset.attributes[field.key] | prettifyField)}}
+                        </td>
+                        <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) != -1 ">
+                            <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{:: asset.attributes[field.key]}}</a>
                         </td>
                         <td ng-if="site.lists[field.options][asset.attributes[field.key]] != undefined">{{:: (site.lists[field.options][asset.attributes[field.key]] | prettifyField) }}</td>
                     </tr>
@@ -32,18 +25,22 @@
             </table>
         </span>
 
-        <hr bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/>
+        <!-- VEOLIA (Commenté pour alléger le DOM) -->
+        <!-- <hr bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'/> -->
+        <!-- <a bo-href="'#/report/'+site.id+'/'+site.activities._byId[map_activity||report_activity].id+'/'+asset.guid"
+           bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'
+           bo-text="site.activities._byId[map_activity||report_activity].label"></a> -->
 
-        <a  style="margin-bottom: 5px;" class="btn btn-primary btn-block"
-            bo-href="'#/report/'+site.id+'/'+site.activities._byId[map_activity||report_activity].id+'/'+asset.guid"
-            bo-if='(report_activity || map_activity) && (site.activities._byId[map_activity||report_activity].okeys[0] == asset.okey)'
-            bo-text="site.activities._byId[map_activity||report_activity].label"></a>
+        <button class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i></button>
+        <button class="consultation-btn" ng-click="asset.goTo()"  bo-if="rights.goto"><i class="fa fa-location-arrow"></i></button>
+        <button class="consultation-btn" ng-click="addToCurrentSelection(asset)"><i class="fa fa-plus"></i></button>
+        <button class="consultation-btn" ng-click="asset.fetchHistory()" bo-if="rights.history" ng-if="!asset.reports"><i class="fa fa-history"></i></button>
 
         <div bo-if="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)"
-            class="btn-group dropup"
-            style="width:100%; margin-bottom: 5px;">
-          <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            <i18n>_CONSULTATION_REPORT</i18n><span class="caret"></span>
+            class="btn-group dropup">
+
+          <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
+            <i class="fa fa-pencil-square-o"></i>
           </button>
           <ul class="dropdown-menu" role="menu">
                 <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
@@ -51,10 +48,10 @@
                 </li>
           </ul>
         </div>
-        <button class="btn btn-primary btn-block" ng-click="asset.zoomOn()"><i18n>_CONSULTATION_LOCATE</i18n></button>
-        <button class="btn btn-primary btn-block" ng-click="asset.goTo()"  bo-if="rights.goto" style="margin-bottom:5px;"><i18n>_CONSULTATION_GOTO</i18n></button>
-        <ng-include src="'partials/consultation-asset-missions.html'"></ng-include>
-        <ng-include src="'partials/consultation-asset-calls.html'"></ng-include>
-        <ng-include ng-if="rights.history" src="'partials/consultation-asset-history.html'"></ng-include>
+
+        <ng-include src="'partials/consultation-asset-missions.html'" ></ng-include>
+        <ng-include src="'partials/consultation-asset-calls.html'"    ></ng-include>
+        <ng-include src="'partials/consultation-asset-history.html'"  ></ng-include>
+
     </div>
 </div>

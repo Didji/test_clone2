@@ -29,37 +29,37 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             $scope.menuItems = [{
                 id: 'search',
                 label: i18n.get('_MENU_SEARCH'),
-                icon: "icon icon-search",
+                icon: "fa fa-search",
                 template: 'partials/search.html',
                 forceLoadDOM: false
             }, {
                 id: 'planning',
                 label: i18n.get('_MENU_PLANNING'),
-                icon: "icon icon-calendar",
+                icon: "fa fa-calendar",
                 template: 'partials/planning.html',
                 forceLoadDOM: true
             }, {
                 id: 'census',
                 label: i18n.get('_MENU_CENSUS'),
-                icon: "icon icon-plus",
+                icon: "fa fa-plus",
                 template: 'partials/census.html',
                 forceLoadDOM: false
             }, {
                 id: 'activelayers',
                 label: i18n.get('_MENU_ACTIVE_LAYERS'),
-                icon: "icon icon-list-ul",
+                icon: "fa fa-list-ul",
                 template: 'partials/layers.html',
                 forceLoadDOM: false
             }, {
                 id: 'synccenter',
                 label: i18n.get('_MENU_SYNC'),
-                icon: "icon icon-refresh",
+                icon: "fa fa-refresh",
                 template: 'partials/synchronizationMenu.html',
                 forceLoadDOM: true
             }, {
                 id: 'parameters',
                 label: i18n.get('_MENU_PARAMETERS'),
-                icon: "icon icon-cogs",
+                icon: "fa fa-cogs",
                 template: 'partials/parameters.html',
                 forceLoadDOM: false
             }];
@@ -67,23 +67,23 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             $scope.bottomMenuItems = [{
                 id: 'logout',
                 label: 'Déconnexion',
-                icon: "icon icon-power-off redicon",
+                icon: "fa fa-power-off redicon",
                 action: 'logout',
             },{
                 id: 'siteselection',
                 label: 'Selection de site',
-                icon: "icon icon-exchange",
+                icon: "fa fa-exchange",
                 action: 'changeSite',
                 specialVisibility: 'checkIfMoreThanOneSiteIsAvailable'
             },{
                 id: 'myposition',
                 label: 'Ma position',
-                icon: "icon icon-compass",
+                icon: "fa fa-compass",
                 action: 'activatePosition',
             },{
                 id: 'consultation',
                 label: 'Consultation',
-                icon: "icon icon-info-sign",
+                icon: "fa fa-info-circle",
                 action: 'activateConsultation',
             }];
 

@@ -63,7 +63,7 @@
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
-        <button ng-click="activateConsultation()" style="margin-top:3px;" class="btn btn-block btn-primary"><span class="icon-info-sign"></span> Activer la consultation</button>
+        <button ng-click="activateConsultation()" style="margin-top:3px;" class="btn btn-block btn-primary"><span class="fa fa-info-circle"></span> Activer la consultation</button>
         <p ng-show='mission.postAddedAssets.assets.length'>
           <table ng-show='mission.postAddedAssets.assets.length' class="table table-condensed" style="margin-bottom: -15px;">
             <thead>
@@ -79,8 +79,8 @@
             </thead>
             <tbody>
               <tr ng-repeat="asset in mission.postAddedAssets.assets">
-                <td><button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="locateAsset(assetsCache[mission.id]._byId[asset])"><span class="icon icon-map-marker"></span> {{assetsCache[mission.id]._byId[asset].label}}</button></td>
-                <td><button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="removeAssetFromMission(assetsCache[mission.id]._byId[asset], mission)"><span class="icon icon-trash"></span></button></td>
+                <td><button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="locateAsset(assetsCache[mission.id]._byId[asset])"><span class="fa fa-map-marker"></span> {{assetsCache[mission.id]._byId[asset].label}}</button></td>
+                <td><button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="removeAssetFromMission(assetsCache[mission.id]._byId[asset], mission)"><span class="fa fa-trash"></span></button></td>
               </tr>
             </tbody>
           </table>
