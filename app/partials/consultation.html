@@ -1,28 +1,29 @@
-<div ng-controller="consultationController" class="consultation-panel" ng-class="state" id="consultation-panel">
-    <div id="toggleConsultationPanelButton" ng-show="assets.length" ng-click="toggleConsultationPanel()">
+<div ng-controller="ConsultationController as consultationController" class="consultation-panel" ng-class="{open : consultationController.isOpen}">
+    <div id="toggleConsultationPanelButton" ng-show="consultationController.assets.length" ng-click="consultationController.toggleConsultationPanel()">
         <span class="fa fa-info"></span>
     </div>
     <div class="consultation-content">
-        <div ng-if="loading" style='width: 0;margin: 0 auto;padding-top: 200px;'>
+        <div ng-if="consultationController.loading" style='width: 0;margin: 0 auto;padding-top: 200px;'>
             <span us-spinner="{radius:30, width:8, length: 16, hwaccel:true, color:'white'}"></span>
             <i18n style="font-size: 1.5em;color: white;margin: 0px -57px;position: relative;top: 57px;">_CONSULTATION_LOADING</i18n>
         </div>
-        <div ng-if="!loading" >
-            <div ng-repeat="priority in groups">
-                <div bindonce ng-repeat="(okey, assets) in priority">
-                    <h4 class="family-title" bo-text="site.metamodel[okey].label"></h4>
+        <div ng-if="!consultationController.loading" >
+            <div ng-repeat="priority in consultationController.groups">
+                <div ng-repeat="(okey, assets) in priority">
+                    <h4 class="family-title">{{::site.metamodel[okey].label}}</h4>
                     <div class="panel-group" id="accordion">
-                        <div bindonce ng-repeat='asset in assets' class="panel panel-default">
+                        <div ng-repeat='asset in assets' class="panel panel-default">
                             <asset-consultation asset=asset><asset-consultation>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 25px;" ng-show="map_target && coordinates">
+            <!-- VEOLIA (Commenté pour alléger le DOM) -->
+            <!-- <div style="margin-top: 25px;" ng-show="map_target && consultationController.coordinates">
                 <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lat, coordinates.lng)">
                     <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

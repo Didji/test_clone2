@@ -25,8 +25,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         initialize : function(){
 
             this._SMARTGEO_MOBILE_VERSION = $rootScope.version = smargeomobileversion+"-"+smargeomobilebuild ;
-            this._BIG_SCREEN_THRESHOLD = 361;
-            this._SIDE_MENU_WIDTH = $window.screen.width > 361 ? 300 : $window.screen.width * 0.8;
+            this._SIDE_MENU_WIDTH = $window.outerWidth > 361 ? 300 : $window.outerWidth * 0.8;
+            this._BIG_SCREEN_THRESHOLD = 2*this._SIDE_MENU_WIDTH ;
             this._MAX_RESULTS_PER_SEARCH = 10;
             this._SERVER_UNREACHABLE_THRESHOLD = 10000;
             this._MAX_MEDIA_PER_REPORT = 3;
@@ -69,7 +69,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Return true if device width is >= to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
         isRunningOnBigScreen: function () {
-            return ($window.screen.width >= Smartgeo._BIG_SCREEN_THRESHOLD);
+            return ($window.outerWidth >= Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         /**
@@ -78,7 +78,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Return true if device width is < to {@link smartgeomobile.Smartgeo#_BIG_SCREEN_THRESHOLD Smartgeo.\_BIG\_SCREEN\_THRESHOLD}
          */
         isRunningOnLittleScreen: function () {
-            return ($window.screen.width < Smartgeo._BIG_SCREEN_THRESHOLD);
+            return ($window.outerWidth < Smartgeo._BIG_SCREEN_THRESHOLD);
         },
 
         /**

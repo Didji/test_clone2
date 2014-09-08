@@ -10,8 +10,6 @@
         .filter('reportTabsFilter', reportTabsFilter)
         .filter('reportFieldsFilter', reportFieldsFilter)
         .filter('activityListFilter', activityListFilter)
-        .filter('toBeSynchronized', toBeSynchronized)
-        .filter('synchronized', synchronized)
         .filter('isLink', isLink);
 
     function prettifyField() {
@@ -148,40 +146,6 @@
             return activitiesOut;
         }
         return activityListFilter_;
-    }
-
-    function toBeSynchronized() {
-        /**
-         * @name toBeSynchronized_
-         * @desc
-         */
-        function toBeSynchronized_(objects) {
-            var objectsOut = [];
-            for (var i = 0; i < objects.length; i++) {
-                if (!objects[i].synced) {
-                    objectsOut.push(objects[i]);
-                }
-            }
-            return objectsOut;
-        }
-        return toBeSynchronized_;
-    }
-
-    function synchronized() {
-        /**
-         * @name synchronized_
-         * @desc
-         */
-        function synchronized_(objects) {
-            var objectsOut = [];
-            for (var i = 0; i < objects.length; i++) {
-                if (objects[i].synced) {
-                    objectsOut.push(objects[i]);
-                }
-            }
-            return objectsOut;
-        }
-        return synchronized_;
     }
 
     function isLink() {

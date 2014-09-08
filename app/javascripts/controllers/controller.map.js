@@ -278,9 +278,7 @@
                 $scope.unHighlightAsset(assets[i]);
             }
         });
-        $scope.$on("UNHIGHLIGHT_ALL_ASSET", function (event) {
-            $scope.unHighlightAllAsset();
-        });
+
 
         /*
          *   Planning related events
@@ -587,9 +585,9 @@
                 Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
             }
             G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
-            G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
-                $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
-            });
+            // G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
+            //     $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
+            // });
             G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
             G3ME.invalidateMapSize();
         };

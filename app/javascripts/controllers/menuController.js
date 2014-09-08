@@ -92,6 +92,10 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
             $rootScope.$on('DEVICE_IS_ONLINE', $scope.checkIfMoreThanOneSiteIsAvailable);
             $rootScope.$on('DEVICE_IS_OFFLINE', $scope.checkIfMoreThanOneSiteIsAvailable);
+            $rootScope.$on('_MENU_CLOSE_', function(){
+                $scope.display = false ;
+                $scope.$digest();
+            });
 
             $scope.checkIfMoreThanOneSiteIsAvailable();
 
@@ -115,6 +119,18 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 }
             });
 
+        };
+
+        /**
+         * @method
+         * @memberOf menuController
+         * @desc
+         */
+        $scope.toggleDisplay = function() {
+            $scope.display = !$scope.display;
+            if($scope.display && Smartgeo.isRunningOnLittleScreen()){
+                $rootScope.$broadcast("CLOSE_CONSULTATION_PANEL");
+            }
         };
 
         /**
