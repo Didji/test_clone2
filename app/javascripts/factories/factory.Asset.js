@@ -168,13 +168,14 @@
          * @desc
          */
         Asset.convertRawRow = function(asset){
-            var a = angular.copy(asset) , parsed = JSON.parse(a.asset) ;
+            var a = angular.copy(asset) , parsed = JSON.parse(a.asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")) ;
             return angular.extend(a, {
                 okey        : parsed.okey,
                 attributes  : parsed.attributes,
                 guid        : a.id,                     //TODO(@gulian): Utiliser asset.id dans l'application pour eviter cette ligne
                 geometry    : JSON.parse(a.geometry),
-                asset       : undefined
+                asset       : undefined,
+                label       : a.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")
             });
         };
 

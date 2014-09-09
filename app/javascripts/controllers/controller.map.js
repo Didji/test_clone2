@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout){
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset){
 
         var vm = this;
 
@@ -160,6 +160,8 @@
             }
             request += " order by priority LIMIT 0,100 ";
 
+            //TODO(@gulian): mettre findAssetsAroundPoint dans factory.Asset.js
+
             SQLite.openDatabase({
                 name: zone.database_name,
                 bgType: 1
@@ -178,14 +180,12 @@
             }
 
             var assets = [],
-                asset, asset_;
+                asset;
 
             for (var i = 0; i < numRows && assets.length < 10; i++) {
-                asset_ = results.rows.item(i);
-                asset = Smartgeo.sanitizeAsset(asset_.asset);
-                asset.label =  asset_.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\");
-                asset.geometry = JSON.parse(asset_.geometry);
-                asset.priority = asset_.priority;
+
+                asset = new Asset(Asset.convertRawRow(results.rows.item(i)));
+
                 if (asset.geometry.type === "LineString") {
 
                     var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),

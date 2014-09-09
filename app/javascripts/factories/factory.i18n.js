@@ -22,7 +22,7 @@
 
         var i18n = {};
 
-        i18n.OVERRIDE_LANGUAGE = null;
+        i18n.OVERRIDE_LANGUAGE = 'fr';
         i18n.SYSTEM_LANGUAGE   = navigator.language.slice(0, 2);
         i18n.FALLBACK_LANGUAGE = 'fr';
         i18n.UNTRANSLATED_CHAR = '≠';

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n) {
+angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n","Asset", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, Asset) {
 
     'use strict';
 
@@ -128,17 +128,12 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                 }
                 return;
             } else {
-                $scope.advancedSearchMessage = '';
+                delete $scope.advancedSearchMessage;
             }
 
-            var assets = [],
-                asset, asset_;
+            var assets = [];
             for (var i = 0; i < results.length; i++) {
-                asset_ = results[i];
-                asset = Smartgeo.sanitizeAsset(asset_.asset);
-                asset.label = asset_.label;
-                asset.geometry = JSON.parse(asset_.geometry);
-                assets.push(asset);
+                assets.push(new Asset(Asset.convertRawRow(results[i]))); //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
         });
