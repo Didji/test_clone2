@@ -58,7 +58,7 @@ window.smartgeo_i18n_lang['en'] = {
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Search",
     _MENU_MY_POSITION: "My position",
-    _MENU_ACTIVE_LAYERS: "Active layers",
+    _MENU_ACTIVE_LAYERS: "Layers",
     _MENU_BACK: "Back",
     _MENU_REPORT: "Report",
     _MENU_SYNC: "Synchronization",
@@ -88,7 +88,7 @@ window.smartgeo_i18n_lang['en'] = {
     _SEARCH_SEARCH_IN_PROGRESS: "Search in progress",
     _SEARCH_SEARCH_NO_RESULT: "No result",
     _SEARCH_PICK_OBJECT_TYPE: "Please select an object type",
-    _SEARCH_SEARCH_HAS_BEEN_CANCELED: "Canceled",
+    _SEARCH_SEARCH_HAS_BEEN_CANCELED: "Cancelled",
     _SEARCH_CANCEL_SEARCH: "Cancel",
 
     _SITE_LOADING: "Loading ...",
@@ -103,7 +103,7 @@ window.smartgeo_i18n_lang['en'] = {
     _SYNC_UPDATE: "Update ",
     _SYNC_UNINSTALL: "Uninstall ",
     _SYNC_UNKNOWN_ERROR_: "Unknown error while synchronizing reports",
-    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s", // sitename
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s", // sitename
 
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",
@@ -131,6 +131,6 @@ window.smartgeo_i18n_lang['en'] = {
     _PLANNING_NEW_MISSION_: " new mission",
     _PLANNING_NEW_MISSIONS_: " new missions",
 
-    _CENSUS_INFORMATION_: " Recensement",
-    _CENSUS_CHOOSE_OBJECT_: "Veuillez sélectionner l'objet à recenser"
+    _CENSUS_INFORMATION_: " Census",
+    _CENSUS_CHOOSE_OBJECT_: "Please select the asset"
 };

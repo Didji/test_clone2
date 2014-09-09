@@ -60,7 +60,7 @@ window.smartgeo_i18n_lang['fr'] = {
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Recherche",
     _MENU_MY_POSITION: "Ma position",
-    _MENU_ACTIVE_LAYERS: "Couches actives",
+    _MENU_ACTIVE_LAYERS: "Couches",
     _MENU_BACK: "Retour",
     _MENU_REPORT: "Compte rendu",
     _MENU_SYNC: "Synchronisation",
