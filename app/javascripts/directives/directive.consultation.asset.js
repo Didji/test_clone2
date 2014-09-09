@@ -15,17 +15,16 @@
 			templateUrl: 'javascripts/directives/template/consultation.asset.html',
 			restrict: 'EA',
 			scope: {
-				'asset': '='
+				'asset': '=',
+				'noButton': '@',
 			}
 		};
 		return directive;
 
 		function link(scope, element, attrs) {
-
 			scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset ;
 			scope.site = $rootScope.site;
 			scope.rights = $rootScope.rights;
-
 			scope.addToCurrentSelection = addToCurrentSelection;
 			scope.$on('$destroy', destroy);
 

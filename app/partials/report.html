@@ -14,10 +14,11 @@
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
                 </span>
             </button>
-
         </p>
 
-        <asset-consultation asset='asset' ng-repeat='asset in assets'/>
+        <div class="panel consultation-group">
+            <asset-consultation asset='asset' ng-repeat='asset in assets' no-button='true'/>
+        </div>
 
         <div bindonce ng-repeat='tab in report.activity.tabs' class="panel panel-default report">
             <div class="panel-heading report-heading">
