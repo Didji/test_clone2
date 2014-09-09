@@ -453,7 +453,7 @@
 
             }
             if (Smartgeo.startWatchingPosition(setLocationMarker)) {
-                POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "icon-compass", stopPosition);
+                POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "fa-compass", stopPosition);
                 G3ME.map.addControl(POSITION_CONTROL);
             }
         });

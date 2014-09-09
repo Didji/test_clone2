@@ -3,6 +3,7 @@
 #left_panel {
     height: 100%;
     position: absolute;
+    z-index:1000;
 }
 
 #left_panel_content {
