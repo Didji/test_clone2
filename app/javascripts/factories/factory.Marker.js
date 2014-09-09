@@ -20,6 +20,9 @@
 
         Marker.getMarkerFromAsset = function(asset, clickHandler) {
             var marker;
+            if(!asset.geometry){
+                return;
+            }
             switch (asset.geometry.type) {
                 case "Point":
                     var coords = asset.geometry.coordinates;

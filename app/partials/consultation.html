@@ -1,29 +1,24 @@
 <div ng-controller="ConsultationController as consultationController" class="consultation-panel" ng-class="{open : consultationController.isOpen}">
-    <div id="toggleConsultationPanelButton" ng-show="consultationController.groups" ng-click="consultationController.toggleConsultationPanel()">
+    <div class="toggleConsultationPanelButton" ng-show="consultationController.groups" ng-click="consultationController.toggleConsultationPanel()">
         <span class="fa fa-info"></span>
     </div>
     <div class="consultation-content">
-        <div ng-if="consultationController.loading" style='width: 0;margin: 0 auto;padding-top: 200px;'>
-            <span us-spinner="{radius:30, width:8, length: 16, hwaccel:true, color:'white'}"></span>
-            <i18n style="font-size: 1.5em;color: white;margin: 0px -57px;position: relative">_CONSULTATION_LOADING</i18n>
+        <div ng-if="consultationController.loading" class="consultationLoadingBlock">
+            <i class="fa fa-refresh fa-spin"></i>
         </div>
-        <div ng-if="!consultationController.loading" >
-            <div ng-repeat="priority in consultationController.groups">
-                <div ng-repeat="(okey, assets) in priority">
-                    <h4 class="family-title">{{::site.metamodel[assets[0].okey].label}}</h4>
-                    <div class="panel-group" id="accordion">
-                        <div ng-repeat='asset in assets' class="panel panel-default">
-                            <asset-consultation asset=::asset><asset-consultation>
-                        </div>
-                    </div>
+        <div ng-repeat="priority in consultationController.groups" ng-if="!consultationController.loading">
+            <div class="panel-group" ng-repeat="(okey, assets) in priority">
+                <h4 class="family-title">{{::site.metamodel[assets[0].okey].label}}</h4>
+                <div class="panel consultation-group">
+                    <asset-consultation asset='::asset' ng-repeat='asset in assets' />
                 </div>
             </div>
-            <!-- VEOLIA (Commenté pour alléger le DOM) -->
-            <!-- <div style="margin-top: 25px;" ng-show="map_target && consultationController.coordinates">
-                <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lat, coordinates.lng)">
-                    <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
-                </button>
-            </div> -->
         </div>
+        <!-- VEOLIA (Commenté pour alléger le DOM) -->
+        <!-- <div style="margin-top: 25px;" ng-show="map_target && consultationController.coordinates">
+            <button class="btn btn-primary btn-block" ng-click="openLocatedReport(coordinates.lat, coordinates.lng)">
+                <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
+            </button>
+        </div> -->
     </div>
 </div>

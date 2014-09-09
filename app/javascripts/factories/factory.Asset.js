@@ -18,16 +18,14 @@
          * @property {Boolean} onMap L'objet est il affiché sur la carte ?
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
-        function Asset(asset) {
+        function Asset(asset, callback) {
             var self = this ;
             if(typeof asset === "object"){
                 angular.extend(this, asset);
-                if(!this.attributes){
-                    this.attributes = JSON.parse(this.asset).attributes ;  //TODO(@gulian): Utiliser Asset.convertRawRow() dans reportController pour eviter ça.
-                }
             } else {
                 Asset.findOne(asset, function(asset){
                     angular.extend(self, asset);
+                    (callback || angular.noop)();
                 });
             }
         }

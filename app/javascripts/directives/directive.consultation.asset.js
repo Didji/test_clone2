@@ -22,7 +22,7 @@
 
 		function link(scope, element, attrs) {
 
-			scope.asset = new Asset(scope.asset);
+			scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset ;
 			scope.site = $rootScope.site;
 			scope.rights = $rootScope.rights;
 

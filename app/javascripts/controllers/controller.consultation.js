@@ -32,6 +32,7 @@
         vm.loading = false;
         vm.coordinates = {};
         vm.groups = null;
+        vm.spinnerOptions = {};
 
         var PREOPEN_TIMER;
 
@@ -47,16 +48,13 @@
                 $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
             });
 
-            // NOTE(@gulian): la mise à jour de spinner.js semble eviter la persistence du spinner
-            //                qui nous forcait à faire disparaitre manuellement le spinner. à verifier.
-            // if (!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)) {
-            //     $scope.$watch('loading', function() {
-            //         var elt = $('.consultation-content')[0];
-            //         elt.style.display = 'none';
-            //         elt.offsetHeight = elt.offsetHeight;
-            //         elt.style.display = 'block';
-            //     });
-            // }
+            vm.spinnerOptions = {
+                radius: 30,
+                width: 8,
+                length: 16,
+                hwaccel: true,
+                color: 'white'
+            }
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
@@ -73,7 +71,9 @@
 
             $scope.$on("CONSULTATION_CLICK_CANCELED", function() {
                 cancelPreopenTimer();
-                vm.close();
+                if(!vm.groups){
+                    vm.close();
+                }
                 vm.loading = false;
                 $scope.$digest();
             });

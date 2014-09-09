@@ -66,12 +66,10 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope","
     var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
     $http.get(url).success(function (sites) {
-        console.log(sites);
         for (var i in sites) {
             if (!$scope.sites[sites[i].id]) {
                 $scope.sites[sites[i].id] = sites[i];
             }
-            console.log(sites[i].id, $routeParams.site);
             if (sites[i].id === $routeParams.site) {
                 $scope.site = sites[i];
             }

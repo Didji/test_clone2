@@ -1,4 +1,3 @@
-
 @font-face {
     font-family: 'robotolight';
     font-style: normal;
@@ -20,10 +19,10 @@
     padding-left: 30px;
 }
 
-*:not(input){
+*:not(input) {
     outline: none;
-    -webkit-touch-callout: none;
     -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 html,
@@ -37,17 +36,17 @@ body {
 
 /** Login */
 
-.login-errorMessage{
-    font-size:0.8em;
+.login-errorMessage {
+    font-size: 0.8em;
 }
 
-.rememberMeCheckbox{
+.rememberMeCheckbox {
     margin-top: 5px;
     margin-bottom: 15px;
 }
 
-.loginForm .form-control{
-    margin-bottom : 5px ;
+.loginForm .form-control {
+    margin-bottom: 5px;
 }
 
 .floating-form {
@@ -114,10 +113,10 @@ body {
     right: 10px;
     bottom: 10px;
 }
-.floating-form > .form-group{
-    text-align: left ;
-    padding: 0 5px ;
 
+.floating-form > .form-group {
+    padding: 0 5px;
+    text-align: left;
 }
 
 /** Vue principale */
@@ -141,16 +140,16 @@ body {
     background-color: rgb(92,92,92);
     background-image: url(../images/bg-square.png);
 }
-img.leaflet-tile{
-    background-color: white ;
+
+img.leaflet-tile {
+    background-color: white;
 }
+
 /** Panneaux de droite */
 
 .consultation-panel {
     z-index: 1000;
     position: absolute;
-    position: absolute;
-    top: 0;
     top: 0;
     right: 0;
     bottom: 0;
@@ -160,8 +159,28 @@ img.leaflet-tile{
     background-color: #3F3F3F;
 }
 
+.consultationLoadingBlock {
+    width: 0;
+    margin: 0 auto;
+    padding-top: 100px;
+}
 
-#toggleConsultationPanelButton {
+.consultationLoadingBlock i{
+    color: white;
+    font-size: 6em;
+    margin-left: -35px;
+}
+
+
+
+/*.consultationLoadingText {
+    position: relative;
+    margin: 0 -57px;
+    font-size: 1.5em;
+    color: white;
+}*/
+
+.toggleConsultationPanelButton {
     -webkit-transform: translate3d(0%,0,0);
     transform: translate3d(0%,0,0);
 }
@@ -199,7 +218,7 @@ img.leaflet-tile{
     display: block;
 }
 
-#toggleConsultationPanelButton {
+.toggleConsultationPanelButton {
     display: block;
     z-index: 100000;
     position: absolute;
@@ -218,41 +237,39 @@ img.leaflet-tile{
     box-shadow: 1px 0 5px 1px rgba(0,0,0,0.10);
 }
 
-#toggleConsultationPanelButton span {
+.toggleConsultationPanelButton span {
     display: inline-block;
     margin-top: 12px;
     margin-left: 7px;
 }
 
 .consultation-btn {
+    float: right;
     width: 45px;
     height: 45px;
-    border-radius: 40px;
-    border: none;
-    float: right;
     margin: 0 8px 10px 0;
+    border: none;
     border-color: #fd9122;
-    color: #FFF;
-    background-color: #fd9122;
+    border-radius: 40px;
     font-size: 2em;
     line-height: 40px;
+    color: #FFF;
+    background-color: #fd9122;
 }
-
 
 .consultation-small-table {
-    font-size:0.75em;
+    font-size: 0.75em;
 }
-
 
 .select2-container {
     width: 90%;
     margin: 0 5%;
 }
 
-.panel-body .select2-container{
-     width: 100%;
-     margin: 0;
- }
+.panel-body .select2-container {
+    width: 100%;
+    margin: 0;
+}
 
 .floating-form {
     width: 300px;
@@ -318,7 +335,6 @@ img.leaflet-tile{
     right: 10px;
     bottom: 10px;
 }
-
 
 .big-button {
     width: 100%;
@@ -464,9 +480,8 @@ fieldset[disabled] .btn-primary.active {
     overflow: auto;
 }
 
-
-
-.reportForm .glyphicon-chevron-up, .reportForm .glyphicon-chevron-down {
+.reportForm .glyphicon-chevron-up,
+.reportForm .glyphicon-chevron-down {
     color: #fd9122;
 }
 
@@ -504,7 +519,6 @@ label.prettycheckbox,
 }
 
 label.prettycheckbox {
-
     display: block;
     width: 100%;
     height: 34px;
@@ -674,6 +688,10 @@ ul.ged-gallery li img {
     font-weight: 200;
 }
 
+.consultation-group:nth-child(odd)  > * > .consultation-panel-heading{
+    background-color: rgba(128, 128, 128, 0.08);
+}
+
 .panel-heading a {
     display: block;
     width: 100%;
@@ -697,31 +715,30 @@ ul.ged-gallery li img {
     white-space: normal;
 }
 
-
 #dayToDisplay {
     width: 50px;
     height: 30px;
     margin-left: -100px;
+    padding-right: 15px;
     padding-left: 150px;
     border: none;
     outline: none;
     background: transparent;
-    padding-right: 15px;
 }
 
 .select2-results .select2-result-label {
     padding: 13px 7px 12px;
 }
 
-.select2-container .select2-choice abbr{
-    background :none;
+.select2-container .select2-choice abbr {
     margin-top: -10px;
+    background: none;
 }
 
-.select2-container .select2-choice abbr:after{
-    content:"\2A09";
+.select2-container .select2-choice abbr:after {
+    content: "\2A09";
+    top: auto;
+    font-size: 20px;
     color: gray;
-    font-size:20px;
-    top:auto;
-    color:black;
+    color: black;
 }
