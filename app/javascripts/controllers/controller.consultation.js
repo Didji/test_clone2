@@ -16,24 +16,22 @@
      * @property {Boolean} loading
      * @property {L.LatLng} coordinates
      * @property {Object} groups
-     * @property {Array<Object>} assets
      */
 
     function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, Asset, $timeout) {
 
         var vm = this;
 
-        vm.openLocatedReport = openLocatedReport ;
-        vm.toggleConsultationPanel = toggleConsultationPanel ;
-        vm.close = close ;
-        vm.open = open ;
-        vm.addAssetsToMission = addAssetsToMission ;
+        vm.openLocatedReport = openLocatedReport;
+        vm.toggleConsultationPanel = toggleConsultationPanel;
+        vm.close = close;
+        vm.open = open;
+        vm.addAssetsToMission = addAssetsToMission;
 
-        vm.isOpen = false ;
-        vm.loading = false ;
-        vm.coordinates = {} ;
-        vm.groups = {};
-        vm.assets = [] ;
+        vm.isOpen = false;
+        vm.loading = false;
+        vm.coordinates = {};
+        vm.groups = null;
 
         var PREOPEN_TIMER;
 
@@ -46,7 +44,7 @@
         function activate() {
 
             angular.element($window).bind("resize", function() {
-                $timeout(vm[ !vm.isOpen ? 'close' : 'open'], 100);
+                $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
             });
 
             if (!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)) {
@@ -78,8 +76,10 @@
                 $scope.$digest();
             });
 
-            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets_) {
-                updateAssetsList(assets_);
+            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets) {
+                cancelPreopenTimer();
+                updateAssetsList(assets);
+                $scope.$digest();
             });
 
             $scope.$on("CLOSE_CONSULTATION_PANEL", close);
@@ -88,20 +88,21 @@
         /**
          * @name updateAssetsList
          * @desc
-         * @param {Array<Object>} assets_
+         * @param {Array<Object>} assets
          */
-        function updateAssetsList(assets_) {
-            cancelPreopenTimer();
-            vm.groups = {};
-            vm.assets = assets_;
-            for (var i = 0; i < vm.assets.length; i++) {
-                vm.groups[vm.assets[i].priority] = vm.groups[vm.assets[i].priority] || {};
-                vm.groups[vm.assets[i].priority][vm.assets[i].okey] = vm.groups[vm.assets[i].priority][vm.assets[i].okey] || {};
-                vm.groups[vm.assets[i].priority][vm.assets[i].okey][vm.assets[i].guid] = vm.assets[i];
+        function updateAssetsList(assets) {
+            if (assets.length) {
+                vm.groups = {};
+            } else {
+                return vm.groups = null;
+            }
+            for (var i = 0; i < assets.length; i++) {
+                vm.groups[assets[i].priority] = vm.groups[assets[i].priority] || {};
+                vm.groups[assets[i].priority][assets[i].okey] = vm.groups[assets[i].priority][assets[i].okey] || [];
+                vm.groups[assets[i].priority][assets[i].okey].push(assets[i]);
             }
             vm.open();
             vm.loading = false;
-            $scope.$digest();
         }
 
         /**
@@ -139,7 +140,7 @@
         function close() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la.
+            $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la. 😒
         }
 
         /**
@@ -152,7 +153,7 @@
                 $rootScope.$broadcast('_MENU_CLOSE_');
             }
             vm.isOpen = true;
-            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la.
+            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la. 😒
         }
 
         /**
