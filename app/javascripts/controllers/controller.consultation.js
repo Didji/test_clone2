@@ -47,14 +47,16 @@
                 $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
             });
 
-            if (!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)) {
-                $scope.$watch('loading', function() {
-                    var elt = $('.consultation-content')[0];
-                    elt.style.display = 'none';
-                    elt.offsetHeight = elt.offsetHeight;
-                    elt.style.display = 'block';
-                });
-            }
+            // NOTE(@gulian): la mise à jour de spinner.js semble eviter la persistence du spinner
+            //                qui nous forcait à faire disparaitre manuellement le spinner. à verifier.
+            // if (!navigator.userAgent.match(/iPhone/i) && !navigator.userAgent.match(/iPad/i)) {
+            //     $scope.$watch('loading', function() {
+            //         var elt = $('.consultation-content')[0];
+            //         elt.style.display = 'none';
+            //         elt.offsetHeight = elt.offsetHeight;
+            //         elt.style.display = 'block';
+            //     });
+            // }
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
@@ -140,7 +142,7 @@
         function close() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la. 😒
+            $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la.
         }
 
         /**
@@ -153,7 +155,7 @@
                 $rootScope.$broadcast('_MENU_CLOSE_');
             }
             vm.isOpen = true;
-            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la. 😒
+            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la.
         }
 
         /**
