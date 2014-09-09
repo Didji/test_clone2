@@ -404,6 +404,8 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                 for (var j in tab.fields) {
                     var field = tab.fields[j];
                     if (field.required && !$scope.report.fields[field.id]) {
+                        // console.log(field.required , !$scope.report.fields[field.id])
+                        console.log($scope.report.fields, field.id);
                         return false;
                     }
                 }
