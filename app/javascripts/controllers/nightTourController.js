@@ -10,7 +10,7 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Report", function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Report) {
+angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "ReportSynchronizer", function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, ReportSynchronizer) {
 
     'use strict';
 
@@ -229,7 +229,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
         };
         applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-        Report.synchronize(report, callback);
+        ReportSynchronizer.synchronize(report, callback);
     };
 
 
@@ -252,7 +252,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
         };
         applyDefaultValues(report, $scope.activity);
         report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-        Report.synchronize(report, callback);
+        ReportSynchronizer.synchronize(report, callback);
     };
 
     function applyDefaultValues(report, act) {

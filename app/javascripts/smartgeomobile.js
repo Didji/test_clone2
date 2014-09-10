@@ -22,24 +22,22 @@ function config($routeProvider, $rootScope, $httpProvider) {
         controllerAs: 'siteListController',
         controller: 'SiteListController'
     }).
-
-    when("/report/:site", {
-        templateUrl: "partials/report.html"
-    }).
-    when("/report/:site/:activity", {
-        templateUrl: "partials/report.html"
-    }).
+    // when("/report/:site/:activity", {
+    //     templateUrl: "partials/report.html"
+    // }).
     when("/report/:site/:activity/:assets", {
-        templateUrl: "partials/report.html"
+        templateUrl: "partials/report.html",
+        controllerAs: 'reportController',
+        controller: 'ReportController'
     }).
     when("/report/:site/:activity/:assets/:mission", {
-        templateUrl: "partials/report.html"
+        templateUrl: "partials/report.html",
+        controllerAs: 'reportController',
+        controller: 'ReportController'
     }).
-
-    when("/report/:site/undefined/:assets/:mission", {
-        templateUrl: "partials/report.html"
-    }).
-
+    // when("/report/:site/undefined/:assets/:mission", {
+    //     templateUrl: "partials/report.html"
+    // }).
     when("/register", {
         templateUrl: "partials/register.html"
     }).

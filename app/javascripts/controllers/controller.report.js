@@ -1,220 +1,84 @@
-angular.module('smartgeomobile').controller('reportController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "Report", "Asset", "$timeout",
+(function() {
 
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, Report, Asset, $timeout) {
+    'use strict';
 
-        'use strict';
+    angular
+        .module('smartgeomobile')
+        .controller('ReportController', ReportController);
 
-        $rootScope.currentPage = "Saisie de compte-rendu";
-        $scope.isAndroid = navigator.userAgent.match(/Android/i);
-        $scope.comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
-        window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
-        $scope._MAX_MEDIA_PER_REPORT = Smartgeo._MAX_MEDIA_PER_REPORT;
+    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "$timeout"];
 
-        if (!$rootScope.site.activities._byId) {
-            $rootScope.site.activities._byId = {};
-            for (var i = 0; i < $rootScope.site.activities.length; i++) {
-                $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+    /**
+     * @class ReportController
+     * @desc Controlleur de la page de Compte rendu.
+     *
+     * @property {Object} report
+     * @property {Boolean} sendingReport
+     * @property {Boolean} isAndroid
+     * @property {Array} assets
+     * @property {RegExp} numberPattern
+     * @property {Object} groupSelectOptions
+     *
+     * @private
+     * @property {Boolean} comesFromIntent
+     */
+
+    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, $timeout) {
+
+        var vm = this;
+
+        vm.applyConsequences = applyConsequences;
+        vm.cancel = cancel;
+        vm.sendReport = sendReport;
+        vm.bidouille = bidouille;
+
+        vm.report = {};
+        vm.sendingReport = false;
+        vm.isAndroid = false;
+        vm.assets = [];
+        vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
+        vm.groupSelectOptions = {};
+
+        var comesFromIntent = false;
+
+        activate();
+
+        /**
+         * @name activate
+         * @desc Fonction d'initialisation
+         */
+        function activate() {
+
+            $rootScope.currentPage = "Saisie de compte-rendu";
+            vm.comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
+            window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
+
+            var assetsIds = $routeParams.assets.split(',');
+
+            vm.report = new Report(assetsIds, $routeParams.activity, $rootScope.report_mission || $routeParams.mission);
+
+            for (var i = 0; i < assetsIds.length; i++) {
+                vm.assets.push(new Asset(assetsIds[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
             }
+
+            vm.groupSelectOptions = {
+                allowClear: true,
+                minimumInputLength: 2,
+                query: select2QueryFunction
+            };
+
+            vm.report.activity.tabs[0].show = true;
         }
 
-        var assetsIds = $routeParams.assets.split(',');
-
-        $scope.assets = [];
-
-        for (var i = 0; i < assetsIds.length; i++) {
-            $scope.assets.push(new Asset(assetsIds[i], applyDefaultValues));
-        }
-
-        $scope.report = {
-            assets: assetsIds,
-            fields: {},
-            roFields: {},
-            overrides: {},
-            ged: [],
-            site: $rootScope.site.label,
-            mission: 1 * $routeParams.mission,
-            activity: angular.copy($rootScope.site.activities._byId[$routeParams.activity]),
-            uuid: Smartgeo.uuid()
-        }
-
-        $scope.report.activity.tabs[0].show = true;
-
-
-        // Used for field validation
-        $scope.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
-
-
-        // if ($routeParams.activity && $routeParams.assets && G3ME.isLatLngString($routeParams.assets)) {
-        //     $scope.report.latlng = $routeParams.assets;
-        // }
-
-        // } else if ($routeParams.assets && !G3ME.isLatLngString($routeParams.assets)) {
-        //         var filteredActivities = [],
-        //             okey = assets[0].okey;
-        //         for (var i = 0; i < $scope.activities.length; i++) {
-        //             if (okey === $scope.activities[i].okeys[0]) {
-        //                 filteredActivities.push($scope.activities[i]);
-        //             }
-        //         }
-        //         $scope.activities = filteredActivities;
-        //         $scope.report.assets = assets;
-        //         $scope.$digest();
-        // }
-
-        $scope.applyVisibility = function() {
-            $scope.reportTemplate = 'report-' + $scope.report.activity.id + '.html';
-            for (var i = 0; i < $rootScope.site.activities.length; i++) {
-                if ($rootScope.site.activities[i].id === $scope.report.activity.id) {
-                    $scope.report.activity = angular.copy($rootScope.site.activities[i]);
-                    $scope.report.activity.tabs[0].show = true;
-                    var act = $scope.report.activity;
-                    // We have to flag fields which have visibility consequences
-                    // to enable a correct layout.
-                    for (var j = 0, numTabs = act.tabs.length, tab; j < numTabs; j++) {
-                        tab = act.tabs[j];
-                        for (var k = 0, numFields = tab.fields.length; k < numFields; k++) {
-                            tab.fields[k].isconsequence = (tab.fields[k].visible === false);
-                        }
-                    }
-                    break;
-                }
-            }
-        };
-
-        $scope.applyVisibility();
-
-        $scope.loadAssets = function() {
-            Smartgeo.findAssetsByOkey($rootScope.site, $scope.report.activity.okeys[0], function(assets) {
-                $scope.assets = assets;
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            });
-        };
-
-        function fieldById(id) {
-            var report = $scope.report,
-                act = report.activity,
-                i, numTabs, j, numFields,
-                tab;
-
-            for (i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
-                tab = act.tabs[i];
-                for (j = 0, numFields = tab.fields.length; j < numFields; j++) {
-                    if (tab.fields[j].id == id) {
-                        return tab.fields[j];
-                    }
-                }
-            }
-            return false;
-        }
-
-        function pad(number) {
-            if (number < 10) {
-                return '0' + number;
-            }
-            return number;
-        }
-
-        function getList(pkey, okey) {
-            var mm = $rootScope.site.metamodel[okey];
-            for (var i in mm.tabs) {
-                for (var j in mm.tabs[i].fields) {
-                    if (mm.tabs[i].fields[j].key === pkey) {
-                        return mm.tabs[i].fields[j].options;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function getValueFromAssets(pkey, okey) {
-            var rv = {},
-                val;
-            for (var i = 0, lim = $scope.assets.length; i < lim; i++) {
-                var a = $scope.assets[i].attributes,
-                    list = getList(pkey, okey);
-                if(!a){
-                    break;
-                }
-                val = a[pkey];
-                if (list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
-                    val = $rootScope.site.lists[list][val];
-                }
-
-                rv[$scope.assets[i].id] = val;
-            }
-            return rv;
-        }
-
-        function applyDefaultValues() {
-            var report = $scope.report,
-                act = report.activity,
-                fields = report.fields,
-                assets = $scope.assets,
-                def,
-                i, numTabs, j, numFields,
-                tab, field,
-                date;
-
-
-
-            for (i = 0, numTabs = act.tabs.length; i < numTabs; i++) {
-                tab = act.tabs[i];
-                for (j = 0, numFields = tab.fields.length; j < numFields; j++) {
-                    field = tab.fields[j];
-                    def = field['default'];
-
-                    // Par priorité sur les valeurs par défaut, on applique les valeurs
-                    // fixées dans le scope par les intents.
-                    if ($scope['report_fields[' + field.label + ']']) {
-                        def = $scope['report_fields[' + field.label + ']'];
-                    }
-                    if ($scope['report_fields[$' + field.id + ']']) {
-                        def = $scope['report_fields[$' + field.id + ']'];
-                    }
-
-                    if (field.type === 'T' && !def) {
-                        var d = new Date();
-                        d.setHours(0);
-                        d.setMinutes(0);
-                        fields[field.id] = d;
-                    } else if (!def) {
-                        continue;
-                    } else if ('string' === typeof def) {
-                        if (field.type === 'D' && def === '#TODAY#') {
-                            date = new Date();
-                            def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
-                        }
-                        fields[field.id] = def;
-                        $scope.report.roFields[field.id] = def;
-                    } else {
-                        def = getValueFromAssets(def.pkey, act.okeys[0]);
-                        $scope.report.roFields[field.id] = $scope.formatFieldEntry(def);
-                        $scope.report.overrides[field.id] = '';
-                        fields[field.id] = def;
-                    }
-                }
-            }
-            $scope.$digest();
-        }
-
-        $scope.formatFieldEntry = function(val) {
-            if ('string' === typeof val) {
-                return val;
-            }
-            var str = [];
-            for (var a in val) {
-                if (val[a]) {
-                    str.push(val[a]);
-                }
-            }
-            return str.join(', ');
-        };
-
-        $scope.applyConsequences = function(srcId) {
+        /**
+         * @name applyConsequences
+         * @param {Number} srcId
+         * @vm
+         * @desc
+         */
+        function applyConsequences(srcId) {
             // Search for src field.
-            var field = fieldById(srcId),
+            var field = vm.report.activity._fields[srcId],
                 targetField, i, lim, act,
                 cond;
 
@@ -224,12 +88,12 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
 
             for (i = 0, lim = field.actions.length; i < lim; i++) {
                 act = field.actions[i];
-                targetField = fieldById(act.target);
+                targetField = vm.report.activity._fields[act.target];
                 if (!targetField) {
                     continue;
                 }
 
-                cond = ($scope.report.fields[srcId] === act.condition);
+                cond = (vm.report.fields[srcId] === act.condition);
                 switch (act.type) {
                     case "show":
                         targetField.visible = cond;
@@ -238,8 +102,8 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                         // aussi des conséquences. Si une case à cocher devient invisible,
                         // il faut qu'on la décoche et qu'on applique ses conséquences.
                         if (cond === false && targetField.type === 'O') {
-                            $scope.report.fields[act.target] = 'N';
-                            $scope.applyConsequences(act.target);
+                            vm.report.fields[act.target] = 'N';
+                            vm.applyConsequences(act.target);
                         }
 
                         break;
@@ -248,21 +112,25 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                         break;
                 }
             }
-        };
+        }
 
-        // $scope.toForm = function() {
-        //     $scope.step = 'form';
-        //     $scope.applyVisibility();
-        //     applyDefaultValues();
-        // };
-
-        $scope.cancel = function() {
+        /**
+         * @name cancel
+         * @vm
+         * @desc
+         */
+        function cancel() {
             $location.path('map/' + $rootScope.site.id);
-        };
+        }
 
-        $scope.sendReport = function(event) {
-            $scope.sendingReport = true;
-            var report = angular.copy($scope.report);
+        /**
+         * @name sendReport
+         * @vm
+         * @desc
+         */
+        function sendReport() {
+            vm.sendingReport = true;
+            var report = angular.copy(vm.report);
             for (var i = 0; i < report.assets.length; i++) {
                 if (report.assets[i].id) {
                     report.assets[i] = report.assets[i].id;
@@ -274,7 +142,6 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                     report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes())
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
-                    console.log("set", report.fields[i], "to", report.fields[i].id);
                     report.fields[i] = report.fields[i].id;
                 }
             }
@@ -295,24 +162,152 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
             delete report.roFields;
 
             report.activity = report.activity.id;
-            report.timestamp = new Date().getTime();
-            report.mission = 1 * $rootScope.report_mission || report.mission;
 
-
-            Report.synchronize(report, function() {
-                $scope.sendingReport = false;
-                if (!$scope.comesFromIntent) {
+            ReportSynchronizer.synchronize(report, function() {
+                vm.sendingReport = false;
+                if (!vm.comesFromIntent) {
                     endOfReport();
                 }
             }, 5000)
 
-            if ($scope.comesFromIntent) {
+            if (vm.comesFromIntent) {
                 endOfReport();
             }
-        };
+        }
 
+        /**
+         * @name bidouille
+         * @param {Event} event
+         * @vm
+         * @desc Olalalala ...
+         */
+        function bidouille(event) {
+            document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).siblings('label')[0].offsetTop - 7;
+            if (window.screen.height <= 640) {
+                document.querySelector('.reportForm').style.paddingBottom = "280px";
+            }
+        }
+
+        /**
+         * @name pad
+         * @param {Number} number
+         * @desc
+         */
+        function pad(number) {
+            return (number < 10) ? ('0' + number) : number;
+        }
+
+        /**
+         * @name getList
+         * @param {String} pkey
+         * @param {String} okey
+         * @desc
+         */
+        function getList(pkey, okey) {
+            var mm = $rootScope.site.metamodel[okey];
+            for (var i in mm.tabs) {
+                for (var j in mm.tabs[i].fields) {
+                    if (mm.tabs[i].fields[j].key === pkey) {
+                        return mm.tabs[i].fields[j].options;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * @name getValueFromAssets
+         * @param {String} pkey
+         * @param {String} okey
+         * @desc
+         */
+        function getValueFromAssets(pkey, okey) {
+            var rv = {},
+                val;
+            for (var i = 0, lim = vm.assets.length; i < lim; i++) {
+                var a = vm.assets[i].attributes,
+                    list = getList(pkey, okey);
+                if (!a) {
+                    break;
+                }
+                val = a[pkey];
+                if (list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
+                    val = $rootScope.site.lists[list][val];
+                }
+                rv[vm.assets[i].id] = val;
+            }
+            return rv;
+        }
+
+        /**
+         * @name applyDefaultValues
+         * @desc
+         */
+        function applyDefaultValues() {
+            var fields = vm.report.fields,
+                def, i, field, date;
+
+            for (var i in vm.report.activity._fields) {
+                field = vm.report.activity._fields[i];
+                def = field['default'];
+
+                // Par priorité sur les valeurs par défaut, on applique les valeurs
+                // fixées dans le scope par les intents.
+                if (vm['report_fields[' + field.label + ']']) {
+                    def = vm['report_fields[' + field.label + ']'];
+                }
+                if (vm['report_fields[$' + field.id + ']']) {
+                    def = vm['report_fields[$' + field.id + ']'];
+                }
+
+                if (field.type === 'T' && !def) {
+                    var d = new Date();
+                    d.setHours(0);
+                    d.setMinutes(0);
+                    fields[field.id] = d;
+                } else if (!def) {
+                    continue;
+                } else if ('string' === typeof def) {
+                    if (field.type === 'D' && def === '#TODAY#') {
+                        date = new Date();
+                        def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                    }
+                    fields[field.id] = def;
+                    vm.report.roFields[field.id] = def;
+                } else {
+                    def = getValueFromAssets(def.pkey, vm.report.activity.okeys[0]);
+                    vm.report.roFields[field.id] = formatFieldEntry(def);
+                    vm.report.overrides[field.id] = '';
+                    fields[field.id] = def;
+                }
+            }
+
+            $scope.$digest();
+        }
+
+        /**
+         * @name formatFieldEntry
+         * @param {String|Array} val
+         * @desc
+         */
+        function formatFieldEntry(val) {
+            if ('string' === typeof val) {
+                return val;
+            }
+            var str = [];
+            for (var a in val) {
+                if (val[a]) {
+                    str.push(val[a]);
+                }
+            }
+            return str.join(', ');
+        }
+
+        /**
+         * @name endOfReport
+         * @desc
+         */
         function endOfReport() {
-
             if ($rootScope.report_url_redirect) {
                 $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
                 if (window.SmartgeoChromium && SmartgeoChromium.redirect) {
@@ -334,18 +329,21 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
             $rootScope.report_url_redirect = undefined;
 
             $location.path('map/' + $rootScope.site.id);
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
+            $scope.$digest();
         }
 
+        /**
+         * @name injectCallbackValues
+         * @param {String} url
+         * @desc
+         */
         function injectCallbackValues(url) {
             var injectedValues;
             if (url.indexOf('[LABEL_INDEXED_FIELDS]') !== -1) {
                 injectedValues = '';
-                for (var field in $scope.report.fields) {
-                    if ($scope.report.fields.hasOwnProperty(field)) {
-                        var val = $scope.report.fields[field];
+                for (var field in vm.report.fields) {
+                    if (vm.report.fields.hasOwnProperty(field)) {
+                        var val = vm.report.fields[field];
                         // /!\ UGLY ALERT WORKS WITH ONLY ONE ASSETS
                         if (typeof val === 'object') {
                             for (var j in val) {
@@ -353,81 +351,29 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
                                 break;
                             }
                         }
-                        injectedValues += 'fields[' + getLabelWithFieldId(field) + ']=' + val + '&';
+                        injectedValues += 'fields[' + vm.report.activity._fields[field].label + ']=' + val + '&';
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
                 url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
-                return url;
             } else if (url.indexOf('[KEY_INDEXED_FIELDS]') !== -1) {
                 injectedValues = '';
-                for (var field_ in $scope.report.fields) {
-                    if ($scope.report.fields.hasOwnProperty(field_)) {
-                        injectedValues += 'fields[' + field_ + ']=' + $scope.report.fields[field_] + '&';
+                for (var field_ in vm.report.fields) {
+                    if (vm.report.fields.hasOwnProperty(field_)) {
+                        injectedValues += 'fields[' + field_ + ']=' + vm.report.fields[field_] + '&';
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
                 url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
-                return url;
-            } else {
-                return url;
             }
+            return url;
         }
 
-        function getLabelWithFieldId(id) {
-            var activity = $scope.report.activity; // UGLY, need to pass activity in parameters and extract this function
-            // in something like Smartgeo.utils.getLabelWithFieldId()
-            for (var i = 0; i < activity.tabs.length; i++) {
-                for (var j = 0; j < activity.tabs[i].fields.length; j++) {
-                    if (activity.tabs[i].fields[j].id == id) {
-                        return activity.tabs[i].fields[j].label;
-                    }
-                }
-            }
-        }
-
-        $scope.containsRequiredFields = function(tab) {
-            for (var i in tab.fields) {
-                if (tab.fields[i].required) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        $scope.areEveryRequiredFieldsAreFilled = function() {
-            if (!$scope.report.activity) {
-                return;
-            }
-            for (var i in $scope.report.activity.tabs) {
-                var tab = $scope.report.activity.tabs[i];
-                for (var j in tab.fields) {
-                    var field = tab.fields[j];
-                    if (field.required && !$scope.report.fields[field.id]) {
-                        // console.log(field.required , !$scope.report.fields[field.id])
-                        console.log($scope.report.fields, field.id);
-                        return false;
-                    }
-                }
-            }
-            return true;
-        };
-
-        $scope.toggleCollapse = function(event) {
-            event.preventDefault();
-        };
-
-        $scope.removeGed = function($index) {
-            $scope.report.ged.splice($index, 1);
-        };
-
-        $scope.bidouille = function(event) {
-            document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).siblings('label')[0].offsetTop - 7;
-            if (window.screen.height <= 640) {
-                document.querySelector('.reportForm').style.paddingBottom = "280px";
-            }
-        };
-
+        /**
+         * @name getBase64Image
+         * @param {String} src
+         * @desc TODO(@gulian): C'est pas vraiment sa place là ...
+         */
         function getBase64Image(src) {
             var img = document.createElement("img");
             img.src = src;
@@ -440,46 +386,40 @@ angular.module('smartgeomobile').controller('reportController', ["$scope", "$rou
             return dataURL;
         }
 
-        var sortFunction = function(a, b) {
-            if (a.text < b.text) {
-                return -1;
-            } else if (a.text > b.text) {
-                return 1;
-            } else {
-                return 0;
-            }
-        };
+        /**
+         * @name sortFunction
+         * @param {Object} a
+         * @param {Object} b
+         * @desc
+         */
+        function sortFunction(a, b) {
+            return (a.text < b.text) ? -1 : 1;
+        }
 
-        $scope.groupSelectOptions = {
-            allowClear: true,
-            minimumInputLength: 2,
-            query: function(query) {
-                for (var j = 0; j < $rootScope.site.activities._byId[$scope.report.activity.id].tabs.length; j++) {
-                    if (query.element.data('tabid') === $rootScope.site.activities._byId[$scope.report.activity.id].tabs[j].id) {
-                        var tab = $rootScope.site.activities._byId[$scope.report.activity.id].tabs[j];
-                        for (var i = 0; i < tab.fields.length; i++) {
-                            if (tab.fields[i].id === query.element.data('field')) {
-                                var field = tab.fields[i],
-                                    data = {
-                                        results: []
-                                    };
-                                for (var k = 0; k < field.options.length; k++) {
-                                    if (field.options[k].label.toLowerCase().indexOf(query.term.toLowerCase()) !== -1) {
-                                        data.results.push({
-                                            id: field.options[k].value,
-                                            text: field.options[k].label
-                                        });
-                                    }
-                                }
-                                // data.results.push({id: null , text: "Vider le champ"});
-                                data.results.sort(sortFunction);
-                                return query.callback(data);
-                            }
-                        }
-                    }
+        /**
+         * @name select2QueryFunction
+         * @param {Object} query
+         * @desc
+         */
+        function select2QueryFunction(query) {
+            var fieldOptions = vm.report.activity._fields[query.element.data('field')].options,
+                results = [],
+                o;
+            query.term = query.term.toLowerCase();
+            for (var k = 0; k < fieldOptions.length && results.length < 50; k++) {
+                o = fieldOptions[k];
+                if (o.label.toLowerCase().indexOf(query.term) !== -1) {
+                    results.push({
+                        id: o.value,
+                        text: o.label
+                    });
                 }
             }
-        };
-
+            results.sort(sortFunction);
+            return query.callback({
+                results: results
+            });
+        }
     }
-]);
+
+})();

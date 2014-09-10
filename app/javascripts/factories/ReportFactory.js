@@ -1,8 +1,8 @@
-angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q, $rootScope) {
+angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, Smartgeo, $q, $rootScope) {
 
     'use strict';
 
-    var Report = {
+    var ReportSynchronizer = {
 
         synchronizeTimeout : 60000,
 
@@ -18,21 +18,21 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
         synchronize: function (report, callback, timeout) {
 
             if(typeof report === "string"){
-                return Report.getByUUID(report, function(report){
-                    Report.synchronize(report, callback, timeout);
+                return ReportSynchronizer.getByUUID(report, function(report){
+                    ReportSynchronizer.synchronize(report, callback, timeout);
                 });
             }
 
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.synchronize(report, callback, timeout);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.synchronize(report, callback, timeout);
                 });
             }
 
             report.syncInProgress = true ;
 
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {
-                timeout: timeout || Report.synchronizeTimeout
+                timeout: timeout || ReportSynchronizer.synchronizeTimeout
             }).success(function () {
                 report.synced = true ;
                 report.error  = undefined ;
@@ -43,16 +43,16 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                     report.error  = "Erreur réseau.";
                 }
             }).finally(function(){
-                Report.m.release();
-                Report.log(report);
+                ReportSynchronizer.m.release();
+                ReportSynchronizer.log(report);
                 report.syncInProgress = false ;
-                Report.addToDatabase(report, callback || function(){});
+                ReportSynchronizer.addToDatabase(report, callback || function(){});
             });
 
         },
 
         checkSynchronizedReports: function(){
-            Report.getAll(function (reports) {
+            ReportSynchronizer.getAll(function (reports) {
 
                 var luuids = [];
 
@@ -68,10 +68,10 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                         for(var uuid in ruuids){
                             if(ruuids[uuid]){
                                 console.warn(uuid+ ' must be deleted');
-                                Report.deleteInDatabase(uuid);
+                                ReportSynchronizer.deleteInDatabase(uuid);
                             } else {
                                 console.warn(uuid+ ' must be resync');
-                                Report.synchronize(uuid);
+                                ReportSynchronizer.synchronize(uuid);
                             }
                         }
                     })
@@ -98,14 +98,14 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
 
         getByUUID: function (uuid, callback) {
 
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.getByUUID(uuid, callback);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.getByUUID(uuid, callback);
                 });
             }
 
             Smartgeo.get_('reports', function(reports){
-                Report.m.release();
+                ReportSynchronizer.m.release();
                 var report;
                 for (var i = 0; i < reports.length; i++) {
                     if(reports[i].uuid !== uuid){
@@ -124,22 +124,22 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
         },
 
         getAll: function (callback) {
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.getAll(callback);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.getAll(callback);
                 });
             }
             callback = callback || function(){};
             Smartgeo.get_('reports', function(reports){
-                Report.m.release();
+                ReportSynchronizer.m.release();
                 callback(reports || []);
             });
         },
 
         addToDatabase: function (report, callback) {
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.addToDatabase(report, callback);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.addToDatabase(report, callback);
                 });
             }
             callback = callback || function(){};
@@ -147,23 +147,23 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                 reports = reports || [] ;
                 for (var i = 0; i < reports.length; i++) {
                     if(reports[i].uuid === report.uuid){
-                        Report.m.release();
-                        return Report.updateInDatabase(report, callback);
+                        ReportSynchronizer.m.release();
+                        return ReportSynchronizer.updateInDatabase(report, callback);
                     }
                 }
                 reports.push(report);
                 Smartgeo.set_('reports', reports, function(){
                     // $rootScope.reports = reports ;
-                    Report.m.release();
+                    ReportSynchronizer.m.release();
                     callback(report);
                 });
             });
         },
 
         updateInDatabase: function (report, callback) {
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.updateInDatabase(report, callback);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.updateInDatabase(report, callback);
                 });
             }
             callback = callback || function(){};
@@ -173,27 +173,27 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                         reports[i] = report ;
                         return Smartgeo.set_('reports', reports, function(){
                             // $rootScope.reports = reports ;
-                            Report.m.release();
+                            ReportSynchronizer.m.release();
                             callback(report);
                         });
                     }
                 }
-                Report.m.release();
-                return Report.addToDatabase(report, callback);
+                ReportSynchronizer.m.release();
+                return ReportSynchronizer.addToDatabase(report, callback);
             });
         },
 
         deleteInDatabase: function (report, callback) {
 
             if(typeof report === "string"){
-                return Report.getByUUID(report, function(report){
-                    Report.deleteInDatabase(report, callback);
+                return ReportSynchronizer.getByUUID(report, function(report){
+                    ReportSynchronizer.deleteInDatabase(report, callback);
                 });
             }
 
-            if(!Report.m.take()){
-                return Smartgeo.sleep( Report.m.getTime(), function(){
-                    Report.deleteInDatabase(report, callback);
+            if(!ReportSynchronizer.m.take()){
+                return Smartgeo.sleep( ReportSynchronizer.m.getTime(), function(){
+                    ReportSynchronizer.deleteInDatabase(report, callback);
                 });
             }
 
@@ -205,7 +205,7 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
                         reports.splice(i, 1);
                         return Smartgeo.set_('reports', reports, function(){
                             // $rootScope.reports = reports ;
-                            Report.m.release();
+                            ReportSynchronizer.m.release();
                             callback();
                         });
                     }
@@ -216,5 +216,5 @@ angular.module('smartgeomobile').factory('Report', function ($http, Smartgeo, $q
         }
 
     };
-    return Report;
+    return ReportSynchronizer;
 });

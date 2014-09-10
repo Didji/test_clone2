@@ -1,115 +1,112 @@
-<form ng-controller="reportController" name="reportForm" class="reportForm">
-    <div style="margin-bottom: 400px;">
-        <button class="btn btn-default" ng-click="cancel()">
-            <i18n>_REPORT_CANCEL</i18n>
-        </button>
-        <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport || !areEveryRequiredFieldsAreFilled()" ng-click="sendReport($event)">
-            <span class="icon-save"></span>
-            <i18n>_REPORT_SAVE</i18n>
-            <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
-            </span>
-        </button>
-        <div bindonce ng-repeat='tab in report.activity.tabs' class="panel panel-default report">
-            <div class="panel-heading report-heading">
-                <span class="pull-right icon {{tab.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
-                <h4 class="panel-title" bo-text="tab.label + (containsRequiredFields(tab) ? ' *' : '')" ng-click="tab.show = !tab.show"></h4>
-            </div>
-            <div ng-if="tab.show" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">
-                <div class="panel-body">
-                    <div ng-repeat='field in tab.fields'>
-                        <p ng-if="field.readonly" ng-show="field.visible !== false">
-                            <b class="ro-label" bo-text="field.label"></b>
-                            <span class="ro-value" bo-text="report.roFields[field.id]"></span>
-                        </p>
-                        <p ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
-                            <label class="control-label" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
-                                <span bo-text="field.label"></span>
-                                <span class="required-marker icon-asterisk" ng-show="field.required"></span>
-
-                                <span bo-if="field.type=='O'">
-                                    <span class="fa fa-check-square-o pull-left yes"></span>
-                                    <span class="fa fa-square-o pull-left no"></span>
-                                    <input type="checkbox" ng-required='field.required' class="form-control" ng-model="report.fields[field.id]" ng-change="applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'"></input>
-                                </span>
-                            </label>
-
-                            <input ng-required='field.required' bo-if='field.type=="L" && field.options.length > 15' ui-select2="groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="report.fields[field.id]" />
-
-                            <select ng-required='field.required' class="form-control" name="f" ng-model="report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
-                            </select>
-
-                            <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="report.overrides[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
-                            </input>
-                            <span class="form-control pull-left" bo-if="field.type=='D' && isAndroid && field.default && field.default.pkey" style="margin-bottom:10px;">{{report.overrides[field.id]}}</span>
-
-                            <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && isAndroid && (!field.default || !field.default.pkey)" ng-required="field.required" type="date" name="f" ng-model="report.fields[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
-                            </input>
-                            <span class="form-control pull-left" bo-if="field.type=='D' && isAndroid && (!field.default || !field.default.pkey)" style="margin-bottom:10px;">{{report.fields[field.id]}}</span>
-
-                            <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && !isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="report.overrides[field.id]" style="margin-bottom:10px">
-                            </input>
-                            <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && !isAndroid && (!field.default || !field.default.pkey)" ng-required="field.required" type="date" name="f" style="margin-bottom:10px" ng-model="report.fields[field.id]">
-                            </input>
-
-                            <timepicker ng-required='field.required' bo-if="field.type=='T' && field.default && field.default.pkey" show-meridian="false" ng-model="report.overrides[field.id]"></timepicker>
-                            <timepicker ng-required='field.required' bo-if="field.type=='T' && (!field.default || !field.default.pkey)" show-meridian="false" ng-model="report.fields[field.id]"></timepicker>
-
-                            <input ng-required='field.required' bo-if="field.type=='N' && field.default && field.default.pkey" type="number" class="form-control" ng-click="bidouille($event)" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'></input>
-                            <input ng-required='field.required' bo-if="field.type=='N' && (!field.default || !field.default.pkey)" type="number" class="form-control" ng-click="bidouille($event)" ng-required="field.required" ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'></input>
-                            <small bo-if="field.type=='N'" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
-
-                            <input ng-required='field.required' bo-if="field.type=='C' && field.default && field.default.pkey" ng-click="bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='report.overrides[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}">
-                            </input>
-                            <input ng-required='field.required' bo-if="field.type=='C' && (!field.default || !field.default.pkey)" ng-click="bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? report.roFields[field.id] : ''}}">
-                            </input>
-                        </p>
-                    </div>
-                </div>
-            </div>
+<form name="reportForm" class="reportForm">
+    <button class="btn btn-default" ng-click="reportController.cancel()">
+        <i18n>_REPORT_CANCEL</i18n>
+    </button>
+    <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+        <span class="icon-save"></span>
+        <i18n>_REPORT_SAVE</i18n>
+        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
+        </span>
+    </button>
+    <div bindonce ng-repeat='tab in reportController.report.activity.tabs' class="panel panel-default report">
+        <div class="panel-heading report-heading">
+            <span class="pull-right icon {{tab.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
+            <h4 class="panel-title" ng-click="tab.show = !tab.show">{{::(tab.label + (tab.required ? ' *' : ''))}}</h4>
         </div>
-
-        <div ng-show="!reportForm.$valid" class="panel text-danger">
-            <p ng-show="reportForm.$error.required">
-                <span class="required-marker icon-asterisk"></span>
-                <i18n>_REPORT_REQUIRED_FIELDS</i18n>
-            </p>
-        </div>
-        <div ng-show="rights.media" class="panel panel-default report">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <i18n>_REPORT_MEDIA</i18n>
-                </h4>
-            </div>
+        <div ng-if="tab.show" class="panel-collapse' + ('' + i !== '0' ? ' collapse' : '') + '">
             <div class="panel-body">
-                <button ng-disabled="report.ged.length >= _MAX_MEDIA_PER_REPORT || isTakingPhoto" camera class='btn btn-default btn-block' ng-model='report.ged'>
-                    <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
-                    <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
-                    <span style="position: relative;top: -10px;left: 15px;" ng-show='isTakingPhoto' us-spinner="{radius:4, width:2, length: 5, hwaccel:true, color:'orange'}"></span>
-                </button>
-                <div id="images">
-                    <ul class='ged-gallery'>
-                        <li ng-repeat='image in report.ged'>
-                            <img ng-src="{{image.content}}" alt="" />
-                            <button class="btn btn-default btn-danger btn-block" ng-click="">
-                                <span ng-click="removeGed($index)" class="fa fa-trash" style="text-align: center;display: block;font-size: 2em;"></span>
-                            </button>
-                        </li>
-                    </ul>
+                <div ng-repeat='field in tab.fields'>
+                    <p ng-if="field.readonly" ng-show="field.visible !== false">
+                        <b class="ro-label" bo-text="field.label"></b>
+                        <span class="ro-value" bo-text="reportController.report.roFields[field.id]"></span>
+                    </p>
+                    <p ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
+                        <label class="control-label" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && reportController.report.fields[field.id] === 'Y') }">
+                            <span bo-text="field.label"></span>
+                            <span class="required-marker icon-asterisk" ng-show="field.required"></span>
+
+                            <span bo-if="field.type=='O'">
+                                <span class="fa fa-check-square-o pull-left yes"></span>
+                                <span class="fa fa-square-o pull-left no"></span>
+                                <input type="checkbox" ng-required='field.required' class="form-control" ng-model="reportController.report.fields[field.id]" ng-change="reportController.applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'"></input>
+                            </span>
+                        </label>
+
+                        <input ng-required='field.required' bo-if='field.type=="L" && field.options.length > 15' ui-select2="reportController.groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="reportController.report.fields[field.id]" />
+
+                        <select ng-required='field.required' class="form-control" name="f" ng-model="reportController.report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
+                        </select>
+
+                        <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
+                        </input>
+                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && field.default && field.default.pkey" style="margin-bottom:10px;">{{reportController.report.overrides[field.id]}}</span>
+
+                        <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey)" ng-required="field.required" type="date" name="f" ng-model="reportController.report.fields[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
+                        </input>
+                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey)" style="margin-bottom:10px;">{{reportController.report.fields[field.id]}}</span>
+
+                        <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && !reportController.isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]" style="margin-bottom:10px">
+                        </input>
+                        <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && !reportController.isAndroid && (!field.default || !field.default.pkey)" ng-required="field.required" type="date" name="f" style="margin-bottom:10px" ng-model="reportController.report.fields[field.id]">
+                        </input>
+
+                        <timepicker ng-required='field.required' bo-if="field.type=='T' && field.default && field.default.pkey" show-meridian="false" ng-model="reportController.report.overrides[field.id]"></timepicker>
+                        <timepicker ng-required='field.required' bo-if="field.type=='T' && (!field.default || !field.default.pkey)" show-meridian="false" ng-model="reportController.report.fields[field.id]"></timepicker>
+
+                        <input ng-required='field.required' bo-if="field.type=='N' && field.default && field.default.pkey" type="number" class="form-control" ng-click="reportController.bidouille($event)" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.overrides[field.id]'></input>
+                        <input ng-required='field.required' bo-if="field.type=='N' && (!field.default || !field.default.pkey)" type="number" class="form-control" ng-click="reportController.bidouille($event)" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.fields[field.id]'></input>
+                        <small bo-if="field.type=='N'" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
+
+                        <input ng-required='field.required' bo-if="field.type=='C' && field.default && field.default.pkey" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='reportController.report.overrides[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
+                        </input>
+                        <input ng-required='field.required' bo-if="field.type=='C' && (!field.default || !field.default.pkey)" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='reportController.report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
+                        </input>
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="panel consultation-group">
-            <asset-consultation asset='::asset' ng-repeat='asset in assets' no-button='true'/>
-        </div>
-        <button class="btn btn-default" ng-click="cancel()">
-            <i18n>_REPORT_CANCEL</i18n>
-        </button>
-        <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:sendingReport}' ng-disabled="!reportForm.$valid || sendingReport" ng-click="sendReport($event)">
-            <span class="icon-save"></span>
-            <i18n>_REPORT_SAVE</i18n>
-            <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
-            </span>
-        </button>
     </div>
 
+    <div ng-show="!reportForm.$valid" class="panel text-danger">
+        <p ng-show="reportForm.$error.required">
+            <span class="required-marker icon-asterisk"></span>
+            <i18n>_REPORT_REQUIRED_FIELDS</i18n>
+        </p>
+    </div>
+    <div ng-show="rights.media" class="panel panel-default report">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <i18n>_REPORT_MEDIA</i18n>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <button ng-disabled="reportController.report.ged.length >= _MAX_MEDIA_PER_REPORT || isTakingPhoto" camera class='btn btn-default btn-block' ng-model='reportController.report.ged'>
+                <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
+                <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
+                <span style="position: relative;top: -10px;left: 15px;" ng-show='isTakingPhoto' us-spinner="{radius:4, width:2, length: 5, hwaccel:true, color:'orange'}"></span>
+            </button>
+            <div id="images">
+                <ul class='ged-gallery'>
+                    <li ng-repeat='image in reportController.report.ged'>
+                        <img ng-src="{{image.content}}" alt="" />
+                        <button class="btn btn-default btn-danger btn-block" ng-click="">
+                            <span ng-click="reportController.report.removeGedItem($index)" class="fa fa-trash" style="text-align: center;display: block;font-size: 2em;"></span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel consultation-group">
+        <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true' />
+    </div>
+    <button class="btn btn-default" ng-click="reportController.cancel()">
+        <i18n>_REPORT_CANCEL</i18n>
+    </button>
+    <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+        <span class="icon-save"></span>
+        <i18n>_REPORT_SAVE</i18n>
+        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
+        </span>
+    </button>
 </form>

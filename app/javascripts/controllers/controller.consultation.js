@@ -12,10 +12,11 @@
      * @class ConsultationController
      * @desc Controlleur de la page de consultation.
      *
-     * @property {Boolean} isOpen
-     * @property {Boolean} loading
+     * @property {Boolean}  isOpen
+     * @property {Boolean}  loading
      * @property {L.LatLng} coordinates
-     * @property {Object} groups
+     * @property {Object}   groups
+     * @property {Object}   spinnerOptions
      */
 
     function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, Asset, $timeout) {
