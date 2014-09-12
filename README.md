@@ -7,7 +7,7 @@
 
 * Téléchargement des sources générales : `git clone https://github.com/gismartwaredev/smartgeomobile`
 * Téléchargez le dépôt windows : `git clone https://github.com/gismartwaredev/smartgeomobile-windows`
-* Copiez les sources générales dans le répértoire `app/` du dépôt windows : `cp -R smartgeomobile/app smargeomobile-windows/` (`index.html` doit se trouver dans le répértoire `smartgeomobile-windows/app/`)
+* Copiez les sources générales (`smartgeomobile/app/`) dans le répértoire `app/` du dépôt windows : `cp -R smartgeomobile/app smargeomobile-windows/` (`index.html` doit se trouver dans le répértoire `smartgeomobile-windows/app/`)
 * Executer `smartgeomobile.exe` ou `smartgeomobile.bat`
 
 ##### Unix
