@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "$timeout"];
+    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "Site", "$timeout"];
 
     /**
      * @class ReportController
@@ -23,7 +23,7 @@
      * @property {Boolean} comesFromIntent
      */
 
-    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, $timeout) {
+    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, Site,$timeout) {
 
         var vm = this;
 
@@ -50,8 +50,16 @@
         function activate() {
 
             $rootScope.currentPage = "Saisie de compte-rendu";
-            vm.comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
-            window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
+
+            if(!checkInputParameters($routeParams)){
+                return;
+            }
+
+            if(!Site.current()){
+                Site.setCurrent($routeParams.site);
+            }
+
+            comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
 
             var assetsIds = $routeParams.assets.split(',');
 
@@ -131,11 +139,6 @@
         function sendReport() {
             vm.sendingReport = true;
             var report = angular.copy(vm.report);
-            for (var i = 0; i < report.assets.length; i++) {
-                if (report.assets[i].id) {
-                    report.assets[i] = report.assets[i].id;
-                }
-            }
 
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date) {
@@ -165,12 +168,12 @@
 
             ReportSynchronizer.synchronize(report, function() {
                 vm.sendingReport = false;
-                if (!vm.comesFromIntent) {
+                if (!comesFromIntent) {
                     endOfReport();
                 }
             }, 5000)
 
-            if (vm.comesFromIntent) {
+            if (comesFromIntent) {
                 endOfReport();
             }
         }
@@ -384,6 +387,28 @@
             ctx.drawImage(img, 0, 0);
             var dataURL = canvas.toDataURL("image/jpeg", 50);
             return dataURL;
+        }
+
+
+
+        /**
+         * @name checkInputParameters
+         * @param {Object} routeParams
+         * @desc Vérification des paramètres d'entrée
+         * @returns {Boolean} Retourne true si les paramètres obligatoires sont présents
+         */
+        function checkInputParameters(routeParams) {
+            if(!routeParams.site){
+                alertify.alert('Aucun site selectionné.');
+                return false;
+            } else if(!routeParams.activity){
+                alertify.alert('Aucune activité selectionnée.');
+                return false;
+            } else if(!routeParams.assets){
+                alertify.alert('Aucun patrimoine selectionné.');
+                return false;
+            }
+            return true;
         }
 
         /**

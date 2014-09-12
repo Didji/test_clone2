@@ -14,7 +14,7 @@
         <!-- Reports Section -->
         <div class="list-group-item" ng-repeat="report in reports track by report.uuid" ng-hide="report.hide">
             <span class="label label-success pull-right" ng-show="report.synced">Synchronisé</span>
-            <button ng-click="deleteReport(report, $index)" ng-show='!report.syncInProgress && !report.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button ng-click="deleteReport(report, $index)" ng-show='!report.syncInProgress && !report.synced' type="button" class="close">&times;</button>
             <span ng-show='report.syncInProgress' class="has-spinner pull-right" ng-class="{active:report.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
             <small class="label label-default">Compte-rendu</small>
             <h6>{{site.activities._byId[report.activity].label}} <span ng-if='report.site'>({{report.site}})</span> <small>{{report.timestamp | date:'dd/MM à HH:mm'}}</small></h6>

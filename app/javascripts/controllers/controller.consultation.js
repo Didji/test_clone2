@@ -28,12 +28,14 @@
         vm.close = close;
         vm.open = open;
         vm.addAssetsToMission = addAssetsToMission;
+        vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
 
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
         vm.groups = null;
         vm.spinnerOptions = {};
+        vm.multiselection = {};
 
         var PREOPEN_TIMER;
 
@@ -85,6 +87,13 @@
                 $scope.$digest();
             });
 
+            $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
+                vm.multiselection[asset.okey] = vm.multiselection[asset.okey] || [] ;
+                if(vm.multiselection[asset.okey].indexOf(asset) === -1){
+                    vm.multiselection[asset.okey].push(asset);
+                }
+            });
+
             $scope.$on("CLOSE_CONSULTATION_PANEL", close);
         }
 
@@ -125,6 +134,22 @@
         function toggleConsultationPanel() {
             vm[vm.isOpen ? 'close' : 'open']();
         }
+
+        /**
+         * @name toggleConsultationPanel
+         * @desc
+         * @param {String} okey
+         * @returns {String} Liste des ids pour un okey de la selection multiple
+         */
+        function getMultiselectionAssetsIds(okey) {
+            var tmp = [];
+            for (var i = 0; i < vm.multiselection[okey].length; i++) {
+                tmp.push(vm.multiselection[okey][i].id);
+            }
+            return tmp.join(',');
+        }
+
+
 
         /**
          * @name cancelPreopenTimer

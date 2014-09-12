@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Activity', ActivityFactory);
 
-    ActivityFactory.$inject = ["$rootScope"];
+    ActivityFactory.$inject = ["$rootScope", "Site"];
 
 
-    function ActivityFactory($rootScope) {
+    function ActivityFactory($rootScope, Site) {
 
         /**
          * @class ActivityFactory
@@ -23,13 +23,14 @@
          * @desc
          */
         Activity.findOne = function(id) {
-            if (!$rootScope.site.activities._byId) {
-                $rootScope.site.activities._byId = {};
-                for (var i = 0; i < $rootScope.site.activities.length; i++) {
-                    $rootScope.site.activities._byId[$rootScope.site.activities[i].id] = $rootScope.site.activities[i];
+            var site = Site.current();
+            if (!site.activities._byId) {
+                site.activities._byId = {};
+                for (var i = 0; i < site.activities.length; i++) {
+                    site.activities._byId[site.activities[i].id] = site.activities[i];
                 }
             }
-            var activity = $rootScope.site.activities._byId[id] ;
+            var activity = site.activities._byId[id] ;
             if (!activity._fields) {
                 activity._fields = {};
                 for (var i = 0, numTabs = activity.tabs.length, tab; i < numTabs; i++) {

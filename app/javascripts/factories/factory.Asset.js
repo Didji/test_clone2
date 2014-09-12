@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Asset', AssetFactory);
 
-    AssetFactory.$inject = ["G3ME", "Icon", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http"];
+    AssetFactory.$inject = ["G3ME", "Icon", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site"];
 
 
-    function AssetFactory(G3ME, Icon, Marker, SQLite, $rootScope, Smartgeo, $http) {
+    function AssetFactory(G3ME, Icon, Marker, SQLite, $rootScope, Smartgeo, $http, Site) {
 
         /**
          * @class AssetFactory
@@ -150,7 +150,7 @@
          */
         Asset.findOne = function(id, callback, zones){
 
-            if (!(zones = zones || $rootScope.site.zones).length) {
+            if (!(zones = zones || Site.current().zones).length) {
                 return callback(null);
             }
 

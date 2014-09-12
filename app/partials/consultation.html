@@ -3,6 +3,29 @@
         <span class="fa fa-info"></span>
     </div>
     <div class="consultation-content">
+        <div ng-repeat='(okey, assets) in consultationController.multiselection' class="consultation-multiselection-okey-group" ng-if="assets.length">
+            <h4 class="family-title">
+                {{::site.metamodel[okey].label}}
+            </h4>
+            <div ng-repeat='asset in assets' class="consultation-multiselection-assets-list">
+                {{::asset.label}}
+                <i ng-click="consultationController.multiselection[okey].splice($index, 1);" class="fa fa-trash consultation-multiselection-trash"></i>
+            </div>
+            <div ng-if="rights.report" class="btn-group consultation-multiselection-report-button">
+                <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
+                    <i class="fa fa-pencil-square-o"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="activity in site.activities|activityListFilter:assets">
+                        <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{consultationController.getMultiselectionAssetsIds(okey)}}">{{::activity.label}}</a>
+                    </li>
+                </ul>
+            </div>
+            <button ng-click="consultationController.multiselection[okey] = []" type="button" class="consultation-btn">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+
         <div ng-if="consultationController.loading" class="consultationLoadingBlock">
             <i class="fa fa-refresh fa-spin"></i>
         </div>
@@ -10,7 +33,7 @@
             <div class="panel-group" ng-repeat="(okey, assets) in priority">
                 <h4 class="family-title">{{::site.metamodel[assets[0].okey].label}}</h4>
                 <div class="panel consultation-group">
-                    <asset-consultation asset='::asset' ng-repeat='asset in assets' />
+                    <asset-consultation asset='::asset' ng-repeat='asset in assets' class="assetConsultationDirective"/>
                 </div>
             </div>
         </div>

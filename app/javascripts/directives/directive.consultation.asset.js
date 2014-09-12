@@ -27,8 +27,9 @@
 			scope.rights = $rootScope.rights;
 			scope.addToCurrentSelection = addToCurrentSelection;
 			scope.$on('$destroy', destroy);
+
 			function addToCurrentSelection() {
-				console.log(scope.asset, 'to current selection from directive');
+				$rootScope.$broadcast("UPDATE_CONSULTATION_MULTISELECTION", scope.asset);
 			}
 
 			function openInApp(url, event) {

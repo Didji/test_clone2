@@ -32,14 +32,6 @@
            bo-text="site.activities._byId[map_activity||report_activity].label"></a> -->
 
         <div ng-if="!noButton">
-            <button class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
-            </button>
-            <button class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
-            </button>
-            <button class="consultation-btn" ng-click="addToCurrentSelection(asset)"><i class="fa fa-plus"></i>
-            </button>
-            <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="rights.history" ng-if="!asset.reports"><i class="fa fa-history"></i>
-            </button>
             <div ng-if="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
                 <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                     <i class="fa fa-pencil-square-o"></i>
@@ -50,6 +42,14 @@
                     </li>
                 </ul>
             </div>
+            <button class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
+            </button>
+            <button class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
+            </button>
+            <button class="consultation-btn" ng-click="addToCurrentSelection(asset)"><i class="fa fa-plus"></i>
+            </button>
+            <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="rights.history" ng-if="!asset.reports"><i class="fa fa-history"></i>
+            </button>
             <ng-include src="'partials/consultation-asset-missions.html'"></ng-include>
             <ng-include src="'partials/consultation-asset-calls.html'"></ng-include>
             <ng-include src="'partials/consultation-asset-history.html'"></ng-include>

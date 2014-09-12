@@ -137,6 +137,9 @@
          * @desc
          */
         function activityListFilter_(activitiesIn, asset) {
+            if(asset.length){
+                asset = asset[0];
+            }
             var activitiesOut = [];
             for (var i = 0; i < activitiesIn.length; i++) {
                 if (activitiesIn[i].okeys[0] === asset.okey) {

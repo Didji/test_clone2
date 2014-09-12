@@ -19,8 +19,8 @@
     padding-left: 30px;
 }
 
-.leaflet-control-container{
-    z-index:0;
+.leaflet-control-container {
+    z-index: 0;
 }
 
 *:not(input) {
@@ -31,8 +31,6 @@
 
 html,
 body {
-/*    height: 100%;
-    overflow: hidden;*/
     font-family: 'robotoregular',sans-serif;
     background: #525252;
     user-select: none;
@@ -163,19 +161,22 @@ img.leaflet-tile {
     background-color: #3F3F3F;
 }
 
+.consultation-multiselection-trash {
+    margin-left: 10px;
+    color: rgba(255,0,0,0.45);
+}
+
 .consultationLoadingBlock {
     width: 0;
     margin: 0 auto;
     padding-top: 100px;
 }
 
-.consultationLoadingBlock i{
-    color: white;
-    font-size: 6em;
+.consultationLoadingBlock i {
     margin-left: -35px;
+    font-size: 6em;
+    color: white;
 }
-
-
 
 /*.consultationLoadingText {
     position: relative;
@@ -248,17 +249,24 @@ img.leaflet-tile {
 }
 
 .consultation-btn {
-    float: right;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     margin: 0 8px 10px 0;
     border: none;
     border-color: #fd9122;
     border-radius: 40px;
     font-size: 2em;
-    line-height: 40px;
+    line-height: 35px;
     color: #FFF;
     background-color: #fd9122;
+}
+
+.btn-group {
+    vertical-align: baseline;
+}
+
+.consultation-multiselection-assets-list {
+    margin-bottom: 10px;
 }
 
 .consultation-small-table {
@@ -475,8 +483,8 @@ fieldset[disabled] .btn-primary.active {
 }
 
 .reportForm {
-    padding: 15px;
     margin-bottom: 400px;
+    padding: 15px;
 }
 
 .reportForm .glyphicon-chevron-up,
@@ -687,8 +695,13 @@ ul.ged-gallery li img {
     font-weight: 200;
 }
 
-.consultation-group:nth-child(odd)  > * > .consultation-panel-heading{
-    background-color: rgba(128, 128, 128, 0.08);
+.consultation-group .assetConsultationDirective {
+}
+
+.consultation-multiselection-okey-group {
+    margin-bottom: 5px;
+    padding: 1px 10px 1px 10px;
+    background: rgba(0,0,0,0.18);
 }
 
 .panel-heading a {
@@ -711,7 +724,7 @@ ul.ged-gallery li img {
 
 .btn.two-lines > *,
 .dropdown-menu > li > a {
-    white-space: normal;
+    font-size: 0.85em;
 }
 
 #dayToDisplay {

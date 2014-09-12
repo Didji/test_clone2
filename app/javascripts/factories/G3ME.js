@@ -134,9 +134,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             G3ME.tilesOnScreen = ~~ ((window.innerHeight / 256) * (window.innerWidth / 256)) + 1;
 
             this.canvasTile.on('loading', function(){
-                console.time('Canvas Tile Layer Drawing');
+                // console.time('Canvas Tile Layer Drawing');
             }).on('load', function(){
-                console.timeEnd('Canvas Tile Layer Drawing');
+                // console.timeEnd('Canvas Tile Layer Drawing');
             }).addTo(this.map);
             this.tempAssetTile.addTo(this.map);
             window.G3ME = this ;
