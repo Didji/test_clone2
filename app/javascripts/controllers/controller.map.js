@@ -59,6 +59,9 @@
 
         Smartgeo.lastLeafletMapExtentTimeout = 0 ;
 
+        var REFERENCE_VIEW_CONTROL = makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView);
+        G3ME.map.addControl(REFERENCE_VIEW_CONTROL);
+
         G3ME.map.on('moveend', function (e) {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function(){
@@ -72,6 +75,15 @@
                 }
             }, 5000);
         });
+
+        function setReferenceView() {
+            var extent = $rootScope.site.extent,
+                southWest = L.latLng(extent.ymax, extent.xmin),
+                northEast = L.latLng(extent.ymin, extent.xmax),
+                bounds = L.latLngBounds(southWest, northEast);            
+            G3ME.map.fitBounds(bounds);
+            return false;
+        }
 
         function noConsultableAssets(coords) {
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
