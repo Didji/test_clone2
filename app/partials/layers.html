@@ -2,8 +2,8 @@
     <div class="list-group" ng-repeat="group in layersController.groups">
         <h4 class="list-group-item active">
             <label class="fullwidth" ng-class="{checked: !!group.status}">
-                <span class="icon-check yes" ></span>
-                <span class="icon-check-empty no" ></span>
+                <span class="fa fa-check-square yes" ></span>
+                <span class="fa fa-square no" ></span>
                 <input
                         type="checkbox"
                         ng-model="group.status"
@@ -13,8 +13,8 @@
         </h4>
         <div class="list-group-item" ng-repeat="layer in group.layers | isGraphical">
             <label class="fullwidth" ng-class="{checked: !!layersController.layers[layer.okey].status}">
-                <span class="icon-check yes" ></span>
-                <span class="icon-check-empty no" ></span>
+                <span class="fa fa-check-square yes" ></span>
+                <span class="fa fa-square no" ></span>
                 <input  type="checkbox"
                         ng-model="layersController.layers[layer.okey].status"
                         ng-change="layersController.refreshView()"></input>

@@ -104,7 +104,7 @@ angular
             report: true,
             parameters: true,
             planning: true,
-            history: true,
+            history: false,
             photo: true,
             media: true,
             myposition: true,

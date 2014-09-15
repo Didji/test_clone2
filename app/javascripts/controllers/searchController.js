@@ -123,9 +123,8 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
             if (!results.length) {
                 $scope.advancedSearchMessage = '_SEARCH_SEARCH_NO_RESULT';
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
+                $scope.$digest();
+
                 return;
             } else {
                 delete $scope.advancedSearchMessage;
@@ -136,6 +135,8 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                 assets.push(new Asset(Asset.convertRawRow(results[i]))); //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+            $scope.$digest();
+
         });
     };
 }]);
