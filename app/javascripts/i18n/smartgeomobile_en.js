@@ -114,6 +114,7 @@ window.smartgeo_i18n_lang['en'] = {
     _MAP_MY_POSITION_CONTROL: "My position",
     _MAP_GPS_FAIL: "Error while retrieving GPS coordinates",
     _MAP_CONSULTATION_CONTROL: "Consultation",
+    _MAP_REFERENCE_VIEW_CONTROL: "Reference view",
 
 
     _PLANNING_SYNC_FAIL_: "Error while updating missions", //"Erreur lors de la mise à jour des missions",
