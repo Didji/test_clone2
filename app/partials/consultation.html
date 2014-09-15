@@ -3,27 +3,38 @@
         <span class="fa fa-info"></span>
     </div>
     <div class="consultation-content">
-        <div ng-repeat='(okey, assets) in consultationController.multiselection' class="consultation-multiselection-okey-group" ng-if="assets.length">
-            <h4 class="family-title">
-                {{::site.metamodel[okey].label}}
-            </h4>
-            <div ng-repeat='asset in assets' class="consultation-multiselection-assets-list">
-                {{::asset.label}}
-                <i ng-click="consultationController.multiselection[okey].splice($index, 1);" class="fa fa-trash consultation-multiselection-trash"></i>
+        <div class="panel consultation-group" ng-if="consultationController.multiselection.length > 0">
+            <div ng-repeat='(okey, assets) in consultationController.multiselection' ng-if="assets.length" class="assetConsultationDirective">
+                <div class="panel-heading consultation-panel-heading {{!consultationController.multiselection[okey].close ? 'consultationDirectiveOpen' : ''}}" ng-click="consultationController.multiselection[okey].close = !consultationController.multiselection[okey].close">
+                    <h4 class="panel-title">
+                        Sélection {{::site.metamodel[okey].label}}
+                        <span class="badge">{{assets.length}}</span>
+                        <span class="pull-right fa fa-caret-{{consultationController.multiselection[okey].close ? 'down' : 'up'}}"></span>
+                    </h4>
+                </div>
+
+                <div ng-if="!consultationController.multiselection[okey].close" class="panel-collapse">
+                    <div class="panel-body multiselection-body">
+                        <div ng-repeat='asset in assets' ng-if='!consultationController.multiselection[okey].close' class="consultation-multiselection-assets-list">
+                            {{::asset.label}}
+                            <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-trash consultation-multiselection-trash"></i>
+                        </div>
+                        <div ng-if="rights.report && !consultationController.multiselection[okey].close" class="btn-group consultation-multiselection-report-button">
+                            <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="activity in site.activities|activityListFilter:assets">
+                                    <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{consultationController.getMultiselectionAssetsIds(okey)}}">{{::activity.label}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button ng-if='!consultationController.multiselection[okey].close' ng-click="consultationController.emptyMultiselectionForOkey(okey)" type="button" class="consultation-btn">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div ng-if="rights.report" class="btn-group consultation-multiselection-report-button">
-                <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
-                    <i class="fa fa-pencil-square-o"></i>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li ng-repeat="activity in site.activities|activityListFilter:assets">
-                        <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{consultationController.getMultiselectionAssetsIds(okey)}}">{{::activity.label}}</a>
-                    </li>
-                </ul>
-            </div>
-            <button ng-click="consultationController.multiselection[okey] = []" type="button" class="consultation-btn">
-                <i class="fa fa-trash"></i>
-            </button>
         </div>
 
         <div ng-if="consultationController.loading" class="consultationLoadingBlock">
@@ -33,7 +44,7 @@
             <div class="panel-group" ng-repeat="(okey, assets) in priority">
                 <h4 class="family-title">{{::site.metamodel[assets[0].okey].label}}</h4>
                 <div class="panel consultation-group">
-                    <asset-consultation asset='::asset' ng-repeat='asset in assets' class="assetConsultationDirective"/>
+                    <asset-consultation asset='::asset' ng-repeat='asset in assets' class="assetConsultationDirective" />
                 </div>
             </div>
         </div>

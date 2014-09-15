@@ -43,6 +43,7 @@
           ng-show='mission.assets.length > 0 && !mission.objectNotFound'>
             <span class="fa fa-search fa-3x"></span><br/><i18n>_PLANNING_LOCATE_</i18n>
         </button>
+
         <button
           style='min-width: 110px'
           class="btn btn-warning"
@@ -54,6 +55,25 @@
           <br/>
           <i18n>_PLANNING_WRITE_</i18n>
         </button>
+
+    <!--     <button id="dropdownMenu{{mission.id}}" data-toggle="dropdown"
+          style='min-width: 110px'
+          class="btn btn-warning"
+          ng-disabled="!mission.selectedAssets"
+          ng-show='mission.assets.length > 0 && site.activities._byId[mission.activity.id].type != "night_tour" && !mission.objectNotFound'>
+          <span class="fa fa-file-text fa-3x"></span>
+          <span ng-show='mission.selectedAssets > 0' style="float: right;margin-left: -30px;" class="badge badge-primary">{{mission.selectedAssets}}</span>
+          <br/>
+          <i class="fa fa-phone"> </i>
+          <i18n>_PLANNING_WRITE_</i18n>
+        </button>
+        <ul  class="dropdown-menu" role="menu"  aria-labelledby="dropdownMenu{{mission.id}}">
+          <li role="presentation" class="dropdown-header">Appel n°{{call.number}} ({{call.reason}})</li>
+            <li ng-repeat="activity in site.activities">
+                <a  ng-click="showReport(mission, activity.id)">{{activity.label}}</a>
+            </li>
+        </ul> -->
+
         <button
           style='min-width: 110px'
           class="btn btn-warning"

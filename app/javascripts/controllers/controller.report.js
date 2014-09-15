@@ -138,8 +138,7 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            var report = angular.copy(vm.report);
-
+            var report = angular.copy(vm.report), i ;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date) {
                     report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes())
@@ -160,9 +159,6 @@
                     report.fields[i] = report.overrides[i];
                 }
             }
-
-            delete report.overrides;
-            delete report.roFields;
 
             report.activity = report.activity.id;
 
@@ -332,7 +328,7 @@
             $rootScope.report_url_redirect = undefined;
 
             $location.path('map/' + $rootScope.site.id);
-            $scope.$digest();
+            $scope.$apply();
         }
 
         /**

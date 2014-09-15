@@ -100,7 +100,7 @@
 
 
         var coords, radius_p = 40,
-            baseRequest = " SELECT asset,";
+            baseRequest = " SELECT id, asset,";
         baseRequest += "       label,";
         baseRequest += "       geometry,";
         baseRequest += "       CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2";

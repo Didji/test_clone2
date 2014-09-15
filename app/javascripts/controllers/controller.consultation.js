@@ -27,8 +27,9 @@
         vm.toggleConsultationPanel = toggleConsultationPanel;
         vm.close = close;
         vm.open = open;
-        vm.addAssetsToMission = addAssetsToMission;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
+        vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
+        vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
 
         vm.isOpen = false;
         vm.loading = false;
@@ -88,10 +89,11 @@
             });
 
             $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
-                vm.multiselection[asset.okey] = vm.multiselection[asset.okey] || [] ;
-                if(vm.multiselection[asset.okey].indexOf(asset) === -1){
-                    vm.multiselection[asset.okey].push(asset);
-                }
+                addAssetToMultiselection(asset);
+            });
+
+            $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
+                dropAssetFromMultiselection(asset);
             });
 
             $scope.$on("CLOSE_CONSULTATION_PANEL", close);
@@ -118,6 +120,48 @@
         }
 
         /**
+         * @name addAssetToMultiselection
+         * @desc
+         * @param {Asset} asset
+         */
+        function addAssetToMultiselection(asset) {
+            if(!vm.multiselection[asset.okey]){
+                vm.multiselection[asset.okey] = [];
+            }
+            vm.multiselection.length = (vm.multiselection.length || 0)+1;
+            if(vm.multiselection[asset.okey].indexOf(asset) === -1){
+                vm.multiselection[asset.okey].push(asset);
+            }
+            asset.isInMultiselection = true ;
+        }
+
+
+        /**
+         * @name dropAssetFromMultiselection
+         * @desc
+         * @param {Asset} asset
+         */
+        function dropAssetFromMultiselection(asset) {
+            vm.multiselection[asset.okey].splice(vm.multiselection[asset.okey].indexOf(asset), 1);
+            asset.isInMultiselection = false ;
+            vm.multiselection.length--;
+        }
+
+        /**
+         * @name emptyMultiselectionForOkey
+         * @desc
+         * @param {String} okey
+         */
+        function emptyMultiselectionForOkey(okey) {
+            vm.multiselection.length -= vm.multiselection[okey].length;
+            for (var i = 0; i < vm.multiselection[okey].length; i++) {
+                vm.multiselection[okey][i].isInMultiselection = false ;
+            }
+            vm.multiselection[okey] = []
+        }
+
+
+        /**
          * @name openLocatedReport
          * @desc
          * @param {Number} lat
@@ -142,14 +186,13 @@
          * @returns {String} Liste des ids pour un okey de la selection multiple
          */
         function getMultiselectionAssetsIds(okey) {
+
             var tmp = [];
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
                 tmp.push(vm.multiselection[okey][i].id);
             }
             return tmp.join(',');
         }
-
-
 
         /**
          * @name cancelPreopenTimer
@@ -182,20 +225,6 @@
             }
             vm.isOpen = true;
             $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la.
-        }
-
-        /**
-         * @name addAssetsToMission
-         * @desc
-         * @param {Object} asset
-         * @param {Object} mission
-         * @param {Event} $event
-         */
-        function addAssetsToMission(asset, mission, $event) {
-            if ($event) {
-                $event.preventDefault();
-            }
-            $rootScope.addAssetToMission(asset, mission);
         }
 
     }

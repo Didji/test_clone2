@@ -22,9 +22,11 @@ function config($routeProvider, $rootScope, $httpProvider) {
         controllerAs: 'siteListController',
         controller: 'SiteListController'
     }).
-    // when("/report/:site/:activity", {
-    //     templateUrl: "partials/report.html"
-    // }).
+    when("/report/:site//:assets/:mission", {
+        templateUrl: "partials/activitySelector.html",
+        controllerAs: 'activitySelectorController',
+        controller: 'ActivitySelectorController'
+    }).
     when("/report/:site/:activity/:assets", {
         templateUrl: "partials/report.html",
         controllerAs: 'reportController',
@@ -35,9 +37,6 @@ function config($routeProvider, $rootScope, $httpProvider) {
         controllerAs: 'reportController',
         controller: 'ReportController'
     }).
-    // when("/report/:site/undefined/:assets/:mission", {
-    //     templateUrl: "partials/report.html"
-    // }).
     when("/register", {
         templateUrl: "partials/register.html"
     }).

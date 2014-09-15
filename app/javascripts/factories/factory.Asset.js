@@ -120,6 +120,15 @@
         };
 
         /**
+         * @name addToMission
+         * @desc
+         * @param {Object} mission
+         */
+        Asset.prototype.addToMission = function(mission) {
+            $rootScope.addAssetToMission(this, mission);
+        }
+
+        /**
          * @name getLineStringMiddle
          * @desc Retourne le milieu d'un LineString
          * @param {Array[]} coordinates Géometrie de l'objet

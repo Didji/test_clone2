@@ -161,6 +161,31 @@ img.leaflet-tile {
     background-color: #3F3F3F;
 }
 
+.panel-heading.consultation-panel-heading{
+    border-top: 1px solid rgba(138, 138, 138, 0.54);
+}
+.assetConsultationDirective:first-of-type .consultation-panel-heading {
+    border-top: none;
+}
+
+.multiselection-heading{
+    border: none ;
+    border-bottom:1px solid rgba(138, 138, 138, 0.54);
+    border-top:none !important;
+}
+.multiselection-body{
+    padding-bottom : 5px;
+}
+.consultationDirectiveOpen {
+    background-color: #999;
+    color: white;
+}
+
+.consultationDirectiveOpen .badge{
+    background-color: white;
+    color: #999;
+}
+
 .consultation-multiselection-trash {
     margin-left: 10px;
     color: rgba(255,0,0,0.45);
@@ -486,6 +511,11 @@ fieldset[disabled] .btn-primary.active {
     margin-bottom: 400px;
     padding: 15px;
 }
+.reportForm .needPadding{
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
 
 .reportForm .glyphicon-chevron-up,
 .reportForm .glyphicon-chevron-down {
@@ -695,13 +725,16 @@ ul.ged-gallery li img {
     font-weight: 200;
 }
 
-.consultation-group .assetConsultationDirective {
+/*.panel:empty{
+    display: none;
 }
-
+*/
 .consultation-multiselection-okey-group {
     margin-bottom: 5px;
     padding: 1px 10px 1px 10px;
     background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(255, 255, 255, 0.54);
+    border-radius: 3px;
 }
 
 .panel-heading a {
@@ -753,4 +786,18 @@ ul.ged-gallery li img {
     font-size: 20px;
     color: gray;
     color: black;
+}
+
+
+.angel {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    background-color: gainsboro;
+    -webkit-transition:  margin-top 2s , opacity 2s;
+}
+
+.ascending {
+    margin-top: -250px;
+    opacity: 0;
 }

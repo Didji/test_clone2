@@ -131,7 +131,10 @@
         return reportFieldsFilter_;
     }
 
-    function activityListFilter() {
+    activityListFilter.$inject = ["Asset"];
+
+    function activityListFilter(Asset) {
+
         /**
          * @name activityListFilter_
          * @desc

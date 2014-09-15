@@ -383,7 +383,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
      * @desc Open report with concerned assets
      *
      */
-    $scope.showReport = function (mission) {
+    $scope.showReport = function (mission, activity) {
         var selectedAssets = [];
         for (var i = 0; i < $scope.assetsCache[mission.id].length; i++) {
             if ($scope.assetsCache[mission.id][i].selected) {

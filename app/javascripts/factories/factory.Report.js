@@ -29,20 +29,16 @@
         function Report(assets, activity, mission) {
             this.assets = assets ;
             this.activity = Activity.findOne(activity) ;
-            this.mission = mission ;
+            this.mission = 1*mission ;
             this.site = $rootScope.site.label ;
+            this.fields = {};
+            this.ged = [];
+            this.uuid = Smartgeo.uuid();
+            this.timestamp = new Date().getTime();
         }
 
-        Report.prototype.assets = [];
-        Report.prototype.fields = {};
         Report.prototype.roFields = {};
         Report.prototype.overrides = {};
-        Report.prototype.ged = [];
-        Report.prototype.site = false;
-        Report.prototype.mission = null;
-        Report.prototype.activity = null;
-        Report.prototype.uuid = Smartgeo.uuid();
-        Report.prototype.timestamp = new Date().getTime();
 
         /**
          * @name removeGedItem

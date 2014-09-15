@@ -1,8 +1,9 @@
 <form name="reportForm" class="reportForm">
-    <button class="btn btn-default" ng-click="reportController.cancel()">
+    <h3>Compte rendu {{reportController.report.activity.label}}</h3>
+    <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i18n>_REPORT_SAVE</i18n>
         <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
@@ -100,10 +101,10 @@
     <div class="panel consultation-group">
         <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true' />
     </div>
-    <button class="btn btn-default" ng-click="reportController.cancel()">
+    <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;" class="btn btn-primary has-spinner" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i18n>_REPORT_SAVE</i18n>
         <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
