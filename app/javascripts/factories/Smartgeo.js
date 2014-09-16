@@ -142,7 +142,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         clearCaches: function () {
             Smartgeo.parametersCache  = {} ;
-            Smartgeo.parametersCache_ = {} ;
+            this.parametersCache_ = {} ;
         },
 
 
@@ -250,8 +250,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc WebSQL getter
          */
         get_: function (parameter, callback) {
-            if (Smartgeo.parametersCache_[parameter] && parameter !== "reports") {
-                var value = angular.copy(Smartgeo.parametersCache_[parameter]) ;
+            if (this.parametersCache_[parameter] && parameter !== "reports") {
+                var value = angular.copy(this.parametersCache_[parameter]) ;
                 (callback || function () {})(value);
                 return value;
             } else {
@@ -272,7 +272,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             // @gulian: Perso j'y crois pas.
             value = JSON.parse(JSON.stringify(value));
 
-            Smartgeo.parametersCache_[parameter] = value;
+            this.parametersCache_[parameter] = value;
             SQLite.set(parameter, value, callback);
         },
 
@@ -283,7 +283,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Clear WebSQL's value
          */
         unset_: function (parameter, callback) {
-            delete Smartgeo.parametersCache_[parameter];
+            delete this.parametersCache_[parameter];
             SQLite.unset(parameter, callback);
         },
 

@@ -17,7 +17,6 @@
         var vm = this;
 
         $rootScope.currentPage = "Cartographie";
-
         window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
         var LAST_USERS_LOCATION = [];
@@ -80,7 +79,7 @@
             var extent = $rootScope.site.extent,
                 southWest = L.latLng(extent.ymax, extent.xmin),
                 northEast = L.latLng(extent.ymin, extent.xmax),
-                bounds = L.latLngBounds(southWest, northEast);            
+                bounds = L.latLngBounds(southWest, northEast);
             G3ME.map.fitBounds(bounds);
             return false;
         }

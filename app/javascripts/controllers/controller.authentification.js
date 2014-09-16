@@ -19,7 +19,7 @@
      * @property {Boolean}  loginInProgress Authentification en cours ?
      */
 
-    function AuthController($rootScope, $location, Smartgeo, i18n, $route, $http) {
+    function AuthController($rootScope, $location, Smartgeo, i18n, $route, $http, $document) {
 
         var vm = this;
 
@@ -56,6 +56,8 @@
         function loginSuccess(data, status) {
 
             var localSites = [] , tmp = Smartgeo.get_('sites'), remoteSites = [] ;
+
+            console.log('tmp', tmp);
 
             for(var site in tmp){
                 localSites.push(tmp[site]);

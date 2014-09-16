@@ -113,9 +113,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                 .success(callback)
                 .error(function(response, code){
                     if(code === 403){
-                        console.log('silentLogin');
                         Smartgeo.silentLogin(function(){
-                        console.log('silentLogin');
                             $route.reload() ;
                         });
                     }
