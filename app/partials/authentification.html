@@ -1,24 +1,35 @@
 <form ng-submit="authController.login()" class="panel floating-form loginForm">
-    <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{::version}}</small></h2>
-    <hr/>
-    <input class="form-control" type='text' ng-model="authController.gimapServer" ng-show='authController.firstAuth' placeholder='Adresse du serveur' />
-    <input class="form-control" type='text' ng-model="authController.user.username" placeholder='Utilisateur' />
-    <input class="form-control" type='password' ng-model="authController.user.password" placeholder='Mot de passe'/>
-    <label class="rememberMeCheckbox"><i18n>_AUTH_REMEMBER_PASSWORD_</i18n> <input type="checkbox" ng-model="authController.user.rememberme"></label>
+    <h2>
+        <img src="./images/logo-smartgeo.png" alt="Smartgeo mobile">
+        <small>{{::version}}</small>
+    </h2>
+    <input class="form-control" type='text' ng-model="authController.gimapServer" ng-show='authController.firstAuth' placeholder='Adresse du serveur'></input>
+    <input class="form-control" type='text' ng-model="authController.user.username" placeholder='Utilisateur'></input>
+    <input class="form-control" type='password' ng-model="authController.user.password" placeholder='Mot de passe'></input>
+    <label class="rememberMeCheckbox">
+        <i18n>_AUTH_REMEMBER_PASSWORD_</i18n>
+        <input type="checkbox" ng-model="authController.user.rememberme">
+    </label>
     <div ng-if='authController.errorMessage' class="alert alert-danger login-errorMessage">{{authController.errorMessage}}</div>
-    <button ng-class="{active:authController.loginInProgress}" class="btn btn-lg btn-primary btn-block has-spinner"
-        ng-disabled = "(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
-        <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span> <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
+    <button ng-class="{active:authController.loginInProgress}" class="btn btn-lg btn-primary btn-block has-spinner" ng-disabled="(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
+        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
+        </span>
+        <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
     </button>
 </form>
 
-<div ng-show="!authController.firstAuth" class="btn-group bottom-right dropup">
+<div ng-if="::!authController.firstAuth" class="btn-group bottom-right dropup">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="fa fa-gears"></span> <i18n>_AUTH_SETTINGS_</i18n> <span class="caret"></span>
+        <span class="fa fa-gears"></span>
+        <i18n>_AUTH_SETTINGS_</i18n>
+        <span class="caret"></span>
     </button>
     <ul class="dropdown-menu pull-right" role="menu">
-        <li ng-show="!authController.firstAuth">
-            <a ng-click="authController.reset()"><i18n>_AUTH_CHANGE_GIMAP_URL_</i18n> <small>({{::(authController.gimapServer | urlShortener)}})</small></a>
+        <li ng-if="::!authController.firstAuth">
+            <a ng-click="authController.reset()">
+                <i18n>_AUTH_CHANGE_GIMAP_URL_</i18n>
+                <small>({{::authController.gimapServer}})</small>
+            </a>
         </li>
     </ul>
 </div>

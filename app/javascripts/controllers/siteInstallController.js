@@ -86,10 +86,17 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope","
                 Installer.install($scope.site, $scope.site.stats, function () {
                     $scope.site.installed = true;
                     Installer.saveSite($scope.site, function () {
-                        $location.path('/map/' + $routeParams.site);
-                        if (!$scope.$$phase) {
-                            $scope.$apply();
-                        }
+                        Smartgeo.selectSiteRemotely($routeParams.site, function(){
+                            $location.path('/map/' + $routeParams.site);
+                            if (!$scope.$$phase) {
+                                $scope.$apply();
+                            }
+                        },function(){
+                            $location.path('/map/' + $routeParams.site);
+                            if (!$scope.$$phase) {
+                                $scope.$apply();
+                            }
+                        });
                     });
                 });
             });

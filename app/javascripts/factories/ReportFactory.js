@@ -105,6 +105,7 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
             }
 
             Smartgeo.get_('reports', function(reports){
+                reports = reports || [];
                 ReportSynchronizer.m.release();
                 var report;
                 for (var i = 0; i < reports.length; i++) {

@@ -57,8 +57,6 @@
 
             var localSites = [] , tmp = Smartgeo.get_('sites'), remoteSites = [] ;
 
-            console.log('tmp', tmp);
-
             for(var site in tmp){
                 localSites.push(tmp[site]);
             }
