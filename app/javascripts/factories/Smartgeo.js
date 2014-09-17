@@ -695,7 +695,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         selectSiteRemotely: function (site, success, error) {
 
             if(window.SmartgeoChromium && !Smartgeo.get_('sites')[site].EXTERNAL_TILEURL) {
-                var user = Smartgeo.get('user') ;
+                var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
                 ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
                 SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
             }
@@ -737,7 +737,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     'mobility': true
                 });
             } else {
-                url = Smartgeo.getServiceUrl('global.auth.json', {
+                url = Smartgeo.getServiceUrl('global.dcnx.json', {
                     'login': encodeURIComponent(login),
                     'pwd': encodeURIComponent(password),
                     'forcegimaplogin': true
@@ -763,15 +763,15 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo.unset('persitence.menu.open');
             Smartgeo.unset('persitence.menu.open.level');
 
-            if(!Smartgeo.get('user')){
+            if(!(Smartgeo.get('users') || {})[Smartgeo.get('lastUser')]){
                 return ;
             }
-            var missions = Smartgeo.get('missions_'+Smartgeo.get('user').username);
+            var missions = Smartgeo.get('missions_'+(Smartgeo.get('users') || {})[Smartgeo.get('lastUser')].username);
             for (var i in missions) {
                 missions[i].openned = false;
             }
             if (missions) {
-                Smartgeo.set('missions_'+Smartgeo.get('user').username, missions);
+                Smartgeo.set('missions_'+(Smartgeo.get('users') || {})[Smartgeo.get('lastUser')].username, missions);
             }
         },
 

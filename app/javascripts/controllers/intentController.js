@@ -7,7 +7,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     function tokenAuth(token, callback) {
 
-        var currentUser = Smartgeo.get('user') || {};
+        var currentUser = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] || {};
         currentUser.token = token;
         Smartgeo.set('user', currentUser);
 
