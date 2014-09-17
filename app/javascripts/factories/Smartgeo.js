@@ -251,11 +251,14 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (this.parametersCache_[parameter] && parameter !== "reports") {
-                var value = angular.copy(this.parametersCache_[parameter]) ;
+                var value = JSON.parse(JSON.stringify(this.parametersCache_[parameter])) ;
                 (callback || function () {})(value);
                 return value;
             } else {
-                SQLite.get(parameter, callback);
+                SQLite.get(parameter, function(value){
+                    Smartgeo.parametersCache_[parameter] = value ;
+                    (callback || function () {})(value);
+                });
             }
         },
 
@@ -724,6 +727,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             if (Smartgeo._LOGIN_MUTEX) {
                 return (error || function () {})();
             }
+
             Smartgeo._LOGIN_MUTEX = true;
             var token, url;
             if (typeof password === 'function' || !password) {
@@ -737,18 +741,20 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     'mobility': true
                 });
             } else {
-                url = Smartgeo.getServiceUrl('global.dcnx.json', {
+                url = Smartgeo.getServiceUrl('global.auth.json', {
                     'login': encodeURIComponent(login),
                     'pwd': encodeURIComponent(password),
                     'forcegimaplogin': true
                 });
             }
+            console.log(url);
             $http.post(url, {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             }).success(function () {
                 Smartgeo._LOGIN_MUTEX = false;
                 if ($rootScope.site) {
                     Smartgeo.selectSiteRemotely($rootScope.site.id, success, error);
+                    (success || function () {})();
                 } else {
                     (success || function () {})();
                 }

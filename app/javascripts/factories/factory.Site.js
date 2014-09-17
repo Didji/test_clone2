@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Site', SiteFactory);
 
-    SiteFactory.$inject = ["$rootScope"];
+    SiteFactory.$inject = ["$rootScope", "$q"];
 
 
-    function SiteFactory($rootScope) {
+    function SiteFactory($rootScope, $q) {
 
         /**
          * @class SiteFactory
@@ -43,7 +43,21 @@
             return window.site || $rootScope.site;
         };
 
+        /**
+         * @name all
+         * @desc
+         */
+        Site.all = function(callback) {
+            var deferred = $q.defer();
+            Smartgeo.get_('sites', function(sites){
+                deferred.resolve(sites);
+                (callback || function(){})(sites);
+            });
+            return deferred.promise;
+        };
+
         return Site;
     }
 
 })();
+

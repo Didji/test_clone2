@@ -9,13 +9,18 @@ angular.module("smartgeobootstrap", []).run(function() {
     });
 });
 
-function config($routeProvider, $rootScope, $httpProvider) {
+function config($routeProvider, $rootScope, $httpProvider, $provide) {
 
     $routeProvider.
     when("/", {
         templateUrl: "partials/authentification.html",
         controllerAs: 'authController',
-        controller: 'AuthController'
+        controller: 'AuthController',
+        resolve: {
+            prefetchedlocalsites: ['Site', 'Smartgeo', function (Site, Smartgeo) {
+                return Site.all();
+            }]
+        }
     }).
     when("/sites/", {
         templateUrl: "partials/sites.html",
@@ -54,7 +59,14 @@ function config($routeProvider, $rootScope, $httpProvider) {
         templateUrl: "partials/update.html"
     }).
     when("/map/:site", {
-        templateUrl: "partials/main.html"
+        templateUrl: "partials/main.html",
+        // controllerAs: 'mainController',
+        // controller: 'MainController',
+        resolve: {
+            prefetchedlocalsites: ['Site', 'Smartgeo', function (Site, Smartgeo) {
+                return Site.all();
+            }]
+        }
     }).
     when("/intent/:controller/?:args", {
         templateUrl: "partials/intent.html"
@@ -66,31 +78,54 @@ function config($routeProvider, $rootScope, $httpProvider) {
         }
     });
 
-    var interceptor = ['$rootScope', '$q', '$injector',
-        function(scope, $q, $injector) {
-            function success(response) {return response;}
-            function error(response) {
-                var $location = $injector.get('$location');
-                var Smartgeo = $injector.get('Smartgeo');
-                var $http = $injector.get('$http');
-                if (response.status === 403 && $location.path() !== "/") {
-                    Smartgeo.silentLogin();
-                    return $http(response.config);
-                }
-                return $q.reject(response);
 
-            }
-            return function(promise) {return promise.then(success, error);}
+  $provide.factory('myHttpInterceptor', function($q, $injector) {
+    return {
+     'responseError': function(rejection) {
+        var Smartgeo = $injector.get('Smartgeo');
+        var $location = $injector.get('$location');
+        var $http = $injector.get('$http');
+        if (rejection.status === 403 && $location.path() !== "/" && rejection.config.url.indexOf('global.auth') === -1) {
+            Smartgeo.silentLogin();
+            return $http(rejection.config);
         }
-    ];
-    $httpProvider.interceptors.push(interceptor);
+        return $q.reject(rejection);
+      }
+    };
+  });
+
+  $httpProvider.interceptors.push('myHttpInterceptor');
+
+
+
+    // var interceptor = ['$rootScope', '$q', '$injector',
+    //     function(scope, $q, $injector) {
+    //         console.log("JE NE MARCHE PLUS");
+    //         function success(response) {return response;}
+    //         function error(response) {
+    //         console.log("JE NE MARCHE PLUS");
+    //             var $location = $injector.get('$location');
+    //             var Smartgeo = $injector.get('Smartgeo');
+    //             var $http = $injector.get('$http');
+    //             console.log(response.status);
+    //             if (response.status === 403 && $location.path() !== "/") {
+    //                 Smartgeo.silentLogin();
+    //                 return $http(response.config);
+    //             }
+    //             return $q.reject(response);
+
+    //         }
+    //         return function(promise) {return promise.then(success, error);}
+    //     }
+    // ];
+    // $httpProvider.interceptors.push(interceptor);
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.cache = false;
 
 }
 
-config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider"];
+config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$provide"];
 
 angular
     .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce', 'ngResource'])

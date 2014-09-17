@@ -64,6 +64,9 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
 
                 $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.check.json'),{uuids:luuids})
                     .success(function(data){
+                        if((typeof data) === "string"){
+                            return ; // Compatibilité GIMAO666
+                        }
                         var ruuids = data.uuids || data ;
                         for(var uuid in ruuids){
                             if(ruuids[uuid]){
@@ -185,6 +188,10 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
         },
 
         deleteInDatabase: function (report, callback) {
+
+            if(!report){
+                return ;
+            }
 
             if(typeof report === "string"){
                 return ReportSynchronizer.getByUUID(report, function(report){

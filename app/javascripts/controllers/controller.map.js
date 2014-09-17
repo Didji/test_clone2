@@ -6,17 +6,20 @@
         .module('smartgeomobile')
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset){
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site){
 
         var vm = this;
 
         $rootScope.currentPage = "Cartographie";
+
+        Site.setCurrent($routeParams.site);
+
         window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[$routeParams.site];
 
         var LAST_USERS_LOCATION = [];

@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller( 'AuthController', AuthController );
 
-    AuthController.$inject = ["$rootScope", "$location", "Smartgeo", "i18n", "$route", "$http"];
+    AuthController.$inject = ["$rootScope", "$location", "Smartgeo", "i18n", "$route", "$http", "Site","prefetchedlocalsites"];
 
     /**
      * @class AuthController
@@ -19,7 +19,7 @@
      * @property {Boolean}  loginInProgress Authentification en cours ?
      */
 
-    function AuthController($rootScope, $location, Smartgeo, i18n, $route, $http, $document) {
+    function AuthController($rootScope, $location, Smartgeo, i18n, $route, $http, Site, prefetchedlocalsites) {
 
         var vm = this;
 
@@ -43,6 +43,7 @@
             Smartgeo.initialize();
 
             $rootScope.currentPage  = "Authentification";
+
             vm.user             = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] || {"rememberme": true};
             vm.gimapServer      = (Smartgeo.get('url')   || "");
             vm.firstAuth        = vm.gimapServer.length ? Smartgeo.ping() && false : true ;
@@ -55,7 +56,7 @@
          */
         function loginSuccess(data, status) {
 
-            var localSites = [] , tmp = Smartgeo.get_('sites'), remoteSites = [] ;
+            var localSites = [] , tmp = prefetchedlocalsites, remoteSites = [] ;
 
             for(var site in tmp){
                 localSites.push(tmp[site]);
@@ -94,8 +95,9 @@
                 },function(){
                     vm.errorMessage = (i18n.get('_AUTH_UNKNOWN_ERROR_OCCURED_'));
                 });
-            } else if(remoteSites.length === 1){
+            } else if(remoteSites.length === 1 && localSites.length <= 1){
                 // Online avec un site non installé : On l'installe directement
+                console.log("on lance l'install", remoteSites, localSites);
                 $location.path('/sites/install/' + remoteSites[0].id);
             } else if((remoteSites.length + localSites.length) > 0) {
                 $location.path('sites');
@@ -112,7 +114,7 @@
          * @desc Callback d'erreur de l'authentification
          */
         function loginError(response, status) {
-            var sites = Object.keys(Smartgeo.get_('sites') || {}),
+            var sites = Object.keys(prefetchedlocalsites || {}),
                 users = Smartgeo.get('users') || {};
 
             if(status >= 400 && status < 500 || sites.length > 0 && users[vm.user.username].password !== vm.user.password){

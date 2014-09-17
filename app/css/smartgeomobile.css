@@ -757,7 +757,8 @@ ul.ged-gallery li img {
 
 .btn.two-lines > *,
 .dropdown-menu > li > a {
-    font-size: 0.85em;
+    font-size: 0.9em;
+    white-space: initial;
 }
 
 #dayToDisplay {
