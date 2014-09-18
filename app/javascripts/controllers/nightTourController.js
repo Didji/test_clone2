@@ -345,7 +345,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
         $scope.mission = mission;
         $scope.isFollowingMe = true;
 
-        $rootScope.closeLeftMenu();
+        $rootScope.$broadcast('_MENU_CLOSE_');
         $rootScope.nightTourInProgress = true;
         $rootScope.nightTourRecording = true;
 
