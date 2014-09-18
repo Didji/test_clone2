@@ -85,7 +85,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope","
             Installer.createZones($scope.site, function () {
                 Installer.install($scope.site, $scope.site.stats, function () {
                     $scope.site.installed = true;
-                    Installer.saveSite($scope.site, function () {
+                    Installer.saveSite($scope.site, function (sites) {
                         Smartgeo.selectSiteRemotely($routeParams.site, function(){
                             $location.path('/map/' + $routeParams.site);
                             if (!$scope.$$phase) {
@@ -96,7 +96,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope","
                             if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
-                        });
+                        }, sites);
                     });
                 });
             });
