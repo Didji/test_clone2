@@ -435,7 +435,6 @@
             for (var i in vm.report.activity._fields) {
                 var field = vm.report.activity._fields[i];
                 if(field.required && !vm.report.fields[field.id]){
-                    console.log('TRUE');
                     return true;
                 }
             }
