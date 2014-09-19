@@ -540,6 +540,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
 
             if (!zones.length) {
+                partial_response.sort(function(a, b) {
+                    return (a.label < b.label) ? -1 : 1;
+                })
                 return callback(partial_response);
             }
 
