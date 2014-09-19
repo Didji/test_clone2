@@ -1,7 +1,14 @@
 package com.gismartware.mobile;
 
-import android.content.Context;
-import android.util.Log;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.Security;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -17,16 +24,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Security;
-import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import android.content.Context;
+import android.util.Log;
 
 public class MailSender extends javax.mail.Authenticator {
     private String mailhost ;
@@ -39,14 +38,10 @@ public class MailSender extends javax.mail.Authenticator {
     }
 
     private Multipart _multipart;
-    private Context context;
     private ResourceBundle config = null ;
 
 
     public MailSender(Context context) {
-
-        this.context = context ;
-
         try {
             FileInputStream fis = new FileInputStream(context.getExternalFilesDir(null).getParent() + "/" + "config.properties");
             config = new PropertyResourceBundle(fis);
@@ -54,7 +49,6 @@ public class MailSender extends javax.mail.Authenticator {
         } catch(Exception e){
             Log.e("gismartware::MailSender/FileInputStream", e.getMessage(), e);
         }
-        //ResourceBundle config = ResourceBundle.getBundle("com.gismartware.mobile.config");
 
         this.mailhost = config.getString("logger.mailhost");
         this.user     = config.getString("logger.user");
@@ -67,14 +61,11 @@ public class MailSender extends javax.mail.Authenticator {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
         props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.socketFactory.fallback", "false");
         props.setProperty("mail.smtp.quitwait", "false");
 
-
         session = Session.getDefaultInstance(props, this);
-        //session.setDebug(true);
     }
 
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -82,38 +73,35 @@ public class MailSender extends javax.mail.Authenticator {
     }
 
     public synchronized void sendMail(String subject, String body, String sender, String recipients, String filename) throws Exception {
+        MimeMessage message = new MimeMessage(session);
 
-            MimeMessage message = new MimeMessage(session);
+        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
 
-            DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+        message.setSender(new InternetAddress(sender));
+        message.setSubject(subject);
+        message.setDataHandler(handler);
 
-            message.setSender(new InternetAddress(sender));
-            message.setSubject(subject);
-            message.setDataHandler(handler);
+        if (filename != null) {
+            BodyPart messageBodyPart = new MimeBodyPart();
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(config.getString("logger.filename"));
+            _multipart.addBodyPart(messageBodyPart);
 
-            if(filename != null){
-                BodyPart messageBodyPart = new MimeBodyPart();
-                DataSource source = new FileDataSource(filename);
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(config.getString("logger.filename"));
-                _multipart.addBodyPart(messageBodyPart);
+            BodyPart messageBodyPart2 = new MimeBodyPart();
+            messageBodyPart2.setText("");
 
-                BodyPart messageBodyPart2 = new MimeBodyPart();
-                messageBodyPart2.setText("");
+            _multipart.addBodyPart(messageBodyPart2);
 
-                _multipart.addBodyPart(messageBodyPart2);
+            message.setContent(_multipart);
+        }
 
-                message.setContent(_multipart);
-            }
-
-            if (recipients.indexOf(',') > 0)
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
-            else
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
-            Transport.send(message);
-
-
-
+        if (recipients.indexOf(',') > 0) {
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+        } else {
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
+        }
+        Transport.send(message);
     }
 
     public class ByteArrayDataSource implements DataSource {

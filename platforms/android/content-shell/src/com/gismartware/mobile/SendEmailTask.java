@@ -1,24 +1,24 @@
 package com.gismartware.mobile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
 class SendEmailTask extends AsyncTask<String, Void, Void> {
 
     private Exception exception;
     private Context mContext;
+    
     public SendEmailTask (Context context){
         mContext = context;
     }
+    
     @Override
     protected Void doInBackground(String... strings) {
         ResourceBundle config = null;
@@ -37,8 +37,7 @@ class SendEmailTask extends AsyncTask<String, Void, Void> {
                     "",
                     config.getString("logger.sender"),
                     config.getString("logger.recipient"),
-                    mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv"
-                    );
+                    mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv");
         } catch (Exception e) {
             this.exception = e;
             MailSender sender = new MailSender(mContext);
@@ -55,22 +54,18 @@ class SendEmailTask extends AsyncTask<String, Void, Void> {
         }
 
         File file = new File(mContext.getExternalFilesDir(null).getParent() + "/" + "smartgeo-log.csv");
-        boolean deleted = file.delete();
-
-
-
+        file.delete();
 
         return null;
     }
 
     protected void onPostExecute() {
-           if(this.exception == null){
-               Toast.makeText(mContext, "SendEmailTask#SendEmailTask error", Toast.LENGTH_LONG).show();
-               Log.e("com.gismartware.smartgeoLogger#GiAlarmService", "SendMail error");
-           } else {
-               Toast.makeText(mContext, "SendEmailTask#SendEmailTask success", Toast.LENGTH_LONG).show();
-               Log.i("com.gismartware.smartgeoLogger#GiAlarmService", "SendMail success ");
-           }
+       if (this.exception == null) {
+           Toast.makeText(mContext, "SendEmailTask#SendEmailTask error", Toast.LENGTH_LONG).show();
+           Log.e("com.gismartware.smartgeoLogger#GiAlarmService", "SendMail error");
+       } else {
+           Toast.makeText(mContext, "SendEmailTask#SendEmailTask success", Toast.LENGTH_LONG).show();
+           Log.i("com.gismartware.smartgeoLogger#GiAlarmService", "SendMail success ");
+       }
     }
-
 }
