@@ -128,7 +128,7 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
 config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$provide"];
 
 angular
-    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", "angularSpinner", 'pasvaz.bindonce', 'ngResource'])
+    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2",'pasvaz.bindonce', 'ngResource'])
     .config(config).run(function($rootScope /*, LicenseManager*/ ) {
         // TODO: activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
         $rootScope.rights = {
