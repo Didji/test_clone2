@@ -7,7 +7,7 @@
         ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i18n>_REPORT_SAVE</i18n>
-        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
+         <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
         </span>
     </button>
     <div bindonce ng-repeat='tab in reportController.report.activity.tabs' class="panel panel-default report">
@@ -111,8 +111,8 @@
         ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()"
         ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
-        <i18n>_REPORT_SAVE</i18n>
-        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
+            <i18n>_REPORT_SAVE</i18n>
+            <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
         </span>
     </button>
 </form>
