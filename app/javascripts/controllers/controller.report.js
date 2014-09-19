@@ -149,14 +149,16 @@
             vm.sendingReport = true;
             var report = angular.copy(vm.report), i ;
             for (i in report.fields) {
-                if (report.fields[i] instanceof Date) {
-                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes())
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "T") {
+                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes()) ;
+                }
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "D") {
+                    report.fields[i] = report.fields[i].getFullYear() + "-" + pad(report.fields[i].getMonth() + 1) + "-" + pad(report.fields[i].getDate());
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
                 }
             }
-
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
                     'content': getBase64Image(report.ged[i].content)
@@ -279,9 +281,14 @@
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
                         def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                        fields[field.id] = new Date(def);
+                        vm.report.fields[field.id] = new Date(def);
+                    } else {
+                        fields[field.id] = def;
+                        vm.report.fields[field.id] = def;
+                        vm.report.overrides[field.id] = def;
+                        vm.report.roFields[field.id] = def;
                     }
-                    fields[field.id] = def;
-                    vm.report.roFields[field.id] = def;
                 } else {
                     def = getValueFromAssets(def.pkey, vm.report.activity.okeys[0]);
                     vm.report.roFields[field.id] = formatFieldEntry(def);
