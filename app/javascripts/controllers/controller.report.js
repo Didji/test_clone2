@@ -38,6 +38,7 @@
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.groupSelectOptions = {};
+        vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
         var comesFromIntent = false;
 
@@ -423,6 +424,22 @@
          */
         function sortFunction(a, b) {
             return (a.text < b.text) ? -1 : 1;
+        }
+
+
+        /**
+         * @name containsUnfilledRequiredFields
+         * @desc
+         */
+        function containsUnfilledRequiredFields(){
+            for (var i in vm.report.activity._fields) {
+                var field = vm.report.activity._fields[i];
+                if(field.required && !vm.report.fields[field.id]){
+                    console.log('TRUE');
+                    return true;
+                }
+            }
+            return false ;
         }
 
         /**
