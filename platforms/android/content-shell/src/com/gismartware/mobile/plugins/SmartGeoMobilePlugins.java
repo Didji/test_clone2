@@ -10,29 +10,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.ByteArrayBuffer;
 import org.apache.http.util.EntityUtils;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.http.AndroidHttpClient;
-import android.provider.Settings.Secure;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,13 +38,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.provider.Settings.Secure;
 import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
 import com.gismartware.mobile.GimapMobileApplication;
 import com.gismartware.mobile.GimapMobileMainActivity;
-import com.gismartware.mobile.util.FileUtils;
 
 public class SmartGeoMobilePlugins {
 
@@ -162,50 +158,6 @@ public class SmartGeoMobilePlugins {
     }
 
     @JavascriptInterface
-    public void eraseAllTiles() {
-        File path = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME);
-        boolean ret = FileUtils.delete(path);
-        if (ret) {
-            Log.d(TAG, path.getAbsolutePath() + " deleted!");
-        } else {
-            Log.d(TAG, "Impossible to delete " + path.getAbsolutePath());
-        }
-        view.evaluateJavaScript("window.ChromiumCallbacks[12](\"" + ret + "\");");
-    }
-
-    private class WriteBase64FileToPNG extends AsyncTask<String, Void, Boolean> {
-        @Override
-        protected Boolean doInBackground(String... params) {
-            byte[] pngAsByte = Base64.decode(params[0], 0);
-            File filePath = new File(GimapMobileApplication.EXT_APP_DIR, params[1]);
-            filePath.getParentFile().mkdirs();
-
-            boolean result = true;
-            try {
-                FileOutputStream os = new FileOutputStream(filePath, false);
-                os.write(pngAsByte);
-                os.flush();
-                os.close();
-            } catch (IOException e) {
-                Log.d(TAG, "Error when writing base64 data to " + params[1], e);
-                result = false;
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            view.evaluateJavaScript("window.ChromiumCallbacks[10](\"" + result.booleanValue() + "\");");
-        }
-    }
-
-    @JavascriptInterface
-    public void writeBase64ToPNG(String base64, String path) {
-        new WriteBase64FileToPNG().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,base64, path );
-    }
-
-    @JavascriptInterface
     public void writeJSON(final String json, final String path) {
         Runnable runnable = new Runnable() {
           @Override
@@ -236,15 +188,15 @@ public class SmartGeoMobilePlugins {
     public void getDeviceId() {
         String name ;
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBluetoothAdapter == null){
+        if (mBluetoothAdapter == null) {
             name = "" ;
         } else {
             name = mBluetoothAdapter.getName();
         }
-        if(name == null){
+        if (name == null) {
             name = "Aucun nom trouvé";
         }
-        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '"+Secure.getString(this.context.getContentResolver(),Secure.ANDROID_ID) +"');");
+        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '"+Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) +"');");
     }
 
     @JavascriptInterface
@@ -310,7 +262,6 @@ public class SmartGeoMobilePlugins {
        String path = GimapMobileApplication.EXT_APP_DIR.getPath() + "/" + fileName ;
        File file = new File(path);
        if (!file.exists()) {
-           Log.e(TAG, path + " does not exist");
            file.getParentFile().mkdirs();
            String header = config.getString("logger.header");
            try {
@@ -346,7 +297,6 @@ public class SmartGeoMobilePlugins {
 
         if (cursor.getCount() > 0){
             cursor.moveToFirst();
-            Log.e(TAG, "[G3DB] Tuile trouvée.");
             String resultJavascript = "window.ChromiumCallbacks['15"
                     +"|" + z
                     +"|" + x
@@ -355,7 +305,6 @@ public class SmartGeoMobilePlugins {
 
             view.evaluateJavaScript(resultJavascript);
         } else {
-            Log.e(TAG, "[G3DB] Tuile non trouvée ("+z+":"+x+":"+y+") on requête le serveur avec GetTileFromURLAndSetItToDatabase");
             new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
         }
         cursor.close();
@@ -374,7 +323,7 @@ public class SmartGeoMobilePlugins {
             return  request(params);
         }
 
-        protected String request(String... params){
+        protected String request(String... params) {
 
             String url = params[0], x = params[1], y = params[2], z = params[3] ;
 
@@ -385,32 +334,28 @@ public class SmartGeoMobilePlugins {
             final HttpGet request           = new HttpGet(url);
             DefaultHttpClient client = new DefaultHttpClient();
 
-            //AndroidHttpClient client = AndroidHttpClient.newInstance("Smartgeo 0.16.1 beta");
             request.setHeader("User-Agent", "Smartgeo 0.16.1 beta");
 
-            if(PHPSESSIONID != null) {
-                Log.e(TAG, "[G3DB] Ajout du cookie " + PHPSESSIONID);
+            if (PHPSESSIONID != null) {
                 request.setHeader("Cookie", PHPSESSIONID);
             }
             try {
-                Log.e(TAG, "[G3DB] GET "+url);
                 HttpResponse  response = client.execute(request);
                 final int   statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if ( statusCode == 403 && PHPSESSIONID != null) {
+                if (statusCode == 403 && PHPSESSIONID != null) {
                     Log.e(TAG, "[G3DB] Erreur HTTP 403. Essai sans PHPSESSID");
                     PHPSESSIONID = null ;
                     return request(params);
-                } else if ( statusCode >= 300 ) {
-                    Log.e(TAG, "[G3DB] Erreur HTTP "+statusCode);
+                } else if (statusCode >= 300 ) {
+                    Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
                     return String.valueOf(statusCode);
-                } else if(image == null) {
+                } else if (image == null) {
                     Log.e(TAG, "[G3DB] Tuile non trouvée sur le serveur ("+z+":"+x+":"+y+")");
                     return null;
                 }
 
-                Log.e(TAG, "[G3DB] Tuile trouvée sur le serveur ("+z+":"+x+":"+y+")");
                 byte[] bytes = EntityUtils.toByteArray(image);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -421,7 +366,6 @@ public class SmartGeoMobilePlugins {
                 final String         databaseIndex = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
                 final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
-                Log.e(TAG, "[G3DB] Exécution des requêtes SQL ("+z+":"+x+":"+y+")");
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, y, x, imageEncoded});
                 tilesDatabase.close();
 
@@ -441,8 +385,6 @@ public class SmartGeoMobilePlugins {
             view.evaluateJavaScript(result);
         }
     }
-
-
 
     private class GetTileURL extends AsyncTask<String, Void, String> {
 
@@ -482,7 +424,7 @@ public class SmartGeoMobilePlugins {
             url = url.replace("{z}", params[3]);
 
             final HttpGet request = new HttpGet(url);
-            if(PHPSESSIONID != null) {
+            if (PHPSESSIONID != null) {
                 request.setHeader("Cookie", PHPSESSIONID);
             } else {
                 Log.e(TAG, "No PHPSESSID!");

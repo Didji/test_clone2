@@ -1,23 +1,20 @@
 package com.gismartware.mobile;
 
+import java.io.FileInputStream;
+import java.util.Calendar;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.nfc.Tag;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.util.Calendar;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
-public class GiAlarmService extends Service
-{
+public class GiAlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         ResourceBundle config = null;
@@ -37,7 +34,6 @@ public class GiAlarmService extends Service
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(config.getString("logger.hour")));
         calendar.set(Calendar.MINUTE, Integer.parseInt(config.getString("logger.minute")));
         calendar.set(Calendar.SECOND, 0);
-        Context context = this.getApplicationContext();
         this.registerReceiver( receiver, new IntentFilter("com.gismartware.mobile") );
         PendingIntent pintent = PendingIntent.getBroadcast( this, 0, new Intent("com.gismartware.mobile"), 0 );
         AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
