@@ -64,9 +64,9 @@
             var assetsIds = $routeParams.assets.split(',');
 
             var missionId = $rootScope.report_mission || $routeParams.mission ;
-            var isCall = false , indexOfCall = missionId.indexOf('-call');
+            var isCall = false ;
 
-            if( missionId.indexOf('call-') != -1){
+            if(missionId && missionId.indexOf('call-') != -1){
                 isCall = true ;
                 missionId = missionId.substr(5) ;
             }
