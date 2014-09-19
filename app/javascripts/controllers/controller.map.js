@@ -501,10 +501,7 @@
 
         function setLocationMarker(lng, lat, alt, acc) {
 
-
-            if(!LAST_USERS_LOCATION.length){
-                G3ME.map.panTo([lat, lng]).setZoom(18);
-            }
+            G3ME.map.panTo([lat, lng]).setZoom(18);
 
             LAST_USERS_LOCATION = [lat, lng] ;
 
