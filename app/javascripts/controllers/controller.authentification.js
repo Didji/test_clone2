@@ -97,7 +97,6 @@
                 });
             } else if(remoteSites.length === 1 && localSites.length <= 1){
                 // Online avec un site non installé : On l'installe directement
-                console.log("on lance l'install", remoteSites, localSites);
                 $location.path('/sites/install/' + remoteSites[0].id);
             } else if((remoteSites.length + localSites.length) > 0) {
                 $location.path('sites');

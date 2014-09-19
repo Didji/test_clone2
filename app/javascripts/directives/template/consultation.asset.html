@@ -46,11 +46,11 @@
             </button>
             <button class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
             </button>
-            <button id="addToSelectionButton" class="consultation-btn" ng-click="addToCurrentSelection($event);"><i class="fa fa-plus"></i>
+            <button  ng-if="reportActivity.length" id="addToSelectionButton" class="consultation-btn" ng-click="addToCurrentSelection($event);"><i class="fa fa-plus"></i>
             </button>
-            <button ng-if="asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection($event)"><i class="fa fa-minus"></i>
+            <button ng-if="reportActivity.length && asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection($event)"><i class="fa fa-minus"></i>
             </button>
-            <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="rights.history && !asset.reports.length" ng-if="!asset.reports"><i class="fa fa-history"></i>
+            <button ng-if="reportActivity.length" class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="rights.history && !asset.reports.length" ng-if="!asset.reports"><i class="fa fa-history"></i>
             </button>
             <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
             <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>

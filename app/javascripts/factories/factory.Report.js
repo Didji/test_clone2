@@ -26,7 +26,7 @@
          * @property {String} uuid
          * @property {Date} timestamp
          */
-        function Report(assets, activity, mission) {
+        function Report(assets, activity, mission, isCall) {
             this.assets = assets ;
             this.activity = Activity.findOne(activity) ;
             this.mission = 1*mission ;
@@ -35,6 +35,7 @@
             this.ged = [];
             this.uuid = Smartgeo.uuid();
             this.timestamp = new Date().getTime();
+            this.isCall = isCall ;
         }
 
         Report.prototype.roFields = {};

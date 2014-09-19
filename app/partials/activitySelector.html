@@ -1,5 +1,5 @@
 <div class="reportForm">
     <h3>Sélection de l'activité</h3>
     <select  class="form-control" ng-model="activitySelectorController.selected" ng-options="activity.id as activity.label for activity in activitySelectorController.activities"></select>
-    <a ng-disabled="!activitySelectorController.selected" href="#/report/{{activitySelectorController.site}}/{{activitySelectorController.selected}}/{{activitySelectorController.assets}}/{{activitySelectorController.mission}}" class="btn btn-primary needPadding">Suivant</a>
+    <a ng-disabled="!activitySelectorController.selected" href="#/report/{{activitySelectorController.site}}/{{activitySelectorController.selected}}/{{activitySelectorController.assets}}/call-{{activitySelectorController.mission}}/" class="btn btn-primary needPadding">Suivant</a>
 </div>

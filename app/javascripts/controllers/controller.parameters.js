@@ -6,25 +6,36 @@
         .module('smartgeomobile')
         .controller('ParametersController', ParametersController);
 
-    ParametersController.$inject = ["$rootScope", "i18n", "$location"];
+    ParametersController.$inject = ["$rootScope", "$scope", "i18n", "$location"];
 
     /**
      * @class ParametersController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function ParametersController($rootScope, i18n, $location) {
+    function ParametersController($rootScope, $scope, i18n, $location) {
 
         var vm = this;
 
-        vm.confirm = confirm;
+        vm.confirmUpdate = confirmUpdate;
+        vm.confirmRemove = confirmRemove;
 
         /**
-         * @name update
+         * @name confirmUpdate
          * @desc Demande confirmation avant de lancer la mise à jour du site en cours
          */
-        function confirm() {
+        function confirmUpdate() {
             alertify.confirm(i18n.get('_SYNC_UPDATE_CONFIRM_MESSAGE_', $rootScope.site.label), function(yes) {
                 if (yes) { update(); }
+            });
+        };
+
+        /**
+         * @name confirmRemove
+         * @desc Demande confirmation avant de lancer la mise à jour du site en cours
+         */
+        function confirmRemove() {
+            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', $rootScope.site.label), function(yes) {
+                if (yes) { uninstall(); }
             });
         };
 
@@ -34,6 +45,16 @@
          */
         function update(){
             $location.path('sites/update/' + $rootScope.site.id);
+            $scope.$apply();
+        }
+
+        /**
+         * @name uninstall
+         * @desc Démarre la mise à jour du site en cours
+         */
+        function uninstall(){
+            $location.path('sites/uninstall/' + $rootScope.site.id);
+            $scope.$apply();
         }
     }
 

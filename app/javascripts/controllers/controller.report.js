@@ -38,6 +38,7 @@
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.groupSelectOptions = {};
+        vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
         var comesFromIntent = false;
 
@@ -63,7 +64,15 @@
 
             var assetsIds = $routeParams.assets.split(',');
 
-            vm.report = new Report(assetsIds, $routeParams.activity, $rootScope.report_mission || $routeParams.mission);
+            var missionId = $rootScope.report_mission || $routeParams.mission ;
+            var isCall = false ;
+
+            if(missionId && missionId.indexOf('call-') != -1){
+                isCall = true ;
+                missionId = missionId.substr(5) ;
+            }
+
+            vm.report = new Report(assetsIds, $routeParams.activity, missionId, isCall);
 
             for (var i = 0; i < assetsIds.length; i++) {
                 vm.assets.push(new Asset(assetsIds[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
@@ -140,14 +149,16 @@
             vm.sendingReport = true;
             var report = angular.copy(vm.report), i ;
             for (i in report.fields) {
-                if (report.fields[i] instanceof Date) {
-                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes())
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "T") {
+                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes()) ;
+                }
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "D") {
+                    report.fields[i] = report.fields[i].getFullYear() + "-" + pad(report.fields[i].getMonth() + 1) + "-" + pad(report.fields[i].getDate());
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
                 }
             }
-
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
                     'content': getBase64Image(report.ged[i].content)
@@ -270,9 +281,14 @@
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
                         def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                        fields[field.id] = new Date(def);
+                        vm.report.fields[field.id] = new Date(def);
+                    } else {
+                        fields[field.id] = def;
+                        vm.report.fields[field.id] = def;
+                        vm.report.overrides[field.id] = def;
+                        vm.report.roFields[field.id] = def;
                     }
-                    fields[field.id] = def;
-                    vm.report.roFields[field.id] = def;
                 } else {
                     def = getValueFromAssets(def.pkey, vm.report.activity.okeys[0]);
                     vm.report.roFields[field.id] = formatFieldEntry(def);
@@ -415,6 +431,21 @@
          */
         function sortFunction(a, b) {
             return (a.text < b.text) ? -1 : 1;
+        }
+
+
+        /**
+         * @name containsUnfilledRequiredFields
+         * @desc
+         */
+        function containsUnfilledRequiredFields(){
+            for (var i in vm.report.activity._fields) {
+                var field = vm.report.activity._fields[i];
+                if(field.required && !vm.report.fields[field.id]){
+                    return true;
+                }
+            }
+            return false ;
         }
 
         /**

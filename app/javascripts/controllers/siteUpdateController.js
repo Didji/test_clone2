@@ -2,6 +2,7 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
 
     'use strict';
 
+return ;
     // LicenseManager.update(true) ;
 
     $scope.steps = [{

@@ -782,7 +782,8 @@ ul.ged-gallery li img {
 }
 
 .select2-container .select2-choice abbr:after {
-    content: "\2A09";
+    font-family:'FontAwesome';
+    content: "\f00d";
     top: auto;
     font-size: 20px;
     color: gray;
@@ -801,4 +802,9 @@ ul.ged-gallery li img {
 .ascending {
     margin-top: -250px;
     opacity: 0;
+}
+
+.site-name{
+    margin-top: 35px;
+margin-bottom: 20px;
 }
