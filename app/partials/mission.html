@@ -13,7 +13,7 @@
           <span ng-show="!mission.isLoading && !mission.activity && mission.done.length > 0" class="badge pull-right mission-assets-count-badge">
               {{mission.done.length}} CR saisi{{mission.done.length>1?'s':''}} sur {{mission.done.length + mission.assets.length}}
           </span>
-          <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
+          <i ng-show="mission.isLoading" class="fa fa-refresh fa-spin pull-right"></i>
         </h3>
         <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> {{ mission.end | sanitizeDate | timeago}} de retard </p>
       </div>

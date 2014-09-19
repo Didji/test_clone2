@@ -12,7 +12,7 @@
                       <span ng-switch-when="0"><i18n>_PLANNING_FINISH_</i18n></span>
                       <span ng-switch-default>{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
                   </span>
-                  <span ng-show="mission.isLoading" class="pull-right" style="margin-top: -7px;margin-right: 3px;" us-spinner="{radius:3, width:3, length: 5, hwaccel:true, color:'orange'}"></span>
+                  <i ng-show="mission.isLoading" class="fa fa-refresh fa-spin pull-right"></i>
                 </h3>
               </div>
               <div class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
