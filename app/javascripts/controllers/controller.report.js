@@ -63,7 +63,15 @@
 
             var assetsIds = $routeParams.assets.split(',');
 
-            vm.report = new Report(assetsIds, $routeParams.activity, $rootScope.report_mission || $routeParams.mission);
+            var missionId = $rootScope.report_mission || $routeParams.mission ;
+            var isCall = false , indexOfCall = missionId.indexOf('-call');
+
+            if( missionId.indexOf('call-') != -1){
+                isCall = true ;
+                missionId = missionId.substr(5) ;
+            }
+
+            vm.report = new Report(assetsIds, $routeParams.activity, missionId, isCall);
 
             for (var i = 0; i < assetsIds.length; i++) {
                 vm.assets.push(new Asset(assetsIds[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
