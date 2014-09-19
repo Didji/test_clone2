@@ -2,9 +2,9 @@
     <div class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
         <div ng-hide="siteListController.ready">
-            <hr />
-            <span class="icon-spinner"></span>
-            <i18n>_SITE_LOADING</i18n>
+            <div style='font-size: 20px;margin-bottom: 15px;'>
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
         </div>
         <div ng-show="siteListController.ready">
             <div ng-show='!siteListController.sites.length'>
