@@ -11,9 +11,8 @@
         <input type="checkbox" ng-model="authController.user.rememberme">
     </label>
     <div ng-if='authController.errorMessage' class="alert alert-danger login-errorMessage">{{authController.errorMessage}}</div>
-    <button ng-class="{active:authController.loginInProgress}" class="btn btn-lg btn-primary btn-block has-spinner" ng-disabled="(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
-        <span class="spinnerb"><i class="icon-spin icon-refresh"></i>
-        </span>
+    <button class="btn btn-lg btn-primary btn-block" ng-disabled="(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
+        <i ng-if="authController.loginInProgress" class="fa fa-refresh fa-spin"></i>
         <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
     </button>
 </form>
