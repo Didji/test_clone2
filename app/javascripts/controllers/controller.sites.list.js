@@ -57,7 +57,6 @@
             var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
             $http.get(url)
                 .success(function(sites) {
-                    console.log(sites);
                     var sitesById = {},
                         site, tmpsites = {};
                     for (var i = 0, lim = sites.length; i < lim; i++) {

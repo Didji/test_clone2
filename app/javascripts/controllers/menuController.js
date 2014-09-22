@@ -52,7 +52,8 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 forceLoadDOM: false
             }, {
                 id: 'synccenter',
-                label: i18n.get('_MENU_SYNC'),
+                label: i18n.get('_MENU_SYNC') ,
+                badge: 'toBeSync',
                 icon: "fa fa-refresh",
                 template: 'partials/synchronizationMenu.html',
                 forceLoadDOM: true

@@ -183,7 +183,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         }, timeout || 3000) ;
     };
 
-    $scope.toBeSyncLength = function () {
+    $rootScope.toBeSyncLength = $scope.toBeSyncLength = function () {
         var reports = $rootScope.reports || [] ,censusAssets = $rootScope.censusAssets || [] , size = 0;
         for (var i = 0; i < reports.length; i++)        if (!reports[i].synced)       size++;
         for (var i = 0; i < censusAssets.length; i++)   if (!censusAssets[i].synced)  size++;
