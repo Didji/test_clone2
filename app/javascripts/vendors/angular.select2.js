@@ -9,7 +9,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
     function (uiSelect2Config, $timeout) {
         var options = {
             allowClear : true
-        }, lastTextValue;
+        }, lastTextValue = {};
         if (uiSelect2Config) {
             angular.extend(options, uiSelect2Config);
         }
@@ -34,7 +34,6 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
 
                 return function (scope, elm, attrs, controller) {
                     // instance-specific options
-
                     var opts = angular.extend({
                         initSelection : function (element, callback) {
                             // debugger;
@@ -114,16 +113,14 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                             // Set the view and model value and update the angular template manually for the ajax/multiple select2.
                             elm.bind("change", function (event) {
                                 if(event.added){
-                                    lastTextValue = event.added.text ;
+                                    lastTextValue[attrs.field+'-'+attrs.tabid] = event.added.text ;
                                 } else {
-                                    lastTextValue = "" ;
+                                    lastTextValue[attrs.field+'-'+attrs.tabid] = "" ;
                                 }
                                 if (scope.$$phase) {
                                     return;
                                 }
                                 scope.$apply(function () {
-                                    // console.log(elm.select2('val'));
-                                    // controller.$setViewValue(convertToAngularModel(elm.select2('data').id));
                                     controller.$setViewValue(convertToAngularModel(elm.select2('val')));
                                 });
                             });
@@ -133,7 +130,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                                 opts.initSelection = function (element, callback) {
                                     initSelection(element, function (value) {
                                         controller.$setViewValue(convertToAngularModel(value));
-                                        callback({id:value, text:value ? lastTextValue :""});
+                                        callback({id:value, text:value ? lastTextValue[attrs.field+'-'+attrs.tabid] :""});
                                     });
                                 };
                             }

@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "Site", "$timeout"];
+    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "Site", "$timeout", "prefetchedlocalsites"];
 
     /**
      * @class ReportController
@@ -23,7 +23,7 @@
      * @property {Boolean} comesFromIntent
      */
 
-    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, Site,$timeout) {
+    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, Site,$timeout, prefetchedlocalsites) {
 
         var vm = this;
 

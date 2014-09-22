@@ -39,17 +39,38 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
     when("/report/:site//:assets/:mission", {
         templateUrl: "partials/activitySelector.html",
         controllerAs: 'activitySelectorController',
-        controller: 'ActivitySelectorController'
+        controller: 'ActivitySelectorController',
+        resolve: {
+            prefetchedlocalsites: ['Site', 'Smartgeo',
+                function(Site, Smartgeo) {
+                    return Site.all();
+                }
+            ]
+        }
     }).
     when("/report/:site/:activity/:assets", {
         templateUrl: "partials/report.html",
         controllerAs: 'reportController',
-        controller: 'ReportController'
+        controller: 'ReportController',
+        resolve: {
+            prefetchedlocalsites: ['Site', 'Smartgeo',
+                function(Site, Smartgeo) {
+                    return Site.all();
+                }
+            ]
+        }
     }).
     when("/report/:site/:activity/:assets/:mission", {
         templateUrl: "partials/report.html",
         controllerAs: 'reportController',
-        controller: 'ReportController'
+        controller: 'ReportController',
+        resolve: {
+            prefetchedlocalsites: ['Site', 'Smartgeo',
+                function(Site, Smartgeo) {
+                    return Site.all();
+                }
+            ]
+        }
     }).
     when("/register", {
         templateUrl: "partials/register.html"
