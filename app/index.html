@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="format-detection" content="telephone=no">
+
     <title>Smartgeo Mobile v{{::version}} {{::(currentPage ? ' - '+currentPage : "")}}</title>
-    <link rel="icon" type="image/png" href="images/logo.png" />
-    <link rel="stylesheet" type="text/css" href="css/vendors/leaflet.css" />
-    <link rel="stylesheet" type="text/css" href="css/vendors/MarkerCluster.css" />
 
-    <link rel="stylesheet" type="text/css" href="css/vendors/bootstrap.css" />
-
-    <link rel="stylesheet" type="text/css" href="css/vendors/alertify.core.css" />
-    <link rel="stylesheet" type="text/css" href="css/vendors/alertify.default.css" />
-    <link rel="stylesheet" type="text/css" href="css/vendors/select2.css" />
-    <link rel="stylesheet" type="text/css" href="css/vendors/font-awesome.css" />
-
-    <link rel="stylesheet" type="text/css" href="css/vendors/bootstrap.css" />
-
-    <link rel="stylesheet" type="text/css" href="css/smartgeomobile.css" />
-    <link rel="stylesheet" type="text/css" href="css/smartgeomobile-menu.css" />
+    <link rel="icon" type="image/png" href="images/logo.png"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/leaflet.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/MarkerCluster.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/bootstrap.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/alertify.core.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/alertify.default.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/select2.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/font-awesome.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/vendors/bootstrap.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/smartgeomobile.css"></link>
+    <link rel="stylesheet" type="text/css" href="css/smartgeomobile-menu.css"></link>
 </head>
-<body ng-app="smartgeobootstrap" class="leaflet-touch">
+
+<body ng-app="smartgeomobile" class="leaflet-touch">
 
     <div id="mainview" ng-view></div>
 
@@ -33,7 +33,6 @@
     <script src="cordova.js"></script>
     <script src="cordova_plugins.js"></script>
 
-
     <script src="javascripts/vendors/alertify.js"></script>
 
     <script src="javascripts/vendors/leaflet.js"></script>
@@ -43,7 +42,6 @@
 
     <script src="javascripts/vendors/jquery.js"></script>
     <script src="javascripts/vendors/bootstrap.js"></script>
-    <script src="javascripts/vendors/spin.js"></script>
     <script src="javascripts/vendors/select2.js"></script>
 
     <script src="javascripts/vendors/angular.js"></script>
@@ -104,6 +102,7 @@
     <script src="javascripts/controllers/controller.map.js"></script>
     <script src="javascripts/controllers/controller.census.js"></script>
     <script src="javascripts/controllers/controller.sites.list.js"></script>
+    <script src="javascripts/controllers/controller.sites.remove.js"></script>
     <script src="javascripts/controllers/controller.consultation.js"></script>
     <script src="javascripts/controllers/controller.report.js"></script>
     <script src="javascripts/controllers/controller.activitySelector.js"></script>
@@ -112,7 +111,6 @@
     <script src="javascripts/controllers/menuController.js"></script>
     <script src="javascripts/controllers/siteInstallController.js"></script>
     <script src="javascripts/controllers/siteUpdateController.js"></script>
-    <script src="javascripts/controllers/siteUninstallController.js"></script>
     <script src="javascripts/controllers/searchController.js"></script>
     <script src="javascripts/controllers/synchronizationMenuController.js"></script>
     <script src="javascripts/controllers/intentController.js"></script>
@@ -123,4 +121,5 @@
 
     <script src="javascripts/services/G3licService.js"></script>
 </body>
+
 </html>

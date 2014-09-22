@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('SiteListController', SiteListController);
 
-    SiteListController.$inject = ["$rootScope", "$http", "$location", "Smartgeo", "i18n"];
+    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", "prefetchedlocalsites"];
 
     /**
      * @class SiteListController
@@ -17,7 +17,7 @@
      * @property {Array} sites Sites chargés
      */
 
-    function SiteListController($rootScope, $http, $location, Smartgeo, i18n) {
+    function SiteListController($scope, $rootScope, $http, $location, Smartgeo, i18n, prefetchedlocalsites) {
 
         var vm = this;
 
@@ -36,17 +36,16 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-            window.site = $rootScope.site = undefined;
+
             $rootScope.currentPage = "Sélection de site";
+
             vm.ready = false;
             vm.online = Smartgeo.get('online');
-            Smartgeo.get_('sites', function(sites){
-                if (vm.online === false) {
-                    getLocalSites(sites || {});
-                } else {
-                    getRemoteSites(sites || {});
-                }
-            });
+            if (vm.online) {
+                getRemoteSites(prefetchedlocalsites || {});
+            } else {
+                getLocalSites(prefetchedlocalsites || {});
+            }
 
         }
 
@@ -58,6 +57,7 @@
             var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
             $http.get(url)
                 .success(function(sites) {
+                    console.log(sites);
                     var sitesById = {},
                         site, tmpsites = {};
                     for (var i = 0, lim = sites.length; i < lim; i++) {
@@ -72,6 +72,7 @@
                     }
                     vm.ready = true;
                 }).error(function(error, errorCode) {
+                    console.log('la');
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in knownSites) {
@@ -108,8 +109,10 @@
         function select(site) {
             Smartgeo.selectSiteRemotely(site.id, function() {
                 $location.path('/map/' + site.id);
+                $scope.$apply();
             }, function() {
                 $location.path('/map/' + site.id);
+                $scope.$apply();
             });
         };
 
@@ -133,6 +136,7 @@
          */
         function uninstallSite(site) {
             $location.path('sites/uninstall/' + site.id);
+            $scope.$apply();
         }
 
     }

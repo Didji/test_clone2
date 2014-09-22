@@ -1,20 +1,20 @@
 <div class="content">
     <div class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
+        <hr style="margin-top: 30px;">
         <div ng-hide="siteListController.ready">
-            <div style='font-size: 20px;margin-bottom: 15px;'>
+            <div style='font-size: 20px;margin-bottom: 15px;margin-top: 40px;'>
                 <i class="fa fa-refresh fa-spin"></i>
             </div>
         </div>
+
         <div ng-show="siteListController.ready">
             <div ng-show='!siteListController.sites.length'>
-                <hr>
                 <p class="text-danger">Erreur : Votre terminal n'est pas connecté au serveur et aucun site n'a été installé préalablement.</p>
-                <hr>
             </div>
-            <div ng-repeat="site in siteListController.sites" ng-show="site.installed">
+            <div ng-repeat="site in siteListController.sites track by site.id" ng-show="site.installed">
                 <hr ng-show="$index==0" />
-                <div style="margin-bottom:10px" class="btn-group has-carret" >
+                <div style="margin-bottom:5px" class="btn-group has-carret" >
                     <a ng-click="siteListController.select(site)" class="btn btn-primary">
                         <span class="icon-star pull-left"></span> {{site.label}}
                     </a>
@@ -38,8 +38,7 @@
                 </div>
             </div>
 
-            <div ng-repeat="site in siteListController.sites" ng-show="!site.installed">
-                <hr ng-show="$index==0" />
+            <div ng-repeat="site in siteListController.sites track by site.id" ng-show="!site.installed">
                 <p >
                     <a ng-show="siteListController.online" href="#/sites/install/{{site.id}}" class="btn btn-default">
                         <span class="icon-star-empty pull-left"></span>

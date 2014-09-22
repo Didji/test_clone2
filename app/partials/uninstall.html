@@ -1,13 +1,10 @@
-<div class="content" ng-controller="siteUninstallController">
-    <div class="panel floating-form">
-        <h2>
-            <img src="./images/logo-smartgeo.png" alt="Smartgeo mobile">
-            <small>{{version}}</small>
-        </h2>
-        <p class="site-name"><b><i18n>_UNINSTALL_UNINSTALLING</i18n> {{site.label}}</b>
-        </p>
-        <div style='font-size: 20px;margin-bottom: 15px;'>
-            <i class="fa fa-refresh fa-spin"></i>
-        </div>
-    </div>
+<div class="panel floating-form">
+    <h2>
+        <img src="./images/logo-smartgeo.png" alt="Smartgeo mobile">
+        <small>{{version}}</small>
+    </h2>
+    <h5 class="site-name">
+        <i18n>_UNINSTALL_UNINSTALLING</i18n>{{siteRemoveController.siteLabel}}
+    </h5>
+    <i class="fa fa-refresh fa-spin siteRemoveSpinner"></i>
 </div>
