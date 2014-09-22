@@ -106,6 +106,7 @@
          * @param {Object} site Site à selectionner
          */
         function select(site) {
+            window.site = $rootScope.site = site ;
             Smartgeo.selectSiteRemotely(site.id, function() {
                 $location.path('/map/' + site.id);
                 $scope.$apply();

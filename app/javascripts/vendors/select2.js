@@ -703,8 +703,8 @@ the specific language governing permissions and limitations under the Apache Lic
                     role: "status",
                     "aria-live": "polite"
                 })
-                .addClass("select2-hidden-accessible")
-                .appendTo(document.body);
+                .addClass("select2-hidden-accessible");
+                // .appendTo(document.body);
 
             this.containerId="s2id_"+(opts.element.attr("id") || "autogen"+nextUid());
             this.containerEventName= this.containerId

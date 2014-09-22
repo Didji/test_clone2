@@ -123,6 +123,11 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                                 scope.$apply(function () {
                                     controller.$setViewValue(convertToAngularModel(elm.select2('val')));
                                 });
+                                setTimeout(function() {
+                                    elm.blur();
+                                    tElm.blur();
+                                    document.activeElement.blur();
+                                }, 1000);
                             });
 
                             if (opts.initSelection) {
