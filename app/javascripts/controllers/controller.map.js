@@ -33,6 +33,7 @@
 
         $scope.$on("$destroy", function( event ) {
                 Smartgeo.emptyPositionListerners();
+                clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             }
         );
 

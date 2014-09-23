@@ -41,6 +41,7 @@
         function activate() {
 
             Smartgeo.initialize();
+            Smartgeo.unset('lastLeafletMapExtent');
 
             $rootScope.currentPage  = "Authentification";
 

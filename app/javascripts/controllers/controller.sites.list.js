@@ -41,6 +41,9 @@
 
             vm.ready = false;
             vm.online = Smartgeo.get('online');
+
+            Smartgeo.unset('lastLeafletMapExtent');
+
             if (vm.online) {
                 getRemoteSites(prefetchedlocalsites || {});
             } else {
