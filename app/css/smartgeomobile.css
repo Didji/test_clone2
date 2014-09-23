@@ -755,7 +755,7 @@ ul.ged-gallery li img {
     color: white;
 }
 
-.btn.two-lines > *,
+.btn.two-lines ,
 .dropdown-menu > li > a {
     font-size: 0.9em;
     white-space: initial;

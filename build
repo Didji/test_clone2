@@ -144,3 +144,5 @@ then
     curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
 
 fi
+
+git checkout -
