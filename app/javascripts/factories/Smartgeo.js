@@ -251,7 +251,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         get_: function (parameter, callback) {
             if (this.parametersCache_[parameter] && parameter !== "reports") {
-                var value = JSON.parse(JSON.stringify(this.parametersCache_[parameter])) ;
+                var value;
+                try {
+                    value = JSON.parse(JSON.stringify(this.parametersCache_[parameter]));
+                } catch(e){
+                    value = this.parametersCache_[parameter];
+                }
                 (callback || function () {})(value);
                 return value;
             } else {
