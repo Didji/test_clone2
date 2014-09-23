@@ -289,11 +289,15 @@ public class SmartGeoMobilePlugins {
     @JavascriptInterface
     public void getTileURLFromDB(String url, String z, String x, String y) {
 
-        final String databaseIndex   = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
+        final int databaseIndex   = Integer.parseInt(y) % 10 ;
         SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex ,  null, SQLiteDatabase.CREATE_IF_NECESSARY);
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
         tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
-        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_row = ? AND tile_column = ?  ", new String[]{z, x, y});
+
+        Log.e(TAG, "[G3DB] requesting zoom_level = "+z+" AND tile_column = "+x+" AND tile_row = "+y+" on database n°"+databaseIndex);
+
+
+        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  ", new String[]{z, x, y});
 
         if (cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -305,7 +309,12 @@ public class SmartGeoMobilePlugins {
 
             view.evaluateJavaScript(resultJavascript);
         } else {
-            new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+            try{
+                Log.e(TAG, "[G3DB] NOT FOUND (local) zoom_level = "+z+" AND tile_column = "+x+" AND tile_row = "+y+" on database n°"+databaseIndex);
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+            } catch (Exception e){
+                Log.e(TAG, "[G3DB] Error while downloading ("+z+":"+x+":"+y+")");
+            }
         }
         cursor.close();
         tilesDatabase.close();
@@ -366,7 +375,7 @@ public class SmartGeoMobilePlugins {
                 final String         databaseIndex = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
                 final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
-                tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, y, x, imageEncoded});
+                tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
                 tilesDatabase.close();
 
                 final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + z +"|" + x +"|" + y +"'](\"data:image/png;base64," + imageEncoded + "\");";
