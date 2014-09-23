@@ -50,7 +50,7 @@
             </button>
             <button ng-if="reportActivity.length && asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection($event)"><i class="fa fa-minus"></i>
             </button>
-            <button ng-if="reportActivity.length" class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="rights.history && !asset.reports.length" ng-if="!asset.reports"><i class="fa fa-history"></i>
+            <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
             </button>
             <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
             <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
