@@ -533,7 +533,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         findAssetsByLabel: function (site, label, callback, zones, partial_response) {
-
+            console.log(partial_response);
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
