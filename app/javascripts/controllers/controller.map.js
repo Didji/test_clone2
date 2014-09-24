@@ -504,12 +504,10 @@
 
             LAST_USERS_LOCATION = [lat, lng] ;
 
-            G3ME.map.panTo(LAST_USERS_LOCATION).setZoom(18);
-
             if(POSITION_CIRCLE){
-                POSITION_CIRCLE.setLatLng([lat, lng]).setRadius(acc);
+                POSITION_CIRCLE.setLatLng(LAST_USERS_LOCATION).setRadius(acc);
             } else {
-                POSITION_CIRCLE = new L.Circle([lat, lng], acc, {
+                POSITION_CIRCLE = new L.Circle(LAST_USERS_LOCATION, acc, {
                     color: '#fd9122',
                     opacity: 0.1,
                     fillOpacity: 0.05
@@ -517,9 +515,9 @@
             }
 
             if(POSITION_MARKER){
-                POSITION_MARKER.setLatLng([lat, lng]);
+                POSITION_MARKER.setLatLng(LAST_USERS_LOCATION);
             } else {
-                POSITION_MARKER = L.marker([lat, lng]).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
+                POSITION_MARKER = L.marker(LAST_USERS_LOCATION).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
             }
 
             $(POSITION_CIRCLE._path).fadeOut(3000, function () {
@@ -528,6 +526,8 @@
                     POSITION_CIRCLE = null ;
                 }
             });
+
+            G3ME.map.setView(LAST_USERS_LOCATION, 18);
 
         }
 
