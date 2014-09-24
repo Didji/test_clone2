@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -50,7 +48,14 @@ public class SmartGeoMobilePlugins {
 
     private static final String TAG = "GimapMobilePlugins";
     private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
-    private static final String TILE_DIRECTORY_NAME = "tiles";
+    
+    /**
+     * User agent utilisé pour requêter des tuiles d'OpenStreetMap.
+     * 403 si pas de user agent. 
+     */
+    private static final String USER_AGENT = "Smartgeo Mobile";
+    
+    private static final int TWO_MINUTES = 1000 * 60 * 2;
 
     private Context context;
     private ContentView view;
@@ -82,16 +87,13 @@ public class SmartGeoMobilePlugins {
                         + lastLocation.getLongitude() + ","
                         + lastLocation.getLatitude()  + ","
                         + lastLocation.getAltitude()  + ","
-                        + lastLocation.getAccuracy()  + ")" +
-                        "};";
+                        + lastLocation.getAccuracy()  + ")};";
                 view.evaluateJavaScript(javascriptCode);
-                Log.d(TAG, javascriptCode);
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {}
             public void onProviderEnabled(String provider) {}
             public void onProviderDisabled(String provider) {}
         };
-
     }
 
     @JavascriptInterface
@@ -159,44 +161,42 @@ public class SmartGeoMobilePlugins {
 
     @JavascriptInterface
     public void writeJSON(final String json, final String path) {
-        Runnable runnable = new Runnable() {
-          @Override
-          public void run() {
+    	Runnable runnable = new Runnable() {
+    		@Override
+    		public void run() {
 
-              android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+    			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
-              File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
-                filePath.getParentFile().mkdirs();
+              	File filePath = new File(GimapMobileApplication.EXT_APP_DIR, path);
+              	filePath.getParentFile().mkdirs();
 
-                boolean result = true;
-                try {
-                    FileOutputStream os = new FileOutputStream(filePath, false);
-                    os.write(json.getBytes());
-                    os.flush();
-                    os.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "Error when writing base64 data to " + path, e);
-                    result = false;
-                }
-                view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
-          }
-        };
+				boolean result = true;
+				try {
+				    FileOutputStream os = new FileOutputStream(filePath, false);
+				    os.write(json.getBytes());
+				    os.flush();
+				    os.close();
+				} catch (IOException e) {
+				    Log.d(TAG, "Error when writing base64 data to " + path, e);
+				    result = false;
+				}
+				view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
+    		}
+    	};
         new Thread(runnable).start();
     }
 
     @JavascriptInterface
     public void getDeviceId() {
-        String name ;
+        String name = "Aucun nom trouvé";
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             name = "" ;
         } else {
             name = mBluetoothAdapter.getName();
         }
-        if (name == null) {
-            name = "Aucun nom trouvé";
-        }
-        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '"+Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) +"');");
+        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '" + 
+        		Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
     }
 
     @JavascriptInterface
@@ -206,8 +206,6 @@ public class SmartGeoMobilePlugins {
             v.vibrate(ms);
         }
     }
-
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
 
     /** Determines whether one Location reading is better than the current Location fix
      * @param location  The new Location that you want to evaluate
@@ -270,10 +268,10 @@ public class SmartGeoMobilePlugins {
                os.flush();
                os.close();
            } catch (IOException e) {
-               Log.e(TAG, "Error when writing '" + header + "' to " + path, e);
+               Log.e(TAG, "Error writing '" + header + "' to " + path, e);
            }
        } else {
-           Log.e(TAG, path + " does exist");
+           Log.d(TAG, path + " exists");
        }
    }
 
@@ -289,31 +287,30 @@ public class SmartGeoMobilePlugins {
     @JavascriptInterface
     public void getTileURLFromDB(String url, String z, String x, String y) {
 
-        final int databaseIndex   = Integer.parseInt(y) % 10 ;
-        SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex ,  null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        final int databaseIndex = Integer.parseInt(y) % 10;
+        SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
+        		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
         tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
 
-        Log.e(TAG, "[G3DB] requesting zoom_level = "+z+" AND tile_column = "+x+" AND tile_row = "+y+" on database n°"+databaseIndex);
+        Log.d(TAG, "[G3DB] requesting zoom_level = " + z + " AND tile_column = " + x + " AND tile_row = " + y + " on database n°" + databaseIndex);
 
+        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", new String[]{z, x, y});
 
-        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?  ", new String[]{z, x, y});
-
-        if (cursor.getCount() > 0){
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             String resultJavascript = "window.ChromiumCallbacks['15"
                     +"|" + Integer.parseInt(z)
                     +"|" + Integer.parseInt(x)
                     +"|" + Integer.parseInt(y)
                     +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
-
             view.evaluateJavaScript(resultJavascript);
         } else {
             try{
-                Log.e(TAG, "[G3DB] NOT FOUND (local) zoom_level = "+z+" AND tile_column = "+x+" AND tile_row = "+y+" on database n°"+databaseIndex);
+                Log.d(TAG, "[G3DB] NOT FOUND (local) zoom_level = " + z + " AND tile_column = " + x + " AND tile_row = " + y + " on database n°" + databaseIndex);
                 new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
             } catch (Exception e){
-                Log.e(TAG, "[G3DB] Error while downloading ("+z+":"+x+":"+y+")");
+                Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
         }
         cursor.close();
@@ -324,39 +321,38 @@ public class SmartGeoMobilePlugins {
 
         @Override
         protected String doInBackground(String... params) {
-            return  request(params);
+            return request(params);
         }
 
         protected String request(String... params) {
-
-            String url = params[0], x = params[1], y = params[2], z = params[3] ;
+            String url = params[0], x = params[1], y = params[2], z = params[3];
 
             url = url.replace("{x}", x);
             url = url.replace("{y}", y);
             url = url.replace("{z}", z);
 
-            final HttpGet request           = new HttpGet(url);
+            final HttpGet request = new HttpGet(url);
             DefaultHttpClient client = new DefaultHttpClient();
 
-            request.setHeader("User-Agent", "Smartgeo 0.16.1 beta");
+            //quand on requête OSM, besoin user agent sinon 403
+            request.setHeader("User-Agent", USER_AGENT);
 
             if (PHPSESSIONID != null) {
                 request.setHeader("Cookie", PHPSESSIONID);
             }
             try {
                 HttpResponse  response = client.execute(request);
-                final int   statusCode = response.getStatusLine().getStatusCode();
+                final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
                 if (statusCode == 403 && PHPSESSIONID != null) {
-                    Log.e(TAG, "[G3DB] Erreur HTTP 403. Essai sans PHPSESSID");
                     PHPSESSIONID = null ;
                     return request(params);
                 } else if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
                     return String.valueOf(statusCode);
                 } else if (image == null) {
-                    Log.e(TAG, "[G3DB] Tuile non trouvée sur le serveur ("+z+":"+x+":"+y+")");
+                    Log.i(TAG, "[G3DB] Tuile non trouvée sur le serveur (" + z + ":" + x + ":" + y + ")");
                     return null;
                 }
 
@@ -367,16 +363,17 @@ public class SmartGeoMobilePlugins {
 
                 String imageEncoded = Base64.encodeToString(baos.toByteArray(),Base64.NO_WRAP);
 
-                final int         databaseIndex = Integer.parseInt(y)%10 ;
-                final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+                final int databaseIndex = Integer.parseInt(y) % 10 ;
+                final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
+                		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
                 tilesDatabase.close();
 
-                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + Integer.parseInt(z) +"|" + Integer.parseInt(x) +"|" + Integer.parseInt(y) +"'](\"data:image/png;base64," + imageEncoded + "\");";
+                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + Integer.parseInt(z) + "|" + 
+                		Integer.parseInt(x) + "|" + Integer.parseInt(y) + "'](\"data:image/png;base64," + imageEncoded + "\");";
 
                 return resultJavascript;
-
             } catch(Exception e) {
                 Log.e(TAG, "Error while downloading " + params[0], e);
                 request.abort();
@@ -389,7 +386,6 @@ public class SmartGeoMobilePlugins {
             view.evaluateJavaScript(result);
         }
     }
-
 
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site) {
@@ -418,18 +414,18 @@ public class SmartGeoMobilePlugins {
                     req = new HttpPost(url.toString());
                     response = client.execute(req);
                     if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        Log.i(TAG, "User " + params[1] + " authenticated on " + params[0]);
+                        Log.d(TAG, "User " + params[1] + " authenticated on " + params[0]);
                         return true;
                     } else {
-                        Log.e(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
+                        Log.d(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
                         return false;
                     }
                 } else {
-                    Log.e(TAG, "Bad supplied credentials!");
+                    Log.d(TAG, "Bad supplied credentials!");
                     return false;
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
+                Log.d(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
             }
             return false;
         }
