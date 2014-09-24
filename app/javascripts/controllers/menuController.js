@@ -95,7 +95,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             $rootScope.$on('DEVICE_IS_OFFLINE', $scope.checkIfMoreThanOneSiteIsAvailable);
             $rootScope.$on('_MENU_CLOSE_', function(){
                 $scope.display = false ;
-                $scope.$digest();
+                if (!$scope.$$phase) {
+                    $scope.$digest();
+                }
             });
 
             $scope.checkIfMoreThanOneSiteIsAvailable();

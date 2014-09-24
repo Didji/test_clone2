@@ -29,7 +29,11 @@ if ((navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 }
                 tile.src = path;
             };
-            SmartgeoChromium.getTileURLFromDB(this._url, z,x,y);
+            try{
+                SmartgeoChromium.getTileURLFromDB(this._url, z,x,y);
+            } catch(e){
+
+            }
         }
     });
 }

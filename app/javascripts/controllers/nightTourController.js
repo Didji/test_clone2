@@ -48,7 +48,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             } else {
                 $scope.stopFollowingPosition();
                 if (oldval === true) {
-                    $rootScope.openLeftMenu();
+                    $rootScope.$broadcast('_MENU_CLOSE_');
                 }
                 $scope.close();
             }

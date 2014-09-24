@@ -302,9 +302,9 @@ public class SmartGeoMobilePlugins {
         if (cursor.getCount() > 0){
             cursor.moveToFirst();
             String resultJavascript = "window.ChromiumCallbacks['15"
-                    +"|" + z
-                    +"|" + x
-                    +"|" + y
+                    +"|" + Integer.parseInt(z)
+                    +"|" + Integer.parseInt(x)
+                    +"|" + Integer.parseInt(y)
                     +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
 
             view.evaluateJavaScript(resultJavascript);
@@ -318,11 +318,6 @@ public class SmartGeoMobilePlugins {
         }
         cursor.close();
         tilesDatabase.close();
-    }
-
-    @JavascriptInterface
-    public void getTileURL(String url, String x, String y, String z) {
-        new GetTileURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
     }
 
     private class GetTileFromURLAndSetItToDatabase extends AsyncTask<String, Void, String> {
@@ -372,13 +367,13 @@ public class SmartGeoMobilePlugins {
 
                 String imageEncoded = Base64.encodeToString(baos.toByteArray(),Base64.NO_WRAP);
 
-                final String         databaseIndex = Character.toString(x.charAt(x.length() - 1)); // TODO: %10 (@gulian)
+                final int         databaseIndex = Integer.parseInt(y)%10 ;
                 final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
                 tilesDatabase.close();
 
-                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + z +"|" + x +"|" + y +"'](\"data:image/png;base64," + imageEncoded + "\");";
+                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + Integer.parseInt(z) +"|" + Integer.parseInt(x) +"|" + Integer.parseInt(y) +"'](\"data:image/png;base64," + imageEncoded + "\");";
 
                 return resultJavascript;
 
@@ -395,96 +390,6 @@ public class SmartGeoMobilePlugins {
         }
     }
 
-    private class GetTileURL extends AsyncTask<String, Void, String> {
-
-        @Override
-        /**
-         * Paramètres :
-         * <ul>
-         * <li>1. Cookie de session
-         * <li>2. Url du serveur</li>
-         * <li>3. Coordonnée X</li>
-         * <li>4. Coordonnée Y</li>
-         * <li>5. Coordonnée Z</li>
-         * </ul>
-         */
-        protected String doInBackground(String... params) {
-
-            File pictureFile = new File(GimapMobileApplication.EXT_APP_DIR, TILE_DIRECTORY_NAME + "/" + params[3] + "/" + params[1] + "/" + params[2] + ".png");
-
-            if(pictureFile.exists()){
-
-                Log.e(TAG, "From local path : " + pictureFile.getPath());
-                String resultJavascript = "window.ChromiumCallbacks['15"
-                        +"|" + params[1]
-                        +"|" + params[2]
-                        +"|" + params[3]
-                        +"'](\"" + pictureFile.getPath() + "\");";
-                return resultJavascript;
-            }
-            Log.e(TAG, "From server");
-
-            final DefaultHttpClient client = new DefaultHttpClient();
-
-            //construction de l'URL
-            String url = params[0];
-            url = url.replace("{x}", params[1]);
-            url = url.replace("{y}", params[2]);
-            url = url.replace("{z}", params[3]);
-
-            final HttpGet request = new HttpGet(url);
-            if (PHPSESSIONID != null) {
-                request.setHeader("Cookie", PHPSESSIONID);
-            } else {
-                Log.e(TAG, "No PHPSESSID!");
-                return null;
-            }
-
-            Log.e(TAG, PHPSESSIONID);
-
-            try {
-                HttpResponse response = client.execute(request);
-                final int statusCode = response.getStatusLine().getStatusCode();
-                if (!(statusCode >= 200 && statusCode < 300)) {
-                    Log.e(TAG, "Error HTTP " + statusCode + " while downloading " + url);
-                    return String.valueOf(statusCode);
-                }
-
-                final HttpEntity entity = response.getEntity();
-                if(entity != null) {
-                    InputStream is = entity.getContent();
-                    pictureFile.getParentFile().mkdirs();
-                    OutputStream os = new FileOutputStream(pictureFile, false);
-                    byte[] b = new byte[1024];
-                    int length;
-                    while ((length = is.read(b)) != -1) {
-                        os.write(b, 0, length);
-                    }
-                    os.flush();
-                    os.close();
-                    is.close();
-                    String resultJavascript = "window.ChromiumCallbacks['15"
-                            +"|" + params[1]
-                            +"|" + params[2]
-                            +"|" + params[3]
-                            +"'](\"" + pictureFile.getPath() + "\");";
-                    return resultJavascript;
-                } else {
-                    Log.e(TAG, "Download response of " + params[0] + " contains no picture!");
-                    return null;
-                }
-            } catch(Exception e) {
-                Log.e(TAG, "Error while downloading " + params[0], e);
-                request.abort();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            view.evaluateJavaScript(result);
-        }
-    }
 
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site) {
