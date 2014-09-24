@@ -502,9 +502,9 @@
 
         function setLocationMarker(lng, lat, alt, acc) {
 
-            G3ME.map.panTo([lat, lng]).setZoom(18);
-
             LAST_USERS_LOCATION = [lat, lng] ;
+
+            G3ME.map.panTo(LAST_USERS_LOCATION).setZoom(18);
 
             if(POSITION_CIRCLE){
                 POSITION_CIRCLE.setLatLng([lat, lng]).setRadius(acc);
