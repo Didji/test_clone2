@@ -256,6 +256,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * Reduce mission.assets array considering pending reports
          */
         $scope.removeObsoleteMission = function(reports) {
+            console.log(reports);
             var missions = Smartgeo.get('missions_' + Smartgeo.get('lastUser')),
                 index, pendingAssets, mission, i;
             for (i in reports) {
@@ -263,7 +264,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     pendingAssets = reports[i].assets;
                     mission = missions[reports[i].mission];
                     for (var j = 0, length = mission.assets.length; j < length; j++) {
-                        if (pendingAssets.indexOf(1 * mission.assets[j]) === -1) {
+                        if (pendingAssets.indexOf(1 * mission.assets[j]) === -1 && pendingAssets.indexOf(""+mission.assets[j]) === -1) {
                             continue;
                         }
                         mission.done.push(mission.assets[j]);
