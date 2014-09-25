@@ -88,8 +88,8 @@
                     </tr>
                     <tr ng-repeat="asset in mission.postAddedAssets.done">
                         <td>
-                            <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="locateAsset(assetsCache[mission.id]._byId[asset])">
-                                <span class="fa fa-map-marker"></span>{{assetsCache[mission.id]._byId[asset].label}}</button>
+                            <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="locateAsset(doneAssetsCache[mission.id]._byId[asset])">
+                                <span class="fa fa-map-marker"></span>{{doneAssetsCache[mission.id]._byId[asset].label}}</button>
                         </td>
                         <td>
 

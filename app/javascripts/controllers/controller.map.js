@@ -322,10 +322,10 @@
                 if (assetsCache[i].marker) {
                     if(     mission.assets.indexOf(assetsCache[i].guid) === -1
                         &&  mission.done.indexOf(assetsCache[i].guid) === -1
-                        &&  mission.postAddedAssets.assets.indexOf(assetsCache[i].guid)
-                        &&  mission.postAddedAssets.done.indexOf(assetsCache[i].guid)
+                        &&  mission.postAddedAssets.assets.indexOf(assetsCache[i].guid) === -1
+                        &&  mission.postAddedAssets.done.indexOf(assetsCache[i].guid) === -1
                         ){
-                        $scope.missionsClusters[mission.id].removeLayer(assetsCache[i].marker);
+                        $scope.missionsClusters[mission.id].removeLayer(""+assetsCache[i].marker);
                         continue;
                     }
                     continue;

@@ -191,6 +191,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.maxBeginDate = 0;
                     for (var i in $rootScope.missions) {
                         var mission = $rootScope.missions[i];
+                        mission.selectedAssets = 0;
                         $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                         if (mission.openned && (mission.assets.length || !mission.activity)) {
                             // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
@@ -269,17 +270,17 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     (function(mission) {
                         Smartgeo.findGeometryByGuids($scope.site, mission.postAddedAssets.done, function(assets) {
 
-                            if (!$scope.assetsCache[mission.id]) {
-                                $scope.assetsCache[mission.id] = [];
+                            if (!$scope.doneAssetsCache[mission.id]) {
+                                $scope.doneAssetsCache[mission.id] = [];
                             }
 
-                            if (!$scope.assetsCache[mission.id]._byId) {
-                                $scope.assetsCache[mission.id]._byId = {};
+                            if (!$scope.doneAssetsCache[mission.id]._byId) {
+                                $scope.doneAssetsCache[mission.id]._byId = {};
                             }
 
                             for (var i = 0; i < assets.length; i++) {
-                                $scope.assetsCache[mission.id].push(assets[i]);
-                                $scope.assetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
+                                $scope.doneAssetsCache[mission.id].push(assets[i]);
+                                $scope.doneAssetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
                             }
 
                             $scope.$apply();
@@ -327,10 +328,8 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     for (j = 0; mission.postAddedAssets && j < mission.postAddedAssets.assets.length; j++) {
                         index = pendingAssets.indexOf("" + mission.postAddedAssets.assets[j]);
                         if (index === -1) {
-                            console.log('ON BOUGE ', pendingAssets, mission.postAddedAssets.assets[j]);
                             continue;
                         }
-                            console.log('ON BOUGE pas',pendingAssets, mission.postAddedAssets.assets[j] );
                         mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
                         mission.postAddedAssets.assets.splice(index, 1);
                     }
