@@ -64,7 +64,7 @@
     <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="sendCriteria($event)">
         <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
         <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
-        <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
+        <i ng-show='searchIsPerforming' class="fa fa-refresh fa-spin"></i> <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
     </button>
     <label ng-show="!advancedSearchDisplay">{{searchMessage | i18n}}</label>
     <label ng-show="advancedSearchDisplay">{{advancedSearchMessage | i18n}}</label>
