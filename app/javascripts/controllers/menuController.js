@@ -38,13 +38,15 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 icon: "fa fa-calendar",
                 template: 'partials/planning.html',
                 forceLoadDOM: true
-            }, {
-                id: 'census',
-                label: i18n.get('_MENU_CENSUS'),
-                icon: "fa fa-plus",
-                template: 'partials/census.html',
-                forceLoadDOM: false
-            }, {
+            },
+            // {
+            //     id: 'census',
+            //     label: i18n.get('_MENU_CENSUS'),
+            //     icon: "fa fa-plus",
+            //     template: 'partials/census.html',
+            //     forceLoadDOM: false
+            // },
+            {
                 id: 'activelayers',
                 label: i18n.get('_MENU_ACTIVE_LAYERS'),
                 icon: "fa fa-list-ul",
