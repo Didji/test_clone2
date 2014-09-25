@@ -368,7 +368,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     }
 
 
-                    $scope.assetsCache[mission.id] = $scope.assetsCache[mission.id] || [] ;
+                    $scope.assetsCache[mission.id] = $scope.assetsCache[mission.id] || [];
                     $scope.assetsCache[mission.id] = $scope.assetsCache[mission.id].concat(assets);
                     $scope.assetsCache[mission.id]._byId = {};
                     for (var i = 0; i < $scope.assetsCache[mission.id].length; i++) {
@@ -679,10 +679,16 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 ]).filter('todayMissions', function($filter) {
     return function(in_) {
         var out = {},
-            mission, now = (new Date()).getTime();
+            mission, now = new Date();
+            now.setHours(0, 0, 0, 0); // MINUIT
+            now = now.getTime();
+
         for (var id in in_) {
             mission = in_[id];
-            if ($filter('sanitizeDate')(mission.end) > now && $filter('sanitizeDate')(mission.begin) <= now && (mission.assets.length || !mission.activity)) {
+            if ($filter('sanitizeDate')(mission.end) > now
+                //&& $filter('sanitizeDate')(mission.begin) <= now
+                && (mission.assets.length || !mission.activity)
+                && !mission.isLate) {
                 out[id] = mission;
             }
         }
