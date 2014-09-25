@@ -106,6 +106,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
          */
+         var notFirst = {} ;
         $scope.synchronize = function() {
             Mission.query()
                 .success(function(data) {
@@ -191,9 +192,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.maxBeginDate = 0;
                     for (var i in $rootScope.missions) {
                         var mission = $rootScope.missions[i];
-                        // mission.selectedAssets = 0;
-                        mission.selectedAssets = selectedAssets[i];
-
+                        if(!notFirst[mission.id]){
+                            mission.selectedAssets = 0;
+                            notFirst[mission.id] = true ;
+                        }
                         $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                         if (mission.openned && (mission.assets.length || !mission.activity)) {
                             // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
@@ -368,7 +370,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         }
                         return;
                     }
-
 
                     $scope.assetsCache[mission.id] = $scope.assetsCache[mission.id] || [];
                     $scope.assetsCache[mission.id] = $scope.assetsCache[mission.id].concat(assets);
