@@ -166,6 +166,7 @@
             }
 
             for (i in report.overrides) {
+
                 if (report.overrides[i]) {
                     report.fields[i] = report.overrides[i];
                 }
@@ -286,7 +287,6 @@
                     } else {
                         fields[field.id] = def;
                         vm.report.fields[field.id] = def;
-                        vm.report.overrides[field.id] = def;
                         vm.report.roFields[field.id] = def;
                     }
                 } else {
