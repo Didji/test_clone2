@@ -71,6 +71,7 @@
          */
         Asset.prototype.zoomOn = function(){
             G3ME.map.setView(this.getCenter(), 18);
+            $rootScope.$broadcast("DESACTIVATE_POSITION");
         };
 
         /**

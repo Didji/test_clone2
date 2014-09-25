@@ -479,6 +479,8 @@
             }
         });
 
+        $rootScope.$on("DESACTIVATE_POSITION", stopPosition);
+
         function stopPosition() {
 
             Smartgeo.stopWatchingPosition(setLocationMarker);
