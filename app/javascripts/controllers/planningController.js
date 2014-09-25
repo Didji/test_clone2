@@ -191,7 +191,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.maxBeginDate = 0;
                     for (var i in $rootScope.missions) {
                         var mission = $rootScope.missions[i];
-                        mission.selectedAssets = 0;
+                        // mission.selectedAssets = 0;
+                        mission.selectedAssets = selectedAssets[i];
+
                         $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                         if (mission.openned && (mission.assets.length || !mission.activity)) {
                             // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
