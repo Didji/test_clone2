@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.math.BigInteger;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,13 +49,13 @@ public class SmartGeoMobilePlugins {
 
     private static final String TAG = "GimapMobilePlugins";
     private static final String PICTURE_FILE_NAME_PATTERN = "yyyyMMdd_HHmmss";
-    
+
     /**
      * User agent utilisé pour requêter des tuiles d'OpenStreetMap.
-     * 403 si pas de user agent. 
+     * 403 si pas de user agent.
      */
     private static final String USER_AGENT = "Smartgeo Mobile";
-    
+
     private static final int TWO_MINUTES = 1000 * 60 * 2;
 
     private Context context;
@@ -195,7 +196,7 @@ public class SmartGeoMobilePlugins {
         } else {
             name = mBluetoothAdapter.getName();
         }
-        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '" + 
+        view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '" +
         		Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
     }
 
@@ -283,11 +284,10 @@ public class SmartGeoMobilePlugins {
         return provider1.equals(provider2);
     }
 
-
     @JavascriptInterface
-    public void getTileURLFromDB(String url, String z, String x, String y) {
-
-        final int databaseIndex = Integer.parseInt(y) % 10;
+    public void getTileURLFromDB(String url, int z, int x, int y) {
+        String xS = String.valueOf(x), yS = String.valueOf(y), zS = String.valueOf(z);
+        final int databaseIndex = y % 10;
         SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
         		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
@@ -295,20 +295,23 @@ public class SmartGeoMobilePlugins {
 
         Log.d(TAG, "[G3DB] requesting zoom_level = " + z + " AND tile_column = " + x + " AND tile_row = " + y + " on database n°" + databaseIndex);
 
-        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", new String[]{z, x, y});
+        Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", new String[]{zS, xS, yS});
 
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             String resultJavascript = "window.ChromiumCallbacks['15"
-                    +"|" + Integer.parseInt(z)
-                    +"|" + Integer.parseInt(x)
-                    +"|" + Integer.parseInt(y)
+                    +"|" + z
+                    +"|" + x
+                    +"|" + y
                     +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
             view.evaluateJavaScript(resultJavascript);
         } else {
-            try{
-                Log.d(TAG, "[G3DB] NOT FOUND (local) zoom_level = " + z + " AND tile_column = " + x + " AND tile_row = " + y + " on database n°" + databaseIndex);
-                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, x, y, z);
+            try {
+                Log.d(TAG, "[G3DB] NOT FOUND (local) zoom_level = " + z
+                    + " AND tile_column = " + x
+                    + " AND tile_row = " + y
+                    + " on database n°" + databaseIndex);
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, xS, yS, zS);
             } catch (Exception e){
                 Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
@@ -350,6 +353,7 @@ public class SmartGeoMobilePlugins {
                     return request(params);
                 } else if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
+                    Log.e(TAG, "[G3DB] When calling " + url);
                     return String.valueOf(statusCode);
                 } else if (image == null) {
                     Log.i(TAG, "[G3DB] Tuile non trouvée sur le serveur (" + z + ":" + x + ":" + y + ")");
@@ -361,7 +365,7 @@ public class SmartGeoMobilePlugins {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
-                String imageEncoded = Base64.encodeToString(baos.toByteArray(),Base64.NO_WRAP);
+                String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
 
                 final int databaseIndex = Integer.parseInt(y) % 10 ;
                 final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
@@ -370,10 +374,11 @@ public class SmartGeoMobilePlugins {
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
                 tilesDatabase.close();
 
-                final String resultJavascript = "window.ChromiumCallbacks['15" +"|" + Integer.parseInt(z) + "|" + 
-                		Integer.parseInt(x) + "|" + Integer.parseInt(y) + "'](\"data:image/png;base64," + imageEncoded + "\");";
-
-                return resultJavascript;
+                return "window.ChromiumCallbacks['15"
+                    +"|" + z
+                    +"|" + x
+                    +"|" + y
+                    +"'](\"data:image/png;base64," + imageEncoded + "\");";
             } catch(Exception e) {
                 Log.e(TAG, "Error while downloading " + params[0], e);
                 request.abort();
