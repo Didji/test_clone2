@@ -248,7 +248,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 if ($rootScope.missions[i].postAddedAssets && $rootScope.missions[i].postAddedAssets.assets && $rootScope.missions[i].postAddedAssets.assets.length) {
                     (function(mission) {
                         Smartgeo.findGeometryByGuids($scope.site, mission.postAddedAssets.assets, function(assets) {
-
+                            console.log(mission.postAddedAssets.assets, assets);
                             if (!$scope.assetsCache[mission.id]) {
                                 $scope.assetsCache[mission.id] = [];
                             }
@@ -272,7 +272,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 if ($rootScope.missions[i].postAddedAssets && $rootScope.missions[i].postAddedAssets.done && $rootScope.missions[i].postAddedAssets.done.length) {
                     (function(mission) {
                         Smartgeo.findGeometryByGuids($scope.site, mission.postAddedAssets.done, function(assets) {
-
+                            console.log(mission.postAddedAssets.done, assets);
                             if (!$scope.assetsCache[mission.id]) {
                                 $scope.assetsCache[mission.id] = [];
                             }
@@ -316,7 +316,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * Reduce mission.assets array considering pending reports
          */
         $scope.removeObsoleteMission = function(reports) {
-            console.log(reports);
             var missions = Smartgeo.get('missions_' + Smartgeo.get('lastUser')),
                 index, pendingAssets, mission, i;
             for (i in reports) {
