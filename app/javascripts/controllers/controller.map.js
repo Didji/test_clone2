@@ -239,7 +239,7 @@
                 G3ME.map.fitBounds([
                     [extent.ymin, extent.xmin],
                     [extent.ymax, extent.xmax]
-                ]);
+                ], {maxZoom:19});
             } else {
                 alertify.error("Extent non valide");
             }
