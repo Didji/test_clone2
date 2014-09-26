@@ -7,8 +7,8 @@
             <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img> <span id='smartgeo-version'>{{version}}</span>
         </h2>
         <ul id="left_panel_menu_items">
-            <div ng-repeat="item in menuItems">
-                <li ng-if="rights[item.id] && item.displayMenuItem" ng-click='execute(item)' >
+            <div ng-repeat="item in menuItems" ng-if="rights[item.id]">
+                <li ng-if="item.displayMenuItem" ng-click='execute(item)'>
                         <span ng-class="item.icon"></span> {{item.label}}
                         <!-- TODO(@gulian): trouver mieux -->
                         <span class="badge" ng-if="item.badge == 'toBeSync' && toBeSyncLength() > 0">{{toBeSyncLength()}}</span>
