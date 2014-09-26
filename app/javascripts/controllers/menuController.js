@@ -13,20 +13,22 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
         'use strict';
 
+        var vm = $scope;
+
         /**
          * @method
          * @memberOf menuController
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
-        $scope.initialize = function() {
+        vm.initialize = function() {
 
-            $scope.display = true;
+            vm.display = true;
 
-            $scope.homeIsDisplayed = true ;
+            vm.homeIsDisplayed = true;
 
-            $scope.siteSelectionEnable = false;
+            vm.siteSelectionEnable = false;
 
-            $scope.menuItems = [{
+            vm.menuItems = [{
                 id: 'search',
                 label: i18n.get('_MENU_SEARCH'),
                 icon: "fa fa-search",
@@ -38,15 +40,13 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 icon: "fa fa-calendar",
                 template: 'partials/planning.html',
                 forceLoadDOM: true
-            },
-            // {
-            //     id: 'census',
-            //     label: i18n.get('_MENU_CENSUS'),
-            //     icon: "fa fa-plus",
-            //     template: 'partials/census.html',
-            //     forceLoadDOM: false
-            // },
-            {
+            }, {
+                id: 'census',
+                label: i18n.get('_MENU_CENSUS'),
+                icon: "fa fa-plus",
+                template: 'partials/census.html',
+                forceLoadDOM: false
+            }, {
                 id: 'activelayers',
                 label: i18n.get('_MENU_ACTIVE_LAYERS'),
                 icon: "fa fa-list-ul",
@@ -54,7 +54,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 forceLoadDOM: false
             }, {
                 id: 'synccenter',
-                label: i18n.get('_MENU_SYNC') ,
+                label: i18n.get('_MENU_SYNC'),
                 badge: 'toBeSync',
                 icon: "fa fa-refresh",
                 template: 'partials/synchronizationMenu.html',
@@ -67,23 +67,23 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 forceLoadDOM: false
             }];
 
-            $scope.bottomMenuItems = [{
+            vm.bottomMenuItems = [{
                 id: 'logout',
                 label: 'Déconnexion',
                 icon: "fa fa-power-off redicon",
                 action: 'logout',
-            },{
+            }, {
                 id: 'siteselection',
                 label: 'Selection de site',
                 icon: "fa fa-exchange",
                 action: 'changeSite',
                 specialVisibility: 'checkIfMoreThanOneSiteIsAvailable'
-            },{
+            }, {
                 id: 'myposition',
                 label: 'Ma position',
                 icon: "fa fa-compass",
                 action: 'activatePosition',
-            },{
+            }, {
                 id: 'consultation',
                 label: 'Consultation',
                 icon: "fa fa-info-circle",
@@ -91,34 +91,34 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             }];
 
 
-            $scope.applyVisibility();
+            vm.applyVisibility();
 
-            $rootScope.$on('DEVICE_IS_ONLINE', $scope.checkIfMoreThanOneSiteIsAvailable);
-            $rootScope.$on('DEVICE_IS_OFFLINE', $scope.checkIfMoreThanOneSiteIsAvailable);
-            $rootScope.$on('_MENU_CLOSE_', function(){
-                $scope.display = false ;
+            $rootScope.$on('DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable);
+            $rootScope.$on('DEVICE_IS_OFFLINE', vm.checkIfMoreThanOneSiteIsAvailable);
+            $rootScope.$on('_MENU_CLOSE_', function() {
+                vm.display = false;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
             });
 
-            $scope.checkIfMoreThanOneSiteIsAvailable();
+            vm.checkIfMoreThanOneSiteIsAvailable();
 
             $rootScope.$watch('reports', function(event) {
 
-                $scope.toSyncNumber = 0;
+                vm.toSyncNumber = 0;
 
                 if ($rootScope.reports && $rootScope.reports._byUUID) {
                     for (var uuid in $rootScope.reports._byUUID) {
                         if (!$rootScope.reports._byUUID[uuid].synced) {
-                            $scope.toSyncNumber++;
+                            vm.toSyncNumber++;
                         }
                     }
                 }
                 if ($rootScope.censusAssets && $rootScope.censusAssets._byUUID) {
                     for (var uuid in $rootScope.censusAssets._byUUID) {
                         if (!$rootScope.censusAssets._byUUID[uuid].synced) {
-                            $scope.toSyncNumber++;
+                            vm.toSyncNumber++;
                         }
                     }
                 }
@@ -131,9 +131,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc
          */
-        $scope.toggleDisplay = function() {
-            $scope.display = !$scope.display;
-            if($scope.display && Smartgeo.isRunningOnLittleScreen()){
+        vm.toggleDisplay = function() {
+            vm.display = !vm.display;
+            if (vm.display && Smartgeo.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast("CLOSE_CONSULTATION_PANEL");
             }
         };
@@ -143,15 +143,15 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Applique la visibilité aux éléments du menu en fonction des droits et de l'attribut 'specialVisibility' s'il est défini.
          */
-        $scope.applyVisibility = function() {
-            for (var menuItem in $scope.menuItems) {
-                $scope.menuItems[menuItem].displayMenuItem = $rootScope.rights[$scope.menuItems[menuItem].id] && ($scope.menuItems[menuItem].specialVisibility ? $scope[$scope.menuItems[menuItem].specialVisibility]() : true);
-                $scope.menuItems[menuItem].displayItemContent = false;
+        vm.applyVisibility = function() {
+            for (var menuItem in vm.menuItems) {
+                vm.menuItems[menuItem].displayMenuItem = (vm.menuItems[menuItem].specialVisibility ? vm[vm.menuItems[menuItem].specialVisibility]() : true);
+                vm.menuItems[menuItem].displayItemContent = false;
             }
 
-            for (var menuItem in $scope.bottomMenuItems) {
-                $scope.bottomMenuItems[menuItem].displayMenuItem = $rootScope.rights[$scope.bottomMenuItems[menuItem].id] && ($scope.bottomMenuItems[menuItem].specialVisibility ? $scope[$scope.bottomMenuItems[menuItem].specialVisibility]() : true);
-                $scope.bottomMenuItems[menuItem].displayItemContent = false;
+            for (var menuItem in vm.bottomMenuItems) {
+                vm.bottomMenuItems[menuItem].displayMenuItem = (vm.bottomMenuItems[menuItem].specialVisibility ? vm[vm.bottomMenuItems[menuItem].specialVisibility]() : true);
+                vm.bottomMenuItems[menuItem].displayItemContent = false;
             }
         };
 
@@ -160,12 +160,12 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Vérifie les sites disponibles pour proposer ou non l'option de changement de site.
          */
-        $scope.checkIfMoreThanOneSiteIsAvailable = function() {
-            $scope.siteSelectionEnable = (Smartgeo.get('availableLocalSites') > 1) || (Smartgeo.get('online') && Smartgeo.get('availableRemoteSites') > 1);
+        vm.checkIfMoreThanOneSiteIsAvailable = function() {
+            vm.siteSelectionEnable = (Smartgeo.get('availableLocalSites') > 1) || (Smartgeo.get('online') && Smartgeo.get('availableRemoteSites') > 1);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-            return $scope.siteSelectionEnable;
+            return vm.siteSelectionEnable;
         };
 
         /**
@@ -174,11 +174,11 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @param {object} item Element du menu
          * @desc Execute une méthode du scope. Utilisé pour créer dynamiquement le menu en y associant des actions.
          */
-        $scope.execute = function(item) {
-            if ($scope[item.action]) {
-                return $scope[item.action]();
+        vm.execute = function(item) {
+            if (vm[item.action]) {
+                return vm[item.action]();
             } else {
-                $scope.showItem(item);
+                vm.showItem(item);
             }
         };
 
@@ -188,11 +188,11 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @param {object} item Element du menu
          * @desc Ouvre un élement du menu
          */
-        $scope.showItem = function(item) {
-            $scope.homeIsDisplayed = false ;
-            for (var menuItem in $scope.menuItems) {
-                $scope.menuItems[menuItem].displayMenuItem = false;
-                $scope.menuItems[menuItem].displayItemContent = false;
+        vm.showItem = function(item) {
+            vm.homeIsDisplayed = false;
+            for (var menuItem in vm.menuItems) {
+                vm.menuItems[menuItem].displayMenuItem = false;
+                vm.menuItems[menuItem].displayItemContent = false;
             }
             item.displayItemContent = true;
         };
@@ -202,11 +202,11 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Retourne à la racine du menu
          */
-        $scope.home = function() {
-            $scope.homeIsDisplayed = true ;
-            for (var menuItem in $scope.menuItems) {
-                $scope.menuItems[menuItem].displayMenuItem = true;
-                $scope.menuItems[menuItem].displayItemContent = false;
+        vm.home = function() {
+            vm.homeIsDisplayed = true;
+            for (var menuItem in vm.menuItems) {
+                vm.menuItems[menuItem].displayMenuItem = true;
+                vm.menuItems[menuItem].displayItemContent = false;
             }
         };
 
@@ -215,7 +215,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Demande la confirmation de déconnexion pour se rendre à la page d'accueil'
          */
-        $scope.logout = function() {
+        vm.logout = function() {
             alertify.confirm(i18n.get('_CONFIRM_DISCONNECT_'), function(yes) {
                 if (!yes) {
                     return;
@@ -232,7 +232,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Demande la confirmation de déconnexion pour se rendre à la page de sélection de site
          */
-        $scope.changeSite = function() {
+        vm.changeSite = function() {
             alertify.confirm(i18n.get('_CONFIRM_CHANGE_SITE_'), function(yes) {
                 if (!yes) {
                     return;
@@ -249,9 +249,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Active la consultation
          */
-        $scope.activateConsultation = function() {
+        vm.activateConsultation = function() {
             $rootScope.$broadcast("ACTIVATE_CONSULTATION");
-            $scope.display = false;
+            vm.display = false;
         };
 
         /**
@@ -259,9 +259,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Active la fonction 'Ma position'
          */
-        $scope.activatePosition = function() {
+        vm.activatePosition = function() {
             $rootScope.$broadcast("ACTIVATE_POSITION");
-            $scope.display = false;
+            vm.display = false;
         };
 
         /**
@@ -269,8 +269,8 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Ouvre le menu
          */
-        $rootScope.showLeftMenu = $scope.showMenu = function() {
-            $scope.display = true;
+        $rootScope.showLeftMenu = vm.showMenu = function() {
+            vm.display = true;
         };
 
         /**
@@ -278,8 +278,8 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @memberOf menuController
          * @desc Ferme le menu
          */
-        $rootScope.hideLeftMenu = $scope.hideMenu = function() {
-            $scope.display = false;
+        $rootScope.hideLeftMenu = vm.hideMenu = function() {
+            vm.display = false;
         };
 
     }
