@@ -300,7 +300,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * @desc Useless log wrapper
          */
         log: function () {
-            console.log(arguments);
+            console.info(arguments);
         },
 
         startWatchingPosition: function(listener){
@@ -429,11 +429,11 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         _this.findGeometryByGuids(site, guids, callback, zones.slice(1), partial_response);
                     },
                     function (tx, SqlError) {
-                        console.log(SqlError.message);
+                        console.error(SqlError.message);
                         alertify.log(SqlError.message);
                     });
             }, function (SqlError) {
-                console.log(SqlError.message);
+                console.error(SqlError.message);
                 alertify.log(SqlError.message);
             });
         },
@@ -487,13 +487,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         _this.findAssetsByGuids(site, guids, callback, zones.slice(1), partial_response);
                     },
                     function (tx, SqlError) {
-                        console.log(SqlError.message);
-                        console.log(request);
+                        console.error(SqlError.message);
+                        console.error(request);
                         alertify.log(SqlError.message);
                     });
             }, function (SqlError) {
-                console.log(SqlError);
-                console.log(request);
+                console.error(SqlError);
+                console.error(request);
             });
         },
 
@@ -523,17 +523,16 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         }
                         _this.findAssetsByOkey(site, okey, callback, zones.slice(1), partial_response);
                     }, function (tx, SqlError) {
-                        console.log(SqlError);
+                        console.error(SqlError);
                     }, function (tx, SqlError) {
-                        console.log(SqlError);
+                        console.error(SqlError);
                     });
             }, function (tx, SqlError) {
-                console.log(SqlError);
+                console.error(SqlError);
             });
         },
 
         findAssetsByLabel: function (site, label, callback, zones, partial_response) {
-            console.log(partial_response);
             if (!zones) {
                 zones = site.zones;
                 partial_response = [];
@@ -567,12 +566,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                         }
                         _this.findAssetsByLabel(site, label, callback, zones.slice(1), partial_response);
                     }, function (tx, SqlError) {
-                        console.log(SqlError, request);
+                        console.error(SqlError, request);
                     }, function (tx, SqlError) {
-                        console.log(SqlError, request);
+                        console.error(SqlError, request);
                     });
             }, function (tx, SqlError) {
-                console.log(SqlError, request);
+                console.error(SqlError, request);
             });
         },
 
@@ -625,22 +624,22 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                                 try {
                                     asset.okey = Smartgeo.sanitizeAsset(asset.asset).okey;
                                 } catch (e) {
-                                    console.log(e);
-                                    console.log(asset.asset);
+                                    console.error(e);
+                                    console.error(asset.asset);
                                 }
                                 partial_response.push(asset);
                             }
                             Smartgeo.findAssetsByCriteria(site, search, callback, zones.slice(1), partial_response, request);
                         },
                         function (tx, SqlError) {
-                            console.log(SqlError);
+                            console.error(SqlError);
                         },
                         function (tx, SqlError) {
-                            console.log(SqlError);
+                            console.error(SqlError);
                         });
                 },
                 function (tx, SqlError) {
-                    console.log(SqlError);
+                    console.error(SqlError);
                 });
         },
 
@@ -709,7 +708,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo.get_('sites', function(sites){
                     if(!sites[site].EXTERNAL_TILEURL){
                         var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
-                        ChromiumCallbacks[16] = function(response){console.log(JSON.stringify(response));};
+                        ChromiumCallbacks[16] = function(response){};
                         SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
                     }
                 });

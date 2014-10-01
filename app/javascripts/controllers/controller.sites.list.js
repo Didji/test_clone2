@@ -74,7 +74,6 @@
                     }
                     vm.ready = true;
                 }).error(function(error, errorCode) {
-                    console.log('la');
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in knownSites) {

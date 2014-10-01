@@ -622,7 +622,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                         for(var uuid in currentRequestPool){
                             currentRequestPool[uuid].callback(results);
                         }
-                    }, function(){console.log(arguments);})
+                    }, function(){console.error(arguments);})
             });
         }
 

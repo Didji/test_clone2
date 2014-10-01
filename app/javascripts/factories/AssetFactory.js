@@ -290,7 +290,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
             }).transaction(function (transaction) {
                 transaction.executeSql(request.request, request.args, function () {
                 }, function (tx, sqlerror) {
-                    console.log(sqlerror.message);
+                    console.error(sqlerror.message);
                 });
             });
         }
@@ -398,14 +398,13 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @memberOf Asset
      */
    Asset.fetchAssetsHistory = function(asset, callback) {
-        // console.log(asset);
         $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.history', {
             id : asset.guid,
             limit: 5
         })).success(function(data){
             callback(data);
         }).error(function(){
-            console.log(arguments)
+            console.error(arguments)
         });
 
         // callback([{

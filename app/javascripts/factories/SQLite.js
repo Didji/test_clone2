@@ -7,7 +7,6 @@ var SQLite = {
     transactions: {},
 
     openDatabase: function (args) {
-        // console.time('Open database '+args.name );
         if (!SQLite.databases[args.name]) {
             if (window.sqlitePlugin) {
                 SQLite.databases[args.name] = sqlitePlugin.openDatabase({
@@ -18,7 +17,6 @@ var SQLite = {
                 SQLite.databases[args.name] = openDatabase(args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE);
             }
         }
-        // console.timeEnd('Open database '+args.name );
         return SQLite.databases[args.name];
     },
 
@@ -54,7 +52,7 @@ var SQLite = {
                     (callback || function () {})(undefined);
                 }
             }, function (transaction, SqlError) {
-                console.log(SqlError);
+                console.error(SqlError);
                 (callback || function () {})(undefined);
             });
         });
@@ -67,7 +65,7 @@ var SQLite = {
             transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function (transaction, results) {
                 (callback || function () {})();
             }, function (transaction, SqlError) {
-                console.log(SqlError);
+                console.error(SqlError);
                 (callback || function () {})(undefined);
             });
         });
@@ -80,7 +78,7 @@ var SQLite = {
             transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function (transaction, results) {
                 (callback || function () {})();
             }, function (transaction, SqlError) {
-                console.log(SqlError);
+                console.error(SqlError);
                 (callback || function () {})();
             });
         });
@@ -91,16 +89,14 @@ var SQLite = {
             t.executeSql( request ,args ||  [], function (t,r) {
                 callback(r.rows);
             }, function(){
-                console.log(arguments);
+                console.error(arguments);
             });
         }, function(){
-            console.log(arguments);
+            console.error(arguments);
         });
     }
 
 };
-
-
 
 window.smartgeoPersistenceSQLite = SQLite;
 

@@ -25,7 +25,6 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                 callback();
             } else {
                 var request = " DELETE FROM ASSETS WHERE id in ( " + assets.join(",") + " ) ";
-                console.log(request);
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase({
                         name: site.zones[i].database_name
@@ -99,7 +98,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
             $http.get(url)
                 .success(callback)
                 .error(function(response, code){
-                    console.log(response, code);
+                    console.error(response, code);
                 });
         },
 
@@ -375,7 +374,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                             Installer.checkpoint("rqst" + zone.table_name, zone.insert_requests.length, callback);
                             return;
                         }, function (tx, sqlerror) {
-                            console.log(sqlerror.message);
+                            console.error(sqlerror.message);
                             Installer.checkpoint("rqst" + zone.table_name, zone.insert_requests.length, callback);
                         });
                     });

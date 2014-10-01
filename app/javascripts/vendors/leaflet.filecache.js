@@ -607,7 +607,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                     msg = 'Unknown Error';
                     break;
             }
-            console.log('Error: ' + msg);
+            console.error('Error: ' + msg);
         },
 
         requestQuota: function(callback) {
@@ -617,7 +617,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             } else if (window.storageInfo) {
                 window.storageInfo.requestQuota(window.PERSISTENT, 0, callback);
             } else {
-                console.log("no filesystem found");
+                console.error("no filesystem found");
                 callback();
             }
         },
@@ -655,7 +655,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                     fileEntry.createWriter(function(writer) {
                         writer.onwriteend = (callback || function() {});
                         writer.onerror = function(e) {
-                            console.log('Write failed: ' + e.toString());
+                            console.error('Write failed: ' + e.toString());
                         };
 
                         var blob, datatype = 'image/png';
@@ -672,10 +672,10 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                                 // Android browser
                                 cordova.exec(
                                     function() {
-                                        console.log('Fichier écrit avec succes');
+                                        console.info('Fichier écrit avec succes');
                                     },
                                     function(error) {
-                                        console.log(JSON.stringify(error));
+                                        console.error(JSON.stringify(error));
                                     },
                                     "WriteFilePlugin",
                                     "writeBase64toPNG", [dataUrl.split(',')[1], path + '/' + tileObject.x + '_' + tileObject.y + '.png']
@@ -687,7 +687,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                                 });
                                 writer.write(blob);
                             } else {
-                                console.log("Error when building blob");
+                                console.error("Error when building blob");
                             }
                         }
 
@@ -697,6 +697,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         getDataURL: function(img) {
+            img.crossOrigin="anonymous";
             var canvas = document.createElement("canvas");
             canvas.width = img.width;
             canvas.height = img.height;
@@ -706,8 +707,6 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         fetchTileFromCache: function(image, z, x, y) {
-            // console.log("fetchTileFromCache")
-
             var this_ = this;
 
             if (!this.filesystem) {
@@ -751,7 +750,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                                         type: datatype
                                     });
                                 } else {
-                                    console.log("Error when building blob");
+                                    console.error("Error when building blob");
                                 }
                             }
                             // image.style.border  = 'solid 1px blue';
@@ -883,7 +882,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                     }
                     writer.truncate(0);
                     writer.onerror = function(e) {
-                        console.log('Write failed: ' + e.toString());
+                        console.error('Write failed: ' + e.toString());
                     }
                 }, _this.log_fs_error);
             });

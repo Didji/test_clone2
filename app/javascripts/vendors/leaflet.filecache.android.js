@@ -25,7 +25,7 @@ if ((navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             ChromiumCallbacks[callback_id] = function(path) {
                 if (1 * path === path || !path) {
                     tile.onerror();
-                    return console.log(path);
+                    return console.error(path);
                 }
                 tile.src = path;
             };

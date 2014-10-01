@@ -283,7 +283,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.__log = function() {
         console.groupCollapsed(window.site.metamodel[this.okey].label + ':' + this.uuid);
-        console.log(this);
+        console.info(this);
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__log();
         }
