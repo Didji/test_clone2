@@ -48,6 +48,9 @@
          * @returns {String}
          */
         i18n.get = function(key) {
+            if(!key || key.trim().length === 0){
+                return;
+            }
             var s = i18n.labels[i18n.lang()] && i18n.labels[i18n.lang()][key && key.trim()],
                 i = 0, j=1, args = [];
             for (; j < arguments.length; j++) {

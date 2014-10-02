@@ -68,6 +68,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                 assets.push(asset);
             }
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+            $scope.$digest();
         });
     };
 
