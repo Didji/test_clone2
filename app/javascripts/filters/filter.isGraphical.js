@@ -15,7 +15,7 @@
             var layersOut = [];
             for (var i = 0; i < layers.length; i++) {
 
-                if (window.site.metamodel[layers[i].okey].is_graphical !== false) {
+                if (window.SMARTGEO_CURRENT_SITE.metamodel[layers[i].okey].is_graphical !== false) {
                     layersOut.push(layers[i]);
                 }
             }

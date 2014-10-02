@@ -18,11 +18,10 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         filecacheIsEnable: $rootScope.rights.tileCache || true ,
 
-        initialize: function (mapDivId, site, target, marker, zoom) {
-            this.site = site;
-            this.symbology = this.site.symbology ;
+        initialize: function (mapDivId, target, marker, zoom) {
+            this.symbology = window.SMARTGEO_CURRENT_SITE.symbology ;
             this.CURRENT_ZOOM = false;
-            this.tileUrl = this.site.EXTERNAL_TILEURL;
+            this.tileUrl = window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL;
             this.mapDiv = document.getElementById(mapDivId);
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
@@ -32,12 +31,10 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.minDistanceToALabel = 15;
             this.map = new L.map(this.mapDiv, {
                 attributionControl: false,
-                // attributionControl: true,
                 zoomControl: false,
                 zoomAnimation: true,
                 inertia: navigator.userAgent.match(/Android/i) ? false : true ,
                 maxZoom: G3ME._MAX_ZOOM,
-                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 attribution: ''
             }).addControl(L.control.zoom({
@@ -50,8 +47,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             if ( !(target && target.length && G3ME.isLatLngString(target))) {
                 target = [
-                    [this.site.extent.ymin, this.site.extent.xmin],
-                    [this.site.extent.ymax, this.site.extent.xmax]
+                    [window.SMARTGEO_CURRENT_SITE.extent.ymin, window.SMARTGEO_CURRENT_SITE.extent.xmin],
+                    [window.SMARTGEO_CURRENT_SITE.extent.ymax, window.SMARTGEO_CURRENT_SITE.extent.xmax]
                 ];
             }
 
@@ -82,22 +79,17 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             var BackgroundTile;
 
             if (this.filecacheIsEnable){
-                // && !navigator.userAgent.match(/Apple/i)) {
                 BackgroundTile = L.TileLayer.FileCache;
             } else {
                 BackgroundTile = L.TileLayer;
             }
             this.BackgroundTile = new BackgroundTile(this.tileUrl, {
                 maxZoom: G3ME._MAX_ZOOM,
-                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
-                // maxNativeZoom: 19,
-                // attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
             }).addTo(this.map);
 
             this.canvasTile = new L.TileLayer.Canvas({
                 maxZoom: G3ME._MAX_ZOOM,
-                // maxZoom: 19, //G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM,
                 async : true,
                 updateWhenIdle: true
@@ -118,13 +110,15 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 G3ME.drawTempAssetTile(canvas, tilePoint, G3ME.benchMe);
             };
 
-            for (var symbol in this.site.symbology) {
-                if (!this.site.symbology[symbol] || !this.site.symbology[symbol].style) {
+            window.SMARTGEO_CURRENT_SITE_IMG = window.SMARTGEO_CURRENT_SITE_IMG || {};
+
+            for (var symbol in window.SMARTGEO_CURRENT_SITE.symbology) {
+                if (!window.SMARTGEO_CURRENT_SITE.symbology[symbol] || !window.SMARTGEO_CURRENT_SITE.symbology[symbol].style) {
                     continue;
                 }
                 var image = new Image();
-                image.src = this.site.symbology[symbol].style.symbol.icon;
-                this.site.symbology[symbol].style.image = image;
+                image.src = window.SMARTGEO_CURRENT_SITE.symbology[symbol].style.symbol.icon;
+                window.SMARTGEO_CURRENT_SITE_IMG[symbol] = image ;
             }
 
             $(window).on('resize', function () {
@@ -288,7 +282,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 _pi4 = Math.PI / 4,
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
                 parse = window.JSON.parse,
-                symbology = this.site.symbology,
+                symbology = window.SMARTGEO_CURRENT_SITE.symbology,
                 imageFactor = 1,
                 // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                 imageFactor_2 = 0.5,
@@ -419,7 +413,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
 
                 asset.angle    = 0 ;
-                asset.maplabel = '('+asset.fields[window.site.metamodel[asset.okey].ukey]+')';
+                asset.maplabel = '('+asset.fields[window.SMARTGEO_CURRENT_SITE.metamodel[asset.okey].ukey]+')';
 
                 var geom = {};
                 if(asset.geometry.length === 2 && asset.geometry[0]*1 === asset.geometry[0]){
@@ -509,7 +503,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     coord_.x = Math.floor(0.5 + coord_.x) - initialTopLeftPointX - nwmerc.x;
                     coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
 
-                    image = assetSymbology.style.image;
+                    image = window.SMARTGEO_CURRENT_SITE_IMG[asset.okey+"0"];
 
                     if (image) {
                         ctx.save();
@@ -573,11 +567,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             if(G3ME.map.getZoom() !== zoom){
                 return G3ME.canvasTile.tileDrawn(canvas);
             }
-            for (var i = 0, zones_length = this.site.zones.length, j = 0 ; i < zones_length; i++) {
-                if (this.extents_match(this.site.zones[i].extent, tileExtent)) {
+            for (var i = 0, zones_length = window.SMARTGEO_CURRENT_SITE.zones.length, j = 0 ; i < zones_length; i++) {
+                if (this.extents_match(window.SMARTGEO_CURRENT_SITE.zones[i].extent, tileExtent)) {
                     j++ ;
-                    G3ME.requestPool[this.site.zones[i].database_name] = G3ME.requestPool[this.site.zones[i].database_name] || {} ;
-                    G3ME.requestPool[this.site.zones[i].database_name][uuid] = {
+                    G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name] = G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name] || {} ;
+                    G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name][uuid] = {
                         request  : request,
                         initargs : initargs,
                         callback : (function(uuid, ctx, zoom, xmin, xscale, ymax,xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize,canvas) {
@@ -659,7 +653,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 assetSymbology  = G3ME.symbology[asset.symbolId];
                 ctx.strokeStyle = assetSymbology.style.strokecolor;
                 ctx.fillStyle   = assetSymbology.style.fillcolor;
-                image           = G3ME.symbology[asset.symbolId.toString()].style.image;
+                image           = window.SMARTGEO_CURRENT_SITE_IMG[asset.symbolId.toString()];
             }
 
             previousSymbolId = asset.symbolId;

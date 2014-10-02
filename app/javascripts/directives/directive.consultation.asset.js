@@ -25,7 +25,7 @@
 
 			scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset ;
 
-			scope.site = $rootScope.site;			//TODO(@gulian): faire mieux.
+			scope.site = window.SMARTGEO_CURRENT_SITE;			//TODO(@gulian): faire mieux.
 			scope.rights = $rootScope.rights;		//TODO(@gulian): faire mieux.
 			scope.missions = $rootScope.missions;	//TODO(@gulian): faire mieux.
 

@@ -819,3 +819,8 @@ margin-bottom: 20px;
 margin-top: 30px;
 margin-bottom: 15px;
 }
+
+
+.NON_SELECTED_NIGHTTOUR{
+    background-image: url(../images/NON_SELECTED_NIGHTTOUR.png);
+}

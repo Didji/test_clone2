@@ -8,7 +8,7 @@
     <div id="left_panel_search_advanced" ng-show="advancedSearchDisplay">
         <label><i18n>_SEARCH_TYPE</i18n></label> <select
             class="form-control" ng-model="selectedFamily"
-            ng-options=" family.label for (okey, family) in site.metamodel">
+            ng-options=" family.label for (okey, family) in metamodel">
         </select> <label><i18n>_SEARCH_CRITERIA</i18n></label> <select
             style="margin-bottom: 10px;" ui-select2
             ng-model="selectedCriteria"
@@ -36,7 +36,7 @@
                         ng-model="selectedCriteriaValues[fieldKey]">
                         <option value=""></option>
                         <option
-                            ng-repeat="(value, label) in site.lists[criteria[selectedFamily.okey]._byKey[fieldKey].options]"
+                            ng-repeat="(value, label) in lists[criteria[selectedFamily.okey]._byKey[fieldKey].options]"
                             value="{{value}}">{{label}}</option>
                     </select>
                 </div>

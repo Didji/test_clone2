@@ -37,7 +37,7 @@
             vm.site = $routeParams.site ;
 
             var asset = new Asset($routeParams.assets.split(',')[0], function(){
-                vm.activities = $filter('activityListFilter')($rootScope.site.activities, asset ) ;
+                vm.activities = $filter('activityListFilter')(asset) ;
                 $scope.$digest();
             });
         }

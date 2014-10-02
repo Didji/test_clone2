@@ -907,7 +907,7 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
     }
 });
 
-L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
+L.MarkerClusterGroup.include(true || !L.DomUtil.TRANSITION ? {
 
     //Non Animated versions of everything
     _animationStart: function () {

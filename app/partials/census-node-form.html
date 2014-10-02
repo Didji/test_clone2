@@ -1,8 +1,8 @@
-<div bindonce ng-repeat='tab in site.metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin: 0 5% 5% 5%;">
-    <div class="panel-heading" style="padding: 10px 10px;" ng-click="toggleCollapse($event,tab, site.metamodel[node.okey].tabs)">
+<div bindonce ng-repeat='tab in metamodel[node.okey].tabs' class="panel panel-default" style="width:90%;margin: 0 5% 5% 5%;">
+    <div class="panel-heading" style="padding: 10px 10px;" ng-click="toggleCollapse($event,tab, metamodel[node.okey].tabs)">
         <h3 class="panel-title" style="font-size: 1.35em">{{tab.label}}</h3>
     </div>
-    <div ng-if='tab.visible  || (site.metamodel[node.okey].tabs.length == 1)'>
+    <div ng-if='tab.visible  || (metamodel[node.okey].tabs.length == 1)'>
         <div class="panel-body" style="padding: 10px 0px;">
             <div ng-repeat='field in tab.fields'>
                 <div bo-if="!field.readonly" ng-switch on="field.type">
@@ -34,4 +34,4 @@
     <span class="fa fa-trash" style="text-align: center;display: block;font-size: 2em;"></span>
 </button>
 
-<input ng-if="site.metamodel[node.okey].is_graphical" class="form-control" style="margin:margin: 0 5% 5% 5%;" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>
+<input ng-if="metamodel[node.okey].is_graphical" class="form-control" style="margin:margin: 0 5% 5% 5%;" type="hidden" ng-model='node.geometry' placeholder="Géometrie" disabled=true></input>

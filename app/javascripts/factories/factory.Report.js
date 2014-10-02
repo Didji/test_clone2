@@ -30,7 +30,7 @@
             this.assets = assets ;
             this.activity = Activity.findOne(activity) ;
             this.mission = 1*mission ;
-            this.site = $rootScope.site.label ;
+            this.site = window.SMARTGEO_CURRENT_SITE.label ;
             this.fields = {};
             this.ged = [];
             this.uuid = Smartgeo.uuid();

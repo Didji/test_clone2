@@ -15,8 +15,9 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
             link: function($scope, element, attrs) {
                 $scope.mapLayers = [];
+                $scope.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
+                $scope.dependancies = window.SMARTGEO_CURRENT_SITE.dependancies;
                 $scope.defaultClassIndex = $scope.classindex || "0";
-                $scope.site = $rootScope.site ;
                 $scope.$watch('okey', function(okey) {
                     if (okey) {
                         window.root = $scope.root = $scope.node = new ComplexAssetFactory(okey);
@@ -47,7 +48,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 $scope.save = function() {
                     if (!$scope.root.isGeometryOk()) {
-                        alertify.alert('Veuillez remplir toutes les géometries <span ng-if="site.metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
+                        alertify.alert('Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
                         return;
                     }
                     $scope.onsave();
@@ -68,7 +69,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
-                                iconUrl: $rootScope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                                iconUrl: window.SMARTGEO_CURRENT_SITE.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                                 iconAnchor: [16, 16]
                             })
                         }).addTo(G3ME.map);
@@ -79,7 +80,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.draw = function(node) {
-                    if ($rootScope.site.metamodel[node.okey].geometry_type === "LineString") {
+                    if (window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].geometry_type === "LineString") {
                         $scope.drawLine(node);
                     } else {
                         $scope.drawPoint(node);
@@ -116,7 +117,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                         }
 
                         if (!node.layer) {
-                            var style = $rootScope.site.symbology['' + node.okey + $scope.defaultClassIndex].style;
+                            var style = window.SMARTGEO_CURRENT_SITE.symbology['' + node.okey + $scope.defaultClassIndex].style;
                             node.layer = L.polyline([clickLatLng], {
                                 color: style.strokecolor,
                                 smoothFactor: 0,
@@ -148,7 +149,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                             return;
                         }
 
-                        var iconUrl =  $rootScope.site.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
+                        var iconUrl =  window.SMARTGEO_CURRENT_SITE.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
                             image   = new Image();
 
                         image.src = iconUrl;
@@ -181,7 +182,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.confirmDelete = function(node){
-                    alertify.confirm('Supprimer '+node.fields[$rootScope.site.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
+                    alertify.confirm('Supprimer '+node.fields[window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
                 };
             }
 

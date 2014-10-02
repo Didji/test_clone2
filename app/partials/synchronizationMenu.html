@@ -17,7 +17,7 @@
             <button ng-click="deleteReport(report, $index)" ng-show='!report.syncInProgress && !report.synced' type="button" class="close">&times;</button>
             <span ng-show='report.syncInProgress' class="has-spinner pull-right" ng-class="{active:report.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
             <small class="label label-default">Compte-rendu</small>
-            <h6>{{site.activities._byId[report.activity].label}} <span ng-if='report.site'>({{report.site}})</span> <small>{{report.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
+            <h6>{{::activities._byId[report.activity].label}} <span ng-if='::report.site'>({{report.site}})</span> <small> {{::(report.timestamp | date:'dd/MM à HH:mm')}}</small></h6>
             <small ng-if=report.error ng-class='{"text-muted":report.syncInProgress, "text-danger":!report.syncInProgress}'>{{report.error}} <a ng-if="!report.syncInProgress && !globalReportsSynchronizationIsInProgress" ng-click='synchronizeReport(report)'>Réessayer ?</a></small>
         </div>
         <!-- Census Assets Section -->
@@ -26,7 +26,7 @@
             <button ng-click="deleteAsset(asset, $index)" ng-show='!asset.syncInProgress && !asset.synced' type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <span ng-show='asset.syncInProgress' class="has-spinner pull-right" ng-class="{active:asset.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
             <small class="label label-default">Recensement</small>
-            <h6>{{asset.fields[site.metamodel[asset.okey].ukey]}} <small>{{asset.timestamp | date:'dd/MM à HH:mm'}}</small></h6>
+            <h6>{{::asset.fields[metamodel[asset.okey].ukey]}} <small>{{::(asset.timestamp | date:'dd/MM à HH:mm')}}</small></h6>
             <small ng-if=asset.error ng-class='{"text-muted":asset.syncInProgress, "text-danger":!asset.syncInProgress}'>{{asset.error}} <a ng-if='!asset.syncInProgress && !globalAssetsSynchronizationIsInProgress' ng-click='synchronizeAsset(asset)'>Réessayer ?</a></small>
         </div>
     </div>

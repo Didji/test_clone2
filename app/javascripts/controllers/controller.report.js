@@ -137,7 +137,7 @@
          * @desc
          */
         function cancel() {
-            $location.path('map/' + $rootScope.site.id);
+            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
         }
 
         /**
@@ -215,7 +215,7 @@
          * @desc
          */
         function getList(pkey, okey) {
-            var mm = $rootScope.site.metamodel[okey];
+            var mm = window.SMARTGEO_CURRENT_SITE.metamodel[okey];
             for (var i in mm.tabs) {
                 for (var j in mm.tabs[i].fields) {
                     if (mm.tabs[i].fields[j].key === pkey) {
@@ -242,8 +242,8 @@
                     break;
                 }
                 val = a[pkey];
-                if (list && $rootScope.site.lists[list] && $rootScope.site.lists[list][val]) {
-                    val = $rootScope.site.lists[list][val];
+                if (list && window.SMARTGEO_CURRENT_SITE.lists[list] && window.SMARTGEO_CURRENT_SITE.lists[list][val]) {
+                    val = window.SMARTGEO_CURRENT_SITE.lists[list][val];
                 }
                 rv[vm.assets[i].id] = val;
             }
@@ -343,7 +343,7 @@
             $rootScope.report_fields = undefined;
             $rootScope.report_url_redirect = undefined;
 
-            $location.path('map/' + $rootScope.site.id);
+            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
             $scope.$apply();
         }
 

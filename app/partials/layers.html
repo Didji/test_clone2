@@ -18,8 +18,8 @@
                 <input  type="checkbox"
                         ng-model="layersController.layers[layer.okey].status"
                         ng-change="layersController.refreshView()"></input>
-                <img ng-if= 'site.symbology[layer.okey+"0"]'
-                    ng-src='{{site.symbology[layer.okey+"0"].style.symbol.icon}}' alt="" />
+                <img ng-if= 'layersController.symbology[layer.okey+"0"]'
+                    ng-src='{{layersController.symbology[layer.okey+"0"].style.symbol.icon}}' alt="" />
                 {{::layer.label}}
             </label>
         </div>

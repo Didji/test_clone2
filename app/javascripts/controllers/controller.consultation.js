@@ -31,6 +31,9 @@
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
 
+        vm.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
+        vm.siteid = window.SMARTGEO_CURRENT_SITE.id ;
+
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
@@ -168,7 +171,7 @@
          * @param {Number} lng
          */
         function openLocatedReport(lat, lng) {
-            $location.path('report/' + $rootScope.site.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
+            $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
         }
 
         /**

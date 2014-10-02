@@ -19,14 +19,14 @@
             <div class="panel-body"><i18n>_CENSUS_CHOOSE_OBJECT_</i18n></div>
         </div>
         <ul>
-            <li ng-repeat="(modelOkey, model) in site.metamodel" ng-if="model.is_census">
+            <li ng-repeat="(modelOkey, model) in censusController.metamodel" ng-if="model.is_census">
                 <a ng-click='censusController.startCensus(modelOkey)'>
-                    <img ng-if= 'site.symbology[modelOkey+censusController.classindex]'
-                        ng-src='{{site.symbology[modelOkey+censusController.classindex].style.symbol.icon}}' alt="" />
-                    <img ng-if='!site.symbology[modelOkey+censusController.classindex]'
-                        ng-src='{{site.symbology[site.dependancies[modelOkey]+censusController.classindex].style.symbol.icon}}' alt="" />
-                    <img ng-if='!site.symbology[site.dependancies[modelOkey]+censusController.classindex]'
-                        ng-src='{{site.symbology[site.dependancies[site.symbology[site.dependancies[modelOkey]+censusController.classindex]]+censusController.classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if= 'censusController.symbology[modelOkey+censusController.classindex]'
+                        ng-src='{{censusController.symbology[modelOkey+censusController.classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!censusController.symbology[modelOkey+censusController.classindex]'
+                        ng-src='{{censusController.symbology[censusController.dependancies[modelOkey]+censusController.classindex].style.symbol.icon}}' alt="" />
+                    <img ng-if='!censusController.symbology[censusController.dependancies[modelOkey]+censusController.classindex]'
+                        ng-src='{{censusController.symbology[censusController.dependancies[censusController.symbology[censusController.dependancies[modelOkey]+censusController.classindex]]+censusController.classindex].style.symbol.icon}}' alt="" />
                     <label>{{model.label}}</label>
                 </a>
             </li>

@@ -799,7 +799,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                         this_._tileOnError.call(this);
                         image.src = oldTile;
                         image.onerror = image.onload = null;
-                        if(!window.site.EXTERNAL_TILEURL){
+                        if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
                             // Smartgeo.silentLogin(function() {
                             //     for (var i in this_._map._layers) {
                             //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
@@ -821,7 +821,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 image.onerror = function(event) {
                     this_._tileOnError.call(this);
                     image.onerror = image.onload = null;
-                    if(!window.site.EXTERNAL_TILEURL){
+                    if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
                         // Smartgeo.silentLogin(function() {
                         //     for (var i in this_._map._layers) {
                         //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
@@ -918,7 +918,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 if (this.readyState == this.DONE && this.status === 200) {
                     callback(this.getResponseHeader("etag"));
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    if(!window.site.EXTERNAL_TILEURL){
+                    if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
                         // Smartgeo.silentLogin(function() {
                         //     for (var i in self._map._layers) {
                         //         self._map._layers[i].redraw && self._map._layers[i].redraw();

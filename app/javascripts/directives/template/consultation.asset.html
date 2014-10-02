@@ -32,7 +32,7 @@
            bo-text="site.activities._byId[map_activity||report_activity].label"></a> -->
 
         <div ng-if="!noButton">
-            <div ng-if="(reportActivity=(site.activities|activityListFilter:asset)).length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
+            <div ng-if="(reportActivity=(asset|activityListFilter)).length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
                 <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                     <i class="fa fa-pencil-square-o"></i>
                 </button>

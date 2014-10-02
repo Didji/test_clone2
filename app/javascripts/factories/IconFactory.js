@@ -28,11 +28,19 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
             iconSize: [49, 67],
             iconAnchor: [25, 67],
         });
-        this.NON_SELECTED_NIGHTTOUR = L.icon({
-            iconUrl: "images/NON_SELECTED_NIGHTTOUR.png",
-            iconSize: [49, 67],
-            iconAnchor: [25, 67],
+
+        this.NON_SELECTED_NIGHTTOUR = new L.DivIcon({
+                html: '',
+                className: 'NON_SELECTED_NIGHTTOUR',
+                iconSize: [49, 67],
+            iconAnchor: [25, 67]
         });
+
+        // this.NON_SELECTED_NIGHTTOUR = L.icon({
+        //     iconUrl: "images/NON_SELECTED_NIGHTTOUR.png",
+        //     iconSize: [49, 67],
+        //     iconAnchor: [25, 67],
+        // });
         this.DONE_MISSION = L.icon({
             iconUrl: "images/DONE_MISSION.png",
             iconSize: [30, 42],
@@ -73,7 +81,7 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
         if(icon){
             return icon;
         } else {
-            console.error('Icon not available.');
+            console.error('Icon '+name+' not available.');
         }
     };
 
@@ -89,7 +97,7 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
         classindex = classindex || 0 ;
 
         var icon = this['OKEY_'+okey+'_'+classindex] || L.icon({
-            iconUrl: window.site.symbology[''+okey+classindex].style.symbol.icon,
+            iconUrl: window.SMARTGEO_CURRENT_SITE.symbology[''+okey+classindex].style.symbol.icon,
             iconSize: [32, 32],
             iconAnchor: [16, 16],
         });

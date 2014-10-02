@@ -7,23 +7,22 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         allowClear: true
     };
 
+    $scope.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
+    $scope.lists = window.SMARTGEO_CURRENT_SITE.lists;
+
     $scope.selectedCriteriaValues = {};
 
     // On index les critères en fonction des okeys, en les sortant des "tabs", pour faire un joli ng-repeat/ng-options
     $scope.criteria = {};
-    for (var i in $rootScope.site.metamodel) {
+    for (var i in window.SMARTGEO_CURRENT_SITE.metamodel) {
         $scope.criteria[i] = [];
         $scope.criteria[i]._byKey = [];
-        for (var j = 0; j < $rootScope.site.metamodel[i].tabs.length; j++) {
-            for (var k = 0; k < $rootScope.site.metamodel[i].tabs[j].fields.length; k++) {
-                $scope.criteria[i].push($rootScope.site.metamodel[i].tabs[j].fields[k]);
-                $scope.criteria[i]._byKey[$rootScope.site.metamodel[i].tabs[j].fields[k].key] = $rootScope.site.metamodel[i].tabs[j].fields[k];
+        for (var j = 0; j < window.SMARTGEO_CURRENT_SITE.metamodel[i].tabs.length; j++) {
+            for (var k = 0; k < window.SMARTGEO_CURRENT_SITE.metamodel[i].tabs[j].fields.length; k++) {
+                $scope.criteria[i].push(window.SMARTGEO_CURRENT_SITE.metamodel[i].tabs[j].fields[k]);
+                $scope.criteria[i]._byKey[window.SMARTGEO_CURRENT_SITE.metamodel[i].tabs[j].fields[k].key] = window.SMARTGEO_CURRENT_SITE.metamodel[i].tabs[j].fields[k];
             }
         }
-    }
-
-    function closest(e, classname) {
-        return classie.has(e, classname) ? e : e.parentNode && closest(e.parentNode, classname);
     }
 
     $scope.sendCriteria = function (event) {
@@ -32,6 +31,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         }
         return $scope.search(event);
     };
+
     $scope.search = function (event) {
 
         event.preventDefault();
@@ -45,7 +45,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
         $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS';
         $scope.searchIsPerforming = true;
-        Smartgeo.findAssetsByLabel($rootScope.site, angular.copy($scope.searchTerms), function (results) {
+        Smartgeo.findAssetsByLabel(window.SMARTGEO_CURRENT_SITE, angular.copy($scope.searchTerms), function (results) {
             $scope.searchIsPerforming = false;
 
             if (!results.length) {
@@ -118,7 +118,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         }
 
         $scope.searchIsPerforming = true;
-        Smartgeo.findAssetsByCriteria($rootScope.site, advancedSearch, function (results) {
+        Smartgeo.findAssetsByCriteria(window.SMARTGEO_CURRENT_SITE, advancedSearch, function (results) {
             $scope.searchIsPerforming = false;
 
             if (!results.length) {

@@ -23,6 +23,7 @@
         vm.refreshView = refreshView;
         vm.updateGroups = updateGroups;
 
+        vm.symbology = window.SMARTGEO_CURRENT_SITE.symbology;
         vm.groups = {};
         vm.layers = {};
 
@@ -37,8 +38,8 @@
             var currentMetamodel = {}, currentLayer,
                 visibilities = G3ME.getVisibility();
 
-            for (var okey in $rootScope.site.metamodel) {
-                currentMetamodel = $rootScope.site.metamodel[okey];
+            for (var okey in window.SMARTGEO_CURRENT_SITE.metamodel) {
+                currentMetamodel = window.SMARTGEO_CURRENT_SITE.metamodel[okey];
                 if (!(currentMetamodel.group in vm.groups)) {
                     vm.groups[currentMetamodel.group] = {
                         label: currentMetamodel.group,

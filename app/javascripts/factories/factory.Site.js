@@ -23,10 +23,10 @@
          * @desc
          */
         Site.setCurrent = function(id) {
-            if(window.site || $rootScope.site){
-                return $rootScope.site;
+            if(window.SMARTGEO_CURRENT_SITE || window.SMARTGEO_CURRENT_SITE){
+                return window.SMARTGEO_CURRENT_SITE;
             } else if(id){
-                return (window.site = $rootScope.site = $rootScope.site || Smartgeo.get_('sites')[id])
+                return (window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE || Smartgeo.get_('sites')[id])
             } else {
                 var sites = Smartgeo.get_('sites') ;
                 for(var id_ in sites){
@@ -40,7 +40,7 @@
          * @desc
          */
         Site.current = function() {
-            return window.site || $rootScope.site;
+            return window.SMARTGEO_CURRENT_SITE || window.SMARTGEO_CURRENT_SITE;
         };
 
         /**

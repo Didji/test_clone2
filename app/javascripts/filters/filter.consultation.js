@@ -64,10 +64,10 @@
                 if (asset.attributes[fieldsIn[i].key] ||
                     (
                         fieldsIn[i].options &&
-                        $rootScope.site.lists &&
+                        window.SMARTGEO_CURRENT_SITE.lists &&
                         asset.attributes[fieldsIn[i].key] &&
-                        $rootScope.site.lists[fieldsIn[i].options] &&
-                        $rootScope.site.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
+                        window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options] &&
+                        window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
                     )
                 ) {
                     fieldsOut.push(fieldsIn[i]);
@@ -116,10 +116,10 @@
                 if (((report.fields[fieldsIn[i].id] ||
                         (
                             fieldsIn[i].options &&
-                            $rootScope.site.lists &&
+                            window.SMARTGEO_CURRENT_SITE.lists &&
                             report.fields[fieldsIn[i].id] &&
-                            $rootScope.site.lists[fieldsIn[i].options] &&
-                            $rootScope.site.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
+                            window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options] &&
+                            window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
                     )) &&
                     JSON.stringify(report.fields[fieldsIn[i].id]) !== '{}'
                 ) {
@@ -139,14 +139,14 @@
          * @name activityListFilter_
          * @desc
          */
-        function activityListFilter_(activitiesIn, asset) {
+        function activityListFilter_(asset) {
             if(asset.length){
                 asset = asset[0];
             }
             var activitiesOut = [];
-            for (var i = 0; i < activitiesIn.length; i++) {
-                if (activitiesIn[i].okeys[0] === asset.okey) {
-                    activitiesOut.push(activitiesIn[i]);
+            for (var i = 0; i < window.SMARTGEO_CURRENT_SITE.activities.length; i++) {
+                if (window.SMARTGEO_CURRENT_SITE.activities[i].okeys[0] === asset.okey) {
+                    activitiesOut.push(window.SMARTGEO_CURRENT_SITE.activities[i]);
                 }
             }
             return activitiesOut;

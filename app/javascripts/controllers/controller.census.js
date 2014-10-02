@@ -20,7 +20,9 @@
 
         vm.startCensus = startCensus;
         vm.cancel = cancel;
-
+        vm.symbology = window.SMARTGEO_CURRENT_SITE.symbology;
+        vm.dependancies = window.SMARTGEO_CURRENT_SITE.dependancies;
+        vm.metamodel =  window.SMARTGEO_CURRENT_SITE.metamodel;
         vm.classindex = "" ;
 
         activate();

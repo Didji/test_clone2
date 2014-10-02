@@ -19,12 +19,14 @@
         vm.confirmUpdate = confirmUpdate;
         vm.confirmRemove = confirmRemove;
 
+        vm.site = window.SMARTGEO_CURRENT_SITE.label ;
+
         /**
          * @name confirmUpdate
          * @desc Demande confirmation avant de lancer la mise à jour du site en cours
          */
         function confirmUpdate() {
-            alertify.confirm(i18n.get('_SYNC_UPDATE_CONFIRM_MESSAGE_', $rootScope.site.label), function(yes) {
+            alertify.confirm(i18n.get('_SYNC_UPDATE_CONFIRM_MESSAGE_', window.SMARTGEO_CURRENT_SITE.label), function(yes) {
                 if (yes) { update(); }
             });
         };
@@ -34,7 +36,7 @@
          * @desc Demande confirmation avant de lancer la mise à jour du site en cours
          */
         function confirmRemove() {
-            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', $rootScope.site.label), function(yes) {
+            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', window.SMARTGEO_CURRENT_SITE.label), function(yes) {
                 if (yes) { uninstall(); }
             });
         };
@@ -44,7 +46,7 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function update(){
-            $location.path('sites/update/' + $rootScope.site.id);
+            $location.path('sites/update/' + window.SMARTGEO_CURRENT_SITE.id);
             $scope.$apply();
         }
 
@@ -53,7 +55,7 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function uninstall(){
-            $location.path('sites/uninstall/' + $rootScope.site.id);
+            $location.path('sites/uninstall/' + window.SMARTGEO_CURRENT_SITE.id);
             $scope.$apply();
         }
     }

@@ -43,13 +43,13 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.father     = father && father.uuid;
         this.root       = root || this ;
         this.fields     = {};
-        this.fields[window.site.metamodel[this.okey].ukey] = window.site.metamodel[this.okey].label
+        this.fields[window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].ukey] = window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label
 
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
         }
 
-        if (window.site.dependancies[okey]) {
+        if (window.SMARTGEO_CURRENT_SITE.dependancies[okey]) {
             this.add() ;
         }
 
@@ -67,7 +67,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.add = function() {
 
-        var childType = window.site.dependancies[this.okey] ;
+        var childType = window.SMARTGEO_CURRENT_SITE.dependancies[this.okey] ;
 
         if(!childType){
             throw new ComplexAssetError('This node type has no child type.');
@@ -239,7 +239,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         }).success(function (data) {
             for(var okey in data){
                 for (var i = 0; i < data[okey].length; i++) {
-                    AssetFactory.save(data[okey][i],window.site);
+                    AssetFactory.save(data[okey][i],window.SMARTGEO_CURRENT_SITE);
                 }
             }
             Smartgeo.get_('census', function (census) {
@@ -282,7 +282,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      * @private
      */
     ComplexAsset.prototype.__log = function() {
-        console.groupCollapsed(window.site.metamodel[this.okey].label + ':' + this.uuid);
+        console.groupCollapsed(window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label + ':' + this.uuid);
         console.info(this);
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__log();
@@ -419,7 +419,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
     }
 
     ComplexAsset.prototype.isGeometryOk = function(){
-        if(window.site.metamodel[this.okey].is_graphical && !this.geometry){
+        if(window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].is_graphical && !this.geometry){
             return false;
         } else if(!this.children.length){
             return true;
