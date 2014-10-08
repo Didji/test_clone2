@@ -25,7 +25,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         initialize : function(){
 
             this._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '') ;
-            this._SIDE_MENU_WIDTH = $window.outerWidth > 361 ? 300 : $window.outerWidth * 0.8;
+            this._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
             this._BIG_SCREEN_THRESHOLD = 2*this._SIDE_MENU_WIDTH ;
             this._MAX_RESULTS_PER_SEARCH = 10;
             this._SERVER_UNREACHABLE_THRESHOLD = 10000;
