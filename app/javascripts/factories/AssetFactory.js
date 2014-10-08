@@ -62,14 +62,14 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), asset, {
             timeout: timeout || Asset.synchronizeTimeout
         }).success(function () {
-            asset.synced = true ;
-            asset.error  = undefined ;
-        }).error(function (data, code) {
-            if(code){
-                asset.error  = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+            if(!data[asset.okey] || !data[asset.okey].length ){
+                Asset.synchronizeErrorCallback(data, false, asset);
             } else {
-                asset.error  = "Erreur réseau.";
+                asset.synced = true ;
+                asset.error  = undefined ;
             }
+        }).error(function (data, code) {
+            Asset.synchronizeErrorCallback(data, code, asset);
         }).finally(function(){
             Asset.m.release();
             Asset.log(asset);
@@ -78,6 +78,14 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
             Asset.addToDatabase(asset, callback || function(){});
         });
 
+    };
+
+    Asset.synchronizeErrorCallback = function(data, code, asset){
+        if(code){
+            asset.error  = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+        } else {
+            asset.error  = "Erreur réseau.";
+        }
     };
 
 

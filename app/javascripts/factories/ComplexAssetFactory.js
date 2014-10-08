@@ -237,6 +237,9 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
             timeout: 100000
         }).success(function (data) {
+            if(!data[node.okey] || !data[node.okey].length ){
+                return ;
+            }
             for(var okey in data){
                 for (var i = 0; i < data[okey].length; i++) {
                     AssetFactory.save(data[okey][i],window.SMARTGEO_CURRENT_SITE);

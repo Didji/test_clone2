@@ -33,15 +33,15 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
 
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {
                 timeout: timeout || ReportSynchronizer.synchronizeTimeout
-            }).success(function () {
-                report.synced = true ;
-                report.error  = undefined ;
-            }).error(function (data, code) {
-                if(code){
-                    report.error  = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+            }).success(function (data) {
+                if(!data.cri || !data.cri.length){
+                    ReportSynchronizer.synchronizeErrorCallback(data, false, report);
                 } else {
-                    report.error  = "Erreur réseau.";
+                    report.synced = true ;
+                    report.error  = undefined ;
                 }
+            }).error(function (data, code) {
+                ReportSynchronizer.synchronizeErrorCallback(data, code, report);
             }).finally(function(){
                 ReportSynchronizer.m.release();
                 ReportSynchronizer.log(report);
@@ -49,6 +49,14 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
                 ReportSynchronizer.addToDatabase(report, callback || function(){});
             });
 
+        },
+
+        synchronizeErrorCallback: function(data, code, report){
+            if(code){
+                report.error  = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+            } else {
+                report.error  = "Erreur réseau.";
+            }
         },
 
         checkSynchronizedReports: function(){
