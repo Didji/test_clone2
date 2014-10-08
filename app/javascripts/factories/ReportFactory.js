@@ -34,7 +34,7 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.report.json'), report, {
                 timeout: timeout || ReportSynchronizer.synchronizeTimeout
             }).success(function (data) {
-                if(!data.cri && data.cri.length){
+                if(!data.cri || !data.cri.length)){
                     ReportSynchronizer.synchronizeErrorCallback(data, false, report);
                 } else {
                     report.synced = true ;
