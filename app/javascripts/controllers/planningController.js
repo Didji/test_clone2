@@ -189,7 +189,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.fillAssetsCache();
                 })
                 .error(function(message, code) {
-
+                     $scope.synchronizeErrorCallback(message, code)
                 });
         };
 
