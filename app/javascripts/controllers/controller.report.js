@@ -30,7 +30,6 @@
         vm.applyConsequences = applyConsequences;
         vm.cancel = cancel;
         vm.sendReport = sendReport;
-        vm.bidouille = bidouille;
 
         vm.report = {};
         vm.sendingReport = false;
@@ -55,6 +54,8 @@
             if(!checkInputParameters($routeParams)){
                 return;
             }
+
+            bidouille();
 
             if(!Site.current()){
                 Site.setCurrent($routeParams.site);
@@ -192,11 +193,29 @@
          * @vm
          * @desc Olalalala ...
          */
-        function bidouille(event) {
-            document.querySelector('#mainview').firstChild.scrollTop = $(event.currentTarget).siblings('label')[0].offsetTop - 7;
-            if (window.screen.height <= 640) {
-                document.querySelector('.reportForm').style.paddingBottom = "280px";
-            }
+        function bidouille() {
+            $('.reportForm').on('click', "input:not(input[type=checkbox]), select, .select2-choice, .select2-container, label", function(e){
+
+                var elt ;
+
+                if(!$(this).prop('tagName') === "label"){
+                    elt = $(this) ;
+                } else if(!$(this).siblings('label').length){
+                    elt = $(this) ;
+                } else {
+                    elt = $(this).siblings('label');
+                }
+
+                if(!elt.offset().top){
+                    return ;
+                }
+
+                $('html, body').animate({
+                    scrollTop: elt.offset().top - 10
+                }, 250);
+                elt = null ;
+            });
+
         }
 
         /**

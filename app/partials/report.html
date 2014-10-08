@@ -30,7 +30,7 @@
                             <span bo-if="field.type=='O'">
                                 <span class="fa fa-check-square-o pull-left yes"></span>
                                 <span class="fa fa-square-o pull-left no"></span>
-                                <input type="checkbox" ng-required='field.required' class="form-control" ng-model="reportController.report.fields[field.id]" ng-change="reportController.applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'"></input>
+                                <input type="checkbox" id="{{tab.id}}-{{field.id}}" ng-required='field.required' class="form-control" ng-model="reportController.report.fields[field.id]" ng-change="reportController.applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'"></input>
                             </span>
                         </label>
 
