@@ -196,6 +196,7 @@
         function bidouille() {
             $('.reportForm').on('click', "input:not(input[type=checkbox]), select, .select2-choice, .select2-container, label", function(e){
 
+
                 var elt ;
 
                 if(!$(this).prop('tagName') === "label"){
@@ -214,6 +215,16 @@
                     scrollTop: elt.offset().top - 10
                 }, 250);
                 elt = null ;
+            });
+
+            $(document).on("select2-open", function(event) {
+                $('html, body').animate({
+                    scrollTop: $(event.target).siblings('label').offset().top - 10
+                }, 250);
+            })
+
+            $scope.$on("$destroy", function(event) {
+                $(document).off("select2-open");
             });
 
         }
