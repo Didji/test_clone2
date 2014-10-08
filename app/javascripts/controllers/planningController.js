@@ -110,7 +110,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         $scope.synchronize = function() {
             Mission.query()
                 .success(function(data) {
-
+                    if(!data || !data.results){
+                        return $scope.synchronizeErrorCallback("", 0);
+                    }
                     var open = [],
                         previous = [],
                         done = [],
@@ -186,31 +188,35 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.fillAssetsCache();
                 })
                 .error(function(message, code) {
-                    if (Smartgeo.get('online') && message !== "" && code !== 0) {
-                        alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
-                    }
-                    $scope.maxBeginDate = 0;
-                    for (var i in $rootScope.missions) {
-                        var mission = $rootScope.missions[i];
-                        if(!notFirst[mission.id]){
-                            mission.selectedAssets = 0;
-                            notFirst[mission.id] = true ;
-                        }
-                        $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
-                        if (mission.openned && (mission.assets.length || !mission.activity)) {
-                            // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
-                            mission.openned = false;
-                            $scope.toggleMission(mission, false);
-                            if (mission.displayDone) {
-                                mission.displayDone = false;
-                                $scope.showDoneAssets(mission);
-                            }
-                        }
-                    }
-                    $scope.applyFilterOnMission();
-                    $scope.fillAssetsCache();
+
                 });
         };
+
+        $scope.synchronizeErrorCallback = function(message, code){
+            if (Smartgeo.get('online') && message !== "" && code !== 0) {
+                alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
+            }
+            $scope.maxBeginDate = 0;
+            for (var i in $rootScope.missions) {
+                var mission = $rootScope.missions[i];
+                if(!notFirst[mission.id]){
+                    mission.selectedAssets = 0;
+                    notFirst[mission.id] = true ;
+                }
+                $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
+                if (mission.openned && (mission.assets.length || !mission.activity)) {
+                    // Pour forcer l'ouverture (ugly) (le mieux serait d'avoir 2 methodes open/close)
+                    mission.openned = false;
+                    $scope.toggleMission(mission, false);
+                    if (mission.displayDone) {
+                        mission.displayDone = false;
+                        $scope.showDoneAssets(mission);
+                    }
+                }
+            }
+            $scope.applyFilterOnMission();
+            $scope.fillAssetsCache();
+        }
 
         /**
          * @method
