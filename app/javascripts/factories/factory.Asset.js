@@ -99,7 +99,7 @@
             var center = this.getCenter();
             Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
                 if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
-                    SmartgeoChromium.goTo(lng, lat, center[0], center[1]);
+                    SmartgeoChromium.goTo(lng, lat, center[1], center[0]);
                 } else if(window.cordova){
                     cordova.exec(null, angular.noop, "gotoPlugin", "goto", [lat, lng, center[1], center[0]]);
                 }
