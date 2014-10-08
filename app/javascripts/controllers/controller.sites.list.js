@@ -108,7 +108,7 @@
          * @param {Object} site Site à selectionner
          */
         function select(site) {
-            window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE = site;
+            window.SMARTGEO_CURRENT_SITE = site;
             Smartgeo.selectSiteRemotely(site.id, function() {
                 $location.path('/map/' + site.id);
                 if (!$scope.$$phase) {

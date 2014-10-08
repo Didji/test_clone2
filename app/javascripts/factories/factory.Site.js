@@ -40,7 +40,7 @@
          * @desc
          */
         Site.current = function() {
-            return window.SMARTGEO_CURRENT_SITE || window.SMARTGEO_CURRENT_SITE;
+            return window.SMARTGEO_CURRENT_SITE;
         };
 
         /**
