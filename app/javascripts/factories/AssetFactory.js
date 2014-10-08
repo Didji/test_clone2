@@ -271,6 +271,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
                     assets.splice(i, 1);
                     return Smartgeo.set_('census', assets, function(){
                         Asset.m.release();
+                        Asset.__updateMapLayers();
                         callback();
                     });
                 }
