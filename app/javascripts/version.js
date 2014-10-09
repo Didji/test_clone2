@@ -1,2 +1,2 @@
 window.smargeomobileversion = "0.16.1" ;
-window.smargeomobilebuild   = "rc1" ;
+window.smargeomobilebuild   = "rc2" ;
