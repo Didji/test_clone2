@@ -705,13 +705,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         selectSiteRemotely: function (site, success, error) {
 
             if(window.SmartgeoChromium) {
-                Smartgeo.get_('sites', function(sites){
-                    if(!sites[site].EXTERNAL_TILEURL){
-                        var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
-                        ChromiumCallbacks[16] = function(response){};
-                        SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
-                    }
-                });
+                var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
+                ChromiumCallbacks[16] = function(response){};
+                SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
             }
 
             if (!site) {
