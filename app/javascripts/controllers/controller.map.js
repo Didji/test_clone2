@@ -517,7 +517,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
 
-            POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = null;
+            POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = null;
 
             return false;
         }
