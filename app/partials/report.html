@@ -25,7 +25,7 @@
                     <p ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" bo-class="{'isconsequence': field.visible}">
                         <label class="control-label" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && reportController.report.fields[field.id] === 'Y') }">
                             <span bo-text="field.label"></span>
-                            <span class="required-marker icon-asterisk" ng-show="field.required"></span>
+                            <span class="required-marker fa fa-asterisk" ng-show="field.required"></span>
 
                             <span bo-if="field.type=='O'">
                                 <span class="fa fa-check-square-o pull-left yes"></span>
