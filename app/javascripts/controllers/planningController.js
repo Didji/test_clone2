@@ -666,7 +666,8 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @param {Object} mission
          * @desc
          */
-        $scope.removeAssetFromMission = function(asset, mission) {
+        $scope.removeAssetFromMission = function(assetid, mission) {
+            var asset = assetsCache[mission.id]._byId[assetid] ;
             mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
             mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
             Smartgeo.set('missions_' + Smartgeo.get('lastUser'), $rootScope.missions);
