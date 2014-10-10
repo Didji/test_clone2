@@ -19,12 +19,12 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
      */
     var Icon = function () {
         this.SELECTED_MISSION = L.icon({
-            iconUrl: "images/SELECTED_MISSION",
+            iconUrl: "images/SELECTED_MISSION.png",
             iconSize: [65, 89],
             iconAnchor: [32, 89],
         });
         this.NON_SELECTED_MISSION = L.icon({
-            iconUrl: "images/NON_SELECTED_MISSION",
+            iconUrl: "images/NON_SELECTED_MISSION.png",
             iconSize: [49, 67],
             iconAnchor: [25, 67],
         });
@@ -36,11 +36,6 @@ angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, 
             iconAnchor: [25, 67]
         });
 
-        // this.NON_SELECTED_NIGHTTOUR = L.icon({
-        //     iconUrl: "images/NON_SELECTED_NIGHTTOUR.png",
-        //     iconSize: [49, 67],
-        //     iconAnchor: [25, 67],
-        // });
         this.DONE_MISSION = L.icon({
             iconUrl: "images/DONE_MISSION.png",
             iconSize: [30, 42],
