@@ -3303,7 +3303,7 @@ angular.module('ui.bootstrap.timepicker', [])
   }
 
   function pad( value ) {
-    return ( angular.isDefined(value) && value.toString().length < 2 ) ? '0' + value : value;
+    return ( angular.isDefined(value) && value.toString().length < 2 ) ? '0' + value : value.toString();
   }
 
   // Respond on mousewheel spin
@@ -3352,7 +3352,7 @@ angular.module('ui.bootstrap.timepicker', [])
 
       if ( angular.isDefined(hours) ) {
         selected.setHours( hours );
-        refresh( 'h' );
+        refresh();
       } else {
         invalidate(true);
       }
@@ -3370,7 +3370,7 @@ angular.module('ui.bootstrap.timepicker', [])
       var minutes = getMinutesFromTemplate() ;
       if ( angular.isDefined(minutes) ) {
         selected.setMinutes( pad(minutes) );
-        refresh( 'm' );
+        refresh();
       } else {
         invalidate(undefined, true);
       }
@@ -3402,10 +3402,10 @@ angular.module('ui.bootstrap.timepicker', [])
   };
 
   // Call internally when we know that model is valid.
-  function refresh( keyboardChange ) {
+  function refresh() {
     makeValid();
     ngModelCtrl.$setViewValue( new Date(selected) );
-    updateTemplate( keyboardChange );
+    updateTemplate();
   }
 
   function makeValid() {
@@ -3414,15 +3414,15 @@ angular.module('ui.bootstrap.timepicker', [])
     $scope.invalidMinutes = false;
   }
 
-  function updateTemplate( keyboardChange ) {
+  function updateTemplate() {
     var hours = selected.getHours(), minutes = selected.getMinutes();
 
     if ( $scope.showMeridian ) {
       hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
     }
 
-    $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
-    $scope.minutes = keyboardChange === 'm' ? minutes : pad(minutes);
+    $scope.hours = pad(hours);
+    $scope.minutes = pad(minutes);
     $scope.meridian = selected.getHours() < 12 ? meridians[0] : meridians[1];
   }
 
