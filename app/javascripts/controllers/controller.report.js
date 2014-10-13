@@ -33,7 +33,7 @@
 
         vm.report = {};
         vm.sendingReport = false;
-        vm.isAndroid = false;
+        vm.isAndroid = navigator.userAgent.match(/Android/i);
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.groupSelectOptions = {};
