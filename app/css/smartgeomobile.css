@@ -824,3 +824,19 @@ margin-bottom: 15px;
 .NON_SELECTED_NIGHTTOUR{
     background-image: url(../images/NON_SELECTED_NIGHTTOUR.png);
 }
+
+.chosen-container-single .chosen-single{
+    height: 35px;
+    line-height: 35px;
+}
+
+.chosen-container .chosen-results li {
+        height: 35px;
+    line-height: 28px;
+}
+.chosen-container-single .chosen-single abbr {
+top: 12px;
+-webkit-transform: scale(2);
+transform: scale(2);
+}
+

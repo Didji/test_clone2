@@ -1,7 +1,7 @@
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
 angular
-    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'pasvaz.bindonce', 'ngResource'])
+    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'pasvaz.bindonce', 'ngResource','localytics.directives'])
     .config(config).run(function($rootScope /*, LicenseManager*/ ) {
         // TODO: activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
         $rootScope.rights = {

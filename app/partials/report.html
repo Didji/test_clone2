@@ -1,13 +1,14 @@
 <form name="reportForm" class="reportForm">
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
     <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
-        <i class="fa fa-times"></i> <i18n>_REPORT_CANCEL</i18n>
+        <i class="fa fa-times"></i>
+        <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
+    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
-        <i class="fa fa-save"></i> <i18n>_REPORT_SAVE</i18n>
-         <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
+        <i class="fa fa-save"></i>
+        <i18n>_REPORT_SAVE</i18n>
+        <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
         </span>
     </button>
     <div bindonce ng-repeat='tab in reportController.report.activity.tabs' class="panel panel-default report">
@@ -34,7 +35,9 @@
                             </span>
                         </label>
 
-                        <input ng-required='field.required' bo-if='field.type=="L" && field.options.length > 15' ui-select2="reportController.groupSelectOptions" data-field="{{field.id}}" data-tabid="{{tab.id}}" ng-model="reportController.report.fields[field.id]" />
+                        <select bo-if='field.type=="L" && field.options.length > 15' chosen no-results-text="'Aucun résultat'" allow-single-deselect="true" disable-search-threshold="3" data-placeholder=" " ng-model="reportController.report.fields[field.id]" ng-options="value.value as value.label for value in reportController.report.activity._fields[field.id].options" style="width:100%;">
+                            <option value=""></option>
+                        </select>
 
                         <select ng-required='field.required' class="form-control" name="f" ng-model="reportController.report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
                             <option value=""></option>
@@ -60,9 +63,9 @@
                         <input ng-required='field.required' bo-if="field.type=='N' && (!field.default || !field.default.pkey)" type="number" class="form-control" ng-click="reportController.bidouille($event)" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.fields[field.id]'></input>
                         <small bo-if="field.type=='N'" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
 
-                        <input ng-required='field.required' bo-if="field.type=='C' && field.default && field.default.pkey" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='reportController.report.overrides[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
+                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && field.default && field.default.pkey)" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" ng-model='reportController.report.overrides[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
                         </input>
-                        <input ng-required='field.required' bo-if="field.type=='C' && (!field.default || !field.default.pkey)" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" type="text" name="f" ng-model='reportController.report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
+                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-click="reportController.bidouille($event)" ng-required="field.required" class="form-control" ng-model='reportController.report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
                         </input>
                     </p>
                 </div>
@@ -91,7 +94,7 @@
             <div id="images">
                 <ul class='ged-gallery'>
                     <li ng-repeat='image in reportController.report.ged'>
-                        <img ng-src="{{image.content}}" alt="" />
+                        <img ng-src="{{image.content}}" alt=""></img>
                         <button class="btn btn-default btn-danger btn-block" ng-click="">
                             <span ng-click="reportController.report.removeGedItem($index)" class="fa fa-trash" style="text-align: center;display: block;font-size: 2em;"></span>
                         </button>
@@ -101,19 +104,17 @@
         </div>
     </div>
     <div class="panel consultation-group">
-        <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true' />
+        <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true'></asset-consultation>
     </div>
     <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
-        <i class="fa fa-times"></i> <i18n>_REPORT_CANCEL</i18n>
+        <i class="fa fa-times"></i>
+        <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;"
-        class="btn btn-primary has-spinner needPadding"
-        ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()"
-        ng-click="reportController.sendReport()">
+    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
-            <i class="fa fa-save"></i> <i18n>_REPORT_SAVE</i18n>
-            <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
+        <i class="fa fa-save"></i>
+        <i18n>_REPORT_SAVE</i18n>
+        <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
         </span>
     </button>
 </form>

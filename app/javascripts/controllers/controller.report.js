@@ -17,7 +17,6 @@
      * @property {Boolean} isAndroid
      * @property {Array} assets
      * @property {RegExp} numberPattern
-     * @property {Object} groupSelectOptions
      *
      * @private
      * @property {Boolean} comesFromIntent
@@ -33,10 +32,9 @@
 
         vm.report = {};
         vm.sendingReport = false;
-        vm.isAndroid = false;
+        vm.isAndroid = navigator.userAgent.match(/Android/i);
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
-        vm.groupSelectOptions = {};
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
         var comesFromIntent = false;
@@ -78,12 +76,6 @@
             for (var i = 0; i < assetsIds.length; i++) {
                 vm.assets.push(new Asset(assetsIds[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
             }
-
-            vm.groupSelectOptions = {
-                allowClear: true,
-                minimumInputLength: 2,
-                query: select2QueryFunction
-            };
 
             vm.report.activity.tabs[0].show = true;
         }
@@ -194,8 +186,7 @@
          * @desc Olalalala ...
          */
         function bidouille() {
-            $('.reportForm').on('click', "input:not(input[type=checkbox]), select, .select2-choice, .select2-container, label", function(e){
-
+            $('.reportForm').on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e){
 
                 var elt ;
 
@@ -215,16 +206,6 @@
                     scrollTop: elt.offset().top - 10
                 }, 250);
                 elt = null ;
-            });
-
-            $(document).on("select2-open", function(event) {
-                $('html, body').animate({
-                    scrollTop: $(event.target).siblings('label').offset().top - 10
-                }, 250);
-            })
-
-            $scope.$on("$destroy", function(event) {
-                $(document).off("select2-open");
             });
 
         }
@@ -476,31 +457,6 @@
                 }
             }
             return false ;
-        }
-
-        /**
-         * @name select2QueryFunction
-         * @param {Object} query
-         * @desc
-         */
-        function select2QueryFunction(query) {
-            var fieldOptions = vm.report.activity._fields[query.element.data('field')].options,
-                results = [],
-                o;
-            query.term = query.term.toLowerCase();
-            for (var k = 0; k < fieldOptions.length && results.length < 50; k++) {
-                o = fieldOptions[k];
-                if (o.label.toLowerCase().indexOf(query.term) !== -1) {
-                    results.push({
-                        id: o.value,
-                        text: o.label
-                    });
-                }
-            }
-            results.sort(sortFunction);
-            return query.callback({
-                results: results
-            });
         }
     }
 
