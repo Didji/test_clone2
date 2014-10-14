@@ -109,6 +109,7 @@
          */
         function select(site) {
             window.SMARTGEO_CURRENT_SITE = site;
+            vm.ready = false;
             Smartgeo.selectSiteRemotely(site.id, function() {
                 $location.path('/map/' + site.id);
                 if (!$scope.$$phase) {
@@ -119,6 +120,8 @@
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
+            }, function() {
+                vm.ready = true;
             });
         };
 

@@ -702,7 +702,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             return Smartgeo._SMARTGEO_MOBILE_VERSION;
         },
 
-        selectSiteRemotely: function (site, success, error) {
+        selectSiteRemotely: function (site, success, error, nosite) {
 
             if(window.SmartgeoChromium) {
                 var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
@@ -712,6 +712,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
             if (!site) {
                 Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
+                noSite = noSite || $.noop();
+                nosite();
                 return;
             }
 
@@ -720,7 +722,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 'site': site,
                 'auto_load_map': true
             });
-            $http.post(url).then(success ||   function () {}, error || function () {});
+            $http.post(url).then(success || $.noop(), error || $.noop());
         },
         login_o: function (user, success, error) {
             // TODO : MERGE WITH LOGIN METHOD
