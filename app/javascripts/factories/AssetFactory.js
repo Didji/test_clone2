@@ -61,8 +61,8 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), asset, {
             timeout: timeout || Asset.synchronizeTimeout
-        }).success(function () {
-            if(!data[asset.okey] || !data[asset.okey].length ){
+        }).success(function (data) {
+            if(!Array.isArray(data) || !data[asset.okey] || !data[asset.okey].length ){
                 Asset.synchronizeErrorCallback(data, false, asset);
             } else {
                 asset.synced = true ;

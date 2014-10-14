@@ -45,11 +45,11 @@
 
                         <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
                         </input>
-                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && field.default && field.default.pkey" style="margin-bottom:10px;">{{reportController.report.overrides[field.id]}}</span>
+                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && field.default && field.default.pkey" style="margin-bottom:10px;">{{reportController.report.overrides[field.id] | date : "dd/MM/yyyy"}}</span>
 
                         <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey)" ng-required="field.required" type="date" name="f" ng-model="reportController.report.fields[field.id]" style="margin-top:-20px;color: transparent;background: transparent;border: transparent;box-shadow:none;height:50px;z-index:-1;margin-bottom:-50px">
                         </input>
-                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey)" style="margin-bottom:10px;">{{reportController.report.fields[field.id]}}</span>
+                        <span class="form-control pull-left" bo-if="field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey)" style="margin-bottom:10px;">{{reportController.report.fields[field.id] | date : "dd/MM/yyyy"}}</span>
 
                         <input ng-required='field.required' class="form-control pull-left" bo-if="field.type=='D' && !reportController.isAndroid && field.default && field.default.pkey" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]" style="margin-bottom:10px">
                         </input>
