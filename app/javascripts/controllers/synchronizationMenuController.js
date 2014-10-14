@@ -4,7 +4,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         'use strict';
 
         var synchronizationCheckTimeout = 1000 * 60 * 10,
-            synchronizationTimeout = 1000 * 60,
+            synchronizationTimeout = 1000 * 60 * 5,
             reportsSynchronizationCheckTimeoutId = false,
             assetsSynchronizationCheckTimeoutId = false,
             reportsSynchronizationTimeoutId = false,

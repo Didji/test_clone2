@@ -4,7 +4,7 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
 
     var ReportSynchronizer = {
 
-        synchronizeTimeout : 60000,
+        synchronizeTimeout : 1000 * 60 * 5,
 
         m : {
             f       : false,
