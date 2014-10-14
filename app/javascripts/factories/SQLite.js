@@ -20,21 +20,6 @@ var SQLite = {
         return SQLite.databases[args.name];
     },
 
-    getTransaction : function(args, callback){
-        if (!SQLite.transactions[args.name]) {
-            this.openDatabase(args).readTransaction(function (tx) {
-                SQLite.transactions[args.name] = tx ;
-                callback(SQLite.transactions[args.name]);
-                setTimeout(function(){
-                    SQLite.transactions[args.name] = undefined ;
-                }, 1000)
-            });
-        } else {
-            callback(SQLite.transactions[args.name]);
-        }
-
-    },
-
     parameters: function () {
         return SQLite.openDatabase({
             name: 'parameters'
