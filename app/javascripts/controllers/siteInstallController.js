@@ -101,7 +101,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
                         });
                     });
                 });
-            });
+            }); // TODO(@gulian): tester le cas d'erreur de la fonction selectSiteRemotely
         });
 
         $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action) {

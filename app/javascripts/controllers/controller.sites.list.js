@@ -104,25 +104,26 @@
 
         /**
          * @name select
-         * @desc Selectionne un site sur le serveur puis charge la carte
+         * @desc Selectionne un site sur le serveur
          * @param {Object} site Site à selectionner
          */
         function select(site) {
             window.SMARTGEO_CURRENT_SITE = site;
             vm.ready = false;
             Smartgeo.selectSiteRemotely(site.id, function() {
-                $location.path('/map/' + site.id);
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
+                redirect(site);
             }, function() {
-                $location.path('/map/' + site.id);
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            }, function() {
-                vm.ready = true;
+                redirect(site);
             });
+        };
+
+        /**
+         * @name redirect
+         * @desc Redirige vers charge la carte
+         * @param {Object} site Site à selectionner
+         */
+        function redirect(site) {
+            $location.path('/map/' + site.id);
         };
 
         /**

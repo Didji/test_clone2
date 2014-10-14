@@ -184,7 +184,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          * });
          */
         ping: function (callback) {
-            callback = callback || function () {};
+            callback = callback || angular.noop;
             $http.post(Smartgeo.getServiceUrl('global.dcnx.json'), {}, {
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             })
@@ -257,12 +257,12 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 } catch(e){
                     value = this.parametersCache_[parameter];
                 }
-                (callback || function () {})(value);
+                (callback || angular.noop)(value);
                 return value;
             } else {
                 SQLite.get(parameter, function(value){
                     Smartgeo.parametersCache_[parameter] = value ;
-                    (callback || function () {})(value);
+                    (callback || angular.noop)(value);
                 });
             }
         },
@@ -702,7 +702,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             return Smartgeo._SMARTGEO_MOBILE_VERSION;
         },
 
-        selectSiteRemotely: function (site, success, error, nosite) {
+        selectSiteRemotely: function (site, success, error) {
 
             if(window.SmartgeoChromium) {
                 var user = (Smartgeo.get('users') || {})[Smartgeo.get('lastUser')] ;
@@ -710,19 +710,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 SmartgeoChromium.authenticate(Smartgeo.getServiceUrl('global.auth.json'), user.username, user.password, site);
             }
 
-            if (!site) {
-                Smartgeo.log(("_SMARTGEO_ZERO_SITE_SELECTED"));
-                noSite = noSite || $.noop();
-                nosite();
-                return;
-            }
-
             var url = Smartgeo.getServiceUrl('global.auth.json', {
                 'app': 'mapcite',
                 'site': site,
                 'auto_load_map': true
             });
-            $http.post(url).then(success || $.noop(), error || $.noop());
+
+            $http.post(url).then(success || angular.noop, error || angular.noop);
         },
         login_o: function (user, success, error) {
             // TODO : MERGE WITH LOGIN METHOD
@@ -734,7 +728,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
         login: function (login, password, success, error) {
             if (Smartgeo._LOGIN_MUTEX) {
-                return (error || function () {})();
+                return (error || angular.noop)();
             }
 
             Smartgeo._LOGIN_MUTEX = true;
@@ -762,13 +756,13 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo._LOGIN_MUTEX = false;
                 if (window.SMARTGEO_CURRENT_SITE) {
                     Smartgeo.selectSiteRemotely(window.SMARTGEO_CURRENT_SITE.id, success, error);
-                    (success || function () {})();
+                    (success || angular.noop)();
                 } else {
-                    (success || function () {})();
+                    (success || angular.noop)();
                 }
             }).error(function (response, status) {
                 Smartgeo._LOGIN_MUTEX = false;
-                (error || function () {})(response, status);
+                (error || angular.noop)(response, status);
             });
         },
         clearPersistence: function () {
