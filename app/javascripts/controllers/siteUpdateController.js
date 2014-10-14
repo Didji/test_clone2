@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "SQLite", "$location", "G3ME", "Installer", "i18n",
-    function($scope, $rootScope, $routeParams, $http, Smartgeo, SQLite, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "i18n",
+    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, i18n) {
 
         'use strict';
 

@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n","Asset", function ($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, Asset) {
+angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n","Asset", function ($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, Asset) {
 
     'use strict';
 

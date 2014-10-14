@@ -8,8 +8,8 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "SQLite", "i18n", "$timeout", "$http", "$location",
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, SQLite, i18n, $timeout, $http, $location) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location",
+    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location) {
 
         'use strict';
 
