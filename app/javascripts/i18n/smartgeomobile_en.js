@@ -103,8 +103,8 @@ window.smartgeo_i18n_lang['en'] = {
     _SYNC_UPDATE: "Update ",
     _SYNC_UNINSTALL: "Uninstall ",
     _SYNC_UNKNOWN_ERROR_: "Unknown error while synchronizing reports",
-    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s", // sitename
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s", // sitename
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s?", // sitename
+    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s?", // sitename
 
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",

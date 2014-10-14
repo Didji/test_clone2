@@ -30,8 +30,8 @@ window.smartgeo_i18n_lang['fr'] = {
     _REGISTER_CAREFUL_:"Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté (%s restante(s))",
     _REGISTER_UPDATE_LICENSE_ :"Vérifier la licence",
     _REGISTER_RECORD_ID_ :"Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
-    _CONFIRM_CHANGE_SITE_ : "Voulez-vous vraiment changer de site ?",
-    _CONFIRM_DISCONNECT_ : "Voulez-vous vraiment quitter l'application ?",
+    _CONFIRM_CHANGE_SITE_ : "Voulez-vous vraiment changer de site&nbsp?",
+    _CONFIRM_DISCONNECT_ : "Voulez-vous vraiment quitter l'application&nbsp?",
 
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
 
@@ -105,9 +105,9 @@ window.smartgeo_i18n_lang['fr'] = {
     _SYNC_UPDATE: "Mettre à jour les données ",
     _SYNC_UNINSTALL: "Désinstaller",
     _SYNC_UNKNOWN_ERROR_: "Erreur inconnue lors de la synchronisation.",
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s", // sitename
-    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s", // sitename
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s", // sitename
+    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?", // sitename
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?", // sitename
+    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?", // sitename
 
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",
