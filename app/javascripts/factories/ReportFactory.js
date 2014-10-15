@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, Smartgeo, $q, $rootScope) {
+angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, Smartgeo) {
 
     'use strict';
 
@@ -165,7 +165,6 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
                 }
                 reports.push(report);
                 Smartgeo.set_('reports', reports, function(){
-                    // $rootScope.reports = reports ;
                     ReportSynchronizer.m.release();
                     callback(report);
                 });
@@ -184,7 +183,6 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
                     if(reports[i].uuid === report.uuid){
                         reports[i] = report ;
                         return Smartgeo.set_('reports', reports, function(){
-                            // $rootScope.reports = reports ;
                             ReportSynchronizer.m.release();
                             callback(report);
                         });
@@ -220,7 +218,6 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
                     if(reports[i].uuid === report.uuid){
                         reports.splice(i, 1);
                         return Smartgeo.set_('reports', reports, function(){
-                            // $rootScope.reports = reports ;
                             ReportSynchronizer.m.release();
                             callback();
                         });

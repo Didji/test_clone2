@@ -6,9 +6,9 @@
 		.module('smartgeomobile')
 		.directive('assetConsultation', assetConsultation);
 
-	assetConsultation.$inject = ["$rootScope", "G3ME", "Asset", "$timeout"];
+	assetConsultation.$inject = ["$rootScope", "Asset"];
 
-	function assetConsultation($rootScope, G3ME, Asset, $timeout) {
+	function assetConsultation($rootScope, Asset) {
 
 		var directive = {
 			link: link,
@@ -21,7 +21,7 @@
 		};
 		return directive;
 
-		function link(scope, element, attrs) {
+		function link(scope, element) {
 
 			scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset;
 
@@ -81,7 +81,7 @@
 					top: y,
 					left: x - 100
 				});
-				$timeout(function() {
+				setTimeout(function() {
 					angel.addClass('ascending');
 				}, 1000)
 			}

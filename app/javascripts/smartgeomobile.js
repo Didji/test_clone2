@@ -1,7 +1,7 @@
 /*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
 
 angular
-    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'pasvaz.bindonce', 'ngResource','localytics.directives'])
+    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource','localytics.directives'])
     .config(config).run(function($rootScope /*, LicenseManager*/ ) {
         // TODO: activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
         $rootScope.rights = {
@@ -29,9 +29,13 @@ config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$pro
 function config($routeProvider, $rootScope, $httpProvider, $provide, $locationProvider) {
 
     var prefetchPromise = {
-        prefetchedlocalsites: ['Site', 'Smartgeo',
-            function(Site, Smartgeo) {
-                return Site.all();
+        prefetchedlocalsites: ['Site', 'Smartgeo', '$route',
+            function(Site, Smartgeo, $route) {
+                if($route.current.params.site){
+                    return Site.get($route.current.params.site);
+                } else {
+                    return Site.all();
+                }
             }
         ]
     };
@@ -88,6 +92,8 @@ function config($routeProvider, $rootScope, $httpProvider, $provide, $locationPr
     }).
     when("/map/:site", {
         templateUrl: "partials/main.html",
+        controllerAs: 'mapController',
+        controller: 'MapController',
         resolve: prefetchPromise
     }).
     when("/intent/:controller/?:args", {

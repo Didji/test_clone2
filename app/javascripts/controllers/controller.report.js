@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "$location", "$http", "G3ME", "i18n", "ReportSynchronizer", "Asset", "Activity", "Report", "Site", "$timeout", "prefetchedlocalsites"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "prefetchedlocalsites"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Boolean} comesFromIntent
      */
 
-    function ReportController($scope, $routeParams, $window, $rootScope, Smartgeo, $location, $http, G3ME, i18n, ReportSynchronizer, Asset, Activity, Report, Site,$timeout, prefetchedlocalsites) {
+    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, prefetchedlocalsites) {
 
         var vm = this;
 
@@ -39,6 +39,7 @@
 
         var comesFromIntent = false;
 
+
         activate();
 
         /**
@@ -53,18 +54,15 @@
                 return;
             }
 
-            bidouille();
+            window.SMARTGEO_CURRENT_SITE = prefetchedlocalsites;
 
-            if(!Site.current()){
-                Site.setCurrent($routeParams.site);
-            }
+            bidouille();
 
             comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
 
-            var assetsIds = $routeParams.assets.split(',');
-
-            var missionId = $rootScope.report_mission || $routeParams.mission ;
-            var isCall = false ;
+            var assetsIds = $routeParams.assets.split(','),
+                missionId = $rootScope.report_mission || $routeParams.mission ,
+                isCall    = false ;
 
             if(missionId && missionId.indexOf('call-') != -1){
                 isCall = true ;
@@ -78,6 +76,7 @@
             }
 
             vm.report.activity.tabs[0].show = true;
+
         }
 
         /**
@@ -186,23 +185,23 @@
          * @desc Olalalala ...
          */
         function bidouille() {
-            $('.reportForm').on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e){
+            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e){
 
                 var elt ;
 
-                if(!$(this).prop('tagName') === "label"){
-                    elt = $(this) ;
-                } else if(!$(this).siblings('label').length){
-                    elt = $(this) ;
+                if(!angular.element(this).prop('tagName') === "label"){
+                    elt = angular.element(this) ;
+                } else if(!angular.element(this).siblings('label').length){
+                    elt = angular.element(this) ;
                 } else {
-                    elt = $(this).siblings('label');
+                    elt = angular.element(this).siblings('label');
                 }
 
                 if(!elt.offset().top){
                     return ;
                 }
 
-                $('html, body').animate({
+                angular.element('html, body').animate({
                     scrollTop: elt.offset().top - 10
                 }, 250);
                 elt = null ;

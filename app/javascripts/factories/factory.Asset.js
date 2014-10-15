@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Asset', AssetFactory);
 
-    AssetFactory.$inject = ["G3ME", "Icon", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site"];
 
 
-    function AssetFactory(G3ME, Icon, Marker, SQLite, $rootScope, Smartgeo, $http, Site) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site) {
 
         /**
          * @class AssetFactory

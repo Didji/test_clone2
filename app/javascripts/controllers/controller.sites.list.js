@@ -90,7 +90,7 @@
         function getLocalSites() {
 
             var sitesById = {},
-                knownSites = Smartgeo.get_('sites') || {},
+                knownSites = prefetchedlocalsites || {},
                 site, tmpsites = {};
 
             // Pour que les filtres fonctionnent, il nous faut un simple tableau.

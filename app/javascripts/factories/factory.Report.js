@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Report', ReportFactory);
 
-    ReportFactory.$inject = ["G3ME", "Icon", "Marker", "$rootScope", "Smartgeo", "$http", "Activity"];
+    ReportFactory.$inject = ["Smartgeo", "Activity"];
 
 
-    function ReportFactory(G3ME, Icon, Marker, $rootScope, Smartgeo, $http, Activity) {
+    function ReportFactory(Smartgeo, Activity) {
 
         /**
          * @class ReportFactory

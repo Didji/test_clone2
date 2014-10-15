@@ -6,22 +6,21 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site) {
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites) {
 
         var vm = this;
 
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
         myLastPositionMarker = null;
-        Site.setCurrent($routeParams.site);
 
-        window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE || Smartgeo.get_('sites')[$routeParams.site];
+        window.SMARTGEO_CURRENT_SITE = prefetchedlocalsites;
 
         var LAST_USERS_LOCATION = [];
 
@@ -34,6 +33,8 @@
 
         $scope.$on("$destroy", function(event) {
             Smartgeo.emptyPositionListerners();
+            G3ME.map.remove();
+            document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
         });
 

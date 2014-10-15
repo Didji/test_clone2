@@ -261,7 +261,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 return value;
             } else {
                 SQLite.get(parameter, function(value){
-                    Smartgeo.parametersCache_[parameter] = value ;
+                    if(parameter !== 'sites'){
+                        Smartgeo.parametersCache_[parameter] = value ;
+                    }
                     (callback || angular.noop)(value);
                 });
             }

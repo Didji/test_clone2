@@ -22,14 +22,14 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.symbology = window.SMARTGEO_CURRENT_SITE.symbology ;
             this.CURRENT_ZOOM = false;
             this.tileUrl = window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL;
-            this.mapDiv = document.getElementById(mapDivId);
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
             this._2pi = 2 * Math.PI;
             this._pi4 = Math.PI / 4;
             this.DEG_TO_RAD = Math.PI / 180;
             this.minDistanceToALabel = 15;
-            this.map = new L.map(this.mapDiv, {
+            this.mapDivId = mapDivId;
+            this.map = new L.map(document.getElementById(mapDivId), {
                 attributionControl: false,
                 zoomControl: false,
                 zoomAnimation: true,
@@ -133,7 +133,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 // console.timeEnd('Canvas Tile Layer Drawing');
             }).addTo(this.map);
             this.tempAssetTile.addTo(this.map);
-            window.G3ME = this ;
         },
 
         getLineStringMiddle: function (lineString) {
@@ -224,12 +223,13 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         },
 
         fullscreen: function () {
-            G3ME.mapDiv.style.width = "100%";
+            document.getElementById(G3ME.mapDivId).style.width = "100%";
             G3ME.invalidateMapSize();
         },
 
         reduceMapWidth: function (px) {
-            G3ME.mapDiv.style.width = (window.innerWidth - px) + 'px';
+            console.log(G3ME.mapDivId);
+            document.getElementById(G3ME.mapDivId).style.width = (window.innerWidth - px) + 'px';
             G3ME.invalidateMapSize();
         },
 
@@ -828,6 +828,5 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = strokeStyle;
     }
-    window.G3ME = G3ME ;
     return G3ME;
 });

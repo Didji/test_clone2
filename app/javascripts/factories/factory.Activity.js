@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Activity', ActivityFactory);
 
-    ActivityFactory.$inject = ["$rootScope", "Site"];
+    ActivityFactory.$inject = ["Site"];
 
 
-    function ActivityFactory($rootScope, Site) {
+    function ActivityFactory(Site) {
 
         /**
          * @class ActivityFactory

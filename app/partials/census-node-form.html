@@ -5,8 +5,8 @@
     <div ng-if='tab.visible  || (metamodel[node.okey].tabs.length == 1)'>
         <div class="panel-body" style="padding: 10px 0px;">
             <div ng-repeat='field in tab.fields'>
-                <div bo-if="!field.readonly" ng-switch on="field.type">
-                    <label style="color:black; margin-top:10px;" for="" bo-text="field.label"></label>
+                <div ng-if="::(!field.readonly)" ng-switch on="field.type">
+                    <label style="color:black; margin-top:10px;" for="">{{::field.label}}</label>
                     <span ng-switch-when="O">
                         <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
                     </span>

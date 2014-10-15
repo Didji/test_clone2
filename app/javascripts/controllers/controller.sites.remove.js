@@ -28,7 +28,7 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-            removedSite = prefetchedlocalsites[$routeParams.site];
+            removedSite = prefetchedlocalsites;
             vm.siteLabel = removedSite.label;
             Installer.uninstallSite(removedSite,siteHasBeenRemoved);
         }
@@ -39,10 +39,14 @@
          */
         function siteHasBeenRemoved(){
             //TODO(@gulian): Site.remove(id);
-            delete prefetchedlocalsites[removedSite.id];
-            Smartgeo.set_('sites', prefetchedlocalsites);
-            $location.path(Object.keys(prefetchedlocalsites).length === 0 ? '/' : '/sites');
-            $scope.$apply();
+            Smartgeo.get_('sites', function(sites){
+                delete sites[prefetchedlocalsites.id];
+                Smartgeo.set_('sites', sites);
+                $location.path(Object.keys(sites).length === 0 ? '/' : '/sites');
+                $scope.$apply();
+            });
+
+
         }
 
     }
