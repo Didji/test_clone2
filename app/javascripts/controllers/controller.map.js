@@ -34,6 +34,8 @@
 
         $scope.$on("$destroy", function(event) {
             Smartgeo.emptyPositionListerners();
+            Smartgeo.set('user_position_activated', POSITION_ACTIVATE);
+            stopPosition();
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
         });
 
@@ -478,10 +480,16 @@
         /*
          * Gestion du mode de suivi de la position GPS.
          */
-        var POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION;
+        var POSITION_ACTIVATE, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION;
 
-        $scope.$on("ACTIVATE_POSITION", function() {
-            FIRST_POSITION = true;
+        $scope.$on("ACTIVATE_POSITION", activatePosition);
+        
+        if (Smartgeo.get('user_position_activated')) {
+            activatePosition();
+        }
+        
+        function activatePosition() {
+            POSITION_ACTIVATE = FIRST_POSITION = true;
             if (LAST_USERS_LOCATION.length) {
                 G3ME.map.setView(LAST_USERS_LOCATION, 18);
                 G3ME.invalidateMapSize();
@@ -491,7 +499,7 @@
                 POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "fa-compass", stopPosition);
                 G3ME.map.addControl(POSITION_CONTROL);
             }
-        });
+        }
 
         G3ME.map.on('dragend', function(event) {
             if (event.distance > 50) {
@@ -517,7 +525,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
 
-            POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = null;
+            POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = null;
 
             return false;
         }
