@@ -688,7 +688,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 coord, coord_ = {},
                 x, y, geometry = JSON.parse(asset.geometry);
 
-            if (changeContext = (previousSymbolId !== asset.symbolId)) {
+            changeContext = (previousSymbolId !== asset.symbolId)
+
+            if (changeContext) {
                 assetSymbology = G3ME.symbology[asset.symbolId];
                 ctx.strokeStyle = assetSymbology.style.strokecolor;
                 ctx.fillStyle = assetSymbology.style.fillcolor;

@@ -204,54 +204,54 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @memberOf Asset
      */
     Asset.addToDatabase = function (asset, callback) {
-            if (!Asset.m.take()) {
-                return Smartgeo.sleep(Asset.m.getTime(), function () {
-                    Asset.addToDatabase(asset, callback);
-                });
-            }
-            callback = callback || function () {};
-            Storage.get_('census', function (assets) {
-                assets = assets || [];
-                for (var i = 0; i < assets.length; i++) {
-                    if (assets[i].uuid === asset.uuid) {
-                        Asset.m.release();
-                        return Asset.updateInDatabase(asset, callback);
-                    }
-                }
-                assets.push(asset);
-                Storage.set_('census', assets, function () {
+        if (!Asset.m.take()) {
+            return Smartgeo.sleep(Asset.m.getTime(), function () {
+                Asset.addToDatabase(asset, callback);
+            });
+        }
+        callback = callback || function () {};
+        Storage.get_('census', function (assets) {
+            assets = assets || [];
+            for (var i = 0; i < assets.length; i++) {
+                if (assets[i].uuid === asset.uuid) {
                     Asset.m.release();
-                    callback(asset);
-                });
-            });
-        },
-
-
-        /**
-         * @method
-         * @memberOf Asset
-         */
-        Asset.updateInDatabase = function (asset, callback) {
-            if (!Asset.m.take()) {
-                return Smartgeo.sleep(Asset.m.getTime(), function () {
-                    Asset.updateInDatabase(asset, callback);
-                });
-            }
-            callback = callback || function () {};
-            Storage.get_('census', function (assets) {
-                for (var i = 0; i < assets.length; i++) {
-                    if (assets[i].uuid === asset.uuid) {
-                        assets[i] = asset;
-                        return Storage.set_('census', assets, function () {
-                            Asset.m.release();
-                            callback(asset);
-                        });
-                    }
+                    return Asset.updateInDatabase(asset, callback);
                 }
+            }
+            assets.push(asset);
+            Storage.set_('census', assets, function () {
                 Asset.m.release();
-                return Asset.addToDatabase(asset, callback);
+                callback(asset);
             });
-        };
+        });
+    };
+
+
+    /**
+     * @method
+     * @memberOf Asset
+     */
+    Asset.updateInDatabase = function (asset, callback) {
+        if (!Asset.m.take()) {
+            return Smartgeo.sleep(Asset.m.getTime(), function () {
+                Asset.updateInDatabase(asset, callback);
+            });
+        }
+        callback = callback || function () {};
+        Storage.get_('census', function (assets) {
+            for (var i = 0; i < assets.length; i++) {
+                if (assets[i].uuid === asset.uuid) {
+                    assets[i] = asset;
+                    return Storage.set_('census', assets, function () {
+                        Asset.m.release();
+                        callback(asset);
+                    });
+                }
+            }
+            Asset.m.release();
+            return Asset.addToDatabase(asset, callback);
+        });
+    };
 
 
     /**
