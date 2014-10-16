@@ -10,8 +10,8 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer",
-    function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer) {
+angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer", "GPS",
+    function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer, GPS) {
 
         'use strict';
 
@@ -88,7 +88,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          */
         $scope.startFollowingPosition = function () {
             $scope.stopFollowingPosition();
-            Smartgeo.startWatchingPosition($scope.whereIAm);
+            GPS.startWatchingPosition($scope.whereIAm);
         };
 
         /**
@@ -97,7 +97,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          */
         $scope.stopFollowingPosition = function () {
             $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
-            Smartgeo.stopWatchingPosition($scope.whereIAm);
+            GPS.stopWatchingPosition($scope.whereIAm);
         };
 
         /**

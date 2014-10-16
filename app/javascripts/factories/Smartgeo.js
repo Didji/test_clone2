@@ -40,7 +40,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             Smartgeo._initializeGlobalEvents();
             Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
-            Smartgeo.emptyPositionListerners();
 
             if (window.SmartgeoChromium) {
                 window.ChromiumCallbacks[13] = function (path) {
@@ -51,9 +50,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     }
                 };
                 SmartgeoChromium.getExtApplicationDirectory();
-                window.ChromiumCallbacks[0] = function (lng, lat, alt, acc) {
-                    Smartgeo.positionListernersDispatchor(lng, lat, alt, acc);
-                };
             }
 
             window.Smartgeo = Smartgeo;
@@ -196,57 +192,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
          */
         sanitizeAsset: function (asset) {
             return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
-        },
-
-        startWatchingPosition: function (listener) {
-            if (!this.positionListerners.length) {
-                if (window.SmartgeoChromium) {
-                    SmartgeoChromium.startWatchingPosition();
-                } else {
-                    Smartgeo.locationWatchIdentifier = navigator.geolocation.watchPosition(function (position) {
-                        Smartgeo.positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
-                    }, function () {}, {
-                        enableHighAccuracy: false,
-                        maximumAge: 0
-                    });
-                }
-            } else if (this.positionListerners.indexOf(listener) !== -1) {
-                return false;
-            }
-            return this.positionListerners.push(listener);
-        },
-
-        stopWatchingPosition: function (listener) {
-            var index = (typeof listener === "function") ? this.positionListerners.indexOf(listener) : listener;
-            if (index !== -1) {
-                this.positionListerners.splice(index);
-            }
-            if (!this.positionListerners.length) {
-                if (window.SmartgeoChromium) {
-                    SmartgeoChromium.stopWatchingPosition();
-                } else {
-                    navigator.geolocation.clearWatch(Smartgeo.locationWatchIdentifier);
-                }
-            }
-        },
-
-        getCurrentLocation: function (listener) {
-            var index = this.startWatchingPosition(function (lng, lat, alt, acc) {
-                Smartgeo.stopWatchingPosition(index - 1);
-                listener(lng, lat, alt, acc);
-            });
-        },
-
-        positionListernersDispatchor: function (lng, lat, alt, acc) {
-            for (var i = 0; i < this.positionListerners.length; i++) {
-                this.positionListerners[i](lng, lat, alt, acc);
-            }
-        },
-
-        emptyPositionListerners: function () {
-            for (var i = 0; i < this.positionListerners.length; i++) {
-                this.stopWatchingPosition(this.positionListerners[i]);
-            }
         },
 
         findGeometryByGuids_big: function (site, guids, callback, partial_response) {

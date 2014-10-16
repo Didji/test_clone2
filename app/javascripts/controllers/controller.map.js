@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites", "GPS"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites) {
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites, GPS) {
 
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
@@ -30,7 +30,7 @@
         }
 
         $scope.$on("$destroy", function () {
-            Smartgeo.emptyPositionListerners();
+            GPS.emptyPositionListerners();
             Storage.set('user_position_activated', POSITION_ACTIVATE);
             stopPosition();
             G3ME.map.remove();
@@ -494,7 +494,7 @@
                 G3ME.invalidateMapSize();
 
             }
-            if (Smartgeo.startWatchingPosition(setLocationMarker)) {
+            if (GPS.startWatchingPosition(setLocationMarker)) {
                 POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "fa-compass", stopPosition);
                 G3ME.map.addControl(POSITION_CONTROL);
             }
@@ -510,7 +510,7 @@
 
         function stopPosition() {
 
-            Smartgeo.stopWatchingPosition(setLocationMarker);
+            GPS.stopWatchingPosition(setLocationMarker);
 
             LAST_USERS_LOCATION = [];
 

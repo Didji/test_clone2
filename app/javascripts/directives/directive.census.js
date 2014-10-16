@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera",
-    function ($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS",
+    function ($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS) {
 
         "use strict";
 
@@ -68,7 +68,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 scope.userLocationGeometry = function (node) {
 
-                    Smartgeo.getCurrentLocation(function (lng, lat) {
+                    GPS.getCurrentLocation(function (lng, lat) {
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({

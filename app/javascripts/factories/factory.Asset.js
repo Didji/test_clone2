@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Asset', AssetFactory);
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Storage", "Site"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Storage", "Site", "GPS"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Storage, Site) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Storage, Site, GPS) {
 
         /**
          * @class AssetFactory
@@ -99,7 +99,7 @@
          */
         Asset.prototype.goTo = function () {
             var center = this.getCenter();
-            Smartgeo.getCurrentLocation(function (lng, lat) {
+            GPS.getCurrentLocation(function (lng, lat) {
                 if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                     SmartgeoChromium.goTo(lng, lat, center[1], center[0]);
                 } else if (window.cordova) {
