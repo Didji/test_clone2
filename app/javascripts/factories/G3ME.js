@@ -236,7 +236,6 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, Smartgeo, $roo
         },
 
         reduceMapWidth: function(px) {
-            console.log(G3ME.mapDivId);
             document.getElementById(G3ME.mapDivId).style.width = (window.innerWidth - px) + 'px';
             G3ME.invalidateMapSize();
         },

@@ -23,7 +23,11 @@
          * @param {*} value
          */
         Storage.set = function(parameter, value) {
-            return localStorage.setItem(parameter, JSON.stringify(value));
+            if(value){
+                return localStorage.setItem(parameter, JSON.stringify(value));
+            } else {
+                return Storage.remove(parameter);
+            }
         };
 
         /**
@@ -52,6 +56,9 @@
          * @param {Function} callback
          */
         Storage.set_ = function(parameter, value, callback) {
+            if(!value){
+                return Storage.remove_(parameter, value, callback);
+            }
             var deferred = $q.defer();
             value = JSON.parse(JSON.stringify(value));
             SQLite.set(parameter, value, function(value) {

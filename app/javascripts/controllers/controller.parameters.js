@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('ParametersController', ParametersController);
 
-    ParametersController.$inject = ["$rootScope", "$scope", "i18n", "$location"];
+    ParametersController.$inject = ["$scope", "i18n", "$location"];
 
     /**
      * @class ParametersController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function ParametersController($rootScope, $scope, i18n, $location) {
+    function ParametersController($scope, i18n, $location) {
 
         var vm = this;
 
