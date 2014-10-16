@@ -396,7 +396,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     asset = assets[i],
                     assetSymbology = symbology[asset.okey + "0"],
                     coord, coord_ = {},
-                     image;
+                    image;
 
                 if (G3ME.active_layers && G3ME.active_layers.indexOf(asset.okey) < 0) {
                     continue;
@@ -670,7 +670,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             var previousX = false,
                 previousY = false,
                 coord, coord_ = {},
-                 geometry = JSON.parse(asset.geometry);
+                geometry = JSON.parse(asset.geometry);
 
             changeContext = (previousSymbolId !== asset.symbolId);
 

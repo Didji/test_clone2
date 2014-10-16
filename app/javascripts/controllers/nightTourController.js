@@ -104,7 +104,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.whereIAm = function (lng, lat /*, alt, acc*/) {
+        $scope.whereIAm = function (lng, lat /*, alt, acc*/ ) {
             $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
             $scope.addPositionToTrace(lat, lng);
         };

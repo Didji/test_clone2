@@ -153,8 +153,8 @@
             });
 
             $http.post(url, {}, {
-                timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
-            })
+                    timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
+                })
                 .success(loginSuccess)
                 .error(loginError);
 

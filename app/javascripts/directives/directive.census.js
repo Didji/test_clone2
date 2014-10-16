@@ -186,7 +186,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 scope.confirmDelete = function (node) {
                     alertify.confirm('Supprimer ' + node.fields[window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].ukey] + ' ?', function (yes) {
-                        if(yes){
+                        if (yes) {
                             node.delete();
                             scope.$apply();
                         }

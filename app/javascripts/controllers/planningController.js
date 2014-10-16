@@ -701,7 +701,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         }
     ]).filter('todayMissions', function ($filter) {
 
-            "use strict";
+        "use strict";
 
         return function (in_) {
             var out = {},
@@ -720,7 +720,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('specificDayMissions', function ($filter) {
 
-            "use strict";
+        "use strict";
 
         return function (in_, day) {
             var out = [],
@@ -737,7 +737,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('lateMissions', function ($filter) {
 
-            "use strict";
+        "use strict";
 
         return function (in_) {
             var out = {},
@@ -754,9 +754,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('doneMissions', function () {
 
-            "use strict";
+        "use strict";
 
-       return function (in_) {
+        return function (in_) {
             var out = {},
                 mission;
             for (var id in in_) {
@@ -771,7 +771,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('sanitizeDate', function () {
 
-            "use strict";
+        "use strict";
 
         // 01/12/1988 -> 12/01/1988 -> timestamp (14XXXXXXXXXXXX)
         return function (date) {
@@ -780,9 +780,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('opennedMissions', function () {
 
-            "use strict";
+        "use strict";
 
-  return function (in_, asset, site) {
+        return function (in_, asset, site) {
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity) {
@@ -805,9 +805,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     })
     .filter('opennedCalls', function () {
 
-            "use strict";
+        "use strict";
 
-return function (in_) {
+        return function (in_) {
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity && in_[i].openned) {
