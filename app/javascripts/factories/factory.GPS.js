@@ -14,7 +14,7 @@
          */
 
         var GPS = {
-            positionListerners : []
+            positionListerners: []
         };
 
         /**
@@ -25,7 +25,7 @@
         GPS.startWatchingPosition = function (listener) {
             if (!GPS.positionListerners.length) {
                 if (window.SmartgeoChromium) {
-                    window.ChromiumCallbacks[0] = GPS.__positionListernersDispatchor ;
+                    window.ChromiumCallbacks[0] = GPS.__positionListernersDispatchor;
                     SmartgeoChromium.startWatchingPosition();
                 } else {
                     GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(function (position) {

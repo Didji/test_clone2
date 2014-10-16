@@ -6,9 +6,9 @@
         .module('smartgeomobile')
         .factory('ComplexAsset', ComplexAssetFactory);
 
-    ComplexAssetFactory.$inject = ["$q" , "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site"];
 
-    function ComplexAssetFactory($q , $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site) {
 
         /**
          * @class ComplexAssetFactory

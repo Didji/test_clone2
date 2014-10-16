@@ -30,7 +30,7 @@
          * @desc
          */
         Site.__defineSetter__("current", function (site) {
-            window.SMARTGEO_CURRENT_SITE =  site;
+            window.SMARTGEO_CURRENT_SITE = site;
         });
 
         /**

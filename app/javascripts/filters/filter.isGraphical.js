@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .filter('isGraphical', isGraphical);
 
-        isGraphical.$inject = ["Site"];
+    isGraphical.$inject = ["Site"];
 
     function isGraphical(Site) {
         /**
