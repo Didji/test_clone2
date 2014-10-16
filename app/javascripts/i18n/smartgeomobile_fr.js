@@ -1,5 +1,5 @@
 window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {};
-window.smartgeo_i18n_lang['fr'] = {
+window.smartgeo_i18n_lang.fr = {
     _MENU_PARAMETERS: "Paramètres",
     _AUTH_LOG_MESSAGE_INIT_: "Initialisation",
     _AUTH_LOG_MESSAGE_REMOTE_: "Connexion distante",
@@ -107,7 +107,6 @@ window.smartgeo_i18n_lang['fr'] = {
     _SYNC_UNKNOWN_ERROR_: "Erreur inconnue lors de la synchronisation.",
     _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?", // sitename
     _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?", // sitename
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?", // sitename
 
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",

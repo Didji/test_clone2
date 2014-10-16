@@ -106,17 +106,19 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
             $rootScope.$watch('reports', function (event) {
 
+                var uuid;
+
                 vm.toSyncNumber = 0;
 
                 if ($rootScope.reports && $rootScope.reports._byUUID) {
-                    for (var uuid in $rootScope.reports._byUUID) {
+                    for (uuid in $rootScope.reports._byUUID) {
                         if (!$rootScope.reports._byUUID[uuid].synced) {
                             vm.toSyncNumber++;
                         }
                     }
                 }
                 if ($rootScope.censusAssets && $rootScope.censusAssets._byUUID) {
-                    for (var uuid in $rootScope.censusAssets._byUUID) {
+                    for (uuid in $rootScope.censusAssets._byUUID) {
                         if (!$rootScope.censusAssets._byUUID[uuid].synced) {
                             vm.toSyncNumber++;
                         }
@@ -144,12 +146,13 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Applique la visibilité aux éléments du menu en fonction des droits et de l'attribut 'specialVisibility' s'il est défini.
          */
         vm.applyVisibility = function () {
-            for (var menuItem in vm.menuItems) {
+            var menuItem;
+            for (menuItem in vm.menuItems) {
                 vm.menuItems[menuItem].displayMenuItem = (vm.menuItems[menuItem].specialVisibility ? vm[vm.menuItems[menuItem].specialVisibility]() : true);
                 vm.menuItems[menuItem].displayItemContent = false;
             }
 
-            for (var menuItem in vm.bottomMenuItems) {
+            for (menuItem in vm.bottomMenuItems) {
                 vm.bottomMenuItems[menuItem].displayMenuItem = (vm.bottomMenuItems[menuItem].specialVisibility ? vm[vm.bottomMenuItems[menuItem].specialVisibility]() : true);
                 vm.bottomMenuItems[menuItem].displayItemContent = false;
             }

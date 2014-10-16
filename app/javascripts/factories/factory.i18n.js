@@ -26,20 +26,20 @@
         i18n.SYSTEM_LANGUAGE = navigator.language.slice(0, 2);
         i18n.FALLBACK_LANGUAGE = 'fr';
         i18n.UNTRANSLATED_CHAR = '≠';
-        i18n.MISSING_ARG_CHAR = 'Ø',
-            i18n.labels = window.smartgeo_i18n_lang,
+        i18n.MISSING_ARG_CHAR = 'Ø';
+        i18n.labels = window.smartgeo_i18n_lang;
 
-            /**
-             * @name lang
-             * @desc Cherche et met en cache la langue à utiliser pour l'internationalisation
-             * @returns {String}
-             */
-            i18n.lang = function () {
-                return i18n.CACHE ||
-                    (i18n.labels[i18n.OVERRIDE_LANGUAGE] && (i18n.CACHE = i18n.OVERRIDE_LANGUAGE)) ||
-                    (i18n.labels[i18n.SYSTEM_LANGUAGE] && (i18n.CACHE = i18n.SYSTEM_LANGUAGE)) ||
-                    (i18n.labels[i18n.FALLBACK_LANGUAGE] && (i18n.CACHE = i18n.FALLBACK_LANGUAGE));
-            };
+        /**
+         * @name lang
+         * @desc Cherche et met en cache la langue à utiliser pour l'internationalisation
+         * @returns {String}
+         */
+        i18n.lang = function () {
+            return i18n.CACHE ||
+                (i18n.labels[i18n.OVERRIDE_LANGUAGE] && (i18n.CACHE = i18n.OVERRIDE_LANGUAGE)) ||
+                (i18n.labels[i18n.SYSTEM_LANGUAGE] && (i18n.CACHE = i18n.SYSTEM_LANGUAGE)) ||
+                (i18n.labels[i18n.FALLBACK_LANGUAGE] && (i18n.CACHE = i18n.FALLBACK_LANGUAGE));
+        };
 
         /**
          * @name get

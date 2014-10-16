@@ -108,8 +108,8 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
             delete report.ged;
             if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
                 ChromiumCallbacks[11] = function (success) {
-                    if (success) {} else {
-                        console.error("writeJSONError while writing " + path);
+                    if (!success) {
+                        console.error("writeJSONError while writing " + report);
                     }
                 };
                 SmartgeoChromium.writeJSON(JSON.stringify(report), 'reports/' + report.uuid + '.json');

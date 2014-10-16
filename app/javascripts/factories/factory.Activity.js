@@ -23,16 +23,17 @@
          * @desc
          */
         Activity.findOne = function (id) {
+            var i, numTabs, tab;
             if (!Site.current.activities._byId) {
                 Site.current.activities._byId = {};
-                for (var i = 0; i < Site.current.activities.length; i++) {
+                for (i = 0; i < Site.current.activities.length; i++) {
                     Site.current.activities._byId[Site.current.activities[i].id] = Site.current.activities[i];
                 }
             }
             var activity = Site.current.activities._byId[id];
             if (!activity._fields) {
                 activity._fields = {};
-                for (var i = 0, numTabs = activity.tabs.length, tab; i < numTabs; i++) {
+                for (i = 0, numTabs = activity.tabs.length, tab; i < numTabs; i++) {
                     tab = activity.tabs[i];
                     for (var j = 0, numFields = tab.fields.length; j < numFields; j++) {
                         if (tab.fields[j].required) {

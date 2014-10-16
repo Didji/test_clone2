@@ -111,7 +111,8 @@
             if (assets.length) {
                 vm.groups = {};
             } else {
-                return vm.groups = null;
+                vm.groups = null
+                return vm.groups;
             }
             for (var i = 0; i < assets.length; i++) {
                 vm.groups[assets[i].priority] = vm.groups[assets[i].priority] || {};

@@ -64,7 +64,7 @@
                 missionId = $rootScope.report_mission || $routeParams.mission,
                 isCall = false;
 
-            if (missionId && missionId.indexOf('call-') != -1) {
+            if (missionId && missionId.indexOf('call-') !== -1) {
                 isCall = true;
                 missionId = missionId.substr(5);
             }
@@ -142,10 +142,10 @@
             var report = angular.copy(vm.report),
                 i;
             for (i in report.fields) {
-                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "T") {
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
                     report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes());
                 }
-                if (report.fields[i] instanceof Date && report.activity._fields[i].type == "D") {
+                if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
                     report.fields[i] = report.fields[i].getFullYear() + "-" + pad(report.fields[i].getMonth() + 1) + "-" + pad(report.fields[i].getDate());
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
@@ -190,7 +190,7 @@
 
                 var elt;
 
-                if (!angular.element(this).prop('tagName') === "label") {
+                if (angular.element(this).prop('tagName') !== "label") {
                     elt = angular.element(this);
                 } else if (!angular.element(this).siblings('label').length) {
                     elt = angular.element(this);
@@ -269,7 +269,7 @@
             var fields = vm.report.fields,
                 def, i, field, date;
 
-            for (var i in vm.report.activity._fields) {
+            for (i in vm.report.activity._fields) {
                 field = vm.report.activity._fields[i];
                 def = field['default'];
 

@@ -115,7 +115,7 @@
             }, function () {
                 redirect(site);
             });
-        };
+        }
 
         /**
          * @name redirect
@@ -124,7 +124,7 @@
          */
         function redirect(site) {
             $location.path('/map/' + site.id);
-        };
+        }
 
         /**
          * @name confirmUninstallSite

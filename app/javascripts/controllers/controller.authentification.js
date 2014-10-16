@@ -67,7 +67,7 @@
                 localSites.push(tmp[site]);
             }
 
-            for (var site in data.sites) {
+            for (site in data.sites) {
                 if (!data.sites[site].isAdmin && !data.sites[site].isAdminCarto) {
                     remoteSites.push(data.sites[site]);
                 }

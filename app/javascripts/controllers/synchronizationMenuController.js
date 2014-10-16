@@ -145,7 +145,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         $scope.deleteReport = function (report, $index) {
             var text;
             try {
-                text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + site.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
+                text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + window.SMARTGEO_CURRENT_SITE.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             } catch (e) {
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             }
@@ -193,10 +193,16 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             var reports = $rootScope.reports || [],
                 censusAssets = $rootScope.censusAssets || [],
                 size = 0;
-            for (var i = 0; i < reports.length; i++)
-                if (!reports[i].synced) size++;
-            for (var i = 0; i < censusAssets.length; i++)
-                if (!censusAssets[i].synced) size++;
+            for (var i = 0; i < reports.length; i++) {
+                if (!reports[i].synced) {
+                    size++;
+                }
+            }
+            for (i = 0; i < censusAssets.length; i++) {
+                if (!censusAssets[i].synced) {
+                    size++;
+                }
+            }
             return size;
         };
 

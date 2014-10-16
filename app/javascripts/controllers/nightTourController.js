@@ -130,8 +130,6 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 var distanceFromLastPosition = L.latLng(previousPosition).distanceTo(L.latLng([lng, lat])),
                     now = new Date().getTime(),
                     timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
-
-                if (!force && previousPosition && (distanceFromLastPosition > 500 || distanceFromLastPosition === 0) && timeBetweenLastPositionAndNow < 15000) {}
             }
 
             $scope.lastPositionWasSetByBatmanOn = new Date().getTime();

@@ -31,7 +31,7 @@
                     update();
                 }
             });
-        };
+        }
 
         /**
          * @name confirmRemove
@@ -43,7 +43,7 @@
                     uninstall();
                 }
             });
-        };
+        }
 
         /**
          * @name update
