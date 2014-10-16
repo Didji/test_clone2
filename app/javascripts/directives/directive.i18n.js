@@ -19,7 +19,7 @@
             link: function (scope, element) {
                 (element.html() && element).html(i18n.get(element.html()));
             }
-        }
+        };
     }
 
 })();

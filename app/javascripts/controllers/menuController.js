@@ -104,7 +104,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
 
             vm.checkIfMoreThanOneSiteIsAvailable();
 
-            $rootScope.$watch('reports', function (event) {
+            $rootScope.$watch('reports', function () {
 
                 var uuid;
 

@@ -41,7 +41,7 @@
                 break;
             }
             return marker.on('click', clickHandler || angular.noop);
-        }
+        };
 
         return Marker;
     }

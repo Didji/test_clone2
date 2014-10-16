@@ -385,10 +385,10 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
         build_binded_insert_request: function (site, assets) {
 
             var request = '',
-                asset, asset_, guid, check = /\'/g,
+                asset, asset_, guid,
                 metamodel = site.metamodel,
                 symbology = site.symbology,
-                bounds, geometry, symbolId, angle, label, args = [],
+                bounds,
                 fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
                 fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
                 assets_length = assets.length,

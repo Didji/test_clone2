@@ -40,7 +40,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         },
         m_max_t: 5000,
         m_min_t: 1000
-    }
+    };
 
     /**
      * @memberOf Asset
@@ -324,10 +324,10 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         var assets = asset_s.length ? asset_s : [asset_s];
 
         var request = '',
-            asset, asset_, guid, check = /\'/g,
+            asset, asset_, guid,
             metamodel = site.metamodel,
             symbology = site.symbology,
-            bounds, geometry, symbolId, angle, label, args = [],
+            bounds,
             fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
             fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
             values_in_request,
@@ -422,7 +422,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         })).success(function (data) {
             callback(data);
         }).error(function () {
-            console.error(arguments)
+            console.error(arguments);
         });
     };
 

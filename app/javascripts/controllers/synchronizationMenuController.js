@@ -6,13 +6,12 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         var synchronizationCheckTimeout = 1000 * 60 * 10,
             synchronizationTimeout = 1000 * 60 * 5,
             reportsSynchronizationCheckTimeoutId = false,
-            assetsSynchronizationCheckTimeoutId = false,
             reportsSynchronizationTimeoutId = false,
             assetsSynchronizationTimeoutId = false;
 
         reportsSynchronizationCheckTimeoutId = $interval(ReportSynchronizer.checkSynchronizedReports, synchronizationCheckTimeout);
 
-        $scope.$on("$destroy", function (event) {
+        $scope.$on("$destroy", function () {
             $interval.cancel(reportsSynchronizationCheckTimeoutId);
         });
 
@@ -67,7 +66,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 if (report.synced && !report.hide) {
                     $scope.hideReport(report, 0);
                 }
-                (callback || function () {})()
+                (callback || function () {})();
             });
         };
 
@@ -87,7 +86,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                     if (!$rootScope.reports._byUUID[reports[i].uuid].synced) {
                         return $scope.synchronizeReport($rootScope.reports._byUUID[reports[i].uuid], function () {
                             $scope.synchronizeReports(i + 1);
-                        })
+                        });
                     }
                 }
 
@@ -107,7 +106,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 if (asset.synced && !asset.hide) {
                     $scope.hideReport(asset, 0);
                 }
-                (callback || function () {})()
+                (callback || function () {})();
             });
         };
 
@@ -126,7 +125,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                     if (!$rootScope.censusAssets._byUUID[assets[i].uuid].synced) {
                         return $scope.synchronizeAsset($rootScope.censusAssets._byUUID[assets[i].uuid], function () {
                             $scope.synchronizeAssets(i + 1);
-                        })
+                        });
                     }
                 }
 

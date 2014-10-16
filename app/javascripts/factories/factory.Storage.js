@@ -14,7 +14,7 @@
          * @class StorageFactory
          * @desc Factory de la classe Storage
          */
-        var Storage = {}
+        var Storage = {};
 
         /**
          * @name set
@@ -92,8 +92,8 @@
         Storage.remove_ = function (parameter, callback) {
             var deferred = $q.defer();
             SQLite.unset(parameter, function (value) {
-                deferred.resolve(true);
-                (callback || angular.noop)(true);
+                deferred.resolve(value);
+                (callback || angular.noop)(value);
             });
             return deferred.promise;
         };

@@ -55,7 +55,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 }
             });
 
-            angular.element($window).bind("resize", function (e) {
+            angular.element($window).bind("resize", function () {
                 if ($scope.state === 'open') {
                     $scope.close();
                     $scope.open();
@@ -65,10 +65,10 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $scope.$on("TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset);
 
 
-            $scope.$watch('nightTourRecording', function (newval, oldval) {
+            $scope.$watch('nightTourRecording', function (newval) {
                 $scope.isFollowingMe = newval;
             });
-            $scope.$watch('isFollowingMe', function (newval, oldval) {
+            $scope.$watch('isFollowingMe', function (newval) {
                 $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
             });
 
@@ -104,7 +104,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.whereIAm = function (lng, lat, alt, acc) {
+        $scope.whereIAm = function (lng, lat /*, alt, acc*/) {
             $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
             $scope.addPositionToTrace(lat, lng);
         };
@@ -115,7 +115,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @param {float} lng Point's longitude
          * @desc
          */
-        $scope.addPositionToTrace = function (lat, lng, force) {
+        $scope.addPositionToTrace = function (lat, lng) {
             if (!$scope.mission) {
                 return alertify.error("Erreur : aucune tournée en cours");
             }
@@ -123,14 +123,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 return;
             }
             var traces = Storage.get('traces') || {},
-                currentTrace = traces[$scope.mission.id] || [],
-                previousPosition = currentTrace[currentTrace.length - 1];
-
-            if (previousPosition) {
-                var distanceFromLastPosition = L.latLng(previousPosition).distanceTo(L.latLng([lng, lat])),
-                    now = new Date().getTime(),
-                    timeBetweenLastPositionAndNow = (now - $scope.lastPositionWasSetByBatmanOn || 0);
-            }
+                currentTrace = traces[$scope.mission.id] || [];
 
             $scope.lastPositionWasSetByBatmanOn = new Date().getTime();
 

@@ -57,7 +57,7 @@
          * @name loginSuccess
          * @desc Callback de succès de l'authentification
          */
-        function loginSuccess(data, status) {
+        function loginSuccess(data) {
 
             var localSites = [],
                 tmp = prefetchedlocalsites,

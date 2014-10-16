@@ -58,8 +58,8 @@
             },
             id: "fr-fr",
             pluralCat: function (a) {
-                return a >= 0 && 2 >= a && 2 !== a ? b.ONE : b.OTHER
+                return a >= 0 && 2 >= a && 2 !== a ? b.ONE : b.OTHER;
             }
-        })
+        });
     }]);
-})()
+})();

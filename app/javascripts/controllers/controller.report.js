@@ -172,7 +172,7 @@
                 if (!comesFromIntent) {
                     endOfReport();
                 }
-            }, 5000)
+            }, 5000);
 
             if (comesFromIntent) {
                 endOfReport();
@@ -186,7 +186,7 @@
          * @desc Olalalala ...
          */
         function bidouille() {
-            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function (e) {
+            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function () {
 
                 var elt;
 
@@ -433,17 +433,6 @@
             }
             return true;
         }
-
-        /**
-         * @name sortFunction
-         * @param {Object} a
-         * @param {Object} b
-         * @desc
-         */
-        function sortFunction(a, b) {
-            return (a.text < b.text) ? -1 : 1;
-        }
-
 
         /**
          * @name containsUnfilledRequiredFields

@@ -31,7 +31,7 @@
 
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
-
+            scope.openInApp = openInApp;
             scope.$on('$destroy', destroy);
 
 
@@ -83,7 +83,7 @@
                 });
                 setTimeout(function () {
                     angel.addClass('ascending');
-                }, 1000)
+                }, 1000);
             }
 
             /**

@@ -1,8 +1,8 @@
-/*global window, angular, navigator, SmartgeoChromium, document, console, Camera, $  */
-
 angular
     .module("smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource','localytics.directives'])
     .config(config).run(function($rootScope /*, LicenseManager*/ ) {
+
+        "use strict" ;
         // TODO: activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
         $rootScope.rights = {
             census: true,
@@ -24,9 +24,11 @@ angular
         };
     });
 
-config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$provide", "$locationProvider"];
+config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$provide"];
 
-function config($routeProvider, $rootScope, $httpProvider, $provide, $locationProvider) {
+function config($routeProvider, $rootScope, $httpProvider, $provide) {
+
+    "use strict" ;
 
     var prefetchPromise = {
         prefetchedlocalsites: ['Site', 'Smartgeo', '$route',

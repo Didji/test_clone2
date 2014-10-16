@@ -51,9 +51,9 @@
         return consultationTabsFilter_;
     }
 
-    consultationFieldsFilter.$inject = ["$rootScope"];
+    consultationFieldsFilter.$inject = [];
 
-    function consultationFieldsFilter($rootScope) {
+    function consultationFieldsFilter() {
         /**
          * @name consultationFieldsFilter_
          * @desc
@@ -131,9 +131,9 @@
         return reportFieldsFilter_;
     }
 
-    activityListFilter.$inject = ["Asset"];
+    activityListFilter.$inject = [];
 
-    function activityListFilter(Asset) {
+    function activityListFilter() {
 
         /**
          * @name activityListFilter_

@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
-    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
+angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage",
+    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage) {
 
         'use strict';
 
@@ -18,8 +18,6 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
             var steps = [],
                 step,
                 n = site.number,
-                stepid = 0,
-                numsteps = 0,
                 i;
 
             $scope.totalProgress = 1 * n.total;
@@ -55,9 +53,6 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
         var allSites = Storage.get_('sites') || {};
         $scope.site = allSites[$routeParams.site];
         $scope.sites = allSites;
-
-        var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
-
         $scope.steps[0].progress = 50;
 
         Installer.getUpdateJSON($scope.site, function (site) {

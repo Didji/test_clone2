@@ -16,7 +16,7 @@
          * @desc Factory de la classe Mission
          */
 
-        var Mission = {}
+        var Mission = {};
 
         /**
          * @name query

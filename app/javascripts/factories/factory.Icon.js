@@ -12,7 +12,7 @@
          * @class IconFactory
          * @desc Factory de la classe Icon
          */
-        var Icon = {}
+        var Icon = {};
 
         /**
          * @name get

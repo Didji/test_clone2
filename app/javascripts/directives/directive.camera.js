@@ -80,7 +80,7 @@
                                 video.src = vendorURL.createObjectURL(stream);
                             }
                             video.play();
-                        }, function (err) {
+                        }, function () {
                             var imageElement2 = document.createElement("img");
                             imageElement2.src = "http://placehold.it/350x150";
                             imageElement2.onload = function () {
@@ -98,7 +98,7 @@
                             };
                         });
 
-                        video.addEventListener("canplay", function (ev) {
+                        video.addEventListener("canplay", function () {
                             if (!streaming) {
                                 height = video.videoHeight / (video.videoWidth / width);
                                 video.setAttribute("width", width);
@@ -130,7 +130,7 @@
                                 });
                                 scope.isTakingPhoto = false;
                             });
-                        }, function (err) {
+                        }, function () {
                             ctrl.$setValidity("error", false);
                         }, {
                             quality: 100,

@@ -40,7 +40,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 $rootScope.$watch('missions', function () {
                     Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
                 });
-                $scope.nextMissions =   {};
+                $scope.nextMissions = {};
 
                 $scope.applyFilterOnMission();
 
@@ -64,7 +64,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.synchronize();
                 }, $scope._SYNCHRONIZE_INTERVAL);
 
-                $scope.$on("$destroy", function (event) {
+                $scope.$on("$destroy", function () {
                     $interval.cancel($scope._SYNCHRONIZE_INTERVAL_ID);
                 });
             };
@@ -189,7 +189,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         $scope.fillAssetsCache();
                     })
                     .error(function (message, code) {
-                        $scope.synchronizeErrorCallback(message, code)
+                        $scope.synchronizeErrorCallback(message, code);
                     });
             };
 
@@ -217,7 +217,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 }
                 $scope.applyFilterOnMission();
                 $scope.fillAssetsCache();
-            }
+            };
 
             /**
              * @method
@@ -274,7 +274,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 
                                 $scope.$apply();
                             });
-                        })($rootScope.missions[i])
+                        })($rootScope.missions[i]);
                     }
 
                     if ($rootScope.missions[i].postAddedAssets && $rootScope.missions[i].postAddedAssets.done && $rootScope.missions[i].postAddedAssets.done.length) {
@@ -296,7 +296,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 
                                 $scope.$apply();
                             });
-                        })($rootScope.missions[i])
+                        })($rootScope.missions[i]);
                     }
                 }
             };
@@ -454,7 +454,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
              * @desc Open report with concerned assets
              *
              */
-            $scope.showReport = function (mission, activity) {
+            $scope.showReport = function (mission) {
                 var selectedAssets = [];
                 for (var i = 0; i < assetsCache[mission.id].length; i++) {
                     if (assetsCache[mission.id][i].selected) {
@@ -693,13 +693,16 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
              * @desc
              */
             $scope.getAssetLabel = function (mission, assetid) {
-                return assetsCache[mission.id]._byId[assetid].label
+                return assetsCache[mission.id]._byId[assetid].label;
             };
 
 
 
         }
     ]).filter('todayMissions', function ($filter) {
+
+            "use strict";
+
         return function (in_) {
             var out = {},
                 mission, now = new Date();
@@ -708,9 +711,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 
             for (var id in in_) {
                 mission = in_[id];
-                if ($filter('sanitizeDate')(mission.end) > now
-                    //&& $filter('sanitizeDate')(mission.begin) <= now
-                    && (mission.assets.length || !mission.activity) && !mission.isLate) {
+                if ($filter('sanitizeDate')(mission.end) > now && (mission.assets.length || !mission.activity) && !mission.isLate) {
                     out[id] = mission;
                 }
             }
@@ -718,6 +719,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         };
     })
     .filter('specificDayMissions', function ($filter) {
+
+            "use strict";
+
         return function (in_, day) {
             var out = [],
                 mission;
@@ -732,6 +736,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         };
     })
     .filter('lateMissions', function ($filter) {
+
+            "use strict";
+
         return function (in_) {
             var out = {},
                 mission, now = (new Date()).getTime();
@@ -745,10 +752,13 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             return out;
         };
     })
-    .filter('doneMissions', function ($filter) {
-        return function (in_) {
+    .filter('doneMissions', function () {
+
+            "use strict";
+
+       return function (in_) {
             var out = {},
-                mission, now = (new Date()).getTime();
+                mission;
             for (var id in in_) {
                 mission = in_[id];
                 if (!(mission.assets.length || !mission.activity)) {
@@ -760,13 +770,19 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         };
     })
     .filter('sanitizeDate', function () {
+
+            "use strict";
+
         // 01/12/1988 -> 12/01/1988 -> timestamp (14XXXXXXXXXXXX)
         return function (date) {
             return date && (new Date(date.slice(3, 5) + '/' + date.slice(0, 2) + '/' + date.slice(6))).getTime() || '';
-        }
+        };
     })
     .filter('opennedMissions', function () {
-        return function (in_, asset, site) {
+
+            "use strict";
+
+  return function (in_, asset, site) {
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity) {
@@ -788,7 +804,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         };
     })
     .filter('opennedCalls', function () {
-        return function (in_, asset, site) {
+
+            "use strict";
+
+return function (in_) {
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity && in_[i].openned) {

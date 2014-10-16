@@ -73,7 +73,7 @@
                         vm.sites.push(tmpsites[id]);
                     }
                     vm.ready = true;
-                }).error(function (error, errorCode) {
+                }).error(function () {
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in knownSites) {
@@ -89,9 +89,7 @@
          */
         function getLocalSites() {
 
-            var sitesById = {},
-                knownSites = prefetchedlocalsites || {},
-                site, tmpsites = {};
+            var knownSites = prefetchedlocalsites || {};
 
             // Pour que les filtres fonctionnent, il nous faut un simple tableau.
             vm.sites = [];

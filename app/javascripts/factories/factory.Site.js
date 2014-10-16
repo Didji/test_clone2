@@ -16,7 +16,7 @@
          * @desc Factory de la classe Site
          */
 
-        var Site = {}
+        var Site = {};
 
         /**
          * @name current

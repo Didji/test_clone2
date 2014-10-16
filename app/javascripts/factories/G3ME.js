@@ -121,17 +121,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 window.SMARTGEO_CURRENT_SITE_IMG[symbol] = image;
             }
 
-            $(window).on('resize', function () {
-                G3ME.tilesOnScreen = ~~((window.innerHeight / 256) * (window.innerWidth / 256)) + 1;
-            });
-
-            G3ME.tilesOnScreen = ~~((window.innerHeight / 256) * (window.innerWidth / 256)) + 1;
-
-            this.canvasTile.on('loading', function () {
-                // console.time('Canvas Tile Layer Drawing');
-            }).on('load', function () {
-                // console.timeEnd('Canvas Tile Layer Drawing');
-            }).addTo(this.map);
+            this.canvasTile.addTo(this.map);
             this.tempAssetTile.addTo(this.map);
         },
 
@@ -261,7 +251,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             return rv;
         },
 
-        drawTempAssetTile: function (canvas, tilePoint, performBench) {
+        drawTempAssetTile: function (canvas, tilePoint) {
 
             var census = Storage.get_('census');
 
@@ -288,7 +278,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 _2pi = 2 * Math.PI,
                 _pi4 = Math.PI / 4,
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
-                parse = window.JSON.parse,
                 symbology = window.SMARTGEO_CURRENT_SITE.symbology,
                 imageFactor = 1,
                 // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
@@ -298,10 +287,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 yscale = canvas.height / Math.abs(ymax - ymin),
                 initialTopLeftPointX = this.map._initialTopLeftPoint.x,
                 initialTopLeftPointY = this.map._initialTopLeftPoint.y,
-                delta_x = initialTopLeftPointX - nwmerc.x,
-                delta_y = initialTopLeftPointY - nwmerc.y,
                 DEG_TO_RAD = Math.PI / 180,
-                buffer = 100 / xscale,
                 drawnLabels = [],
                 labelCache = [],
                 minDistanceToALabel = 15;
@@ -410,7 +396,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     asset = assets[i],
                     assetSymbology = symbology[asset.okey + "0"],
                     coord, coord_ = {},
-                    x, y, image;
+                     image;
 
                 if (G3ME.active_layers && G3ME.active_layers.indexOf(asset.okey) < 0) {
                     continue;
@@ -562,9 +548,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 yscale = 256 / Math.abs(ymax - ymin),
                 buffer = 100 / xscale,
                 initialTopLeftPointX = this.map._initialTopLeftPoint.x,
-                initialTopLeftPointY = this.map._initialTopLeftPoint.y,
-                delta_x = initialTopLeftPointX - nwmerc.x,
-                delta_y = initialTopLeftPointY - nwmerc.y;
+                initialTopLeftPointY = this.map._initialTopLeftPoint.y;
 
             var initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                 tileExtent = {
@@ -638,7 +622,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     },
                     function () {
                         console.error(arguments);
-                    })
+                    });
             });
         }
 
@@ -686,9 +670,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             var previousX = false,
                 previousY = false,
                 coord, coord_ = {},
-                x, y, geometry = JSON.parse(asset.geometry);
+                 geometry = JSON.parse(asset.geometry);
 
-            changeContext = (previousSymbolId !== asset.symbolId)
+            changeContext = (previousSymbolId !== asset.symbolId);
 
             if (changeContext) {
                 assetSymbology = G3ME.symbology[asset.symbolId];

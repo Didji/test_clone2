@@ -17,7 +17,7 @@
             DATABASE_SIZE: 1024 * 1024 * 4,
             DATABASE_VERSION: '0.0.1-angular',
             DATABASES: {}
-        }
+        };
 
         /**
          * @name openDatabase
@@ -27,7 +27,7 @@
         SQLite.openDatabase = function (args) {
             if (!SQLite.DATABASES[args.name]) {
                 if (window.sqlitePlugin) {
-                    SQLite.DATABASES[args.name] = sqlitePlugin.openDatabase({
+                    SQLite.DATABASES[args.name] = window.sqlitePlugin.openDatabase({
                         name: args.name,
                         bgType: 1
                     });
@@ -78,7 +78,7 @@
          */
         SQLite.set = function (parameter, value, callback) {
             SQLite.parameters().transaction(function (transaction) {
-                transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function (transaction, results) {
+                transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function () {
                     (callback || function () {})();
                 }, function (transaction, SqlError) {
                     console.error(SqlError);
@@ -95,7 +95,7 @@
          */
         SQLite.unset = function (parameter, callback) {
             SQLite.parameters().transaction(function (transaction) {
-                transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function (transaction, results) {
+                transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function () {
                     (callback || function () {})();
                 }, function (transaction, SqlError) {
                     console.error(SqlError);

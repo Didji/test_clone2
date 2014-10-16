@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
-    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
+angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage",
+    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage) {
 
         'use strict';
 
@@ -20,7 +20,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
 
         var stepsByOkey = {};
 
-        $scope.$on('$locationChangeStart', function (event, next, current) {
+        $scope.$on('$locationChangeStart', function (event, next) {
             if (next.indexOf('/map/') === -1) {
                 event.preventDefault();
             }
@@ -30,8 +30,6 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
             var steps = [],
                 step,
                 n = site.number,
-                stepid = 0,
-                numsteps = 0,
                 i;
 
             $scope.totalProgress = 1 * n.total;
@@ -87,7 +85,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
                         Installer.install($scope.site, $scope.site.stats, function () {
                             $scope.site.installed = true;
                             window.SMARTGEO_CURRENT_SITE = $scope.site;
-                            Installer.saveSite($scope.site, function (sites) {
+                            Installer.saveSite($scope.site, function () {
                                 $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {
                                     $scope.$apply();

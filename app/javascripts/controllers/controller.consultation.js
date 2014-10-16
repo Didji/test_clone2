@@ -25,8 +25,8 @@
 
         vm.openLocatedReport = openLocatedReport;
         vm.toggleConsultationPanel = toggleConsultationPanel;
-        vm.close = close;
-        vm.open = open;
+        vm.close = close_;
+        vm.open = open_;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
@@ -54,14 +54,6 @@
             angular.element($window).bind("resize", function () {
                 $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
             });
-
-            vm.spinnerOptions = {
-                radius: 30,
-                width: 8,
-                length: 16,
-                hwaccel: true,
-                color: 'white'
-            }
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
@@ -111,7 +103,7 @@
             if (assets.length) {
                 vm.groups = {};
             } else {
-                vm.groups = null
+                vm.groups = null;
                 return vm.groups;
             }
             for (var i = 0; i < assets.length; i++) {
@@ -161,7 +153,7 @@
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
                 vm.multiselection[okey][i].isInMultiselection = false;
             }
-            vm.multiselection[okey] = []
+            vm.multiselection[okey] = [];
         }
 
 
@@ -212,7 +204,7 @@
          * @name close
          * @desc
          */
-        function close() {
+        function close_() {
             G3ME.fullscreen();
             vm.isOpen = false;
             $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la.
@@ -222,7 +214,7 @@
          * @name open
          * @desc
          */
-        function open() {
+        function open_() {
             G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
             if (Smartgeo.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast('_MENU_CLOSE_');

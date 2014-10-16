@@ -41,7 +41,7 @@
             var self = this;
             this.onMap = true;
             this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset(this, function () {
-                self.zoomOn()
+                self.zoomOn();
             });
             if (G3ME.map) {
                 this.consultationMarker.addTo(G3ME.map);
@@ -99,7 +99,7 @@
          */
         Asset.prototype.goTo = function () {
             var center = this.getCenter();
-            Smartgeo.getCurrentLocation(function (lng, lat, alt, acc) {
+            Smartgeo.getCurrentLocation(function (lng, lat) {
                 if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                     SmartgeoChromium.goTo(lng, lat, center[1], center[0]);
                 } else if (window.cordova) {
@@ -129,7 +129,7 @@
          */
         Asset.prototype.addToMission = function (mission) {
             $rootScope.addAssetToMission(this, mission);
-        }
+        };
 
         /**
          * @name getLineStringMiddle

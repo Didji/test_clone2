@@ -43,7 +43,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         this.father = father && father.uuid;
         this.root = root || this;
         this.fields = {};
-        this.fields[window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].ukey] = window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label
+        this.fields[window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].ukey] = window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label;
 
         if (!this.okey) {
             throw new ComplexAssetError('You must provide a root okey.');
@@ -291,7 +291,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             this.children[i].__log();
         }
         console.groupEnd();
-    }
+    };
 
     /**
      * @method
@@ -320,7 +320,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
 
         newNode.__restoreRoot(root);
         return newNode;
-    }
+    };
 
     /**
      * @method
@@ -332,7 +332,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteRoot();
         }
-    }
+    };
 
     /**
      * @method
@@ -344,7 +344,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteGeometry();
         }
-    }
+    };
 
     /**
      * @method
@@ -356,7 +356,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteLayer();
         }
-    }
+    };
 
     /**
      * @method
@@ -366,7 +366,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.__restoreGeometry = function (geometry) {
         this.geometry = geometry;
-    }
+    };
 
     /**
      * @method
@@ -376,7 +376,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
      */
     ComplexAsset.prototype.__restoreLayer = function (layer) {
         this.layer = layer;
-    }
+    };
 
     /**
      * @method
@@ -389,7 +389,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__restoreRoot(root);
         }
-    }
+    };
 
     /**
      * @method
@@ -406,7 +406,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             this.children[i].__clean();
         }
         return this;
-    }
+    };
 
     /**
      * @method
@@ -419,7 +419,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__updateUuid(this.uuid);
         }
-    }
+    };
 
     ComplexAsset.prototype.isGeometryOk = function () {
         if (window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].is_graphical && !this.geometry) {
@@ -433,6 +433,6 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http,
             children = children && this.children[i].isGeometryOk();
         }
         return children;
-    }
+    };
     return ComplexAsset;
 });

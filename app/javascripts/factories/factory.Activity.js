@@ -16,7 +16,7 @@
          * @desc Factory de la classe Activity
          */
 
-        var Activity = {}
+        var Activity = {};
 
         /**
          * @name findOne

@@ -60,7 +60,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.__isDeviceRegistered = function () {
         return (JSON.parse(localStorage['LicenseManager.license'] || "{}").registered === true);
-    }
+    };
 
     /**
      * @method
@@ -75,7 +75,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             rights[options[i].code] = (options[i].value === "undefined" ? true : options[i].value);
         }
         return rights;
-    }
+    };
 
     /**
      * @method
@@ -89,7 +89,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
         localStorage['LicenseManager.rights'] = JSON.stringify(rights || {});
         this.__dispatchRights(rights);
         return this;
-    }
+    };
 
     /**
      * @method
@@ -99,7 +99,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.__getRights = function () {
         return JSON.parse(localStorage['LicenseManager.rights'] || "{}");
-    }
+    };
 
     /**
      * @method
@@ -111,7 +111,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
     LicenseManager.prototype.__dispatchRights = function (rights) {
         $rootScope.rights = this.__rights = (rights || this.__rights);
         return this;
-    }
+    };
 
     /**
      * @method
@@ -123,7 +123,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
     LicenseManager.prototype.__setLicense = function (license) {
         localStorage['LicenseManager.license'] = JSON.stringify(license || {});
         return this;
-    }
+    };
 
     /**
      * @method
@@ -133,7 +133,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      */
     LicenseManager.prototype.__getLicense = function () {
         return JSON.parse(localStorage['LicenseManager.license'] || "{}");
-    }
+    };
 
 
     /**
@@ -162,7 +162,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             console.error(response);
             break;
         }
-    }
+    };
 
     /**
      * @method
@@ -204,7 +204,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
         });
 
         return this;
-    }
+    };
 
     /**
      * @method
@@ -232,13 +232,13 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
                 this_.__setRights(this_.__parseG3licResponse(options));
                 this_.__setLicense(license);
                 success(license);
-            }, error)
+            }, error);
 
         });
 
 
         return this;
-    }
+    };
 
     /**
      * @method
@@ -262,7 +262,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
         }
 
         return this;
-    }
+    };
 
     return new LicenseManager();
 

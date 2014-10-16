@@ -14,8 +14,6 @@
      */
     function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites) {
 
-        var vm = this;
-
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
             myLastPositionMarker = null;
@@ -31,7 +29,7 @@
             }
         }
 
-        $scope.$on("$destroy", function (event) {
+        $scope.$on("$destroy", function () {
             Smartgeo.emptyPositionListerners();
             Storage.set('user_position_activated', POSITION_ACTIVATE);
             stopPosition();
@@ -66,7 +64,7 @@
         var REFERENCE_VIEW_CONTROL = makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView);
         G3ME.map.addControl(REFERENCE_VIEW_CONTROL);
 
-        G3ME.map.on('moveend', function (e) {
+        G3ME.map.on('moveend', function () {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function () {
                 var extent = G3ME.map.getBounds();
@@ -271,7 +269,7 @@
         });
 
 
-        $scope.$on("ACTIVATE_CONSULTATION", function (event) {
+        $scope.$on("ACTIVATE_CONSULTATION", function () {
             activateConsultation();
         });
 
@@ -304,7 +302,7 @@
         /*
          *   Planning related events
          */
-        $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
+        $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission) {
             if (missionsClusters[mission.id]) {
                 G3ME.map.removeLayer(missionsClusters[mission.id]);
             }
@@ -317,7 +315,7 @@
             iconCreateFunction: iconCreateFunction,
             disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
             maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
-        }
+        };
 
         function iconCreateFunction(cluster) {
             iconCluster[cluster._childCount] = iconCluster[cluster._childCount] || new L.DivIcon({
@@ -325,7 +323,7 @@
                 className: 'marker-cluster-assets',
                 iconSize: [40, 40]
             });
-            return iconCluster[cluster._childCount]
+            return iconCluster[cluster._childCount];
         }
 
         $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
@@ -366,7 +364,7 @@
             G3ME.map.addLayer(missionsClusters[mission.id]);
         });
 
-        $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
+        $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission) {
             if (missionsClusters['done-' + mission.id]) {
                 G3ME.map.removeLayer(missionsClusters['done-' + mission.id]);
             }
@@ -385,7 +383,7 @@
         });
 
 
-        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
+        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache) {
             missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
                     return new L.DivIcon({
@@ -421,7 +419,7 @@
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
-            $scope.traces = $scope.traces ||  {};
+            $scope.traces = $scope.traces || {};
             var geoJSON = {
                 "type": "LineString",
                 "coordinates": mission.trace,
@@ -467,7 +465,7 @@
                 options: {
                     position: 'topright'
                 },
-                onAdd: function (map) {
+                onAdd: function () {
                     var container = L.DomUtil.create('div', 'leaflet-bar');
                     $(container)
                         .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
