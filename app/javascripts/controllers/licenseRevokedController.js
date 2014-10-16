@@ -9,7 +9,7 @@
  * @property {string} errorMessage Message affiché en cas d'erreur
  */
 
-angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope", "$location", "i18n", "LicenseManager", function($scope, $location, i18n, LicenseManager) {
+angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope", "$location", "i18n", "LicenseManager", function ($scope, $location, i18n, LicenseManager) {
 
     'use strict';
 
@@ -20,7 +20,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope
      * @memberOf    licenseController
      * @desc        Lance la mise à jour de la licence
      */
-    $scope.update = function() {
+    $scope.update = function () {
         LicenseManager.update($scope.updateSuccess, $scope.updateError);
     };
 
@@ -30,7 +30,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope
      * @memberOf    licenseController
      * @desc        Callback de succès de la mise à jour qui va rediriger l'utilisateur vers la page d'authentification
      */
-    $scope.updateSuccess = function() {
+    $scope.updateSuccess = function () {
         $location.path('/');
     };
 
@@ -41,7 +41,7 @@ angular.module('smartgeomobile').controller('licenseRevokedController', ["$scope
      * @desc        Callback d'erreur de la mise à jour qui va afficher le message d'erreur en conséquence
      * @param       {object} response Réponse d'un objet angular $resource
      */
-    $scope.updateError = function(response) {
+    $scope.updateError = function (response) {
         switch (response.status) {
         case 0:
             $scope.errorMessage = (i18n.get("_REGISTER_ERROR_OFFLINE"));

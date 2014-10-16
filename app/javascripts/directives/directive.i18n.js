@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .directive('i18n', i18nDirective);
 
-    i18nDirective.$inject = ['i18n'] ;
+    i18nDirective.$inject = ['i18n'];
 
     /**
      * @desc Directive pour l'internationalisation

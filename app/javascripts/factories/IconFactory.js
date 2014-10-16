@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Icon', function() {
+angular.module('smartgeomobile').factory('Icon', function () {
 
     'use strict';
 
@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Icon', function() {
      * @property    {L.icon} GRAY_TARGET
      * @property    {L.icon} TARGET
      */
-    var Icon = function() {
+    var Icon = function () {
         this.SELECTED_MISSION = L.icon({
             iconUrl: "images/SELECTED_MISSION.png",
             iconSize: [65, 89],
@@ -71,7 +71,7 @@ angular.module('smartgeomobile').factory('Icon', function() {
      * @param       {string} name Nom de l'icône
      * @returns     {L.icon} Icône correspondant
      */
-    Icon.prototype.get = function(name) {
+    Icon.prototype.get = function (name) {
         var icon = this[name];
         if (icon) {
             return icon;
@@ -87,7 +87,7 @@ angular.module('smartgeomobile').factory('Icon', function() {
      * @param       {string} okey
      * @returns     {L.icon} Icône correspondant
      */
-    Icon.prototype.getOkeyIcon = function(okey, classindex) {
+    Icon.prototype.getOkeyIcon = function (okey, classindex) {
 
         classindex = classindex || 0;
 

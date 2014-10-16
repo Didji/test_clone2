@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -22,8 +22,8 @@
          * @param {String} parameter
          * @param {*} value
          */
-        Storage.set = function(parameter, value) {
-            if(value){
+        Storage.set = function (parameter, value) {
+            if (value) {
                 return localStorage.setItem(parameter, JSON.stringify(value));
             } else {
                 return Storage.remove(parameter);
@@ -35,7 +35,7 @@
          * @desc Récupère une valeur dans le localStorage
          * @param {String} parameter
          */
-        Storage.get = function(parameter) {
+        Storage.get = function (parameter) {
             return JSON.parse(localStorage.getItem(parameter));
         };
 
@@ -44,7 +44,7 @@
          * @desc Supprime une valeur dans le localStorage
          * @param {String} parameter
          */
-        Storage.remove = function(parameter) {
+        Storage.remove = function (parameter) {
             return localStorage.removeItem(parameter);
         };
 
@@ -55,13 +55,13 @@
          * @param {*} value
          * @param {Function} callback
          */
-        Storage.set_ = function(parameter, value, callback) {
-            if(!value){
+        Storage.set_ = function (parameter, value, callback) {
+            if (!value) {
                 return Storage.remove_(parameter, value, callback);
             }
             var deferred = $q.defer();
             value = JSON.parse(JSON.stringify(value));
-            SQLite.set(parameter, value, function(value) {
+            SQLite.set(parameter, value, function (value) {
                 deferred.resolve(value);
                 (callback || angular.noop)(value);
             });
@@ -74,9 +74,9 @@
          * @param {String} parameter
          * @param {Function} callback
          */
-        Storage.get_ = function(parameter, callback) {
+        Storage.get_ = function (parameter, callback) {
             var deferred = $q.defer();
-            SQLite.get(parameter, function(value) {
+            SQLite.get(parameter, function (value) {
                 deferred.resolve(value);
                 (callback || angular.noop)(value);
             });
@@ -89,9 +89,9 @@
          * @param {String} parameter
          * @param {Function} callback
          */
-        Storage.remove_ = function(parameter, callback) {
+        Storage.remove_ = function (parameter, callback) {
             var deferred = $q.defer();
-            SQLite.unset(parameter, function(value) {
+            SQLite.unset(parameter, function (value) {
                 deferred.resolve(true);
                 (callback || angular.noop)(true);
             });

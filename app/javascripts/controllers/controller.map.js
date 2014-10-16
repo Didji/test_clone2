@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -31,7 +31,7 @@
             }
         }
 
-        $scope.$on("$destroy", function(event) {
+        $scope.$on("$destroy", function (event) {
             Smartgeo.emptyPositionListerners();
             Storage.set('user_position_activated', POSITION_ACTIVATE);
             stopPosition();
@@ -51,7 +51,7 @@
         }
 
         $scope.consultationIsEnabled = false;
-        Smartgeo.silentLogin(function() {
+        Smartgeo.silentLogin(function () {
             if (G3ME.backgroundTile) {
                 G3ME.backgroundTile.redraw();
             }
@@ -66,9 +66,9 @@
         var REFERENCE_VIEW_CONTROL = makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView);
         G3ME.map.addControl(REFERENCE_VIEW_CONTROL);
 
-        G3ME.map.on('moveend', function(e) {
+        G3ME.map.on('moveend', function (e) {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
-            Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function() {
+            Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function () {
                 var extent = G3ME.map.getBounds();
                 if (extent._northEast.lat !== extent._southWest.lat ||
                     extent._northEast.lng !== extent._southWest.lng) {
@@ -93,7 +93,7 @@
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if ($rootScope.report_activity) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
-                $(document).on('click', '.openLocateReportButton', function() {
+                $(document).on('click', '.openLocateReportButton', function () {
                     $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
                     if (!$scope.$$phase) {
                         $scope.$apply();
@@ -105,7 +105,7 @@
                 .openOn(G3ME.map);
 
             if (!$rootScope.report_activity) {
-                setTimeout(function() {
+                setTimeout(function () {
                     $(popup._container).fadeOut();
                 }, 4000);
             }
@@ -126,7 +126,7 @@
         baseRequest += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
         baseRequest += "    AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
 
-        G3ME.map.on('click', function(e) {
+        G3ME.map.on('click', function (e) {
 
             if (!$scope.consultationIsEnabled) {
                 return false;
@@ -151,18 +151,18 @@
                 zoom = G3ME.map.getZoom(),
                 request = baseRequest;
 
-            $(circle._path).fadeOut(1500, function() {
+            $(circle._path).fadeOut(1500, function () {
                 G3ME.map.removeLayer(circle);
             });
 
             for (var i = 0, length_ = window.SMARTGEO_CURRENT_SITE.zones.length; i < length_; i++) {
                 zone = window.SMARTGEO_CURRENT_SITE.zones[i];
                 if (G3ME.extents_match(zone.extent, {
-                    xmin: xmin,
-                    ymin: ymin,
-                    xmax: xmax,
-                    ymax: ymax
-                })) {
+                        xmin: xmin,
+                        ymin: ymin,
+                        xmax: xmax,
+                        ymax: ymax
+                    })) {
                     break;
                 }
             }
@@ -181,7 +181,7 @@
             SQLite.openDatabase({
                 name: zone.database_name,
                 bgType: 1
-            }).transaction(function(t) {
+            }).transaction(function (t) {
                 t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom], sendResultsToConsultation, Smartgeo.log);
             });
             return false;
@@ -235,7 +235,7 @@
             $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
         }
 
-        $scope.$on("__MAP_SETVIEW__", function(event, extent) {
+        $scope.$on("__MAP_SETVIEW__", function (event, extent) {
             if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {
                 G3ME.map.fitBounds([
                     [extent.ymin, extent.xmin],
@@ -249,7 +249,7 @@
             }
         });
 
-        $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng) {
+        $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function (event, lat, lng) {
             if (!$scope.myPositionMarker) {
                 $scope.myPositionMarker = L.marker([lat, lng], {
                     zIndexOffset: 10000
@@ -263,7 +263,7 @@
             G3ME.invalidateMapSize();
         });
 
-        $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function() {
+        $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function () {
             if ($scope.myPositionMarker) {
                 G3ME.map.removeLayer($scope.myPositionMarker);
                 delete $scope.myPositionMarker;
@@ -271,7 +271,7 @@
         });
 
 
-        $scope.$on("ACTIVATE_CONSULTATION", function(event) {
+        $scope.$on("ACTIVATE_CONSULTATION", function (event) {
             activateConsultation();
         });
 
@@ -279,22 +279,22 @@
         /*
          *   General events
          */
-        $scope.$on("ZOOM_ON_ASSET", function(event, asset) {
+        $scope.$on("ZOOM_ON_ASSET", function (event, asset) {
             $scope.zoomOnAsset(asset);
         });
-        $scope.$on("HIGHLIGHT_ASSET", function(event, asset) {
+        $scope.$on("HIGHLIGHT_ASSET", function (event, asset) {
             $scope.highlightAsset(asset);
         });
-        $scope.$on("UNHIGHLIGHT_ASSET", function(event, asset) {
+        $scope.$on("UNHIGHLIGHT_ASSET", function (event, asset) {
             $scope.unHighlightAsset(asset);
         });
 
-        $scope.$on("HIGHLIGHT_ASSETS", function(event, assets, marker, clickHandler) {
+        $scope.$on("HIGHLIGHT_ASSETS", function (event, assets, marker, clickHandler) {
             for (var i = 0; i < assets.length; i++) {
                 $scope.highlightAsset(assets[i], marker, clickHandler);
             }
         });
-        $scope.$on("UNHIGHLIGHT_ASSETS", function(event, assets) {
+        $scope.$on("UNHIGHLIGHT_ASSETS", function (event, assets) {
             for (var i = 0; i < assets.length; i++) {
                 $scope.unHighlightAsset(assets[i]);
             }
@@ -304,7 +304,7 @@
         /*
          *   Planning related events
          */
-        $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler) {
+        $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
             if (missionsClusters[mission.id]) {
                 G3ME.map.removeLayer(missionsClusters[mission.id]);
             }
@@ -328,7 +328,7 @@
             return iconCluster[cluster._childCount]
         }
 
-        $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler) {
+        $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
             if (!missionsClusters[mission.id]) {
                 missionsClusters[mission.id] = new L.MarkerClusterGroup(MarkerClusterGroupOptions);
             }
@@ -355,8 +355,8 @@
                     assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_NIGHTTOUR'));
                 }
 
-                (function(i, marker) {
-                    marker.on('click', function() {
+                (function (i, marker) {
+                    marker.on('click', function () {
                         clickHandler(mission.id, i);
                     });
                 })(i, assetsCache[i].marker);
@@ -366,14 +366,14 @@
             G3ME.map.addLayer(missionsClusters[mission.id]);
         });
 
-        $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, marker, clickHandler) {
+        $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, marker, clickHandler) {
             if (missionsClusters['done-' + mission.id]) {
                 G3ME.map.removeLayer(missionsClusters['done-' + mission.id]);
             }
         });
 
 
-        $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions) {
+        $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function (event, missions) {
             for (var i in missionsClusters) {
                 if ((!missions[i] || missions[i].assets.length === 0) && i.indexOf('done') === -1) {
                     G3ME.map.removeLayer(missionsClusters[i]);
@@ -385,9 +385,9 @@
         });
 
 
-        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler) {
+        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
             missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
-                iconCreateFunction: function(cluster) {
+                iconCreateFunction: function (cluster) {
                     return new L.DivIcon({
                         html: '<div><span>' + cluster.getChildCount() + '</span></div>',
                         className: 'marker-cluster-done',
@@ -406,10 +406,10 @@
             G3ME.map.addLayer(missionsClusters['done-' + mission.id]);
         });
 
-        $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset) {
+        $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function (event, asset) {
             asset.marker.setIcon(asset.selected ? Icon.get('SELECTED_MISSION') : Icon.get('NON_SELECTED_MISSION'));
         });
-        $scope.$on("__MAP_HIDE_TRACE__", function(event, mission) {
+        $scope.$on("__MAP_HIDE_TRACE__", function (event, mission) {
             if ($scope.traces && $scope.traces[mission.id]) {
                 G3ME.map.removeLayer($scope.traces[mission.id]);
                 G3ME.map.removeLayer(myLastPositionMarker);
@@ -417,7 +417,7 @@
                 myLastPositionMarker = null;
             }
         });
-        $scope.$on("__MAP_DISPLAY_TRACE__", function(event, mission, setView) {
+        $scope.$on("__MAP_DISPLAY_TRACE__", function (event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
@@ -432,7 +432,7 @@
                 G3ME.map.removeLayer($scope.traces[mission.id]);
             }
             $scope.traces[mission.id] = L.geoJson(geoJSON, {
-                style: function(feature) {
+                style: function (feature) {
                     return {
                         color: feature.geometry.color,
                         opacity: 0.9,
@@ -467,7 +467,7 @@
                 options: {
                     position: 'topright'
                 },
-                onAdd: function(map) {
+                onAdd: function (map) {
                     var container = L.DomUtil.create('div', 'leaflet-bar');
                     $(container)
                         .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
@@ -502,7 +502,7 @@
             }
         }
 
-        G3ME.map.on('dragend', function(event) {
+        G3ME.map.on('dragend', function (event) {
             if (event.distance > 50) {
                 stopPosition();
             }
@@ -551,7 +551,7 @@
                 POSITION_MARKER = L.marker(LAST_USERS_LOCATION).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
             }
 
-            $(POSITION_CIRCLE._path).fadeOut(3000, function() {
+            $(POSITION_CIRCLE._path).fadeOut(3000, function () {
                 if (POSITION_CIRCLE) {
                     G3ME.map.removeLayer(POSITION_CIRCLE);
                     POSITION_CIRCLE = null;
@@ -593,8 +593,8 @@
 
         $rootScope.stopConsultation = stopConsultation;
 
-        $scope.highlightAsset = function(asset, customMarker, customClickHandler) {
-            customClickHandler = customClickHandler || function() {
+        $scope.highlightAsset = function (asset, customMarker, customClickHandler) {
+            customClickHandler = customClickHandler || function () {
                 $scope.zoomOnAsset(asset);
             };
 
@@ -603,32 +603,32 @@
             }
 
             switch (asset.geometry.type) {
-                case "Point":
-                    var coords = asset.geometry.coordinates;
-                    G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {
-                        icon: Icon.get('CONSULTATION')
-                    });
-                    break;
-                case "LineString":
-                    G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
-                        style: {
-                            color: '#fc9e49',
-                            opacity: 0.9,
-                            weight: 7
-                        }
-                    });
-                    break;
-                case "Polygon":
-                    G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
-                        style: {
-                            color: '#fc9e49',
-                            opacity: 0.9,
-                            weight: 7
-                        }
-                    });
-                    break;
-                default:
-                    console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+            case "Point":
+                var coords = asset.geometry.coordinates;
+                G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {
+                    icon: Icon.get('CONSULTATION')
+                });
+                break;
+            case "LineString":
+                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
+                    style: {
+                        color: '#fc9e49',
+                        opacity: 0.9,
+                        weight: 7
+                    }
+                });
+                break;
+            case "Polygon":
+                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
+                    style: {
+                        color: '#fc9e49',
+                        opacity: 0.9,
+                        weight: 7
+                    }
+                });
+                break;
+            default:
+                console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
             }
             G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
             // G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
@@ -638,14 +638,14 @@
             G3ME.invalidateMapSize();
         };
 
-        $scope.unHighlightAsset = function(asset) {
+        $scope.unHighlightAsset = function (asset) {
             if (G3ME.assetsMarkers[asset.guid]) {
                 G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
             }
             G3ME.invalidateMapSize();
         };
 
-        $scope.unHighlightAllAsset = function() {
+        $scope.unHighlightAllAsset = function () {
             for (var i = 0; i < G3ME.assetsMarkers.length; i++) {
                 if (G3ME.assetsMarkers[i]) {
                     G3ME.map.removeLayer(G3ME.assetsMarkers[i]);
@@ -654,24 +654,24 @@
             G3ME.invalidateMapSize();
         };
 
-        $scope.zoomOnAsset = function(asset) {
+        $scope.zoomOnAsset = function (asset) {
             var coords = asset.geometry.coordinates,
                 center;
             switch (asset.geometry.type) {
-                case "Point":
-                    center = [coords[1], coords[0]];
-                    break;
-                case "LineString":
-                    center = [coords[0][1], coords[0][0]];
-                    break;
-                case "MultiLineString":
-                    center = [coords[0][0][1], coords[0][0][0]];
-                    break;
-                case "Polygon":
-                    center = [coords[0][0][1], coords[0][0][0]];
-                    break;
-                default:
-                    console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+            case "Point":
+                center = [coords[1], coords[0]];
+                break;
+            case "LineString":
+                center = [coords[0][1], coords[0][0]];
+                break;
+            case "MultiLineString":
+                center = [coords[0][0][1], coords[0][0][0]];
+                break;
+            case "Polygon":
+                center = [coords[0][0][1], coords[0][0][0]];
+                break;
+            default:
+                console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
             }
             G3ME.map.setView(center, 18);
             G3ME.invalidateMapSize();

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -23,7 +23,7 @@
             if (typeof asset === "object") {
                 angular.extend(this, asset);
             } else {
-                Asset.findOne(asset, function(asset) {
+                Asset.findOne(asset, function (asset) {
                     angular.extend(self, asset);
                     (callback || angular.noop)();
                 });
@@ -37,10 +37,10 @@
          * @name showOnMap
          * @desc
          */
-        Asset.prototype.showOnMap = function() {
+        Asset.prototype.showOnMap = function () {
             var self = this;
             this.onMap = true;
-            this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset(this, function() {
+            this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset(this, function () {
                 self.zoomOn()
             });
             if (G3ME.map) {
@@ -52,7 +52,7 @@
          * @name hideFromMap
          * @desc
          */
-        Asset.prototype.hideFromMap = function() {
+        Asset.prototype.hideFromMap = function () {
             this.onMap = false;
             if (G3ME.map) {
                 G3ME.map.removeLayer(this.consultationMarker);
@@ -63,7 +63,7 @@
          * @name toggleMapVisibility
          * @desc
          */
-        Asset.prototype.toggleMapVisibility = function() {
+        Asset.prototype.toggleMapVisibility = function () {
             this[this.onMap ? "hideFromMap" : "showOnMap"]();
         };
 
@@ -71,7 +71,7 @@
          * @name zoomOn
          * @desc
          */
-        Asset.prototype.zoomOn = function() {
+        Asset.prototype.zoomOn = function () {
             G3ME.map.setView(this.getCenter(), 18);
             $rootScope.$broadcast("DESACTIVATE_POSITION");
         };
@@ -80,14 +80,14 @@
          * @name fetchHistory
          * @desc
          */
-        Asset.prototype.fetchHistory = function() {
+        Asset.prototype.fetchHistory = function () {
             var self = this;
             $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.history', {
                 id: this.guid,
                 limit: 5
-            })).success(function(data) {
+            })).success(function (data) {
                 self.reports = data;
-            }).error(function(error) {
+            }).error(function (error) {
                 self.reports = [];
                 console.error(error);
             });
@@ -97,9 +97,9 @@
          * @name goTo
          * @desc
          */
-        Asset.prototype.goTo = function() {
+        Asset.prototype.goTo = function () {
             var center = this.getCenter();
-            Smartgeo.getCurrentLocation(function(lng, lat, alt, acc) {
+            Smartgeo.getCurrentLocation(function (lng, lat, alt, acc) {
                 if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                     SmartgeoChromium.goTo(lng, lat, center[1], center[0]);
                 } else if (window.cordova) {
@@ -112,7 +112,7 @@
          * @name getCenter
          * @desc
          */
-        Asset.prototype.getCenter = function() {
+        Asset.prototype.getCenter = function () {
             var coordinates = this.geometry.coordinates;
 
             if (this.geometry.type === "Point") {
@@ -127,7 +127,7 @@
          * @desc
          * @param {Object} mission
          */
-        Asset.prototype.addToMission = function(mission) {
+        Asset.prototype.addToMission = function (mission) {
             $rootScope.addAssetToMission(this, mission);
         }
 
@@ -136,7 +136,7 @@
          * @desc Retourne le milieu d'un LineString
          * @param {Array[]} coordinates Géometrie de l'objet
          */
-        Asset.getLineStringMiddle = function(coordinates) {
+        Asset.getLineStringMiddle = function (coordinates) {
             var length = 0,
                 a, b, i, raptor, middle;
             for (i = 0; i < coordinates.length - 1; i++) {
@@ -161,13 +161,13 @@
          * @name findOne
          * @desc
          */
-        Asset.findOne = function(id, callback, zones) {
+        Asset.findOne = function (id, callback, zones) {
 
             if (!(zones = zones || Site.current.zones).length) {
                 return callback(null);
             }
 
-            SQLite.exec(zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function(rows) {
+            SQLite.exec(zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function (rows) {
                 if (!rows.length) {
                     return Asset.findOne(id, callback, zones.slice(1));
                 }
@@ -180,7 +180,7 @@
          * @name convertRawRow
          * @desc
          */
-        Asset.convertRawRow = function(asset) {
+        Asset.convertRawRow = function (asset) {
             var a = angular.copy(asset),
                 parsed = JSON.parse(a.asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
             return angular.extend(a, {

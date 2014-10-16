@@ -11,7 +11,7 @@
  */
 
 angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer",
-    function($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer) {
+    function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer) {
 
         'use strict';
 
@@ -19,7 +19,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.initialize = function() {
+        $scope.initialize = function () {
 
             $scope._DRAG_THRESHOLD = 50;
 
@@ -42,7 +42,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $rootScope.nightTourInProgress = false;
             $scope.state = 'closed';
             $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
-            $scope.$watch('nightTourInProgress', function(newval, oldval) {
+            $scope.$watch('nightTourInProgress', function (newval, oldval) {
                 if (newval === true) {
                     $scope.startFollowingPosition();
                     $scope.open();
@@ -55,7 +55,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 }
             });
 
-            angular.element($window).bind("resize", function(e) {
+            angular.element($window).bind("resize", function (e) {
                 if ($scope.state === 'open') {
                     $scope.close();
                     $scope.open();
@@ -65,14 +65,14 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $scope.$on("TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset);
 
 
-            $scope.$watch('nightTourRecording', function(newval, oldval) {
+            $scope.$watch('nightTourRecording', function (newval, oldval) {
                 $scope.isFollowingMe = newval;
             });
-            $scope.$watch('isFollowingMe', function(newval, oldval) {
+            $scope.$watch('isFollowingMe', function (newval, oldval) {
                 $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
             });
 
-            G3ME.map.on('dragend', function(event) {
+            G3ME.map.on('dragend', function (event) {
                 if (event.distance > $scope._DRAG_THRESHOLD) {
                     $scope.isFollowingMe = false;
                     if (!$scope.$$phase) {
@@ -86,7 +86,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.startFollowingPosition = function() {
+        $scope.startFollowingPosition = function () {
             $scope.stopFollowingPosition();
             Smartgeo.startWatchingPosition($scope.whereIAm);
         };
@@ -95,7 +95,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.stopFollowingPosition = function() {
+        $scope.stopFollowingPosition = function () {
             $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
             Smartgeo.stopWatchingPosition($scope.whereIAm);
         };
@@ -104,7 +104,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.whereIAm = function(lng, lat, alt, acc) {
+        $scope.whereIAm = function (lng, lat, alt, acc) {
             $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
             $scope.addPositionToTrace(lat, lng);
         };
@@ -115,7 +115,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @param {float} lng Point's longitude
          * @desc
          */
-        $scope.addPositionToTrace = function(lat, lng, force) {
+        $scope.addPositionToTrace = function (lat, lng, force) {
             if (!$scope.mission) {
                 return alertify.error("Erreur : aucune tournée en cours");
             }
@@ -147,7 +147,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.resumeNightTour = function() {
+        $scope.resumeNightTour = function () {
             $rootScope.nightTourRecording = true;
             $scope.stopFollowingPosition();
         };
@@ -156,7 +156,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.pauseNightTour = function() {
+        $scope.pauseNightTour = function () {
             $rootScope.nightTourRecording = false;
         };
 
@@ -164,8 +164,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.closeNightTour = function() {
-            alertify.confirm('Clôturer la tournée de nuit ?', function(yes) {
+        $scope.closeNightTour = function () {
+            alertify.confirm('Clôturer la tournée de nuit ?', function (yes) {
                 if (!yes) {
                     return;
                 }
@@ -185,7 +185,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.stopNightTour = function(ok, ko) {
+        $scope.stopNightTour = function (ok, ko) {
             $rootScope.nightTourInProgress = false;
             $rootScope.nightTourRecording = false;
             $scope.stopFollowingPosition();
@@ -202,8 +202,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                     }
                 }
             }
-            $scope.sendOkReports(ok, function() {
-                $scope.sendKoReports(ko, function() {
+            $scope.sendOkReports(ok, function () {
+                $scope.sendKoReports(ko, function () {
                     $route.reload();
                 });
             });
@@ -213,8 +213,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.sendOkReports = function(ok, callback) {
-            callback = callback || function() {};
+        $scope.sendOkReports = function (ok, callback) {
+            callback = callback || function () {};
 
             if (!ok.length) {
                 return callback();
@@ -238,8 +238,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.sendKoReports = function(ko, callback) {
-            callback = callback || function() {};
+        $scope.sendKoReports = function (ko, callback) {
+            callback = callback || function () {};
             if (!ko.length) {
                 return callback();
             }
@@ -329,7 +329,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @param {array}  assetsCache  Array of mission's assets, fetched from database
          * @desc
          */
-        $scope.startNightTour = function(event, mission, assetsCache) {
+        $scope.startNightTour = function (event, mission, assetsCache) {
 
             $rootScope.stopConsultation();
 
@@ -357,7 +357,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
 
         };
 
-        $scope.close = function() {
+        $scope.close = function () {
             if ($scope.state === 'closed') {
                 return;
             }
@@ -366,7 +366,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $($(".consultation-panel")[1]).removeClass('open').css('width', 0);
         };
 
-        $scope.open = function() {
+        $scope.open = function () {
             if ($scope.state === 'open') {
                 return;
             }
@@ -383,7 +383,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.togglePanel = function() {
+        $scope.togglePanel = function () {
             $scope[($scope.state === 'open' ? 'close' : 'open')]();
         };
 
@@ -391,7 +391,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @memberOf nightTourController
          * @desc
          */
-        $scope.locateMission = function() {
+        $scope.locateMission = function () {
             if (!$scope.mission.extent) {
                 $scope.mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[$scope.mission.id]);
             }
@@ -405,7 +405,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          * @param {array}  asset        Clicked asset on map (contains marker)
          * @desc
          */
-        $scope.toggleAsset = function(event, mission, asset) {
+        $scope.toggleAsset = function (event, mission, asset) {
             if (!$rootScope.nightTourRecording) {
                 // TODO: afficher une popup pour signaler que la tournée n'est pas en cours
                 return;

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -140,7 +140,7 @@
          * @desc
          */
         function activityListFilter_(asset) {
-            if(asset.length){
+            if (asset.length) {
                 asset = asset[0];
             }
             var activitiesOut = [];

@@ -1,5 +1,5 @@
 angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
-    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
+    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
 
         'use strict';
 
@@ -60,14 +60,14 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
 
         $scope.steps[0].progress = 50;
 
-        Installer.getUpdateJSON($scope.site, function(site) {
+        Installer.getUpdateJSON($scope.site, function (site) {
             var update = true;
             var formatedSite = Installer.formatSiteMetadata(site, update);
             $scope.steps[0].progress = 100;
             buildSteps(formatedSite);
             $scope.site.oldTimestamp = $scope.site.timestamp;
             angular.extend($scope.site, formatedSite);
-            Installer.update($scope.site, $scope.site.stats, function() {
+            Installer.update($scope.site, $scope.site.stats, function () {
                 Installer.saveSite($scope.site);
                 $location.path('/map/' + $routeParams.site);
                 if (!$scope.$$phase) {
@@ -76,7 +76,7 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
             });
         });
 
-        $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action) {
+        $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function (event, action) {
             $scope.currentInstalledOkey = action.okey;
             stepsByOkey[action.okey].progress = 1 * action.progress;
             if (!$scope.$$phase) {

@@ -1,6 +1,6 @@
-window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {} ;
+window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {};
 window.smartgeo_i18n_lang['fr'] = {
-    _MENU_PARAMETERS : "Paramètres",
+    _MENU_PARAMETERS: "Paramètres",
     _AUTH_LOG_MESSAGE_INIT_: "Initialisation",
     _AUTH_LOG_MESSAGE_REMOTE_: "Connexion distante",
     _AUTH_LOG_MESSAGE_LOCAL_: "Connexion locale",
@@ -17,21 +17,21 @@ window.smartgeo_i18n_lang['fr'] = {
     _AUTH_SERVER_ERROR: "Une erreur est survenue (%s)", // status
     _AUTH_INCORRECT_PASSWORD: "Authentification incorrecte",
     _AUTH_ERROR_: "Connexion impossible",
-    _AUTH_UNKNOWN_ERROR_OCCURED_ : "Connexion impossible",
-    _REGISTER_REGISTER_ : "Enregister",
-    _REGISTER_ERROR_OFFLINE  : "Vous devez être connecté à Internet pour vous enregister.",
-    _REGISTER_ERROR_NOT_FOUND : "Le numéro de licence fourni n'existe pas.",
-    _REGISTER_ERROR_CONFLICT : "Cette licence a déjà été enregistée.",
-    _REGISTER_ERROR_G3LIC   :  "Une erreur s'est produite, veuillez contacter votre support.",
-    _REGISTER_ERROR_UNKNOWN : "Une erreur s'est produite, veuillez contacter votre support.",
-    _REGISTER_ERROR_NO_MORE_LICENSE : "Le nombre d'utilisation maximal de cette licence a été atteint.",
-    _REGISTER_LICENSE_REVOKED : "La license n'est plus valide.",
+    _AUTH_UNKNOWN_ERROR_OCCURED_: "Connexion impossible",
+    _REGISTER_REGISTER_: "Enregister",
+    _REGISTER_ERROR_OFFLINE: "Vous devez être connecté à Internet pour vous enregister.",
+    _REGISTER_ERROR_NOT_FOUND: "Le numéro de licence fourni n'existe pas.",
+    _REGISTER_ERROR_CONFLICT: "Cette licence a déjà été enregistée.",
+    _REGISTER_ERROR_G3LIC: "Une erreur s'est produite, veuillez contacter votre support.",
+    _REGISTER_ERROR_UNKNOWN: "Une erreur s'est produite, veuillez contacter votre support.",
+    _REGISTER_ERROR_NO_MORE_LICENSE: "Le nombre d'utilisation maximal de cette licence a été atteint.",
+    _REGISTER_LICENSE_REVOKED: "La license n'est plus valide.",
     _REGISTER_MUST_CHECK_: "Limite d'utilisation hors ligne atteinte, veuillez vous connecter à Internet.",
-    _REGISTER_CAREFUL_:"Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté (%s restante(s))",
-    _REGISTER_UPDATE_LICENSE_ :"Vérifier la licence",
-    _REGISTER_RECORD_ID_ :"Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
-    _CONFIRM_CHANGE_SITE_ : "Voulez-vous vraiment changer de site&nbsp?",
-    _CONFIRM_DISCONNECT_ : "Voulez-vous vraiment quitter l'application&nbsp?",
+    _REGISTER_CAREFUL_: "Attention, vous avez bientôt atteint le nombre maximal d'utilisation en mode déconnecté (%s restante(s))",
+    _REGISTER_UPDATE_LICENSE_: "Vérifier la licence",
+    _REGISTER_RECORD_ID_: "Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
+    _CONFIRM_CHANGE_SITE_: "Voulez-vous vraiment changer de site&nbsp?",
+    _CONFIRM_DISCONNECT_: "Voulez-vous vraiment quitter l'application&nbsp?",
 
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
 

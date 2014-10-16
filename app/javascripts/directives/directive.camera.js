@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     "use strict";
 
@@ -17,10 +17,10 @@
         return {
             restrict: "A",
             require: "ngModel",
-            link: function(scope, elm, attrs, ctrl) {
+            link: function (scope, elm, attrs, ctrl) {
                 attrs = attrs;
-                elm.on("click", function() {
-                    scope.$apply(function() {
+                elm.on("click", function () {
+                    scope.$apply(function () {
                         scope.isTakingPhoto = true;
                     });
                     //TODO(@gulian): Utiliser Camera.snap()
@@ -33,15 +33,15 @@
                         if (!window.ChromiumCallbacks) {
                             window.ChromiumCallbacks = {};
                         }
-                        window.ChromiumCallbacks[1] = function(path) {
+                        window.ChromiumCallbacks[1] = function (path) {
                             var imageElement = document.createElement("img");
                             imageElement.src = path;
-                            imageElement.onload = function() {
+                            imageElement.onload = function () {
                                 var canvasElement = document.createElement("canvas");
                                 canvasElement.width = imageElement.width;
                                 canvasElement.height = imageElement.height;
                                 canvasElement.getContext("2d").drawImage(imageElement, 0, 0);
-                                scope.$apply(function() {
+                                scope.$apply(function () {
                                     ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push({
                                         content: canvasElement.toDataURL("image/jpeg", 0.75)
@@ -49,14 +49,14 @@
                                     scope.isTakingPhoto = false;
                                 });
                             };
-                            window.ChromiumCallbacks[3] = function() {
-                                scope.$apply(function() {
+                            window.ChromiumCallbacks[3] = function () {
+                                scope.$apply(function () {
                                     scope.isTakingPhoto = false;
                                 });
                             };
                         };
-                        window.ChromiumCallbacks[3] = function() {
-                            scope.$apply(function() {
+                        window.ChromiumCallbacks[3] = function () {
+                            scope.$apply(function () {
                                 scope.isTakingPhoto = false;
                             });
                         };
@@ -72,7 +72,7 @@
                         navigator.getMedia({
                             video: true,
                             audio: false
-                        }, function(stream) {
+                        }, function (stream) {
                             if (navigator.mozGetUserMedia) {
                                 video.mozSrcObject = stream;
                             } else {
@@ -80,15 +80,15 @@
                                 video.src = vendorURL.createObjectURL(stream);
                             }
                             video.play();
-                        }, function(err) {
+                        }, function (err) {
                             var imageElement2 = document.createElement("img");
                             imageElement2.src = "http://placehold.it/350x150";
-                            imageElement2.onload = function() {
+                            imageElement2.onload = function () {
                                 var canvasElement = document.createElement("canvas");
                                 canvasElement.width = imageElement2.width;
                                 canvasElement.height = imageElement2.height;
                                 canvasElement.getContext("2d").drawImage(imageElement2, 0, 0);
-                                scope.$apply(function() {
+                                scope.$apply(function () {
                                     ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push({
                                         content: canvasElement.toDataURL("image/jpeg", 0.75)
@@ -98,7 +98,7 @@
                             };
                         });
 
-                        video.addEventListener("canplay", function(ev) {
+                        video.addEventListener("canplay", function (ev) {
                             if (!streaming) {
                                 height = video.videoHeight / (video.videoWidth / width);
                                 video.setAttribute("width", width);
@@ -111,7 +111,7 @@
                             canvas.height = height;
                             canvas.getContext("2d").drawImage(video, 0, 0, width, height);
 
-                            scope.$apply(function() {
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
                                     content: canvas.toDataURL("image/jpeg", 0.75)
@@ -122,15 +122,15 @@
                         }, false);
 
                     } else if (navigator.camera) {
-                        navigator.camera.getPicture(function(imageURI) {
-                            scope.$apply(function() {
+                        navigator.camera.getPicture(function (imageURI) {
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
                                     content: imageURI
                                 });
                                 scope.isTakingPhoto = false;
                             });
-                        }, function(err) {
+                        }, function (err) {
                             ctrl.$setValidity("error", false);
                         }, {
                             quality: 100,
@@ -143,12 +143,12 @@
                     } else {
                         var img = document.createElement("img");
                         img.src = "http://placehold.it/350x150";
-                        img.onload = function() {
+                        img.onload = function () {
                             var canvasElement2 = document.createElement("canvas");
                             canvasElement2.width = img.width;
                             canvasElement2.height = img.height;
                             canvasElement2.getContext("2d").drawImage(img, 0, 0);
-                            scope.$apply(function() {
+                            scope.$apply(function () {
                                 ctrl.$viewValue = ctrl.$viewValue || [];
                                 ctrl.$viewValue.push({
                                     content: canvasElement2.toDataURL("image/jpeg", 0.75)

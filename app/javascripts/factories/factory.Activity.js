@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -22,21 +22,21 @@
          * @name findOne
          * @desc
          */
-        Activity.findOne = function(id) {
+        Activity.findOne = function (id) {
             if (!Site.current.activities._byId) {
                 Site.current.activities._byId = {};
                 for (var i = 0; i < Site.current.activities.length; i++) {
                     Site.current.activities._byId[Site.current.activities[i].id] = Site.current.activities[i];
                 }
             }
-            var activity = Site.current.activities._byId[id] ;
+            var activity = Site.current.activities._byId[id];
             if (!activity._fields) {
                 activity._fields = {};
                 for (var i = 0, numTabs = activity.tabs.length, tab; i < numTabs; i++) {
                     tab = activity.tabs[i];
                     for (var j = 0, numFields = tab.fields.length; j < numFields; j++) {
-                        if(tab.fields[j].required){
-                            tab.required = true ;
+                        if (tab.fields[j].required) {
+                            tab.required = true;
                         }
                         tab.fields[j].isconsequence = (tab.fields[j].visible === false);
                         activity._fields[tab.fields[j].id] = tab.fields[j];

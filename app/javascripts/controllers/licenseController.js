@@ -9,7 +9,7 @@
  * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
  */
 
-angular.module('smartgeomobile').controller('licenseController', ["$scope", "$location",  "i18n", "LicenseManager", function($scope, $location, i18n, LicenseManager) {
+angular.module('smartgeomobile').controller('licenseController', ["$scope", "$location", "i18n", "LicenseManager", function ($scope, $location, i18n, LicenseManager) {
 
     'use strict';
 
@@ -18,7 +18,7 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$lo
      * @memberOf    licenseController
      * @desc        Lance l'enregistrement de la licence
      */
-    $scope.register = function() {
+    $scope.register = function () {
         LicenseManager.register($scope.licenseNumber, $scope.registerSuccess, $scope.registerError);
     };
 
@@ -28,8 +28,8 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$lo
      * @memberOf    licenseController
      * @desc        Callback de succès de l'enregistrement qui va rediriger l'utilisateur vers la page d'authentification
      */
-    $scope.registerSuccess = function(licence) {
-        $scope.successMessage = (i18n.get("_REGISTER_RECORD_ID_")) + licence.device_serial ;
+    $scope.registerSuccess = function (licence) {
+        $scope.successMessage = (i18n.get("_REGISTER_RECORD_ID_")) + licence.device_serial;
     };
 
     /**
@@ -37,7 +37,7 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$lo
      * @memberOf    licenseController
      * @desc        Redirige l'utilisateur vers la page d'authentification
      */
-    $scope.continue = function() {
+    $scope.continue = function () {
         $location.path('/');
     };
 
@@ -47,7 +47,7 @@ angular.module('smartgeomobile').controller('licenseController', ["$scope", "$lo
      * @desc        Callback d'erreur de l'enregistrement qui va afficher le message d'erreur en conséquence
      * @param       {object} response Réponse d'un objet angular $resource
      */
-    $scope.registerError = function(response) {
+    $scope.registerError = function (response) {
         switch (response.status) {
         case 0:
             $scope.errorMessage = (i18n.get("_REGISTER_ERROR_OFFLINE"));

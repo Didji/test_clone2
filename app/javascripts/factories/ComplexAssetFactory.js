@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, Smartgeo, $q, $rootScope, AssetFactory, G3ME, Storage) {
+angular.module('smartgeomobile').factory('ComplexAssetFactory', function ($http, Smartgeo, $q, $rootScope, AssetFactory, G3ME, Storage) {
 
     'use strict';
 
@@ -36,7 +36,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      *
      * @throws      {ComplexAssetError} You must provide a root okey.
      */
-    var ComplexAsset = function(okey, father, root) {
+    var ComplexAsset = function (okey, father, root) {
         this.okey = okey;
         this.uuid = Smartgeo.uuid();
         this.children = [];
@@ -65,7 +65,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      *
      * @throws      {ComplexAssetError} This node type has no child type.
      */
-    ComplexAsset.prototype.add = function() {
+    ComplexAsset.prototype.add = function () {
 
         var childType = window.SMARTGEO_CURRENT_SITE.dependancies[this.okey];
 
@@ -90,7 +90,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      *
      * @desc        Cherche le noeud correspondant à l'UUID en paramêtre
      */
-    ComplexAsset.prototype.get = function(uuid) {
+    ComplexAsset.prototype.get = function (uuid) {
 
         if (!uuid) {
             throw new ComplexAssetError('You must provide node uuid.');
@@ -122,7 +122,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @throws {ComplexAssetError} You cannot duplicate root node.
      * @throws {ComplexAssetError} Father node not found.
      */
-    ComplexAsset.prototype.duplicate = function() {
+    ComplexAsset.prototype.duplicate = function () {
 
         if (!this.father) {
             throw new ComplexAssetError('You cannot duplicate root node.');
@@ -158,7 +158,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @throws {ComplexAssetError} You cannot remove root node.
      * @throws {ComplexAssetError} Father node not found.
      */
-    ComplexAsset.prototype.delete = function() {
+    ComplexAsset.prototype.delete = function () {
 
         if (!this.father) {
             throw new ComplexAssetError('You cannot remove root node.');
@@ -188,7 +188,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @method
      * @memberOf ComplexAsset
      */
-    ComplexAsset.prototype.toggleForm = function() {
+    ComplexAsset.prototype.toggleForm = function () {
         var visibility = this.formVisible;
         this.root.__closeTreeForm();
         this.formVisible = !visibility;
@@ -198,7 +198,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @method
      * @memberOf ComplexAsset
      */
-    ComplexAsset.prototype.__closeTreeForm = function() {
+    ComplexAsset.prototype.__closeTreeForm = function () {
         this.formVisible = false;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__closeTreeForm();
@@ -211,7 +211,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      *
      * @returns {Boolean} True si l'objet a été supprimé
      */
-    ComplexAsset.prototype.save = function() {
+    ComplexAsset.prototype.save = function () {
 
         var node = this.__clone(true);
         node.timestamp = (new Date()).getTime();
@@ -219,10 +219,10 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
         node.geometry = this.geometry;
         var deferred = $q.defer();
 
-        Storage.get_('census', function(census) {
+        Storage.get_('census', function (census) {
             census = census || [];
             census.push(node);
-            Storage.set_('census', census, function() {
+            Storage.set_('census', census, function () {
                 $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                 for (var i in G3ME.map._layers) {
                     if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url && G3ME.map._layers[i].isTemp) {
@@ -236,7 +236,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
 
         $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
             timeout: 100000
-        }).success(function(data) {
+        }).success(function (data) {
             if (!Array.isArray(data) || !data[node.okey] || !data[node.okey].length) {
                 return;
             }
@@ -245,7 +245,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
                     AssetFactory.save(data[okey][i], window.SMARTGEO_CURRENT_SITE);
                 }
             }
-            Storage.get_('census', function(census) {
+            Storage.get_('census', function (census) {
                 census = census || [];
                 var alreadySaved = false;
                 for (var i = 0; i < census.length; i++) {
@@ -261,7 +261,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
                     census.push(node);
                 }
 
-                Storage.set_('census', census, function() {
+                Storage.set_('census', census, function () {
                     $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
                     for (var i in G3ME.map._layers) {
                         if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
@@ -284,7 +284,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @param {integer} level
      * @private
      */
-    ComplexAsset.prototype.__log = function() {
+    ComplexAsset.prototype.__log = function () {
         console.groupCollapsed(window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label + ':' + this.uuid);
         console.info(this);
         for (var i = 0; i < this.children.length; i++) {
@@ -299,7 +299,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @param {integer} level
      * @private
      */
-    ComplexAsset.prototype.__clone = function(preserveGeometry) {
+    ComplexAsset.prototype.__clone = function (preserveGeometry) {
         var root = this.root,
             layer = this.layer,
             geometry = this.geometry;
@@ -327,7 +327,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__deleteRoot = function() {
+    ComplexAsset.prototype.__deleteRoot = function () {
         delete this.root;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteRoot();
@@ -339,7 +339,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__deleteGeometry = function() {
+    ComplexAsset.prototype.__deleteGeometry = function () {
         delete this.geometry;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteGeometry();
@@ -351,7 +351,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__deleteLayer = function() {
+    ComplexAsset.prototype.__deleteLayer = function () {
         delete this.layer;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__deleteLayer();
@@ -364,7 +364,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @param {ComplexAsset} root
      * @private
      */
-    ComplexAsset.prototype.__restoreGeometry = function(geometry) {
+    ComplexAsset.prototype.__restoreGeometry = function (geometry) {
         this.geometry = geometry;
     }
 
@@ -374,7 +374,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @param {ComplexAsset} root
      * @private
      */
-    ComplexAsset.prototype.__restoreLayer = function(layer) {
+    ComplexAsset.prototype.__restoreLayer = function (layer) {
         this.layer = layer;
     }
 
@@ -384,7 +384,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @param {ComplexAsset} root
      * @private
      */
-    ComplexAsset.prototype.__restoreRoot = function(root) {
+    ComplexAsset.prototype.__restoreRoot = function (root) {
         this.root = root;
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].__restoreRoot(root);
@@ -396,7 +396,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__clean = function() {
+    ComplexAsset.prototype.__clean = function () {
         this.__deleteRoot();
         delete this.father;
         delete this.showForm;
@@ -413,7 +413,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
      * @memberOf ComplexAsset
      * @private
      */
-    ComplexAsset.prototype.__updateUuid = function(father) {
+    ComplexAsset.prototype.__updateUuid = function (father) {
         this.uuid = Smartgeo.uuid();
         this.father = father;
         for (var i = 0; i < this.children.length; i++) {
@@ -421,7 +421,7 @@ angular.module('smartgeomobile').factory('ComplexAssetFactory', function($http, 
         }
     }
 
-    ComplexAsset.prototype.isGeometryOk = function() {
+    ComplexAsset.prototype.isGeometryOk = function () {
         if (window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].is_graphical && !this.geometry) {
             return false;
         } else if (!this.children.length) {

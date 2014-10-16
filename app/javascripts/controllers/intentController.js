@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('intentController', function($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon, Storage) {
+angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon, Storage) {
 
     'use strict';
 
@@ -11,7 +11,7 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
         currentUser.token = token;
         Storage.set('user', currentUser);
 
-        Smartgeo.login(token, callback, function(response) {
+        Smartgeo.login(token, callback, function (response) {
             if ((response && response.status === 200) || !response) {
                 callback();
             } else {
@@ -23,19 +23,19 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
 
     function redirect() {
         switch ($scope.controller) {
-            case 'map':
-                $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-                break;
+        case 'map':
+            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+            break;
 
-            case 'report':
-                $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-                break;
+        case 'report':
+            $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+            break;
         }
     }
 
@@ -43,7 +43,7 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
         if (!Storage.get("url") || Storage.get("url").indexOf($routeParams.url) === -1) {
             Storage.setGimapUrl($routeParams.url);
         }
-        return tokenAuth($routeParams.token, function() {
+        return tokenAuth($routeParams.token, function () {
             $location.path('sites/');
         });
     }
@@ -80,7 +80,7 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
 
     if ($rootScope.map_target) {
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
-        G3ME.parseTarget(window.SMARTGEO_CURRENT_SITE, $rootScope.map_target, function(assets) {
+        G3ME.parseTarget(window.SMARTGEO_CURRENT_SITE, $rootScope.map_target, function (assets) {
             if (!assets.length) {
                 alertify.alert(i18n.get("_INTENT_OBJECT_NOT_FOUND"));
                 return tokenAuth($routeParams.token, redirect);
@@ -91,7 +91,7 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
                     icon: Icon.get('CONSULTATION')
                 });
                 if ($rootScope.report_target && $rootScope.report_activity) {
-                    $rootScope.map_marker.on('click', function() {
+                    $rootScope.map_marker.on('click', function () {
                         $location.path('/report/' + window.SMARTGEO_CURRENT_SITE.id + "/" + $rootScope.report_activity + "/" + $rootScope.report_target);
                         $scope.$apply();
                         if (!$scope.$$phase) {
@@ -103,7 +103,7 @@ angular.module('smartgeomobile').controller('intentController', function($scope,
                 $rootScope.map_marker = undefined;
             }
             tokenAuth($routeParams.token, redirect);
-        }, function() {
+        }, function () {
             alertify.alert(i18n.get("_INTENT_TARGET_NOT_VALID", $rootScope.map_target));
             $location.path('/map/');
 

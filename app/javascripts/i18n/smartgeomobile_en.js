@@ -1,4 +1,4 @@
-window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {} ;
+window.smartgeo_i18n_lang = window.smartgeo_i18n_lang || {};
 window.smartgeo_i18n_lang['en'] = {
     _AUTH_LOG_MESSAGE_INIT_: "Initialization",
     _AUTH_LOG_MESSAGE_REMOTE_: "Remote login",
@@ -16,24 +16,24 @@ window.smartgeo_i18n_lang['en'] = {
     _AUTH_SERVER_ERROR: "%s", // status
     _AUTH_INCORRECT_PASSWORD: "Invalid password", //Mot de passe incorrect",
     _AUTH_ERROR_: "Connection error",
-    _AUTH_UNKNOWN_ERROR_OCCURED_ : "Unknown error occured",
+    _AUTH_UNKNOWN_ERROR_OCCURED_: "Unknown error occured",
     _SMARTGEO_ONLINE: "Smartgeo is online",
     _SMARTGEO_OFFLINE: "Smartgeo is offline",
     _SMARTGEO_ZERO_SITE_SELECTED: "No site found",
-    _REGISTER_REGISTER_ : "Register",
-    _REGISTER_ERROR_OFFLINE  : "You must be connected to register.",
-    _REGISTER_ERROR_NOT_FOUND : "The supplied license doesn't exist.",
-    _REGISTER_ERROR_CONFLICT : "This license has already been registered.",
-    _REGISTER_ERROR_G3LIC   :  "An error has occured, please contact your support.",
-    _REGISTER_ERROR_UNKNOWN : "An error has occured, please contact your support.",
-    _REGISTER_ERROR_NO_MORE_LICENSE : "The maximum use of this license has been reached.",
-    _REGISTER_LICENSE_REVOKED : "The license isn't valid.",
+    _REGISTER_REGISTER_: "Register",
+    _REGISTER_ERROR_OFFLINE: "You must be connected to register.",
+    _REGISTER_ERROR_NOT_FOUND: "The supplied license doesn't exist.",
+    _REGISTER_ERROR_CONFLICT: "This license has already been registered.",
+    _REGISTER_ERROR_G3LIC: "An error has occured, please contact your support.",
+    _REGISTER_ERROR_UNKNOWN: "An error has occured, please contact your support.",
+    _REGISTER_ERROR_NO_MORE_LICENSE: "The maximum use of this license has been reached.",
+    _REGISTER_LICENSE_REVOKED: "The license isn't valid.",
     _REGISTER_MUST_CHECK_: "You've reached the maximum offline use of this license, please connect to Internet.",
-    _REGISTER_CAREFUL_:"Caution, you've nearly reached the maximum use of this license while offline (%s left)",
-    _REGISTER_UPDATE_LICENSE_ :"Check the license",
-    _REGISTER_RECORD_ID_ :"Your license has been accepted. Please, record the following ID in case of loss or theft: ",
-    _CONFIRM_CHANGE_SITE_ : "Do you really want to change site?",
-    _CONFIRM_DISCONNECT_ : "Do you really want to exit?",
+    _REGISTER_CAREFUL_: "Caution, you've nearly reached the maximum use of this license while offline (%s left)",
+    _REGISTER_UPDATE_LICENSE_: "Check the license",
+    _REGISTER_RECORD_ID_: "Your license has been accepted. Please, record the following ID in case of loss or theft: ",
+    _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
+    _CONFIRM_DISCONNECT_: "Do you really want to exit?",
 
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)", // geom
 
@@ -65,7 +65,7 @@ window.smartgeo_i18n_lang['en'] = {
     _MENU_LOGOUT: "Log out",
     _MENU_CENSUS: "Census",
     _MENU_CHANGE_SITE: "Change area",
-    _MENU_PARAMETERS : "Parameters",
+    _MENU_PARAMETERS: "Parameters",
     _REPORT_REPORT: "Report",
     _REPORT_CANCEL: "Cancel",
     _REPORT_NEXT: "Next",

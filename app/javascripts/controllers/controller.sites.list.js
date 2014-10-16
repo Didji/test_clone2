@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -59,7 +59,7 @@
         function getRemoteSites(knownSites) {
             var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
             $http.get(url)
-                .success(function(sites) {
+                .success(function (sites) {
                     var sitesById = {},
                         site, tmpsites = {};
                     for (var i = 0, lim = sites.length; i < lim; i++) {
@@ -73,7 +73,7 @@
                         vm.sites.push(tmpsites[id]);
                     }
                     vm.ready = true;
-                }).error(function(error, errorCode) {
+                }).error(function (error, errorCode) {
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in knownSites) {
@@ -110,9 +110,9 @@
         function select(site) {
             window.SMARTGEO_CURRENT_SITE = site;
             vm.ready = false;
-            Smartgeo.selectSiteRemotely(site.id, function() {
+            Smartgeo.selectSiteRemotely(site.id, function () {
                 redirect(site);
-            }, function() {
+            }, function () {
                 redirect(site);
             });
         };
@@ -132,7 +132,7 @@
          * @param {Object} site Site à désinstaller
          */
         function confirmUninstallSite(site) {
-            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label), function(yes) {
+            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label), function (yes) {
                 if (yes) {
                     vm.uninstallSite(site);
                 }

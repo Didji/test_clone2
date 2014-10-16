@@ -1,5 +1,5 @@
 angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
-    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
+    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
 
         'use strict';
 
@@ -20,7 +20,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
 
         var stepsByOkey = {};
 
-        $scope.$on('$locationChangeStart', function(event, next, current) {
+        $scope.$on('$locationChangeStart', function (event, next, current) {
             if (next.indexOf('/map/') === -1) {
                 event.preventDefault();
             }
@@ -66,7 +66,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
 
         var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
 
-        $http.get(url).success(function(sites) {
+        $http.get(url).success(function (sites) {
             for (var i in sites) {
                 if (!$scope.sites[sites[i].id]) {
                     $scope.sites[sites[i].id] = sites[i];
@@ -77,22 +77,22 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
             }
             $scope.site = $scope.site || sites[0];
             $scope.steps[0].progress = 50;
-            Smartgeo.selectSiteRemotely($routeParams.site, function() {
-                Installer.getInstallJSON($scope.site, function(site) {
+            Smartgeo.selectSiteRemotely($routeParams.site, function () {
+                Installer.getInstallJSON($scope.site, function (site) {
                     $scope.steps[0].progress = 100;
                     var formatedSite = Installer.formatSiteMetadata(site);
                     buildSteps(formatedSite);
                     angular.extend($scope.site, formatedSite);
-                    Installer.createZones($scope.site, function() {
-                        Installer.install($scope.site, $scope.site.stats, function() {
+                    Installer.createZones($scope.site, function () {
+                        Installer.install($scope.site, $scope.site.stats, function () {
                             $scope.site.installed = true;
                             window.SMARTGEO_CURRENT_SITE = $scope.site;
-                            Installer.saveSite($scope.site, function(sites) {
+                            Installer.saveSite($scope.site, function (sites) {
                                 $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {
                                     $scope.$apply();
                                 }
-                            }, function() {
+                            }, function () {
                                 $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {
                                     $scope.$apply();
@@ -104,7 +104,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
             }); // TODO(@gulian): tester le cas d'erreur de la fonction selectSiteRemotely
         });
 
-        $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action) {
+        $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function (event, action) {
             $scope.currentInstalledOkey = action.okey;
             stepsByOkey[action.okey].progress = 1 * action.progress;
             if (!$scope.$$phase) {

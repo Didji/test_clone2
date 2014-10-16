@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -32,7 +32,7 @@
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
 
         vm.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
-        vm.siteid = window.SMARTGEO_CURRENT_SITE.id ;
+        vm.siteid = window.SMARTGEO_CURRENT_SITE.id;
 
         vm.isOpen = false;
         vm.loading = false;
@@ -51,7 +51,7 @@
          */
         function activate() {
 
-            angular.element($window).bind("resize", function() {
+            angular.element($window).bind("resize", function () {
                 $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
             });
 
@@ -66,36 +66,36 @@
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
             // pas de résultat, on annulera cette ouverture.
-            $scope.$on("CONSULTATION_CLICK_REQUESTED", function(e, coordinates) {
+            $scope.$on("CONSULTATION_CLICK_REQUESTED", function (e, coordinates) {
                 vm.coordinates = coordinates;
                 cancelPreopenTimer();
-                PREOPEN_TIMER = $timeout(function() {
+                PREOPEN_TIMER = $timeout(function () {
                     vm.loading = true;
                     vm.open();
                     $scope.$digest();
                 }, 200);
             });
 
-            $scope.$on("CONSULTATION_CLICK_CANCELED", function() {
+            $scope.$on("CONSULTATION_CLICK_CANCELED", function () {
                 cancelPreopenTimer();
-                if(!vm.groups){
+                if (!vm.groups) {
                     vm.close();
                 }
                 vm.loading = false;
                 $scope.$digest();
             });
 
-            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets) {
+            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function (event, assets) {
                 cancelPreopenTimer();
                 updateAssetsList(assets);
                 $scope.$digest();
             });
 
-            $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
+            $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function (event, asset) {
                 addAssetToMultiselection(asset);
             });
 
-            $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
+            $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function (event, asset) {
                 dropAssetFromMultiselection(asset);
             });
 
@@ -128,14 +128,14 @@
          * @param {Asset} asset
          */
         function addAssetToMultiselection(asset) {
-            if(!vm.multiselection[asset.okey]){
+            if (!vm.multiselection[asset.okey]) {
                 vm.multiselection[asset.okey] = [];
             }
-            vm.multiselection.length = (vm.multiselection.length || 0)+1;
-            if(vm.multiselection[asset.okey].indexOf(asset) === -1){
+            vm.multiselection.length = (vm.multiselection.length || 0) + 1;
+            if (vm.multiselection[asset.okey].indexOf(asset) === -1) {
                 vm.multiselection[asset.okey].push(asset);
             }
-            asset.isInMultiselection = true ;
+            asset.isInMultiselection = true;
         }
 
 
@@ -146,7 +146,7 @@
          */
         function dropAssetFromMultiselection(asset) {
             vm.multiselection[asset.okey].splice(vm.multiselection[asset.okey].indexOf(asset), 1);
-            asset.isInMultiselection = false ;
+            asset.isInMultiselection = false;
             vm.multiselection.length--;
         }
 
@@ -158,7 +158,7 @@
         function emptyMultiselectionForOkey(okey) {
             vm.multiselection.length -= vm.multiselection[okey].length;
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
-                vm.multiselection[okey][i].isInMultiselection = false ;
+                vm.multiselection[okey][i].isInMultiselection = false;
             }
             vm.multiselection[okey] = []
         }

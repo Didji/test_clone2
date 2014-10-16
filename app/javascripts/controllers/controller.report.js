@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -104,21 +104,21 @@
 
                 cond = (vm.report.fields[srcId] === act.condition);
                 switch (act.type) {
-                    case "show":
-                        targetField.visible = cond;
+                case "show":
+                    targetField.visible = cond;
 
-                        // Si targetField est une case à cocher, elle a peut-être
-                        // aussi des conséquences. Si une case à cocher devient invisible,
-                        // il faut qu'on la décoche et qu'on applique ses conséquences.
-                        if (cond === false && targetField.type === 'O') {
-                            vm.report.fields[act.target] = 'N';
-                            vm.applyConsequences(act.target);
-                        }
+                    // Si targetField est une case à cocher, elle a peut-être
+                    // aussi des conséquences. Si une case à cocher devient invisible,
+                    // il faut qu'on la décoche et qu'on applique ses conséquences.
+                    if (cond === false && targetField.type === 'O') {
+                        vm.report.fields[act.target] = 'N';
+                        vm.applyConsequences(act.target);
+                    }
 
-                        break;
-                    case "require":
-                        targetField.required = cond;
-                        break;
+                    break;
+                case "require":
+                    targetField.required = cond;
+                    break;
                 }
             }
         }
@@ -167,7 +167,7 @@
 
             report.activity = report.activity.id;
 
-            ReportSynchronizer.synchronize(report, function() {
+            ReportSynchronizer.synchronize(report, function () {
                 vm.sendingReport = false;
                 if (!comesFromIntent) {
                     endOfReport();
@@ -186,7 +186,7 @@
          * @desc Olalalala ...
          */
         function bidouille() {
-            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e) {
+            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function (e) {
 
                 var elt;
 

@@ -1,5 +1,5 @@
 angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "ReportSynchronizer", "$filter", "$interval",
-    function($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval) {
+    function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval) {
 
         'use strict';
 
@@ -12,16 +12,16 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
 
         reportsSynchronizationCheckTimeoutId = $interval(ReportSynchronizer.checkSynchronizedReports, synchronizationCheckTimeout);
 
-        $scope.$on("$destroy", function(event) {
+        $scope.$on("$destroy", function (event) {
             $interval.cancel(reportsSynchronizationCheckTimeoutId);
         });
 
         $scope.activities = window.SMARTGEO_CURRENT_SITE.activities;
         $scope.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
 
-        $scope.initialize = function(justRefresh) {
+        $scope.initialize = function (justRefresh) {
 
-            ReportSynchronizer.getAll(function(reports) {
+            ReportSynchronizer.getAll(function (reports) {
                 $rootScope.reports = reports || [];
                 $rootScope.reports._byUUID = {};
 
@@ -38,7 +38,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 }
             });
 
-            Asset.getAll(function(assets) {
+            Asset.getAll(function (assets) {
                 $rootScope.censusAssets = assets || [];
                 $rootScope.censusAssets._byUUID = {};
 
@@ -57,21 +57,21 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
 
         };
 
-        $rootScope.refreshSyncCenter = function() {
+        $rootScope.refreshSyncCenter = function () {
             $scope.initialize(true);
         };
 
-        $scope.synchronizeReport = function(UIreport, callback) {
-            return ReportSynchronizer.synchronize(UIreport, function(report) {
+        $scope.synchronizeReport = function (UIreport, callback) {
+            return ReportSynchronizer.synchronize(UIreport, function (report) {
                 UIreport = report || UIreport;
                 if (report.synced && !report.hide) {
                     $scope.hideReport(report, 0);
                 }
-                (callback || function() {})()
+                (callback || function () {})()
             });
         };
 
-        $scope.synchronizeReports = function(i, callback) {
+        $scope.synchronizeReports = function (i, callback) {
 
             if ($scope.globalReportsSynchronizationIsInProgress && !i) {
                 return false;
@@ -81,37 +81,37 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
 
             $scope.globalReportsSynchronizationIsInProgress = true;
 
-            ReportSynchronizer.getAll(function(reports) {
+            ReportSynchronizer.getAll(function (reports) {
 
                 for (i = i || 0; i < reports.length; i++) {
                     if (!$rootScope.reports._byUUID[reports[i].uuid].synced) {
-                        return $scope.synchronizeReport($rootScope.reports._byUUID[reports[i].uuid], function() {
+                        return $scope.synchronizeReport($rootScope.reports._byUUID[reports[i].uuid], function () {
                             $scope.synchronizeReports(i + 1);
                         })
                     }
                 }
 
-                $scope.$apply(function() {
+                $scope.$apply(function () {
                     $scope.globalReportsSynchronizationIsInProgress = false;
                 });
 
-                (callback || function() {})();
+                (callback || function () {})();
                 reportsSynchronizationTimeoutId = setTimeout($scope.synchronizeReports, synchronizationTimeout);
             });
 
         };
 
-        $scope.synchronizeAsset = function(UIasset, callback) {
-            return Asset.synchronize(UIasset, function(asset) {
+        $scope.synchronizeAsset = function (UIasset, callback) {
+            return Asset.synchronize(UIasset, function (asset) {
                 UIasset = asset || UIasset;
                 if (asset.synced && !asset.hide) {
                     $scope.hideReport(asset, 0);
                 }
-                (callback || function() {})()
+                (callback || function () {})()
             });
         };
 
-        $scope.synchronizeAssets = function(i, callback) {
+        $scope.synchronizeAssets = function (i, callback) {
             if ($scope.globalAssetsSynchronizationIsInProgress && !i) {
                 return false;
             }
@@ -120,11 +120,11 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
 
             $scope.globalAssetsSynchronizationIsInProgress = true;
 
-            Asset.getAll(function(assets) {
+            Asset.getAll(function (assets) {
 
                 for (i = i || 0; i < assets.length; i++) {
                     if (!$rootScope.censusAssets._byUUID[assets[i].uuid].synced) {
-                        return $scope.synchronizeAsset($rootScope.censusAssets._byUUID[assets[i].uuid], function() {
+                        return $scope.synchronizeAsset($rootScope.censusAssets._byUUID[assets[i].uuid], function () {
                             $scope.synchronizeAssets(i + 1);
                         })
                     }
@@ -136,13 +136,13 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                     $scope.$apply();
                 }
 
-                (callback || function() {})();
+                (callback || function () {})();
                 assetsSynchronizationTimeoutId = setTimeout($scope.synchronizeAssets, synchronizationTimeout);
             });
 
         };
 
-        $scope.deleteReport = function(report, $index) {
+        $scope.deleteReport = function (report, $index) {
             var text;
             try {
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + site.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
@@ -150,7 +150,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             }
 
-            alertify.confirm(text, function(yes) {
+            alertify.confirm(text, function (yes) {
                 if (!yes) {
                     return;
                 }
@@ -160,10 +160,10 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             });
         };
 
-        $scope.deleteAsset = function(asset, $index) {
+        $scope.deleteAsset = function (asset, $index) {
             var text = "Êtes vous sûr de vouloir supprimer cet objet ? Cette action est définitive. L'objet ne pourra être récupéré.";
 
-            alertify.confirm(text, function(yes) {
+            alertify.confirm(text, function (yes) {
                 if (!yes) {
                     return;
                 }
@@ -173,23 +173,23 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             });
         };
 
-        $scope.hideReport = function(report, timeout) {
-            $timeout(function() {
+        $scope.hideReport = function (report, timeout) {
+            $timeout(function () {
                 $rootScope.reports._byUUID[report.uuid].hide = true;
                 ReportSynchronizer.updateInDatabase($rootScope.reports._byUUID[report.uuid]);
                 $scope.$apply();
             }, timeout || 3000);
         };
 
-        $scope.hideAsset = function(asset, timeout) {
-            $timeout(function() {
+        $scope.hideAsset = function (asset, timeout) {
+            $timeout(function () {
                 $rootScope.censusAssets._byUUID[asset.uuid].hide = true;
                 Asset.updateInDatabase($rootScope.censusAssets._byUUID[asset.uuid]);
                 $scope.$apply();
             }, timeout || 3000);
         };
 
-        $rootScope.toBeSyncLength = $scope.toBeSyncLength = function() {
+        $rootScope.toBeSyncLength = $scope.toBeSyncLength = function () {
             var reports = $rootScope.reports || [],
                 censusAssets = $rootScope.censusAssets || [],
                 size = 0;

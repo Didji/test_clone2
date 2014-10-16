@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -35,7 +35,8 @@
          */
         function activate() {
 
-            var currentMetamodel = {}, currentLayer,
+            var currentMetamodel = {},
+                currentLayer,
                 visibilities = G3ME.getVisibility();
 
             for (var okey in window.SMARTGEO_CURRENT_SITE.metamodel) {
@@ -68,7 +69,8 @@
          * @param {Object} group Groupe à switcher
          */
         function checkGroup(group) {
-            var status = false, layers = group.layers;
+            var status = false,
+                layers = group.layers;
             for (var i = 0; i < layers.length; i++) {
                 status = status || layers[i].status;
             }

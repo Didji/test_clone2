@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -14,14 +14,14 @@
          * @desc
          */
 
-        var lists = Site.current.lists ;
+        var lists = Site.current.lists;
         var listsArray = {};
 
         function listObjectToArray_(options) {
-            if(listsArray[options]){
+            if (listsArray[options]) {
                 return listsArray[options];
             }
-            var currentList = lists[options] ;
+            var currentList = lists[options];
             var out = [];
             for (var value in currentList) {
                 out.push({
@@ -29,7 +29,7 @@
                     'label': currentList[value]
                 });
             }
-            listsArray[options] =  out ;
+            listsArray[options] = out;
             return out;
         }
         return listObjectToArray_;

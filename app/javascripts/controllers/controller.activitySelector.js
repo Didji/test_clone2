@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -32,7 +32,7 @@
             vm.mission = $routeParams.mission;
             vm.site = $routeParams.site;
 
-            var asset = new Asset($routeParams.assets.split(',')[0], function() {
+            var asset = new Asset($routeParams.assets.split(',')[0], function () {
                 vm.activities = $filter('activityListFilter')(asset);
                 $scope.$digest();
             });

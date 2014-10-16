@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -19,7 +19,7 @@
          * @desc Prend une photo
          * @param {Function} callback
          */
-        Camera.snap = function(callback) {
+        Camera.snap = function (callback) {
             navigator.getMedia = (navigator.getUserMedia ||
                 navigator.webkitGetUserMedia ||
                 navigator.mozGetUserMedia ||
@@ -29,10 +29,10 @@
                 if (!window.ChromiumCallbacks) {
                     window.ChromiumCallbacks = {};
                 }
-                window.ChromiumCallbacks[1] = function(path) {
+                window.ChromiumCallbacks[1] = function (path) {
                     var imageElement = document.createElement("img");
                     imageElement.src = path;
-                    imageElement.onload = function() {
+                    imageElement.onload = function () {
                         var canvasElement = document.createElement("canvas");
                         canvasElement.width = imageElement.width;
                         canvasElement.height = imageElement.height;
@@ -52,7 +52,7 @@
                 navigator.getMedia({
                     video: true,
                     audio: false
-                }, function(stream) {
+                }, function (stream) {
                     if (navigator.mozGetUserMedia) {
                         video.mozSrcObject = stream;
                     } else {
@@ -60,10 +60,10 @@
                         video.src = vendorURL.createObjectURL(stream);
                     }
                     video.play();
-                }, function(err) {
+                }, function (err) {
                     var imageElement2 = document.createElement("img");
                     imageElement2.src = "http://placehold.it/350x150";
-                    imageElement2.onload = function() {
+                    imageElement2.onload = function () {
                         var canvasElement = document.createElement("canvas");
                         canvasElement.width = imageElement2.width;
                         canvasElement.height = imageElement2.height;
@@ -72,7 +72,7 @@
                     };
                 });
 
-                video.addEventListener("canplay", function(ev) {
+                video.addEventListener("canplay", function (ev) {
                     if (!streaming) {
                         height = video.videoHeight / (video.videoWidth / width);
                         video.setAttribute("width", width);
@@ -88,9 +88,9 @@
                 }, false);
 
             } else if (navigator.camera) {
-                navigator.camera.getPicture(function(imageURI) {
+                navigator.camera.getPicture(function (imageURI) {
                     callback(imageURI);
-                }, function() {}, {
+                }, function () {}, {
                     quality: 100,
                     sourceType: navigator.camera.PictureSourceType.CAMERA,
                     mediaType: navigator.camera.MediaType.PICTURE,
@@ -101,7 +101,7 @@
             } else {
                 var img = document.createElement("img");
                 img.src = "http://placehold.it/350x150";
-                img.onload = function() {
+                img.onload = function () {
                     var canvasElement2 = document.createElement("canvas");
                     canvasElement2.width = img.width;
                     canvasElement2.height = img.height;

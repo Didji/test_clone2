@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera" ,
-    function($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera",
+    function ($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera) {
         return {
 
             restrict: 'E',
@@ -13,24 +13,24 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
             templateUrl: 'partials/censusDirectiveTemplate.html',
 
-            link: function($scope, element, attrs) {
+            link: function ($scope, element, attrs) {
                 $scope.mapLayers = [];
                 $scope.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
                 $scope.dependancies = window.SMARTGEO_CURRENT_SITE.dependancies;
                 $scope.defaultClassIndex = $scope.classindex || "0";
-                $scope.$watch('okey', function(okey) {
+                $scope.$watch('okey', function (okey) {
                     if (okey) {
                         window.root = $scope.root = $scope.node = new ComplexAssetFactory(okey);
                     }
                 }, true);
 
-                $scope.cancel = function() {
+                $scope.cancel = function () {
                     $scope.okey = undefined;
                     $scope.oncancel();
                     $scope.removeLayers();
                 };
 
-                $scope.toggleCollapse = function(e, tab, tabs) {
+                $scope.toggleCollapse = function (e, tab, tabs) {
                     var oldVisible = tab.visible;
                     for (var i = 0; i < tabs.length; i++) {
                         tabs[i].visible = false;
@@ -39,14 +39,14 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     tab.visible = !!!oldVisible;
                 };
 
-                $scope.removeLayers = function() {
+                $scope.removeLayers = function () {
                     for (var i = 0; i < $scope.mapLayers.length; i++) {
                         G3ME.map.removeLayer($scope.mapLayers[i]);
                     }
                     $scope.mapLayers = [];
                 };
 
-                $scope.save = function() {
+                $scope.save = function () {
                     if (!$scope.root.isGeometryOk()) {
                         alertify.alert('Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
                         return;
@@ -56,16 +56,16 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     $scope.root.save();
                 };
 
-                $scope.snap = function(node) {
-                    Camera.snap(function(picture) {
+                $scope.snap = function (node) {
+                    Camera.snap(function (picture) {
                         node.photo = picture;
                         $scope.$apply();
                     })
                 };
 
-                $scope.userLocationGeometry = function(node) {
+                $scope.userLocationGeometry = function (node) {
 
-                    Smartgeo.getCurrentLocation(function(lng, lat, alt, acc) {
+                    Smartgeo.getCurrentLocation(function (lng, lat, alt, acc) {
                         node.geometry = [lat, lng];
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
@@ -79,7 +79,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 };
 
-                $scope.draw = function(node) {
+                $scope.draw = function (node) {
                     if (window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].geometry_type === "LineString") {
                         $scope.drawLine(node);
                     } else {
@@ -87,7 +87,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     }
                 };
 
-                $scope.drawLine = function(node) {
+                $scope.drawLine = function (node) {
 
                     function mouseClickHandler(e) {
                         var clickLatLng = [e.latlng.lat, e.latlng.lng];
@@ -103,7 +103,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                                 weight: 1,
                                 fillOpacity: 1
                             }).addTo(G3ME.map);
-                            $scope.lastPointLayer.on('click', function(e) {
+                            $scope.lastPointLayer.on('click', function (e) {
                                 node.geometry = angular.copy(node.tmpGeometry);
                                 delete node.tmpGeometry;
                                 G3ME.map.off('click', mouseClickHandler);
@@ -140,7 +140,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     G3ME.map.off('click', mouseClickHandler).on('click', mouseClickHandler);
                 };
 
-                $scope.drawPoint = function(node) {
+                $scope.drawPoint = function (node) {
 
                     node.geometry = undefined;
 
@@ -181,8 +181,8 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                 };
 
-                $scope.confirmDelete = function(node) {
-                    alertify.confirm('Supprimer ' + node.fields[window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].ukey] + ' ?', function(yes) {
+                $scope.confirmDelete = function (node) {
+                    alertify.confirm('Supprimer ' + node.fields[window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].ukey] + ' ?', function (yes) {
                         node.delete();
                         $scope.$apply()
                     });

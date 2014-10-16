@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -27,15 +27,15 @@
          * @property {Date} timestamp
          */
         function Report(assets, activity, mission, isCall) {
-            this.assets = assets ;
-            this.activity = Activity.findOne(activity) ;
-            this.mission = 1*mission ;
-            this.site = window.SMARTGEO_CURRENT_SITE.label ;
+            this.assets = assets;
+            this.activity = Activity.findOne(activity);
+            this.mission = 1 * mission;
+            this.site = window.SMARTGEO_CURRENT_SITE.label;
             this.fields = {};
             this.ged = [];
             this.uuid = Smartgeo.uuid();
             this.timestamp = new Date().getTime();
-            this.isCall = isCall ;
+            this.isCall = isCall;
         }
 
         Report.prototype.roFields = {};
@@ -46,7 +46,7 @@
          * @param {Number} i
          * @desc
          */
-        Report.prototype.removeGedItem = function(i) {
+        Report.prototype.removeGedItem = function (i) {
             this.ged.splice(i, 1);
         };
 

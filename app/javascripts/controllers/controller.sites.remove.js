@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -39,7 +39,7 @@
          */
         function siteHasBeenRemoved() {
             //TODO(@gulian): Site.remove(id);
-            Storage.get_('sites', function(sites) {
+            Storage.get_('sites', function (sites) {
                 delete sites[prefetchedlocalsites.id];
                 Storage.set_('sites', sites);
                 $location.path(Object.keys(sites).length === 0 ? '/' : '/sites');

@@ -1,5 +1,5 @@
 angular.module('smartgeomobile').factory('G3lic', ['$resource',
-    function($resource) {
+    function ($resource) {
         return $resource('http://localhost:3000/licenses/:method', {}, {
             register: {
                 method: 'POST',

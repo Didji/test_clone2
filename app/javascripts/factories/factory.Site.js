@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -22,7 +22,7 @@
          * @name current
          * @desc
          */
-        Site.__defineGetter__("current", function(){
+        Site.__defineGetter__("current", function () {
             return window.SMARTGEO_CURRENT_SITE;
         });
 
@@ -30,11 +30,11 @@
          * @name all
          * @desc
          */
-        Site.all = function(callback) {
+        Site.all = function (callback) {
             var deferred = $q.defer();
-            Storage.get_('sites', function(sites) {
+            Storage.get_('sites', function (sites) {
                 deferred.resolve(sites);
-                (callback || function() {})(sites);
+                (callback || function () {})(sites);
             });
             return deferred.promise;
         };
@@ -43,9 +43,9 @@
          * @name all
          * @desc
          */
-        Site.get = function(id) {
+        Site.get = function (id) {
             var deferred = $q.defer();
-            Storage.get_('sites', function(sites) {
+            Storage.get_('sites', function (sites) {
                 deferred.resolve(sites[id]);
             });
             return deferred.promise;

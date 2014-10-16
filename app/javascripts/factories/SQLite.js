@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('SQLite', function() {
+angular.module('smartgeomobile').factory('SQLite', function () {
 
     'use strict';
 
@@ -9,7 +9,7 @@ angular.module('smartgeomobile').factory('SQLite', function() {
 
         databases: {},
 
-        openDatabase: function(args) {
+        openDatabase: function (args) {
             if (!SQLite.databases[args.name]) {
                 if (window.sqlitePlugin) {
                     SQLite.databases[args.name] = sqlitePlugin.openDatabase({
@@ -23,65 +23,65 @@ angular.module('smartgeomobile').factory('SQLite', function() {
             return SQLite.databases[args.name];
         },
 
-        parameters: function() {
+        parameters: function () {
             return SQLite.openDatabase({
                 name: 'parameters'
             });
         },
 
-        get: function(parameter, callback) {
-            SQLite.parameters().transaction(function(transaction) {
+        get: function (parameter, callback) {
+            SQLite.parameters().transaction(function (transaction) {
                 transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
                 transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
-                transaction.executeSql('SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
+                transaction.executeSql('SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function (transaction, results) {
                     if (results.rows.length === 1) {
-                        (callback || function() {})(JSON.parse(results.rows.item(0).p_value));
+                        (callback || function () {})(JSON.parse(results.rows.item(0).p_value));
                     } else {
-                        (callback || function() {})(undefined);
+                        (callback || function () {})(undefined);
                     }
-                }, function(transaction, SqlError) {
+                }, function (transaction, SqlError) {
                     console.error(SqlError);
-                    (callback || function() {})(undefined);
+                    (callback || function () {})(undefined);
                 });
             });
         },
 
-        set: function(parameter, value, callback) {
-            SQLite.parameters().transaction(function(transaction) {
+        set: function (parameter, value, callback) {
+            SQLite.parameters().transaction(function (transaction) {
                 transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
                 transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
-                transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function(transaction, results) {
-                    (callback || function() {})();
-                }, function(transaction, SqlError) {
+                transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify(value)], function (transaction, results) {
+                    (callback || function () {})();
+                }, function (transaction, SqlError) {
                     console.error(SqlError);
-                    (callback || function() {})(undefined);
+                    (callback || function () {})(undefined);
                 });
             });
         },
 
-        unset: function(parameter, callback) {
-            SQLite.parameters().transaction(function(transaction) {
+        unset: function (parameter, callback) {
+            SQLite.parameters().transaction(function (transaction) {
                 transaction.executeSql('CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)');
                 transaction.executeSql('CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)');
-                transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
-                    (callback || function() {})();
-                }, function(transaction, SqlError) {
+                transaction.executeSql('DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function (transaction, results) {
+                    (callback || function () {})();
+                }, function (transaction, SqlError) {
                     console.error(SqlError);
-                    (callback || function() {})();
+                    (callback || function () {})();
                 });
             });
         },
 
-        exec: function(database, request, args, callback) {
+        exec: function (database, request, args, callback) {
             SQLite.openDatabase({
                 name: database
-            }).transaction(function(t) {
-                t.executeSql(request, args || [], function(t, r) {
+            }).transaction(function (t) {
+                t.executeSql(request, args || [], function (t, r) {
                     callback(r.rows);
-                }, function() {
+                }, function () {
                     console.error(arguments);
                 });
-            }, function() {
+            }, function () {
                 console.error(arguments);
             });
         }

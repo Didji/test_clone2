@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -16,7 +16,7 @@
             return url.replace(/^https?:\/\/(.+)\/index\.php.*$/, '$1');
         }
 
-        return shortener ;
+        return shortener;
     }
 
 })();

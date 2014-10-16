@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict';
 
@@ -95,9 +95,9 @@
                 $location.path('/map/' + localSites[0].id);
             } else if (remoteSites.length === 1 && localSites.length === 1 && localSites[0].installed === true && localSites[0].id === remoteSites[0].id) {
                 // Online avec un site installé : Authentification nécessaire
-                Smartgeo.selectSiteRemotely(localSites[0].id, function() {
+                Smartgeo.selectSiteRemotely(localSites[0].id, function () {
                     $location.path('/map/' + localSites[0].id);
-                }, function() {
+                }, function () {
                     vm.errorMessage = (i18n.get('_AUTH_UNKNOWN_ERROR_OCCURED_'));
                 });
             } else if (remoteSites.length === 1 && localSites.length <= 1) {
@@ -153,8 +153,8 @@
             });
 
             $http.post(url, {}, {
-                timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
-            })
+                    timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
+                })
                 .success(loginSuccess)
                 .error(loginError);
 

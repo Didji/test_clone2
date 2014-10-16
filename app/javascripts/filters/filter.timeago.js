@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -16,7 +16,7 @@
             var nowTime = (new Date()).getTime(),
                 date = (new Date(input)).getTime(),
                 dateDifference = nowTime - date,
-                substitute = function(stringOrFunction, number, strings) {
+                substitute = function (stringOrFunction, number, strings) {
                     var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, dateDifference) : stringOrFunction;
                     var value = (strings.numbers && strings.numbers[number]) || number;
                     return string.replace(/%d/i, value);
@@ -71,7 +71,7 @@
             return $.trim([prefix, words, suffix].join(separator));
         }
 
-        return timeago ;
+        return timeago;
 
     }
 
