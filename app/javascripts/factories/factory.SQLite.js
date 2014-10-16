@@ -21,7 +21,7 @@
 
         /**
          * @name openDatabase
-         * @desc Ouvre une base de données et la met en cache
+         * @desc
          * @param {Object} args
          */
         SQLite.openDatabase = function (args) {
@@ -40,7 +40,7 @@
 
         /**
          * @name parameters
-         * @desc Ouvre la base de données 'parameters'
+         * @desc
          */
         SQLite.parameters = function () {
             return SQLite.openDatabase({
@@ -50,7 +50,7 @@
 
         /**
          * @name get
-         * @desc Récupére une valeur dans la base de données 'parameters'
+         * @desc
          * @param {String} parameter
          * @param {Function} callback
          */
@@ -71,7 +71,7 @@
 
         /**
          * @name set
-         * @desc Enregistre une valeur dans la base de données 'parameters'
+         * @desc
          * @param {String} parameter
          * @param {*} value
          * @param {Function} callback
@@ -89,7 +89,7 @@
 
         /**
          * @name unset
-         * @desc Supprime une valeur dans la base de données 'parameters'
+         * @desc
          * @param {String} parameter
          * @param {Function} callback
          */
@@ -106,7 +106,7 @@
 
         /**
          * @name exec
-         * @desc Execute une requête
+         * @desc
          * @param {String} database
          * @param {String} request
          * @param {Array} args
@@ -128,7 +128,7 @@
 
         /**
          * @name initialize
-         * @desc Crée la base de données 'parameters' et ses index
+         * @desc
          */
         SQLite.initialize = function () {
             SQLite.parameters().transaction(function (transaction) {
