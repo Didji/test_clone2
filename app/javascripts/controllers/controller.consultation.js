@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ConsultationController', ConsultationController);
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", "AssetFactory", "$timeout"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", "$timeout"];
 
     /**
      * @class ConsultationController
@@ -19,7 +19,7 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, Asset, $timeout) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, $timeout) {
 
         var vm = this;
 

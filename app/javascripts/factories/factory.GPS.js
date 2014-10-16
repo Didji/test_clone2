@@ -19,17 +19,17 @@
 
         /**
          * @name startWatchingPosition
-         * @desc
+         * @desc Demande des mises à jour de position GPS
          * @param {Function} listener
          */
         GPS.startWatchingPosition = function (listener) {
             if (!GPS.positionListerners.length) {
                 if (window.SmartgeoChromium) {
-                    window.ChromiumCallbacks[0] = GPS.positionListernersDispatchor ;
+                    window.ChromiumCallbacks[0] = GPS.__positionListernersDispatchor ;
                     SmartgeoChromium.startWatchingPosition();
                 } else {
                     GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(function (position) {
-                        GPS.positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
+                        GPS.__positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
                     }, function () {}, {
                         enableHighAccuracy: false,
                         maximumAge: 0
@@ -43,7 +43,7 @@
 
         /**
          * @name stopWatchingPosition
-         * @desc
+         * @desc Arrête les demandes des mises à jour de position GPS
          * @param {Function} listener
          */
         GPS.stopWatchingPosition = function (listener) {
@@ -62,7 +62,7 @@
 
         /**
          * @name getCurrentLocation
-         * @desc
+         * @desc Récupère la position GPS
          * @param {Function} listener
          */
         GPS.getCurrentLocation = function (listener) {
@@ -73,14 +73,14 @@
         };
 
         /**
-         * @name positionListernersDispatchor
-         * @desc
+         * @name __positionListernersDispatchor
+         * @private
          * @param {Number} lng
          * @param {Number} lat
          * @param {Number} alt
          * @param {Number} acc
          */
-        GPS.positionListernersDispatchor = function (lng, lat, alt, acc) {
+        GPS.__positionListernersDispatchor = function (lng, lat, alt, acc) {
             for (var i = 0; i < GPS.positionListerners.length; i++) {
                 GPS.positionListerners[i](lng, lat, alt, acc);
             }
@@ -88,7 +88,7 @@
 
         /**
          * @name emptyPositionListerners
-         * @desc
+         * @desc Vide le tableau d'écouteur de position GPS
          */
         GPS.emptyPositionListerners = function () {
             for (var i = 0; i < GPS.positionListerners.length; i++) {

@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS",
-    function ($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS",
+    function ($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS) {
 
         "use strict";
 
@@ -23,7 +23,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 scope.defaultClassIndex = scope.classindex || "0";
                 scope.$watch('okey', function (okey) {
                     if (okey) {
-                        window.root = scope.root = scope.node = new ComplexAssetFactory(okey);
+                        window.root = scope.root = scope.node = new ComplexAsset(okey);
                     }
                 }, true);
 
