@@ -480,14 +480,15 @@
         /*
          * Gestion du mode de suivi de la position GPS.
          */
-        var POSITION_ACTIVATE, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION;
+        var POSITION_ACTIVATE = false, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION;
 
         $scope.$on("ACTIVATE_POSITION", activatePosition);
-        
+
         if (Smartgeo.get('user_position_activated')) {
             activatePosition();
+            POSITION_ACTIVATE = true;
         }
-        
+
         function activatePosition() {
             POSITION_ACTIVATE = FIRST_POSITION = true;
             if (LAST_USERS_LOCATION.length) {
