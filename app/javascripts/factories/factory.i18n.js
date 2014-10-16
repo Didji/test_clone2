@@ -4,7 +4,7 @@
 
     angular
         .module('smartgeomobile')
-        .factory('i18n', i18n);
+        .factory('i18n', i18nFactory);
 
     /**
      * @class i18n
@@ -18,15 +18,15 @@
      * @property {String} labels Dictionnaire
      */
 
-    function i18n() {
+    function i18nFactory() {
 
         var i18n = {};
 
         i18n.OVERRIDE_LANGUAGE = 'fr';
-        i18n.SYSTEM_LANGUAGE   = navigator.language.slice(0, 2);
+        i18n.SYSTEM_LANGUAGE = navigator.language.slice(0, 2);
         i18n.FALLBACK_LANGUAGE = 'fr';
         i18n.UNTRANSLATED_CHAR = '≠';
-        i18n.MISSING_ARG_CHAR  = 'Ø',
+        i18n.MISSING_ARG_CHAR = 'Ø',
         i18n.labels = window.smartgeo_i18n_lang,
 
         /**
@@ -48,11 +48,13 @@
          * @returns {String}
          */
         i18n.get = function(key) {
-            if(!key || key.trim().length === 0){
+            if (!key || key.trim().length === 0) {
                 return;
             }
             var s = i18n.labels[i18n.lang()] && i18n.labels[i18n.lang()][key && key.trim()],
-                i = 0, j=1, args = [];
+                i = 0,
+                j = 1,
+                args = [];
             for (; j < arguments.length; j++) {
                 args.push(arguments[j]);
             }

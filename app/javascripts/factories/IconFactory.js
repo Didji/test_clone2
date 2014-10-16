@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Icon', function () {
+angular.module('smartgeomobile').factory('Icon', function() {
 
     'use strict';
 
@@ -17,7 +17,7 @@ angular.module('smartgeomobile').factory('Icon', function () {
      * @property    {L.icon} GRAY_TARGET
      * @property    {L.icon} TARGET
      */
-    var Icon = function () {
+    var Icon = function() {
         this.SELECTED_MISSION = L.icon({
             iconUrl: "images/SELECTED_MISSION.png",
             iconSize: [65, 89],
@@ -30,9 +30,9 @@ angular.module('smartgeomobile').factory('Icon', function () {
         });
 
         this.NON_SELECTED_NIGHTTOUR = new L.DivIcon({
-                html: '',
-                className: 'NON_SELECTED_NIGHTTOUR',
-                iconSize: [49, 67],
+            html: '',
+            className: 'NON_SELECTED_NIGHTTOUR',
+            iconSize: [49, 67],
             iconAnchor: [25, 67]
         });
 
@@ -71,12 +71,12 @@ angular.module('smartgeomobile').factory('Icon', function () {
      * @param       {string} name Nom de l'icône
      * @returns     {L.icon} Icône correspondant
      */
-    Icon.prototype.get = function (name) {
-        var icon = this[name] ;
-        if(icon){
+    Icon.prototype.get = function(name) {
+        var icon = this[name];
+        if (icon) {
             return icon;
         } else {
-            console.error('Icon '+name+' not available.');
+            console.error('Icon ' + name + ' not available.');
         }
     };
 
@@ -87,17 +87,17 @@ angular.module('smartgeomobile').factory('Icon', function () {
      * @param       {string} okey
      * @returns     {L.icon} Icône correspondant
      */
-    Icon.prototype.getOkeyIcon = function (okey, classindex) {
+    Icon.prototype.getOkeyIcon = function(okey, classindex) {
 
-        classindex = classindex || 0 ;
+        classindex = classindex || 0;
 
-        var icon = this['OKEY_'+okey+'_'+classindex] || L.icon({
-            iconUrl: window.SMARTGEO_CURRENT_SITE.symbology[''+okey+classindex].style.symbol.icon,
+        var icon = this['OKEY_' + okey + '_' + classindex] || L.icon({
+            iconUrl: window.SMARTGEO_CURRENT_SITE.symbology['' + okey + classindex].style.symbol.icon,
             iconSize: [32, 32],
             iconAnchor: [16, 16],
         });
 
-        if(icon){
+        if (icon) {
             return icon;
         } else {
             console.error('Icon not available.');

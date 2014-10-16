@@ -50,7 +50,7 @@
 
             $rootScope.currentPage = "Saisie de compte-rendu";
 
-            if(!checkInputParameters($routeParams)){
+            if (!checkInputParameters($routeParams)) {
                 return;
             }
 
@@ -61,12 +61,12 @@
             comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
 
             var assetsIds = $routeParams.assets.split(','),
-                missionId = $rootScope.report_mission || $routeParams.mission ,
-                isCall    = false ;
+                missionId = $rootScope.report_mission || $routeParams.mission,
+                isCall = false;
 
-            if(missionId && missionId.indexOf('call-') != -1){
-                isCall = true ;
-                missionId = missionId.substr(5) ;
+            if (missionId && missionId.indexOf('call-') != -1) {
+                isCall = true;
+                missionId = missionId.substr(5);
             }
 
             vm.report = new Report(assetsIds, $routeParams.activity, missionId, isCall);
@@ -139,10 +139,11 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            var report = angular.copy(vm.report), i ;
+            var report = angular.copy(vm.report),
+                i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type == "T") {
-                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes()) ;
+                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes());
                 }
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type == "D") {
                     report.fields[i] = report.fields[i].getFullYear() + "-" + pad(report.fields[i].getMonth() + 1) + "-" + pad(report.fields[i].getDate());
@@ -185,26 +186,26 @@
          * @desc Olalalala ...
          */
         function bidouille() {
-            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e){
+            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function(e) {
 
-                var elt ;
+                var elt;
 
-                if(!angular.element(this).prop('tagName') === "label"){
-                    elt = angular.element(this) ;
-                } else if(!angular.element(this).siblings('label').length){
-                    elt = angular.element(this) ;
+                if (!angular.element(this).prop('tagName') === "label") {
+                    elt = angular.element(this);
+                } else if (!angular.element(this).siblings('label').length) {
+                    elt = angular.element(this);
                 } else {
                     elt = angular.element(this).siblings('label');
                 }
 
-                if(!elt.offset().top){
-                    return ;
+                if (!elt.offset().top) {
+                    return;
                 }
 
                 angular.element('html, body').animate({
                     scrollTop: elt.offset().top - 10
                 }, 250);
-                elt = null ;
+                elt = null;
             });
 
         }
@@ -420,13 +421,13 @@
          * @returns {Boolean} Retourne true si les paramètres obligatoires sont présents
          */
         function checkInputParameters(routeParams) {
-            if(!routeParams.site){
+            if (!routeParams.site) {
                 alertify.alert('Aucun site selectionné.');
                 return false;
-            } else if(!routeParams.activity){
+            } else if (!routeParams.activity) {
                 alertify.alert('Aucune activité selectionnée.');
                 return false;
-            } else if(!routeParams.assets){
+            } else if (!routeParams.assets) {
                 alertify.alert('Aucun patrimoine selectionné.');
                 return false;
             }
@@ -448,14 +449,14 @@
          * @name containsUnfilledRequiredFields
          * @desc
          */
-        function containsUnfilledRequiredFields(){
+        function containsUnfilledRequiredFields() {
             for (var i in vm.report.activity._fields) {
                 var field = vm.report.activity._fields[i];
-                if(field.required && !vm.report.fields[field.id]){
+                if (field.required && !vm.report.fields[field.id]) {
                     return true;
                 }
             }
-            return false ;
+            return false;
         }
     }
 

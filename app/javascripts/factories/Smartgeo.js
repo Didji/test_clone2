@@ -237,7 +237,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
             });
         },
 
-
         positionListernersDispatchor: function(lng, lat, alt, acc) {
             for (var i = 0; i < this.positionListerners.length; i++) {
                 this.positionListerners[i](lng, lat, alt, acc);
