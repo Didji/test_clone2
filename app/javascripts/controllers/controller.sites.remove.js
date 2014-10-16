@@ -6,18 +6,18 @@
         .module('smartgeomobile')
         .controller('SiteRemoveController', SiteRemoveController);
 
-    SiteRemoveController.$inject = ["$scope", "$rootScope", "$routeParams", "Smartgeo", "$location", "Installer","prefetchedlocalsites"];
+    SiteRemoveController.$inject = ["$scope", "$rootScope", "$routeParams", "Smartgeo", "$location", "Installer", "Storage", "prefetchedlocalsites"];
 
     /**
      * @class SiteRemoveController
      * @desc Controlleur de la page de suppression de site.
      */
 
-    function SiteRemoveController($scope, $rootScope, $routeParams, Smartgeo, $location, Installer,prefetchedlocalsites) {
+    function SiteRemoveController($scope, $rootScope, $routeParams, Smartgeo, $location, Installer, Storage, prefetchedlocalsites) {
 
         var vm = this;
 
-        vm.siteLabel = "" ;
+        vm.siteLabel = "";
 
         var removedSite = {};
 
@@ -30,18 +30,18 @@
         function activate() {
             removedSite = prefetchedlocalsites;
             vm.siteLabel = removedSite.label;
-            Installer.uninstallSite(removedSite,siteHasBeenRemoved);
+            Installer.uninstallSite(removedSite, siteHasBeenRemoved);
         }
 
         /**
          * @name siteHasBeenRemoved
          * @desc Callback de fin de suppression de site
          */
-        function siteHasBeenRemoved(){
+        function siteHasBeenRemoved() {
             //TODO(@gulian): Site.remove(id);
-            Smartgeo.get_('sites', function(sites){
+            Storage.get_('sites', function(sites) {
                 delete sites[prefetchedlocalsites.id];
-                Smartgeo.set_('sites', sites);
+                Storage.set_('sites', sites);
                 $location.path(Object.keys(sites).length === 0 ? '/' : '/sites');
                 $scope.$apply();
             });

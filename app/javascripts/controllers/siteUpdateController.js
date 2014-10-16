@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "i18n",
-    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
+    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
 
         'use strict';
 
@@ -52,7 +52,7 @@ angular.module('smartgeomobile').controller('siteUpdateController', ["$scope", "
             }
         }
 
-        var allSites = Smartgeo.get_('sites') || {};
+        var allSites = Storage.get_('sites') || {};
         $scope.site = allSites[$routeParams.site];
         $scope.sites = allSites;
 

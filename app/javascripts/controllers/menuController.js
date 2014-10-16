@@ -8,8 +8,8 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location",
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "Storage", "$location",
+    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, Storage, $location) {
 
         'use strict';
 
@@ -161,7 +161,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Vérifie les sites disponibles pour proposer ou non l'option de changement de site.
          */
         vm.checkIfMoreThanOneSiteIsAvailable = function() {
-            vm.siteSelectionEnable = (Smartgeo.get('availableLocalSites') > 1) || (Smartgeo.get('online') && Smartgeo.get('availableRemoteSites') > 1);
+            vm.siteSelectionEnable = (Storage.get('availableLocalSites') > 1) || (Storage.get('online') && Storage.get('availableRemoteSites') > 1);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }

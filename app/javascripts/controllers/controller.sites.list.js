@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('SiteListController', SiteListController);
 
-    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", "prefetchedlocalsites"];
+    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", "Storage", "prefetchedlocalsites"];
 
     /**
      * @class SiteListController
@@ -17,7 +17,7 @@
      * @property {Array} sites Sites chargés
      */
 
-    function SiteListController($scope, $rootScope, $http, $location, Smartgeo, i18n, prefetchedlocalsites) {
+    function SiteListController($scope, $rootScope, $http, $location, Smartgeo, i18n, Storage, prefetchedlocalsites) {
 
         var vm = this;
 
@@ -40,9 +40,9 @@
             $rootScope.currentPage = "Sélection de site";
 
             vm.ready = false;
-            vm.online = Smartgeo.get('online');
+            vm.online = Storage.get('online');
 
-            Smartgeo.unset('lastLeafletMapExtent');
+            Storage.remove('lastLeafletMapExtent');
 
             if (vm.online) {
                 getRemoteSites(prefetchedlocalsites || {});
@@ -99,7 +99,7 @@
                 vm.sites.push(knownSites[id]);
             }
             vm.ready = true;
-            Smartgeo.set('online', true);
+            Storage.set('online', true);
         }
 
         /**

@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "i18n",
-    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, i18n) {
+angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "i18n",
+    function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, i18n) {
 
         'use strict';
 
@@ -11,7 +11,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
             target: 100
         }];
         $scope.totalProgress = 100;
-        $scope.sites = Smartgeo.get_('sites') || {};
+        $scope.sites = Storage.get_('sites') || {};
         $scope.Math = Math;
         /* Si le site est déjà installé, on ne le reinstalle pas (#132), on retourne sur la carte */
         if ($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true) {

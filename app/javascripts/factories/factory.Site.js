@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Site', SiteFactory);
 
-    SiteFactory.$inject = ["$q"];
+    SiteFactory.$inject = ["Storage", "$q"];
 
 
-    function SiteFactory($q) {
+    function SiteFactory(Storage, $q) {
 
         /**
          * @class SiteFactory
@@ -19,29 +19,12 @@
         var Site = {}
 
         /**
-         * @name setCurrent
+         * @name current
          * @desc
          */
-        Site.setCurrent = function(id) {
-            if(window.SMARTGEO_CURRENT_SITE){
-                return window.SMARTGEO_CURRENT_SITE;
-            } else if(id){
-                return (window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE || Smartgeo.get_('sites')[id])
-            } else {
-                var sites = Smartgeo.get_('sites') ;
-                for(var id_ in sites){
-                    return sites[id_];
-                }
-            }
-        };
-
-        /**
-         * @name getCurrent
-         * @desc
-         */
-        Site.current = function() {
+        Site.__defineGetter__("current", function(){
             return window.SMARTGEO_CURRENT_SITE;
-        };
+        });
 
         /**
          * @name all
@@ -49,9 +32,9 @@
          */
         Site.all = function(callback) {
             var deferred = $q.defer();
-            Smartgeo.get_('sites', function(sites){
+            Storage.get_('sites', function(sites) {
                 deferred.resolve(sites);
-                (callback || function(){})(sites);
+                (callback || function() {})(sites);
             });
             return deferred.promise;
         };
@@ -62,7 +45,7 @@
          */
         Site.get = function(id) {
             var deferred = $q.defer();
-            Smartgeo.get_('sites', function(sites){
+            Storage.get_('sites', function(sites) {
                 deferred.resolve(sites[id]);
             });
             return deferred.promise;
@@ -72,4 +55,3 @@
     }
 
 })();
-

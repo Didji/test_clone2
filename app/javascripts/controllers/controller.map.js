@@ -6,19 +6,19 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites) {
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites) {
 
         var vm = this;
 
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
-        myLastPositionMarker = null;
+            myLastPositionMarker = null;
 
         window.SMARTGEO_CURRENT_SITE = prefetchedlocalsites;
 
@@ -55,7 +55,7 @@
             }
         });
 
-        G3ME.initialize('smartgeo-map', $rootScope.map_target || Smartgeo.get('lastLeafletMapExtent') || [],
+        G3ME.initialize('smartgeo-map', $rootScope.map_target || Storage.get('lastLeafletMapExtent') || [],
             $rootScope.map_marker,
             $rootScope.map_zoom || 18);
 
@@ -70,7 +70,7 @@
                 var extent = G3ME.map.getBounds();
                 if (extent._northEast.lat !== extent._southWest.lat ||
                     extent._northEast.lng !== extent._southWest.lng) {
-                    Smartgeo.set('lastLeafletMapExtent', [
+                    Storage.set('lastLeafletMapExtent', [
                         [extent._northEast.lat, extent._northEast.lng],
                         [extent._southWest.lat, extent._southWest.lng]
                     ]);
@@ -345,11 +345,11 @@
 
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
 
-                if(assetsCache[i].selected){
-                    assetsCache[i].marker.setIcon(Icon.get('SELECTED_MISSION'))  ;
-                } else if(!mission.activity || mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type !== "night_tour"){
-                    assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_MISSION')) ;
-                } else if(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour"){
+                if (assetsCache[i].selected) {
+                    assetsCache[i].marker.setIcon(Icon.get('SELECTED_MISSION'));
+                } else if (!mission.activity || mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type !== "night_tour") {
+                    assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_MISSION'));
+                } else if (mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour") {
                     assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_NIGHTTOUR'));
                 }
 
@@ -522,6 +522,7 @@
 
             return false;
         }
+
         function setLocationMarker(lng, lat, alt, acc) {
 
             LAST_USERS_LOCATION = [lat, lng];

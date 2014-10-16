@@ -9,8 +9,8 @@
  * @property {date} lastUpdate Date de dernière synchronisation
  */
 
-angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", "$interval",
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n, $interval) {
+angular.module('smartgeomobile').controller('planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", "Storage", "$interval",
+    function($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n, Storage, $interval) {
 
         'use strict';
 
@@ -27,18 +27,18 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          *     <li>Set current day : today at midnight or last viewed day ({@link planningController#getMidnightTimestamp $scope.getMidnightTimestamp})</li>
          * </ul>
          */
-            var assetsCache = {};
+        var assetsCache = {};
 
         $scope.initialize = function() {
 
             $scope._SYNCHRONIZE_INTERVAL = 60000;
             $scope.activities = window.SMARTGEO_CURRENT_SITE.activities;
             $scope.doneAssetsCache = {};
-            $scope.lastUpdate = Smartgeo.get('lastUpdate');
+            $scope.lastUpdate = Storage.get('lastUpdate');
             $scope.currentNextDay = $scope.getMidnightTimestamp((new Date()).getTime());
-            $rootScope.missions = Smartgeo.get('missions_' + Smartgeo.get('lastUser')) || {};
+            $rootScope.missions = Storage.get('missions_' + Storage.get('lastUser')) || {};
             $rootScope.$watch('missions', function() {
-                Smartgeo.set('missions_' + Smartgeo.get('lastUser'), $rootScope.missions || {});
+                Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
             });
             $scope.nextMissions =   {};
 
@@ -46,14 +46,14 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 
             // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
             $timeout(function() {
-                Smartgeo.get_('reports', function(reports) {
+                Storage.get_('reports', function(reports) {
                     $scope.removeObsoleteMission(reports);
                     $scope.synchronize();
                 });
             }, 500);
 
             $scope.$watch('lastUpdate', function() {
-                Smartgeo.set('lastUpdate', $scope.lastUpdate);
+                Storage.set('lastUpdate', $scope.lastUpdate);
             });
 
             $scope.$on('SYNC_MISSION', function() {
@@ -107,11 +107,11 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          * Get mission from remote server but keep 'openned', 'selectedAssets' and 'displayDone' attributes from local version
          */
-         var notFirst = {} ;
+        var notFirst = {};
         $scope.synchronize = function() {
             Mission.query()
                 .success(function(data) {
-                    if(!data || !data.results){
+                    if (!data || !data.results) {
                         return $scope.synchronizeErrorCallback("", 0);
                     }
                     var open = [],
@@ -189,20 +189,20 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.fillAssetsCache();
                 })
                 .error(function(message, code) {
-                     $scope.synchronizeErrorCallback(message, code)
+                    $scope.synchronizeErrorCallback(message, code)
                 });
         };
 
-        $scope.synchronizeErrorCallback = function(message, code){
-            if (Smartgeo.get('online') && message !== "" && code !== 0) {
+        $scope.synchronizeErrorCallback = function(message, code) {
+            if (Storage.get('online') && message !== "" && code !== 0) {
                 alertify.error(i18n.get('_PLANNING_SYNC_FAIL_'));
             }
             $scope.maxBeginDate = 0;
             for (var i in $rootScope.missions) {
                 var mission = $rootScope.missions[i];
-                if(!notFirst[mission.id]){
+                if (!notFirst[mission.id]) {
                     mission.selectedAssets = 0;
-                    notFirst[mission.id] = true ;
+                    notFirst[mission.id] = true;
                 }
                 $scope.maxBeginDate = Math.max($scope.maxBeginDate, $filter('sanitizeDate')(mission.begin));
                 if (mission.openned && (mission.assets.length || !mission.activity)) {
@@ -226,7 +226,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * Remove trace from localStorage with no mission attached.
          */
         $scope.removeDeprecatedTraces = function() {
-            var traces = Smartgeo.get('traces'),
+            var traces = Storage.get('traces'),
                 updated = false;
             for (var i in traces) {
                 if (!$rootScope.missions[i]) {
@@ -235,7 +235,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 }
             }
             if (updated) {
-                Smartgeo.set('traces', traces);
+                Storage.set('traces', traces);
             }
         };
 
@@ -322,7 +322,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * Reduce mission.assets array considering pending reports
          */
         $scope.removeObsoleteMission = function(reports) {
-            var missions = Smartgeo.get('missions_' + Smartgeo.get('lastUser')),
+            var missions = Storage.get('missions_' + Storage.get('lastUser')),
                 index, pendingAssets, mission, i;
             for (i in reports) {
                 if (missions[reports[i].mission]) {
@@ -391,7 +391,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     });
                     if (mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour") {
                         mission.activity.isNightTour = true;
-                        var traces = Smartgeo.get('traces') || [];
+                        var traces = Storage.get('traces') || [];
                         mission.trace = traces[mission.id];
                         $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
                     }
@@ -633,7 +633,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 mission.postAddedAssets.assets.push(asset.guid);
             }
 
-            Smartgeo.set('missions_' + Smartgeo.get('lastUser'), $rootScope.missions);
+            Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions);
 
             Smartgeo.findGeometryByGuids(window.SMARTGEO_CURRENT_SITE, asset.guid, function(assets) {
 
@@ -667,10 +667,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.removeAssetFromMission = function(assetid, mission) {
-            var asset = assetsCache[mission.id]._byId[assetid] ;
+            var asset = assetsCache[mission.id]._byId[assetid];
             mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
             mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
-            Smartgeo.set('missions_' + Smartgeo.get('lastUser'), $rootScope.missions);
+            Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions);
             $scope.highlightMission(mission);
         };
 
@@ -681,7 +681,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.locateAsset = function(mission, assetid) {
-            Smartgeo.findAssetsByGuids(window.SMARTGEO_CURRENT_SITE,assetid, function(assets) {
+            Smartgeo.findAssetsByGuids(window.SMARTGEO_CURRENT_SITE, assetid, function(assets) {
                 $rootScope.$broadcast("ZOOM_ON_ASSET", assets[0]);
             });
         };
@@ -703,15 +703,14 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
     return function(in_) {
         var out = {},
             mission, now = new Date();
-            now.setHours(0, 0, 0, 0); // MINUIT
-            now = now.getTime();
+        now.setHours(0, 0, 0, 0); // MINUIT
+        now = now.getTime();
 
         for (var id in in_) {
             mission = in_[id];
             if ($filter('sanitizeDate')(mission.end) > now
                 //&& $filter('sanitizeDate')(mission.begin) <= now
-                && (mission.assets.length || !mission.activity)
-                && !mission.isLate) {
+                && (mission.assets.length || !mission.activity) && !mission.isLate) {
                 out[id] = mission;
             }
         }

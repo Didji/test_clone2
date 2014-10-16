@@ -1,12 +1,12 @@
-angular.module('smartgeomobile').factory('Mission', function ($http, Smartgeo, $q) {
+angular.module('smartgeomobile').factory('Mission', function($http, Smartgeo) {
 
     'use strict';
 
     var Mission = {
-        query: function () {
+        query: function() {
             return $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.showOT.json'));
         },
-        poll: function () {
+        poll: function() {
             return $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.poll.json'));
         }
     };

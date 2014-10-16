@@ -14,7 +14,7 @@
          * @desc
          */
 
-        var lists = Site.current().lists ;
+        var lists = Site.current.lists ;
         var listsArray = {};
 
         function listObjectToArray_(options) {
