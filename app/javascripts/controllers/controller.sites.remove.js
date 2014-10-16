@@ -6,14 +6,14 @@
         .module('smartgeomobile')
         .controller('SiteRemoveController', SiteRemoveController);
 
-    SiteRemoveController.$inject = ["$scope", "$rootScope", "$routeParams", "Smartgeo", "$location", "Installer", "Storage", "prefetchedlocalsites"];
+    SiteRemoveController.$inject = ["$scope", "$location", "Installer", "Storage", "prefetchedlocalsites"];
 
     /**
      * @class SiteRemoveController
      * @desc Controlleur de la page de suppression de site.
      */
 
-    function SiteRemoveController($scope, $rootScope, $routeParams, Smartgeo, $location, Installer, Storage, prefetchedlocalsites) {
+    function SiteRemoveController($scope, $location, Installer, Storage, prefetchedlocalsites) {
 
         var vm = this;
 

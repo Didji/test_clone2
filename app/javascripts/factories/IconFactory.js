@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Icon', function ($http, Smartgeo, $q, $rootScope) {
+angular.module('smartgeomobile').factory('Icon', function () {
 
     'use strict';
 

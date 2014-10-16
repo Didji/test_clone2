@@ -6,15 +6,13 @@
         .module('smartgeomobile')
         .controller( 'CensusController', CensusController );
 
-    CensusController.$inject = ["$rootScope", "ComplexAssetFactory", "G3ME"];
-
     /**
      * @class CensusController
      * @desc Controlleur du menu de recensement
      *
      * @property {String} classindex Okey de l'objet recencé en cours
      */
-    function CensusController($rootScope, ComplexAssetFactory, G3ME) {
+    function CensusController() {
 
         var vm = this;
 
@@ -23,6 +21,7 @@
         vm.symbology = window.SMARTGEO_CURRENT_SITE.symbology;
         vm.dependancies = window.SMARTGEO_CURRENT_SITE.dependancies;
         vm.metamodel =  window.SMARTGEO_CURRENT_SITE.metamodel;
+
         vm.classindex = "" ;
 
         activate();

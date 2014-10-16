@@ -16,7 +16,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function($http, Smartge
     /**
      * @class Asset
      */
-    var Asset = function(asset) {
+    var Asset = function() {
         return this;
     };
 
