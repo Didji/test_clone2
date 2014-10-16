@@ -610,10 +610,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
 
         },
 
-        getVersion: function() {
-            return Smartgeo._SMARTGEO_MOBILE_VERSION;
-        },
-
         selectSiteRemotely: function(site, success, error) {
 
             if (window.SmartgeoChromium) {

@@ -99,7 +99,7 @@
          */
         Asset.prototype.goTo = function() {
             var center = this.getCenter();
-            Storage.getCurrentLocation(function(lng, lat, alt, acc) {
+            Smartgeo.getCurrentLocation(function(lng, lat, alt, acc) {
                 if (window.SmartgeoChromium && window.SmartgeoChromium.goTo) {
                     SmartgeoChromium.goTo(lng, lat, center[1], center[0]);
                 } else if (window.cordova) {
