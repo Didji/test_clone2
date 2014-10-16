@@ -11,7 +11,9 @@
      * @example <button camera ng-model='report.ged'> <--! avec report.ged = [] -->
      */
 
-    function camera() {
+    camera.$inject = ['Camera'];
+
+    function camera(Camera) {
         return {
             restrict: "A",
             require: "ngModel",
@@ -21,6 +23,7 @@
                     scope.$apply(function() {
                         scope.isTakingPhoto = true;
                     });
+                    //TODO(@gulian): Utiliser Camera.snap()
                     navigator.getMedia = (navigator.getUserMedia ||
                         navigator.webkitGetUserMedia ||
                         navigator.mozGetUserMedia ||

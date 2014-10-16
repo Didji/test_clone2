@@ -22,7 +22,7 @@
                     <button ng-if='node.father' class='btn-lg btn btn-default' ng-click="node.duplicate()">
                         <span class="fa fa-copy"></span>
                     </button>
-                    <button type="button" class="btn btn-default btn-lg" ng-click="snapPicture(node);">
+                    <button type="button" class="btn btn-default btn-lg" ng-click="snap(node);">
                         <i class="fa fa-camera"> </i>
                     </button>
                     <button ng-if="metamodel[node.okey].is_graphical" type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown">

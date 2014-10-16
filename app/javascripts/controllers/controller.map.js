@@ -628,7 +628,7 @@
                     });
                     break;
                 default:
-                    Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+                    console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
             }
             G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
             // G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
@@ -671,7 +671,7 @@
                     center = [coords[0][0][1], coords[0][0][0]];
                     break;
                 default:
-                    Smartgeo.log(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
+                    console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
             }
             G3ME.map.setView(center, 18);
             G3ME.invalidateMapSize();

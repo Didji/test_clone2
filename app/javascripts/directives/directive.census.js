@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME",
-    function($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetFactory", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera" ,
+    function($compile, ComplexAssetFactory, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera) {
         return {
 
             restrict: 'E',
@@ -56,8 +56,8 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                     $scope.root.save();
                 };
 
-                $scope.snapPicture = function(node) {
-                    Smartgeo.snapPicture(function(picture) {
+                $scope.snap = function(node) {
+                    Camera.snap(function(picture) {
                         node.photo = picture;
                         $scope.$apply();
                     })
