@@ -20,7 +20,8 @@
 
         /**
          * @name findOne
-         * @desc
+         * @desc Cherche une activité depuis un identifiant
+         * @param {Number} id Identifiant de l'activité à trouver
          */
         Activity.findOne = function (id) {
             var i, numTabs, tab;

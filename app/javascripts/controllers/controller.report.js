@@ -83,7 +83,7 @@
          * @name applyConsequences
          * @param {Number} srcId
          * @vm
-         * @desc
+         * @desc Applique les conséquences entre champs
          */
         function applyConsequences(srcId) {
             // Search for src field.
@@ -126,7 +126,7 @@
         /**
          * @name cancel
          * @vm
-         * @desc
+         * @desc Annule le compte rendu
          */
         function cancel() {
             $location.path('map/' + Site.current.id);
@@ -135,7 +135,7 @@
         /**
          * @name sendReport
          * @vm
-         * @desc
+         * @desc Envoie le compte rendu
          */
         function sendReport() {
             vm.sendingReport = true;
@@ -213,7 +213,7 @@
         /**
          * @name pad
          * @param {Number} number
-         * @desc
+         * @desc Rajoute un 0 au nombre inférieur à 10
          */
         function pad(number) {
             return (number < 10) ? ('0' + number) : number;
@@ -223,7 +223,7 @@
          * @name getList
          * @param {String} pkey
          * @param {String} okey
-         * @desc
+         * @desc Cherche une liste en fonction d'un PKEY et d'un OKEY
          */
         function getList(pkey, okey) {
             var mm = Site.current.metamodel[okey];
@@ -241,7 +241,7 @@
          * @name getValueFromAssets
          * @param {String} pkey
          * @param {String} okey
-         * @desc
+         * @desc Retourne la valeur d'un attribut d'un objet
          */
         function getValueFromAssets(pkey, okey) {
             var rv = {},
@@ -263,7 +263,7 @@
 
         /**
          * @name applyDefaultValues
-         * @desc
+         * @desc Applique les valeurs par defaut
          */
         function applyDefaultValues() {
             var fields = vm.report.fields,
@@ -314,7 +314,7 @@
         /**
          * @name formatFieldEntry
          * @param {String|Array} val
-         * @desc
+         * @desc Formatte le champs
          */
         function formatFieldEntry(val) {
             if ('string' === typeof val) {
@@ -331,7 +331,7 @@
 
         /**
          * @name endOfReport
-         * @desc
+         * @desc Procédure de fin de compte rendu
          */
         function endOfReport() {
             if ($rootScope.report_url_redirect) {
@@ -361,7 +361,7 @@
         /**
          * @name injectCallbackValues
          * @param {String} url
-         * @desc
+         * @desc Injecte les valeurs de retour pour les intents
          */
         function injectCallbackValues(url) {
             var injectedValues;
@@ -412,8 +412,6 @@
             return dataURL;
         }
 
-
-
         /**
          * @name checkInputParameters
          * @param {Object} routeParams
@@ -436,7 +434,6 @@
 
         /**
          * @name containsUnfilledRequiredFields
-         * @desc
          */
         function containsUnfilledRequiredFields() {
             for (var i in vm.report.activity._fields) {

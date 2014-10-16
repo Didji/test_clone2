@@ -65,7 +65,7 @@
 
         /**
          * @name checkGroup
-         * @desc
+         * @desc Active un groupe entier
          * @param {Object} group Groupe à switcher
          */
         function checkGroup(group) {
@@ -79,7 +79,7 @@
 
         /**
          * @name refreshView
-         * @desc
+         * @desc Rafraichi la carte
          */
         function refreshView() {
             for (var i in vm.groups) {
@@ -90,7 +90,7 @@
 
         /**
          * @name updateGroups
-         * @desc
+         * @desc Met à jour les groupes
          * @param {Object} group Groupe à mettre à jour
          */
         function updateGroups(group) {

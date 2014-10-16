@@ -85,7 +85,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 url = url + '/index.php?service=';
             }
             Smartgeo.reset();
-            this.set('url', url);
+            Storage.set('url', url);
             return url;
         },
 

@@ -41,7 +41,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     if ($scope.controller === "oauth") {
         if (!Storage.get("url") || Storage.get("url").indexOf($routeParams.url) === -1) {
-            Storage.setGimapUrl($routeParams.url);
+            Smartgeo.setGimapUrl($routeParams.url);
         }
         return tokenAuth($routeParams.token, function () {
             $location.path('sites/');

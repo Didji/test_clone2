@@ -44,7 +44,7 @@
         /**
          * @name removeGedItem
          * @param {Number} i
-         * @desc
+         * @desc Supprime la GED d'un object Report
          */
         Report.prototype.removeGedItem = function (i) {
             this.ged.splice(i, 1);

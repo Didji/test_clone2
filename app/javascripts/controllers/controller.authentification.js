@@ -144,7 +144,7 @@
 
             vm.loginInProgress = true;
             vm.errorMessage = "";
-            vm.gimapServer = vm.firstAuth ? Storage.setGimapUrl(vm.gimapServer) : vm.gimapServer;
+            vm.gimapServer = vm.firstAuth ? Smartgeo.setGimapUrl(vm.gimapServer) : vm.gimapServer;
 
             var url = Smartgeo.getServiceUrl('global.auth.json', {
                 'login': encodeURIComponent(vm.user.username),

@@ -20,14 +20,15 @@
 
         /**
          * @name getcurrent
-         * @desc
+         * @desc Accesseur de l'attribut current
          */
         Site.__defineGetter__("current", function () {
             return window.SMARTGEO_CURRENT_SITE;
         });
+
         /**
          * @name setcurrent
-         * @desc
+         * @desc Modificateur de l'attribut current
          */
         Site.__defineSetter__("current", function (site) {
             window.SMARTGEO_CURRENT_SITE = site;
@@ -35,7 +36,8 @@
 
         /**
          * @name all
-         * @desc
+         * @desc Retourne la liste des sites
+         * @param {Function} callback
          */
         Site.all = function (callback) {
             var deferred = $q.defer();
@@ -48,7 +50,8 @@
 
         /**
          * @name get
-         * @desc
+         * @desc Retourne un site en particulier
+         * @param {String} id Identifiant du site
          */
         Site.get = function (id) {
             var deferred = $q.defer();

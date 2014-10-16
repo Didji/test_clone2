@@ -35,7 +35,7 @@
 
         /**
          * @name showOnMap
-         * @desc
+         * @desc Montre l'objet sur la carte avec un marqueur
          */
         Asset.prototype.showOnMap = function () {
             var self = this;
@@ -50,7 +50,7 @@
 
         /**
          * @name hideFromMap
-         * @desc
+         * @desc Cache l'objet de la carte
          */
         Asset.prototype.hideFromMap = function () {
             this.onMap = false;
@@ -61,7 +61,7 @@
 
         /**
          * @name toggleMapVisibility
-         * @desc
+         * @desc Change la visibilité de l'objet sur la carte
          */
         Asset.prototype.toggleMapVisibility = function () {
             this[this.onMap ? "hideFromMap" : "showOnMap"]();
@@ -69,7 +69,7 @@
 
         /**
          * @name zoomOn
-         * @desc
+         * @desc Zoom sur l'objet
          */
         Asset.prototype.zoomOn = function () {
             G3ME.map.setView(this.getCenter(), 18);
@@ -78,7 +78,7 @@
 
         /**
          * @name fetchHistory
-         * @desc
+         * @desc Recherche l'historique de maintenance sur le server
          */
         Asset.prototype.fetchHistory = function () {
             var self = this;
@@ -95,7 +95,7 @@
 
         /**
          * @name goTo
-         * @desc
+         * @desc Lance le GPS pour se rendre jusqu'à l'objet
          */
         Asset.prototype.goTo = function () {
             var center = this.getCenter();
@@ -110,7 +110,7 @@
 
         /**
          * @name getCenter
-         * @desc
+         * @desc Retourne le centre d'un objet
          */
         Asset.prototype.getCenter = function () {
             var coordinates = this.geometry.coordinates;
@@ -124,7 +124,7 @@
 
         /**
          * @name addToMission
-         * @desc
+         * @desc Ajoute l'objet à une mission
          * @param {Object} mission
          */
         Asset.prototype.addToMission = function (mission) {
@@ -159,7 +159,10 @@
 
         /**
          * @name findOne
-         * @desc
+         * @desc Cherche un objet en fonction de son identifiant
+         * @param {Number} id
+         * @param {Function} callback
+         * @param {Array} zones
          */
         Asset.findOne = function (id, callback, zones) {
 
@@ -178,7 +181,8 @@
 
         /**
          * @name convertRawRow
-         * @desc
+         * @desc Converti un objet sortant de la base de données en objet exploitable
+         * @param {Object} asset
          */
         Asset.convertRawRow = function (asset) {
             var a = angular.copy(asset),

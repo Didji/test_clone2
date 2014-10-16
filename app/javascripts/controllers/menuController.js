@@ -131,7 +131,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
         /**
          * @method
          * @memberOf menuController
-         * @desc
+         * @desc Change la visibilité du menu
          */
         vm.toggleDisplay = function () {
             vm.display = !vm.display;
