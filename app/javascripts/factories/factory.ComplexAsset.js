@@ -6,9 +6,9 @@
         .module('smartgeomobile')
         .factory('ComplexAsset', ComplexAssetFactory);
 
-    ComplexAssetFactory.$inject = ["$q" , "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory"];
+    ComplexAssetFactory.$inject = ["$q" , "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site"];
 
-    function ComplexAssetFactory($q , $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory) {
+    function ComplexAssetFactory($q , $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site) {
 
         /**
          * @class ComplexAssetFactory
@@ -21,14 +21,14 @@
             this.father = father && father.uuid;
             this.root = root || this;
             this.fields = {};
-            this.fields[window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].ukey] = window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label;
+            this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
 
             if (!this.okey) {
                 console.error('You must provide a root okey.');
                 return false;
             }
 
-            if (window.SMARTGEO_CURRENT_SITE.dependancies[okey]) {
+            if (Site.current.dependancies[okey]) {
                 this.add();
             }
 
@@ -45,7 +45,7 @@
          */
         ComplexAsset.prototype.add = function () {
 
-            var childType = window.SMARTGEO_CURRENT_SITE.dependancies[this.okey];
+            var childType = Site.current.dependancies[this.okey];
 
             if (!childType) {
                 console.error('This node type has no child type.');
@@ -222,7 +222,7 @@
                 }
                 for (var okey in data) {
                     for (var i = 0; i < data[okey].length; i++) {
-                        AssetFactory.save(data[okey][i], window.SMARTGEO_CURRENT_SITE);
+                        AssetFactory.save(data[okey][i], Site.current);
                     }
                 }
                 Storage.get_('census', function (census) {
@@ -265,7 +265,7 @@
          * @private
          */
         ComplexAsset.prototype.__log = function () {
-            console.groupCollapsed(window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].label + ':' + this.uuid);
+            console.groupCollapsed(Site.current.metamodel[this.okey].label + ':' + this.uuid);
             console.info(this);
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__log();
@@ -402,7 +402,7 @@
         };
 
         ComplexAsset.prototype.isGeometryOk = function () {
-            if (window.SMARTGEO_CURRENT_SITE.metamodel[this.okey].is_graphical && !this.geometry) {
+            if (Site.current.metamodel[this.okey].is_graphical && !this.geometry) {
                 return false;
             } else if (!this.children.length) {
                 return true;

@@ -6,7 +6,9 @@
         .module('smartgeomobile')
         .filter('isGraphical', isGraphical);
 
-    function isGraphical() {
+        isGraphical.$inject = ["Site"];
+
+    function isGraphical(Site) {
         /**
          * @name isGraphical_
          * @desc
@@ -15,7 +17,7 @@
             var layersOut = [];
             for (var i = 0; i < layers.length; i++) {
 
-                if (window.SMARTGEO_CURRENT_SITE.metamodel[layers[i].okey].is_graphical !== false) {
+                if (Site.current.metamodel[layers[i].okey].is_graphical !== false) {
                     layersOut.push(layers[i]);
                 }
             }

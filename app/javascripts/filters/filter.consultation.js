@@ -51,9 +51,9 @@
         return consultationTabsFilter_;
     }
 
-    consultationFieldsFilter.$inject = [];
+    consultationFieldsFilter.$inject = ["Site"];
 
-    function consultationFieldsFilter() {
+    function consultationFieldsFilter(Site) {
         /**
          * @name consultationFieldsFilter_
          * @desc
@@ -64,10 +64,10 @@
                 if (asset.attributes[fieldsIn[i].key] ||
                     (
                         fieldsIn[i].options &&
-                        window.SMARTGEO_CURRENT_SITE.lists &&
+                        Site.current.lists &&
                         asset.attributes[fieldsIn[i].key] &&
-                        window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options] &&
-                        window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
+                        Site.current.lists[fieldsIn[i].options] &&
+                        Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
                     )
                 ) {
                     fieldsOut.push(fieldsIn[i]);
@@ -103,9 +103,9 @@
         return reportTabsFilter_;
     }
 
-    reportFieldsFilter.$inject = ["$rootScope"];
+    reportFieldsFilter.$inject = ["Site"];
 
-    function reportFieldsFilter() {
+    function reportFieldsFilter(Site) {
         /**
          * @name reportFieldsFilter_
          * @desc
@@ -116,10 +116,10 @@
                 if (((report.fields[fieldsIn[i].id] ||
                         (
                             fieldsIn[i].options &&
-                            window.SMARTGEO_CURRENT_SITE.lists &&
+                            Site.current.lists &&
                             report.fields[fieldsIn[i].id] &&
-                            window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options] &&
-                            window.SMARTGEO_CURRENT_SITE.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
+                            Site.current.lists[fieldsIn[i].options] &&
+                            Site.current.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
                     )) &&
                     JSON.stringify(report.fields[fieldsIn[i].id]) !== '{}'
                 ) {
@@ -131,9 +131,9 @@
         return reportFieldsFilter_;
     }
 
-    activityListFilter.$inject = [];
+    activityListFilter.$inject = ["Site"];
 
-    function activityListFilter() {
+    function activityListFilter(Site) {
 
         /**
          * @name activityListFilter_
@@ -144,9 +144,9 @@
                 asset = asset[0];
             }
             var activitiesOut = [];
-            for (var i = 0; i < window.SMARTGEO_CURRENT_SITE.activities.length; i++) {
-                if (window.SMARTGEO_CURRENT_SITE.activities[i].okeys[0] === asset.okey) {
-                    activitiesOut.push(window.SMARTGEO_CURRENT_SITE.activities[i]);
+            for (var i = 0; i < Site.current.activities.length; i++) {
+                if (Site.current.activities[i].okeys[0] === asset.okey) {
+                    activitiesOut.push(Site.current.activities[i]);
                 }
             }
             return activitiesOut;

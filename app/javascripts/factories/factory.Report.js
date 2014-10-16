@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Report', ReportFactory);
 
-    ReportFactory.$inject = ["Smartgeo", "Activity"];
+    ReportFactory.$inject = ["Smartgeo", "Activity", "Site"];
 
 
-    function ReportFactory(Smartgeo, Activity) {
+    function ReportFactory(Smartgeo, Activity, Site) {
 
         /**
          * @class ReportFactory
@@ -30,7 +30,7 @@
             this.assets = assets;
             this.activity = Activity.findOne(activity);
             this.mission = 1 * mission;
-            this.site = window.SMARTGEO_CURRENT_SITE.label;
+            this.site = Site.current.label;
             this.fields = {};
             this.ged = [];
             this.uuid = Smartgeo.uuid();

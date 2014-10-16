@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ConsultationController', ConsultationController);
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", "$timeout"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "i18n", "G3ME", "$timeout", "Site"];
 
     /**
      * @class ConsultationController
@@ -19,7 +19,7 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, $timeout) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, i18n, G3ME, $timeout, Site) {
 
         var vm = this;
 
@@ -31,8 +31,8 @@
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
 
-        vm.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
-        vm.siteid = window.SMARTGEO_CURRENT_SITE.id;
+        vm.metamodel = Site.current.metamodel;
+        vm.siteid = Site.current.id;
 
         vm.isOpen = false;
         vm.loading = false;
@@ -164,7 +164,7 @@
          * @param {Number} lng
          */
         function openLocatedReport(lat, lng) {
-            $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
+            $location.path('report/' + Site.current.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
         }
 
         /**

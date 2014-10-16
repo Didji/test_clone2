@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon, Storage) {
+angular.module('smartgeomobile').controller('intentController', function ($scope, $routeParams, $location, $rootScope, Smartgeo, $http, $window, G3ME, i18n, Icon, Storage, Site) {
 
     'use strict';
 
@@ -24,14 +24,14 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     function redirect() {
         switch ($scope.controller) {
         case 'map':
-            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
+            $location.path('map/' + Site.current.id);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
             break;
 
         case 'report':
-            $location.path('report/' + window.SMARTGEO_CURRENT_SITE.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
+            $location.path('report/' + Site.current.id + '/' + $rootScope.report_activity + '/' + $rootScope.target + '/');
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -53,18 +53,18 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
     }
 
     if ($routeParams.site) {
-        window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE || Storage.get_('sites')[$routeParams.site];
+        Site.current = Site.current || Storage.get_('sites')[$routeParams.site];
     } else {
         var sites = Storage.get_('sites');
         for (var siteId in sites) {
             if (sites.hasOwnProperty(siteId)) {
-                window.SMARTGEO_CURRENT_SITE = sites[siteId];
+                Site.current = sites[siteId];
                 break;
             }
         }
     }
 
-    if (!window.SMARTGEO_CURRENT_SITE) {
+    if (!Site.current) {
         alertify.alert(i18n.get("_INTENT_ZERO_SITE_SELECTED"));
         $location.path("#");
         return false;
@@ -80,7 +80,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
 
     if ($rootScope.map_target) {
         // TODO: OULALA IT'S UGLY /!\ REFACTOR ALERT /!\
-        G3ME.parseTarget(window.SMARTGEO_CURRENT_SITE, $rootScope.map_target, function (assets) {
+        G3ME.parseTarget(Site.current, $rootScope.map_target, function (assets) {
             if (!assets.length) {
                 alertify.alert(i18n.get("_INTENT_OBJECT_NOT_FOUND"));
                 return tokenAuth($routeParams.token, redirect);
@@ -92,7 +92,7 @@ angular.module('smartgeomobile').controller('intentController', function ($scope
                 });
                 if ($rootScope.report_target && $rootScope.report_activity) {
                     $rootScope.map_marker.on('click', function () {
-                        $location.path('/report/' + window.SMARTGEO_CURRENT_SITE.id + "/" + $rootScope.report_activity + "/" + $rootScope.report_target);
+                        $location.path('/report/' + Site.current.id + "/" + $rootScope.report_activity + "/" + $rootScope.report_target);
                         $scope.$apply();
                         if (!$scope.$$phase) {
                             $scope.$apply();

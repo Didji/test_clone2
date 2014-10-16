@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "ReportSynchronizer", "$filter", "$interval",
-    function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "ReportSynchronizer", "$filter", "$interval", "Site",
+    function ($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval, Site) {
 
         'use strict';
 
@@ -15,8 +15,8 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             $interval.cancel(reportsSynchronizationCheckTimeoutId);
         });
 
-        $scope.activities = window.SMARTGEO_CURRENT_SITE.activities;
-        $scope.metamodel = window.SMARTGEO_CURRENT_SITE.metamodel;
+        $scope.activities = Site.current.activities;
+        $scope.metamodel = Site.current.metamodel;
 
         $scope.initialize = function (justRefresh) {
 
@@ -144,7 +144,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
         $scope.deleteReport = function (report, $index) {
             var text;
             try {
-                text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + window.SMARTGEO_CURRENT_SITE.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
+                text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + Site.current.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             } catch (e) {
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             }

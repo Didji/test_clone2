@@ -10,8 +10,8 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer", "GPS",
-    function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer, GPS) {
+angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer", "GPS", "Site",
+    function ($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer, GPS, Site) {
 
         'use strict';
 
@@ -259,7 +259,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             }
 
             function getList(pkey, okey) {
-                var mm = window.SMARTGEO_CURRENT_SITE.metamodel[okey];
+                var mm = Site.current.metamodel[okey];
                 for (var i in mm.tabs) {
                     for (var j in mm.tabs[i].fields) {
                         if (mm.tabs[i].fields[j].key === pkey) {
@@ -278,8 +278,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                         list = getList(pkey, okey);
 
                     val = a[pkey];
-                    if (list && window.SMARTGEO_CURRENT_SITE.lists[list] && window.SMARTGEO_CURRENT_SITE.lists[list][val]) {
-                        val = window.SMARTGEO_CURRENT_SITE.lists[list][val];
+                    if (list && Site.current.lists[list] && Site.current.lists[list][val]) {
+                        val = Site.current.lists[list][val];
                     }
 
                     rv[assets[i].id] = val;
@@ -326,11 +326,11 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
 
             if ($rootScope.nightTourInProgress) {
                 return alertify.error("Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée.");
-            } else if (window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type !== "night_tour") {
+            } else if (Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
                 return alertify.error("Erreur : L'activité de cette mission n'est pas une tournée de nuit.");
             }
 
-            $scope.activity = window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id];
+            $scope.activity = Site.current.activities._byId[mission.activity.id];
 
             $scope.assetsCache = assetsCache;
             $scope.mission = mission;

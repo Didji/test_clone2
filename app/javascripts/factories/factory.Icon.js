@@ -6,7 +6,9 @@
         .module('smartgeomobile')
         .factory('Icon', IconFactory);
 
-    function IconFactory() {
+    IconFactory.$inject = ["Site"];
+
+    function IconFactory(Site) {
 
         /**
          * @class IconFactory
@@ -40,7 +42,7 @@
             classindex = classindex || 0;
 
             var icon = Icon['OKEY_' + okey + '_' + classindex] || L.icon({
-                iconUrl: window.SMARTGEO_CURRENT_SITE.symbology['' + okey + classindex].style.symbol.icon,
+                iconUrl: Site.current.symbology['' + okey + classindex].style.symbol.icon,
                 iconSize: [32, 32],
                 iconAnchor: [16, 16],
             });

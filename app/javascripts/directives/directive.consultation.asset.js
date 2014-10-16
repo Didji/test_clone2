@@ -6,9 +6,9 @@
         .module('smartgeomobile')
         .directive('assetConsultation', assetConsultation);
 
-    assetConsultation.$inject = ["$rootScope", "Asset"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site"];
 
-    function assetConsultation($rootScope, Asset) {
+    function assetConsultation($rootScope, Asset, Site) {
 
         var directive = {
             link: link,
@@ -25,7 +25,7 @@
 
             scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset;
 
-            scope.site = window.SMARTGEO_CURRENT_SITE; //TODO(@gulian): faire mieux.
+            scope.site = Site.current; //TODO(@gulian): faire mieux.
             scope.rights = $rootScope.rights; //TODO(@gulian): faire mieux.
             scope.missions = $rootScope.missions; //TODO(@gulian): faire mieux.
 

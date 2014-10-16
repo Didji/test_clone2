@@ -19,11 +19,18 @@
         var Site = {};
 
         /**
-         * @name current
+         * @name getcurrent
          * @desc
          */
         Site.__defineGetter__("current", function () {
             return window.SMARTGEO_CURRENT_SITE;
+        });
+        /**
+         * @name setcurrent
+         * @desc
+         */
+        Site.__defineSetter__("current", function (site) {
+            window.SMARTGEO_CURRENT_SITE =  site;
         });
 
         /**
@@ -40,7 +47,7 @@
         };
 
         /**
-         * @name all
+         * @name get
          * @desc
          */
         Site.get = function (id) {

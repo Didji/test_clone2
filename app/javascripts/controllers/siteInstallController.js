@@ -1,5 +1,5 @@
-angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage",
-    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage) {
+angular.module('smartgeomobile').controller('siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "Site",
+    function ($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, Site) {
 
         'use strict';
 
@@ -84,7 +84,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
                     Installer.createZones($scope.site, function () {
                         Installer.install($scope.site, $scope.site.stats, function () {
                             $scope.site.installed = true;
-                            window.SMARTGEO_CURRENT_SITE = $scope.site;
+                            Site.current = $scope.site;
                             Installer.saveSite($scope.site, function () {
                                 $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {

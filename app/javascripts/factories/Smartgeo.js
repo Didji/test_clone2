@@ -16,7 +16,7 @@
  * @property {number}   locationWatchIdentifier
  */
 
-angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, SQLite, Storage) {
+angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $rootScope, SQLite, Storage, Site) {
 
     'use strict';
 
@@ -480,7 +480,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         rustineVeolia: function (sites, success, error) {
             for (var i in sites) {
                 var site = sites[i];
-                if (window.SMARTGEO_CURRENT_SITE && site && (site.id === window.SMARTGEO_CURRENT_SITE.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
+                if (Site.current && site && (site.id === Site.current.id) && site.url && site.url.indexOf('veoliagroup') !== -1) {
                     var url = (Storage.get('url') || '').replace(/^(https?:\/\/.+)index\.php.*$/, '$1') + site.url;
                     $http.get(url).then(success, error);
                 }
@@ -540,8 +540,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
             }).success(function () {
                 Smartgeo._LOGIN_MUTEX = false;
-                if (window.SMARTGEO_CURRENT_SITE) {
-                    Smartgeo.selectSiteRemotely(window.SMARTGEO_CURRENT_SITE.id, success, error);
+                if (Site.current) {
+                    Smartgeo.selectSiteRemotely(Site.current.id, success, error);
                     (success || angular.noop)();
                 } else {
                     (success || angular.noop)();
@@ -570,7 +570,8 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
         },
 
         clearSiteSelection: function () {
-            window.SMARTGEO_CURRENT_SITE = null;
+            //TODO(@gulian): on supprime ?
+            // Site.current = null;
         },
 
         sleep: function (millis, callback) {

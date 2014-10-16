@@ -54,7 +54,7 @@
                 return;
             }
 
-            window.SMARTGEO_CURRENT_SITE = prefetchedlocalsites;
+            Site.current = prefetchedlocalsites;
 
             bidouille();
 
@@ -129,7 +129,7 @@
          * @desc
          */
         function cancel() {
-            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
+            $location.path('map/' + Site.current.id);
         }
 
         /**
@@ -226,7 +226,7 @@
          * @desc
          */
         function getList(pkey, okey) {
-            var mm = window.SMARTGEO_CURRENT_SITE.metamodel[okey];
+            var mm = Site.current.metamodel[okey];
             for (var i in mm.tabs) {
                 for (var j in mm.tabs[i].fields) {
                     if (mm.tabs[i].fields[j].key === pkey) {
@@ -253,8 +253,8 @@
                     break;
                 }
                 val = a[pkey];
-                if (list && window.SMARTGEO_CURRENT_SITE.lists[list] && window.SMARTGEO_CURRENT_SITE.lists[list][val]) {
-                    val = window.SMARTGEO_CURRENT_SITE.lists[list][val];
+                if (list && Site.current.lists[list] && Site.current.lists[list][val]) {
+                    val = Site.current.lists[list][val];
                 }
                 rv[vm.assets[i].id] = val;
             }
@@ -354,7 +354,7 @@
             $rootScope.report_fields = undefined;
             $rootScope.report_url_redirect = undefined;
 
-            $location.path('map/' + window.SMARTGEO_CURRENT_SITE.id);
+            $location.path('map/' + Site.current.id);
             $scope.$apply();
         }
 

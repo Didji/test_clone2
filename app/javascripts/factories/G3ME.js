@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $rootScope, i18n, Storage) {
+angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $rootScope, i18n, Storage, Site) {
 
     'use strict';
 
@@ -19,9 +19,9 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
         filecacheIsEnable: $rootScope.rights.tileCache || true,
 
         initialize: function (mapDivId, target, marker, zoom) {
-            this.symbology = window.SMARTGEO_CURRENT_SITE.symbology;
+            this.symbology = Site.current.symbology;
             this.CURRENT_ZOOM = false;
-            this.tileUrl = window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL;
+            this.tileUrl = Site.current.EXTERNAL_TILEURL;
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
             this._2pi = 2 * Math.PI;
@@ -47,8 +47,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             if (!(target && target.length && G3ME.isLatLngString(target))) {
                 target = [
-                    [window.SMARTGEO_CURRENT_SITE.extent.ymin, window.SMARTGEO_CURRENT_SITE.extent.xmin],
-                    [window.SMARTGEO_CURRENT_SITE.extent.ymax, window.SMARTGEO_CURRENT_SITE.extent.xmax]
+                    [Site.current.extent.ymin, Site.current.extent.xmin],
+                    [Site.current.extent.ymax, Site.current.extent.xmax]
                 ];
             }
 
@@ -112,12 +112,12 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             window.SMARTGEO_CURRENT_SITE_IMG = window.SMARTGEO_CURRENT_SITE_IMG || {};
 
-            for (var symbol in window.SMARTGEO_CURRENT_SITE.symbology) {
-                if (!window.SMARTGEO_CURRENT_SITE.symbology[symbol] || !window.SMARTGEO_CURRENT_SITE.symbology[symbol].style) {
+            for (var symbol in Site.current.symbology) {
+                if (!Site.current.symbology[symbol] || !Site.current.symbology[symbol].style) {
                     continue;
                 }
                 var image = new Image();
-                image.src = window.SMARTGEO_CURRENT_SITE.symbology[symbol].style.symbol.icon;
+                image.src = Site.current.symbology[symbol].style.symbol.icon;
                 window.SMARTGEO_CURRENT_SITE_IMG[symbol] = image;
             }
 
@@ -278,7 +278,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 _2pi = 2 * Math.PI,
                 _pi4 = Math.PI / 4,
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
-                symbology = window.SMARTGEO_CURRENT_SITE.symbology,
+                symbology = Site.current.symbology,
                 imageFactor = 1,
                 // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                 imageFactor_2 = 0.5,
@@ -406,7 +406,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
 
                 asset.angle = 0;
-                asset.maplabel = '(' + asset.fields[window.SMARTGEO_CURRENT_SITE.metamodel[asset.okey].ukey] + ')';
+                asset.maplabel = '(' + asset.fields[Site.current.metamodel[asset.okey].ukey] + ')';
 
                 var geom = {};
                 if (asset.geometry.length === 2 && asset.geometry[0] * 1 === asset.geometry[0]) {
@@ -567,11 +567,11 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             if (G3ME.map.getZoom() !== zoom) {
                 return G3ME.canvasTile.tileDrawn(canvas);
             }
-            for (var i = 0, zones_length = window.SMARTGEO_CURRENT_SITE.zones.length, j = 0; i < zones_length; i++) {
-                if (this.extents_match(window.SMARTGEO_CURRENT_SITE.zones[i].extent, tileExtent)) {
+            for (var i = 0, zones_length = Site.current.zones.length, j = 0; i < zones_length; i++) {
+                if (this.extents_match(Site.current.zones[i].extent, tileExtent)) {
                     j++;
-                    G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name] = G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name] || {};
-                    G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name][uuid] = {
+                    G3ME.requestPool[Site.current.zones[i].database_name] = G3ME.requestPool[Site.current.zones[i].database_name] || {};
+                    G3ME.requestPool[Site.current.zones[i].database_name][uuid] = {
                         request: request,
                         initargs: initargs,
                         callback: (function (uuid, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize, canvas) {

@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('LayersController', LayersController);
 
-    LayersController.$inject = ["$rootScope", "G3ME"];
+    LayersController.$inject = ["$rootScope", "G3ME", "Site"];
 
     /**
      * @class LayersController
@@ -16,14 +16,14 @@
      * @property {Object} groups Groupe de couches
      */
 
-    function LayersController($rootScope, G3ME) {
+    function LayersController($rootScope, G3ME, Site) {
 
         var vm = this;
 
         vm.refreshView = refreshView;
         vm.updateGroups = updateGroups;
 
-        vm.symbology = window.SMARTGEO_CURRENT_SITE.symbology;
+        vm.symbology = Site.current.symbology;
         vm.groups = {};
         vm.layers = {};
 
@@ -39,8 +39,8 @@
                 currentLayer,
                 visibilities = G3ME.getVisibility();
 
-            for (var okey in window.SMARTGEO_CURRENT_SITE.metamodel) {
-                currentMetamodel = window.SMARTGEO_CURRENT_SITE.metamodel[okey];
+            for (var okey in Site.current.metamodel) {
+                currentMetamodel = Site.current.metamodel[okey];
                 if (!(currentMetamodel.group in vm.groups)) {
                     vm.groups[currentMetamodel.group] = {
                         label: currentMetamodel.group,
