@@ -50,7 +50,6 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 if (oldval === true) {
                     $rootScope.$broadcast('_MENU_CLOSE_');
                 }
-                $scope.close();
             }
         });
 
@@ -79,6 +78,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 }
             }
         });
+        $scope.saving = false;
     };
 
     /**
@@ -202,9 +202,11 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 }
             }
         }
-        $scope.sendOkReports(ok, function () {
-            $scope.sendKoReports(ko, function () {
+        $scope.saving = true;
+        $scope.sendKoReports(ko, function () {
+            $scope.sendOkReports(ok, function () {
                 $route.reload();
+                $scope.saving = false;
             });
         });
     };
