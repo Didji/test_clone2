@@ -17968,7 +17968,7 @@ function createDateParser(regexp, mapping) {
                }
             });
 
-            return new Date(map.yyyy, map.MM - 1, map.dd, map.HH, map.mm);
+            return new Date(Date.UTC(map.yyyy, map.MM - 1, map.dd, map.HH, map.mm));
          }
       }
 
