@@ -6,7 +6,9 @@ dependencies {
 android {
     compileSdkVersion 18
     buildToolsVersion "20.0.0"
-
+    lintOptions {
+        abortOnError false
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
