@@ -35,14 +35,18 @@
                 </p>
 
                 <!-- <button class="btn btn-block" ng-click="whereIAm()" ng-disabled='isFollowingMe'><i class="fa fa-map-marker"></i> Ma position</button> -->
-                <button class="btn btn-block" style="margin-bottom: 5px;" ng-class="{'btn-primary':isFollowingMe}" ng-click="isFollowingMe =! isFollowingMe">
+                <button ng-show="!saving" class="btn btn-block" style="margin-bottom: 5px;" ng-class="{'btn-primary':isFollowingMe}" ng-click="isFollowingMe =! isFollowingMe">
                   <i class="fa fa-location-arrow"></i> Suivi de position {{isFollowingMe ? 'activé' : ''}}
                 </button>
                 <!-- <hr> -->
 <!--                 <button type="button" ng-show='!nightTourRecording' class="btn btn-default btn-lg" ng-click='resumeNightTour()'><i class="fa fa-play"></i></button>
                 <button type="button" ng-show='nightTourRecording' class="btn btn-default btn-lg" ng-click='pauseNightTour()'><i class="fa fa-pause"></i></button> -->
-                <button type="button" style="width:49%;" class="btn btn-default" ng-click='stopNightTour()'  ><i class="fa fa-stop" > </i> Arrêter </button>
-                <button type="button" style="width:49%;" class="btn btn-default" ng-click='closeNightTour()' ><i class="fa fa-check"> </i> Clôturer</button>
+                <button ng-show="!saving" type="button" style="width:49%;" class="btn btn-default" ng-click='stopNightTour()'  ><i class="fa fa-stop" > </i> <i18n>_NIGHTTOUR_STOP_</i18n> </button>
+                <button ng-show="!saving" type="button" style="width:49%;" class="btn btn-default" ng-click='closeNightTour()' ><i class="fa fa-check"> </i> <i18n>_NIGHTTOUR_CLOSE_</i18n></button>
+
+                <p ng-show="saving">
+                  <i class="fa fa-refresh fa-spin"> </i> <i18n>_NIGHTTOUR_SAVING_</i18n>
+                </p>
 
                 <!-- <div ng-show='nightTourRecording'>
                   <h4 style="text-align: center;margin-top: 25px;">
