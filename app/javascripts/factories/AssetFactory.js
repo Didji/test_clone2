@@ -67,13 +67,13 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
             } else {
                 asset.synced = true ;
                 asset.error  = undefined ;
+                Asset.__updateMapLayers();
             }
         }).error(function (data, code) {
             Asset.synchronizeErrorCallback(data, code, asset);
         }).finally(function(){
             Asset.m.release();
             Asset.log(asset);
-            Asset.__updateMapLayers();
             asset.syncInProgress = false ;
             Asset.addToDatabase(asset, callback || function(){});
         });
