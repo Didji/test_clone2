@@ -706,18 +706,29 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 ]).filter('todayMissions', function($filter) {
     return function(in_) {
         var out = {},
-            mission, now = new Date();
-            now.setHours(0, 0, 0, 0); // MINUIT
-            now = now.getTime();
-
+            mission, 
+            begin, end,
+            now = new Date(),
+            tomorrow = new Date(),
+            startsToday, endsToday, overlapsToday;
+        now.setHours(0, 0, 0, 0); // MINUIT
+        tomorrow.setHours(23, 59, 59, 99);
+        
+        now = now.getTime();
+        tomorrow = tomorrow.getTime();
+        
         for (var id in in_) {
             mission = in_[id];
-            if ($filter('sanitizeDate')(mission.end) > now
-                //&& $filter('sanitizeDate')(mission.begin) <= now
+            begin = $filter('sanitizeDate')(mission.begin);
+            end = $filter('sanitizeDate')(mission.end);
+             
+            startsToday     = (begin >= now && begin <= tomorrow);
+            endsToday       = (end >= now && end <= tomorrow); 
+            overlapsToday   = (begin <= now && end >= tomorrow); 
+            if ((startsToday || endsToday || overlapsToday)
                 && (mission.assets.length || !mission.activity)
                 && !mission.isLate) {
                 out[id] = mission;
-            }
         }
         return out;
     };
