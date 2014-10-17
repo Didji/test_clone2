@@ -693,7 +693,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.getAssetLabel = function(mission, assetid) {
-            if(assetsCache[mission.id]){
+            if(assetsCache[mission.id] && assetsCache[mission.id]._byId && assetsCache[mission.id]._byId[assetid]){
                 return assetsCache[mission.id]._byId[assetid].label
             } else {
                 return "" ;
