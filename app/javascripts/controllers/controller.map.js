@@ -480,7 +480,7 @@
         /*
          * Gestion du mode de suivi de la position GPS.
          */
-        var POSITION_ACTIVATE = false, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION;
+        var POSITION_ACTIVATE = false, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION, POSITION_ZOOM;
 
         $scope.$on("ACTIVATE_POSITION", activatePosition);
 
@@ -491,8 +491,14 @@
 
         function activatePosition() {
             POSITION_ACTIVATE = FIRST_POSITION = true;
+
+            POSITION_ZOOM = 18;
+            if (G3ME.map.getZoom() > POSITION_ZOOM) {
+                POSITION_ZOOM = G3ME.map.getZoom();
+            }
+
             if (LAST_USERS_LOCATION.length) {
-                G3ME.map.setView(LAST_USERS_LOCATION, 18);
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
                 G3ME.invalidateMapSize();
 
             }
@@ -526,7 +532,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
 
-            POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = null;
+            POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
 
             return false;
         }
@@ -556,11 +562,10 @@
                     POSITION_CIRCLE = null;
                 }
             });
-            var zoom = 18;
             if (!FIRST_POSITION) {
-                zoom = G3ME.map.getZoom();
+                POSITION_ZOOM = G3ME.map.getZoom();
             }
-            G3ME.map.setView(LAST_USERS_LOCATION, zoom);
+            G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             FIRST_POSITION = false;
         }
 
