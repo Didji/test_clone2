@@ -371,6 +371,9 @@
             }
         });
 
+        $scope.$on("DELETEMARKERFORMISSION", function(event, mission, marker) {
+             missionsClusters[mission.id].removeLayer(marker) ;
+        });
 
         $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions) {
             for (var i in missionsClusters) {
