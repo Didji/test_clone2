@@ -202,8 +202,8 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 }
             }
         }
-        $scope.sendOkReports(ok, function () {
-            $scope.sendKoReports(ko, function () {
+        $scope.sendKoReports(ko, function () {
+            $scope.sendOkReports(ok, function () {
                 $route.reload();
             });
         });
