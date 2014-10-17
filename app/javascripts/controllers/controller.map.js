@@ -459,11 +459,18 @@
         /*
          * Gestion du mode de suivi de la position GPS.
          */
-        var POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL;
+        var POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION, POSITION_ZOOM;
 
         $scope.$on("ACTIVATE_POSITION", function (){
+            FIRST_POSITION = true;
+
+            POSITION_ZOOM = 18;
+            if (G3ME.map.getZoom() > POSITION_ZOOM) {
+                POSITION_ZOOM = G3ME.map.getZoom();
+            }
+
             if(LAST_USERS_LOCATION.length){
-                G3ME.map.setView(LAST_USERS_LOCATION,18);
+                G3ME.map.setView(LAST_USERS_LOCATION,POSITION_ZOOM);
                 G3ME.invalidateMapSize();
 
             }
@@ -497,7 +504,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
 
-            POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = null ;
+            POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
 
             return false;
         }
@@ -529,7 +536,12 @@
                 }
             });
 
-            G3ME.map.setView(LAST_USERS_LOCATION, 18);
+            var zoom = 18;
+            if (!FIRST_POSITION) {
+               POSITION_ZOOM = G3ME.map.getZoom();
+            }
+            G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
+            FIRST_POSITION = false;
 
         }
 
