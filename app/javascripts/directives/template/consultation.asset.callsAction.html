@@ -17,20 +17,3 @@
         </li>
     </ul>
 </div>
-
-<a class="btn btn-default" style="width: 100%;white-space: normal;margin-bottom: 5px;" ng-show="filteredOpennedCalls.length == 1" href="#/report/{{site.id}}//{{asset.guid}}/{{filteredOpennedCalls[0].id}}" ng-click="addAssetsToMission(asset, filteredOpennedCalls[0])">
-    <i class="fa fa-phone"> </i>
-    <i18n>_CONSULTATION_WRITE_FOR_</i18n>Appel n°{{filteredOpennedCalls[0].number}} ({{filteredOpennedCalls[0].reason}})
-</a>
-<div class="btn-group dropup" style="width:100%; margin-bottom: 5px;" ng-show="filteredOpennedCalls.length > 1">
-    <button type="button" style="width:100%" class="btn btn-primary dropdown-toggle two-lines" data-toggle="dropdown">
-        <i class="fa fa-phone"> </i>
-        <i18n>_CONSULTATION_WRITE_FOR_</i18n>...
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="call in filteredOpennedCalls">
-            <a href="#/report/{{site.id}}//{{asset.guid}}/{{call.id}}"> Appel n°{{call.number}} ({{call.reason}})</a>
-        </li>
-    </ul>
-</div>
