@@ -217,7 +217,7 @@
             $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), node, {
                 timeout: 100000
             }).success(function (data) {
-                if (!Array.isArray(data) || !data[node.okey] || !data[node.okey].length) {
+                if (!data[node.okey] || !Array.isArray(data[node.okey]) || !data[node.okey].length) {
                     return;
                 }
                 for (var okey in data) {

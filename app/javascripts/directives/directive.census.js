@@ -27,7 +27,9 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
                     }
                 }, true);
 
-                scope.cancel = function () {
+                scope.android = navigator.userAgent.match(/Android/i);
+
+                scope.cancel = function() {
                     scope.okey = undefined;
                     scope.oncancel();
                     scope.removeLayers();

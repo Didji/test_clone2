@@ -711,6 +711,10 @@
             this.container.removeClass("chosen-container-active");
             this.clear_backstroke();
             this.show_search_field_default();
+            $(".chosen-container-single .chosen-search").css('position', 'static');
+            setTimeout(function(){
+                $(".chosen-container-single .chosen-search").css('position', 'relative');
+            }, 10);
             return this.search_field_scale();
         };
 

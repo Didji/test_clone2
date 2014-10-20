@@ -77,7 +77,7 @@
                     <tr ng-repeat="asset in mission.postAddedAssets.assets">
                         <td>
                             <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="locateAsset(mission, asset)">
-                                <span class="fa fa-map-marker"></span>{{::getAssetLabel(mission, asset)}}</button>
+                                <span class="fa fa-map-marker"></span>{{getAssetLabel(mission, asset)}}</button>
                         </td>
                         <td>
                             <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="removeAssetFromMission(asset, mission)">

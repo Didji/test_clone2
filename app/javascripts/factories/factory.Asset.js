@@ -127,7 +127,10 @@
          * @desc Ajoute l'objet à une mission
          * @param {Object} mission
          */
-        Asset.prototype.addToMission = function (mission) {
+        Asset.prototype.addToMission = function(mission, e) {
+            if(e){
+                e.preventDefault();
+            }
             $rootScope.addAssetToMission(this, mission);
         };
 

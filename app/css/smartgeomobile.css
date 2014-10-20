@@ -839,4 +839,6 @@ top: 12px;
 -webkit-transform: scale(2);
 transform: scale(2);
 }
-
+.chosen-container .chosen-results li em {
+    color: #fd9122;
+}

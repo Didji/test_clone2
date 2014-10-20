@@ -1,6 +1,6 @@
 <span ng-show="( filteredOpennedCalls = (missions|opennedCalls:asset:site) ).length != 0 " />
 
-<button class="btn btn-block  btn-primary two-lines" ng-show="filteredOpennedCalls.length == 1" style="width:100%; margin-bottom: 5px;white-space: normal;" ng-click="asset.addToMission(filteredOpennedCalls[0])">
+<button class="btn btn-block  btn-primary two-lines" ng-show="filteredOpennedCalls.length == 1" style="width:100%; margin-bottom: 5px;white-space: normal;" ng-click="asset.addToMission(filteredOpennedCalls[0], $event)">
     <i class="fa fa-phone"> </i>
     <i18n>_CONSULTATION_ADD_TO_</i18n>Appel n°{{filteredOpennedCalls[0].number}} ({{filteredOpennedCalls[0].reason}})
 </button>
@@ -13,7 +13,7 @@
     </button>
     <ul class="dropdown-menu" role="menu">
         <li ng-repeat="call in filteredOpennedCalls">
-            <a href="#" ng-click="asset.addToMission(call)"> Appel n°{{call.number}} ({{call.reason}})</a>
+            <a href="#" ng-click="asset.addToMission(call, $event)"> Appel n°{{call.number}} ({{call.reason}})</a>
         </li>
     </ul>
 </div>
