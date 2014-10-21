@@ -741,13 +741,15 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             begin = $filter('sanitizeDate')(mission.begin);
             end = $filter('sanitizeDate')(mission.end);
 
-            startsToday = (begin >= now && begin <= tomorrow);
-            endsToday = (end >= now && end <= tomorrow);
-            overlapsToday = (begin <= now && end >= tomorrow);
-            if ((startsToday || endsToday || overlapsToday) && (mission.assets.length || !mission.activity) && !mission.isLate) {
+            startsToday     = (begin >= now && begin <= tomorrow);
+            endsToday       = (end >= now && end <= tomorrow);
+            overlapsToday   = (begin <= now && end >= tomorrow);
+            if ((startsToday || endsToday || overlapsToday)
+                && (mission.assets.length || !mission.activity)
+                && !mission.isLate) {
                 out[id] = mission;
             }
-            return out;
+
         }
     };
 })
