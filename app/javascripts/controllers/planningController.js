@@ -96,9 +96,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.applyFilterOnMission = function () {
-            $scope.lateMissionsLength = Object.keys($filter('lateMissions')($rootScope.missions)).length;
-            $scope.todayMissionsLength = Object.keys($filter('todayMissions')($rootScope.missions)).length;
-            $scope.doneMissionsLength = Object.keys($filter('doneMissions')($rootScope.missions)).length;
+            $scope.lateMissionsLength = Object.keys($filter('lateMissions')($rootScope.missions) || {} ).length;
+            $scope.todayMissionsLength = Object.keys($filter('todayMissions')($rootScope.missions) || {} ).length;
+            $scope.doneMissionsLength = Object.keys($filter('doneMissions')($rootScope.missions) || {} ).length;
         };
 
         /**
