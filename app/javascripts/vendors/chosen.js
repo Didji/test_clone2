@@ -714,7 +714,7 @@
             $(".chosen-container-single .chosen-search").css('position', 'static');
             setTimeout(function(){
                 $(".chosen-container-single .chosen-search").css('position', 'relative');
-            }, 10);
+            }, 100);
             return this.search_field_scale();
         };
 
@@ -814,6 +814,10 @@
                     chosen: this
                 });
             }
+            $(".chosen-container-single .chosen-search").css('position', 'static');
+            setTimeout(function(){
+                $(".chosen-container-single .chosen-search").css('position', 'relative');
+            }, 10);
             return this.results_showing = false;
         };
 
