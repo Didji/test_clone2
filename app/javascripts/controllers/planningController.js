@@ -27,7 +27,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          *     <li>Set current day : today at midnight or last viewed day ({@link planningController#getMidnightTimestamp $scope.getMidnightTimestamp})</li>
          * </ul>
          */
-            var assetsCache = {};
+        var assetsCache = {};
 
         $scope.initialize = function() {
 
@@ -268,8 +268,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                             }
 
                             for (var i = 0; i < assets.length; i++) {
-                                assetsCache[mission.id].push(assets[i]);
-                                assetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
+                                if(!assetsCache[mission.id]._byId[1 * assets[i].guid]){
+                                    assetsCache[mission.id].push(assets[i]);
+                                    assetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
+                                }
                             }
 
                             $scope.$apply();
@@ -290,8 +292,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                             }
 
                             for (var i = 0; i < assets.length; i++) {
-                                $scope.doneAssetsCache[mission.id].push(assets[i]);
-                                $scope.doneAssetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
+                                if(!$scope.doneAssetsCache[mission.id]._byId[1 * assets[i].guid]){
+                                    $scope.doneAssetsCache[mission.id].push(assets[i]);
+                                    $scope.doneAssetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
+                                }
                             }
 
                             $scope.$apply();
@@ -363,6 +367,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * </ul>
          */
         $scope.toggleMission = function(mission, locate) {
+            mission = $rootScope.missions[mission.id];
             mission.isLoading = true;
             mission.openned = !mission.openned;
 
@@ -379,9 +384,13 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     }
 
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
-                    assetsCache[mission.id] = assetsCache[mission.id].concat(assets);
+                    for (var i = 0; i < assets.length; i++) {
+                        if(!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]){
+                            assetsCache[mission.id].push(assets[i]);
+                        }
+                    }
                     assetsCache[mission.id]._byId = {};
-                    for (var i = 0; i < assetsCache[mission.id].length; i++) {
+                    for (i = 0; i < assetsCache[mission.id].length; i++) {
                         assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
                     }
                     angular.extend(mission, {
@@ -614,6 +623,8 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          */
         $rootScope.addAssetToMission = $scope.addAssetToMission = function(asset, mission) {
 
+            mission = $rootScope.missions[mission.id];
+
             asset.guid = 1 * asset.guid;
 
             if (mission.assets.indexOf(asset.guid) !== -1 || mission.done.indexOf(asset.guid) !== -1) {
@@ -667,12 +678,15 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.removeAssetFromMission = function(assetid, mission) {
+            mission = $rootScope.missions[mission.id] ;
             var asset = assetsCache[mission.id]._byId[assetid] ;
-            mission.assets.splice(mission.assets.indexOf(asset.guid), 1);
+            mission.assets.splice(mission.assets.indexOf(assetid), 1);
             mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(asset.guid), 1);
             Smartgeo.set('missions_' + Smartgeo.get('lastUser'), $rootScope.missions);
             $scope.highlightMission(mission);
             $rootScope.$broadcast("DELETEMARKERFORMISSION", mission, assetsCache[mission.id]._byId[assetid].marker);
+            assetsCache[mission.id].splice(assetsCache[mission.id].indexOf(asset), 1);
+            delete assetsCache[mission.id]._byId[assetid] ;
         };
 
         /**
