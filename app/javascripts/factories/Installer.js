@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage) {
+angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site) {
 
     'use strict';
 
@@ -205,10 +205,20 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
 
         },
 
-        update: function (site, stats, callback) {
-            var update = true;
-            Installer.deleteAssets(site, site.obsoletes, function () {
-                Installer.install(site, stats, callback, update);
+        update: function (site, callback) {
+            callback = callback || function(){};
+            Installer.getUpdateJSON(site, function (site) {
+                var formatedSite = Installer.formatSiteMetadata(site, true);
+                Site.current.oldTimestamp = Site.current.timestamp;
+                angular.extend(Site.current, formatedSite);
+                Installer.deleteAssets(site, site.obsoletes, function () {
+                    Installer.install(site, site.stats, function(){
+                        if(G3ME.canvasTile){
+                            G3ME.canvasTile.redraw();
+                        }
+                        callback();
+                    }, true);
+                });
             });
         },
 

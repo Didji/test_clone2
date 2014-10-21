@@ -89,9 +89,6 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
         controller: 'SiteRemoveController',
         resolve: prefetchPromise
     }).
-    when("/sites/update/:site", {
-        templateUrl: "partials/update.html"
-    }).
     when("/map/:site", {
         templateUrl: "partials/main.html",
         controllerAs: 'mapController',

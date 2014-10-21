@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites", "GPS"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites, GPS) {
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites, GPS, Installer) {
 
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
@@ -21,6 +21,10 @@
         Site.current = prefetchedlocalsites;
 
         var LAST_USERS_LOCATION = [];
+
+        if(Date.now() - Site.current.timestamp * 1000 > 86400000){
+            Installer.update(Site.current);
+        }
 
         if (!Site.current.activities._byId) {
             Site.current.activities._byId = {};

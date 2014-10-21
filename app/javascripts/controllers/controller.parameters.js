@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('ParametersController', ParametersController);
 
-    ParametersController.$inject = ["$scope", "i18n", "$location", "Site"];
+    ParametersController.$inject = ["$scope", "i18n", "$location", "Site", "Installer", "G3ME"];
 
     /**
      * @class ParametersController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function ParametersController($scope, i18n, $location, Site) {
+    function ParametersController($scope, i18n, $location, Site, Installer, G3ME) {
 
         var vm = this;
 
@@ -20,6 +20,7 @@
         vm.confirmRemove = confirmRemove;
 
         vm.site = Site.current.label;
+        vm.updating = false;
 
         /**
          * @name confirmUpdate
@@ -29,6 +30,7 @@
             alertify.confirm(i18n.get('_SYNC_UPDATE_CONFIRM_MESSAGE_', Site.current.label), function (yes) {
                 if (yes) {
                     update();
+                    $scope.$digest();
                 }
             });
         }
@@ -50,8 +52,10 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function update() {
-            $location.path('sites/update/' + Site.current.id);
-            $scope.$apply();
+            vm.updating = true;
+            Installer.update(Site.current, function () {
+                vm.updating = false;
+            });
         }
 
         /**
