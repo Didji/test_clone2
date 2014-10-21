@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $browser, $timeout, $route, Storage) {
+angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage) {
 
     'use strict';
 
@@ -121,6 +121,14 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
 
         saveSite: function (site, callback) {
             Storage.get_('sites', function (sites) {
+                for (var i = 0; i < site.zones.length; i++) {
+                    SQLite.openDatabase({
+                        name: site.zones[i].database_name
+                    }).transaction(function (transaction) {
+                        transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)');
+                        transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)');
+                    });
+                }
                 sites = sites || {};
                 delete site.number;
                 delete site.obsoletes;
@@ -155,8 +163,8 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                         extent: extent,
                         assets: [],
                         insert_requests: [],
-                        table_name: JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, ''),
-                        database_name: JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, '')
+                        table_name: site.id + JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, ''),
+                        database_name: site.id + JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, '')
                     });
                 }
             }
@@ -166,9 +174,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                     name: site.zones[i].database_name
                 }).transaction(function (transaction) {
                     transaction.executeSql('DROP TABLE IF EXISTS ASSETS');
-                    transaction.executeSql('CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, maplabel, minzoom integer, maxzoom integer, asset)');
-                    transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)');
-                    transaction.executeSql('CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function () {
+                    transaction.executeSql('CREATE TABLE IF NOT EXISTS ASSETS (id, xmin real, xmax real, ymin real, ymax real, geometry, symbolId,  angle, label, maplabel, minzoom integer, maxzoom integer, asset)', [], function () {
                         Installer.checkpoint("create_zones_databases_", site.zones.length, callback);
                     });
                 });
