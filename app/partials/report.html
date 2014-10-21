@@ -35,7 +35,7 @@
                             </span>
                         </label>
 
-                        <select bo-if='field.type=="L" && field.options.length > 15' chosen no-results-text="'Aucun résultat'" allow-single-deselect="true" disable-search-threshold="3" data-placeholder=" " ng-model="reportController.report.fields[field.id]" ng-options="value.value as value.label for value in reportController.report.activity._fields[field.id].options" style="width:100%;">
+                        <select bo-if='field.type=="L" && field.options.length > 15' chosen no-results-text="'Aucun résultat'" allow-single-deselect="true" disable-search-threshold="3" data-placeholder=" " ng-model="reportController.report.fields[field.id]" ng-options="value.value as value.label for value in reportController.report.activity._fields[field.id].options | orderBy:'label'" style="width:100%;">
                             <option value=""></option>
                         </select>
 
