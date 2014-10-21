@@ -15,8 +15,8 @@
                         </select>
                     </span>
                     <span ng-switch-when="D">
-                        <span class="form-control pull-left" bo-if="android && field.type=='D'" style="margin-top:-46px;">{{node.fields[field.key] | date : "dd/MM/yyyy"}}</span>
-                        <input class="form-control" type="date" bo-if="android" style="color: transparent;background: transparent;border: transparent;box-shadow: none;z-index: -1;width: 100%;" ng-model='node.fields[field.key]'></input>
+                        <span class="form-control pull-left" bo-if="android && field.type=='D'" style="margin-bottom: -34px;">{{node.fields[field.key] | date : "dd/MM/yyyy"}}</span>
+                        <input class="form-control" type="date" bo-if="android" style="color: transparent;background: transparent;-webkit-transform: translate3d(0,0,0);transform: translate3d(0,0,0);" ng-model='node.fields[field.key]'></input>
                         <input class="form-control" type="date" bo-if="!android" ng-model='node.fields[field.key]'></input>
                     </span>
                     <span ng-switch-when="N">
