@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').factory('LicenseManager', function ($location, $rootScope, G3lic, i18n) {
+angular.module('smartgeomobile').factory('LicenseManager', function ($location, $rootScope, G3lic, i18n, Smartgeo) {
 
     'use strict';
 
@@ -50,7 +50,8 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @member {number} __max_time_between_check
      * @desc Temps max entre 2 vérifications de licence en millisecond (86400000 === 1 jour)
      */
-    LicenseManager.prototype.__max_time_between_check = 86400000;
+    LicenseManager.prototype.__max_time_between_check = 8;
+    // LicenseManager.prototype.__max_time_between_check = 86400000;
 
     /**
      * @method
@@ -173,7 +174,6 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @returns {LicenseManager} LicenseManager
      */
     LicenseManager.prototype.update = function (force, success, error) {
-
         if (typeof force !== "boolean") {
             error = success || function () {};
             success = force || function () {};
@@ -199,6 +199,13 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             this_.__setLicense(license);
             success();
         }, function (response) {
+            if(+response.status === 401){
+                localStorage.clear();
+                Smartgeo.reset();
+                $location.path('/');
+                document.location.reload();
+                return  ;
+            }
             this_.__updateErrorCallback(response);
             error(response);
         });
