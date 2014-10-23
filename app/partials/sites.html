@@ -2,55 +2,31 @@
     <div class="panel floating-form">
         <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
         <hr style="margin-top: 30px;">
-        <div ng-hide="siteListController.ready">
-            <div style='font-size: 20px;margin-bottom: 15px;margin-top: 40px;'>
-                <i class="fa fa-refresh fa-spin"></i>
-            </div>
+        <div ng-hide="siteListController.ready" style='font-size: 20px;margin-bottom: 15px;margin-top: 40px;'>
+            <i class="fa fa-refresh fa-spin"></i>
         </div>
-
         <div ng-show="siteListController.ready">
             <div ng-show='!siteListController.sites.length'>
                 <p class="text-danger">Erreur : Votre terminal n'est pas connecté au serveur et aucun site n'a été installé préalablement.</p>
             </div>
             <div ng-repeat="site in siteListController.sites track by site.id | orderBy:'label'" ng-show="site.installed">
-                <hr ng-show="$index==0" />
                 <div style="margin-bottom:5px" class="btn-group has-carret" >
-                    <a ng-click="siteListController.select(site)" class="btn btn-primary">
-                        <span class="icon-star pull-left"></span> {{site.label}}
-                    </a>
+                    <a ng-click="siteListController.select(site)" class="btn btn-primary">{{site.label}}</a>
                     <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu pull-right">
                         <li>
                             <a ng-click="siteListController.confirmUninstallSite(site)" ng-show="site.installed">
-                                <span class="icon-trash"></span>
-                                <i18n>_SITE_UNINSTALL</i18n> {{site.label}}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#/sites/update/{{site.id}}" ng-show="site.installed">
-                                <span class="icon-refresh"></span>
-                                <i18n>_SITE_UPDATE</i18n> {{site.label}}
+                                <span class="fa fa-trash"></span> <i18n>_SITE_UNINSTALL</i18n> {{site.label}}
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
-
-            <div ng-repeat="site in siteListController.sites track by site.id" ng-show="!site.installed">
-                <p >
-                    <a ng-show="siteListController.online" href="#/sites/install/{{site.id}}" class="btn btn-default">
-                        <span class="icon-star-empty pull-left"></span>
-                        <span ng-hide="siteListController.online" class="icon-ban-circle pull-left"></span>
-                        {{site.label}}
-                    </a>
-                    <a ng-hide="siteListController.online" href="#/sites/install/{{site.id}}" class="btn btn-default">
-                        <span class="icon-ban-circle pull-left"></span>
-                        {{site.label}}
-                    </a>
-                </p>
-            </div>
+            <p ng-repeat="site in siteListController.sites track by site.id | orderBy:'label'" ng-show="!site.installed">
+                <a href="#/sites/install/{{site.id}}" class="btn btn-default">{{site.label}}</a>
+            </p>
         </div>
     </div>
 </div>
