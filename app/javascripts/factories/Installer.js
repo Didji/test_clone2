@@ -211,8 +211,8 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                 var formatedSite = Installer.formatSiteMetadata(site, true);
                 Site.current.oldTimestamp = Site.current.timestamp;
                 angular.extend(Site.current, formatedSite);
-                Installer.deleteAssets(site, site.obsoletes, function () {
-                    Installer.install(site, site.stats, function(){
+                Installer.deleteAssets(Site.current, site.obsoletes, function () {
+                    Installer.install(Site.current, site.stats, function(){
                         if(G3ME.canvasTile){
                             G3ME.canvasTile.redraw();
                         }
