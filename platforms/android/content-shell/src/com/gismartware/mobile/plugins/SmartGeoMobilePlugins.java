@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.math.BigInteger;
 
+import org.apache.http.HttpMessage;
 import org.apache.http.HttpEntity;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
@@ -65,7 +67,7 @@ public class SmartGeoMobilePlugins {
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
 
-    private static String PHPSESSIONID = null;
+    private static Header[] COOKIES = null;
 
     @SuppressLint("SimpleDateFormat")
     public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
@@ -340,18 +342,18 @@ public class SmartGeoMobilePlugins {
             //quand on requête OSM, besoin user agent sinon 403
             request.setHeader("User-Agent", USER_AGENT);
 
-            if (PHPSESSIONID != null) {
-                request.setHeader("Cookie", PHPSESSIONID);
+            if (COOKIES != null) {
+                request.setHeaders(COOKIES);
+                for (int i=0; i<COOKIES.length ; i++) {
+                    Log.i(TAG, "[G3DB::request] COOKIES["+i+"]->"+COOKIES[i].getName()+"="+COOKIES[i].getValue());
+                }
             }
             try {
                 HttpResponse  response = client.execute(request);
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if (statusCode == 403 && PHPSESSIONID != null) {
-                    PHPSESSIONID = null ;
-                    return request(params);
-                } else if (statusCode >= 300 ) {
+                if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
                     Log.e(TAG, "[G3DB] When calling " + url);
                     return String.valueOf(statusCode);
@@ -411,8 +413,10 @@ public class SmartGeoMobilePlugins {
                 HttpResponse response = client.execute(req);
                 if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     //auth OK, on recupere l'identifiant de session
-                    PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
-
+                    COOKIES = response.getHeaders("Set-Cookie");
+                    for (int i=0; i<COOKIES.length ; i++) {
+                        Log.i(TAG, "[G3DB::Authenticate] COOKIES["+i+"]->"+COOKIES[i].getName()+"="+COOKIES[i].getValue());
+                    }
                     //nouvelle requete  effectuer : slection du site
                     url = new StringBuffer(params[0]);
                     url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
