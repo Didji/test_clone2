@@ -96,7 +96,10 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
         resolve: prefetchPromise
     }).
     when("/intent/:controller/?:args", {
-        templateUrl: "partials/intent.html"
+        template: "<div class='intent'><i class='fa fa-refresh fa-spin'></i></div>",
+        controllerAs: 'intentController',
+        controller: 'IntentController',
+        resolve: prefetchPromise
     }).
     otherwise({
         template: " ",

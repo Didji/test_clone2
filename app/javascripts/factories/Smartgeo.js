@@ -550,7 +550,27 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 Smartgeo._LOGIN_MUTEX = false;
                 (error || angular.noop)(response, status);
             });
+
         },
+
+        /**
+         * @name tokenAuth
+         * @desc Fonction d'authentification par token
+         */
+        tokenAuth: function(token, callback, callback2) {
+            var currentUser = (Storage.get('users') || {})[Storage.get('lastUser')] || {};
+            currentUser.token = token;
+            Storage.set('user', currentUser);
+
+            Smartgeo.login(token, callback, function (response) {
+                if ((response && response.status === 200) || !response) {
+                    callback();
+                } else {
+                    callback2();
+                }
+            }, callback2);
+        },
+
         clearPersistence: function () {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             // Storage.remove('lastLeafletMapExtent');

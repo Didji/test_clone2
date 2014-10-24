@@ -24,7 +24,8 @@
          */
         Storage.set = function (parameter, value) {
             if (value) {
-                return localStorage.setItem(parameter, JSON.stringify(value));
+                localStorage.setItem(parameter, JSON.stringify(value));
+                return value ;
             } else {
                 return Storage.remove(parameter);
             }
