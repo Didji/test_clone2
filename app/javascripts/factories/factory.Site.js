@@ -23,6 +23,12 @@
          * @desc Accesseur de l'attribut current
          */
         Site.__defineGetter__("current", function () {
+            if (window.SMARTGEO_CURRENT_SITE && !window.SMARTGEO_CURRENT_SITE.activities._byId) {
+                window.SMARTGEO_CURRENT_SITE.activities._byId = {};
+                for (var i = 0; i < window.SMARTGEO_CURRENT_SITE.activities.length; i++) {
+                    window.SMARTGEO_CURRENT_SITE.activities._byId[window.SMARTGEO_CURRENT_SITE.activities[i].id] = window.SMARTGEO_CURRENT_SITE.activities[i];
+                }
+            }
             return window.SMARTGEO_CURRENT_SITE;
         });
 
@@ -53,9 +59,12 @@
          * @desc Retourne un site en particulier
          * @param {String} id Identifiant du site
          */
-        Site.get = function (id) {
+        Site.get = function (id, setcurrent) {
             var deferred = $q.defer();
             Storage.get_('sites', function (sites) {
+                if(setcurrent){
+                    Site.current = sites[id] ;
+                }
                 deferred.resolve(sites[id]);
             });
             return deferred.promise;

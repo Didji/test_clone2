@@ -34,7 +34,7 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
         prefetchedlocalsites: ['Site', 'Smartgeo', '$route',
             function(Site, Smartgeo, $route) {
                 if($route.current.params.site){
-                    return Site.get($route.current.params.site);
+                    return Site.get($route.current.params.site, true);
                 } else {
                     return Site.all();
                 }

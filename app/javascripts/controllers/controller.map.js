@@ -6,71 +6,72 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, Storage, $location, i18n, Icon, $timeout, Asset, Site, prefetchedlocalsites, GPS, Installer) {
+    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, prefetchedlocalsites, GPS, Installer) {
 
-        $rootScope.currentPage = "Cartographie";
-        var missionsClusters = {},
-            myLastPositionMarker = null;
+        var broadcaster = $rootScope.$broadcast,
+            LAST_USERS_LOCATION = [],
+            lastViewTimeout = 0,
+            consultationIsEnabled = false,
+            CONSULTATION_CONTROL,
+            POSITION_ACTIVATE = false,
+            POSITION_CIRCLE,
+            POSITION_MARKER,
+            POSITION_CONTROL,
+            POSITION_ZOOM,
+            FIRST_POSITION,
+            intent;
 
-        Site.current = prefetchedlocalsites;
+        activate();
 
-        var LAST_USERS_LOCATION = [];
+        /**
+         * @name activate
+         * @desc Fonction d'initialisation
+         */
+        function activate() {
 
-        if(Date.now() - Site.current.timestamp * 1000 > 86400000){
-            Installer.update(Site.current);
-        }
+            $rootScope.currentPage = "Cartographie";
 
-        if (!Site.current.activities._byId) {
-            Site.current.activities._byId = {};
-            for (var i = 0; i < Site.current.activities.length; i++) {
-                Site.current.activities._byId[Site.current.activities[i].id] = Site.current.activities[i];
+            if (Date.now() - Site.current.timestamp * 1000 > 86400000) {
+                Installer.update(Site.current);
             }
+
+            G3ME.initialize([
+                [Site.current.extent.ymin, Site.current.extent.xmin],
+                [Site.current.extent.ymax, Site.current.extent.xmax]])
+                .on('click', mapClickHandler)
+                .on('dragend', dragEndHandler)
+                .addControl(Smartgeo.makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView));
+
+            Smartgeo.silentLogin(G3ME.backgroundTile.redraw);
+
+            (Storage.get('user_position_activated') ? activatePosition : angular.noop)();
+
+            $scope.$on("$destroy", controllerDestroyHandler);
+
+            $rootScope.$on("ACTIVATE_POSITION", activatePosition);
+            $rootScope.$on("DESACTIVATE_POSITION", stopPosition);
+
+            $rootScope.activateConsultation = activateConsultation;
+            $rootScope.stopConsultation = stopConsultation;
         }
 
-        $scope.$on("$destroy", function () {
-            GPS.emptyPositionListerners();
-            Storage.set('user_position_activated', POSITION_ACTIVATE);
-            stopPosition();
-            G3ME.map.remove();
-            document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
-            clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
-        });
-
-        missionsClusters = {};
-        $scope.DISABLE_CLUSTER_AT_ZOOM = 21;
-        $scope.MAX_CLUSTER_RADIUS = 75;
-
-        if (!Site.current) {
-            alertify.alert(i18n.get("_MAP_ZERO_SITE_SELECTED"));
-            $location.path("#");
-            return false;
-        }
-
-        $scope.consultationIsEnabled = false;
-        Smartgeo.silentLogin(function () {
-            if (G3ME.backgroundTile) {
-                G3ME.backgroundTile.redraw();
+        /**
+         * @name dragEndHandler
+         * @desc Handler de fin de drag pour arrêter ou non la fonction "Ma position"
+         * @param {Event} e
+         */
+        function dragEndHandler(e) {
+            if (e.distance > 50) {
+                stopPosition();
             }
-        });
-
-        G3ME.initialize('smartgeo-map', $rootScope.map_target || Storage.get('lastLeafletMapExtent') || [],
-            $rootScope.map_marker,
-            $rootScope.map_zoom || 18);
-
-        Smartgeo.lastLeafletMapExtentTimeout = 0;
-
-        var REFERENCE_VIEW_CONTROL = makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView);
-        G3ME.map.addControl(REFERENCE_VIEW_CONTROL);
-
-        G3ME.map.on('moveend', function () {
-            clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
-            Smartgeo.lastLeafletMapExtentTimeout = setTimeout(function () {
+            clearTimeout(lastViewTimeout);
+            lastViewTimeout = setTimeout(function () {
                 var extent = G3ME.map.getBounds();
                 if (extent._northEast.lat !== extent._southWest.lat ||
                     extent._northEast.lng !== extent._southWest.lng) {
@@ -80,8 +81,27 @@
                     ]);
                 }
             }, 5000);
-        });
+        }
 
+        /**
+         * @name controllerDestroyHandler
+         * @desc Handler de destruction du scope de controller. Supprime correctement
+         *       la carte du DOM pour éviter les fuites mémoires, efface les timeouts
+         *       et enregister l'état de la fonction "Ma position" pour la réactiver.
+         */
+        function controllerDestroyHandler() {
+            GPS.emptyPositionListerners();
+            Storage.set('user_position_activated', POSITION_ACTIVATE);
+            stopPosition();
+            G3ME.map.remove();
+            document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
+            clearTimeout(lastViewTimeout);
+        }
+
+        /**
+         * @name setReferenceView
+         * @desc Repositionne la carte à la vue de référence
+         */
         function setReferenceView() {
             var extent = Site.current.extent,
                 southWest = L.latLng(extent.ymax, extent.xmin),
@@ -91,151 +111,203 @@
             return false;
         }
 
+        /**
+         * @name noConsultableAssets
+         * @desc Callback de la consultation dans le cas ou aucun objet n'est trouvé.
+         * @param {L.LatLng} coords Coordonées du click de consultation
+         */
         function noConsultableAssets(coords) {
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
-            if ($rootScope.report_activity) {
+            if (intent.report_activity) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
                 $(document).on('click', '.openLocateReportButton', function () {
-                    $location.path('report/' + Site.current.id + '/' + $rootScope.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
+                    $location.path('report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
+                    $scope.$apply();
                 });
             }
-            var popup = L.popup().setLatLng(coords)
-                .setContent(popupContent)
-                .openOn(G3ME.map);
-
-            if (!$rootScope.report_activity) {
+            var popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
+            if (!intent.report_activity) {
                 setTimeout(function () {
                     $(popup._container).fadeOut();
                 }, 4000);
             }
-
-            $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
+            broadcaster("CONSULTATION_CLICK_CANCELED");
             return false;
         }
 
-
-        var coords, radius_p = 40,
-            baseRequest = " SELECT id, asset,";
-        baseRequest += "       label,";
-        baseRequest += "       geometry,";
-        baseRequest += "       CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2";
-        baseRequest += "       END AS priority";
-        baseRequest += " FROM ASSETS ";
-        baseRequest += " WHERE ";
-        baseRequest += "    not ( xmax < ? or xmin > ? or ymax < ? or ymin > ?) ";
-        baseRequest += "    AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
-
-        G3ME.map.on('click', function (e) {
-
-            if (!$scope.consultationIsEnabled) {
+        /**
+         * @name mapClickHandler
+         * @desc Handler de click pour la consultation
+         * @param {Event} e
+         */
+        function mapClickHandler(e) {
+            if (!consultationIsEnabled) {
                 return false;
             }
 
-            $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
-            coords = e.latlng;
-            var mpp = 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
-                radius = radius_p * mpp,
+            var coords = e.latlng,
+                radius = 40 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat) / Math.pow(2, (G3ME.map.getZoom() + 8)),
                 circle = new L.Circle(coords, radius, {
                     color: "#fc9e49",
                     weight: 1
-                }).addTo(G3ME.map),
-                bounds = circle.getBounds(),
-                nw = bounds.getNorthWest(),
-                se = bounds.getSouthEast(),
-                xmin = nw.lng,
-                xmax = se.lng,
-                ymin = se.lat,
-                ymax = nw.lat,
-                zone,
-                zoom = G3ME.map.getZoom(),
-                request = baseRequest;
+                }).addTo(G3ME.map);
+
+            broadcaster("CONSULTATION_CLICK_REQUESTED", coords);
+
+            Asset.findInBounds(coords, circle.getBounds(), function (assets) {
+                if (!assets.length) {
+                    noConsultableAssets(coords);
+                } else {
+                    broadcaster("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+                }
+            });
 
             $(circle._path).fadeOut(1500, function () {
                 G3ME.map.removeLayer(circle);
             });
-
-            for (var i = 0, length_ = Site.current.zones.length; i < length_; i++) {
-                zone = Site.current.zones[i];
-                if (G3ME.extents_match(zone.extent, {
-                        xmin: xmin,
-                        ymin: ymin,
-                        xmax: xmax,
-                        ymax: ymax
-                    })) {
-                    break;
-                }
-            }
-
-            if (!zone || (G3ME.active_layers && !G3ME.active_layers.length)) {
-                return noConsultableAssets(coords);
-            }
-
-            if (G3ME.active_layers) {
-                request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join('|') + ')[0-9]+" )';
-            }
-            request += " order by priority LIMIT 0,100 ";
-
-            //TODO(@gulian): mettre findAssetsAroundPoint dans factory.Asset.js
-
-            SQLite.openDatabase({
-                name: zone.database_name,
-                bgType: 1
-            }).transaction(function (t) {
-                t.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom], sendResultsToConsultation, Smartgeo.log);
-            });
-            return false;
-        });
-
-        function sendResultsToConsultation(t, results) {
-
-            var numRows = results.rows.length;
-
-            if (numRows === 0) {
-                return noConsultableAssets(coords);
-            }
-
-            var assets = [],
-                asset;
-
-            for (var i = 0; i < numRows && assets.length < 10; i++) {
-
-                asset = new Asset(Asset.convertRawRow(results.rows.item(i)));
-
-                if (asset.geometry.type === "LineString") {
-
-                    var p1 = G3ME.map.latLngToContainerPoint([coords.lng, coords.lat]),
-                        p2,
-                        p3,
-                        distanceToCenter;
-
-                    for (var j = 0, length_ = asset.geometry.coordinates.length; j < (length_ - 1); j++) {
-                        if (j) {
-                            p2 = p3;
-                        } else {
-                            p2 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j]);
-                        }
-                        p3 = G3ME.map.latLngToContainerPoint(asset.geometry.coordinates[j + 1]);
-                        distanceToCenter = L.LineUtil.pointToSegmentDistance(p1, p2, p3);
-
-                        if (distanceToCenter <= radius_p) {
-                            assets.push(asset);
-                            break;
-                        }
-                    }
-                } else {
-                    assets.push(asset);
-                }
-            }
-
-            if (assets.length === 0) {
-                return noConsultableAssets(coords);
-            }
-
-            $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
         }
+
+        /**
+         * @name activateConsultation
+         * @desc Active la consultation
+         */
+        function activateConsultation() {
+            stopConsultation();
+            consultationIsEnabled = true;
+            CONSULTATION_CONTROL = CONSULTATION_CONTROL || Smartgeo.makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "fa-info-circle", stopConsultation);
+            G3ME.map.addControl(CONSULTATION_CONTROL);
+        }
+
+        /**
+         * @name stopConsultation
+         * @desc Désactive la consultation
+         */
+        function stopConsultation() {
+            consultationIsEnabled = false;
+            if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
+                G3ME.map.removeControl(CONSULTATION_CONTROL);
+            }
+        }
+
+        /**
+         * @name activatePosition
+         * @desc Active la fonction "Ma position"
+         */
+        function activatePosition() {
+            POSITION_ACTIVATE = FIRST_POSITION = true;
+            POSITION_ZOOM = G3ME.map.getZoom() > POSITION_ZOOM ? G3ME.map.getZoom() : 18 ;
+
+            if (LAST_USERS_LOCATION.length) {
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
+                G3ME.invalidateMapSize();
+            }
+
+            if (GPS.startWatchingPosition(setLocationMarker)) {
+                POSITION_CONTROL = POSITION_CONTROL || Smartgeo.makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "fa-compass", stopPosition);
+                G3ME.map.addControl(POSITION_CONTROL);
+            }
+        }
+
+        /**
+         * @name stopPosition
+         * @desc Désactive la fonction "Ma position"
+         */
+        function stopPosition() {
+
+            GPS.stopWatchingPosition(setLocationMarker);
+
+            LAST_USERS_LOCATION = [];
+
+            if (POSITION_CONTROL && POSITION_CONTROL._map) {
+                G3ME.map.removeControl(POSITION_CONTROL);
+            }
+            if (POSITION_CIRCLE && POSITION_CIRCLE._map) {
+                G3ME.map.removeLayer(POSITION_CIRCLE);
+            }
+            if (POSITION_MARKER && POSITION_MARKER._map) {
+                G3ME.map.removeLayer(POSITION_MARKER);
+            }
+
+            return (POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null);
+        }
+
+        /**
+         * @name setLocationMarker
+         * @desc Ajoute un marker à une position sur la carte
+         * @param {Number} lng Longitude
+         * @param {Number} lat Latitude
+         * @param {Number} alt Altitude
+         * @param {Number} acc Précision
+         */
+        function setLocationMarker(lng, lat, alt, acc) {
+
+            LAST_USERS_LOCATION = [lat, lng];
+
+            if (POSITION_CIRCLE) {
+                POSITION_CIRCLE.setLatLng(LAST_USERS_LOCATION).setRadius(acc);
+            } else {
+                POSITION_CIRCLE = new L.Circle(LAST_USERS_LOCATION, acc, {
+                    color: '#fd9122',
+                    opacity: 0.1,
+                    fillOpacity: 0.05
+                }).addTo(G3ME.map);
+            }
+
+            if (POSITION_MARKER) {
+                POSITION_MARKER.setLatLng(LAST_USERS_LOCATION);
+            } else {
+                POSITION_MARKER = L.marker(LAST_USERS_LOCATION).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
+            }
+
+            $(POSITION_CIRCLE._path).fadeOut(3000, function () {
+                if (POSITION_CIRCLE) {
+                    G3ME.map.removeLayer(POSITION_CIRCLE);
+                    POSITION_CIRCLE = null;
+                }
+            });
+            if (!FIRST_POSITION) {
+                POSITION_ZOOM = G3ME.map.getZoom();
+            }
+            G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
+            FIRST_POSITION = false;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ===================================================
+        // ===================================================
+        // =========== CECI DOIT DISPARAITRE AVEC LE =========
+        // ============= REFACTORING DU PLANNING =============
+        // ===================================================
+        // ===================================================
+
+
+        var missionsClusters = {},
+            iconCluster = {}, myLastPositionMarker = null,
+            myPositionMarker = null,
+            MarkerClusterGroupOptions = {
+                showCoverageOnHover: false,
+                iconCreateFunction: iconCreateFunction,
+                disableClusteringAtZoom: 21,
+                maxClusterRadius: 75
+            }, traces;
 
         $scope.$on("__MAP_SETVIEW__", function (event, extent) {
             if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {
@@ -252,12 +324,12 @@
         });
 
         $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function (event, lat, lng) {
-            if (!$scope.myPositionMarker) {
-                $scope.myPositionMarker = L.marker([lat, lng], {
+            if (!myPositionMarker) {
+                myPositionMarker = L.marker([lat, lng], {
                     zIndexOffset: 10000
                 }).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
             } else {
-                $scope.myPositionMarker.setLatLng([lat, lng]);
+                myPositionMarker.setLatLng([lat, lng]);
             }
             G3ME.map.panTo([lat, lng], {
                 animate: false
@@ -266,60 +338,17 @@
         });
 
         $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function () {
-            if ($scope.myPositionMarker) {
-                G3ME.map.removeLayer($scope.myPositionMarker);
-                delete $scope.myPositionMarker;
+            if (myPositionMarker) {
+                G3ME.map.removeLayer(myPositionMarker);
+                myPositionMarker = null;
             }
         });
 
-
-        $scope.$on("ACTIVATE_CONSULTATION", function () {
-            activateConsultation();
-        });
-
-
-        /*
-         *   General events
-         */
-        $scope.$on("ZOOM_ON_ASSET", function (event, asset) {
-            $scope.zoomOnAsset(asset);
-        });
-        $scope.$on("HIGHLIGHT_ASSET", function (event, asset) {
-            $scope.highlightAsset(asset);
-        });
-        $scope.$on("UNHIGHLIGHT_ASSET", function (event, asset) {
-            $scope.unHighlightAsset(asset);
-        });
-
-        $scope.$on("HIGHLIGHT_ASSETS", function (event, assets, marker, clickHandler) {
-            for (var i = 0; i < assets.length; i++) {
-                $scope.highlightAsset(assets[i], marker, clickHandler);
-            }
-        });
-        $scope.$on("UNHIGHLIGHT_ASSETS", function (event, assets) {
-            for (var i = 0; i < assets.length; i++) {
-                $scope.unHighlightAsset(assets[i]);
-            }
-        });
-
-
-        /*
-         *   Planning related events
-         */
         $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission) {
             if (missionsClusters[mission.id]) {
                 G3ME.map.removeLayer(missionsClusters[mission.id]);
             }
         });
-
-        var iconCluster = {};
-        var MarkerClusterGroupOptions = {
-            showCoverageOnHover: false,
-            // removeOutsideVisibleBounds: false,
-            iconCreateFunction: iconCreateFunction,
-            disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
-            maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
-        };
 
         function iconCreateFunction(cluster) {
             iconCluster[cluster._childCount] = iconCluster[cluster._childCount] || new L.DivIcon({
@@ -374,8 +403,8 @@
             }
         });
 
-        $scope.$on("DELETEMARKERFORMISSION", function(event, mission, marker) {
-             missionsClusters[mission.id].removeLayer(marker) ;
+        $scope.$on("DELETEMARKERFORMISSION", function (event, mission, marker) {
+            missionsClusters[mission.id].removeLayer(marker);
         });
 
         $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function (event, missions) {
@@ -389,19 +418,8 @@
             }
         });
 
-
         $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache) {
-            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
-                iconCreateFunction: function (cluster) {
-                    return new L.DivIcon({
-                        html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-                        className: 'marker-cluster-done',
-                        iconSize: new L.Point(40, 40)
-                    });
-                },
-                disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
-                maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
-            });
+            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup(MarkerClusterGroupOptions);
             for (var i = 0; assetsCache && i < assetsCache.length; i++) {
                 assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
                 var icon = !mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
@@ -414,29 +432,31 @@
         $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function (event, asset) {
             asset.marker.setIcon(asset.selected ? Icon.get('SELECTED_MISSION') : Icon.get('NON_SELECTED_MISSION'));
         });
+
         $scope.$on("__MAP_HIDE_TRACE__", function (event, mission) {
-            if ($scope.traces && $scope.traces[mission.id]) {
-                G3ME.map.removeLayer($scope.traces[mission.id]);
+            if (traces && traces[mission.id]) {
+                G3ME.map.removeLayer(traces[mission.id]);
                 G3ME.map.removeLayer(myLastPositionMarker);
-                delete $scope.traces[mission.id];
+                delete traces[mission.id];
                 myLastPositionMarker = null;
             }
         });
+
         $scope.$on("__MAP_DISPLAY_TRACE__", function (event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
-            $scope.traces = $scope.traces || {};
+            traces = traces || {};
             var geoJSON = {
                 "type": "LineString",
                 "coordinates": mission.trace,
                 "color": "orange"
             };
 
-            if ($scope.traces[mission.id]) {
-                G3ME.map.removeLayer($scope.traces[mission.id]);
+            if (traces[mission.id]) {
+                G3ME.map.removeLayer(traces[mission.id]);
             }
-            $scope.traces[mission.id] = L.geoJson(geoJSON, {
+            traces[mission.id] = L.geoJson(geoJSON, {
                 style: function (feature) {
                     return {
                         color: feature.geometry.color,
@@ -445,7 +465,7 @@
                     };
                 }
             });
-            $scope.traces[mission.id].addTo(G3ME.map);
+            traces[mission.id].addTo(G3ME.map);
 
             if (mission.trace.length) {
                 var lastPosition = mission.trace[mission.trace.length - 1];
@@ -465,227 +485,6 @@
 
         });
 
-
-        // Fonction utilitaire créant un contrôle Leaflet.
-        function makeControl(title, icon, onclick) {
-            var Constr = L.Control.extend({
-                options: {
-                    position: 'topright'
-                },
-                onAdd: function () {
-                    var container = L.DomUtil.create('div', 'leaflet-bar');
-                    $(container)
-                        .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
-                        .on('click', onclick);
-                    return container;
-                }
-            });
-            return new Constr();
-        }
-
-        /*
-         * Gestion du mode de suivi de la position GPS.
-         */
-        var POSITION_ACTIVATE = false, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, FIRST_POSITION, POSITION_ZOOM;
-
-        $scope.$on("ACTIVATE_POSITION", activatePosition);
-
-        if (Storage.get('user_position_activated')) {
-            activatePosition();
-        }
-
-        function activatePosition() {
-            POSITION_ACTIVATE = FIRST_POSITION = true;
-
-            POSITION_ZOOM = 18;
-            if (G3ME.map.getZoom() > POSITION_ZOOM) {
-                POSITION_ZOOM = G3ME.map.getZoom();
-            }
-
-            if (LAST_USERS_LOCATION.length) {
-                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
-                G3ME.invalidateMapSize();
-
-            }
-            if (GPS.startWatchingPosition(setLocationMarker)) {
-                POSITION_CONTROL = makeControl(i18n.get('_MAP_MY_POSITION_CONTROL'), "fa-compass", stopPosition);
-                G3ME.map.addControl(POSITION_CONTROL);
-            }
-        }
-
-        G3ME.map.on('dragend', function (event) {
-            if (event.distance > 50) {
-                stopPosition();
-            }
-        });
-
-        $rootScope.$on("DESACTIVATE_POSITION", stopPosition);
-
-        function stopPosition() {
-
-            GPS.stopWatchingPosition(setLocationMarker);
-
-            LAST_USERS_LOCATION = [];
-
-            if (POSITION_CONTROL && POSITION_CONTROL._map) {
-                G3ME.map.removeControl(POSITION_CONTROL);
-            }
-            if (POSITION_CIRCLE && POSITION_CIRCLE._map) {
-                G3ME.map.removeLayer(POSITION_CIRCLE);
-            }
-            if (POSITION_MARKER && POSITION_MARKER._map) {
-                G3ME.map.removeLayer(POSITION_MARKER);
-            }
-
-            POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
-
-            return false;
-        }
-
-        function setLocationMarker(lng, lat, alt, acc) {
-
-            LAST_USERS_LOCATION = [lat, lng];
-
-            if (POSITION_CIRCLE) {
-                POSITION_CIRCLE.setLatLng(LAST_USERS_LOCATION).setRadius(acc);
-            } else {
-                POSITION_CIRCLE = new L.Circle(LAST_USERS_LOCATION, acc, {
-                    color: '#fd9122',
-                    opacity: 0.1,
-                    fillOpacity: 0.05
-                }).addTo(G3ME.map);
-            }
-
-            if (POSITION_MARKER) {
-                POSITION_MARKER.setLatLng(LAST_USERS_LOCATION);
-            } else {
-                POSITION_MARKER = L.marker(LAST_USERS_LOCATION).setIcon(Icon.get('TARGET')).addTo(G3ME.map);
-            }
-
-            $(POSITION_CIRCLE._path).fadeOut(3000, function () {
-                if (POSITION_CIRCLE) {
-                    G3ME.map.removeLayer(POSITION_CIRCLE);
-                    POSITION_CIRCLE = null;
-                }
-            });
-            if (!FIRST_POSITION) {
-                POSITION_ZOOM = G3ME.map.getZoom();
-            }
-            G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
-            FIRST_POSITION = false;
-        }
-
-        /*
-         * Gestion de la consultation.
-         */
-        var CONSULTATION_CONTROL;
-
-        function activateConsultation(event) {
-            if (event) {
-                event.preventDefault();
-            }
-            stopConsultation();
-            $scope.consultationIsEnabled = true;
-            if (!CONSULTATION_CONTROL) {
-                CONSULTATION_CONTROL = makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "fa-info-circle", stopConsultation);
-            }
-
-            G3ME.map.addControl(CONSULTATION_CONTROL);
-        }
-
-        function stopConsultation() {
-            $scope.consultationIsEnabled = false;
-            if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
-                G3ME.map.removeControl(CONSULTATION_CONTROL);
-            }
-            return false;
-        }
-
-        $rootScope.stopConsultation = stopConsultation;
-
-        $scope.highlightAsset = function (asset, customMarker, customClickHandler) {
-            customClickHandler = customClickHandler || function () {
-                $scope.zoomOnAsset(asset);
-            };
-
-            if (G3ME.assetsMarkers[asset.guid]) {
-                G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
-            }
-
-            switch (asset.geometry.type) {
-            case "Point":
-                var coords = asset.geometry.coordinates;
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.marker([coords[1], coords[0]], {
-                    icon: Icon.get('CONSULTATION')
-                });
-                break;
-            case "LineString":
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
-                    style: {
-                        color: '#fc9e49',
-                        opacity: 0.9,
-                        weight: 7
-                    }
-                });
-                break;
-            case "Polygon":
-                G3ME.assetsMarkers[asset.guid] = customMarker || L.geoJson(asset.geometry, {
-                    style: {
-                        color: '#fc9e49',
-                        opacity: 0.9,
-                        weight: 7
-                    }
-                });
-                break;
-            default:
-                console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
-            }
-            G3ME.assetsMarkers[asset.guid].on('click', customClickHandler);
-            // G3ME.assetsMarkers[asset.guid].on('dblclick', function () {
-            //     $rootScope.$broadcast("CONSULTATION_OPEN_PANEL");
-            // });
-            G3ME.assetsMarkers[asset.guid].addTo(G3ME.map);
-            G3ME.invalidateMapSize();
-        };
-
-        $scope.unHighlightAsset = function (asset) {
-            if (G3ME.assetsMarkers[asset.guid]) {
-                G3ME.map.removeLayer(G3ME.assetsMarkers[asset.guid]);
-            }
-            G3ME.invalidateMapSize();
-        };
-
-        $scope.unHighlightAllAsset = function () {
-            for (var i = 0; i < G3ME.assetsMarkers.length; i++) {
-                if (G3ME.assetsMarkers[i]) {
-                    G3ME.map.removeLayer(G3ME.assetsMarkers[i]);
-                }
-            }
-            G3ME.invalidateMapSize();
-        };
-
-        $scope.zoomOnAsset = function (asset) {
-            var coords = asset.geometry.coordinates,
-                center;
-            switch (asset.geometry.type) {
-            case "Point":
-                center = [coords[1], coords[0]];
-                break;
-            case "LineString":
-                center = [coords[0][1], coords[0][0]];
-                break;
-            case "MultiLineString":
-                center = [coords[0][0][1], coords[0][0][0]];
-                break;
-            case "Polygon":
-                center = [coords[0][0][1], coords[0][0][0]];
-                break;
-            default:
-                console.info(i18n.get("_G3ME_UNKNOWN_GEOMETRY", asset.geometry.type));
-            }
-            G3ME.map.setView(center, 18);
-            G3ME.invalidateMapSize();
-        };
     }
 
 })();

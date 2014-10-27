@@ -253,7 +253,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Active la consultation
          */
         vm.activateConsultation = function () {
-            $rootScope.$broadcast("ACTIVATE_CONSULTATION");
+            $rootScope.activateConsultation();
             vm.display = false;
         };
 

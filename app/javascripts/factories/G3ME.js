@@ -18,7 +18,10 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         filecacheIsEnable: $rootScope.rights.tileCache || true,
 
-        initialize: function (mapDivId, target, marker, zoom) {
+        initialize: function (extent /*target, marker, zoom*/) {
+            // (intent && intent.map_target) || Storage.get('lastLeafletMapExtent') || [],
+            // (intent && intent.map_marker),
+            // (intent && intent.map_zoom)
             this.symbology = Site.current.symbology;
             this.CURRENT_ZOOM = false;
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
@@ -28,8 +31,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this._pi4 = Math.PI / 4;
             this.DEG_TO_RAD = Math.PI / 180;
             this.minDistanceToALabel = 15;
-            this.mapDivId = mapDivId;
-            this.map = new L.map(document.getElementById(mapDivId), {
+            this.mapDivId = 'smartgeo-map';
+            this.map = new L.map(document.getElementById(this.mapDivId), {
                 attributionControl: false,
                 zoomControl: false,
                 zoomAnimation: true,
@@ -45,31 +48,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 'imperial': false
             }).addTo(this.map);
 
-            if (!(target && target.length && G3ME.isLatLngString(target))) {
-                target = [
-                    [Site.current.extent.ymin, Site.current.extent.xmin],
-                    [Site.current.extent.ymax, Site.current.extent.xmax]
-                ];
-            }
-
-            if (target[0] instanceof Array) {
-                G3ME.map.fitBounds(target);
-            } else if (target instanceof Array) {
-                // target is a point
-                G3ME.map.setView(target, zoom || 18);
-                if (marker) {
-                    if (marker._map) {
-                        (marker._map.removeLayer)(marker);
-                    }
-                    marker.addTo(G3ME.map);
-                }
-            } else if (Storage.get('lastLeafletMapExtent')) {
-                G3ME.map.fitBounds(Storage.get('lastLeafletMapExtent'));
-            } else {
-                G3ME.map.fitBounds(target);
-            }
-
-            G3ME.invalidateMapSize();
+            G3ME.map.fitBounds(Storage.get('lastLeafletMapExtent') || extent);
 
             // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
             if (!this.tileUrl) {
@@ -123,6 +102,13 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             this.canvasTile.addTo(this.map);
             this.tempAssetTile.addTo(this.map);
+
+            return this.map;
+        },
+
+        zoomOnAsset: function (asset) {
+            G3ME.map.setView(G3ME.getLineStringMiddle(asset.geometry.coordinates), 18);
+            G3ME.invalidateMapSize();
         },
 
         getLineStringMiddle: function (lineString) {
@@ -280,7 +266,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
                 symbology = Site.current.symbology,
                 imageFactor = 1,
-                // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                 imageFactor_2 = 0.5,
                 scale = 256 * Math.pow(2, zoom),
                 xscale = canvas.width / Math.abs(xmax - xmin),
@@ -640,16 +625,16 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             drawnLabels = [];
 
         if (!G3ME.extents_match({
-                xmin: xmin,
-                xmax: xmax,
-                ymin: ymin,
-                ymax: ymax
-            }, {
-                xmin: currentMapBounds._southWest.lng,
-                xmax: currentMapBounds._northEast.lng,
-                ymin: currentMapBounds._southWest.lat,
-                ymax: currentMapBounds._northEast.lat
-            }) || G3ME.map.getZoom() !== zoom) {
+            xmin: xmin,
+            xmax: xmax,
+            ymin: ymin,
+            ymax: ymax
+        }, {
+            xmin: currentMapBounds._southWest.lng,
+            xmax: currentMapBounds._northEast.lng,
+            ymin: currentMapBounds._southWest.lat,
+            ymax: currentMapBounds._northEast.lat
+        }) || G3ME.map.getZoom() !== zoom) {
             return G3ME.canvasTile.tileDrawn(canvas);
         }
         for (var i = 0, length = rows.length; i < length; i++) {

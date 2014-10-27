@@ -38,7 +38,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             this.locationWatchIdentifier = null;
 
             Smartgeo._initializeGlobalEvents();
-            Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
 
             if (window.SmartgeoChromium) {
@@ -99,7 +98,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                 return;
             }
 
-            Smartgeo.clearSiteSelection();
             Smartgeo.clearPersistence();
             Smartgeo.clearCaches();
 
@@ -589,10 +587,24 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
-        clearSiteSelection: function () {
-            //TODO(@gulian): on supprime ?
-            // Site.current = null;
+
+        // Fonction utilitaire créant un contrôle Leaflet.
+        makeControl :function (title, icon, onclick) {
+            var Constr = L.Control.extend({
+                options: {
+                    position: 'topright'
+                },
+                onAdd: function () {
+                    var container = L.DomUtil.create('div', 'leaflet-bar');
+                    $(container)
+                        .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
+                        .on('click', onclick);
+                    return container;
+                }
+            });
+            return new Constr();
         },
+
 
         sleep: function (millis, callback) {
             setTimeout(callback, millis);

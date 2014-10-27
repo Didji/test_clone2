@@ -99,7 +99,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             $scope.lateMissionsLength = Object.keys($filter('lateMissions')($rootScope.missions) || {} ).length;
             $scope.todayMissionsLength = Object.keys($filter('todayMissions')($rootScope.missions) || {} ).length;
             $scope.doneMissionsLength = Object.keys($filter('doneMissions')($rootScope.missions) || {} ).length;
-            console.log($rootScope.missions, $filter('todayMissions')($rootScope.missions), $scope.todayMissionsLength);
         };
 
         /**
@@ -699,7 +698,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          */
         $scope.locateAsset = function (mission, assetid) {
             Smartgeo.findAssetsByGuids(Site.current, assetid, function (assets) {
-                $rootScope.$broadcast("ZOOM_ON_ASSET", assets[0]);
+                G3ME.zoomOnAsset(assets[0]);
             });
         };
 
