@@ -99,6 +99,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             $scope.lateMissionsLength = Object.keys($filter('lateMissions')($rootScope.missions) || {} ).length;
             $scope.todayMissionsLength = Object.keys($filter('todayMissions')($rootScope.missions) || {} ).length;
             $scope.doneMissionsLength = Object.keys($filter('doneMissions')($rootScope.missions) || {} ).length;
+            console.log($rootScope.missions, $filter('todayMissions')($rootScope.missions), $scope.todayMissionsLength);
         };
 
         /**
@@ -760,13 +761,13 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             startsToday     = (begin >= now && begin <= tomorrow);
             endsToday       = (end >= now && end <= tomorrow);
             overlapsToday   = (begin <= now && end >= tomorrow);
-            if ((startsToday || endsToday || overlapsToday)
-                && (mission.assets.length || !mission.activity)
-                && !mission.isLate) {
+            if ((startsToday || endsToday || overlapsToday) &&
+                (mission.assets.length || !mission.activity) &&
+                !mission.isLate) {
                 out[id] = mission;
             }
-
         }
+        return out;
     };
 })
     .filter('specificDayMissions', function ($filter) {
