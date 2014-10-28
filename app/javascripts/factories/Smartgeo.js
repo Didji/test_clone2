@@ -468,9 +468,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         silentLogin: function (callback) {
             var user = (Storage.get('users') || {})[Storage.get('lastUser')];
-            if (user.token) {
+            if (user && user.token) {
                 Smartgeo.login(user.token, callback);
-            } else if (user.username && user.password) {
+            } else if (user && user.username && user.password) {
                 Smartgeo.login(user.username, user.password, callback);
             }
         },

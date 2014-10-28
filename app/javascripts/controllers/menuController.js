@@ -263,7 +263,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Active la fonction 'Ma position'
          */
         vm.activatePosition = function () {
-            $rootScope.$broadcast("ACTIVATE_POSITION");
+            $rootScope.activatePosition();
             vm.display = false;
         };
 

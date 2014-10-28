@@ -18,13 +18,8 @@
             LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
             consultationIsEnabled = false,
-            CONSULTATION_CONTROL,
             POSITION_ACTIVATE = false,
-            POSITION_CIRCLE,
-            POSITION_MARKER,
-            POSITION_CONTROL,
-            POSITION_ZOOM,
-            FIRST_POSITION,
+            CONSULTATION_CONTROL, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, POSITION_ZOOM, FIRST_POSITION,
             intent;
 
         activate();
@@ -37,26 +32,26 @@
 
             $rootScope.currentPage = "Cartographie";
 
-            if (Date.now() - Site.current.timestamp * 1000 > 86400000) {
+            if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
                 Installer.update(Site.current);
             }
 
             G3ME.initialize([
                 [Site.current.extent.ymin, Site.current.extent.xmin],
-                [Site.current.extent.ymax, Site.current.extent.xmax]])
+                [Site.current.extent.ymax, Site.current.extent.xmax]
+            ])
                 .on('click', mapClickHandler)
                 .on('dragend', dragEndHandler)
                 .addControl(Smartgeo.makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView));
 
-            Smartgeo.silentLogin(G3ME.backgroundTile.redraw);
+            Smartgeo.silentLogin(G3ME.BackgroundTile.redraw);
 
             (Storage.get('user_position_activated') ? activatePosition : angular.noop)();
 
             $scope.$on("$destroy", controllerDestroyHandler);
 
-            $rootScope.$on("ACTIVATE_POSITION", activatePosition);
-            $rootScope.$on("DESACTIVATE_POSITION", stopPosition);
-
+            $rootScope.activatePosition = activatePosition;
+            $rootScope.stopPosition = stopPosition;
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
         }
@@ -67,9 +62,7 @@
          * @param {Event} e
          */
         function dragEndHandler(e) {
-            if (e.distance > 50) {
-                stopPosition();
-            }
+            (e.distance > 50 ? stopPosition : angular.noop)();
             clearTimeout(lastViewTimeout);
             lastViewTimeout = setTimeout(function () {
                 var extent = G3ME.map.getBounds();
@@ -195,7 +188,7 @@
          */
         function activatePosition() {
             POSITION_ACTIVATE = FIRST_POSITION = true;
-            POSITION_ZOOM = G3ME.map.getZoom() > POSITION_ZOOM ? G3ME.map.getZoom() : 18 ;
+            POSITION_ZOOM = G3ME.map.getZoom() > POSITION_ZOOM ? G3ME.map.getZoom() : 18;
 
             if (LAST_USERS_LOCATION.length) {
                 G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
@@ -271,17 +264,6 @@
             G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             FIRST_POSITION = false;
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
