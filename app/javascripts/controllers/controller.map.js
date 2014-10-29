@@ -6,16 +6,15 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer", "Marker"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, prefetchedlocalsites, GPS, Installer) {
+    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, prefetchedlocalsites, GPS, Installer, Marker) {
 
-        var broadcaster = $rootScope.$broadcast,
-            LAST_USERS_LOCATION = [],
+        var LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
             consultationIsEnabled = false,
             POSITION_ACTIVATE = false,
@@ -54,6 +53,25 @@
             $rootScope.stopPosition = stopPosition;
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
+
+            if ((intent = Storage.get('intent'))) {
+                setTimeout(intentHandler, 0);
+            }
+        }
+
+        /**
+         * @name intentHandler
+         * @desc Handler d'intent
+         */
+        function intentHandler() {
+            console.log(intent);
+            if (intent.latlng && intent.map_marker) {
+                Marker.get(intent.latlng, 'CONSULTATION', function () {
+                    document.location.hash = '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target ;
+                }).addTo(G3ME.map.setView(intent.latlng, intent.map_zoom || G3ME.map.getZoom()));
+            } else if (intent.map_zoom) {
+                G3ME.map.setZoom(intent.map_zoom);
+            }
         }
 
         /**
@@ -110,12 +128,12 @@
          * @param {L.LatLng} coords Coordonées du click de consultation
          */
         function noConsultableAssets(coords) {
+            $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if (intent.report_activity) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
                 $(document).on('click', '.openLocateReportButton', function () {
-                    $location.path('report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
-                    $scope.$apply();
+                    document.location.hash = 'report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/';
                 });
             }
             var popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
@@ -124,7 +142,6 @@
                     $(popup._container).fadeOut();
                 }, 4000);
             }
-            broadcaster("CONSULTATION_CLICK_CANCELED");
             return false;
         }
 
@@ -135,6 +152,7 @@
          */
         function mapClickHandler(e) {
             if (!consultationIsEnabled) {
+                console.info(e.latlng.lat, e.latlng.lng);
                 return false;
             }
 
@@ -145,13 +163,13 @@
                     weight: 1
                 }).addTo(G3ME.map);
 
-            broadcaster("CONSULTATION_CLICK_REQUESTED", coords);
+            $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", coords);
 
             Asset.findInBounds(coords, circle.getBounds(), function (assets) {
                 if (!assets.length) {
                     noConsultableAssets(coords);
                 } else {
-                    broadcaster("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+                    $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 }
             });
 
@@ -206,7 +224,6 @@
          * @desc Désactive la fonction "Ma position"
          */
         function stopPosition() {
-
             GPS.stopWatchingPosition(setLocationMarker);
 
             LAST_USERS_LOCATION = [];
@@ -233,7 +250,6 @@
          * @param {Number} acc Précision
          */
         function setLocationMarker(lng, lat, alt, acc) {
-
             LAST_USERS_LOCATION = [lat, lng];
 
             if (POSITION_CIRCLE) {

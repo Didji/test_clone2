@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .factory('Marker', MarkerFactory);
 
-    MarkerFactory.$inject = ["G3ME", "Icon"];
+    MarkerFactory.$inject = [ "Icon"];
 
     /**
      * @class MarkerFactory
@@ -14,9 +14,15 @@
      *
      */
 
-    function MarkerFactory(G3ME, Icon) {
+    function MarkerFactory(Icon) {
 
         var Marker = {};
+
+        Marker.get = function (pos, icon, clickHandler) {
+            return L.marker(pos, {
+                icon: Icon.get(icon)
+            }).on('click', clickHandler);
+        };
 
         Marker.getMarkerFromAsset = function (asset, clickHandler) {
             var marker;

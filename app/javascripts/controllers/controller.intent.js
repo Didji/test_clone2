@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('IntentController', IntentController);
 
-    IntentController.$inject = ["$routeParams", "$location", "Smartgeo", "Storage", "Site", "prefetchedlocalsites"];
+    IntentController.$inject = ["$routeParams", "$location", "Smartgeo", "Storage", "Site", "prefetchedlocalsites", "Asset"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Smartgeo, Storage, Site, prefetchedlocalsites) {
+    function IntentController($routeParams, $location, Smartgeo, Storage, Site, prefetchedlocalsites, Asset) {
 
         var intent = {};
 
@@ -29,7 +29,10 @@
             } else if (intent.controller === "oauth" || (!Site.current && !selectFirstSite() && intent.controller !== "oauth")) {
                 firstLaunch();
             } else {
-                Smartgeo.tokenAuth(intent.token, redirect, redirect);
+                preprocessIntentTarget(function () {
+                    Storage.set('intent', intent);
+                    Smartgeo.tokenAuth(intent.token, redirect, redirect);
+                });
             }
         }
 
@@ -50,7 +53,7 @@
                 redirection = 'sites/';
                 break;
             }
-            $location.path(redirection);
+            document.location.hash = redirection;
         }
 
         /**
@@ -74,6 +77,38 @@
                 Smartgeo.setGimapUrl(intent.url);
             }
             Smartgeo.tokenAuth(intent.token, redirect, redirect);
+        }
+
+        /**
+         * @name preprocessIntentTarget
+         * @desc Traduit la cible de l'intent
+         */
+        function preprocessIntentTarget(callback) {
+
+            if (!intent.map_target) {
+                return callback();
+            }
+
+            var match, assetid;
+
+            if ((match = intent.map_target.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "24081;45.803,4.773"
+                assetid = match[1];
+                intent.latlng = [match[2], match[3]];
+            } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "45.803,4.773"
+                intent.latlng = [match[1], match[2]];
+            } else if ((match = intent.map_target.match(/^(\d+)$/))) { // "24081"
+                assetid = match[1];
+            }
+
+            if (assetid) {
+                Asset.findOne(assetid, function (asset) {
+                    intent.asset = asset;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+
         }
 
     }

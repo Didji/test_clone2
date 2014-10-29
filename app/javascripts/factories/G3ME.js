@@ -18,10 +18,8 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         filecacheIsEnable: $rootScope.rights.tileCache || true,
 
-        initialize: function (extent /*target, marker, zoom*/) {
-            // (intent && intent.map_target) || Storage.get('lastLeafletMapExtent') || [],
-            // (intent && intent.map_marker),
-            // (intent && intent.map_zoom)
+        initialize: function (extent) {
+
             this.symbology = Site.current.symbology;
             this.CURRENT_ZOOM = false;
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
@@ -50,7 +48,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
             G3ME.map.fitBounds(Storage.get('lastLeafletMapExtent') || extent);
 
-            // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png';
+            this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
             if (!this.tileUrl) {
                 this.tileUrl = Storage.get('url').replace(/index.php.+$/, '');
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
