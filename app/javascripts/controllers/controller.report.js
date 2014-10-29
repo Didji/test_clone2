@@ -220,24 +220,6 @@
         }
 
         /**
-         * @name getList
-         * @param {String} pkey
-         * @param {String} okey
-         * @desc Cherche une liste en fonction d'un PKEY et d'un OKEY
-         */
-        function getList(pkey, okey) {
-            var mm = Site.current.metamodel[okey];
-            for (var i in mm.tabs) {
-                for (var j in mm.tabs[i].fields) {
-                    if (mm.tabs[i].fields[j].key === pkey) {
-                        return mm.tabs[i].fields[j].options;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /**
          * @name getValueFromAssets
          * @param {String} pkey
          * @param {String} okey
@@ -248,7 +230,7 @@
                 val;
             for (var i = 0, lim = vm.assets.length; i < lim; i++) {
                 var a = vm.assets[i].attributes,
-                    list = getList(pkey, okey);
+                    list = Site.getList(pkey, okey);
                 if (!a) {
                     break;
                 }

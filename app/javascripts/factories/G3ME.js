@@ -62,7 +62,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             }
             this.BackgroundTile = new BackgroundTile(this.tileUrl, {
                 maxZoom: G3ME._MAX_ZOOM,
-                minZoom: G3ME._MIN_ZOOM,
+                minZoom: G3ME._MIN_ZOOM
             }).addTo(this.map);
 
             this.canvasTile = new L.TileLayer.Canvas({

@@ -44,7 +44,7 @@
             var icon = Icon['OKEY_' + okey + '_' + classindex] || L.icon({
                 iconUrl: Site.current.symbology['' + okey + classindex].style.symbol.icon,
                 iconSize: [32, 32],
-                iconAnchor: [16, 16],
+                iconAnchor: [16, 16]
             });
 
             if (icon) {
@@ -58,13 +58,13 @@
         Icon.SELECTED_MISSION = L.icon({
             iconUrl: "images/SELECTED_MISSION.png",
             iconSize: [65, 89],
-            iconAnchor: [32, 89],
+            iconAnchor: [32, 89]
         });
 
         Icon.NON_SELECTED_MISSION = L.icon({
             iconUrl: "images/NON_SELECTED_MISSION.png",
             iconSize: [49, 67],
-            iconAnchor: [25, 67],
+            iconAnchor: [25, 67]
         });
 
         Icon.NON_SELECTED_NIGHTTOUR = new L.DivIcon({
@@ -77,31 +77,31 @@
         Icon.DONE_MISSION = L.icon({
             iconUrl: "images/DONE_MISSION.png",
             iconSize: [30, 42],
-            iconAnchor: [15, 42],
+            iconAnchor: [15, 42]
         });
 
         Icon.DONE_NIGHTTOUR = L.icon({
             iconUrl: "images/DONE_NIGHTTOUR.png",
             iconSize: [30, 42],
-            iconAnchor: [15, 42],
+            iconAnchor: [15, 42]
         });
 
         Icon.CONSULTATION = L.icon({
             iconUrl: "images/CONSULTATION.png",
             iconSize: [49, 67],
-            iconAnchor: [25, 67],
+            iconAnchor: [25, 67]
         });
 
         Icon.GRAY_TARGET = L.icon({
             iconUrl: 'javascripts/vendors/images/target_gray.png',
             iconSize: [32, 32],
-            iconAnchor: [16, 16],
+            iconAnchor: [16, 16]
         });
 
         Icon.TARGET = L.icon({
             iconUrl: 'javascripts/vendors/images/target.png',
             iconSize: [32, 32],
-            iconAnchor: [16, 16],
+            iconAnchor: [16, 16]
         });
 
         return Icon;

@@ -16,7 +16,7 @@
             restrict: 'EA',
             scope: {
                 'asset': '=',
-                'noButton': '@',
+                'noButton': '@'
             }
         };
         return directive;

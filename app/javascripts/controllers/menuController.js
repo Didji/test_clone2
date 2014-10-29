@@ -71,7 +71,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 id: 'logout',
                 label: 'Déconnexion',
                 icon: "fa fa-power-off redicon",
-                action: 'logout',
+                action: 'logout'
             }, {
                 id: 'siteselection',
                 label: 'Selection de site',
@@ -82,12 +82,12 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 id: 'myposition',
                 label: 'Ma position',
                 icon: "fa fa-compass",
-                action: 'activatePosition',
+                action: 'activatePosition'
             }, {
                 id: 'consultation',
                 label: 'Consultation',
                 icon: "fa fa-info-circle",
-                action: 'activateConsultation',
+                action: 'activateConsultation'
             }];
 
 

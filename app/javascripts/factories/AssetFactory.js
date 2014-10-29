@@ -168,9 +168,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
             assets = assets || [];
             var asset;
             for (var i = 0; i < assets.length; i++) {
-                if (assets[i].uuid !== uuid) {
-                    continue;
-                } else {
+                if (assets[i].uuid === uuid) {
                     asset = assets[i];
                     break;
                 }

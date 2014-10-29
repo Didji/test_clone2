@@ -62,12 +62,25 @@
         Site.get = function (id, setcurrent) {
             var deferred = $q.defer();
             Storage.get_('sites', function (sites) {
-                if(setcurrent){
-                    Site.current = sites[id] ;
+                if (setcurrent) {
+                    Site.current = sites[id];
                 }
                 deferred.resolve(sites[id]);
             });
             return deferred.promise;
+        };
+
+
+        Site.getList = function (pkey, okey) {
+            var mm = Site.current.metamodel[okey];
+            for (var i in mm.tabs) {
+                for (var j in mm.tabs[i].fields) {
+                    if (mm.tabs[i].fields[j].key === pkey) {
+                        return mm.tabs[i].fields[j].options;
+                    }
+                }
+            }
+            return false;
         };
 
         return Site;

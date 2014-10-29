@@ -26,17 +26,17 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $scope._OK_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-ok.png',
                 iconSize: [65, 89],
-                iconAnchor: [32, 89],
+                iconAnchor: [32, 89]
             });
             $scope._KO_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-ko.png',
                 iconSize: [65, 89],
-                iconAnchor: [32, 89],
+                iconAnchor: [32, 89]
             });
             $scope._DONE_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-done.png',
                 iconSize: [30, 42],
-                iconAnchor: [15, 42],
+                iconAnchor: [15, 42]
             });
 
             $rootScope.nightTourInProgress = false;
@@ -297,24 +297,12 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 return number;
             }
 
-            function getList(pkey, okey) {
-                var mm = Site.current.metamodel[okey];
-                for (var i in mm.tabs) {
-                    for (var j in mm.tabs[i].fields) {
-                        if (mm.tabs[i].fields[j].key === pkey) {
-                            return mm.tabs[i].fields[j].options;
-                        }
-                    }
-                }
-                return false;
-            }
-
             function getValueFromAssets(pkey, okey) {
                 var rv = {},
                     val;
                 for (var i = 0, lim = assets.length; i < lim; i++) {
                     var a = JSON.parse(assets[i].asset).attributes,
-                        list = getList(pkey, okey);
+                        list = Site.getList(pkey, okey);
 
                     val = a[pkey];
                     if (list && Site.current.lists[list] && Site.current.lists[list][val]) {
