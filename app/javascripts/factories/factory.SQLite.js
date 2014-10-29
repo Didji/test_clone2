@@ -119,7 +119,7 @@
                 t.executeSql(request, args || [], function (t, r) {
                     callback(r.rows);
                 }, function () {
-                    console.error(arguments);
+                    console.error(arguments[1], request, args || []);
                 });
             }, function () {
                 console.error(arguments);

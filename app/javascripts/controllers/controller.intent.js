@@ -94,9 +94,9 @@
             if ((match = intent.map_target.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "24081;45.803,4.773"
                 assetid = match[1];
                 intent.latlng = [match[2], match[3]];
-            } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "45.803,4.773"
+            } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) {     // "45.803,4.773"
                 intent.map_center = intent.latlng = [match[1], match[2]];
-            } else if ((match = intent.map_target.match(/^(\d+)$/))) { // "24081"
+            } else if ((match = intent.map_target.match(/^(\d+)$/))) {                          // "24081"
                 assetid = match[1];
             }
 

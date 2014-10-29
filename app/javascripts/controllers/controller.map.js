@@ -32,7 +32,7 @@
             $rootScope.currentPage = "Cartographie";
 
             // if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-                // Installer.update(Site.current);
+            // Installer.update(Site.current);
             // }
 
             G3ME.initialize([
@@ -65,12 +65,12 @@
          */
         function intentHandler() {
             console.log(intent);
-            if (intent.map_center){
+            if (intent.map_center) {
                 G3ME.map.setView(intent.map_center, intent.map_zoom || G3ME.map.getZoom());
             }
-            if(intent.map_marker) {
+            if (intent.map_marker) {
                 Marker.get(intent.map_center, 'CONSULTATION', function () {
-                    $location.path('/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target) ;
+                    $location.path('/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target);
                     $scope.$apply();
                 }).addTo(G3ME.map);
             }

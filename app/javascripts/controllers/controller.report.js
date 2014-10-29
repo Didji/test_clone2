@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "prefetchedlocalsites"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "prefetchedlocalsites", "Storage"];
 
     /**
      * @class ReportController
@@ -19,10 +19,10 @@
      * @property {RegExp} numberPattern
      *
      * @private
-     * @property {Boolean} comesFromIntent
+     * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, prefetchedlocalsites) {
+    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, prefetchedlocalsites, Storage) {
 
         var vm = this;
 
@@ -37,7 +37,7 @@
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
-        var comesFromIntent = false;
+        var intent = Storage.get('intent');
 
 
         activate();
@@ -58,10 +58,8 @@
 
             bidouille();
 
-            comesFromIntent = $rootScope.map_activity || $rootScope.report_activity;
-
-            var assetsIds = $routeParams.assets.split(','),
-                missionId = $rootScope.report_mission || $routeParams.mission,
+            var assetsIds = intent.asset.guid || $routeParams.assets.split(','),
+                missionId = intent.report_mission || $routeParams.mission,
                 isCall = false;
 
             if (missionId && missionId.indexOf('call-') !== -1) {
@@ -86,7 +84,6 @@
          * @desc Applique les conséquences entre champs
          */
         function applyConsequences(srcId) {
-            // Search for src field.
             var field = vm.report.activity._fields[srcId],
                 targetField, i, lim, act,
                 cond;
@@ -167,14 +164,19 @@
 
             report.activity = report.activity.id;
 
+            if(intent.latlng) {
+                report.latlng = intent.latlng.join(',');
+            }
+
+            return console.info(JSON.stringify(report));
             ReportSynchronizer.synchronize(report, function () {
                 vm.sendingReport = false;
-                if (!comesFromIntent) {
+                if (!intent) {
                     endOfReport();
                 }
             }, 5000);
 
-            if (comesFromIntent) {
+            if (intent) {
                 endOfReport();
             }
         }
@@ -184,12 +186,11 @@
          * @param {Event} event
          * @vm
          * @desc Olalalala ...
+         *       TODO(@gulian): remplacer par un ng-blur ?
          */
         function bidouille() {
             angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function () {
-
                 var elt;
-
                 if (angular.element(this).prop('tagName') !== "label") {
                     elt = angular.element(this);
                 } else if (!angular.element(this).siblings('label').length) {
@@ -197,11 +198,9 @@
                 } else {
                     elt = angular.element(this).siblings('label');
                 }
-
                 if (!elt.offset().top) {
                     return;
                 }
-
                 angular.element('html, body').animate({
                     scrollTop: elt.offset().top - 10
                 }, 250);
@@ -214,6 +213,7 @@
          * @name pad
          * @param {Number} number
          * @desc Rajoute un 0 au nombre inférieur à 10
+         *       TODO(@gulian): C'est pas vraiment sa place là ...
          */
         function pad(number) {
             return (number < 10) ? ('0' + number) : number;
@@ -316,28 +316,16 @@
          * @desc Procédure de fin de compte rendu
          */
         function endOfReport() {
-            if ($rootScope.report_url_redirect) {
-                $rootScope.report_url_redirect = injectCallbackValues($rootScope.report_url_redirect) || $rootScope.report_url_redirect;
+            if (intent.report_url_redirect) {
+                intent.report_url_redirect = injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
                 if (window.SmartgeoChromium && SmartgeoChromium.redirect) {
-                    SmartgeoChromium.redirect(decodeURI($rootScope.report_url_redirect));
+                    SmartgeoChromium.redirect(decodeURI(intent.report_url_redirect));
                 } else {
-                    window.open($rootScope.report_url_redirect, "_blank");
+                    window.open(intent.report_url_redirect, "_blank");
                 }
             }
-
-            // TODO: Put all intents variables in something like $rootScope.intent.[map|report]_*
-            //       It will be easier to reset context ($rootScope.intent=undefined)
-            $rootScope.map_target = undefined;
-            $rootScope.map_marker = undefined;
-            $rootScope.map_activity = undefined;
-            $rootScope.report_activity = undefined;
-            $rootScope.report_mission = undefined;
-            $rootScope.report_target = undefined;
-            $rootScope.report_fields = undefined;
-            $rootScope.report_url_redirect = undefined;
-
+            Storage.remove('intent');
             $location.path('map/' + Site.current.id);
-            $scope.$apply();
         }
 
         /**
@@ -416,6 +404,7 @@
 
         /**
          * @name containsUnfilledRequiredFields
+         * @desc Detecte si un onglet possède un champs requis
          */
         function containsUnfilledRequiredFields() {
             for (var i in vm.report.activity._fields) {
