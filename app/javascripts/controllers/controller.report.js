@@ -58,7 +58,7 @@
 
             bidouille();
 
-            var assetsIds = intent.asset.guid || $routeParams.assets.split(','),
+            var reportTargets = (intent && intent.asset && intent.asset.guid) || (intent && !intent.asset && intent.latlng && intent.latlng.join(",")) || $routeParams.assets.split(','),
                 missionId = intent.report_mission || $routeParams.mission,
                 isCall = false;
 
@@ -67,10 +67,10 @@
                 missionId = missionId.substr(5);
             }
 
-            vm.report = new Report(assetsIds, $routeParams.activity, missionId, isCall);
+            vm.report = new Report((intent && intent.latlng && !intent.asset) ? [] : reportTargets, $routeParams.activity, missionId, isCall);
 
-            for (var i = 0; i < assetsIds.length; i++) {
-                vm.assets.push(new Asset(assetsIds[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
+            for (var i = 0; i < reportTargets.length && !(intent && intent.latlng); i++) {
+                vm.assets.push(new Asset(reportTargets[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
             }
 
             vm.report.activity.tabs[0].show = true;
