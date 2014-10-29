@@ -19,7 +19,8 @@ Intents
     "uuid": "a4bf169d-2023-4024-9adc-944e3cf44c27",
     "timestamp": 1414600164681,
     "isCall": false
-}```
+}
+```
 
     * [sur X,Y](http://localhost:12345/#/intent/map?map_target=45.80307994417619,4.773500561714172&report_target=45.80307994417619,4.773500561714172&map_marker=true&report_activity=496401&map_activity=496401&map_zoom=18&report_mission=12345&report_url_redirect=https:%2F%2Fgoogle.fr) - doit positionner un marqueur sur une position précise,en cliquant dessus on doit pouvoir accéder au formulaire de l'activité passé en paramêtre, le compte rendu doit être associé à une position X,Y
     * [sur X,Y et équipement](http://localhost:12345/#/intent/map?map_target=2407301%3B45.80307994417619,4.773500561714172&report_target=2407301%3B45.80307994417619,4.773500561714172&map_marker=true&report_activity=496401&map_activity=496401&map_zoom=18&report_mission=12345&report_url_redirect=https:%2F%2Fgoogle.fr) - doit positionner un marqueur sur un équipement, en cliquant dessus on doit pouvoir accéder au formulaire de l'activité passé en paramêtre, le compte rendu doit être associé à un équipement et doit être envoyé avec un identifiant de mission et une position X,Y
