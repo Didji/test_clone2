@@ -16,7 +16,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         requestPool: {},
 
-        filecacheIsEnable: $rootScope.rights.tileCache || true,
+        filecacheIsEnable: true,
 
         initialize: function (extent) {
 
@@ -222,7 +222,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 }
             }
             this.canvasTile.redraw();
-            // this.tempAssetTile.redraw();
         },
         getVisibility: function () {
             if (this.active_layers === false) {

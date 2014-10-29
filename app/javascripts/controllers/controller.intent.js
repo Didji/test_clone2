@@ -53,7 +53,7 @@
                 redirection = 'sites/';
                 break;
             }
-            document.location.hash = redirection;
+            $location.path(redirection);
         }
 
         /**
@@ -95,14 +95,15 @@
                 assetid = match[1];
                 intent.latlng = [match[2], match[3]];
             } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "45.803,4.773"
-                intent.latlng = [match[1], match[2]];
+                intent.map_center = intent.latlng = [match[1], match[2]];
             } else if ((match = intent.map_target.match(/^(\d+)$/))) { // "24081"
                 assetid = match[1];
             }
 
             if (assetid) {
-                Asset.findOne(assetid, function (asset) {
-                    intent.asset = asset;
+                Asset.findOne(+assetid, function (asset) {
+                    intent.asset = new Asset(asset);
+                    intent.map_center = intent.asset.getCenter();
                     callback();
                 });
             } else {

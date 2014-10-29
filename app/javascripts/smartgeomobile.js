@@ -100,12 +100,6 @@ function config($routeProvider, $rootScope, $httpProvider, $provide) {
         controllerAs: 'intentController',
         controller: 'IntentController',
         resolve: prefetchPromise
-    }).
-    otherwise({
-        template: " ",
-        controller: function($location) {
-            $location.path("/");
-        }
     });
 
     $provide.factory('myHttpInterceptor', function($q, $injector) {

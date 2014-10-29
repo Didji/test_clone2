@@ -31,7 +31,7 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             this._SERVER_UNREACHABLE_THRESHOLD = 10000;
             this._MAX_MEDIA_PER_REPORT = $rootScope._MAX_MEDIA_PER_REPORT = 3;
             this._MAX_ID_FOR_SELECT_REQUEST = 4000;
-            this._DONT_REALLY_RESET = $rootScope.rights && $rootScope.rights._DONT_REALLY_RESET || false ;
+            this._DONT_REALLY_RESET = $rootScope.rights && $rootScope.rights._DONT_REALLY_RESET ;
             this.parametersCache = {};
             this.parametersCache_ = window.smartgeoPersistenceCache_ || {};
             this.positionListerners = [];

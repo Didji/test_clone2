@@ -31,9 +31,9 @@
 
             $rootScope.currentPage = "Cartographie";
 
-            if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-                Installer.update(Site.current);
-            }
+            // if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
+                // Installer.update(Site.current);
+            // }
 
             G3ME.initialize([
                 [Site.current.extent.ymin, Site.current.extent.xmin],
@@ -65,13 +65,16 @@
          */
         function intentHandler() {
             console.log(intent);
-            if (intent.latlng && intent.map_marker) {
-                Marker.get(intent.latlng, 'CONSULTATION', function () {
-                    document.location.hash = '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target ;
-                }).addTo(G3ME.map.setView(intent.latlng, intent.map_zoom || G3ME.map.getZoom()));
-            } else if (intent.map_zoom) {
-                G3ME.map.setZoom(intent.map_zoom);
+            if (intent.map_center){
+                G3ME.map.setView(intent.map_center, intent.map_zoom || G3ME.map.getZoom());
             }
+            if(intent.map_marker) {
+                Marker.get(intent.map_center, 'CONSULTATION', function () {
+                    $location.path('/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target) ;
+                    $scope.$apply();
+                }).addTo(G3ME.map);
+            }
+
         }
 
         /**
@@ -83,12 +86,12 @@
             (e.distance > 50 ? stopPosition : angular.noop)();
             clearTimeout(lastViewTimeout);
             lastViewTimeout = setTimeout(function () {
-                var extent = G3ME.map.getBounds();
-                if (extent._northEast.lat !== extent._southWest.lat ||
-                    extent._northEast.lng !== extent._southWest.lng) {
-                    Storage.set('lastLeafletMapExtent', [
-                        [extent._northEast.lat, extent._northEast.lng],
-                        [extent._southWest.lat, extent._southWest.lng]
+                var e = G3ME.map.getBounds();
+                if (e._northEast.lat !== e._southWest.lat ||
+                    e._northEast.lng !== e._southWest.lng) {
+                    Storage.set('lastLeafletMape', [
+                        [e._northEast.lat, e._northEast.lng],
+                        [e._southWest.lat, e._southWest.lng]
                     ]);
                 }
             }, 5000);
@@ -133,7 +136,7 @@
             if (intent.report_activity) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
                 $(document).on('click', '.openLocateReportButton', function () {
-                    document.location.hash = 'report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/';
+                    $location.path('report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
                 });
             }
             var popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
