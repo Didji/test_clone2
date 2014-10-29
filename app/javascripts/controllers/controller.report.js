@@ -39,7 +39,6 @@
 
         var intent = Storage.get('intent');
 
-
         activate();
 
         /**
@@ -47,34 +46,21 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             $rootScope.currentPage = "Saisie de compte-rendu";
 
             if (!checkInputParameters($routeParams)) {
                 return;
             }
 
-            Site.current = prefetchedlocalsites;
-
             bidouille();
 
-            var reportTargets = (intent && intent.asset && intent.asset.guid) || (intent && !intent.asset && intent.latlng && intent.latlng.join(",")) || $routeParams.assets.split(','),
-                missionId = intent.report_mission || $routeParams.mission,
-                isCall = false;
+            vm.report = new Report($routeParams.assets, $routeParams.activity, intent.report_mission || $routeParams.mission);
+            // A voir si dans tous les cas ou on appelle depuis un intent,
+            // on ne peut pas injecter la valeur de la mission pour remplacer intent.report_mission || $routeParams.mission
 
-            if (missionId && missionId.indexOf('call-') !== -1) {
-                isCall = true;
-                missionId = missionId.substr(5);
+            for (var i = 0; i < vm.report.assets.length; i++) {
+                vm.assets.push(new Asset(vm.report.assets[i], applyDefaultValues));
             }
-
-            vm.report = new Report((intent && intent.latlng && !intent.asset) ? [] : reportTargets, $routeParams.activity, missionId, isCall);
-
-            for (var i = 0; i < reportTargets.length && !(intent && intent.latlng); i++) {
-                vm.assets.push(new Asset(reportTargets[i], applyDefaultValues)); //TODO(@gulian): AssetCollectionFactory ?!
-            }
-
-            vm.report.activity.tabs[0].show = true;
-
         }
 
         /**
@@ -164,11 +150,6 @@
 
             report.activity = report.activity.id;
 
-            if(intent.latlng) {
-                report.latlng = intent.latlng.join(',');
-            }
-
-            return console.info(JSON.stringify(report));
             ReportSynchronizer.synchronize(report, function () {
                 vm.sendingReport = false;
                 if (!intent) {

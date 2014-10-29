@@ -26,9 +26,29 @@
          * @property {String} uuid
          * @property {Date} timestamp
          */
-        function Report(assets, activity, mission, isCall) {
-            this.assets = assets;
+        function Report(assets, activity, mission) {
+            var reportTargets = [],
+                isCall = false,
+                reportLatLng, match;
+
+            if ((match = assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+                reportTargets = match[0];
+            } else if ((match = assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+                reportLatLng = match[0] + ',' + match[1];
+            } else {
+                reportTargets = assets.split(',');
+            }
+
+            if (mission && mission.indexOf('call-') !== -1) {
+                isCall = true;
+                mission = mission.substr(5);
+            }
+
+            this.assets = reportTargets;
+
             this.activity = Activity.findOne(activity);
+            this.activity.tabs[0].show = true;
+
             this.mission = 1 * mission;
             this.site = Site.current.label;
             this.fields = {};
@@ -36,6 +56,7 @@
             this.uuid = Smartgeo.uuid();
             this.timestamp = new Date().getTime();
             this.isCall = isCall;
+            this.latlng = reportLatLng;
         }
 
         Report.prototype.roFields = {};
