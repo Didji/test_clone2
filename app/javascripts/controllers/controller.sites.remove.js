@@ -38,7 +38,6 @@
          * @desc Callback de fin de suppression de site
          */
         function siteHasBeenRemoved() {
-            //TODO(@gulian): Site.remove(id);
             Storage.get_('sites', function (sites) {
                 delete sites[prefetchedlocalsites.id];
                 Storage.set_('sites', sites);

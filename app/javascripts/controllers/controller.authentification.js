@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('AuthController', AuthController);
 
-    AuthController.$inject = ["$rootScope", "$location", "Smartgeo", "Storage", "i18n", "$route", "$http", "Site", "prefetchedlocalsites"];
+    AuthController.$inject = ["$rootScope", "$location", "Smartgeo", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites"];
 
     /**
      * @class AuthController
@@ -19,7 +19,7 @@
      * @property {Boolean}  loginInProgress Authentification en cours ?
      */
 
-    function AuthController($rootScope, $location, Smartgeo, Storage, i18n, $route, $http, Site, prefetchedlocalsites) {
+    function AuthController($rootScope, $location, Smartgeo, Storage, i18n, $route, $http, prefetchedlocalsites) {
 
         var vm = this;
 
@@ -120,7 +120,6 @@
         function loginError(response, status) {
             var sites = Object.keys(prefetchedlocalsites || {}),
                 users = Storage.get('users') || {};
-
             if (status >= 400 && status < 500 || sites.length > 0 && users[vm.user.username].password !== vm.user.password) {
                 vm.errorMessage = (i18n.get("_AUTH_INCORRECT_PASSWORD"));
             } else if (vm.firstAuth) {
@@ -132,7 +131,7 @@
                     sites: []
                 }, 0);
             }
-
+            console.warn(response);
             vm.loginInProgress = false;
         }
 

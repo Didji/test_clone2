@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "prefetchedlocalsites", "GPS", "Installer", "Marker"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, prefetchedlocalsites, GPS, Installer, Marker) {
+    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker) {
 
         var LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -31,9 +31,9 @@
 
             $rootScope.currentPage = "Cartographie";
 
-            // if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-            // Installer.update(Site.current);
-            // }
+            if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
+            Installer.update(Site.current);
+            }
 
             G3ME.initialize([
                 [Site.current.extent.ymin, Site.current.extent.xmin],

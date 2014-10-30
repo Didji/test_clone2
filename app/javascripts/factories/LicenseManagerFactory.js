@@ -50,8 +50,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @member {number} __max_time_between_check
      * @desc Temps max entre 2 vérifications de licence en millisecond (86400000 === 1 jour)
      */
-    LicenseManager.prototype.__max_time_between_check = 8;
-    // LicenseManager.prototype.__max_time_between_check = 86400000;
+    LicenseManager.prototype.__max_time_between_check = 86400000;
 
     /**
      * @method

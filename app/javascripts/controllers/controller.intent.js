@@ -52,6 +52,8 @@
             case 'oauth':
                 redirection = 'sites/';
                 break;
+            default:
+                redirection = '/';
             }
             $location.path(redirection);
         }

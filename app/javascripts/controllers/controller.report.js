@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "prefetchedlocalsites", "Storage"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, prefetchedlocalsites, Storage) {
+    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage) {
 
         var vm = this;
 
@@ -89,7 +89,6 @@
                 switch (act.type) {
                 case "show":
                     targetField.visible = cond;
-
                     // Si targetField est une case à cocher, elle a peut-être
                     // aussi des conséquences. Si une case à cocher devient invisible,
                     // il faut qu'on la décoche et qu'on applique ses conséquences.
@@ -97,11 +96,12 @@
                         vm.report.fields[act.target] = 'N';
                         vm.applyConsequences(act.target);
                     }
-
                     break;
                 case "require":
                     targetField.required = cond;
                     break;
+                default:
+                    targetField.required = !!targetField.required;
                 }
             }
         }

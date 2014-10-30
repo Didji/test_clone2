@@ -124,9 +124,6 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             if (!$scope.nightTourRecording) {
                 return;
             }
-            // var traces = Smartgeo.get('traces') || {},
-            //     currentTrace = traces[$scope.mission.id] || [],
-            //     previousPosition = currentTrace[currentTrace.length - 1];
         };
         /**
          * @memberOf nightTourController
@@ -425,7 +422,6 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
          */
         $scope.toggleAsset = function (event, mission, asset) {
             if (!$rootScope.nightTourRecording) {
-                // TODO: afficher une popup pour signaler que la tournée n'est pas en cours
                 return;
             }
             asset.isWorking = (asset.isWorking === undefined ? false : !asset.isWorking);

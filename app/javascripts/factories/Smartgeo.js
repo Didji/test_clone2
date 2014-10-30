@@ -392,7 +392,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
                     if (search.criteria.hasOwnProperty(criter) && search.criteria[criter]) {
                         if (search.criteria[criter] === 1 * search.criteria[criter]) {
                             regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
-                            // regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
                         } else {
                             regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
                         }
@@ -571,7 +570,6 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
 
         clearPersistence: function () {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
-            // Storage.remove('lastLeafletMapExtent');
             Storage.remove('persitence.menu.open');
             Storage.remove('persitence.menu.open.level');
 

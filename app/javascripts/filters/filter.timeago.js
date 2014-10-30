@@ -49,11 +49,9 @@
                 prefix = strings.prefixAgo,
                 suffix = strings.suffixAgo;
 
-            if (allowFuture) {
-                if (dateDifference < 0) {
-                    prefix = strings.prefixFromNow;
-                    suffix = strings.suffixFromNow;
-                }
+            if (allowFuture && dateDifference < 0) {
+                prefix = strings.prefixFromNow;
+                suffix = strings.suffixFromNow;
             }
 
             words = seconds < 45 && substitute(strings.seconds, Math.round(seconds), strings) ||

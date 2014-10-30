@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('LayersController', LayersController);
 
-    LayersController.$inject = ["$rootScope", "G3ME", "Site"];
+    LayersController.$inject = ["G3ME", "Site"];
 
     /**
      * @class LayersController
@@ -16,7 +16,7 @@
      * @property {Object} groups Groupe de couches
      */
 
-    function LayersController($rootScope, G3ME, Site) {
+    function LayersController(G3ME, Site) {
 
         var vm = this;
 

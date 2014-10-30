@@ -24,9 +24,9 @@ angular
         };
     });
 
-config.$inject = ["$routeProvider", "$rootScopeProvider", "$httpProvider", "$provide"];
+config.$inject = ["$routeProvider", "$httpProvider", "$provide"];
 
-function config($routeProvider, $rootScope, $httpProvider, $provide) {
+function config($routeProvider, $httpProvider, $provide) {
 
     "use strict" ;
 
