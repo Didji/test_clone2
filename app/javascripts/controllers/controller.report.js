@@ -165,7 +165,6 @@
         /**
          * @name bidouille
          * @param {Event} event
-         * @vm
          * @desc Olalalala ...
          *       TODO(@gulian): remplacer par un ng-blur ?
          */

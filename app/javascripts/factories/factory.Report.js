@@ -28,7 +28,6 @@
          */
         function Report(assets, activity, mission) {
             var reportTargets = [],
-                isCall = false,
                 reportLatLng, match;
 
             if ((match = assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
@@ -40,7 +39,7 @@
             }
 
             if (mission && mission.indexOf('call-') !== -1) {
-                isCall = true;
+                this.isCall = true;
                 mission = mission.substr(5);
             }
 
@@ -49,14 +48,17 @@
             this.activity = Activity.findOne(activity);
             this.activity.tabs[0].show = true;
 
-            this.mission = 1 * mission;
+            if(mission){
+                this.mission = +mission;
+            }
             this.site = Site.current.label;
             this.fields = {};
             this.ged = [];
             this.uuid = Smartgeo.uuid();
             this.timestamp = new Date().getTime();
-            this.isCall = isCall;
-            this.latlng = reportLatLng;
+            if(reportLatLng){
+                this.latlng = reportLatLng;
+            }
         }
 
         Report.prototype.roFields = {};
