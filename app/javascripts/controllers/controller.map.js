@@ -32,7 +32,7 @@
             $rootScope.currentPage = "Cartographie";
 
             if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-            Installer.update(Site.current);
+                Installer.update(Site.current);
             }
 
             G3ME.initialize([
@@ -73,7 +73,6 @@
                     $scope.$apply();
                 }).addTo(G3ME.map);
             }
-
         }
 
         /**
@@ -297,8 +296,6 @@
         // ============= REFACTORING DU PLANNING =============
         // ===================================================
         // ===================================================
-
-
         var missionsClusters = {},
             iconCluster = {}, myLastPositionMarker = null,
             myPositionMarker = null,
@@ -308,7 +305,6 @@
                 disableClusteringAtZoom: 21,
                 maxClusterRadius: 75
             }, traces;
-
         $scope.$on("__MAP_SETVIEW__", function (event, extent) {
             if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {
                 G3ME.map.fitBounds([
@@ -322,7 +318,6 @@
                 alertify.error("Extent non valide");
             }
         });
-
         $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function (event, lat, lng) {
             if (!myPositionMarker) {
                 myPositionMarker = L.marker([lat, lng], {
@@ -336,14 +331,12 @@
             });
             G3ME.invalidateMapSize();
         });
-
         $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function () {
             if (myPositionMarker) {
                 G3ME.map.removeLayer(myPositionMarker);
                 myPositionMarker = null;
             }
         });
-
         $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission) {
             if (missionsClusters[mission.id]) {
                 G3ME.map.removeLayer(missionsClusters[mission.id]);
@@ -358,7 +351,6 @@
             });
             return iconCluster[cluster._childCount];
         }
-
         $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function (event, mission, assetsCache, marker, clickHandler) {
             if (!missionsClusters[mission.id]) {
                 missionsClusters[mission.id] = new L.MarkerClusterGroup(MarkerClusterGroupOptions);
@@ -371,13 +363,10 @@
                     }
                     continue;
                 }
-
                 if (assetsCache[i].geometry.type === "LineString") {
                     assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
                 }
-
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
-
                 if (assetsCache[i].selected) {
                     assetsCache[i].marker.setIcon(Icon.get('SELECTED_MISSION'));
                 } else if (!mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
@@ -385,28 +374,23 @@
                 } else if (mission.activity && Site.current.activities._byId[mission.activity.id].type === "night_tour") {
                     assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_NIGHTTOUR'));
                 }
-
                 (function (i, marker) {
                     marker.on('click', function () {
                         clickHandler(mission.id, i);
                     });
                 })(i, assetsCache[i].marker);
-
                 missionsClusters[mission.id].addLayer(assetsCache[i].marker);
             }
             G3ME.map.addLayer(missionsClusters[mission.id]);
         });
-
         $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission) {
             if (missionsClusters['done-' + mission.id]) {
                 G3ME.map.removeLayer(missionsClusters['done-' + mission.id]);
             }
         });
-
         $scope.$on("DELETEMARKERFORMISSION", function (event, mission, marker) {
             missionsClusters[mission.id].removeLayer(marker);
         });
-
         $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function (event, missions) {
             for (var i in missionsClusters) {
                 if ((!missions[i] || missions[i].assets.length === 0) && i.indexOf('done') === -1) {
@@ -417,7 +401,6 @@
                 }
             }
         });
-
         $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache) {
             missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup(MarkerClusterGroupOptions);
             for (var i = 0; assetsCache && i < assetsCache.length; i++) {
@@ -428,11 +411,9 @@
             }
             G3ME.map.addLayer(missionsClusters['done-' + mission.id]);
         });
-
         $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function (event, asset) {
             asset.marker.setIcon(asset.selected ? Icon.get('SELECTED_MISSION') : Icon.get('NON_SELECTED_MISSION'));
         });
-
         $scope.$on("__MAP_HIDE_TRACE__", function (event, mission) {
             if (traces && traces[mission.id]) {
                 G3ME.map.removeLayer(traces[mission.id]);
@@ -441,7 +422,6 @@
                 myLastPositionMarker = null;
             }
         });
-
         $scope.$on("__MAP_DISPLAY_TRACE__", function (event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
@@ -452,7 +432,6 @@
                 "coordinates": mission.trace,
                 "color": "orange"
             };
-
             if (traces[mission.id]) {
                 G3ME.map.removeLayer(traces[mission.id]);
             }
@@ -466,7 +445,6 @@
                 }
             });
             traces[mission.id].addTo(G3ME.map);
-
             if (mission.trace.length) {
                 var lastPosition = mission.trace[mission.trace.length - 1];
                 if (!myLastPositionMarker) {
@@ -482,9 +460,6 @@
                     });
                 }
             }
-
         });
-
     }
-
 })();
