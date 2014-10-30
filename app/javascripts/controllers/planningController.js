@@ -405,7 +405,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         $rootScope.$broadcast('__MAP_DISPLAY_TRACE__', mission);
                     }
                     $scope.highlightMission(mission);
-                    if (locate !== false) {
+                    if (!!!locate) {
                         $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
                     }
                     if (mission.displayDone) {

@@ -6,10 +6,10 @@
         .module('smartgeomobile')
         .factory('Report', ReportFactory);
 
-    ReportFactory.$inject = ["Smartgeo", "Activity", "Site"];
+    ReportFactory.$inject = ["Activity", "Site"];
 
 
-    function ReportFactory(Smartgeo, Activity, Site) {
+    function ReportFactory(Activity, Site) {
 
         /**
          * @class ReportFactory

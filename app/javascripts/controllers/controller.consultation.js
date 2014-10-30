@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ConsultationController', ConsultationController);
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage"];
 
     /**
      * @class ConsultationController
@@ -19,11 +19,11 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage) {
 
         var vm = this;
 
-        vm.openLocatedReport = openLocatedReport;
+        $rootScope.openLocatedReport = vm.openLocatedReport = openLocatedReport;
         vm.toggleConsultationPanel = toggleConsultationPanel;
         vm.close = _close;
         vm.open = _open;
@@ -164,7 +164,16 @@
          * @param {Number} lng
          */
         function openLocatedReport(lat, lng) {
-            $location.path('report/' + Site.current.id + '/' + $rootScope.report_activity + '/' + lat + ',' + lng + '/');
+            var intent = Storage.get('intent'),
+                path = 'report/' + Site.current.id + '/';
+
+            path += (intent ? intent.report_activity : '') + '/' + lat + ',' + lng + '/';
+
+            if (intent && intent.report_mission) {
+                path += intent.report_mission + '/';
+            }
+
+            $location.path(path);
         }
 
         /**

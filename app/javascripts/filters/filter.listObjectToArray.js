@@ -10,14 +10,14 @@
 
     function listObjectToArray(Site) {
         /**
-         * @name listObjectToArray_
+         * @name _listObjectToArray
          * @desc
          */
 
         var lists = Site.current.lists;
         var listsArray = {};
 
-        function listObjectToArray_(options) {
+        function _listObjectToArray(options) {
             if (listsArray[options]) {
                 return listsArray[options];
             }
@@ -32,7 +32,7 @@
             listsArray[options] = out;
             return out;
         }
-        return listObjectToArray_;
+        return _listObjectToArray;
     }
 
 })();

@@ -10,21 +10,18 @@
 
     function isGraphical(Site) {
         /**
-         * @name isGraphical_
+         * @name _isGraphical
          * @desc
          */
-        function isGraphical_(layers) {
+        function _isGraphical(layers) {
             var layersOut = [];
             for (var i = 0; i < layers.length; i++) {
-
-                if (Site.current.metamodel[layers[i].okey].is_graphical !== false) {
+                if ( !! !Site.current.metamodel[layers[i].okey].is_graphical) {
                     layersOut.push(layers[i]);
                 }
             }
             return layersOut;
         }
-        return isGraphical_;
+        return _isGraphical;
     }
-
-
 })();

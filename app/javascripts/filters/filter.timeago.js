@@ -21,7 +21,7 @@
                     var value = (strings.numbers && strings.numbers[number]) || number;
                     return string.replace(/%d/i, value);
                 },
-                allowFuture = PAllowFuture || false,
+                allowFuture = !!PAllowFuture,
                 strings = {
                     prefixAgo: null,
                     prefixFromNow: null,

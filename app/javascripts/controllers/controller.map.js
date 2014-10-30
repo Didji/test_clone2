@@ -64,7 +64,6 @@
          * @desc Handler d'intent
          */
         function intentHandler() {
-            console.log(intent);
             if (intent.map_center) {
                 G3ME.map.setView(intent.map_center, intent.map_zoom || G3ME.map.getZoom());
             }
@@ -136,7 +135,7 @@
             if (intent.report_activity) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
                 $(document).on('click', '.openLocateReportButton', function () {
-                    $location.path('report/' + Site.current.id + '/' + intent.report_activity + '/' + coords.lat + ',' + coords.lng + '/');
+                    $rootScope.openLocatedReport(coords.lat, coords.lng);
                 });
             }
             var popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);

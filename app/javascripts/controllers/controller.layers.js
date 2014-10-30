@@ -49,7 +49,7 @@
                     };
                 }
                 currentLayer = {
-                    status: (visibilities === false) || !!visibilities[currentMetamodel.okey],
+                    status: !!!visibilities || !!visibilities[currentMetamodel.okey],
                     label: currentMetamodel.label,
                     okey: currentMetamodel.okey
                 };

@@ -92,7 +92,7 @@
                     // Si targetField est une case à cocher, elle a peut-être
                     // aussi des conséquences. Si une case à cocher devient invisible,
                     // il faut qu'on la décoche et qu'on applique ses conséquences.
-                    if (cond === false && targetField.type === 'O') {
+                    if (!!!cond && targetField.type === 'O') {
                         vm.report.fields[act.target] = 'N';
                         vm.applyConsequences(act.target);
                     }
