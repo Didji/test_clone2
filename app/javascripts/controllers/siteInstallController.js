@@ -14,7 +14,7 @@ angular.module('smartgeomobile').controller('siteInstallController', ["$scope", 
         $scope.sites = Storage.get_('sites') || {};
         $scope.Math = Math;
         /* Si le site est déjà installé, on ne le reinstalle pas (#132), on retourne sur la carte */
-        if ($scope.sites[$routeParams.site] && $scope.sites[$routeParams.site].installed === true) {
+        if ($scope.sites[$routeParams.site] && !!$scope.sites[$routeParams.site].installed) {
             $location.path('/map/' + $routeParams.site);
         }
 

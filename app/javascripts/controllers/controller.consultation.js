@@ -25,8 +25,8 @@
 
         vm.openLocatedReport = openLocatedReport;
         vm.toggleConsultationPanel = toggleConsultationPanel;
-        vm.close = close_;
-        vm.open = open_;
+        vm.close = _close;
+        vm.open = _open;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
@@ -204,17 +204,17 @@
          * @name close
          * @desc TODO(@gulian) : Oulala faut faire mieux la.
          */
-        function close_() {
+        function _close() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $(".consultation-panel").first().css('width', 0); //
+            $(".consultation-panel").first().css('width', 0);
         }
 
         /**
          * @name open
          * @desc TODO(@gulian) : Oulala faut faire mieux la.
          */
-        function open_() {
+        function _open() {
             G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
             if (Smartgeo.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast('_MENU_CLOSE_');

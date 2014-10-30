@@ -43,12 +43,12 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
             $scope.state = 'closed';
             $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
             $scope.$watch('nightTourInProgress', function (newval, oldval) {
-                if (newval === true) {
+                if (!!newval) {
                     $scope.startFollowingPosition();
                     $scope.open();
                 } else {
                     $scope.stopFollowingPosition();
-                    if (oldval === true) {
+                    if (!!oldval) {
                         $rootScope.$broadcast('_MENU_CLOSE_');
                     }
                     $scope.close();
@@ -69,7 +69,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 $scope.isFollowingMe = newval;
             });
             $scope.$watch('isFollowingMe', function (newval) {
-                $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
+                $scope[(!!newval ? 'start' : 'stop') + 'FollowingPosition']();
             });
 
             G3ME.map.on('dragend', function (event) {
@@ -199,7 +199,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                     asset;
                 for (var i in $scope.assetsCache) {
                     asset = $scope.assetsCache[i];
-                    (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
+                    (!!asset.isWorking || asset.isWorking === undefined ? ok : ko).push(asset.guid);
                 }
                 $scope.mission.displayDone = false;
                 $scope.stopNightTour(ok, ko);
@@ -223,7 +223,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 for (var i in $scope.assetsCache) {
                     asset = $scope.assetsCache[i];
                     if (asset.isWorking !== undefined) {
-                        (asset.isWorking === true ? ok : ko).push(asset.guid);
+                        (!!asset.isWorking ? ok : ko).push(asset.guid);
                     }
                 }
             }

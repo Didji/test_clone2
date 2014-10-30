@@ -224,7 +224,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this.canvasTile.redraw();
         },
         getVisibility: function () {
-            if (this.active_layers === false) {
+            if (!!!this.active_layers) {
                 return false;
             }
             var rv = {};
@@ -419,7 +419,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                             coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
                         }
 
-                        if (prevX === false) {
+                        if (!!!prevX) {
                             ctx.moveTo(coord_.x, coord_.y);
                         } else if (coord_.x === prevX && coord_.y === prevY) {
                             continue;
@@ -686,7 +686,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                         coord_.y = Math.floor(0.5 + coord_.y) - initialTopLeftPointY - nwmerc.y;
                     }
 
-                    if (previousX === false) {
+                    if (!!!previousX) {
                         ctx.moveTo(coord_.x, coord_.y);
                     } else if (coord_.x === previousX && coord_.y === previousY) {
                         continue;

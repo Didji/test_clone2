@@ -14,24 +14,24 @@
 
     function prettifyField() {
         /**
-         * @name prettifyField_
+         * @name _prettifyField
          * @desc
          */
-        function prettifyField_(s) {
+        function _prettifyField(s) {
             if ('string' !== typeof s) {
                 return s;
             }
             return ((s + '') || '').replace(/\\n/g, '\n');
         }
-        return prettifyField_;
+        return _prettifyField;
     }
 
     function consultationTabsFilter() {
         /**
-         * @name consultationTabsFilter_
+         * @name _consultationTabsFilter
          * @desc
          */
-        function consultationTabsFilter_(tabsIn, asset) {
+        function _consultationTabsFilter(tabsIn, asset) {
             var tabsOut = [];
             for (var i = 0; i < tabsIn.length; i++) {
                 for (var j = 0; j < tabsIn[i].fields.length; j++) {
@@ -48,17 +48,17 @@
             }
             return tabsOut;
         }
-        return consultationTabsFilter_;
+        return _consultationTabsFilter;
     }
 
     consultationFieldsFilter.$inject = ["Site"];
 
     function consultationFieldsFilter(Site) {
         /**
-         * @name consultationFieldsFilter_
+         * @name _consultationFieldsFilter
          * @desc
          */
-        function consultationFieldsFilter_(fieldsIn, asset) {
+        function _consultationFieldsFilter(fieldsIn, asset) {
             var fieldsOut = [];
             for (var i = 0; i < fieldsIn.length; i++) {
                 if (asset.attributes[fieldsIn[i].key] ||
@@ -75,15 +75,15 @@
             }
             return fieldsOut;
         }
-        return consultationFieldsFilter_;
+        return _consultationFieldsFilter;
     }
 
     function reportTabsFilter() {
         /**
-         * @name reportTabsFilter_
+         * @name _reportTabsFilter
          * @desc
          */
-        function reportTabsFilter_(tabsIn, report) {
+        function _reportTabsFilter(tabsIn, report) {
             var tabsOut = [];
             for (var i = 0; i < tabsIn.length; i++) {
                 for (var j = 0; j < tabsIn[i].fields.length; j++) {
@@ -100,17 +100,17 @@
             }
             return tabsOut;
         }
-        return reportTabsFilter_;
+        return _reportTabsFilter;
     }
 
     reportFieldsFilter.$inject = ["Site"];
 
     function reportFieldsFilter(Site) {
         /**
-         * @name reportFieldsFilter_
+         * @name _reportFieldsFilter
          * @desc
          */
-        function reportFieldsFilter_(fieldsIn, report) {
+        function _reportFieldsFilter(fieldsIn, report) {
             var fieldsOut = [];
             for (var i = 0; i < fieldsIn.length; i++) {
                 if (((report.fields[fieldsIn[i].id] ||
@@ -128,7 +128,7 @@
             }
             return fieldsOut;
         }
-        return reportFieldsFilter_;
+        return _reportFieldsFilter;
     }
 
     activityListFilter.$inject = ["Site"];
@@ -136,10 +136,10 @@
     function activityListFilter(Site) {
 
         /**
-         * @name activityListFilter_
+         * @name _activityListFilter
          * @desc
          */
-        function activityListFilter_(asset) {
+        function _activityListFilter(asset) {
             if (asset.length) {
                 asset = asset[0];
             }
@@ -151,18 +151,18 @@
             }
             return activitiesOut;
         }
-        return activityListFilter_;
+        return _activityListFilter;
     }
 
     function isLink() {
         /**
-         * @name isLink_
+         * @name _isLink
          * @desc
          */
-        function isLink_(s) {
+        function _isLink(s) {
             return ((s + '') || '').search(/(https?:\/\/.*)$/);
         }
-        return isLink_;
+        return _isLink;
     }
 
 })();

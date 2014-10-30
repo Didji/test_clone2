@@ -90,10 +90,10 @@
             }
             Storage.set('availableLocalSites', localSites.length);
 
-            if (remoteSites.length === 0 && localSites.length === 1 && localSites[0].installed === true) {
+            if (remoteSites.length === 0 && localSites.length === 1 && !!localSites[0].installed) {
                 // Offline avec un site installé
                 $location.path('/map/' + localSites[0].id);
-            } else if (remoteSites.length === 1 && localSites.length === 1 && localSites[0].installed === true && localSites[0].id === remoteSites[0].id) {
+            } else if (remoteSites.length === 1 && localSites.length === 1 && !!localSites[0].installed && localSites[0].id === remoteSites[0].id) {
                 // Online avec un site installé : Authentification nécessaire
                 Smartgeo.selectSiteRemotely(localSites[0].id, function () {
                     $location.path('/map/' + localSites[0].id);

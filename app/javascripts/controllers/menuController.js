@@ -21,13 +21,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function () {
-
             vm.display = true;
-
             vm.homeIsDisplayed = true;
-
             vm.siteSelectionEnable = false;
-
             vm.menuItems = [{
                 id: 'search',
                 label: i18n.get('_MENU_SEARCH'),
@@ -66,7 +62,6 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 template: 'partials/parameters.html',
                 forceLoadDOM: false
             }];
-
             vm.bottomMenuItems = [{
                 id: 'logout',
                 label: 'Déconnexion',
@@ -90,8 +85,8 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 action: 'activateConsultation'
             }];
 
-
             vm.applyVisibility();
+            vm.checkIfMoreThanOneSiteIsAvailable();
 
             $rootScope.$on('DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable);
             $rootScope.$on('DEVICE_IS_OFFLINE', vm.checkIfMoreThanOneSiteIsAvailable);
@@ -101,15 +96,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                     $scope.$digest();
                 }
             });
-
-            vm.checkIfMoreThanOneSiteIsAvailable();
-
             $rootScope.$watch('reports', function () {
-
                 var uuid;
-
                 vm.toSyncNumber = 0;
-
                 if ($rootScope.reports && $rootScope.reports._byUUID) {
                     for (uuid in $rootScope.reports._byUUID) {
                         if (!$rootScope.reports._byUUID[uuid].synced) {
@@ -125,7 +114,6 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                     }
                 }
             });
-
         };
 
         /**

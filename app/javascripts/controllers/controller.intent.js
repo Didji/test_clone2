@@ -42,18 +42,10 @@
          */
         function redirect() {
             var redirection;
-            switch (intent.controller) {
-            case 'map':
-                redirection = intent.controller + '/' + Site.current.id;
-                break;
-            case 'report':
-                redirection = intent.controller + '/' + Site.current.id + '/' + intent.report_activity + '/' + intent.target + '/';
-                break;
-            case 'oauth':
+            if(intent.controller === 'oauth'){
                 redirection = 'sites/';
-                break;
-            default:
-                redirection = '/';
+            } else {
+                redirection = 'map/' + Site.current.id;
             }
             $location.path(redirection);
         }
@@ -65,9 +57,8 @@
         function selectFirstSite() {
             for (var siteid in prefetchedlocalsites) {
                 Site.current = prefetchedlocalsites[siteid];
-                break;
+                return Site.current;
             }
-            return Site.current;
         }
 
         /**
@@ -104,8 +95,12 @@
 
             if (assetid) {
                 Asset.findOne(+assetid, function (asset) {
-                    intent.asset = new Asset(asset);
-                    intent.map_center = intent.asset.getCenter();
+                    if(!asset){
+                        alertify.log("L'objet "+assetid+" n'existe pas. Veuillez mettre à jour vos données.");
+                    } else {
+                        intent.asset = new Asset(asset);
+                        intent.map_center = intent.asset.getCenter();
+                    }
                     callback();
                 });
             } else {

@@ -40,7 +40,7 @@
                         if (tab.fields[j].required) {
                             tab.required = true;
                         }
-                        tab.fields[j].isconsequence = (tab.fields[j].visible === false);
+                        tab.fields[j].isconsequence = !!!tab.fields[j].visible;
                         activity._fields[tab.fields[j].id] = tab.fields[j];
                     }
                 }

@@ -59,7 +59,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
      * @desc Retourne "true" si le terminal a une licence, "false sinon"
      */
     LicenseManager.prototype.__isDeviceRegistered = function () {
-        return (JSON.parse(localStorage['LicenseManager.license'] || "{}").registered === true);
+        return !!JSON.parse(localStorage['LicenseManager.license'] || "{}").registered;
     };
 
     /**
