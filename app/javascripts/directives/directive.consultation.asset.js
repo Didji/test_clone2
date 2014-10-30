@@ -25,9 +25,10 @@
 
             scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset;
 
-            scope.site = Site.current; //TODO(@gulian): faire mieux.
-            scope.rights = $rootScope.rights; //TODO(@gulian): faire mieux.
-            scope.missions = $rootScope.missions; //TODO(@gulian): faire mieux.
+            //TODO(@gulian): faire mieux.
+            scope.site = Site.current;
+            scope.rights = $rootScope.rights;
+            scope.missions = $rootScope.missions;
 
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;

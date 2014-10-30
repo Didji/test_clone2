@@ -13,8 +13,8 @@ window.smartgeo_i18n_lang.en = {
     _AUTH_SERVER_UNREACHABLE: "Unreachable server",
     _AUTH_PLEASE_WAIT: "Please wait ...",
     _AUTH_REQUIRED_FIELD_EMPTY: "Please fill user and password fields.",
-    _AUTH_SERVER_ERROR: "%s", // status
-    _AUTH_INCORRECT_PASSWORD: "Invalid password", //Mot de passe incorrect",
+    _AUTH_SERVER_ERROR: "%s",
+    _AUTH_INCORRECT_PASSWORD: "Invalid password",
     _AUTH_ERROR_: "Connection error",
     _AUTH_UNKNOWN_ERROR_OCCURED_: "Unknown error occured",
     _SMARTGEO_ONLINE: "Smartgeo is online",
@@ -34,9 +34,7 @@ window.smartgeo_i18n_lang.en = {
     _REGISTER_RECORD_ID_: "Your license has been accepted. Please, record the following ID in case of loss or theft: ",
     _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
     _CONFIRM_DISCONNECT_: "Do you really want to exit?",
-
-    _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)", // geom
-
+    _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)",
     _CONSULTATION_LOADING: "Loading ...",
     _CONSULTATION_REPORT: "Report",
     _CONSULTATION_LOCATE: "Locate",
@@ -46,14 +44,10 @@ window.smartgeo_i18n_lang.en = {
     _CONSULTATION_ADD_TO_: "Add to",
     _CONSULTATION_WRITE_FOR_: "Write for ",
     _CONSULTATION_ADD_TO_SELECTION: "Add to current selection",
-
     _INSTALL_INSTALLING: "Installing ",
     _INSTALL_IN_PROGRESS: " in progress",
-
     _UNINSTALL_UNINSTALLING: "Uninstalling ",
-
     _UPDATE_UPDATING: "Updating ",
-
     _MENU_CONSULTATION: "Consultation",
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Search",
@@ -78,7 +72,6 @@ window.smartgeo_i18n_lang.en = {
     _REPORT_DELETE: "Delete",
     _REPORT_SELECT_ACTIVITY: "Select activity",
     _REPORT_SELECT_ASSETS: "Select assets",
-
     _SEARCH_SEARCH: "Search",
     _SEARCH_ADVANCED_SEARCH: "Advanced search",
     _SEARCH_BACK: "Back",
@@ -90,11 +83,9 @@ window.smartgeo_i18n_lang.en = {
     _SEARCH_PICK_OBJECT_TYPE: "Please select an object type",
     _SEARCH_SEARCH_HAS_BEEN_CANCELED: "Cancelled",
     _SEARCH_CANCEL_SEARCH: "Cancel",
-
     _SITE_LOADING: "Loading ...",
     _SITE_UNINSTALL: "Uninstalling ",
     _SITE_UPDATE: "Updating ",
-
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",
     _SYNC_SYNC_EVERYTHING: "Synchronize all",
     _SYNC_SYNC: "Synchronize",
@@ -103,39 +94,33 @@ window.smartgeo_i18n_lang.en = {
     _SYNC_UPDATE: "Update ",
     _SYNC_UNINSTALL: "Uninstall ",
     _SYNC_UNKNOWN_ERROR_: "Unknown error while synchronizing reports",
-    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s?", // sitename
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s?", // sitename
-
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s?",
+    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s?",
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",
-    _INTENT_AUTH_FAILED: "%s", // status
-
+    _INTENT_AUTH_FAILED: "%s",
     _MAP_ZERO_SITE_SELECTED: "No site found",
     _MAP_ZERO_OBJECT_FOUND: "No asset in this area",
     _MAP_MY_POSITION_CONTROL: "My position",
     _MAP_GPS_FAIL: "Error while retrieving GPS coordinates",
     _MAP_CONSULTATION_CONTROL: "Consultation",
     _MAP_REFERENCE_VIEW_CONTROL: "Reference view",
-
-
-    _PLANNING_SYNC_FAIL_: "Error while updating missions", //"Erreur lors de la mise à jour des missions",
-    _PLANNING_OBJECT_NOT_FOUND_: "Mission's objects not found", //"Les objets de cette mission n'ont pas été trouvés.",
-    _PLANNING_REFRESH_: "Refresh", //"Actualiser",
-    _PLANNING_TODAY_: "Today", //"Aujourd'hui",
-    _PLANNING_BEFORE_: "Before", //"Avant",
-    _PLANNING_DISPLAY_DONE_ASSETS_: "Show finished objects", //"Afficher objets terminés",
-    _PLANNING_LOCATE_: "Locate", //"Localiser",
-    _PLANNING_WRITE_: "Record", //"Saisir"
-    _PLANNING_START_: "Start", //"Démarrer"
-    _PLANNING_FINISH_: "finished", //"terminé"
-    _PLANNING_REFRESHED_: "Refreshed", //"Actualisé"
-    _PLANNING_DISPLAY_FINISHED_: "Display finished mission", //Afficher les OT terminé"
+    _PLANNING_SYNC_FAIL_: "Error while updating missions",
+    _PLANNING_OBJECT_NOT_FOUND_: "Mission's objects not found",
+    _PLANNING_REFRESH_: "Refresh",
+    _PLANNING_TODAY_: "Today",
+    _PLANNING_BEFORE_: "Before",
+    _PLANNING_DISPLAY_DONE_ASSETS_: "Show finished objects",
+    _PLANNING_LOCATE_: "Locate",
+    _PLANNING_WRITE_: "Record",
+    _PLANNING_START_: "Start",
+    _PLANNING_FINISH_: "finished",
+    _PLANNING_REFRESHED_: "Refreshed",
+    _PLANNING_DISPLAY_FINISHED_: "Display finished mission",
     _PLANNING_NEW_MISSION_: " new mission",
     _PLANNING_NEW_MISSIONS_: " new missions",
-
     _CENSUS_INFORMATION_: " Census",
     _CENSUS_CHOOSE_OBJECT_: "Please select the asset",
-
     _NIGHTTOUR_STOP_: "Stop",
     _NIGHTTOUR_CLOSE_: "Close",
     _NIGHTTOUR_SAVING_: "Saving"

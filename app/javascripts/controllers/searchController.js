@@ -134,7 +134,8 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
                 var assets = [];
                 for (var i = 0; i < results.length; i++) {
-                    assets.push(new Asset(Asset.convertRawRow(results[i]))); //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
+                    assets.push(new Asset(Asset.convertRawRow(results[i])));
+                    //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
                 }
                 $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 $scope.$digest();

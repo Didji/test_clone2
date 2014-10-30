@@ -29,14 +29,12 @@
             if (!asset.geometry) {
                 return;
             }
-            switch (asset.geometry.type) {
-            case "Point":
+            if (asset.geometry.type === "Point") {
                 var coords = asset.geometry.coordinates;
                 marker = L.marker([coords[1], coords[0]], {
                     icon: Icon.get('CONSULTATION')
                 });
-                break;
-            default:
+            } else {
                 marker = L.geoJson(asset.geometry, {
                     style: {
                         color: '#fc9e49',
@@ -44,7 +42,6 @@
                         weight: 7
                     }
                 });
-                break;
             }
             return marker.on('click', clickHandler || angular.noop);
         };

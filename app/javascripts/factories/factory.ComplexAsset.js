@@ -16,7 +16,7 @@
          */
         var ComplexAsset = function (okey, father, root) {
             this.okey = okey;
-            this.uuid = Smartgeo.uuid();
+            this.uuid = window.uuid();
             this.children = [];
             this.father = father && father.uuid;
             this.root = root || this;
@@ -394,7 +394,7 @@
          * @private
          */
         ComplexAsset.prototype.__updateUuid = function (father) {
-            this.uuid = Smartgeo.uuid();
+            this.uuid = window.uuid();
             this.father = father;
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__updateUuid(this.uuid);

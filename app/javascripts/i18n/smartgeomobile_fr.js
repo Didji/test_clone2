@@ -14,7 +14,7 @@ window.smartgeo_i18n_lang.fr = {
     _AUTH_SERVER_UNREACHABLE: "Serveur injoignable",
     _AUTH_PLEASE_WAIT: "Veuillez patienter ...",
     _AUTH_REQUIRED_FIELD_EMPTY: "Veuillez renseigner les champs utilisateur et mot de passe.",
-    _AUTH_SERVER_ERROR: "Une erreur est survenue (%s)", // status
+    _AUTH_SERVER_ERROR: "Une erreur est survenue (%s)",
     _AUTH_INCORRECT_PASSWORD: "Authentification incorrecte",
     _AUTH_ERROR_: "Connexion impossible",
     _AUTH_UNKNOWN_ERROR_OCCURED_: "Connexion impossible",
@@ -33,7 +33,7 @@ window.smartgeo_i18n_lang.fr = {
     _CONFIRM_CHANGE_SITE_: "Voulez-vous vraiment changer de site&nbsp?",
     _CONFIRM_DISCONNECT_: "Voulez-vous vraiment quitter l'application&nbsp?",
 
-    _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)", // geom
+    _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)",
 
     _SMARTGEO_ONLINE: "Smartgeo est connecté",
     _SMARTGEO_OFFLINE: "Smartgeo est déconnecté",
@@ -105,12 +105,12 @@ window.smartgeo_i18n_lang.fr = {
     _SYNC_UPDATE: "Mettre à jour les données ",
     _SYNC_UNINSTALL: "Désinstaller",
     _SYNC_UNKNOWN_ERROR_: "Erreur inconnue lors de la synchronisation.",
-    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?", // sitename
-    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?", // sitename
+    _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?",
+    _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?",
 
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",
-    _INTENT_AUTH_FAILED: "L'authentification a échoué (%s)", // status
+    _INTENT_AUTH_FAILED: "L'authentification a échoué (%s)",
 
     _MAP_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _MAP_ZERO_OBJECT_FOUND: "Aucun patrimoine dans cette zone",

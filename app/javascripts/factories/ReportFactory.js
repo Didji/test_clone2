@@ -83,7 +83,7 @@ angular.module('smartgeomobile').factory('ReportSynchronizer', function ($http, 
                     })
                     .success(function (data) {
                         if ((typeof data) === "string") {
-                            return; // Compatibilité GIMAO666
+                            return;
                         }
                         var ruuids = data.uuids || data;
                         for (var uuid in ruuids) {

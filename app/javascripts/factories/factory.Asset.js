@@ -146,7 +146,7 @@
                 a = coordinates[i];
                 b = coordinates[i + 1];
                 a[2] = length;
-                length += Math.sqrt(Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2)); //TODO(@gulian): Factory Geometry ? Vector ?
+                length += Math.sqrt(Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2));
             }
             coordinates[coordinates.length - 1][2] = length;
             middle = length / 2;
@@ -252,7 +252,8 @@
             return angular.extend(a, {
                 okey: parsed.okey,
                 attributes: parsed.attributes,
-                guid: a.id, //TODO(@gulian): Utiliser asset.id dans l'application pour eviter cette ligne
+                guid: a.id,
+                //TODO(@gulian): Utiliser asset.id dans l'application pour eviter cette ligne
                 geometry: JSON.parse(a.geometry),
                 asset: undefined,
                 label: a.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")

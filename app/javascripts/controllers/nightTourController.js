@@ -252,7 +252,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 fields: {},
                 mission: $scope.mission.id,
                 activity: $scope.mission.activity.id,
-                uuid: Smartgeo.uuid()
+                uuid: window.uuid()
             };
             applyDefaultValues(report, $scope.activity);
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
@@ -275,7 +275,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 fields: {},
                 mission: $scope.mission.id,
                 activity: $scope.mission.activity.id,
-                uuid: Smartgeo.uuid()
+                uuid: window.uuid()
             };
             applyDefaultValues(report, $scope.activity);
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;

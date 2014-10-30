@@ -54,7 +54,7 @@
             this.site = Site.current.label;
             this.fields = {};
             this.ged = [];
-            this.uuid = Smartgeo.uuid();
+            this.uuid = window.uuid();
             this.timestamp = new Date().getTime();
             if(reportLatLng){
                 this.latlng = reportLatLng;

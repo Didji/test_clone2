@@ -539,7 +539,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     xmin: xmin,
                     xmax: xmax
                 },
-                uuid = Smartgeo.uuid(),
+                uuid = window.uuid(),
                 request = G3ME.baseRequest.replace("##UUID##", uuid);
 
             if (this.active_layers) {

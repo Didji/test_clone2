@@ -202,17 +202,17 @@
 
         /**
          * @name close
-         * @desc
+         * @desc TODO(@gulian) : Oulala faut faire mieux la.
          */
         function close_() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $(".consultation-panel").first().css('width', 0); //TODO(@gulian) : Oulala faut faire mieux la.
+            $(".consultation-panel").first().css('width', 0); //
         }
 
         /**
          * @name open
-         * @desc
+         * @desc TODO(@gulian) : Oulala faut faire mieux la.
          */
         function open_() {
             G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
@@ -220,7 +220,7 @@
                 $rootScope.$broadcast('_MENU_CLOSE_');
             }
             vm.isOpen = true;
-            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH); //TODO(@gulian) : Oulala faut faire mieux la.
+            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH);
         }
 
     }
