@@ -30,13 +30,15 @@
          */
         function activate() {
 
-            var match ;
-
-            if ((match = $routeParams.assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            var match = $routeParams.assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/);
+            if (match) {
                 vm.assets = match[0];
-            } else if ((match = $routeParams.assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            }
+            match = $routeParams.assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/);
+            if (match) {
                 vm.latlng = match[0];
-            } else {
+            }
+            if(!match) {
                 vm.assets = $routeParams.assets.split(',');
             }
 

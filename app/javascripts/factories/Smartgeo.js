@@ -577,6 +577,30 @@ angular.module('smartgeomobile').factory('Smartgeo', function ($http, $window, $
             }
         },
 
+        /**
+         * @name pad
+         * @param {Number} number
+         * @desc Rajoute un 0 au nombre inférieur à 10
+         */
+        pad: function(number){
+            return (number < 10) ? ('0' + number) : number;
+        },
+
+        /**
+         * @name getBase64Image
+         * @param {String} src
+         */
+        getBase64Image :function (src) {
+            var img = document.createElement("img");
+            img.src = src;
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            var dataURL = canvas.toDataURL("image/jpeg", 50);
+            return dataURL;
+        },
 
         // Fonction utilitaire créant un contrôle Leaflet.
         makeControl :function (title, icon, onclick) {

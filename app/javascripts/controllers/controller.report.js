@@ -6,7 +6,7 @@
         .module('smartgeomobile')
         .controller('ReportController', ReportController);
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage", "Smartgeo"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage) {
+    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage, Smartgeo) {
 
         var vm = this;
 
@@ -143,10 +143,10 @@
                 i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
-                    report.fields[i] = pad(report.fields[i].getHours()) + ":" + pad(report.fields[i].getMinutes());
+                    report.fields[i] = Smartgeo.pad(report.fields[i].getHours()) + ":" + Smartgeo.pad(report.fields[i].getMinutes());
                 }
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
-                    report.fields[i] = report.fields[i].getFullYear() + "-" + pad(report.fields[i].getMonth() + 1) + "-" + pad(report.fields[i].getDate());
+                    report.fields[i] = report.fields[i].getFullYear() + "-" + Smartgeo.pad(report.fields[i].getMonth() + 1) + "-" + Smartgeo.pad(report.fields[i].getDate());
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
@@ -154,7 +154,7 @@
             }
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
-                    'content': getBase64Image(report.ged[i].content)
+                    'content': Smartgeo.getBase64Image(report.ged[i].content)
                 };
             }
             for (i in report.overrides) {
@@ -168,8 +168,7 @@
         /**
          * @name bidouille
          * @param {Event} event
-         * @desc Olalalala ...
-         *       TODO(@gulian): remplacer par un ng-blur ?
+         * @desc Olalalala ... A remplacer par un ng-blur ?
          */
         function bidouille() {
             angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function () {
@@ -190,16 +189,6 @@
                 elt = null;
             });
 
-        }
-
-        /**
-         * @name pad
-         * @param {Number} number
-         * @desc Rajoute un 0 au nombre inférieur à 10
-         *       TODO(@gulian): C'est pas vraiment sa place là ...
-         */
-        function pad(number) {
-            return (number < 10) ? ('0' + number) : number;
         }
 
         /**
@@ -257,7 +246,7 @@
                 } else if ('string' === typeof def) {
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
-                        def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                        def = date.getUTCFullYear() + '-' + Smartgeo.pad(date.getUTCMonth() + 1) + '-' + Smartgeo.pad(date.getUTCDate());
                         fields[field.id] = new Date(def);
                         vm.report.fields[field.id] = new Date(def);
                     } else {
@@ -346,23 +335,6 @@
                 url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
             }
             return url;
-        }
-
-        /**
-         * @name getBase64Image
-         * @param {String} src
-         * @desc TODO(@gulian): C'est pas vraiment sa place là ...
-         */
-        function getBase64Image(src) {
-            var img = document.createElement("img");
-            img.src = src;
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            var dataURL = canvas.toDataURL("image/jpeg", 50);
-            return dataURL;
         }
 
         /**

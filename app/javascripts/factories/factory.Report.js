@@ -28,11 +28,14 @@
          */
         function Report(assets, activity, mission) {
             var reportTargets = [],
-                reportLatLng, match;
+                reportLatLng,
+                match = assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/);
 
-            if ((match = assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            if (match) {
                 reportTargets = match[0];
-            } else if ((match = assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            }
+            match = assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/);
+            if (match) {
                 reportLatLng = match[0] + ',' + match[1];
             } else {
                 reportTargets = assets.split(',');

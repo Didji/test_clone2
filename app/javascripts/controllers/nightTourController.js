@@ -287,13 +287,6 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 assets = report.assets,
                 def, i, numTabs, j, numFields, tab, field, date;
 
-            function pad(number) {
-                if (number < 10) {
-                    return '0' + number;
-                }
-                return number;
-            }
-
             function getValueFromAssets(pkey, okey) {
                 var rv = {},
                     val;
@@ -322,7 +315,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                     if ('string' === typeof def) {
                         if (field.type === 'D' && def === '#TODAY#') {
                             date = new Date();
-                            def = date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+                            def = date.getUTCFullYear() + '-' + Smartgeo.pad(date.getUTCMonth() + 1) + '-' + Smartgeo.pad(date.getUTCDate());
                         }
                     } else {
                         def = getValueFromAssets(def.pkey, act.okeys[0]);

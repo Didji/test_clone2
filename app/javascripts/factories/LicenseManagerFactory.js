@@ -155,7 +155,7 @@ angular.module('smartgeomobile').factory('LicenseManager', function ($location, 
             this.__setLicense(license);
             break;
         case 404:
-            // TODO/UGLYALERT: return something more explicit from g3lic (like 403) (@gulian)
+            // UGLYALERT: return something more explicit from g3lic (like 403) (@gulian)
             $location.path('licenseRevoked');
             return;
         default:

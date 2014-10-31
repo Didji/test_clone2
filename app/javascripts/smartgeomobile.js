@@ -3,7 +3,8 @@ angular
     .config(config).run(function($rootScope /* ,LicenseManager*/ ) {
 
         "use strict" ;
-        // TODO: activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
+        // Pour activer le serveur de license :
+        // Activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
         $rootScope.rights = {
             census: true,
             consultation: true,

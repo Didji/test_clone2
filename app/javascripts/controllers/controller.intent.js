@@ -42,7 +42,7 @@
          */
         function redirect() {
             var redirection;
-            if(intent.controller === 'oauth'){
+            if (intent.controller === 'oauth') {
                 redirection = 'sites/';
             } else {
                 redirection = 'map/' + Site.current.id;
@@ -82,21 +82,26 @@
                 return callback();
             }
 
-            var match, assetid;
+            var assetid,
+                match = intent.map_target.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/);
 
-            if ((match = intent.map_target.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) { // "24081;45.803,4.773"
+            if (match) {
                 assetid = match[1];
                 intent.latlng = [match[2], match[3]];
-            } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) {     // "45.803,4.773"
+            }
+            match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/);
+            if (match) {
                 intent.map_center = intent.latlng = [match[1], match[2]];
-            } else if ((match = intent.map_target.match(/^(\d+)$/))) {                          // "24081"
+            }
+            match = intent.map_target.match(/^(\d+)$/);
+            if (!assetid && match) {
                 assetid = match[1];
             }
 
             if (assetid) {
                 Asset.findOne(+assetid, function (asset) {
-                    if(!asset){
-                        alertify.log("L'objet "+assetid+" n'existe pas. Veuillez mettre à jour vos données.");
+                    if (!asset) {
+                        alertify.log("L'objet " + assetid + " n'existe pas. Veuillez mettre à jour vos données.");
                     } else {
                         intent.asset = new Asset(asset);
                         intent.map_center = intent.asset.getCenter();

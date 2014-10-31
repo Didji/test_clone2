@@ -17,15 +17,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         /**
          * @method
          * @memberOf planningController
-         * @desc
-         * Controller initialization :
-         * <ul>
-         *     <li>Get local mission(s)</li>
-         *     <li>Reduce mission.assets array considering pending reports ({@link planningController#removeObsoleteMission $scope.removeObsoleteMission})</li>
-         *     <li>Send pending missions related reports (TODO)</li>
-         *     <li>Get remote mission(s) ({@link planningController#synchronize $scope.synchronize}) </li>
-         *     <li>Set current day : today at midnight or last viewed day ({@link planningController#getMidnightTimestamp $scope.getMidnightTimestamp})</li>
-         * </ul>
+         * @desc Controller initialization
          */
         var assetsCache = {};
 
