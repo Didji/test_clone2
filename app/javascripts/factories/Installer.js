@@ -1,12 +1,10 @@
-angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site) {
+angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory) {
 
     'use strict';
 
     var Installer = {
 
         _LAST_ID_OKEY: {},
-
-        // INSTALLATION CONSTANTS
         _INSTALL_MAX_ASSETS_PER_HTTP_REQUEST: 1000,
         _INSTALL_MAX_ASSETS_PER_ZONE: 4096,
         _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST: 500,
@@ -20,7 +18,6 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                     assets = assets.concat(obsoletes[okey]);
                 }
             }
-
             if (assets.length <= 0) {
                 callback();
             } else {
@@ -38,7 +35,6 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
         },
 
         formatSiteMetadata: function (site, update) {
-
             var metamodel = {},
                 lists = {},
                 symbology = {},
@@ -308,7 +304,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
         },
 
         save: function (site, assets, callback) {
-            Installer.distribute_assets_in_zones(site, assets);
+            site.zones = AssetFactory.__distributeAssetsInZone(assets, site);
             Installer.save_zones_to_database(site, function () {
                 Installer.clean_zones(site);
                 callback();
@@ -325,34 +321,6 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
             }
         },
 
-        distribute_assets_in_zones: function (site, assets) {
-
-            if (!assets) {
-                return false;
-            }
-
-            var asset, bounds, asset_extent, zones = site.zones;
-
-            for (var i = 0, assets_length = assets.length; i < assets_length; i++) {
-                asset = assets[i];
-                if (!asset || !asset.bounds) {
-                    continue;
-                }
-                bounds = asset.bounds;
-                asset_extent = {
-                    xmin: bounds.sw.lng,
-                    xmax: bounds.ne.lng,
-                    ymin: bounds.sw.lat,
-                    ymax: bounds.ne.lat
-                };
-                for (var j = 0, zones_length = zones.length; j < zones_length; j++) {
-                    if (G3ME.extents_match(zones[j].extent, asset_extent)) {
-                        zones[j].assets.push(asset);
-                    }
-                }
-            }
-        },
-
         save_zones_to_database: function (site, callback) {
 
             for (var i = 0; i < site.zones.length; i++) {
@@ -365,7 +333,7 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                     }
                     while (temp_zone.length) {
                         sub_zone = temp_zone.slice(0, Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST);
-                        zone.insert_requests.push(Installer.build_binded_insert_request(site, sub_zone));
+                        zone.insert_requests.push(AssetFactory.__buildRequest(sub_zone, site));
                         temp_zone = temp_zone.slice(Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST);
                     }
                     Installer.execute_requests_for_zone(site, zone, function () {
@@ -396,54 +364,6 @@ angular.module('smartgeomobile').factory('Installer', function (SQLite, Smartgeo
                     });
                 })(zone, zone.insert_requests[i]);
             }
-        },
-
-        build_binded_insert_request: function (site, assets) {
-
-            var request = '',
-                asset, asset_, guid,
-                metamodel = site.metamodel,
-                symbology = site.symbology,
-                bounds,
-                fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
-                fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
-                assets_length = assets.length,
-                values_in_request,
-                i, j, k;
-
-            for (i = 0; i < assets_length; i++) {
-                asset = assets[i];
-                asset_ = JSON.parse(JSON.stringify(asset));
-                guid = asset.guid;
-                bounds = asset.bounds;
-
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " " + guid + " as id ";
-
-                for (k = 0; k < fields_to_delete.length; k++) {
-                    delete asset_[fields_to_delete[k]];
-                }
-
-                values_in_request = [
-                    bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
-                    JSON.stringify(asset.geometry), ("" + asset.okey + asset.classindex), (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
-                    asset.maplabel || '',
-                    1 * symbology[("" + asset.okey + asset.classindex)].minzoom,
-                    1 * symbology[("" + asset.okey + asset.classindex)].maxzoom,
-                    JSON.stringify(asset_)
-                ];
-
-                for (j = 0; j < fields_in_request.length; j++) {
-                    request += ' , \'' + ((typeof values_in_request[j] === 'string' && values_in_request[j].length) || typeof values_in_request[j] !== 'string' ? JSON.stringify(values_in_request[j]) : '').replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;') + '\' as ' + fields_in_request[j];
-                }
-
-                if (assets[i]) {
-                    delete assets[i];
-                }
-            }
-            return {
-                request: ((request !== '') ? request : 'SELECT 1'),
-                args: []
-            };
         },
 
         uninstallSite: function (site, callback) {
