@@ -120,7 +120,26 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            var report = angular.copy(vm.report),
+            var report = prepareReport(vm.report);
+            ReportSynchronizer.synchronize(report, function () {
+                vm.sendingReport = false;
+                if (!intent) {
+                    endOfReport();
+                }
+            }, 5000);
+            if (intent) {
+                endOfReport();
+            }
+        }
+
+        /**
+         * @name prepareReport
+         * @desc Prepare le compte rendu avant de l'envoyer
+         * @param {Report} reportin Le compte rendu a préparer
+         * @returns {Object}
+         */
+        function prepareReport(reportin){
+            var report = angular.copy(reportin),
                 i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
@@ -138,26 +157,12 @@
                     'content': getBase64Image(report.ged[i].content)
                 };
             }
-
             for (i in report.overrides) {
-
                 if (report.overrides[i]) {
                     report.fields[i] = report.overrides[i];
                 }
             }
-
             report.activity = report.activity.id;
-
-            ReportSynchronizer.synchronize(report, function () {
-                vm.sendingReport = false;
-                if (!intent) {
-                    endOfReport();
-                }
-            }, 5000);
-
-            if (intent) {
-                endOfReport();
-            }
         }
 
         /**
