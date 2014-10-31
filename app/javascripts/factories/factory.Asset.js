@@ -168,8 +168,9 @@
          * @param {Array} zones
          */
         Asset.findOne = function (id, callback, zones) {
+            zones = zones || Site.current.zones;
 
-            if (!(zones = zones || Site.current.zones).length) {
+            if (!zones.length) {
                 return callback(null);
             }
 

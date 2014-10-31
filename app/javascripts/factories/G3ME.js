@@ -130,46 +130,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             }
         },
 
-        parseTarget: function (site, target, callback, error) {
-            if (G3ME.isLatLngString(target)) {
-                callback(target.split(','));
-            } else if ('' + (target * 1) === target) {
-                Smartgeo.findAssetsByGuids(site, target, function (assets) {
-                    if (!assets.length) {
-                        callback([]);
-                    } else {
-                        var geometry;
-                        try {
-                            geometry = JSON.parse(assets[0].geometry);
-                        } catch (e) {
-                            geometry = assets[0].geometry;
-                        }
-                        if (geometry.type === 'Point') {
-                            callback([assets[0].ymin, assets[0].xmin]);
-                        } else {
-                            callback(G3ME.getLineStringMiddle(geometry));
-                        }
-                    }
-                }, null, null, function () {
-                    (error || function () {})();
-                });
-            } else {
-                (error || function () {})();
-            }
-        },
-
-        isLatLngString: function (str) {
-            if ((typeof str === "object") && (typeof (1 * str[0]) === "number") && (typeof (1 * str[1]) === "number")) {
-                return true;
-            } else if (typeof str === "object") {
-                return false;
-            } else if (typeof str !== "string") {
-                return false;
-            } else {
-                return ((str || "").match(/^-?\d+[.]\d*,-?\d+[.]\d*$/) !== null);
-            }
-        },
-
         invalidateMapSize: function (timeout, callback) {
             timeout = timeout || 10;
             setTimeout(function () {

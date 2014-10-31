@@ -35,10 +35,16 @@
          * @returns {String}
          */
         i18n.lang = function () {
-            return i18n.CACHE ||
-                (i18n.labels[i18n.OVERRIDE_LANGUAGE] && (i18n.CACHE = i18n.OVERRIDE_LANGUAGE)) ||
-                (i18n.labels[i18n.SYSTEM_LANGUAGE] && (i18n.CACHE = i18n.SYSTEM_LANGUAGE)) ||
-                (i18n.labels[i18n.FALLBACK_LANGUAGE] && (i18n.CACHE = i18n.FALLBACK_LANGUAGE));
+            if(i18n.CACHE){
+                return i18n.CACHE;
+            } else if(i18n.labels[i18n.OVERRIDE_LANGUAGE]){
+                i18n.CACHE = i18n.OVERRIDE_LANGUAGE;
+            } else if(i18n.labels[i18n.SYSTEM_LANGUAGE]){
+                i18n.CACHE = i18n.SYSTEM_LANGUAGE;
+            } else if(i18n.labels[i18n.FALLBACK_LANGUAGE]){
+                i18n.CACHE = i18n.FALLBACK_LANGUAGE;
+            }
+            return i18n.CACHE;
         };
 
         /**
@@ -51,17 +57,25 @@
             if (!key || key.trim().length === 0) {
                 return;
             }
-            var s = i18n.labels[i18n.lang()] && i18n.labels[i18n.lang()][key && key.trim()],
-                i = 0,
-                j = 1,
+            var s = i18n.fillArgWithValues(i18n.labels[i18n.lang()] && i18n.labels[i18n.lang()][key && key.trim()], arguments);
+            return (s === undefined && key !== undefined ? i18n.UNTRANSLATED_CHAR : s);
+        };
+
+        /**
+         * @name fillArgWithValues
+         * @desc Remplie la chaine passée en paramètre avec des arguments
+         * @param {String} s La chaine
+         * @param {Array} parameters Les paramètres
+         * @returns {String}
+         */
+        i18n.fillArgWithValues = function (s, parameters) {
+            var i = 0,
                 args = [];
-            for (; j < arguments.length; j++) {
-                args.push(arguments[j]);
-            }
-            while (args && s && s.indexOf('%s') !== -1 && i < args.length) {
+            for (var j = 1 ; j < parameters.length && s.indexOf('%s') !== -1; j++) {
+                args.push(parameters[j]);
                 s = s.replace('%s', args[i++] || i18n.MISSING_ARG_CHAR);
             }
-            return (s === undefined && key !== undefined ? i18n.UNTRANSLATED_CHAR : s);
+            return s;
         };
 
         return i18n;

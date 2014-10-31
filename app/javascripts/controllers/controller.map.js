@@ -54,7 +54,9 @@
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
 
-            if ((intent = Storage.get('intent'))) {
+            intent = Storage.get('intent') ;
+
+            if (intent) {
                 setTimeout(intentHandler, 0);
             }
         }
@@ -226,9 +228,7 @@
          */
         function stopPosition() {
             GPS.stopWatchingPosition(setLocationMarker);
-
             LAST_USERS_LOCATION = [];
-
             if (POSITION_CONTROL && POSITION_CONTROL._map) {
                 G3ME.map.removeControl(POSITION_CONTROL);
             }
@@ -238,8 +238,8 @@
             if (POSITION_MARKER && POSITION_MARKER._map) {
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
-
-            return (POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null);
+            POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
+            return ;
         }
 
         /**
