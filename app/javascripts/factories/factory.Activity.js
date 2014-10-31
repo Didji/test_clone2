@@ -48,6 +48,14 @@
             return angular.copy(activity);
         };
 
+        /**
+         * @name getAll
+         * @desc Retourne l'intégralité des activités du site courrant
+         */
+        Activity.getAll = function(){
+            return Site.current.activities;
+        };
+
         return Activity;
     }
 

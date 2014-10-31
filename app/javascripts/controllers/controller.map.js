@@ -133,18 +133,12 @@
         function noConsultableAssets(coords) {
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
-            if (intent.report_activity) {
-                popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
-                $(document).on('click', '.openLocateReportButton', function () {
-                    $rootScope.openLocatedReport(coords.lat, coords.lng);
-                });
-            }
-            var popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
-            if (!intent.report_activity) {
-                setTimeout(function () {
-                    $(popup._container).fadeOut();
-                }, 4000);
-            }
+            popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
+            $(document).on('click', '.openLocateReportButton', function () {
+                //TODO(@gulian): utiliser un ng-click si possible
+                $rootScope.openLocatedReport(coords.lat, coords.lng);
+            });
+            L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
             return false;
         }
 

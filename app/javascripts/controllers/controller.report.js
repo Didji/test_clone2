@@ -54,9 +54,7 @@
 
             bidouille();
 
-            vm.report = new Report($routeParams.assets, $routeParams.activity, intent.report_mission || $routeParams.mission);
-            // A voir si dans tous les cas ou on appelle depuis un intent,
-            // on ne peut pas injecter la valeur de la mission pour remplacer intent.report_mission || $routeParams.mission
+            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
             for (var i = 0; i < vm.report.assets.length; i++) {
                 vm.assets.push(new Asset(vm.report.assets[i], applyDefaultValues));
