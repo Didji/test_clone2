@@ -12,21 +12,21 @@
         <input type="checkbox" ng-model="authController.user.rememberme">
     </label>
     <div ng-if='authController.errorMessage' class="alert alert-danger login-errorMessage">{{authController.errorMessage}}</div>
-    <button class="btn btn-lg btn-primary btn-block" ng-disabled="(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
+    <button name="login-button" class="btn btn-lg btn-primary btn-block" ng-disabled="(!authController.gimapServer.length || !authController.user.username.length || !authController.user.password.length) || authController.loginInProgress">
         <i ng-if="authController.loginInProgress" class="fa fa-refresh fa-spin"></i>
         <i18n>_AUTH_LOG_MESSAGE_LOGIN_</i18n>
     </button>
 </form>
 
 <div ng-if="::!authController.firstAuth" class="btn-group bottom-right dropup">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    <button type="button" name="parameters-button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         <span class="fa fa-gears"></span>
         <i18n>_AUTH_SETTINGS_</i18n>
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu pull-right" role="menu">
         <li ng-if="::!authController.firstAuth">
-            <a ng-click="authController.reset()">
+            <a ng-click="authController.reset()" name="reset-button" >
                 <i18n>_AUTH_CHANGE_GIMAP_URL_</i18n>
                 <small>({{::authController.gimapServer}})</small>
             </a>
