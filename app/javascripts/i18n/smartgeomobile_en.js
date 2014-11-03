@@ -85,6 +85,7 @@ window.smartgeo_i18n_lang.en = {
     _SEARCH_CANCEL_SEARCH: "Cancel",
     _SITE_LOADING: "Loading ...",
     _SITE_UNINSTALL: "Uninstalling ",
+    _SITE_LAST_UPDATE: "Last update on ",
     _SITE_UPDATE: "Updating ",
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",
     _SYNC_SYNC_EVERYTHING: "Synchronize all",
