@@ -38,8 +38,6 @@
                 currentLayer,
                 visibilities = G3ME.getVisibility();
 
-            // vm.groups = Storage.get( 'activeGroups' ) || {};
-
             for (var okey in Site.current.metamodel) {
                 currentMetamodel = Site.current.metamodel[okey];
                 if (!currentMetamodel.is_graphical) {
