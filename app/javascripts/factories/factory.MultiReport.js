@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'MultiReport', MultiReportFactory );
 
-    MultiReportFactory.$inject = ["G3ME", "Asset", "Report", "ReportSynchronizer", "Activity", "Site"];
+    MultiReportFactory.$inject = ["G3ME", "Asset", "Report", "ReportSynchronizer", "Activity", "Site", "Storage"];
 
 
-    function MultiReportFactory(G3ME, Asset, Report, ReportSynchronizer, Activity, Site) {
+    function MultiReportFactory(G3ME, Asset, Report, ReportSynchronizer, Activity, Site, Storage) {
 
         /**
          * @class MultiReportFactory
@@ -85,6 +85,7 @@
                 redirect = intent.multi_report_redirect.replace( "[DONE_ASSETS]", intent.multi_report_assets_id.join( ',' ) );
                 SmartgeoChromium.redirect( decodeURI( redirect ) );
             }
+            Storage.remove( 'intent' );
             return false;
         };
 
