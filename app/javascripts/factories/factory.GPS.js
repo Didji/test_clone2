@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .factory('GPS', GPSFactory);
+        .module( 'smartgeomobile' )
+        .factory( 'GPS', GPSFactory );
 
     function GPSFactory() {
 
@@ -22,23 +22,23 @@
          * @desc Demande des mises à jour de position GPS
          * @param {Function} listener
          */
-        GPS.startWatchingPosition = function (listener) {
+        GPS.startWatchingPosition = function(listener) {
             if (!GPS.positionListerners.length) {
                 if (window.SmartgeoChromium) {
                     window.ChromiumCallbacks[0] = GPS.__positionListernersDispatchor;
                     SmartgeoChromium.startWatchingPosition();
                 } else {
-                    GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(function (position) {
-                        GPS.__positionListernersDispatchor(position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy);
-                    }, function () {}, {
-                        enableHighAccuracy: false,
-                        maximumAge: 0
-                    });
+                    GPS.locationWatchIdentifier = navigator.geolocation.watchPosition( function(position) {
+                        GPS.__positionListernersDispatchor( position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy );
+                    }, function() {}, {
+                            enableHighAccuracy: false,
+                            maximumAge: 0
+                        } );
                 }
-            } else if (GPS.positionListerners.indexOf(listener) !== -1) {
+            } else if (GPS.positionListerners.indexOf( listener ) !== -1) {
                 return false;
             }
-            return GPS.positionListerners.push(listener);
+            return GPS.positionListerners.push( listener );
         };
 
         /**
@@ -46,16 +46,16 @@
          * @desc Arrête les demandes des mises à jour de position GPS
          * @param {Function} listener
          */
-        GPS.stopWatchingPosition = function (listener) {
-            var index = (typeof listener === "function") ? GPS.positionListerners.indexOf(listener) : listener;
+        GPS.stopWatchingPosition = function(listener) {
+            var index = (typeof listener === "function") ? GPS.positionListerners.indexOf( listener ) : listener;
             if (index !== -1) {
-                GPS.positionListerners.splice(index);
+                GPS.positionListerners.splice( index );
             }
             if (!GPS.positionListerners.length) {
                 if (window.SmartgeoChromium) {
                     SmartgeoChromium.stopWatchingPosition();
                 } else {
-                    navigator.geolocation.clearWatch(GPS.locationWatchIdentifier);
+                    navigator.geolocation.clearWatch( GPS.locationWatchIdentifier );
                 }
             }
         };
@@ -65,11 +65,11 @@
          * @desc Récupère la position GPS
          * @param {Function} listener
          */
-        GPS.getCurrentLocation = function (listener) {
-            var index = GPS.startWatchingPosition(function (lng, lat, alt, acc) {
-                GPS.stopWatchingPosition(index - 1);
-                listener(lng, lat, alt, acc);
-            });
+        GPS.getCurrentLocation = function(listener) {
+            var index = GPS.startWatchingPosition( function(lng, lat, alt, acc) {
+                GPS.stopWatchingPosition( index - 1 );
+                listener( lng, lat, alt, acc );
+            } );
         };
 
         /**
@@ -80,9 +80,9 @@
          * @param {Number} alt
          * @param {Number} acc
          */
-        GPS.__positionListernersDispatchor = function (lng, lat, alt, acc) {
+        GPS.__positionListernersDispatchor = function(lng, lat, alt, acc) {
             for (var i = 0; i < GPS.positionListerners.length; i++) {
-                GPS.positionListerners[i](lng, lat, alt, acc);
+                GPS.positionListerners[i]( lng, lat, alt, acc );
             }
         };
 
@@ -90,9 +90,9 @@
          * @name emptyPositionListerners
          * @desc Vide le tableau d'écouteur de position GPS
          */
-        GPS.emptyPositionListerners = function () {
+        GPS.emptyPositionListerners = function() {
             for (var i = 0; i < GPS.positionListerners.length; i++) {
-                GPS.stopWatchingPosition(GPS.positionListerners[i]);
+                GPS.stopWatchingPosition( GPS.positionListerners[i] );
             }
         };
 

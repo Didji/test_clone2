@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .directive('assetConsultation', assetConsultation);
+        .module( 'smartgeomobile' )
+        .directive( 'assetConsultation', assetConsultation );
 
     assetConsultation.$inject = ["$rootScope", "Asset", "Site"];
 
@@ -23,7 +23,7 @@
 
         function link(scope, element) {
 
-            scope.asset = !(scope.asset instanceof Asset) ? new Asset(scope.asset) : scope.asset;
+            scope.asset = !(scope.asset instanceof Asset) ? new Asset( scope.asset ) : scope.asset;
 
             //TODO(@gulian): faire mieux.
             scope.site = Site.current;
@@ -33,7 +33,7 @@
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
             scope.openInApp = openInApp;
-            scope.$on('$destroy', destroy);
+            scope.$on( '$destroy', destroy );
 
 
             /**
@@ -41,8 +41,8 @@
              * @param {Event} event
              */
             function addToCurrentSelection(event) {
-                sendAssetToHeaven(event);
-                $rootScope.$broadcast("UPDATE_CONSULTATION_MULTISELECTION", scope.asset);
+                sendAssetToHeaven( event );
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", scope.asset );
             }
 
             /**
@@ -50,7 +50,7 @@
              * @desc
              */
             function dropFromCurrentSelection() {
-                $rootScope.$broadcast("UPDATE_DROP_CONSULTATION_MULTISELECTION", scope.asset);
+                $rootScope.$broadcast( "UPDATE_DROP_CONSULTATION_MULTISELECTION", scope.asset );
             }
 
             /**
@@ -62,9 +62,9 @@
             function openInApp(url, event) {
                 event.preventDefault();
                 if (window.SmartgeoChromium && window.SmartgeoChromium.redirect) {
-                    SmartgeoChromium.redirect(url);
+                    SmartgeoChromium.redirect( url );
                 } else {
-                    window.open(url, '_system');
+                    window.open( url, '_system' );
                 }
             }
 
@@ -77,14 +77,14 @@
                 var html = '' + scope.site.metamodel[scope.asset.okey].label + ':' + scope.asset.label + '';
                 var x = event.pageX,
                     y = event.pageY;
-                var angel = $('<div>').addClass('angel').appendTo(element).html(html).css({
+                var angel = $( '<div>' ).addClass( 'angel' ).appendTo( element ).html( html ).css( {
                     position: 'fixed',
                     top: y,
                     left: x - 100
-                });
-                setTimeout(function () {
-                    angel.addClass('ascending');
-                }, 1000);
+                } );
+                setTimeout( function() {
+                    angel.addClass( 'ascending' );
+                }, 1000 );
             }
 
             /**

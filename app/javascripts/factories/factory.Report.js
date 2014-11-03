@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .factory('Report', ReportFactory);
+        .module( 'smartgeomobile' )
+        .factory( 'Report', ReportFactory );
 
     ReportFactory.$inject = ["Activity", "Site"];
 
@@ -30,25 +30,25 @@
             var reportTargets = [],
                 reportLatLng, match;
 
-            if ((match = assets.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            if ( (match = assets.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 reportTargets = match[0];
-            } else if ((match = assets.match(/^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
+            } else if ( (match = assets.match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 reportLatLng = match[0] + ',' + match[1];
             } else {
-                reportTargets = assets.split(',');
+                reportTargets = assets.split( ',' );
             }
 
-            if (mission && mission.indexOf('call-') !== -1) {
+            if (mission && mission.indexOf( 'call-' ) !== -1) {
                 this.isCall = true;
-                mission = mission.substr(5);
+                mission = mission.substr( 5 );
             }
 
             this.assets = reportTargets;
 
-            this.activity = Activity.findOne(activity);
+            this.activity = Activity.findOne( activity );
             this.activity.tabs[0].show = true;
 
-            if(mission){
+            if (mission) {
                 this.mission = +mission;
             }
             this.site = Site.current.label;
@@ -56,7 +56,7 @@
             this.ged = [];
             this.uuid = window.uuid();
             this.timestamp = new Date().getTime();
-            if(reportLatLng){
+            if (reportLatLng) {
                 this.latlng = reportLatLng;
             }
         }
@@ -69,8 +69,8 @@
          * @param {Number} i
          * @desc Supprime la GED d'un object Report
          */
-        Report.prototype.removeGedItem = function (i) {
-            this.ged.splice(i, 1);
+        Report.prototype.removeGedItem = function(i) {
+            this.ged.splice( i, 1 );
         };
 
         return Report;

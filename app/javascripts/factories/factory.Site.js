@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .factory('Site', SiteFactory);
+        .module( 'smartgeomobile' )
+        .factory( 'Site', SiteFactory );
 
     SiteFactory.$inject = ["Storage", "$q"];
 
@@ -22,7 +22,7 @@
          * @name getcurrent
          * @desc Accesseur de l'attribut current
          */
-        Site.__defineGetter__("current", function () {
+        Site.__defineGetter__( "current", function() {
             if (window.SMARTGEO_CURRENT_SITE && !window.SMARTGEO_CURRENT_SITE.activities._byId) {
                 window.SMARTGEO_CURRENT_SITE.activities._byId = {};
                 for (var i = 0; i < window.SMARTGEO_CURRENT_SITE.activities.length; i++) {
@@ -30,27 +30,27 @@
                 }
             }
             return window.SMARTGEO_CURRENT_SITE;
-        });
+        } );
 
         /**
          * @name setcurrent
          * @desc Modificateur de l'attribut current
          */
-        Site.__defineSetter__("current", function (site) {
+        Site.__defineSetter__( "current", function(site) {
             window.SMARTGEO_CURRENT_SITE = site;
-        });
+        } );
 
         /**
          * @name all
          * @desc Retourne la liste des sites
          * @param {Function} callback
          */
-        Site.all = function (callback) {
+        Site.all = function(callback) {
             var deferred = $q.defer();
-            Storage.get_('sites', function (sites) {
-                deferred.resolve(sites);
-                (callback || function () {})(sites);
-            });
+            Storage.get_( 'sites', function(sites) {
+                deferred.resolve( sites );
+                (callback || function() {})( sites );
+            } );
             return deferred.promise;
         };
 
@@ -59,19 +59,19 @@
          * @desc Retourne un site en particulier
          * @param {String} id Identifiant du site
          */
-        Site.get = function (id, setcurrent) {
+        Site.get = function(id, setcurrent) {
             var deferred = $q.defer();
-            Storage.get_('sites', function (sites) {
+            Storage.get_( 'sites', function(sites) {
                 if (setcurrent) {
                     Site.current = sites[id];
                 }
-                deferred.resolve(sites[id]);
-            });
+                deferred.resolve( sites[id] );
+            } );
             return deferred.promise;
         };
 
 
-        Site.getList = function (pkey, okey) {
+        Site.getList = function(pkey, okey) {
             var mm = Site.current.metamodel[okey];
             for (var i in mm.tabs) {
                 for (var j in mm.tabs[i].fields) {

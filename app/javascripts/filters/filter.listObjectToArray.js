@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .filter('listObjectToArray', listObjectToArray);
+        .module( 'smartgeomobile' )
+        .filter( 'listObjectToArray', listObjectToArray );
 
     listObjectToArray.$inject = ["Site"];
 
@@ -24,10 +24,10 @@
             var currentList = lists[options];
             var out = [];
             for (var value in currentList) {
-                out.push({
+                out.push( {
                     'value': value,
                     'label': currentList[value]
-                });
+                } );
             }
             listsArray[options] = out;
             return out;

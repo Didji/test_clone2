@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('SiteRemoveController', SiteRemoveController);
+        .module( 'smartgeomobile' )
+        .controller( 'SiteRemoveController', SiteRemoveController );
 
     SiteRemoveController.$inject = ["$scope", "$location", "Installer", "Storage", "prefetchedlocalsites"];
 
@@ -30,7 +30,7 @@
         function activate() {
             removedSite = prefetchedlocalsites;
             vm.siteLabel = removedSite.label;
-            Installer.uninstallSite(removedSite, siteHasBeenRemoved);
+            Installer.uninstallSite( removedSite, siteHasBeenRemoved );
         }
 
         /**
@@ -38,12 +38,12 @@
          * @desc Callback de fin de suppression de site
          */
         function siteHasBeenRemoved() {
-            Storage.get_('sites', function (sites) {
+            Storage.get_( 'sites', function(sites) {
                 delete sites[prefetchedlocalsites.id];
-                Storage.set_('sites', sites);
-                $location.path(Object.keys(sites).length === 0 ? '/' : '/sites');
+                Storage.set_( 'sites', sites );
+                $location.path( Object.keys( sites ).length === 0 ? '/' : '/sites' );
                 $scope.$apply();
-            });
+            } );
 
 
         }

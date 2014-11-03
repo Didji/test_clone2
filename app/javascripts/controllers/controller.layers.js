@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('LayersController', LayersController);
+        .module( 'smartgeomobile' )
+        .controller( 'LayersController', LayersController );
 
     LayersController.$inject = ["G3ME", "Site"];
 
@@ -53,12 +53,12 @@
                     label: currentMetamodel.label,
                     okey: currentMetamodel.okey
                 };
-                vm.groups[currentMetamodel.group].layers.push(currentLayer);
+                vm.groups[currentMetamodel.group].layers.push( currentLayer );
                 vm.layers[currentMetamodel.okey] = currentLayer;
             }
 
             for (var label in vm.groups) {
-                checkGroup(vm.groups[label]);
+                checkGroup( vm.groups[label] );
             }
 
         }
@@ -83,9 +83,9 @@
          */
         function refreshView() {
             for (var i in vm.groups) {
-                checkGroup(vm.groups[i]);
+                checkGroup( vm.groups[i] );
             }
-            G3ME.setVisibility(vm.layers);
+            G3ME.setVisibility( vm.layers );
         }
 
         /**

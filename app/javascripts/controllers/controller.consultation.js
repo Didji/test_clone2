@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('ConsultationController', ConsultationController);
+        .module( 'smartgeomobile' )
+        .controller( 'ConsultationController', ConsultationController );
 
     ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage"];
 
@@ -51,47 +51,47 @@
          */
         function activate() {
 
-            angular.element($window).bind("resize", function () {
-                $timeout(vm[!vm.isOpen ? 'close' : 'open'], 100);
-            });
+            angular.element( $window ).bind( "resize", function() {
+                $timeout( vm[!vm.isOpen ? 'close' : 'open'], 100 );
+            } );
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
             // pas de résultat, on annulera cette ouverture.
-            $scope.$on("CONSULTATION_CLICK_REQUESTED", function (e, coordinates) {
+            $scope.$on( "CONSULTATION_CLICK_REQUESTED", function(e, coordinates) {
                 vm.coordinates = coordinates;
                 cancelPreopenTimer();
-                PREOPEN_TIMER = $timeout(function () {
+                PREOPEN_TIMER = $timeout( function() {
                     vm.loading = true;
                     vm.open();
                     $scope.$digest();
-                }, 200);
-            });
+                }, 200 );
+            } );
 
-            $scope.$on("CONSULTATION_CLICK_CANCELED", function () {
+            $scope.$on( "CONSULTATION_CLICK_CANCELED", function() {
                 cancelPreopenTimer();
                 if (!vm.groups) {
                     vm.close();
                 }
                 vm.loading = false;
                 $scope.$digest();
-            });
+            } );
 
-            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function (event, assets) {
+            $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets) {
                 cancelPreopenTimer();
-                updateAssetsList(assets);
+                updateAssetsList( assets );
                 $scope.$digest();
-            });
+            } );
 
-            $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function (event, asset) {
-                addAssetToMultiselection(asset);
-            });
+            $rootScope.$on( "UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
+                addAssetToMultiselection( asset );
+            } );
 
-            $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function (event, asset) {
-                dropAssetFromMultiselection(asset);
-            });
+            $rootScope.$on( "UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
+                dropAssetFromMultiselection( asset );
+            } );
 
-            $scope.$on("CLOSE_CONSULTATION_PANEL", close);
+            $scope.$on( "CLOSE_CONSULTATION_PANEL", close );
         }
 
         /**
@@ -109,7 +109,7 @@
             for (var i = 0; i < assets.length; i++) {
                 vm.groups[assets[i].priority] = vm.groups[assets[i].priority] || {};
                 vm.groups[assets[i].priority][assets[i].okey] = vm.groups[assets[i].priority][assets[i].okey] || [];
-                vm.groups[assets[i].priority][assets[i].okey].push(assets[i]);
+                vm.groups[assets[i].priority][assets[i].okey].push( assets[i] );
             }
             vm.open();
             vm.loading = false;
@@ -125,8 +125,8 @@
                 vm.multiselection[asset.okey] = [];
             }
             vm.multiselection.length = (vm.multiselection.length || 0) + 1;
-            if (vm.multiselection[asset.okey].indexOf(asset) === -1) {
-                vm.multiselection[asset.okey].push(asset);
+            if (vm.multiselection[asset.okey].indexOf( asset ) === -1) {
+                vm.multiselection[asset.okey].push( asset );
             }
             asset.isInMultiselection = true;
         }
@@ -138,7 +138,7 @@
          * @param {Asset} asset
          */
         function dropAssetFromMultiselection(asset) {
-            vm.multiselection[asset.okey].splice(vm.multiselection[asset.okey].indexOf(asset), 1);
+            vm.multiselection[asset.okey].splice( vm.multiselection[asset.okey].indexOf( asset ), 1 );
             asset.isInMultiselection = false;
             vm.multiselection.length--;
         }
@@ -164,7 +164,7 @@
          * @param {Number} lng
          */
         function openLocatedReport(lat, lng) {
-            var intent = Storage.get('intent'),
+            var intent = Storage.get( 'intent' ),
                 path = 'report/' + Site.current.id + '/';
 
             path += (intent ? intent.report_activity : '') + '/' + lat + ',' + lng + '/';
@@ -173,7 +173,7 @@
                 path += intent.report_mission + '/';
             }
 
-            $location.path(path);
+            $location.path( path );
         }
 
         /**
@@ -194,9 +194,9 @@
 
             var tmp = [];
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
-                tmp.push(vm.multiselection[okey][i].id);
+                tmp.push( vm.multiselection[okey][i].id );
             }
-            return tmp.join(',');
+            return tmp.join( ',' );
         }
 
         /**
@@ -205,7 +205,7 @@
          */
         function cancelPreopenTimer() {
             if (PREOPEN_TIMER) {
-                $timeout.cancel(PREOPEN_TIMER);
+                $timeout.cancel( PREOPEN_TIMER );
             }
         }
 
@@ -216,7 +216,7 @@
         function _close() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $(".consultation-panel").first().css('width', 0);
+            $( ".consultation-panel" ).first().css( 'width', 0 );
         }
 
         /**
@@ -224,12 +224,12 @@
          * @desc TODO(@gulian) : Oulala faut faire mieux la.
          */
         function _open() {
-            G3ME.reduceMapWidth(Smartgeo._SIDE_MENU_WIDTH);
+            G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
             if (Smartgeo.isRunningOnLittleScreen()) {
-                $rootScope.$broadcast('_MENU_CLOSE_');
+                $rootScope.$broadcast( '_MENU_CLOSE_' );
             }
             vm.isOpen = true;
-            $(".consultation-panel").first().css('width', Smartgeo._SIDE_MENU_WIDTH);
+            $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
         }
 
     }

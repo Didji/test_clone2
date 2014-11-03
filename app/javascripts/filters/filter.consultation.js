@@ -1,16 +1,16 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .filter('prettifyField', prettifyField)
-        .filter('consultationTabsFilter', consultationTabsFilter)
-        .filter('consultationFieldsFilter', consultationFieldsFilter)
-        .filter('reportTabsFilter', reportTabsFilter)
-        .filter('reportFieldsFilter', reportFieldsFilter)
-        .filter('activityListFilter', activityListFilter)
-        .filter('isLink', isLink);
+        .module( 'smartgeomobile' )
+        .filter( 'prettifyField', prettifyField )
+        .filter( 'consultationTabsFilter', consultationTabsFilter )
+        .filter( 'consultationFieldsFilter', consultationFieldsFilter )
+        .filter( 'reportTabsFilter', reportTabsFilter )
+        .filter( 'reportFieldsFilter', reportFieldsFilter )
+        .filter( 'activityListFilter', activityListFilter )
+        .filter( 'isLink', isLink );
 
     function prettifyField() {
         /**
@@ -21,7 +21,7 @@
             if ('string' !== typeof s) {
                 return s;
             }
-            return ((s + '') || '').replace(/\\n/g, '\n');
+            return ((s + '') || '').replace( /\\n/g, '\n' );
         }
         return _prettifyField;
     }
@@ -42,8 +42,8 @@
                 }
             }
             for (i = 0; i < tabsIn.length; i++) {
-                if ((tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0)) {
-                    tabsOut.push(tabsIn[i]);
+                if ( (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) ) {
+                    tabsOut.push( tabsIn[i] );
                 }
             }
             return tabsOut;
@@ -63,14 +63,14 @@
             for (var i = 0; i < fieldsIn.length; i++) {
                 if (asset.attributes[fieldsIn[i].key] ||
                     (
-                        fieldsIn[i].options &&
-                        Site.current.lists &&
-                        asset.attributes[fieldsIn[i].key] &&
-                        Site.current.lists[fieldsIn[i].options] &&
-                        Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
-                    )
+                    fieldsIn[i].options &&
+                    Site.current.lists &&
+                    asset.attributes[fieldsIn[i].key] &&
+                    Site.current.lists[fieldsIn[i].options] &&
+                    Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
+                )
                 ) {
-                    fieldsOut.push(fieldsIn[i]);
+                    fieldsOut.push( fieldsIn[i] );
                 }
             }
             return fieldsOut;
@@ -94,8 +94,8 @@
                 }
             }
             for (i = 0; i < tabsIn.length; i++) {
-                if ((tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0)) {
-                    tabsOut.push(tabsIn[i]);
+                if ( (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) ) {
+                    tabsOut.push( tabsIn[i] );
                 }
             }
             return tabsOut;
@@ -114,16 +114,16 @@
             var fieldsOut = [];
             for (var i = 0; i < fieldsIn.length; i++) {
                 if (((report.fields[fieldsIn[i].id] ||
-                        (
-                            fieldsIn[i].options &&
-                            Site.current.lists &&
-                            report.fields[fieldsIn[i].id] &&
-                            Site.current.lists[fieldsIn[i].options] &&
-                            Site.current.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
+                    (
+                    fieldsIn[i].options &&
+                    Site.current.lists &&
+                    report.fields[fieldsIn[i].id] &&
+                    Site.current.lists[fieldsIn[i].options] &&
+                    Site.current.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
                     )) &&
-                    JSON.stringify(report.fields[fieldsIn[i].id]) !== '{}'
+                    JSON.stringify( report.fields[fieldsIn[i].id] ) !== '{}'
                 ) {
-                    fieldsOut.push(fieldsIn[i]);
+                    fieldsOut.push( fieldsIn[i] );
                 }
             }
             return fieldsOut;
@@ -146,7 +146,7 @@
             var activitiesOut = [];
             for (var i = 0; i < Site.current.activities.length; i++) {
                 if (Site.current.activities[i].okeys[0] === asset.okey) {
-                    activitiesOut.push(Site.current.activities[i]);
+                    activitiesOut.push( Site.current.activities[i] );
                 }
             }
             return activitiesOut;
@@ -160,7 +160,7 @@
          * @desc
          */
         function _isLink(s) {
-            return ((s + '') || '').search(/(https?:\/\/.*)$/);
+            return ((s + '') || '').search( /(https?:\/\/.*)$/ );
         }
         return _isLink;
     }

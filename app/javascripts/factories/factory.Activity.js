@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .factory('Activity', ActivityFactory);
+        .module( 'smartgeomobile' )
+        .factory( 'Activity', ActivityFactory );
 
     ActivityFactory.$inject = ["Site"];
 
@@ -23,7 +23,7 @@
          * @desc Cherche une activité depuis un identifiant
          * @param {Number} id Identifiant de l'activité à trouver
          */
-        Activity.findOne = function (id) {
+        Activity.findOne = function(id) {
             var i, numTabs, tab;
             if (!Site.current.activities._byId) {
                 Site.current.activities._byId = {};
@@ -45,14 +45,14 @@
                     }
                 }
             }
-            return angular.copy(activity);
+            return angular.copy( activity );
         };
 
         /**
          * @name getAll
          * @desc Retourne l'intégralité des activités du site courrant
          */
-        Activity.getAll = function(){
+        Activity.getAll = function() {
             return Site.current.activities;
         };
 

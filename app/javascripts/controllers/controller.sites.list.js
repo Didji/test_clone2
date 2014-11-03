@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('SiteListController', SiteListController);
+        .module( 'smartgeomobile' )
+        .controller( 'SiteListController', SiteListController );
 
     SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", "Storage", "prefetchedlocalsites", "Site"];
 
@@ -40,14 +40,14 @@
             $rootScope.currentPage = "Sélection de site";
 
             vm.ready = false;
-            vm.online = Storage.get('online');
+            vm.online = Storage.get( 'online' );
 
-            Storage.remove('lastLeafletMapExtent');
+            Storage.remove( 'lastLeafletMapExtent' );
 
             if (vm.online) {
-                getRemoteSites(prefetchedlocalsites || {});
+                getRemoteSites( prefetchedlocalsites || {} );
             } else {
-                getLocalSites(prefetchedlocalsites || {});
+                getLocalSites( prefetchedlocalsites || {} );
             }
 
         }
@@ -57,30 +57,31 @@
          * @desc Récupère la liste des sites sur le serveur
          */
         function getRemoteSites(knownSites) {
-            var url = Smartgeo.getServiceUrl('gi.maintenance.mobility.site.json');
-            $http.get(url)
-                .success(function (sites) {
+            var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.site.json' );
+            $http.get( url )
+                .success( function(sites) {
                     var sitesById = {},
-                        site, tmpsites = {};
+                        site,
+                        tmpsites = {};
                     for (var i = 0, lim = sites.length; i < lim; i++) {
                         site = sites[i];
                         tmpsites[site.id] = site;
                     }
-                    angular.extend(tmpsites, sitesById, knownSites);
+                    angular.extend( tmpsites, sitesById, knownSites );
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in tmpsites) {
-                        vm.sites.push(tmpsites[id]);
+                        vm.sites.push( tmpsites[id] );
                     }
                     vm.ready = true;
-                }).error(function () {
-                    // Pour que les filtres fonctionnent, il nous faut un simple tableau.
-                    vm.sites = [];
-                    for (var id in knownSites) {
-                        vm.sites.push(knownSites[id]);
-                    }
-                    vm.ready = true;
-                });
+                } ).error( function() {
+                // Pour que les filtres fonctionnent, il nous faut un simple tableau.
+                vm.sites = [];
+                for (var id in knownSites) {
+                    vm.sites.push( knownSites[id] );
+                }
+                vm.ready = true;
+            } );
         }
 
         /**
@@ -94,10 +95,10 @@
             // Pour que les filtres fonctionnent, il nous faut un simple tableau.
             vm.sites = [];
             for (var id in knownSites) {
-                vm.sites.push(knownSites[id]);
+                vm.sites.push( knownSites[id] );
             }
             vm.ready = true;
-            Storage.set('online', true);
+            Storage.set( 'online', true );
         }
 
         /**
@@ -108,11 +109,11 @@
         function select(site) {
             Site.current = site;
             vm.ready = false;
-            Smartgeo.selectSiteRemotely(site.id, function () {
-                redirect(site);
-            }, function () {
-                redirect(site);
-            });
+            Smartgeo.selectSiteRemotely( site.id, function() {
+                redirect( site );
+            }, function() {
+                    redirect( site );
+                } );
         }
 
         /**
@@ -121,7 +122,7 @@
          * @param {Object} site Site à selectionner
          */
         function redirect(site) {
-            $location.path('/map/' + site.id);
+            $location.path( '/map/' + site.id );
         }
 
         /**
@@ -130,11 +131,11 @@
          * @param {Object} site Site à désinstaller
          */
         function confirmUninstallSite(site) {
-            alertify.confirm(i18n.get('_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label), function (yes) {
+            alertify.confirm( i18n.get( '_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label ), function(yes) {
                 if (yes) {
-                    vm.uninstallSite(site);
+                    vm.uninstallSite( site );
                 }
-            });
+            } );
         }
 
         /**
@@ -143,7 +144,7 @@
          * @param {Object} site Site à désinstaller
          */
         function uninstallSite(site) {
-            $location.path('sites/uninstall/' + site.id);
+            $location.path( 'sites/uninstall/' + site.id );
             $scope.$apply();
         }
 

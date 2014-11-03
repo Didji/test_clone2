@@ -1,5 +1,4 @@
-angular.module('smartgeomobile').controller('searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "Asset", "Site",
-    function ($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, Asset, Site) {
+angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "Asset", "Site", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, Asset, Site) {
 
         'use strict';
 
@@ -20,20 +19,20 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
             $scope.criteria[i]._byKey = [];
             for (var j = 0; j < Site.current.metamodel[i].tabs.length; j++) {
                 for (var k = 0; k < Site.current.metamodel[i].tabs[j].fields.length; k++) {
-                    $scope.criteria[i].push(Site.current.metamodel[i].tabs[j].fields[k]);
+                    $scope.criteria[i].push( Site.current.metamodel[i].tabs[j].fields[k] );
                     $scope.criteria[i]._byKey[Site.current.metamodel[i].tabs[j].fields[k].key] = Site.current.metamodel[i].tabs[j].fields[k];
                 }
             }
         }
 
-        $scope.sendCriteria = function (event) {
+        $scope.sendCriteria = function(event) {
             if ($scope.advancedSearchDisplay) {
-                return $scope.advancedSearch(event);
+                return $scope.advancedSearch( event );
             }
-            return $scope.search(event);
+            return $scope.search( event );
         };
 
-        $scope.search = function (event) {
+        $scope.search = function(event) {
 
             event.preventDefault();
 
@@ -46,7 +45,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
             $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS';
             $scope.searchIsPerforming = true;
-            Smartgeo.findAssetsByLabel(Site.current, angular.copy($scope.searchTerms), function (results) {
+            Smartgeo.findAssetsByLabel( Site.current, angular.copy( $scope.searchTerms ), function(results) {
                 $scope.searchIsPerforming = false;
 
                 if (!results.length) {
@@ -63,25 +62,25 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
                     asset, asset_;
                 for (var i = 0; i < results.length; i++) {
                     asset_ = results[i];
-                    asset = Smartgeo.sanitizeAsset(asset_.asset);
+                    asset = Smartgeo.sanitizeAsset( asset_.asset );
                     asset.label = asset_.label;
-                    asset.geometry = JSON.parse(asset_.geometry);
-                    assets.push(asset);
+                    asset.geometry = JSON.parse( asset_.geometry );
+                    assets.push( asset );
                 }
-                $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                 $scope.$digest();
-            });
+            } );
         };
 
 
-        $scope.resetCriteria = function () {
+        $scope.resetCriteria = function() {
             $scope.selectedFamily = null;
             $scope.selectedCriteria = [];
             $scope.selectedCriteriaChangeHandler();
-            $('[ng-model=selectedCriteria]').select2("val", "");
+            $( '[ng-model=selectedCriteria]' ).select2( "val", "" );
         };
 
-        $scope.selectedCriteriaChangeHandler = function () {
+        $scope.selectedCriteriaChangeHandler = function() {
             var newSelectedCriteriaValues = {};
             for (var i = 0; i < $scope.selectedCriteria.length; i++) {
                 if ($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]) {
@@ -94,7 +93,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
             }
         };
 
-        $scope.advancedSearch = function (event) {
+        $scope.advancedSearch = function(event) {
             event.preventDefault();
 
             $scope.searchMessage = "";
@@ -120,7 +119,7 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
             }
 
             $scope.searchIsPerforming = true;
-            Smartgeo.findAssetsByCriteria(Site.current, advancedSearch, function (results) {
+            Smartgeo.findAssetsByCriteria( Site.current, advancedSearch, function(results) {
                 $scope.searchIsPerforming = false;
 
                 if (!results.length) {
@@ -134,13 +133,13 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
 
                 var assets = [];
                 for (var i = 0; i < results.length; i++) {
-                    assets.push(new Asset(Asset.convertRawRow(results[i])));
+                    assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
                     //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
                 }
-                $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                 $scope.$digest();
 
-            });
+            } );
         };
     }
-]);
+] );

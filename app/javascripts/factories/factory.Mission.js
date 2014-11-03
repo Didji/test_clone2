@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .factory('Mission', MissionFactory);
+        .module( 'smartgeomobile' )
+        .factory( 'Mission', MissionFactory );
 
     MissionFactory.$inject = ["$http", "Smartgeo"];
 
@@ -22,8 +22,8 @@
          * @name query
          * @desc Requête le serveur pour récupérer les missions de l'utilisateur connecté.
          */
-        Mission.query = function () {
-            return $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.showOT.json'));
+        Mission.query = function() {
+            return $http.get( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.showOT.json' ) );
         };
 
         return Mission;

@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('CensusController', CensusController);
+        .module( 'smartgeomobile' )
+        .controller( 'CensusController', CensusController );
 
     CensusController.$inject = ["Site"];
 

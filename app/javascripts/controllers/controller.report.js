@@ -1,10 +1,10 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('ReportController', ReportController);
+        .module( 'smartgeomobile' )
+        .controller( 'ReportController', ReportController );
 
     ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage", "Smartgeo"];
 
@@ -32,12 +32,12 @@
 
         vm.report = {};
         vm.sendingReport = false;
-        vm.isAndroid = navigator.userAgent.match(/Android/i);
+        vm.isAndroid = navigator.userAgent.match( /Android/i );
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
-        var intent = Storage.get('intent');
+        var intent = Storage.get( 'intent' );
 
         activate();
 
@@ -48,16 +48,16 @@
         function activate() {
             $rootScope.currentPage = "Saisie de compte-rendu";
 
-            if (!checkInputParameters($routeParams)) {
+            if (!checkInputParameters( $routeParams )) {
                 return;
             }
 
             bidouille();
 
-            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
+            vm.report = new Report( $routeParams.assets, $routeParams.activity, $routeParams.mission );
 
             for (var i = 0; i < vm.report.assets.length; i++) {
-                vm.assets.push(new Asset(vm.report.assets[i], applyDefaultValues));
+                vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
             }
         }
 
@@ -85,21 +85,21 @@
 
                 cond = (vm.report.fields[srcId] === act.condition);
                 switch (act.type) {
-                case "show":
-                    targetField.visible = cond;
-                    // Si targetField est une case à cocher, elle a peut-être
-                    // aussi des conséquences. Si une case à cocher devient invisible,
-                    // il faut qu'on la décoche et qu'on applique ses conséquences.
-                    if (!!!cond && targetField.type === 'O') {
-                        vm.report.fields[act.target] = 'N';
-                        vm.applyConsequences(act.target);
-                    }
-                    break;
-                case "require":
-                    targetField.required = cond;
-                    break;
-                default:
-                    targetField.required = !!targetField.required;
+                    case "show":
+                        targetField.visible = cond;
+                        // Si targetField est une case à cocher, elle a peut-être
+                        // aussi des conséquences. Si une case à cocher devient invisible,
+                        // il faut qu'on la décoche et qu'on applique ses conséquences.
+                        if (!!!cond && targetField.type === 'O') {
+                            vm.report.fields[act.target] = 'N';
+                            vm.applyConsequences( act.target );
+                        }
+                        break;
+                    case "require":
+                        targetField.required = cond;
+                        break;
+                    default:
+                        targetField.required = !!targetField.required;
                 }
             }
         }
@@ -110,7 +110,7 @@
          * @desc Annule le compte rendu
          */
         function cancel() {
-            $location.path('map/' + Site.current.id);
+            $location.path( 'map/' + Site.current.id );
         }
 
         /**
@@ -120,13 +120,13 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            var report = prepareReport(vm.report);
-            ReportSynchronizer.synchronize(report, function () {
+            var report = prepareReport( vm.report );
+            ReportSynchronizer.synchronize( report, function() {
                 vm.sendingReport = false;
                 if (!intent) {
                     endOfReport();
                 }
-            }, 5000);
+            }, 5000 );
             if (intent) {
                 endOfReport();
             }
@@ -138,15 +138,15 @@
          * @param {Report} reportin Le compte rendu a préparer
          * @returns {Object}
          */
-        function prepareReport(reportin){
-            var report = angular.copy(reportin),
+        function prepareReport(reportin) {
+            var report = angular.copy( reportin ),
                 i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
-                    report.fields[i] = Smartgeo.pad(report.fields[i].getHours()) + ":" + Smartgeo.pad(report.fields[i].getMinutes());
+                    report.fields[i] = Smartgeo.pad( report.fields[i].getHours() ) + ":" + Smartgeo.pad( report.fields[i].getMinutes() );
                 }
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
-                    report.fields[i] = report.fields[i].getFullYear() + "-" + Smartgeo.pad(report.fields[i].getMonth() + 1) + "-" + Smartgeo.pad(report.fields[i].getDate());
+                    report.fields[i] = report.fields[i].getFullYear() + "-" + Smartgeo.pad( report.fields[i].getMonth() + 1 ) + "-" + Smartgeo.pad( report.fields[i].getDate() );
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
@@ -154,7 +154,7 @@
             }
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
-                    'content': Smartgeo.getBase64Image(report.ged[i].content)
+                    'content': Smartgeo.getBase64Image( report.ged[i].content )
                 };
             }
             for (i in report.overrides) {
@@ -171,23 +171,23 @@
          * @desc Olalalala ... A remplacer par un ng-blur ?
          */
         function bidouille() {
-            angular.element(document.getElementsByClassName('reportForm')[0]).on('click', "input:not(input[type=checkbox]), select, label, .chosen-container", function () {
+            angular.element( document.getElementsByClassName( 'reportForm' )[0] ).on( 'click', "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
                 var elt;
-                if (angular.element(this).prop('tagName') !== "label") {
-                    elt = angular.element(this);
-                } else if (!angular.element(this).siblings('label').length) {
-                    elt = angular.element(this);
+                if (angular.element( this ).prop( 'tagName' ) !== "label") {
+                    elt = angular.element( this );
+                } else if (!angular.element( this ).siblings( 'label' ).length) {
+                    elt = angular.element( this );
                 } else {
-                    elt = angular.element(this).siblings('label');
+                    elt = angular.element( this ).siblings( 'label' );
                 }
                 if (!elt.offset().top) {
                     return;
                 }
-                angular.element('html, body').animate({
+                angular.element( 'html, body' ).animate( {
                     scrollTop: elt.offset().top - 10
-                }, 250);
+                }, 250 );
                 elt = null;
-            });
+            } );
 
         }
 
@@ -202,7 +202,7 @@
                 val;
             for (var i = 0, lim = vm.assets.length; i < lim; i++) {
                 var a = vm.assets[i].attributes,
-                    list = Site.getList(pkey, okey);
+                    list = Site.getList( pkey, okey );
                 if (!a) {
                     break;
                 }
@@ -238,25 +238,25 @@
 
                 if (field.type === 'T' && !def) {
                     var d = new Date();
-                    d.setHours(0);
-                    d.setMinutes(0);
+                    d.setHours( 0 );
+                    d.setMinutes( 0 );
                     fields[field.id] = d;
                 } else if (!def) {
                     continue;
                 } else if ('string' === typeof def) {
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
-                        def = date.getUTCFullYear() + '-' + Smartgeo.pad(date.getUTCMonth() + 1) + '-' + Smartgeo.pad(date.getUTCDate());
-                        fields[field.id] = new Date(def);
-                        vm.report.fields[field.id] = new Date(def);
+                        def = date.getUTCFullYear() + '-' + Smartgeo.pad( date.getUTCMonth() + 1 ) + '-' + Smartgeo.pad( date.getUTCDate() );
+                        fields[field.id] = new Date( def );
+                        vm.report.fields[field.id] = new Date( def );
                     } else {
                         fields[field.id] = def;
                         vm.report.fields[field.id] = def;
                         vm.report.roFields[field.id] = def;
                     }
                 } else {
-                    def = getValueFromAssets(def.pkey, vm.report.activity.okeys[0]);
-                    vm.report.roFields[field.id] = formatFieldEntry(def);
+                    def = getValueFromAssets( def.pkey, vm.report.activity.okeys[0] );
+                    vm.report.roFields[field.id] = formatFieldEntry( def );
                     vm.report.overrides[field.id] = '';
                     fields[field.id] = def;
                 }
@@ -277,10 +277,10 @@
             var str = [];
             for (var a in val) {
                 if (val[a]) {
-                    str.push(val[a]);
+                    str.push( val[a] );
                 }
             }
-            return str.join(', ');
+            return str.join( ', ' );
         }
 
         /**
@@ -289,15 +289,15 @@
          */
         function endOfReport() {
             if (intent.report_url_redirect) {
-                intent.report_url_redirect = injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
+                intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
                 if (window.SmartgeoChromium && SmartgeoChromium.redirect) {
-                    SmartgeoChromium.redirect(decodeURI(intent.report_url_redirect));
+                    SmartgeoChromium.redirect( decodeURI( intent.report_url_redirect ) );
                 } else {
-                    window.open(intent.report_url_redirect, "_blank");
+                    window.open( intent.report_url_redirect, "_blank" );
                 }
             }
-            Storage.remove('intent');
-            $location.path('map/' + Site.current.id);
+            Storage.remove( 'intent' );
+            $location.path( 'map/' + Site.current.id );
         }
 
         /**
@@ -307,10 +307,10 @@
          */
         function injectCallbackValues(url) {
             var injectedValues;
-            if (url.indexOf('[LABEL_INDEXED_FIELDS]') !== -1) {
+            if (url.indexOf( '[LABEL_INDEXED_FIELDS]' ) !== -1) {
                 injectedValues = '';
                 for (var field in vm.report.fields) {
-                    if (vm.report.fields.hasOwnProperty(field)) {
+                    if (vm.report.fields.hasOwnProperty( field )) {
                         var val = vm.report.fields[field];
                         // /!\ UGLY ALERT WORKS WITH ONLY ONE ASSETS
                         if (typeof val === 'object') {
@@ -322,17 +322,17 @@
                         injectedValues += 'fields[' + vm.report.activity._fields[field].label + ']=' + val + '&';
                     }
                 }
-                injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
-            } else if (url.indexOf('[KEY_INDEXED_FIELDS]') !== -1) {
+                injectedValues = injectedValues.slice( 0, injectedValues.length - 1 );
+                url = url.replace( "[LABEL_INDEXED_FIELDS]", injectedValues );
+            } else if (url.indexOf( '[KEY_INDEXED_FIELDS]' ) !== -1) {
                 injectedValues = '';
                 for (var field_ in vm.report.fields) {
-                    if (vm.report.fields.hasOwnProperty(field_)) {
+                    if (vm.report.fields.hasOwnProperty( field_ )) {
                         injectedValues += 'fields[' + field_ + ']=' + vm.report.fields[field_] + '&';
                     }
                 }
-                injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+                injectedValues = injectedValues.slice( 0, injectedValues.length - 1 );
+                url = url.replace( "[KEY_INDEXED_FIELDS]", injectedValues );
             }
             return url;
         }
@@ -345,13 +345,13 @@
          */
         function checkInputParameters(routeParams) {
             if (!routeParams.site) {
-                alertify.alert('Aucun site selectionné.');
+                alertify.alert( 'Aucun site selectionné.' );
                 return false;
             } else if (!routeParams.activity) {
-                alertify.alert('Aucune activité selectionnée.');
+                alertify.alert( 'Aucune activité selectionnée.' );
                 return false;
             } else if (!routeParams.assets) {
-                alertify.alert('Aucun patrimoine selectionné.');
+                alertify.alert( 'Aucun patrimoine selectionné.' );
                 return false;
             }
             return true;
