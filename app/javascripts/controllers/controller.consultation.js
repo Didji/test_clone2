@@ -211,7 +211,7 @@
 
         /**
          * @name close
-         * @desc TODO(@gulian) : Oulala faut faire mieux la.
+         * @desc Oulala faut faire mieux la.
          */
         function _close() {
             G3ME.fullscreen();
@@ -221,7 +221,7 @@
 
         /**
          * @name open
-         * @desc TODO(@gulian) : Oulala faut faire mieux la.
+         * @desc Oulala faut faire mieux la.
          */
         function _open() {
             G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );

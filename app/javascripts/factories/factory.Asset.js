@@ -207,6 +207,10 @@
             var nw = bounds.getNorthWest(),
                 se = bounds.getSouthEast(),
                 zone,
+                xmin = nw.lng,
+                xmax = se.lng,
+                ymin = se.lat,
+                ymax = nw.lat,
                 zoom = G3ME.map.getZoom(),
                 request = " SELECT id, asset, label, geometry,";
             request += " CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2 END AS priority ";
@@ -215,10 +219,10 @@
 
             for (var i = 0, length_ = Site.current.zones.length; i < length_; i++) {
                 if (G3ME.extents_match( Site.current.zones[i].extent, {
-                        xmin: nw.lng,
-                        ymin: se.lng,
-                        xmax: se.lat,
-                        ymax: nw.lat
+                        xmin: xmin,
+                        xmax: xmax,
+                        ymin: ymin,
+                        ymax: ymax
                     } )) {
                     zone = Site.current.zones[i];
                     break;
@@ -231,29 +235,34 @@
                 request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
             }
             request += " order by priority LIMIT 0,100 ";
-
-            SQLite.exec( zone.database_name, request, [nw.lng, se.lng, se.lat, nw.lat, zoom, zoom], function(results) {
+            SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(results) {
                 var assets = [];
                 for (var i = 0, numRows = results.length; i < numRows && assets.length < 10; i++) {
                     var asset = new Asset( Asset.convertRawRow( results.item( i ) ) );
-                    if (asset.geometry.type === "LineString") {
-                        var p1 = G3ME.map.latLngToContainerPoint( [center.lng, center.lat] ),
-                            p2, p3, distanceToCenter;
-                        for (var j = 0, length_ = asset.geometry.coordinates.length; j < (length_ - 1); j++) {
-                            p2 = j ? p3 : G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j] );
-                            p3 = G3ME.map.latLngToContainerPoint( asset.geometry.coordinates[j + 1] );
-                            distanceToCenter = L.LineUtil.pointToSegmentDistance( p1, p2, p3 );
-                            if (distanceToCenter <= 40) {
-                                assets.push( asset );
-                                break;
-                            }
-                        }
-                    } else {
+                    if (asset.intersectsWithCircle( center, 40 )) {
                         assets.push( asset );
                     }
                 }
                 return callback( assets );
             } );
+        };
+
+        Asset.prototype.intersectsWithCircle = function(center, radius) {
+            if (this.geometry.type === "LineString") {
+                var p1 = G3ME.map.latLngToContainerPoint( [center.lng, center.lat] ),
+                    p2, p3, distanceToCenter;
+                for (var j = 0, length_ = this.geometry.coordinates.length; j < (length_ - 1); j++) {
+                    p2 = j ? p3 : G3ME.map.latLngToContainerPoint( this.geometry.coordinates[j] );
+                    p3 = G3ME.map.latLngToContainerPoint( this.geometry.coordinates[j + 1] );
+                    distanceToCenter = L.LineUtil.pointToSegmentDistance( p1, p2, p3 );
+                    if (distanceToCenter <= radius) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
         };
 
         Asset.findAssetsByGuids = function(site, guids, callback, zones, partial_response) {
