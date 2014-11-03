@@ -261,61 +261,6 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
                 } );
         },
 
-        findAssetsByGuids: function(site, guids, callback, zones, partial_response) {
-
-            if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
-                return Smartgeo.findAssetsByGuids_big( site, guids, callback );
-            }
-
-            if (!zones) {
-                zones = site.zones;
-                partial_response = [];
-            }
-
-            if (window._SMARTGEO_STOP_SEARCH) {
-                window._SMARTGEO_STOP_SEARCH = false;
-                return callback( [] );
-            }
-
-            if (!zones || !zones.length) {
-                return callback( partial_response );
-            }
-
-            if (typeof guids !== 'object') {
-                guids = [guids];
-            }
-
-            if (guids.length === 0) {
-                return callback( [] );
-            }
-
-            var _this = this,
-                request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
-
-            SQLite.openDatabase( {
-                name: zones[0].database_name
-            } ).transaction( function(t) {
-                t.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)' );
-                t.executeSql( request, [], function(tx, rslt) {
-                    for (var i = 0; i < rslt.rows.length; i++) {
-                        var ast = angular.copy( rslt.rows.item( i ) );
-                        ast.okey = JSON.parse( ast.asset.replace( new RegExp( '\n', 'g' ), ' ' ) ).okey;
-                        ast.guid = ast.id;
-                        ast.geometry = JSON.parse( ast.geometry );
-                        partial_response.push( ast );
-                    }
-                    _this.findAssetsByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
-                }, function(tx, SqlError) {
-                        console.error( SqlError.message );
-                        console.error( request );
-                        alertify.log( SqlError.message );
-                    } );
-            }, function(SqlError) {
-                    console.error( SqlError );
-                    console.error( request );
-                } );
-        },
-
         findAssetsByLabel: function(site, label, callback, zones, partial_response) {
             if (!zones) {
                 zones = site.zones;

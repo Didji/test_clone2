@@ -123,6 +123,20 @@
         };
 
         /**
+         * @name getCenter
+         * @desc Retourne le centre d'un objet
+         */
+        Asset.getCenter = function(asset) {
+            var coordinates = asset.geometry.coordinates;
+
+            if (asset.geometry.type === "Point") {
+                return [coordinates[1], coordinates[0]];
+            } else {
+                return Asset.getLineStringMiddle( coordinates );
+            }
+        };
+
+        /**
          * @name addToMission
          * @desc Ajoute l'objet à une mission
          * @param {Object} mission
@@ -239,6 +253,28 @@
                     }
                 }
                 return callback( assets );
+            } );
+        };
+
+        Asset.findAssetsByGuids = function(site, guids, callback, zones, partial_response) {
+            if (!zones) {
+                zones = site.zones;
+                partial_response = [];
+            }
+            if (!zones || !zones.length || guids.length === 0 || window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
+                return callback( partial_response );
+            }
+            if (typeof guids !== 'object') {
+                guids = [guids];
+            }
+
+            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
+            SQLite.exec( zones[0].database_name, request, [], function(results) {
+                for (var i = 0; i < results.length; i++) {
+                    partial_response.push( Asset.convertRawRow( results.item( i ) ) );
+                }
+                Asset.findAssetsByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
             } );
         };
 

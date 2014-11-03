@@ -30,12 +30,14 @@
             var reportTargets = [],
                 reportLatLng, match;
 
-            if ( (match = assets.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            if ( (match = ("" + assets).match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 reportTargets = match[0];
-            } else if ( (match = assets.match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            } else if ( (match = ("" + assets).match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 reportLatLng = match[0] + ',' + match[1];
-            } else {
+            } else if (assets.search && assets.search( ',' ) !== -1) {
                 reportTargets = assets.split( ',' );
+            } else {
+                reportTargets = assets ;
             }
 
             if (mission && mission.indexOf( 'call-' ) !== -1) {

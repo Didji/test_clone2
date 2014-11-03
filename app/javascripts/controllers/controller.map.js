@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker) {
+    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport) {
 
         var LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -74,6 +74,9 @@
                     $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
                     $scope.$apply();
                 } ).addTo( G3ME.map );
+            }
+            if (intent.multi_report_target) {
+                new MultiReport( intent );
             }
         }
 

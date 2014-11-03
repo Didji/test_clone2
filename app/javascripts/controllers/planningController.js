@@ -9,7 +9,7 @@
  * @property {date} lastUpdate Date de dernière synchronisation
  */
 
-angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", "Storage", "$interval", "Site", function($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n, Storage, $interval, Site) {
+angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "Mission", "$location", "$timeout", "$filter", "G3ME", "i18n", "Storage", "$interval", "Site", "Asset", function($scope, $routeParams, $window, $rootScope, Smartgeo, Mission, $location, $timeout, $filter, G3ME, i18n, Storage, $interval, Site, Asset) {
 
         'use strict';
 
@@ -561,7 +561,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
 
             if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
                 $scope.stopCacheLoop = true;
-                return Smartgeo.findAssetsByGuids( Site.current, mission.done, function(assets) {
+                return Asset.findAssetsByGuids( Site.current, mission.done, function(assets) {
                     if (!$scope.doneAssetsCache[mission.id] || !$scope.doneAssetsCache[mission.id].length) {
                         $scope.doneAssetsCache[mission.id] = assets;
                     } else {
@@ -680,8 +680,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
             $scope.highlightMission( mission );
             $rootScope.$broadcast( "DELETEMARKERFORMISSION", mission, assetsCache[mission.id]._byId[assetid].marker );
             assetsCache[mission.id].splice( assetsCache[mission.id].indexOf( asset ), 1 );
-            delete assetsCache[mission.id]._byId[assetid]
-            ;
+            delete assetsCache[mission.id]._byId[assetid];
         };
 
         /**
@@ -691,7 +690,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
          * @desc
          */
         $scope.locateAsset = function(mission, assetid) {
-            Smartgeo.findAssetsByGuids( Site.current, assetid, function(assets) {
+            Asset.findAssetsByGuids( Site.current, assetid, function(assets) {
                 G3ME.zoomOnAsset( assets[0] );
             } );
         };

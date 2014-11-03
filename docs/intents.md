@@ -131,3 +131,6 @@ Intents
         "latlng": "45.80307994417619,4.773500561714172"
     }
     ```
+
+
+* Compte rendu simplifié, multi équipement : [*](http://localhost:12345/#/intent/report?report_activity=29&report_mission=1234&report_url_redirect=https://recette.m-ve.com/feuillederoute/cr-67428975&multi_report_target=1523220,1523221&multi_report_mission=1234&multi_report_activity=29&multi_report_zoom=19&multi_report_outmsg=Sortir%20de%20la&multi_report_center=48.280,4.034074&multi_report_redirect=https://recette.m-ve.com/feuillederoute/[DONE_ASSETS]&map_zoom=19&map_activity=29)
