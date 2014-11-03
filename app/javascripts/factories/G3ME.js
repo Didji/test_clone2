@@ -174,24 +174,28 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             G3ME.invalidateMapSize();
         },
 
-        setVisibility: function(layers) {
+        setVisibility: function(groups) {
             this.active_layers = [];
-            for (var i in layers) {
-                if (layers[i].status) {
-                    this.active_layers.push( i );
+            for (var j in groups) {
+                var layers = groups[j].layers;
+                for (var i in layers) {
+                    if (layers[i].status) {
+                        this.active_layers.push( i );
+                    }
                 }
             }
             this.canvasTile.redraw();
         },
         getVisibility: function() {
-            if (!!!this.active_layers) {
+            this.active_layers = this.active_layers;
+            if (!this.active_layers) {
                 return false;
             }
-            var rv = {};
+            var visibilities = {};
             for (var i in this.active_layers) {
-                rv[this.active_layers[i]] = true;
+                visibilities[this.active_layers[i]] = true;
             }
-            return rv;
+            return visibilities;
         },
 
         drawTempAssetTile: function(canvas, tilePoint) {

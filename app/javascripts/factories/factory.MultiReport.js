@@ -79,7 +79,7 @@
                 }
             }
             for (reportValue in intent.multi_report_reports) {
-                ReportSynchronizer.synchronize( intent.multi_report_reports[reportValue], function() {}, 5000 );
+                ReportSynchronizer.synchronize( intent.multi_report_reports[reportValue], angular.noop, 5000 );
             }
             if (intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
                 redirect = intent.multi_report_redirect.replace( "[DONE_ASSETS]", intent.multi_report_assets_id.join( ',' ) );

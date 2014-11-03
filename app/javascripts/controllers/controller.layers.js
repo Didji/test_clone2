@@ -25,7 +25,6 @@
 
         vm.symbology = Site.current.symbology;
         vm.groups = {};
-        vm.layers = {};
 
         activate();
 
@@ -39,22 +38,25 @@
                 currentLayer,
                 visibilities = G3ME.getVisibility();
 
+            // vm.groups = Storage.get( 'activeGroups' ) || {};
+
             for (var okey in Site.current.metamodel) {
                 currentMetamodel = Site.current.metamodel[okey];
-                if (!(currentMetamodel.group in vm.groups)) {
-                    vm.groups[currentMetamodel.group] = {
-                        label: currentMetamodel.group,
-                        status: true,
-                        layers: []
-                    };
+                if (!currentMetamodel.is_graphical) {
+                    continue;
                 }
-                currentLayer = {
-                    status: !!!visibilities || !!visibilities[currentMetamodel.okey],
-                    label: currentMetamodel.label,
-                    okey: currentMetamodel.okey
+                vm.groups[currentMetamodel.group] = vm.groups[currentMetamodel.group] || {
+                    label: currentMetamodel.group,
+                    status: true,
+                    layers: {}
                 };
-                vm.groups[currentMetamodel.group].layers.push( currentLayer );
-                vm.layers[currentMetamodel.okey] = currentLayer;
+                currentLayer = {
+                    status: !visibilities || visibilities[currentMetamodel.okey],
+                    label: currentMetamodel.label,
+                    okey: currentMetamodel.okey,
+                    src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].currentSrc
+                };
+                vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer ;
             }
 
             for (var label in vm.groups) {
@@ -69,7 +71,7 @@
          * @param {Object} group Groupe à switcher
          */
         function checkGroup(group) {
-            var status = false,
+            var status = group.status,
                 layers = group.layers;
             for (var i = 0; i < layers.length; i++) {
                 status = status || layers[i].status;
@@ -85,20 +87,16 @@
             for (var i in vm.groups) {
                 checkGroup( vm.groups[i] );
             }
-            G3ME.setVisibility( vm.layers );
+            G3ME.setVisibility( vm.groups );
         }
 
         /**
          * @name updateGroups
          * @desc Met à jour les groupes
-         * @param {Object} group Groupe à mettre à jour
          */
         function updateGroups(group) {
-            var status = group.status,
-                layers = group.layers;
-
-            for (var i in layers) {
-                layers[i].status = status;
+            for (var i in group.layers) {
+                group.layers[i].status = group.status;
             }
             refreshView();
         }
