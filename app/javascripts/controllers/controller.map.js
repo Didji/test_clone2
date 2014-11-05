@@ -6,24 +6,28 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site"];
+    MapController.$inject = ["$scope", "$routeParams", "$window", "$rootScope", "SQLite", "G3ME", "Smartgeo", "$location", "i18n", "Icon", "$timeout", "Asset", "Site", "Installer"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site) {
+    function MapController($scope, $routeParams, $window, $rootScope, SQLite, G3ME, Smartgeo, $location, i18n, Icon, $timeout, Asset, Site, Installer) {
 
         var vm = this;
 
         $rootScope.currentPage = "Cartographie";
         var missionsClusters = {},
-        myLastPositionMarker = null;
+            myLastPositionMarker = null;
         Site.setCurrent($routeParams.site);
 
         window.SMARTGEO_CURRENT_SITE = window.SMARTGEO_CURRENT_SITE || Smartgeo.get_('sites')[$routeParams.site];
 
         var LAST_USERS_LOCATION = [];
+
+        if (Date.now() - Site.current.timestamp * 1000 > 86400000) {
+            Installer.update(Site.current);
+        }
 
         if (!window.SMARTGEO_CURRENT_SITE.activities._byId) {
             window.SMARTGEO_CURRENT_SITE.activities._byId = {};
@@ -114,7 +118,8 @@
         }
 
 
-        var coords, radius_p = 40,
+        var coords,
+            radius_p = 40,
             baseRequest = " SELECT id, asset,";
         baseRequest += "       label,";
         baseRequest += "       geometry,";
@@ -157,11 +162,11 @@
             for (var i = 0, length_ = window.SMARTGEO_CURRENT_SITE.zones.length; i < length_; i++) {
                 zone = window.SMARTGEO_CURRENT_SITE.zones[i];
                 if (G3ME.extents_match(zone.extent, {
-                    xmin: xmin,
-                    ymin: ymin,
-                    xmax: xmax,
-                    ymax: ymax
-                })) {
+                        xmin: xmin,
+                        ymin: ymin,
+                        xmax: xmax,
+                        ymax: ymax
+                    })) {
                     break;
                 }
             }
@@ -240,9 +245,9 @@
                     [extent.ymin, extent.xmin],
                     [extent.ymax, extent.xmax]
                 ], {
-                    maxZoom: 19,
-                    animate: false
-                });
+                        maxZoom: 19,
+                        animate: false
+                    });
             } else {
                 alertify.error("Extent non valide");
             }
@@ -346,11 +351,11 @@
 
                 assetsCache[i].marker = L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
 
-                if(assetsCache[i].selected){
-                    assetsCache[i].marker.setIcon(Icon.get('SELECTED_MISSION'))  ;
-                } else if(!mission.activity || mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type !== "night_tour"){
-                    assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_MISSION')) ;
-                } else if(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour"){
+                if (assetsCache[i].selected) {
+                    assetsCache[i].marker.setIcon(Icon.get('SELECTED_MISSION'));
+                } else if (!mission.activity || mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type !== "night_tour") {
+                    assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_MISSION'));
+                } else if (mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour") {
                     assetsCache[i].marker.setIcon(Icon.get('NON_SELECTED_NIGHTTOUR'));
                 }
 
@@ -372,7 +377,7 @@
         });
 
         $scope.$on("DELETEMARKERFORMISSION", function(event, mission, marker) {
-             missionsClusters[mission.id].removeLayer(marker) ;
+            missionsClusters[mission.id].removeLayer(marker);
         });
 
         $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions) {
@@ -391,10 +396,10 @@
             missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
                     return new L.DivIcon({
-                        html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-                        className: 'marker-cluster-done',
-                        iconSize: new L.Point(40, 40)
-                    });
+                            html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                            className: 'marker-cluster-done',
+                            iconSize: new L.Point(40, 40)
+                        });
                 },
                 disableClusteringAtZoom: $scope.DISABLE_CLUSTER_AT_ZOOM,
                 maxClusterRadius: $scope.MAX_CLUSTER_RADIUS
@@ -423,7 +428,7 @@
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
-            $scope.traces = $scope.traces ||  {};
+            $scope.traces = $scope.traces || {};
             var geoJSON = {
                 "type": "LineString",
                 "coordinates": mission.trace,
