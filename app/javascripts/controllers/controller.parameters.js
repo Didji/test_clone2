@@ -21,6 +21,7 @@
 
         vm.site = window.SMARTGEO_CURRENT_SITE.label ;
         vm.updating = false;
+        vm.lastUpdate = window.SMARTGEO_CURRENT_SITE.timestamp;
 
         /**
          * @name confirmUpdate

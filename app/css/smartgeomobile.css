@@ -843,3 +843,8 @@ transform: scale(2);
     color: #fd9122;
 }
 
+.lastUpdate{
+    color: white;
+    padding: 10px 0 0 5px;
+ font-size: 13px;
+}
