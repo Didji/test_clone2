@@ -155,8 +155,8 @@ angular.module('smartgeomobile').factory('Installer', function(SQLite, Smartgeo,
                         extent: extent,
                         assets: [],
                         insert_requests: [],
-                        table_name: JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, ''),
-                        database_name: JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, '')
+                        table_name: site.id + JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, ''),
+                        database_name: site.id + JSON.stringify(extent).replace(/\.|-|{|}|,|:|xmin|xmax|ymin|ymax|"/g, '')
                     });
                 }
             }
