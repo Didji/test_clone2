@@ -40,13 +40,13 @@
             <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
         </p>
 
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="locateMission(mission)" ng-show='mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="locateMission(mission)" ng-show='mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'>
             <span class="fa fa-search fa-3x"></span>
             <br/>
             <i18n>_PLANNING_LOCATE_</i18n>
         </button>
 
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets"
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="showReport(mission)" ng-disabled="!mission.selectedAssets"
           ng-show='mission.assets.length > 0 && activities._byId[mission.activity.id].type != "night_tour" && (!mission.objectNotFound || !mission.activity)'>
             <span class="fa fa-file-text fa-3x"></span>
             <span ng-show='mission.selectedAssets > 0' style="float: right;margin-left: -30px;" class="badge badge-primary">{{mission.selectedAssets}}</span>
@@ -54,7 +54,7 @@
             <i18n>_PLANNING_WRITE_</i18n>
         </button>
 
-        <button style='min-width: 110px' class="btn btn-warning" ng-click="launchNightTour(mission)"
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="launchNightTour(mission)"
           ng-show='activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
             <span class="fa fa-lightbulb-o fa-3x"></span>
             <br>
