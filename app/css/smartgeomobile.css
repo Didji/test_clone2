@@ -283,7 +283,7 @@ img.leaflet-tile {
     font-size: 2em;
     line-height: 35px;
     color: #FFF;
-    padding-left:10px;
+    padding-left: 7px;
     background-color: #fd9122;
 }
 
@@ -848,4 +848,5 @@ transform: scale(2);
     color: white;
     padding: 10px 0 0 5px;
  font-size: 13px;
+
 }
