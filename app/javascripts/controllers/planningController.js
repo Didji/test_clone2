@@ -373,7 +373,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             mission = $rootScope.missions[mission.id];
             mission.isLoading = true;
             mission.openned = !mission.openned;
-            if (mission.opened) $rootScope.$broadcast("DESACTIVATE_POSITION");
+            if (mission.opened) {
+                $rootScope.$broadcast("DESACTIVATE_POSITION");
+            }
             if (mission.openned && (!assetsCache[mission.id] || assetsCache[mission.id].length < mission.assets.length) && (mission.assets.length || !mission.activity)) {
 
                 return Smartgeo.findGeometryByGuids(window.SMARTGEO_CURRENT_SITE, mission.assets, function(assets) {
@@ -570,7 +572,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
         $scope.showDoneAssets = function(mission) {
             mission.isLoading = mission.displayDone = true;
 
-            if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
+            if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length)) && !$scope.stopCacheLoop) {
                 $scope.stopCacheLoop = true;
                 return Smartgeo.findAssetsByGuids(window.SMARTGEO_CURRENT_SITE, mission.done, function(assets) {
                     if (!$scope.doneAssetsCache[mission.id] || !$scope.doneAssetsCache[mission.id].length) {
