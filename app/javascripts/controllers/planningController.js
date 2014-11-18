@@ -74,8 +74,10 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
          * @desc
          */
         $scope.findNextMissions = function() {
-
             if ($scope.currentNextDay > $scope.maxBeginDate) {
+                setTimeout(function() {
+                    $scope.currentNextDay -= 86400000 ;
+                }, 2000);
                 return;
             }
 
