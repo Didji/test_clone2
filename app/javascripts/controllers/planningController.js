@@ -818,6 +818,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 }
                 if (isCompatible && in_[i].openned && !in_[i].objectNotFound) {
                     out.push(in_[i]);
+
                 }
             }
             return out;
