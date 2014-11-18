@@ -373,7 +373,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
             mission = $rootScope.missions[mission.id];
             mission.isLoading = true;
             mission.openned = !mission.openned;
-
+            if (mission.opened) $rootScope.$broadcast("DESACTIVATE_POSITION");
             if (mission.openned && (!assetsCache[mission.id] || assetsCache[mission.id].length < mission.assets.length) && (mission.assets.length || !mission.activity)) {
 
                 return Smartgeo.findGeometryByGuids(window.SMARTGEO_CURRENT_SITE, mission.assets, function(assets) {
@@ -410,6 +410,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $scope.highlightMission(mission);
                     if (locate !== false) {
                         $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
+                        $rootScope.$broadcast("DESACTIVATE_POSITION");
                     }
                     if (mission.displayDone) {
                         $scope.showDoneAssets(mission);
@@ -441,7 +442,6 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     $rootScope.$broadcast('__MAP_HIDE_TRACE__', mission);
                 }
             }
-
             mission.isLoading = false;
         };
 
@@ -457,6 +457,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 mission.extent = G3ME.getExtentsFromAssetsList(assetsCache[mission.id]);
             }
             $rootScope.$broadcast('__MAP_SETVIEW__', mission.extent);
+            $rootScope.$broadcast("DESACTIVATE_POSITION");
         };
 
         /**
