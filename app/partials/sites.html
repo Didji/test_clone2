@@ -9,7 +9,7 @@
             <div ng-show='!siteListController.sites.length'>
                 <p class="text-danger">Erreur : Votre terminal n'est pas connecté au serveur et aucun site n'a été installé préalablement.</p>
             </div>
-            <div ng-repeat="site in siteListController.sites track by site.id | orderBy:'label'" ng-show="site.installed">
+            <div ng-repeat="site in siteListController.sites | orderBy:'label' track by site.id" ng-show="site.installed">
                 <div style="margin-bottom:5px" class="btn-group has-carret" >
                     <a ng-click="siteListController.select(site)" class="btn btn-primary">{{site.label}}</a>
                     <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -24,7 +24,7 @@
                     </ul>
                 </div>
             </div>
-            <p ng-repeat="site in siteListController.sites track by site.id | orderBy:'label'" ng-show="!site.installed">
+            <p ng-repeat="site in siteListController.sites | orderBy:'label' track by site.id" ng-show="!site.installed">
                 <a href="#/sites/install/{{site.id}}" class="btn btn-default">{{site.label}}</a>
             </p>
         </div>
