@@ -398,6 +398,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 $scope.mission.extent = G3ME.getExtentsFromAssetsList($scope.assetsCache[$scope.mission.id]);
             }
             $rootScope.$broadcast('__MAP_SETVIEW__', $scope.mission.extent);
+            $rootScope.$broadcast("DESACTIVATE_POSITION");
         };
 
         /**
