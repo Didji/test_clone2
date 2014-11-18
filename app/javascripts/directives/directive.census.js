@@ -188,6 +188,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
                 };
 
                 $scope.confirmDelete = function(node){
+                    // TODO: Internationalisation.
                     alertify.confirm('Supprimer '+node.fields[window.SMARTGEO_CURRENT_SITE.metamodel[node.okey].ukey]+' ?', function (yes) {node.delete();$scope.$apply()});
                 };
             }
