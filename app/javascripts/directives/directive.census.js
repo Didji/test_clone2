@@ -69,6 +69,10 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAssetF
 
                     Smartgeo.getCurrentLocation(function(lng, lat, alt, acc){
                         node.geometry = [lat, lng];
+                        if (node.layer) {
+                            G3ME.map.removeLayer(node.layer);
+                            delete node.layer;
+                        }
                         node.layer = L.marker(node.geometry, {
                             icon: L.icon({
                                 iconUrl: window.SMARTGEO_CURRENT_SITE.symbology['' + node.okey + $scope.defaultClassIndex].style.symbol.icon,
