@@ -28,7 +28,7 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
             this._2pi = 2 * Math.PI;
             this._pi4 = Math.PI / 4;
             this.DEG_TO_RAD = Math.PI / 180;
-            this.minDistanceToALabel = 15;
+            this.minDistanceToALabel = 3;
             this.map = new L.map(this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
@@ -273,18 +273,18 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     lat: nw.y,
                     lng: nw.x
                 }),
-                margin = 0.00005,
-                ymin = se.y - margin,
-                ymax = nw.y + margin,
-                xmin = nw.x - margin,
-                xmax = se.x + margin,
+                marginx = nw.x - se.x,
+                marginy = nw.y - se.y,
+                ymin = se.y - marginy,
+                ymax = nw.y + marginy,
+                xmin = nw.x - marginx,
+                xmax = se.x + marginx,
                 _2pi = 2 * Math.PI,
                 _pi4 = Math.PI / 4,
                 dotSize = Math.floor(0.5 + (7 / (19 - zoom))),
                 parse = window.JSON.parse,
                 symbology = window.SMARTGEO_CURRENT_SITE.symbology,
                 imageFactor = 1,
-                // imageFactor = Math.floor(30 / (22 - zoom)) / 10,
                 imageFactor_2 = 0.5,
                 scale = 256 * Math.pow(2, zoom),
                 xscale = canvas.width / Math.abs(xmax - xmin),
@@ -295,30 +295,18 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                 delta_y = initialTopLeftPointY - nwmerc.y,
                 DEG_TO_RAD = Math.PI / 180,
                 buffer = 100 / xscale,
-                drawnLabels = [],
                 labelCache = [],
                 minDistanceToALabel = 15;
 
 
             function drawLabel(ctx, txt, size, x, y, angle, color) {
+                var _measure = ctx.measureText(txt);
+                var _height = size / 2;
+                var _width = _measure.width;
 
                 ctx.save();
-
-                // Anticollision primaire.
-                var cur;
                 ctx.fillStyle = color;
-                for (var i = 0, lim = drawnLabels.length; i < lim; i++) {
-                    cur = drawnLabels[i];
-                    if ((x < (cur.x + cur.width + minDistanceToALabel)) &&
-                        (x > (cur.x - minDistanceToALabel)) &&
-                        (y < (cur.y + cur.width + minDistanceToALabel)) &&
-                        (y > (cur.y - minDistanceToALabel))) {
-                        return;
-                    }
-                }
-                var _width = ctx.measureText(txt).width;
-
-
+                
                 ctx.translate(x, y);
                 var offset_x = size * imageFactor_2 + 1;
                 var offset_y = 0;
@@ -327,13 +315,6 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
                     offset_x = -_width / 2;
                     offset_y = -4;
                 }
-
-                drawnLabels.push({
-                    x: x + offset_x,
-                    y: y + offset_y,
-                    width: _width
-                });
-
                 ctx.font = (size / 2) + 'px Arial';
                 ctx.strokeText(txt, offset_x, offset_y);
                 ctx.fillText(txt, offset_x, offset_y);
@@ -767,49 +748,96 @@ angular.module('smartgeomobile').factory('G3ME', function (SQLite, Smartgeo, $ro
 
         }
         if (zoom > 16) {
-            drawLabels(ctx, labelCache,drawnLabels);
+            drawLabels(ctx, labelCache, drawnLabels);
         }
         G3ME.canvasTile.tileDrawn(canvas);
 
     }
 
-    function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels_) {
-        ctx.save();
-        var cur;
-        if(ctx.fillStyle !== color.toLowerCase()){
-            ctx.fillStyle = color;
-        }
+    function isPointInRect(x, y, minx, miny, maxx, maxy) {
+        return (
+            x >= minx
+            && x <= maxx
+            && y >= miny
+            && y <= maxy
+        );
+    }
+    
+    function isThereAnAutoCollision(x, y, width, height, drawnLabels_) {
+        var cur, curXmin, curXmax, curYmin, curYmax,
+            myXmin = x,
+            myYmin = y,
+            myXmax = x + width,
+            myYmax = y + height;
+            
         for (var i = 0, lim = drawnLabels_.length; i < lim; i++) {
             cur = drawnLabels_[i];
-            if ((x < (cur.x + cur.width + G3ME.minDistanceToALabel)) &&
-                (x > (cur.x - G3ME.minDistanceToALabel)) &&
-                (y < (cur.y + cur.width + G3ME.minDistanceToALabel)) &&
-                (y > (cur.y - G3ME.minDistanceToALabel))) {
-                return;
+            curXmin = cur.x - G3ME.minDistanceToALabel;
+            curXmax = cur.x + cur.width + G3ME.minDistanceToALabel;
+            curYmin = cur.y - G3ME.minDistanceToALabel;
+            curYmax = cur.y + cur.height + G3ME.minDistanceToALabel;
+            
+            // Premier cas : je chevauche sur l'emprise courante : 
+            if (isPointInRect(myXmin, myYmin, curXmin, curYmin, curXmax, curYmax)) {
+                return true;
+            }
+            if (isPointInRect(myXmin, myYmax, curXmin, curYmin, curXmax, curYmax)) {
+                return true;
+            }
+            if (isPointInRect(myXmax, myYmin, curXmin, curYmin, curXmax, curYmax)) {
+                return true;
+            }
+            if (isPointInRect(myXmax, myYmax, curXmin, curYmin, curXmax, curYmax)) {
+                return true;
+            }
+            
+            // Deuxième cas : j'englobe complètement l'emprise courante.
+            if (myXmin <= curXmin && myXmax >= curXmax && myYmin <= curYmin && myYmax >= curYmax) {
+                return true;
             }
         }
-        var _width = ctx.measureText(txt).width;
-
-
-        ctx.translate(x, y);
+        return false;
+    }
+    
+    
+    function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels_) {
+        
         var offset_x = size * 0.5 + 1;
         var offset_y = 0;
         if (angle) {
-            ctx.rotate(angle * G3ME.DEG_TO_RAD);
             offset_x = -_width / 2;
             offset_y = -4;
+        }
+        var newFont = (size / 2) + 'px Arial' ;
+        if(ctx.font !== newFont){
+            ctx.font = newFont;
+        }
+        
+        var _measure = ctx.measureText(txt);
+        var _height = size / 2;
+        var _width = _measure.width;
+
+        if (isThereAnAutoCollision(x + offset_x, y + offset_y, _width, _height, drawnLabels_)) {
+            return;
+        }
+
+        ctx.save();
+        if(ctx.fillStyle !== color.toLowerCase()){
+            ctx.fillStyle = color;
+        }
+        
+        ctx.translate(x, y);
+        if (angle) {
+            ctx.rotate(angle * G3ME.DEG_TO_RAD);
         }
 
         drawnLabels_.push({
             x: x + offset_x,
             y: y + offset_y,
-            width: _width
+            width: _width,
+            height: _height
         });
 
-        var newFont = (size / 2) + 'px Arial' ;
-        if(ctx.font !== newFont){
-            ctx.font = newFont;
-        }
         ctx.strokeText(txt, offset_x, offset_y);
         ctx.fillText(txt, offset_x, offset_y);
         ctx.restore();
