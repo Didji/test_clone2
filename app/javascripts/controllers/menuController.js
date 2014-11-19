@@ -8,8 +8,8 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location",
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location", "$filter",
+    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location, $filter) {
 
         'use strict';
 
@@ -21,6 +21,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function() {
+            vm.persistence = Smartgeo.get("persistence.menu");
 
             vm.display = true;
 
@@ -90,7 +91,6 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 action: 'activateConsultation',
             }];
 
-
             vm.applyVisibility();
 
             $rootScope.$on('DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable);
@@ -124,6 +124,25 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 }
             });
 
+            vm.$watch('persistence', function(event) {
+                if (null === vm.persistence) return;
+                vm.display = vm.persistence.display;
+                for(var menuIndex in vm.menuItems) {
+                    if(vm.menuItems[menuIndex].id === vm.persistence.activeMenuId) {
+                        vm.showItem(vm.menuItems[menuIndex]);
+                    }
+                }
+            });
+
+            $scope.$on("$destroy", function(event) {
+                Smartgeo.set(
+                    "persistence.menu", 
+                    {
+                        display: vm.display,
+                        activeMenuId: $filter('filter')(vm.menuItems, {displayItemContent: true})[0].id
+                    }
+                );
+            });
         };
 
         /**
