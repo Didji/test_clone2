@@ -270,6 +270,11 @@
     margin-top: 5px;
 }
 
+
+div#left_panel_planning {
+    margin-bottom : 50px;
+}
+
 #left_panel_planning h5.planning_section_header span, #left_panel_planning h5.planning_section_header small{
     background: #525252;
     padding: 0px 5px;

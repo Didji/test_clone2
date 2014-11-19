@@ -188,6 +188,20 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
 
                     $scope.lastUpdate = (new Date()).getTime();
 
+
+                    var tmp = {};
+
+                    for (var day in $scope.nextMissions) {
+                        var sday = $scope.nextMissions[day] ;
+                        for (i = 0; i < sday.length; i++) {
+                            mission = sday[i];
+                            if ($rootScope.missions[mission.id]) {
+                                tmp[day] = tmp[day] || [];
+                                tmp[day].push(mission);
+                            }
+                        }
+                    }
+                    $scope.nextMissions = tmp;
                     $scope.applyFilterOnMission();
                     $scope.fillAssetsCache();
                 })
