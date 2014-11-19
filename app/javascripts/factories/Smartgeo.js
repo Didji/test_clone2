@@ -763,8 +763,9 @@ angular.module('smartgeomobile').factory('Smartgeo', function($http, $window, $r
         clearPersistence: function() {
             clearTimeout(Smartgeo.lastLeafletMapExtentTimeout);
             // Smartgeo.unset('lastLeafletMapExtent');
-            Smartgeo.unset('persitence.menu.open');
-            Smartgeo.unset('persitence.menu.open.level');
+            Smartgeo.unset('persistence.menu.open');
+            Smartgeo.unset('persistence.menu.open.level');
+            Smartgeo.unset('persistence.menu');
 
             if (!(Smartgeo.get('users') || {})[Smartgeo.get('lastUser')]) {
                 return;

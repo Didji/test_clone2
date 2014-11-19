@@ -1,3 +1,4 @@
+
 /**
  * @class       menuController
  * @classdesc   Controlleur du menu
@@ -8,8 +9,7 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location",
-    function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location) {
+angular.module('smartgeomobile').controller('menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location", "$filter", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location, $filter) {
 
         'use strict';
 
@@ -21,8 +21,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function() {
+            var persistence = Smartgeo.get("persistence.menu");
 
-            vm.display = true;
+            vm.display = (null === persistence) ? true : persistence.display;
 
             vm.homeIsDisplayed = true;
 
@@ -34,32 +35,32 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 icon: "fa fa-search",
                 template: 'partials/search.html',
                 forceLoadDOM: false
-            }, {
+                }, {
                 id: 'planning',
                 label: i18n.get('_MENU_PLANNING'),
                 icon: "fa fa-calendar",
                 template: 'partials/planning.html',
                 forceLoadDOM: true
-            }, {
+                }, {
                 id: 'census',
                 label: i18n.get('_MENU_CENSUS'),
                 icon: "fa fa-plus",
                 template: 'partials/census.html',
                 forceLoadDOM: false
-            }, {
+                }, {
                 id: 'activelayers',
                 label: i18n.get('_MENU_ACTIVE_LAYERS'),
                 icon: "fa fa-list-ul",
                 template: 'partials/layers.html',
                 forceLoadDOM: false
-            }, {
+                }, {
                 id: 'synccenter',
                 label: i18n.get('_MENU_SYNC'),
                 badge: 'toBeSync',
                 icon: "fa fa-refresh",
                 template: 'partials/synchronizationMenu.html',
                 forceLoadDOM: true
-            }, {
+                }, {
                 id: 'parameters',
                 label: i18n.get('_MENU_PARAMETERS'),
                 icon: "fa fa-cogs",
@@ -72,27 +73,27 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 label: 'Déconnexion',
                 icon: "fa fa-power-off redicon",
                 action: 'logout',
-            }, {
+                }, {
                 id: 'siteselection',
                 label: 'Selection de site',
                 icon: "fa fa-exchange",
                 action: 'changeSite',
                 specialVisibility: 'checkIfMoreThanOneSiteIsAvailable'
-            }, {
+                }, {
                 id: 'myposition',
                 label: 'Ma position',
                 icon: "fa fa-compass",
                 action: 'activatePosition',
-            }, {
+                }, {
                 id: 'consultation',
                 label: 'Consultation',
                 icon: "fa fa-info-circle",
                 action: 'activateConsultation',
             }];
 
-
             vm.applyVisibility();
 
+            $scope.$on("$destroy", destroyHandler);
             $rootScope.$on('DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable);
             $rootScope.$on('DEVICE_IS_OFFLINE', vm.checkIfMoreThanOneSiteIsAvailable);
             $rootScope.$on('_MENU_CLOSE_', function() {
@@ -124,7 +125,34 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 }
             });
 
+            for (var menuIndex in vm.menuItems) {
+                if ((null !== persistence) && (vm.menuItems[menuIndex].id === persistence.activeMenuId)) {
+                    vm.showItem(vm.menuItems[menuIndex]);
+                    break;
+                }
+            }
+
         };
+
+
+        /**
+         * @method
+         * @memberOf menuController
+         * @desc
+         */
+        function destroyHandler() {
+            var active = $filter('filter')(vm.menuItems, {
+                displayItemContent: true
+            });
+            Smartgeo.set(
+                "persistence.menu",
+                {
+                    display: vm.display,
+                    activeMenuId: active && active[0] && active[0].id
+                }
+            );
+        }
+
 
         /**
          * @method
