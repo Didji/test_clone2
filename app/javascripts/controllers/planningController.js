@@ -335,21 +335,22 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                 if (missions[reports[i].mission]) {
                     pendingAssets = reports[i].assets;
                     mission = missions[reports[i].mission];
-                    for (var j = 0, length = mission.assets.length; j < length; j++) {
+                    for (var j = 0, length_ = mission.assets.length; j < length_; j++) {
                         if (pendingAssets.indexOf(1 * mission.assets[j]) === -1 && pendingAssets.indexOf("" + mission.assets[j]) === -1) {
                             continue;
                         }
                         mission.done.push(mission.assets[j]);
                         mission.assets.splice(j--, 1);
-                        length--;
+                        length_--;
                     }
-                    for (j = 0; mission.postAddedAssets && j < mission.postAddedAssets.assets.length; j++) {
-                        index = pendingAssets.indexOf("" + mission.postAddedAssets.assets[j]);
+                    var tempassets = angular.copy(mission.postAddedAssets.assets);
+                    for (var k = 0, length_2 = tempassets.length; k < length_2; k++) {
+                        index = pendingAssets.indexOf("" + tempassets[k]);
                         if (index === -1) {
                             continue;
                         }
-                        mission.postAddedAssets.done.push(mission.postAddedAssets.assets[j]);
-                        mission.postAddedAssets.assets.splice(index, 1);
+                        mission.postAddedAssets.done.push(tempassets[k]);
+                        mission.postAddedAssets.assets.splice(mission.postAddedAssets.assets.indexOf(tempassets[k]), 1);
                     }
                 }
             }
