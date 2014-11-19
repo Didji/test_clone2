@@ -580,14 +580,9 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                     } else {
                         for (var i = 0; i < assets.length; i++) {
                             var toBeAdded = true;
-                            for (var j = 0; j < $scope.doneAssetsCache[mission.id].length; j++) {
-                                if ($scope.doneAssetsCache[mission.id][j].id === assets[i].id) {
-                                    toBeAdded = false;
-                                    break;
-                                }
-                            }
-                            if (toBeAdded) {
+                            if (!$scope.doneAssetsCache[mission.id]._byId[assets[i].id]) {
                                 $scope.doneAssetsCache[mission.id].push(assets[i]);
+                                $scope.doneAssetsCache[mission.id]._byId[assets[i].id] = assets[i];
                             }
                         }
                     }
