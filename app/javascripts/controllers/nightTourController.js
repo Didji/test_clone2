@@ -172,7 +172,7 @@ angular.module('smartgeomobile').controller('nightTourController', ["$scope", "$
                 var ok = [],
                     ko = [],
                     asset;
-                for (var i in $scope.assetsCache) {
+                for (var i=0; i < $scope.assetsCache.length; i++) {
                     asset = $scope.assetsCache[i];
                     (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
                 }
