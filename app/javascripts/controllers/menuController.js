@@ -94,7 +94,7 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
             for(var menuIndex in vm.menuItems) {
                 if((null !== persistence) && (vm.menuItems[menuIndex].id === persistence.activeMenuId)) {
                     vm.showItem(vm.menuItems[menuIndex]);
-                    $scope.apply(); //TODO: Comprendre pourquoi la vue n'est pas mise à jour sans $apply
+                    $scope.apply(); //TODO(@alexandre-j): Comprendre pourquoi la vue n'est pas mise à jour sans $apply
                     break;
                 }
             }
