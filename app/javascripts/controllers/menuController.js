@@ -21,9 +21,9 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function() {
-            vm.persistence = Smartgeo.get("persistence.menu");
+            var persistence = Smartgeo.get("persistence.menu");
 
-            vm.display = true;
+            vm.display = (null === persistence) ? true : persistence.display;
 
             vm.homeIsDisplayed = true;
 
@@ -91,6 +91,14 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                 action: 'activateConsultation',
             }];
 
+            for(var menuIndex in vm.menuItems) {
+                if((null !== persistence) && (vm.menuItems[menuIndex].id === persistence.activeMenuId)) {
+                    vm.showItem(vm.menuItems[menuIndex]);
+                    $scope.apply(); //TODO: Comprendre pourquoi la vue n'est pas mise à jour sans $apply
+                    break;
+                }
+            }
+
             vm.applyVisibility();
 
             $rootScope.$on('DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable);
@@ -120,16 +128,6 @@ angular.module('smartgeomobile').controller('menuController', ["$scope", "$route
                         if (!$rootScope.censusAssets._byUUID[uuid].synced) {
                             vm.toSyncNumber++;
                         }
-                    }
-                }
-            });
-
-            vm.$watch('persistence', function(event) {
-                if (null === vm.persistence) return;
-                vm.display = vm.persistence.display;
-                for(var menuIndex in vm.menuItems) {
-                    if(vm.menuItems[menuIndex].id === vm.persistence.activeMenuId) {
-                        vm.showItem(vm.menuItems[menuIndex]);
                     }
                 }
             });
