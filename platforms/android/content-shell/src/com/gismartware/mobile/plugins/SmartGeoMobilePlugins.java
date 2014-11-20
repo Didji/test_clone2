@@ -56,6 +56,8 @@ public class SmartGeoMobilePlugins {
      */
     private static final String USER_AGENT = "Smartgeo Mobile";
 
+    private int[] databasesPointer = {0,0,0,0,0,0,0,0,0,0} ;
+
     private static final int TWO_MINUTES = 1000 * 60 * 2;
 
     private Context context;
@@ -288,6 +290,7 @@ public class SmartGeoMobilePlugins {
     public void getTileURLFromDB(String url, int z, int x, int y) {
         String xS = String.valueOf(x), yS = String.valueOf(y), zS = String.valueOf(z);
         final int databaseIndex = y % 10;
+        databasesPointer[databaseIndex]++ ;
         SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
         		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
@@ -317,7 +320,11 @@ public class SmartGeoMobilePlugins {
             }
         }
         cursor.close();
-        tilesDatabase.close();
+        databasesPointer[databaseIndex]-- ;
+        if(databasesPointer[databaseIndex] <= 0){
+            databasesPointer[databaseIndex] = 0 ;
+            tilesDatabase.close();
+        }
     }
 
     private class GetTileFromURLAndSetItToDatabase extends AsyncTask<String, Void, String> {
@@ -368,11 +375,17 @@ public class SmartGeoMobilePlugins {
                 String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
 
                 final int databaseIndex = Integer.parseInt(y) % 10 ;
+                databasesPointer[databaseIndex]++ ;
                 final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
                 		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
-                tilesDatabase.close();
+
+                databasesPointer[databaseIndex]-- ;
+                if(databasesPointer[databaseIndex] <= 0){
+                    databasesPointer[databaseIndex] = 0 ;
+                    tilesDatabase.close();
+                }
 
                 return "window.ChromiumCallbacks['15"
                     +"|" + z
