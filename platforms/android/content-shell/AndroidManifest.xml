@@ -28,7 +28,7 @@
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
 
-    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17" />
+    <uses-sdk android:targetSdkVersion="19" />
 
     <application android:name=".GimapMobileApplication"
         		android:label="Smartgeo"
