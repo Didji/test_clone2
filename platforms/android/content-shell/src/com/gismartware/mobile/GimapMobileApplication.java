@@ -14,8 +14,10 @@ import java.util.ResourceBundle;
 import org.chromium.base.PathUtils;
 import org.chromium.content.browser.ResourceExtractor;
 
+import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -49,6 +51,7 @@ public class GimapMobileApplication extends Application {
 
 	private GimapMobileMainActivity mCurrentActivity = null;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -60,23 +63,32 @@ public class GimapMobileApplication extends Application {
         WEB_ROOT = getCacheDir().getAbsolutePath() + File.separator + config.getString("application.directory");
 		DEFAULT_URL = WEB_ROOT + File.separator + config.getString("application.page.default");
 
-		//initialise le chemin vers les tuiles stock�es sur la carte SD externe si elle existe, interne sinon
-        String sdCard  = getExtSdCard() ;
-        if(sdCard != null) {
-            File extSdCardSlot = new File(sdCard);
-            if (extSdCardSlot.canWrite()) { //carte SD "mont�e" si on peut �crire ou lire dedans..
-                Log.d(TAG, "External SD Card detected @ " + extSdCardSlot.getPath() + "...");
-                //TODO: g�rer plusieurs cartes SD
-                EXT_APP_DIR = new File(extSdCardSlot, "Android/data/com.gismartware.mobile/");
-                if (!EXT_APP_DIR.exists()) {
-                    EXT_APP_DIR.mkdirs();
-                }
-                return ;
-            }
-        }
 
-		EXT_APP_DIR = context.getExternalFilesDir(null).getParentFile();
-		Log.d(TAG, "No external SD Card detected, use internal @ " + EXT_APP_DIR.getPath() + "...");
+        if (Build.VERSION.SDK_INT >= 19) {
+            File [] dirs = getExternalCacheDirs();
+            if(dirs.length > 1 && dirs[1] != null) {
+                EXT_APP_DIR = dirs[1];
+                Log.d(TAG, "Using SDCARD @" + EXT_APP_DIR.getPath());
+            } else {
+                EXT_APP_DIR = dirs[0];
+                Log.d(TAG, "Using internal memory @" + EXT_APP_DIR.getPath());
+            }
+        } else {
+            String sdCard  = getExtSdCard() ;
+            if(sdCard != null) {
+                File extSdCardSlot = new File(sdCard);
+                if (extSdCardSlot.canWrite()) {
+                    Log.d(TAG, "External SD Card detected @ " + extSdCardSlot.getPath() + "...");
+                    EXT_APP_DIR = new File(extSdCardSlot, "Android/data/com.gismartware.mobile/");
+                    if (!EXT_APP_DIR.exists()) {
+                        EXT_APP_DIR.mkdirs();
+                    }
+                    return ;
+                }
+            }
+            EXT_APP_DIR = context.getExternalFilesDir(null).getParentFile();
+            Log.d(TAG, "No external SD Card detected, use internal @ " + EXT_APP_DIR.getPath() + "...");
+        }
     }
 
     public static void initializeApplicationParameters() {
