@@ -1,5 +1,4 @@
-angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "ReportSynchronizer", "$filter", "$interval",
-    function($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval) {
+angular.module('smartgeomobile').controller('synchronizationMenuController', ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "$window", "i18n", "$timeout", "AssetFactory", "G3ME", "ReportSynchronizer", "$filter", "$interval", function($scope, $rootScope, $http, $location, Smartgeo, $window, i18n, $timeout, Asset, G3ME, ReportSynchronizer, $filter, $interval) {
 
         'use strict';
 
@@ -45,7 +44,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 for (var i = 0; i < assets.length; i++) {
                     var asset = $rootScope.censusAssets[i];
                     $rootScope.censusAssets._byUUID[asset.uuid] = asset;
-                    if (asset.synced && !asset.hide) {
+                    if (asset.synced && asset.hide !== true) {
                         $scope.hideAsset(asset);
                     }
                 }
@@ -105,7 +104,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             return Asset.synchronize(UIasset, function(asset) {
                 UIasset = asset || UIasset;
                 if (asset.synced && !asset.hide) {
-                    $scope.hideReport(asset, 0);
+                    $scope.hideAsset(asset, 0);
                 }
                 (callback || function() {})()
             });
@@ -146,7 +145,7 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
             var text;
             try {
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu ' + site.activities[report.activity].label + ' saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
-            } catch (e) {
+            } catch ( e ) {
                 text = 'Êtes vous sûr de vouloir supprimer le compte-rendu saisi le ' + $filter('date')(report.timestamp, 'dd/MM à HH:mm') + " ? Cette action est définitive. Le compte-rendu ne pourra être récupéré.";
             }
 
@@ -194,9 +193,13 @@ angular.module('smartgeomobile').controller('synchronizationMenuController', ["$
                 censusAssets = $rootScope.censusAssets || [],
                 size = 0;
             for (var i = 0; i < reports.length; i++)
-                if (!reports[i].synced) size++;
+                if (!reports[i].synced) {
+                    size++;
+            }
             for (var i = 0; i < censusAssets.length; i++)
-                if (!censusAssets[i].synced) size++;
+                if (!censusAssets[i].synced) {
+                    size++;
+            }
             return size;
         };
 
