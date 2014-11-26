@@ -357,7 +357,7 @@ angular.module('smartgeomobile').controller('planningController', ["$scope", "$r
                         mission.assets.splice(j--, 1);
                         length_--;
                     }
-                    var tempassets = angular.copy(mission.postAddedAssets.assets);
+                    var tempassets = angular.copy(mission.postAddedAssets && mission.postAddedAssets.assets || []);
                     for (var k = 0, length_2 = tempassets.length; k < length_2; k++) {
                         index = pendingAssets.indexOf("" + tempassets[k]);
                         if (index === -1) {
