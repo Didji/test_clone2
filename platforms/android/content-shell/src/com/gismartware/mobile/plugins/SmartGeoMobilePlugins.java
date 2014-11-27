@@ -8,6 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.math.BigInteger;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,6 +25,7 @@ import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.JavascriptInterface;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -33,6 +39,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -42,6 +49,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.gismartware.mobile.ActivityCode;
+import com.gismartware.mobile.G3dbDatabaseHelper;
 import com.gismartware.mobile.GimapMobileApplication;
 import com.gismartware.mobile.GimapMobileMainActivity;
 
@@ -66,6 +74,12 @@ public class SmartGeoMobilePlugins {
     private LocationManager locationManager ;
     private Location lastLocation ;
     private SimpleDateFormat pictureFileNameFormater;
+    private ThreadPoolExecutor threadPool;
+
+    private String tileUrl ;
+    private String tileUser;
+    private String tilePassword;
+    private String tileSite;
 
     private static String PHPSESSIONID = null;
 
@@ -97,6 +111,49 @@ public class SmartGeoMobilePlugins {
             public void onProviderEnabled(String provider) {}
             public void onProviderDisabled(String provider) {}
         };
+
+        // extend LinkedBlockingQueue to force offer() to return false conditionally
+        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>() {
+            private static final long serialVersionUID = -6903933921423432194L;
+            @Override
+            public boolean offer(Runnable e) {
+        /*
+         * Offer it to the queue if there is 1 or 0 items already queued, else
+         * return false so the TPE will add another thread. If we return false
+         * and max threads have been reached then the RejectedExecutionHandler
+         * will be called which will do the put into the queue.
+         *
+         * NOTE: I chose 1 to protect against race conditions where a task had
+         * been added to the queue but the threads had not dequeued it yet. But
+         * if there were more than 1, chances were greater that the current
+         * threads were not keeping up with the load.  If you want to be more
+         * aggressive about creating threads, then change this to: size() == 0
+         */
+                if (size() <= 1) {
+                    return super.offer(e);
+                } else {
+                    return false;
+                }
+            }
+        };
+        this.threadPool = new ThreadPoolExecutor(1 /*core*/, 50 /*max*/,
+                60 /*secs*/, TimeUnit.SECONDS, queue);
+        this.threadPool.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                try {
+            /*
+             * This does the actual put into the queue. Once the max threads
+             * have been reached, the tasks will then queue up.
+             */
+                    executor.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        });
+
     }
 
     @JavascriptInterface
@@ -121,6 +178,7 @@ public class SmartGeoMobilePlugins {
         this.lastLocation = null;
     }
 
+    @TargetApi(Build.VERSION_CODES.FROYO)
     @JavascriptInterface
     public void launchCamera(int callbackId) throws IOException {
         Log.d(TAG, "Request camera");
@@ -189,6 +247,7 @@ public class SmartGeoMobilePlugins {
         new Thread(runnable).start();
     }
 
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
     @JavascriptInterface
     public void getDeviceId() {
         String name = "Aucun nom trouvé";
@@ -202,6 +261,7 @@ public class SmartGeoMobilePlugins {
         		Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @JavascriptInterface
     public void vibrate(long ms) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -286,13 +346,15 @@ public class SmartGeoMobilePlugins {
         return provider1.equals(provider2);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @JavascriptInterface
     public void getTileURLFromDB(String url, int z, int x, int y) {
         String xS = String.valueOf(x), yS = String.valueOf(y), zS = String.valueOf(z);
         final int databaseIndex = y % 10;
         databasesPointer[databaseIndex]++ ;
-        SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
-        		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+
+        SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
+
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
         tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
 
@@ -314,7 +376,9 @@ public class SmartGeoMobilePlugins {
                     + " AND tile_column = " + x
                     + " AND tile_row = " + y
                     + " on database n°" + databaseIndex);
-                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, xS, yS, zS);
+
+
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite);
             } catch (Exception e){
                 Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
@@ -327,6 +391,7 @@ public class SmartGeoMobilePlugins {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     private class GetTileFromURLAndSetItToDatabase extends AsyncTask<String, Void, String> {
 
         @Override
@@ -334,6 +399,7 @@ public class SmartGeoMobilePlugins {
             return request(params);
         }
 
+        @TargetApi(Build.VERSION_CODES.FROYO)
         protected String request(String... params) {
             String url = params[0], x = params[1], y = params[2], z = params[3];
 
@@ -355,8 +421,11 @@ public class SmartGeoMobilePlugins {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if (statusCode == 403 && PHPSESSIONID != null) {
+                if (statusCode == 403 && !params[4].contains("getTuileTMS")) {
                     PHPSESSIONID = null ;
+                    return request(params);
+                } else if (statusCode == 403) {
+                    authenticate(params[4], params[5], params[6], params[7]);
                     return request(params);
                 } else if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
@@ -376,8 +445,9 @@ public class SmartGeoMobilePlugins {
 
                 final int databaseIndex = Integer.parseInt(y) % 10 ;
                 databasesPointer[databaseIndex]++ ;
-                final SQLiteDatabase tilesDatabase = SQLiteDatabase.openDatabase(
-                		GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+                SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
+                        //SQLiteDatabase.openDatabase(
+                	//GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
 
@@ -405,52 +475,43 @@ public class SmartGeoMobilePlugins {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site) {
-        new Authenticate().execute(url, user, password, site);
-    }
 
-    private class Authenticate extends AsyncTask<String, Void, Boolean> {
+        this.tileUrl = url ;
+        this.tileUser = user ;
+        this.tilePassword = password;
+        this.tileSite = site ;
 
-        @Override
-        protected Boolean doInBackground(String... params) {
-            final DefaultHttpClient client = new DefaultHttpClient();
+        final DefaultHttpClient client = new DefaultHttpClient();
 
-            StringBuffer url = new StringBuffer(params[0]);
-            url.append("&login=").append(params[1]).append("&pwd=").append(params[2]).append("&forcegimaplogin=true");
+        StringBuffer bufUrl = new StringBuffer(url);
+        bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
 
-            HttpPost req = new HttpPost(url.toString());
-            try {
-                HttpResponse response = client.execute(req);
+        HttpPost req = new HttpPost(bufUrl.toString());
+        try {
+            HttpResponse response = client.execute(req);
+            if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                //auth OK, on recupere l'identifiant de session
+                PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
+
+                //nouvelle requete  effectuer : slection du site
+                bufUrl = new StringBuffer(url);
+                bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
+                req = new HttpPost(bufUrl.toString());
+                response = client.execute(req);
                 if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    //auth OK, on recupere l'identifiant de session
-                    PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
-
-                    //nouvelle requete  effectuer : slection du site
-                    url = new StringBuffer(params[0]);
-                    url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
-                    req = new HttpPost(url.toString());
-                    response = client.execute(req);
-                    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        Log.d(TAG, "User " + params[1] + " authenticated on " + params[0]);
-                        return true;
-                    } else {
-                        Log.d(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
-                        return false;
-                    }
+                    Log.d(TAG, "User " + user + " authenticated on " + url);
                 } else {
-                    Log.d(TAG, "Bad supplied credentials!");
-                    return false;
+                    Log.d(TAG, "Site " + site + " unavailable for user " + user);
                 }
-            } catch (Exception e) {
-                Log.d(TAG, "Unable to authenticate user " + params[1] + " on url " + params[0] + " and site " + params[3], e);
+            } else {
+                Log.d(TAG, "Bad supplied credentials!");
             }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            view.evaluateJavaScript("window.ChromiumCallbacks[16](\"" + result.booleanValue() + "\");");
+        } catch (Exception e) {
+            Log.d(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
         }
     }
+
 }
