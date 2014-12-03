@@ -4,6 +4,7 @@
          <i18n ng-if="!parametersController.updating">_SYNC_UPDATE</i18n>
          <i18n ng-if=" parametersController.updating">_SITE_UPDATE</i18n> {{::parametersController.site}}
     </button>
+
     <button class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmRemove()">
         <span class="icon-refresh"></span> <i18n>_SYNC_UNINSTALL</i18n> {{::parametersController.site}}
     </button>

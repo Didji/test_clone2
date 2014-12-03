@@ -74,6 +74,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         node.layer = L.marker( node.geometry, {
                             icon: L.icon( {
                                 iconUrl: Site.current.symbology['' + node.okey + scope.defaultClassIndex].style.symbol.icon,
+
                                 iconAnchor: [16, 16]
                             } )
                         } ).addTo( G3ME.map );
@@ -194,8 +195,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     } );
                 };
             }
-
         };
-
     }
 ] );

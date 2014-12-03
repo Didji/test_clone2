@@ -79,7 +79,7 @@ $SMARTGEOMOBILE_GRADLEW_COMMAND >> /dev/null
 
 # [ANDROID] ZIP ALIGN IT
 echo "Alignement de l'APK"
-zipalign -f 4 "build/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
+zipalign -f 4 "build/outputs/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
 
 # [IOS] COPY FILE TO CORDOVA PROJECT
 echo "Copie des fichiers pour iOS"

@@ -208,7 +208,6 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
                 this_.__updateErrorCallback( response );
                 error( response );
             } );
-
         return this;
     };
 
@@ -225,7 +224,6 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             now = new Date();
 
         this.__getDeviceId( function(name, serial) {
-
             var license = {
                 'serial': licenseNumber,
                 'device_serial': serial,
@@ -239,7 +237,6 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
                 this_.__setLicense( license );
                 success( license );
             }, error );
-
         } );
 
 

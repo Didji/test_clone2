@@ -31,6 +31,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
             $rootScope.$watch( 'missions', function() {
                 Storage.set( 'missions_' + Storage.get( 'lastUser' ), $rootScope.missions || {} );
             } );
+
             $scope.nextMissions = {};
 
             $scope.applyFilterOnMission();
@@ -66,8 +67,10 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
          * @desc
          */
         $scope.findNextMissions = function() {
-
             if ($scope.currentNextDay > $scope.maxBeginDate) {
+                setTimeout( function() {
+                    $scope.currentNextDay -= 86400000 ;
+                }, 2000 );
                 return;
             }
 
@@ -178,6 +181,20 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
 
                     $scope.lastUpdate = (new Date()).getTime();
 
+
+                    var tmp = {};
+
+                    for (var day in $scope.nextMissions) {
+                        var sday = $scope.nextMissions[day] ;
+                        for (i = 0; i < sday.length; i++) {
+                            mission = sday[i];
+                            if ($rootScope.missions[mission.id]) {
+                                tmp[day] = tmp[day] || [];
+                                tmp[day].push( mission );
+                            }
+                        }
+                    }
+                    $scope.nextMissions = tmp;
                     $scope.applyFilterOnMission();
                     $scope.fillAssetsCache();
                 } )
@@ -325,21 +342,22 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
                 if (missions[reports[i].mission]) {
                     pendingAssets = reports[i].assets;
                     mission = missions[reports[i].mission];
-                    for (var j = 0, length = mission.assets.length; j < length; j++) {
+                    for (var j = 0, length_ = mission.assets.length; j < length_; j++) {
                         if (pendingAssets.indexOf( 1 * mission.assets[j] ) === -1 && pendingAssets.indexOf( "" + mission.assets[j] ) === -1) {
                             continue;
                         }
                         mission.done.push( mission.assets[j] );
                         mission.assets.splice( j--, 1 );
-                        length--;
+                        length_--;
                     }
-                    for (j = 0; mission.postAddedAssets && j < mission.postAddedAssets.assets.length; j++) {
-                        index = pendingAssets.indexOf( "" + mission.postAddedAssets.assets[j] );
+                    var tempassets = angular.copy( mission.postAddedAssets && mission.postAddedAssets.assets || [] );
+                    for (var k = 0, length_2 = tempassets.length; k < length_2; k++) {
+                        index = pendingAssets.indexOf( "" + tempassets[k] );
                         if (index === -1) {
                             continue;
                         }
-                        mission.postAddedAssets.done.push( mission.postAddedAssets.assets[j] );
-                        mission.postAddedAssets.assets.splice( index, 1 );
+                        mission.postAddedAssets.done.push( tempassets[k] );
+                        mission.postAddedAssets.assets.splice( mission.postAddedAssets.assets.indexOf( tempassets[k] ), 1 );
                     }
                 }
             }
@@ -363,7 +381,9 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
             mission = $rootScope.missions[mission.id];
             mission.isLoading = true;
             mission.openned = !mission.openned;
-
+            if (mission.opened) {
+                $rootScope.$broadcast( "DESACTIVATE_POSITION" );
+            }
             if (mission.openned && (!assetsCache[mission.id] || assetsCache[mission.id].length < mission.assets.length) && (mission.assets.length || !mission.activity)) {
 
                 return Smartgeo.findGeometryByGuids( Site.current, mission.assets, function(assets) {
@@ -398,8 +418,9 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
                         $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
                     }
                     $scope.highlightMission( mission );
-                    if (!!!locate) {
+                    if (locate !== false) {
                         $rootScope.$broadcast( '__MAP_SETVIEW__', mission.extent );
+                        $rootScope.$broadcast( "DESACTIVATE_POSITION" );
                     }
                     if (mission.displayDone) {
                         $scope.showDoneAssets( mission );
@@ -431,7 +452,6 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
                     $rootScope.$broadcast( '__MAP_HIDE_TRACE__', mission );
                 }
             }
-
             mission.isLoading = false;
         };
 
@@ -447,6 +467,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
                 mission.extent = G3ME.getExtentsFromAssetsList( assetsCache[mission.id] );
             }
             $rootScope.$broadcast( '__MAP_SETVIEW__', mission.extent );
+            $rootScope.$broadcast( "DESACTIVATE_POSITION" );
         };
 
         /**
@@ -559,7 +580,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
         $scope.showDoneAssets = function(mission) {
             mission.isLoading = mission.displayDone = true;
 
-            if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length && mission.activity)) && !$scope.stopCacheLoop) {
+            if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length)) && !$scope.stopCacheLoop) {
                 $scope.stopCacheLoop = true;
                 return Asset.findAssetsByGuids( Site.current, mission.done, function(assets) {
                     if (!$scope.doneAssetsCache[mission.id] || !$scope.doneAssetsCache[mission.id].length) {
@@ -567,14 +588,9 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
                     } else {
                         for (var i = 0; i < assets.length; i++) {
                             var toBeAdded = true;
-                            for (var j = 0; j < $scope.doneAssetsCache[mission.id].length; j++) {
-                                if ($scope.doneAssetsCache[mission.id][j].id === assets[i].id) {
-                                    toBeAdded = false;
-                                    break;
-                                }
-                            }
-                            if (toBeAdded) {
+                            if (!$scope.doneAssetsCache[mission.id]._byId[assets[i].id]) {
                                 $scope.doneAssetsCache[mission.id].push( assets[i] );
+                                $scope.doneAssetsCache[mission.id]._byId[assets[i].id] = assets[i];
                             }
                         }
                     }

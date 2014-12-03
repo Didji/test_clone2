@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smartgeo, G3ME, SQLite, Storage) {
+angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smartgeo, G3ME, SQLite, Storage, $rootScope) {
 
     'use strict';
 
@@ -68,26 +68,56 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
         asset.syncInProgress = true;
 
         $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), asset, {
-            timeout: timeout || Asset.synchronizeTimeout
+            timeout: 100000
         } ).success( function(data) {
-            for (var i in data) {
-                if (data[i][0] && (data[i][0].okey + "" === i + "")) {
-                    asset.synced = true ;
-                    asset.error = undefined ;
-                    Asset.__updateMapLayers();
-                    return;
+            asset.syncInProgress = false ;
+
+            for (var okey in data) {
+                if (window.SMARTGEO_CURRENT_SITE.metamodel[okey]) {
+                    break;
+                }
+                return;
+            }
+
+            for (var okey_ in data) {
+                for (var i = 0; i < data[okey_].length; i++) {
+                    Asset.save( data[okey_][i], window.SMARTGEO_CURRENT_SITE );
                 }
             }
-            Asset.synchronizeErrorCallback( data, false, asset );
+            Smartgeo.get_( 'census', function(census) {
+                census = census || [];
+                var alreadySaved = false ;
+                for (var i = 0; i < census.length; i++) {
+                    if (census[i].uuid === asset.uuid) {
+                        alreadySaved = true ;
+                        break;
+                    }
+                }
+                if (alreadySaved) {
+                    census[i].synced = true ;
+                } else {
+                    asset.synced = true ;
+                    census.push( asset );
+                }
+
+                Smartgeo.set_( 'census', census, function() {
+                    $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
+                    for (var i in G3ME.map._layers) {
+                        if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
+                            G3ME.map._layers[i].redraw();
+                        }
+                    }
+                    $rootScope.refreshSyncCenter();
+                    (callback || function() {})( asset );
+                } );
+            } );
         } ).error( function(data, code) {
             Asset.synchronizeErrorCallback( data, code, asset );
+            (callback || function() {})( asset );
         } ).finally( function() {
             Asset.m.release();
             Asset.log( asset );
-            asset.syncInProgress = false;
-            Asset.addToDatabase( asset, callback || function() {} );
         } );
-
     };
 
     Asset.synchronizeErrorCallback = function(data, code, asset) {
@@ -119,7 +149,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                 uuids: luuids
             } )
                 .success( function(data) {
-                    var ruuids = data.uuids || data;
+                    var ruuids = data.uuids || data ;
                     for (var uuid in ruuids) {
                         if (ruuids[uuid]) {
                             console.warn( uuid + ' must be deleted' );
@@ -156,6 +186,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @method
      * @memberOf Asset
      */
+
     Asset.getByUUID = function(uuid, callback) {
         if (!Asset.m.take()) {
             return Smartgeo.sleep( Asset.m.getTime(), function() {
@@ -164,6 +195,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
         }
 
         Storage.get_( 'census', function(assets) {
+
             Asset.m.release();
             assets = assets || [];
             var asset;

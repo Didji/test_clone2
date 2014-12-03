@@ -24,7 +24,7 @@
                     </ul>
                 </div>
             </div>
-            <p ng-repeat="site in siteListController.sites track by site.id | orderBy:'label'" ng-show="!site.installed">
+            <p ng-repeat="site in siteListController.sites | orderBy:'label' track by site.id" ng-show="!site.installed">
                 <a href="#/sites/install/{{site.id}}" class="btn btn-default">{{site.label}}</a>
             </p>
         </div>

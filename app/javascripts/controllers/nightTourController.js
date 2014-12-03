@@ -47,15 +47,14 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                     $scope.open();
                 } else {
                     $scope.stopFollowingPosition();
-                    if (!!oldval) {
+                    if (oldval === true) {
                         $rootScope.$broadcast( '_MENU_CLOSE_' );
                     }
-                    $scope.close();
                 }
             } );
 
             angular.element( $window ).bind( "resize", function() {
-                if ($scope.state === 'open') {
+                if ($rootScope.nightTourInProgress && $scope.state === 'open') {
                     $scope.close();
                     $scope.open();
                 }
@@ -68,7 +67,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 $scope.isFollowingMe = newval;
             } );
             $scope.$watch( 'isFollowingMe', function(newval) {
-                $scope[(!!newval ? 'start' : 'stop') + 'FollowingPosition']();
+                $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
             } );
 
             G3ME.map.on( 'dragend', function(event) {
@@ -225,6 +224,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                         (!!asset.isWorking ? ok : ko).push( asset.guid );
                     }
                 }
+                return false;
             }
             $scope.saving = true;
             $scope.sendKoReports( ko, function() {
@@ -384,7 +384,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             $scope.state = 'open';
             $( $( ".consultation-panel" )[1] ).addClass( 'open' ).css( 'width', Smartgeo._SIDE_MENU_WIDTH );
         };
-
 
         /**
          * @memberOf nightTourController

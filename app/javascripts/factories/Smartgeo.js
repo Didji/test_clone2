@@ -498,7 +498,7 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
             clearTimeout( Smartgeo.lastLeafletMapExtentTimeout );
             Storage.remove( 'persitence.menu.open' );
             Storage.remove( 'persitence.menu.open.level' );
-
+            Storage.remove( 'persistence.menu' );
             if (!(Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )]) {
                 return;
             }
