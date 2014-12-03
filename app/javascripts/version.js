@@ -1,2 +1,2 @@
-window.smargeomobileversion = "1.1" ;
+window.smargeomobileversion = "1.2" ;
 window.smargeomobilebuild = "alpha" ;
