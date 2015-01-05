@@ -8,7 +8,7 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location", "$filter", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location, $filter) {
+angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location", "$filter", "Storage", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location, $filter, Storage) {
 
         'use strict';
 
@@ -20,7 +20,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function() {
-            var persistence = Smartgeo.get( "persistence.menu" );
+            var persistence = Storage.get( "persistence.menu" );
 
             vm.display = (null === persistence) ? true : persistence.display;
 
@@ -145,7 +145,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             var active = $filter( 'filter' )( vm.menuItems, {
                 displayItemContent: true
             } );
-            Smartgeo.set(
+            Storage.set(
                 "persistence.menu",
                 {
                     display: vm.display,
@@ -190,7 +190,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Vérifie les sites disponibles pour proposer ou non l'option de changement de site.
          */
         vm.checkIfMoreThanOneSiteIsAvailable = function() {
-            vm.siteSelectionEnable = (Smartgeo.get( 'availableLocalSites' ) > 1) || (Smartgeo.get( 'online' ) && Smartgeo.get( 'availableRemoteSites' ) > 1);
+            vm.siteSelectionEnable = (Storage.get( 'availableLocalSites' ) > 1) || (Storage.get( 'online' ) && Storage.get( 'availableRemoteSites' ) > 1);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }

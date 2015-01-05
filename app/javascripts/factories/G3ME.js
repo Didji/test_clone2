@@ -11,7 +11,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         assetsMarkers: [],
 
         mapDiv: null,
-        mapDivId: null,
+        mapDivId: "smartgeo-map",
         databases: {},
 
         requestPool: {},
@@ -20,6 +20,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
 
         initialize: function(extent) {
 
+            this.mapDiv = document.getElementById( this.mapDivId );
             this.symbology = Site.current.symbology;
             this.CURRENT_ZOOM = false;
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
@@ -83,7 +84,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             };
 
             this.tempAssetTile.drawTile = function(canvas, tilePoint) {
-                Smartgeo.get_( 'census', function(census) {
+                Storage.get_( 'census', function(census) {
                     G3ME.drawTempAssetTile( canvas, tilePoint, census );
                 } );
             };
@@ -482,7 +483,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     xmin: xmin,
                     xmax: xmax
                 },
-                uuid = Smartgeo.uuid(),
+                uuid = window.uuid(),
                 request = G3ME.baseRequest.replace( "##UUID##", uuid );
 
             if (this.active_layers) {

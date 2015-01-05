@@ -84,7 +84,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                     Asset.save( data[okey_][i], window.SMARTGEO_CURRENT_SITE );
                 }
             }
-            Smartgeo.get_( 'census', function(census) {
+            Storage.get_( 'census', function(census) {
                 census = census || [];
                 var alreadySaved = false ;
                 for (var i = 0; i < census.length; i++) {
@@ -100,7 +100,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                     census.push( asset );
                 }
 
-                Smartgeo.set_( 'census', census, function() {
+                Storage.set_( 'census', census, function() {
                     $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
                     for (var i in G3ME.map._layers) {
                         if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {

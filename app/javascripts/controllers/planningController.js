@@ -723,7 +723,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
             var asset = assetsCache[mission.id]._byId[assetid];
             mission.assets.splice( mission.assets.indexOf( asset.guid ), 1 );
             mission.postAddedAssets.assets.splice( mission.postAddedAssets.assets.indexOf( asset.guid ), 1 );
-            Smartgeo.set( 'missions_' + Smartgeo.get( 'lastUser' ), $rootScope.missions );
+            Storage.set( 'missions_' + Smartgeo.get( 'lastUser' ), $rootScope.missions );
             $scope.highlightMission( mission );
             $rootScope.$broadcast( "DELETEMARKERFORMISSION", mission, assetsCache[mission.id]._byId[assetid].marker );
         };
