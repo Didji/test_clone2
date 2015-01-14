@@ -181,6 +181,9 @@
 
         function toggleConsultationPanelButtonMousedownHandler($event) {
             console.log( "toggleConsultationPanelButtonMousedownHandler;" );
+            if (navigator.userAgent.match( /Android/i )) {
+                $event.preventDefault();
+            }
             initialXPosition = $event.clientX;
             initialWidth = Smartgeo._SIDE_MENU_WIDTH;
             $( window ).bind( 'mousemove touchmove', mousemoveHandler );
