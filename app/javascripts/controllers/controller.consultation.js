@@ -24,7 +24,8 @@
         var vm = this;
 
         $rootScope.openLocatedReport = vm.openLocatedReport = openLocatedReport;
-        vm.toggleConsultationPanel = toggleConsultationPanel;
+        vm.toggleConsultationPanelButtonMousedownHandler = toggleConsultationPanelButtonMousedownHandler;
+        vm.mouseupHandler = mouseupHandler;
         vm.close = _close;
         vm.open = _open;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
@@ -41,7 +42,9 @@
         vm.spinnerOptions = {};
         vm.multiselection = {};
 
-        var PREOPEN_TIMER;
+        var PREOPEN_TIMER, initialXPosition, initialWidth,
+            currentXPosition,
+            finalXPosition;
 
         activate();
 
@@ -176,6 +179,39 @@
             $location.path( path );
         }
 
+        function toggleConsultationPanelButtonMousedownHandler($event) {
+            console.log( "toggleConsultationPanelButtonMousedownHandler;" );
+            initialXPosition = $event.clientX;
+            initialWidth = Smartgeo._SIDE_MENU_WIDTH;
+            $( window ).bind( 'mousemove touchmove', mousemoveHandler );
+            $( window ).bind( 'mouseup touchend', mouseupHandler );
+        }
+
+        function mousemoveHandler($event) {
+            console.log( "mousemoveHandler;" );
+            currentXPosition = $event.clientX ;
+            if (Math.abs(( initialXPosition - currentXPosition )) > 30) {
+                Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
+                $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
+                G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
+            }
+            if (vm.isOpen === false && Smartgeo._SIDE_MENU_WIDTH >= 80) {
+                _open();
+            } else if (Smartgeo._SIDE_MENU_WIDTH < 80) {
+                _close();
+            }
+        }
+
+        function mouseupHandler($event) {
+            console.log( "mouseupHandler;" );
+            $( window ).unbind( 'mousemove touchmove', mousemoveHandler );
+            $( window ).unbind( 'mouseup touchend', mouseupHandler );
+            finalXPosition = $event.clientX;
+            if (Math.abs(( initialXPosition - finalXPosition )) < 20) {
+                toggleConsultationPanel();
+            }
+        }
+
         /**
          * @name toggleConsultationPanel
          * @desc
@@ -217,6 +253,9 @@
             G3ME.fullscreen();
             vm.isOpen = false;
             $( ".consultation-panel" ).first().css( 'width', 0 );
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         }
 
         /**
@@ -224,12 +263,18 @@
          * @desc Oulala faut faire mieux la.
          */
         function _open() {
+            if (Smartgeo._SIDE_MENU_WIDTH > window.innerWidth) {
+                Smartgeo._SIDE_MENU_WIDTH = window.innerWidth - 70;
+            }
             G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
             if (Smartgeo.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast( '_MENU_CLOSE_' );
             }
             vm.isOpen = true;
             $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         }
 
     }

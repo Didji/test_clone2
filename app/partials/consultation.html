@@ -1,5 +1,7 @@
 <div ng-controller="ConsultationController as consultationController" class="consultation-panel" ng-class="{open : consultationController.isOpen}">
-    <div class="toggleConsultationPanelButton" ng-show="consultationController.groups" ng-click="consultationController.toggleConsultationPanel()">
+    <div class="toggleConsultationPanelButton" ng-show="consultationController.groups"
+    ng-mousedown="consultationController.toggleConsultationPanelButtonMousedownHandler($event)"
+    ng-mouseup="consultationController.toggleConsultationPanelButtonMouseupHandler($event)">
         <span class="fa fa-info"></span>
     </div>
     <div class="consultation-content">

@@ -47,6 +47,9 @@
 
             (Storage.get( 'user_position_activated' ) ? activatePosition : angular.noop)();
 
+            $scope.$on( "ACTIVATE_CONSULTATION", function() {
+                consultationIsEnabled = true;
+            } );
             $scope.$on( "$destroy", controllerDestroyHandler );
 
             $rootScope.activatePosition = activatePosition;

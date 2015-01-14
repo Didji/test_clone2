@@ -427,7 +427,6 @@ public class SmartGeoMobilePlugins {
                 final HttpEntity image = response.getEntity();
 
                 if (statusCode == 403 && !params[4].contains("getTuileTMS")) {
-                    PHPSESSIONID = null ;
                     return request(params);
                 } else if (statusCode == 403) {
                     authenticate(params[4], params[5], params[6], params[7]);
@@ -491,7 +490,7 @@ public class SmartGeoMobilePlugins {
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
-        StringBuffer bufUrl = new StringBuffer(url);
+        StringBuffer bufUrl = new StringBuffer(this.tileUrl);
         bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
 
         HttpPost req = new HttpPost(bufUrl.toString());
@@ -499,10 +498,9 @@ public class SmartGeoMobilePlugins {
             HttpResponse response = client.execute(req);
             if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 //auth OK, on recupere l'identifiant de session
-                PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
 
                 //nouvelle requete  effectuer : slection du site
-                bufUrl = new StringBuffer(url);
+                bufUrl = new StringBuffer(this.tileUrl);
                 bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
                 req = new HttpPost(bufUrl.toString());
                 response = client.execute(req);
@@ -513,16 +511,16 @@ public class SmartGeoMobilePlugins {
                         Log.i(TAG, "[G3DB::Authenticate] COOKIES["+i+"]->"+COOKIES[i].getName()+"="+COOKIES[i].getValue());
                     }
                     //nouvelle requete  effectuer : slection du site
-                    url = new StringBuffer(params[0]);
-                    url.append("&app=mapcite").append("&site=").append(params[3]).append("&auto_load_map=true");
-                    req = new HttpPost(url.toString());
+                    bufUrl = new StringBuffer(url);
+                    bufUrl.append("&app=mapcite").append("&site=").append(this.tileSite).append("&auto_load_map=true");
+                    req = new HttpPost(bufUrl.toString());
                     response = client.execute(req);
                     if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        Log.d(TAG, "User " + params[1] + " authenticated on " + params[0]);
-                        return true;
+                        Log.d(TAG, "User " + this.tileUser + " authenticated on " + bufUrl);
+                        return;
                     } else {
-                        Log.d(TAG, "Site " + params[3] + " unavailable for user " + params[1]);
-                        return false;
+                        Log.d(TAG, "Site " + this.tileSite + " unavailable for user " + this.tileUser);
+                        return;
                     }
                 } else {
                     Log.d(TAG, "Site " + site + " unavailable for user " + user);
