@@ -24,8 +24,8 @@
         var vm = this;
 
         $rootScope.openLocatedReport = vm.openLocatedReport = openLocatedReport;
-        vm.toggleConsultationPanelButtonMousedownHandler = toggleConsultationPanelButtonMousedownHandler;
-        vm.mouseupHandler = mouseupHandler;
+        // vm.toggleConsultationPanelButtonMousedownHandler = toggleConsultationPanelButtonMousedownHandler;
+        // vm.mouseupHandler = mouseupHandler;
         vm.close = _close;
         vm.open = _open;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
@@ -44,6 +44,7 @@
 
         var PREOPEN_TIMER, initialXPosition, initialWidth,
             currentXPosition,
+            movePhase,
             finalXPosition;
 
         activate();
@@ -95,6 +96,9 @@
             } );
 
             $scope.$on( "CLOSE_CONSULTATION_PANEL", close );
+
+            $( '.toggleConsultationPanelButton' ).bind( 'touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
+
         }
 
         /**
@@ -180,20 +184,31 @@
         }
 
         function toggleConsultationPanelButtonMousedownHandler($event) {
-            console.log( "toggleConsultationPanelButtonMousedownHandler;" );
-            if (navigator.userAgent.match( /Android/i )) {
-                $event.preventDefault();
-            }
+            movePhase = 0;
+
+            $( '.toggleConsultationPanelButton' ).unbind( 'touchmove', toggleConsultationPanelButtonMousedownHandler );
+
+
             initialXPosition = $event.clientX;
             initialWidth = Smartgeo._SIDE_MENU_WIDTH;
             $( window ).bind( 'mousemove touchmove', mousemoveHandler );
             $( window ).bind( 'mouseup touchend', mouseupHandler );
+
+            if (navigator.userAgent.match( /Android/i )) {
+                $event.preventDefault();
+            }
         }
 
         function mousemoveHandler($event) {
-            console.log( "mousemoveHandler;" );
+
+
+
+            $event.preventDefault();
             currentXPosition = $event.clientX ;
-            if (Math.abs(( initialXPosition - currentXPosition )) > 30) {
+            if (!currentXPosition) {
+                currentXPosition = $event.originalEvent.touches[0].clientX;
+            }
+            if (!(++movePhase % 5) && Math.abs(( initialXPosition - currentXPosition )) > 30) {
                 Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
                 $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
                 G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
@@ -206,13 +221,15 @@
         }
 
         function mouseupHandler($event) {
-            console.log( "mouseupHandler;" );
             $( window ).unbind( 'mousemove touchmove', mousemoveHandler );
             $( window ).unbind( 'mouseup touchend', mouseupHandler );
             finalXPosition = $event.clientX;
+            movePhase = 0;
             if (Math.abs(( initialXPosition - finalXPosition )) < 20) {
                 toggleConsultationPanel();
             }
+            $( '.toggleConsultationPanelButton' ).bind( 'touchmove', toggleConsultationPanelButtonMousedownHandler );
+
         }
 
         /**

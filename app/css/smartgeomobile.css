@@ -159,6 +159,8 @@ img.leaflet-tile {
     height: 100%;
     color: gray;
     background-color: #3F3F3F;
+        -webkit-transition: width 0.2s; /* For Safari 3.1 to 6.0 */
+    transition: width 0.2s;
 }
 
 .panel-heading.consultation-panel-heading{
