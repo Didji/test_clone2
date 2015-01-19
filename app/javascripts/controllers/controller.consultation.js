@@ -97,7 +97,7 @@
 
             $scope.$on( "CLOSE_CONSULTATION_PANEL", close );
 
-            $( '.toggleConsultationPanelButton' ).bind( 'touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
+            $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
 
         }
 
@@ -186,7 +186,7 @@
         function toggleConsultationPanelButtonMousedownHandler($event) {
             movePhase = 0;
 
-            $( '.toggleConsultationPanelButton' ).unbind( 'touchmove', toggleConsultationPanelButtonMousedownHandler );
+            $( '.toggleConsultationPanelButton' ).unbind( 'touchstart touchmove', toggleConsultationPanelButtonMousedownHandler );
 
 
             initialXPosition = $event.clientX;
