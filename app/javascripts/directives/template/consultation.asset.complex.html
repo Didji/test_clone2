@@ -1,0 +1,5 @@
+<ng-include src="'javascripts/directives/template/consultation.asset.simple.html'"></ng-include>
+
+<div style="padding-left: 10px; border-left: 1px dashed gray;background-color:rgba(128, 128, 128, 0.12)" ng-repeat='assetid in complex.tree[asset.id]'>
+    <ng-include src="'javascripts/directives/template/consultation.asset.complex.html'" ng-init="asset = complex.relatedAssets[assetid]"></ng-include>
+</div>

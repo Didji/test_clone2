@@ -1,0 +1,51 @@
+<div ng-if="complex.tree" class="panel-heading consultation-panel-heading  {{asset.onMap ? 'consultationDirectiveOpen' : ''}}" ng-class="{'consultationDirectiveOpen' : asset.onMap}"  ng-click="toggleMapVisibility(asset);">
+    <h4 class="panel-title">
+        <span class="pull-right fa fa-caret-{{asset.onMap ? 'up' : 'down'}}"></span>
+        <a class="accordion-toggle"><img style="margin: -15px 0 -15px -10px;" ng-if="site.metamodel[asset.okey].is_graphical" ng-src='{{::site.symbology[asset.symbolId].style.symbol.icon}}' alt=''/> {{site.metamodel[asset.okey].label}} <span style="float:right">{{asset.label}}</span></a>
+    </h4>
+</div>
+<div ng-show="asset.onMap">
+    <span ng-repeat='tab in site.metamodel[asset.okey].tabs | consultationTabsFilter:asset'>
+        <h5>{{::tab.label}}</h5>
+        <table class="table table-striped consultation-small-table ">
+            <tbody>
+                <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
+                    <td>{{::field.label}}</td>
+                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) == -1 ">
+                        {{::(asset.attributes[field.key] | prettifyField)}}
+                    </td>
+                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) != -1 ">
+                        <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{::asset.attributes[field.key]}}</a>
+                    </td>
+                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] != undefined">{{::(site.lists[field.options][asset.attributes[field.key]] | prettifyField) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </span>
+
+    <div ng-if="!noButton">
+        <div ng-if="(reportActivity=(asset|activityListFilter)).length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
+            <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
+                <i class="fa fa-pencil-square-o"></i>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
+                    <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{::activity.label}}</a>
+                </li>
+            </ul>
+        </div>
+        <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
+        </button>
+        <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
+        </button>
+        <button ng-if="reportActivity.length" id="addToSelectionButton" class="consultation-btn" ng-click="addToCurrentSelection(asset, $event);"><i class="fa fa-plus"></i>
+        </button>
+        <button ng-if="reportActivity.length && asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection(asset, $event)"><i class="fa fa-minus"></i>
+        </button>
+        <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
+        </button>
+        <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
+        <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
+        <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.historyAction.html'"></ng-include>
+    </div>
+</div>
