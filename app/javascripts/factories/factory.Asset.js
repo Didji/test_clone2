@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship) {
 
         /**
          * @class AssetFactory
@@ -18,26 +18,54 @@
          * @property {Boolean} onMap L'objet est il affiché sur la carte ?
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
-        function Asset(asset, callback) {
-            var self = this;
-            if (typeof asset === "object") {
-                angular.extend( this, asset );
-            } else {
-                Asset.findOne( asset, function(asset) {
-                    angular.extend( self, asset );
-                    (callback || angular.noop)();
-                } );
+        function Asset(asset, callback, getRelated) {
+            angular.extend( this, asset );
+            if (getRelated) {
+                this.findRelated( callback );
             }
         }
 
         Asset.prototype.onMap = false;
+
         Asset.prototype.consultationMarker = false;
+
+        Asset.prototype.findRelated = function(callback) {
+            if (this.isComplex !== undefined) {
+                (callback || angular.noop)();
+            }
+            var self = this ;
+            Relationship.findRelated( this.id || this.guid, function(root, tree) {
+                if (!root) {
+                    return (callback || angular.noop)();
+                }
+                Asset.findAssetsByGuidsWithoutSite( Object.keys( tree ), function(assets_) {
+
+                    if (assets_.length === 1) {
+                        self.isComplex = false ;
+                        return;
+                    }
+                    var assets_byId = {} ;
+                    for (var i = 0; i < assets_.length; i++) {
+                        assets_byId[assets_[i].id] = new Asset( assets_[i] );
+                    }
+                    self.isComplex = true ;
+                    self.tree = tree ;
+                    self.root = root;
+                    self.relatedAssets = assets_byId ;
+                    self.relatedAssetsTree = tree ;
+                    (callback || angular.noop)();
+                } );
+            } );
+        };
 
         /**
          * @name showOnMap
          * @desc Montre l'objet sur la carte avec un marqueur
          */
         Asset.prototype.showOnMap = function() {
+            if (this.relatedAssets && this.relatedAssets[this.id]) {
+                this.relatedAssets[this.id].showOnMap();
+            }
             var self = this;
             this.onMap = true;
             this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
@@ -53,6 +81,12 @@
          * @desc Cache l'objet de la carte
          */
         Asset.prototype.hideFromMap = function() {
+            if (this.relatedAssets) {
+                for (var i in this.relatedAssets) {
+                    this.relatedAssets[i].hideFromMap();
+                }
+            }
+
             this.onMap = false;
             if (G3ME.map) {
                 G3ME.map.removeLayer( this.consultationMarker );
@@ -265,6 +299,10 @@
             }
         };
 
+        Asset.findAssetsByGuidsWithoutSite = function(guids, callback) {
+            Asset.findAssetsByGuids( window.SMARTGEO_CURRENT_SITE, guids, callback );
+        };
+
         Asset.findAssetsByGuids = function(site, guids, callback, zones, partial_response) {
             if (!zones) {
                 zones = site.zones;
@@ -305,6 +343,8 @@
                 label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )
             } );
         };
+
+        window.AssetFactory = Asset ;
 
         return Asset;
     }

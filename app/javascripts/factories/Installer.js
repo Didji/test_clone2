@@ -83,6 +83,12 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
 
             delete site.assets;
 
+            var relationship = site.relationship;
+
+            this.saveRelationship( relationship );
+
+            delete site.relationship;
+
             return site;
         },
 
@@ -113,6 +119,21 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                         } );
                     }
                 } );
+        },
+
+        saveRelationship: function(relationship) {
+            SQLite.openDatabase( {
+                name: 'parameters'
+            } ).transaction( function(transaction) {
+                transaction.executeSql( 'DROP TABLE IF EXISTS relationship' );
+                transaction.executeSql( 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)', [], function() {
+                    for (var daddy in relationship) {
+                        for (var child in relationship[daddy]) {
+                            transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
+                        }
+                    }
+                } );
+            } );
         },
 
         saveSite: function(site, callback) {

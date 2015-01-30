@@ -22,16 +22,17 @@
         return directive;
 
         function link(scope, element) {
-
-            scope.asset = !(scope.asset instanceof Asset) ? new Asset( scope.asset ) : scope.asset;
-
-            //TODO(@gulian): faire mieux.
+            // scope.asset = !(scope.asset instanceof Asset) ? new Asset( scope.asset ) : scope.asset;
+            scope.asset.findRelated( function() {
+                scope.$digest();
+            } );
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
             scope.missions = $rootScope.missions;
 
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
+            scope.toggleMapVisibility = toggleMapVisibility;
             scope.openInApp = openInApp;
             scope.$on( '$destroy', destroy );
 
@@ -40,17 +41,17 @@
              * @name addToCurrentSelection
              * @param {Event} event
              */
-            function addToCurrentSelection(event) {
+            function addToCurrentSelection(asset, event) {
                 sendAssetToHeaven( event );
-                $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", scope.asset );
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", asset );
             }
 
             /**
              * @name dropFromCurrentSelection
              * @desc
              */
-            function dropFromCurrentSelection() {
-                $rootScope.$broadcast( "UPDATE_DROP_CONSULTATION_MULTISELECTION", scope.asset );
+            function dropFromCurrentSelection(asset) {
+                $rootScope.$broadcast( "UPDATE_DROP_CONSULTATION_MULTISELECTION", asset );
             }
 
             /**
@@ -85,6 +86,10 @@
                 setTimeout( function() {
                     angel.addClass( 'ascending' );
                 }, 1000 );
+            }
+
+            function toggleMapVisibility(asset) {
+                asset.toggleMapVisibility();
             }
 
             /**

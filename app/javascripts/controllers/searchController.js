@@ -58,14 +58,10 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
                     $scope.searchMessage = '';
                 }
 
-                var assets = [],
-                    asset, asset_;
+                var assets = [];
+
                 for (var i = 0; i < results.length; i++) {
-                    asset_ = results[i];
-                    asset = Smartgeo.sanitizeAsset( asset_.asset );
-                    asset.label = asset_.label;
-                    asset.geometry = JSON.parse( asset_.geometry );
-                    assets.push( asset );
+                    assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
                 }
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                 $scope.$digest();
