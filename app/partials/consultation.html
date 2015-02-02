@@ -44,7 +44,7 @@
             <div class="panel-group" ng-repeat="(okey, assets) in priority">
                 <h4 class="family-title">{{::consultationController.metamodel[assets[0].okey].label}}</h4>
                 <div class="panel consultation-group">
-                    <asset-consultation asset='asset' ng-repeat='asset in assets track by asset.id' class="assetConsultationDirective" />
+                    <asset-consultation asset='::asset' ng-repeat='asset in assets track by asset.id' class="assetConsultationDirective" />
                 </div>
             </div>
         </div>
