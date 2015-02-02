@@ -25,6 +25,8 @@
             }
         }
 
+        Asset.cache = { } ;
+
         Asset.prototype.onMap = false;
 
         Asset.prototype.consultationMarker = false;
@@ -216,6 +218,11 @@
          * @param {Array} zones
          */
         Asset.findOne = function(id, callback, zones) {
+
+            if (Asset.cache[id]) {
+                return callback( angular.copy( Asset.cache[id] ) );
+            }
+
             zones = zones || Site.current.zones;
 
             if (!zones.length) {
@@ -226,7 +233,8 @@
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
-                callback( Asset.convertRawRow( rows.item( 0 ) ) );
+                Asset.cache[id] = Asset.convertRawRow( rows.item( 0 ) );
+                callback( angular.copy( Asset.cache[id] ) );
             } );
 
         };
@@ -316,10 +324,23 @@
                 guids = [guids];
             }
 
+            for (var i = 0; i < guids.length; i++) {
+                if (Asset.cache[guids[i]]) {
+                    partial_response.push( angular.copy( Asset.cache[guids[i]] ) );
+                    guids.splice( i, 1 );
+                }
+            }
+
+            if (guids.length === 0) {
+                return callback( partial_response );
+            }
+
             var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function(results) {
                 for (var i = 0; i < results.length; i++) {
-                    partial_response.push( Asset.convertRawRow( results.item( i ) ) );
+                    var tmp = Asset.convertRawRow( results.item( i ) );
+                    Asset.cache[tmp.id] = tmp;
+                    partial_response.push( angular.copy( Asset.cache[tmp.id] ) );
                 }
                 Asset.findAssetsByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
             } );
