@@ -47,6 +47,12 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 template: 'partials/census.html',
                 forceLoadDOM: false
                 }, {
+                id: 'project',
+                label: i18n.get( '_MENU_PROJECT' ),
+                icon: "fa fa-meh-o",
+                template: 'partials/project.html',
+                forceLoadDOM: false
+                }, {
                 id: 'activelayers',
                 label: i18n.get( '_MENU_ACTIVE_LAYERS' ),
                 icon: "fa fa-list-ul",

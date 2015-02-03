@@ -1,5 +1,5 @@
 angular
-    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource', 'localytics.directives', 'ngTouch'] )
+    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
     .config( config ).run( function($rootScope /* ,LicenseManager*/ ) {
 
     "use strict" ;
@@ -15,6 +15,7 @@ angular
         planning: true,
         history: false,
         photo: true,
+        project: true,
         media: true,
         myposition: true,
         activelayers: true,

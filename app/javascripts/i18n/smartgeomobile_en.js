@@ -58,6 +58,7 @@ window.smartgeo_i18n_lang.en = {
     _MENU_SYNC: "Synchronization",
     _MENU_LOGOUT: "Log out",
     _MENU_CENSUS: "Census",
+    _MENU_PROJECT: "Project",
     _MENU_CHANGE_SITE: "Change area",
     _MENU_PARAMETERS: "Parameters",
     _REPORT_REPORT: "Report",
@@ -124,5 +125,14 @@ window.smartgeo_i18n_lang.en = {
     _CENSUS_CHOOSE_OBJECT_: "Please select the asset",
     _NIGHTTOUR_STOP_: "Stop",
     _NIGHTTOUR_CLOSE_: "Close",
-    _NIGHTTOUR_SAVING_: "Saving"
+    _NIGHTTOUR_SAVING_: "Saving",
+    _PROJECTS_LOAD_PROJECT_: "Load project",
+    _PROJECTS_GET_PROJECT_: "Get projects",
+    _PROJECTS_REFRESH_PROJECT_: "Refresh projects",
+    _PROJECTS_LAST_UPDATE_: "Last update",
+    _PROJECTS_PROJECT_MANAGER_: "Project manager",
+    _PROJECTS_PROJECT_STATUS_: "Status",
+    _PROJECTS_PROJECT_URL_: "URL",
+    _PROJECTS_PROJECT_BILAN_: "Sum up",
+    _PROJECTS_ESTIMATED_END_DATE_: "Estimated end date"
 };

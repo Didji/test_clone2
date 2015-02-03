@@ -113,6 +113,7 @@
          * @param {Function} callback
          */
         SQLite.exec = function(database, request, args, callback) {
+            callback = callback || function() {};
             SQLite.openDatabase( {
                 name: database
             } ).transaction( function(t) {
