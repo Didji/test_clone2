@@ -40,7 +40,7 @@
                 if (!root) {
                     return (callback || angular.noop)();
                 }
-                Asset.findAssetsByGuidsWithoutSite( Object.keys( tree ), function(assets_) {
+                Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
 
                     if (assets_.length === 1) {
                         self.isComplex = false ;
@@ -233,7 +233,7 @@
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
-                Asset.cache[id] = Asset.convertRawRow( rows.item( 0 ) );
+                Asset.cache[id] = new Asset( Asset.convertRawRow( rows.item( 0 ) ) );
                 callback( angular.copy( Asset.cache[id] ) );
             } );
 
@@ -307,13 +307,9 @@
             }
         };
 
-        Asset.findAssetsByGuidsWithoutSite = function(guids, callback) {
-            Asset.findAssetsByGuids( window.SMARTGEO_CURRENT_SITE, guids, callback );
-        };
-
-        Asset.findAssetsByGuids = function(site, guids, callback, zones, partial_response) {
+        Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
             if (!zones) {
-                zones = site.zones;
+                zones = Site.current.zones;
                 partial_response = [];
             }
             if (!zones || !zones.length || guids.length === 0 || window._SMARTGEO_STOP_SEARCH) {
@@ -338,11 +334,34 @@
             var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function(results) {
                 for (var i = 0; i < results.length; i++) {
-                    var tmp = Asset.convertRawRow( results.item( i ) );
+                    var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
                     Asset.cache[tmp.id] = tmp;
                     partial_response.push( angular.copy( Asset.cache[tmp.id] ) );
                 }
-                Asset.findAssetsByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
+                Asset.findAssetsByGuids( guids, callback, zones.slice( 1 ), partial_response );
+            } );
+        };
+
+        /**
+         * @name delete
+         * @desc Supprime les objets Asset en base de données correspondant au guids passé en paramètre.
+         * @param {Number|Array} guids
+         * @param {function} callback
+         * @param {Array} zones
+         */
+        Asset.delete = function(guids, callback, zones) {
+            if (!zones) {
+                zones = Site.current.zones;
+            }
+            if (!zones.length || guids.length === 0) {
+                return callback();
+            }
+
+            guids = (+guids === guids) ? [guids] : guids ;
+
+            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
+            SQLite.exec( zones[0].database_name, request, [], function() {
+                Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
         };
 
@@ -358,7 +377,6 @@
                 okey: parsed.okey,
                 attributes: parsed.attributes,
                 guid: a.id,
-                //TODO(@gulian): Utiliser asset.id dans l'application pour eviter cette ligne
                 geometry: JSON.parse( a.geometry ),
                 asset: undefined,
                 label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )

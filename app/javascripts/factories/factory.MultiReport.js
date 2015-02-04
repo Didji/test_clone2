@@ -30,7 +30,7 @@
             }
             intent.multi_report_field = intent.multi_report_activity._fields[+intent.multi_report_activity.multi_assets_tour.switch_field];
             intent.multi_report_target = intent.multi_report_target.split( ',' );
-            Asset.findAssetsByGuids( Site.current, intent.multi_report_target, MultiReport.createMarkers );
+            Asset.findAssetsByGuids( intent.multi_report_target, MultiReport.createMarkers );
             MultiReport.createExitControl();
         }
 

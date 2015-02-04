@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smartgeo, G3ME, SQLite, Storage, $rootScope) {
+angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smartgeo, G3ME, SQLite, Storage, $rootScope, Site) {
 
     'use strict';
 
@@ -313,7 +313,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                     assets.splice( i, 1 );
                     return Storage.set_( 'census', assets, function() {
                         Asset.m.release();
-                        Asset.__updateMapLayers();
+                        G3ME.__updateMapLayers();
                         callback();
                     } );
                 }
@@ -328,6 +328,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @memberOf Asset
      */
     Asset.save = function(asset, site) {
+        site = site || Site.current ;
         var zones = Asset.__distributeAssetsInZone( asset, site );
         for (var i = 0; i < zones.length; i++) {
             var zone = zones[i];
@@ -335,17 +336,11 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                 continue;
             }
             var request = Asset.__buildRequest( zone.assets, site );
-
-            SQLite.openDatabase( {
-                name: zone.database_name
-            } ).transaction( function(transaction) {
-                transaction.executeSql( request.request, request.args, function() {}, function(tx, sqlerror) {
-                    console.error( sqlerror.message );
-                } );
+            SQLite.exec( zone.database_name, request.request, request.args, function() {}, function(tx, sqlerror) {
+                console.error( sqlerror.message );
             } );
         }
     };
-
 
     /**
      * @method
@@ -430,18 +425,6 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
         }
 
         return zones;
-    };
-
-    /**
-     * @method
-     * @memberOf Asset
-     */
-    Asset.__updateMapLayers = function() {
-        for (var i in G3ME.map._layers) {
-            if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
-                G3ME.map._layers[i].redraw();
-            }
-        }
     };
 
     /**

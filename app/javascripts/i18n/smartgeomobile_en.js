@@ -127,12 +127,16 @@ window.smartgeo_i18n_lang.en = {
     _NIGHTTOUR_CLOSE_: "Close",
     _NIGHTTOUR_SAVING_: "Saving",
     _PROJECTS_LOAD_PROJECT_: "Load project",
+    _PROJECTS_LOADING_PROJECT_: "Loading project",
     _PROJECTS_GET_PROJECT_: "Get projects",
     _PROJECTS_REFRESH_PROJECT_: "Refresh projects",
     _PROJECTS_LAST_UPDATE_: "Last update",
     _PROJECTS_PROJECT_MANAGER_: "Project manager",
+    _PROJECTS_UNLOAD_PROJECT_: "Unload Project",
+    _PROJECTS_UNLOADING_PROJECT_: "Unloading Project",
     _PROJECTS_PROJECT_STATUS_: "Status",
     _PROJECTS_PROJECT_URL_: "URL",
     _PROJECTS_PROJECT_BILAN_: "Sum up",
-    _PROJECTS_ESTIMATED_END_DATE_: "Estimated end date"
+    _PROJECTS_ESTIMATED_END_DATE_: "Estimated end date",
+    _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Current loaded project has been modified, please save or drop changes before unload"
 };

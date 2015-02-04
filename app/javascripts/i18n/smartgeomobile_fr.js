@@ -127,6 +127,7 @@ window.smartgeo_i18n_lang.fr = {
     _NIGHTTOUR_CLOSE_: "Clôturer",
     _NIGHTTOUR_SAVING_: "Sauvegarde en cours",
     _PROJECTS_LOAD_PROJECT_: "Charger le projet",
+    _PROJECTS_UNLOAD_PROJECT_: "Décharger le projet",
     _PROJECTS_GET_PROJECT_: "Récupérer les projets",
     _PROJECTS_REFRESH_PROJECT_: "Actualiser les projets",
     _PROJECTS_LAST_UPDATE_: "Dernière modification",
@@ -134,6 +135,9 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_PROJECT_STATUS_: "Statut",
     _PROJECTS_PROJECT_BILAN_: "Bilan",
     _PROJECTS_PROJECT_URL_: "URL",
-    _PROJECTS_ESTIMATED_END_DATE_: "Date de fin estimée"
-
+    _PROJECTS_ESTIMATED_END_DATE_: "Date de fin estimée",
+    _PROJECTS_LOADING_PROJECT_: "Chargement du projet",
+    _PROJECTS_UNLOADING_PROJECT_: "Déchargement du projet",
+    _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Le projet chargé a été modifié. Veuillez enregistrer ou annuler les modifications avant de le décharger.",
+    _PROJECTS_CONSULT_ASSETS_: "Consulter le patrimoine"
 };

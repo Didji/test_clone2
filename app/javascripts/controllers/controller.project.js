@@ -18,6 +18,7 @@
         var vm = this;
 
         vm.getRemoteProjects = getRemoteProjects ;
+        vm.loadProject = loadProject ;
 
         vm.projects = [];
         vm.loading = true ;
@@ -56,9 +57,24 @@
             callback = callback || function() {};
             Project.findAll( function(projects) {
                 vm.projects = projects || [] ;
+                if (!$scope.$$phase) {
+                    $scope.$digest();
+                }
                 callback();
             } );
         }
+
+        /**
+         * @name loadProject
+         * @desc
+         */
+        function loadProject(project) {
+            project.load( function() {
+                getLocalProjects();
+            } );
+        }
+
+
 
     }
 

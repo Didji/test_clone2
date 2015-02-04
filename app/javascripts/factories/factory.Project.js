@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["$http", "SQLite", "Smartgeo"];
+    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n"];
 
 
-    function ProjectFactory($http, SQLite, Smartgeo) {
+    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n) {
 
         /**
          * @class ProjectFactory
@@ -21,6 +21,7 @@
         }
 
         Project.prototype.id = undefined ;
+        Project.prototype.assets = [] ;
         Project.prototype.added = [] ;
         Project.prototype.deleted = [] ;
         Project.prototype.updated = [] ;
@@ -34,6 +35,8 @@
         Project.prototype.updatable = undefined;
         Project.prototype.url = undefined;
         Project.prototype.loaded = undefined;
+        Project.prototype.loading = undefined;
+        Project.prototype.unloading = undefined;
 
         Project.database = "parameters" ;
         Project.table = "PROJECTS" ;
@@ -44,16 +47,78 @@
          * @name load
          * @desc Télécharge et charge un projet depuis le serveur
          */
-        Project.prototype.load = function() {
-            return $http.get( Smartgeo.getServiceUrl( 'project.mobility.load.json' ) );
+        Project.prototype.load = function(callback) {
+            var project = this ;
+            callback = callback || function() {};
+            Project.getLoadedProject( function(loadedProject) {
+                if (loadedProject) {
+                    return loadedProject.unload( function() {
+                        project.load( callback );
+                    } );
+                }
+                project.loading = true ;
+                $http.get( Smartgeo.getServiceUrl( 'project.mobility.load.json', {
+                    id: project.id
+                } ) ).success( function(assets) {
+                    project.setAssets( assets );
+                    project.loading = false ;
+                    project.loaded = true ;
+                    Project.save( project, callback );
+                    G3ME.__updateMapLayers();
+                } ).error( function() {
+                    project.loading = false ;
+                } );
+            } );
         };
 
         /**
          * @name unload
          * @desc Décharge un projet, localement, et sur le serveur
          */
-        Project.prototype.unload = function() {
-            return $http.get( Smartgeo.getServiceUrl( 'project.mobility.unload.json' ) );
+        Project.prototype.unload = function(callback) {
+            var project = this ;
+            if ((project.added.length + project.deleted.length + project.updated.length) > 0) {
+                return alertify.alert( i18n.get( '_PROJECTS_LOADED_PROJECT_NOT_SAVE_' ) );
+            }
+            this.unloading = true ;
+            callback = callback || function() {};
+            $http.get( Smartgeo.getServiceUrl( 'project.mobility.unload.json', {
+                id: project.id
+            } ) ).success( function() {
+                project.unloading = false ;
+                project.loaded = false ;
+                Asset.delete( project.assets.concat( project.added ), function() {
+                    Project.save( project, callback );
+                    G3ME.__updateMapLayers();
+                } );
+            } ).error( function() {
+                project.unloading = false ;
+            } );
+        };
+
+        /**
+         * @name setAssets
+         * @desc
+         */
+        Project.prototype.setAssets = function(assets) {
+            this.assets = [];
+            for (var i = 0; i < assets.length; i++) {
+                this.assets.push( assets[i].guid );
+            }
+            Asset.delete( this.assets, function() {
+                AssetFactory.save( assets );
+            } );
+            this.save();
+        };
+
+        /**
+         * @name setAssets
+         * @desc
+         */
+        Project.prototype.consult = function() {
+            Asset.findAssetsByGuids( this.assets, function(assets) {
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
+            } );
         };
 
         /**
@@ -65,6 +130,16 @@
         };
 
         /**
+         * @name getLoadedProject
+         * @desc Enregistre un projet en base de données
+         */
+        Project.getLoadedProject = function(callback) {
+            SQLite.exec( Project.database, 'SELECT * FROM ' + Project.table + ' WHERE loaded = ? ', ["true"], function(rows) {
+                callback( rows.length ? new Project( Project.convertRawRow( rows.item( 0 ) ) ) : false );
+            } );
+        };
+
+        /**
          * @name save
          * @desc Enregistre un projet en base de données
          */
@@ -73,8 +148,17 @@
             if (!(project instanceof Project)) {
                 project = new Project( project );
             }
-            SQLite.exec( Project.database, 'INSERT OR REPLACE INTO ' + Project.table + '(' + Project.columns.join( ',' ) + ') VALUES (' + Project.prepareStatement + ')', project.serializeForSQL(), callback );
-            return project;
+            return project.save( callback );
+        };
+
+        /**
+         * @name save
+         * @desc Enregistre un projet en base de données
+         */
+        Project.prototype.save = function(callback) {
+            callback = callback || function() {};
+            SQLite.exec( Project.database, 'INSERT OR REPLACE INTO ' + Project.table + '(' + Project.columns.join( ',' ) + ') VALUES (' + Project.prepareStatement + ')', this.serializeForSQL(), callback );
+            return this;
         };
 
         /**
@@ -83,7 +167,7 @@
          */
         Project.find = function(id, callback) {
             SQLite.exec( Project.database, 'SELECT * FROM ' + Project.table + ' WHERE id = ? ', [id], function(rows) {
-                callback( rows.length ? new Project( rows.item( 0 ) ) : false );
+                callback( rows.length ? new Project( Project.convertRawRow( rows.item( 0 ) ) ) : false );
             } );
         };
 

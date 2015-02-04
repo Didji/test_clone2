@@ -582,7 +582,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
 
             if ((!$scope.doneAssetsCache[mission.id] || ($scope.doneAssetsCache[mission.id].length < mission.done.length)) && !$scope.stopCacheLoop) {
                 $scope.stopCacheLoop = true;
-                return Asset.findAssetsByGuids( Site.current, mission.done, function(assets) {
+                return Asset.findAssetsByGuids( mission.done, function(assets) {
                     if (!$scope.doneAssetsCache[mission.id] || !$scope.doneAssetsCache[mission.id].length) {
                         $scope.doneAssetsCache[mission.id] = assets;
                     } else {
@@ -706,7 +706,7 @@ angular.module( 'smartgeomobile' ).controller( 'planningController', ["$scope", 
          * @desc
          */
         $scope.locateAsset = function(mission, assetid) {
-            Asset.findAssetsByGuids( Site.current, assetid, function(assets) {
+            Asset.findAssetsByGuids( assetid, function(assets) {
                 G3ME.zoomOnAsset( assets[0] );
             } );
         };

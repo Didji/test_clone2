@@ -1,5 +1,5 @@
 <div ng-controller="ProjectController as projectController" class="project-controller">
-    <div ng-repeat="project in projectController.projects track by project.id " class="project-block">
+    <div ng-repeat="project in (projectController.projects | orderBy:'id') track by project.id" class="project-block">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">{{project.name}}</h3>
@@ -11,8 +11,17 @@
                 <p ng-if="project.status"><i18n class="project-desc-title">_PROJECTS_PROJECT_STATUS_</i18n> : {{project.status}}</p>
                 <p ng-if="project.url"><i18n class="project-desc-title">_PROJECTS_PROJECT_URL_</i18n> : {{project.url}}</p>
                 <p ng-if="project.bilan"><i18n class="project-desc-title">_PROJECTS_PROJECT_BILAN_</i18n> : <p ng-bind-html="project.bilan"></p></p>
-
-                <button class="btn btn-block" ng-click="project.load()"><i18n>_PROJECTS_LOAD_PROJECT_</i18n></button><!--  Project.prototype.loaded = undefined; -->
+                <button ng-if="project.loaded != true" ng-disabled="project.loading"    class="btn btn-block" ng-click="projectController.loadProject(project)">
+                    <i18n ng-if="!project.loading">_PROJECTS_LOAD_PROJECT_</i18n>
+                    <i ng-if="project.loading" class="fa fa-refresh fa-spin"></i> <i18n ng-if=" project.loading">_PROJECTS_LOADING_PROJECT_</i18n>
+                </button>
+                <button ng-if="project.loaded == true" ng-disabled="project.unloading"  class="btn btn-block" ng-click="project.unload()">
+                    <i18n ng-if="!project.unloading">_PROJECTS_UNLOAD_PROJECT_</i18n>
+                    <i ng-if="project.unloading" class="fa fa-refresh fa-spin"></i> <i18n ng-if="project.unloading">_PROJECTS_UNLOADING_PROJECT_</i18n>
+                </button>
+                <button ng-if="project.loaded == true && project.assets.length > 0" class="btn btn-block" ng-click="project.consult()">
+                    <i18n>_PROJECTS_CONSULT_ASSETS_</i18n>
+                </button>
             </div>
         </div>
     </div>
