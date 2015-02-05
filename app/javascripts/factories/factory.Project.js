@@ -42,6 +42,7 @@
         Project.table = "PROJECTS" ;
         Project.columns = ['id', 'json', 'added', 'deleted', 'updated', 'loaded'];
         Project.prepareStatement = ' ?, ?, ?, ?, ?, ?';
+        Project.currentLoadedProject = undefined ;
 
         /**
          * @name load
@@ -51,7 +52,7 @@
             var project = this ;
             callback = callback || function() {};
             Project.getLoadedProject( function(loadedProject) {
-                if (loadedProject) {
+                if (loadedProject && loadedProject.id !== project.id) {
                     return loadedProject.unload( function() {
                         project.load( callback );
                     } );
@@ -64,6 +65,8 @@
                     project.loading = false ;
                     project.loaded = true ;
                     Project.save( project, callback );
+                    Project.currentLoadedProject = project ;
+                    $rootScope.$broadcast( 'NEW_PROJECT_LOADED' );
                     G3ME.__updateMapLayers();
                 } ).error( function() {
                     project.loading = false ;
@@ -89,6 +92,7 @@
                 project.loaded = false ;
                 Asset.delete( project.assets.concat( project.added ), function() {
                     Project.save( project, callback );
+                    Project.currentLoadedProject = null ;
                     G3ME.__updateMapLayers();
                 } );
             } ).error( function() {
@@ -109,6 +113,28 @@
                 AssetFactory.save( assets );
             } );
             this.save();
+        };
+
+        /**
+         * @name addAsset
+         * @desc
+         */
+        Project.prototype.addAsset = function(asset) {
+            if (this.assets.indexOf( asset.id ) === -1) {
+                this.assets.push( asset.id );
+                this.added.push( asset.id );
+                this.save();
+            }
+        };
+
+        /**
+         * @name addAssets
+         * @desc
+         */
+        Project.prototype.addAssets = function(assets) {
+            for (var i = 0; i < assets.length; i++) {
+                this.addAsset( assets[i] );
+            }
         };
 
         /**

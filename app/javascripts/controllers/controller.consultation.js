@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ConsultationController', ConsultationController );
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project"];
 
     /**
      * @class ConsultationController
@@ -19,22 +19,22 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project) {
 
         var vm = this;
 
         $rootScope.openLocatedReport = vm.openLocatedReport = openLocatedReport;
-        // vm.toggleConsultationPanelButtonMousedownHandler = toggleConsultationPanelButtonMousedownHandler;
-        // vm.mouseupHandler = mouseupHandler;
+
         vm.close = _close;
         vm.open = _open;
         vm.getMultiselectionAssetsIds = getMultiselectionAssetsIds;
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
+        vm.addMultiselectionToCurrentProject = addMultiselectionToCurrentProject;
 
         vm.metamodel = Site.current.metamodel;
         vm.siteid = Site.current.id;
-
+        vm.currentLoadedProject = Project.currentLoadedProject ;
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
@@ -96,6 +96,10 @@
             } );
 
             $scope.$on( "CLOSE_CONSULTATION_PANEL", close );
+
+            $rootScope.$on( "NEW_PROJECT_LOADED", function() {
+                vm.currentLoadedProject = Project.currentLoadedProject ;
+            } );
 
             $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
 
@@ -163,6 +167,14 @@
             vm.multiselection[okey] = [];
         }
 
+        /**
+         * @name addMultiselectionToCurrentProject
+         * @desc
+         * @param {String} okey
+         */
+        function addMultiselectionToCurrentProject(okey) {
+            vm.currentLoadedProject.addAssets( vm.multiselection[okey] );
+        }
 
         /**
          * @name openLocatedReport

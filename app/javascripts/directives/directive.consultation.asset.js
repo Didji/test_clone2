@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project"];
 
-    function assetConsultation($rootScope, Asset, Site) {
+    function assetConsultation($rootScope, Asset, Site, Project) {
 
         var directive = {
             link: link,
@@ -29,11 +29,13 @@
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
             scope.missions = $rootScope.missions;
+            scope.currentLoadedProject = Project.currentLoadedProject ;
 
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
             scope.toggleMapVisibility = toggleMapVisibility;
             scope.openInApp = openInApp;
+
             scope.$on( '$destroy', destroy );
 
 

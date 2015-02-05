@@ -28,6 +28,7 @@
                                     <a ng-href="#/report/{{consultationController.siteid}}/{{activity.id}}/{{consultationController.getMultiselectionAssetsIds(okey)}}">{{::activity.label}}</a>
                                 </li>
                             </ul>
+                            <button ng-if="consultationController.currentLoadedProject" class="consultation-btn" ng-click="consultationController.addMultiselectionToCurrentProject(okey)"><i class="fa fa-meh-o"></i>
                         </div>
                         <button ng-if='!consultationController.multiselection[okey].close' ng-click="consultationController.emptyMultiselectionForOkey(okey)" type="button" class="consultation-btn">
                             <i class="fa fa-trash"></i>

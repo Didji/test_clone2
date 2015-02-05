@@ -32,6 +32,12 @@
         function activate() {
             getLocalProjects( function() {
                 vm.loading = false ;
+                for (var i = 0; i < vm.projects.length; i++) {
+                    if (vm.projects[i].loaded) {
+                        vm.projects[i].load();
+                        break;
+                    }
+                }
                 $scope.$digest();
             } );
         }

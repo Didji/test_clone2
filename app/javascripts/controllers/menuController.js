@@ -51,7 +51,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 label: i18n.get( '_MENU_PROJECT' ),
                 icon: "fa fa-meh-o",
                 template: 'partials/project.html',
-                forceLoadDOM: false
+                forceLoadDOM: true
                 }, {
                 id: 'activelayers',
                 label: i18n.get( '_MENU_ACTIVE_LAYERS' ),
