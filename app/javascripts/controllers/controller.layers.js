@@ -48,13 +48,15 @@
                     status: true,
                     layers: {}
                 };
-                currentLayer = {
-                    status: !visibilities || visibilities[currentMetamodel.okey],
-                    label: currentMetamodel.label,
-                    okey: currentMetamodel.okey,
-                    src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].currentSrc
-                };
-                vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer ;
+                if (window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"]) {
+                    currentLayer = {
+                        status: !visibilities || visibilities[currentMetamodel.okey],
+                        label: currentMetamodel.label,
+                        okey: currentMetamodel.okey,
+                        src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].currentSrc
+                    };
+                    vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer ;
+                }
             }
 
             for (var label in vm.groups) {

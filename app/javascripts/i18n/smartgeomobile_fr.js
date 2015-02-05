@@ -139,5 +139,7 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_LOADING_PROJECT_: "Chargement du projet",
     _PROJECTS_UNLOADING_PROJECT_: "Déchargement du projet",
     _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Le projet chargé a été modifié. Veuillez enregistrer ou annuler les modifications avant de le décharger.",
-    _PROJECTS_CONSULT_ASSETS_: "Consulter le patrimoine"
+    _PROJECTS_CONSULT_ASSETS_: "Consulter le patrimoine",
+    _PROJECTS_PROJECT_: "Projet"
+
 };

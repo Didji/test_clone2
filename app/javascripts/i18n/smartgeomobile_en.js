@@ -137,6 +137,7 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_PROJECT_STATUS_: "Status",
     _PROJECTS_PROJECT_URL_: "URL",
     _PROJECTS_PROJECT_BILAN_: "Sum up",
+    _PROJECTS_PROJECT_: "Project",
     _PROJECTS_ESTIMATED_END_DATE_: "Estimated end date",
     _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Current loaded project has been modified, please save or drop changes before unload"
 };

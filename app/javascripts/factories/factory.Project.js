@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n"];
+    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship"];
 
 
-    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n) {
+    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship) {
 
         /**
          * @class ProjectFactory
@@ -60,8 +60,9 @@
                 project.loading = true ;
                 $http.get( Smartgeo.getServiceUrl( 'project.mobility.load.json', {
                     id: project.id
-                } ) ).success( function(assets) {
-                    project.setAssets( assets );
+                } ) ).success( function(data) {
+                    Relationship.saveRelationship( data.relations );
+                    project.setAssets( data.assets );
                     project.loading = false ;
                     project.loaded = true ;
                     Project.save( project, callback );
@@ -108,6 +109,7 @@
             this.assets = [];
             for (var i = 0; i < assets.length; i++) {
                 this.assets.push( assets[i].guid );
+                assets[i].okey = "PROJECT_" + assets[i].okey;
             }
             Asset.delete( this.assets, function() {
                 AssetFactory.save( assets );
@@ -116,12 +118,21 @@
         };
 
         /**
+         * @name discardChanges
+         * @desc
+         */
+        Project.prototype.discardChanges = function() {
+            // Asset.delete(this.added)
+            // this.added = [];
+            // this.save();
+        };
+
+        /**
          * @name addAsset
          * @desc
          */
         Project.prototype.addAsset = function(asset) {
             if (this.assets.indexOf( asset.id ) === -1) {
-                this.assets.push( asset.id );
                 this.added.push( asset.id );
                 this.save();
             }

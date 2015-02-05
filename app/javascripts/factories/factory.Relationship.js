@@ -90,6 +90,18 @@
             } );
         };
 
+        Relationship.saveRelationship = function() {
+            // SQLite.openDatabase( {
+            //     name: 'parameters'
+            // } ).transaction( function(transaction) {
+            //     for (var daddy in relationship) {
+            //         for (var child in relationship[daddy]) {
+            //             transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
+            //         }
+            //     }
+            // } );
+        };
+
 
         return Relationship;
     }

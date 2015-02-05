@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory) {
+angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory, i18n) {
 
     'use strict';
 
@@ -47,7 +47,15 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                     metamodel[site.metamodel[i].okey] = site.metamodel[i];
                 }
             }
-            site.metamodel = metamodel;
+            site.metamodel = angular.copy( metamodel );
+            var okey;
+            for (okey in metamodel) {
+                if (metamodel[okey].is_project) {
+                    site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
+                    site.metamodel['PROJECT_' + okey].okey = 'PROJECT_' + okey;
+                    site.metamodel['PROJECT_' + okey].group = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].group;
+                }
+            }
 
             activities._byId = [];
             for (i = 0; i < site.activities.length; i++) {
@@ -71,7 +79,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
             }
             site.symbology = symbology;
 
-            for (var okey in site.number) {
+            for (okey in site.number) {
                 if (site.number.hasOwnProperty( okey ) && okey !== 'total' && site.number[okey] !== 0 && site.number[okey] !== "0") {
                     stats.push( {
                         'okey': okey,
