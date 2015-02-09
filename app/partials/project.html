@@ -15,7 +15,15 @@
                     <i18n ng-if="!project.loading">_PROJECTS_LOAD_PROJECT_</i18n>
                     <i ng-if="project.loading" class="fa fa-refresh fa-spin"></i> <i18n ng-if=" project.loading">_PROJECTS_LOADING_PROJECT_</i18n>
                 </button>
-                <button ng-if="project.loaded == true" ng-disabled="project.unloading"  class="btn btn-block" ng-click="project.unload()">
+                <button ng-if="project.loaded == true && project.hasBeenModified() " ng-disabled="project.synchronizing"  class="btn btn-block" ng-click="project.synchronize()">
+                    <i18n ng-if="!project.synchronizing">_PROJECTS_SAVE_PROJECT_</i18n>
+                    <i ng-if="project.synchronizing" class="fa fa-refresh fa-spin"></i> <i18n ng-if="project.synchronizing">_PROJECTS_SYNCHRONIZING_PROJECT_</i18n>
+                </button>
+                <button ng-if="project.loaded == true && project.hasBeenModified() " ng-disabled="project.unloading"  class="btn btn-block" ng-click="project.discardChanges()">
+                    <i18n ng-if="!project.unloading">_PROJECTS_DISCARD_PROJECT_</i18n>
+                    <i ng-if="project.unloading" class="fa fa-refresh fa-spin"></i> <i18n ng-if="project.unloading">_PROJECTS_UNLOADING_PROJECT_</i18n>
+                </button>
+                <button ng-if="project.loaded == true && !project.hasBeenModified() " ng-disabled="project.unloading"  class="btn btn-block" ng-click="project.unload()">
                     <i18n ng-if="!project.unloading">_PROJECTS_UNLOAD_PROJECT_</i18n>
                     <i ng-if="project.unloading" class="fa fa-refresh fa-spin"></i> <i18n ng-if="project.unloading">_PROJECTS_UNLOADING_PROJECT_</i18n>
                 </button>

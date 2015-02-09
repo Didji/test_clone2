@@ -33,7 +33,7 @@
             getLocalProjects( function() {
                 vm.loading = false ;
                 for (var i = 0; i < vm.projects.length; i++) {
-                    if (vm.projects[i].loaded) {
+                    if (vm.projects[i].loaded === true) {
                         vm.projects[i].load();
                         break;
                     }

@@ -140,6 +140,10 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_UNLOADING_PROJECT_: "Déchargement du projet",
     _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Le projet chargé a été modifié. Veuillez enregistrer ou annuler les modifications avant de le décharger.",
     _PROJECTS_CONSULT_ASSETS_: "Consulter le patrimoine",
-    _PROJECTS_PROJECT_: "Projet"
+    _PROJECTS_PROJECT_: "Projet",
+    _PROJECTS_SAVE_PROJECT_: "Enregister",
+    _PROJECTS_DISCARD_PROJECT_: "Annuler",
+    _PROJECTS_CANNOT_REACH_SMARTGEO_: "Impossible de charger/decharger/enregistrer un projet, le serveur est injoignable.",
+    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing"
 
 };

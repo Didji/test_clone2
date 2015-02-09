@@ -139,5 +139,9 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_PROJECT_BILAN_: "Sum up",
     _PROJECTS_PROJECT_: "Project",
     _PROJECTS_ESTIMATED_END_DATE_: "Estimated end date",
-    _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Current loaded project has been modified, please save or drop changes before unload"
+    _PROJECTS_LOADED_PROJECT_NOT_SAVE_: "Current loaded project has been modified, please save or drop changes before unload",
+    _PROJECTS_SAVE_PROJECT_: "Save",
+    _PROJECTS_DISCARD_PROJECT_: "Discard",
+    _PROJECTS_CANNOT_REACH_SMARTGEO_: "Cannot reach Smartgeo",
+    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing"
 };
