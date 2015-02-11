@@ -93,14 +93,44 @@
         Project.prototype.synchronize = function(callback) {
             var project = this ;
             this.synchronizing = true ;
-            $http.get( Smartgeo.getServiceUrl( 'project.mobility.save.json', {
-                project: this.id
-            }, [ /* [{Asset}] */ ] ) ).success( function() {
-                project.discardChanges( callback );
-            } ).error( Project.smartgeoReachError ).finally( function() {
-                project.synchronizing = false ;
+            this.getSynchronizePayload( function(payload) {
+                $http.post( Smartgeo.getServiceUrl( 'mobility.installation.assets.json', {
+                    project: project.id
+                }, payload ) ).success( function() {
+                    project.discardChanges( callback );
+                } ).error( Project.smartgeoReachError ).finally( function() {
+                    project.synchronizing = false ;
+                } );
             } );
         };
+
+
+        /**
+         * @name getSynchronizePayload
+         * @desc
+         */
+        Project.prototype.getSynchronizePayload = function(callback) {
+            var payload = {
+                    'added': [],
+                    'deleted': [],
+                    'updated': []
+                },
+                project = this ;
+
+            Asset.findAssetsByGuids( this.added.concat( this.deleted.concat( this.updated ) ), function(assets) {
+                for (var i = 0; i < assets.length; i++) {
+                    if (project.added.indexOf( assets[i].id ) !== -1) {
+                        payload.added.push( assets[i] );
+                    } else if (project.deleted.indexOf( assets[i].id ) !== -1) {
+                        payload.deleted.push( assets[i] );
+                    } else if (project.updated.indexOf( assets[i].id ) !== -1) {
+                        payload.updated.push( assets[i] );
+                    }
+                }
+                callback( payload );
+            } );
+        };
+
 
         /**
          * @name setProjectLoaded
