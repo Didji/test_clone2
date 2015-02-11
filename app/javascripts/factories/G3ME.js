@@ -2,6 +2,25 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
 
     'use strict';
 
+
+    var acos = Math.acos ,
+        sqrt = Math.sqrt ,
+        PI = Math.PI ,
+        log = Math.log ,
+        tan = Math.tan ,
+        pow = Math.pow ,
+        abs = Math.abs ;
+
+    var DEG2RAD = 0.017453292519943295 ,
+        M_DEG2RAD = -0.017453292519943295 ,
+        RAD2DEG = 180 / PI,
+        H_DEG2RAD = 0.008726646259971648,
+        PI_4 = PI / 4,
+        INV_2PI = 0.15915494309189535,
+        M_INV_2PI = -0.15915494309189535,
+        INV_2PI_T_DEG2RAD = INV_2PI * DEG2RAD;
+
+
     var G3ME = {
 
         _MAX_ZOOM: 21,
@@ -26,9 +45,9 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
-            this._2pi = 2 * Math.PI;
-            this._pi4 = Math.PI / 4;
-            this.DEG_TO_RAD = Math.PI / 180;
+            this._2pi = 2 * PI;
+            this.PI_4 = PI / 4;
+            this.DEG_TO_RAD = PI / 180;
             this.minDistanceToALabel = 3;
             this.map = new L.map( this.mapDiv, {
                 attributionControl: false,
@@ -83,13 +102,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 G3ME.drawTile( canvas, tilePoint );
             };
 
-            this.tempAssetTile.drawTile = function(canvas, tilePoint) {
-                Storage.get_( 'census', function(census) {
-                    G3ME.drawTempAssetTile( canvas, tilePoint, census );
-                } );
-            };
-
             window.SMARTGEO_CURRENT_SITE_IMG = window.SMARTGEO_CURRENT_SITE_IMG || {};
+            window.SMARTGEO_CURRENT_SITE_IMG_W = window.SMARTGEO_CURRENT_SITE_IMG_W || {};
+            window.SMARTGEO_CURRENT_SITE_IMG_H = window.SMARTGEO_CURRENT_SITE_IMG_H || {};
+            window.SMARTGEO_CURRENT_SITE_IMG_W_HALF = window.SMARTGEO_CURRENT_SITE_IMG_W_HALF || {};
+            window.SMARTGEO_CURRENT_SITE_IMG_H_HALF = window.SMARTGEO_CURRENT_SITE_IMG_H_HALF || {};
 
             for (var symbol in Site.current.symbology) {
                 if (!Site.current.symbology[symbol] || !Site.current.symbology[symbol].style) {
@@ -98,12 +115,34 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 var image = new Image();
                 image.src = Site.current.symbology[symbol].style.symbol.icon;
                 window.SMARTGEO_CURRENT_SITE_IMG[symbol] = image;
+                window.SMARTGEO_CURRENT_SITE_IMG_W[symbol] = image.width;
+                window.SMARTGEO_CURRENT_SITE_IMG_H[symbol] = image.height;
+                window.SMARTGEO_CURRENT_SITE_IMG_W_HALF[symbol] = image.width * -0.5;
+                window.SMARTGEO_CURRENT_SITE_IMG_H_HALF[symbol] = image.height * -0.5;
             }
 
             this.canvasTile.addTo( this.map );
-            this.tempAssetTile.addTo( this.map );
+            // this.tempAssetTile.addTo( this.map );
 
             return this.map;
+        },
+
+        getActiveLayersForRequest: function() {
+            if (!this.active_layers) {
+                this.active_layers = [];
+                for (var okey in Site.current.metamodel) {
+                    if (Site.current.metamodel[okey].is_graphical) {
+                        this.active_layers.push( okey );
+                    }
+                }
+            } else {
+                for (var i = 0; i < this.active_layers.length; i++) {
+                    if (!Site.current.metamodel[this.active_layers[i]].is_graphical) {
+                        this.active_layers.splice( i, 1 );
+                    }
+                }
+            }
+            return this.active_layers.join( '%" or symbolId like "' );
         },
 
         zoomOnAsset: function(asset) {
@@ -118,7 +157,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 var p1 = coords[i];
                 var p2 = coords[i + 1];
                 p1[2] = lineStringLength;
-                lineStringLength += Math.sqrt( Math.pow( p2[0] - p1[0], 2 ) + Math.pow( p2[1] - p1[1], 2 ) );
+                lineStringLength += sqrt( pow( p2[0] - p1[0], 2 ) + pow( p2[1] - p1[1], 2 ) );
             }
             coords[coords.length - 1][2] = lineStringLength;
             var lineStringMiddle = lineStringLength / 2;
@@ -207,256 +246,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             return visibilities;
         },
 
-        drawTempAssetTile: function(canvas, tilePoint, census) {
-
-            if (!census || (census && !census.length)) {
-                return;
-            }
-
-            var ctx = canvas.getContext( '2d' ),
-                zoom = this.map.getZoom(),
-                crs = L.CRS.EPSG4326,
-                nwPoint = tilePoint.multiplyBy( 256 ),
-                sePoint = nwPoint.add( new L.Point( 256, 256 ) ),
-                nw = crs.project( this.map.unproject( nwPoint, zoom ) ),
-                se = crs.project( this.map.unproject( sePoint, zoom ) ),
-                nwmerc = this.map.latLngToLayerPoint( {
-                    lat: nw.y,
-                    lng: nw.x
-                } ),
-                marginx = nw.x - se.x,
-                marginy = nw.y - se.y,
-                ymin = se.y - marginy,
-                ymax = nw.y + marginy,
-                xmin = nw.x - marginx,
-                xmax = se.x + marginx,
-                _2pi = 2 * Math.PI,
-                _pi4 = Math.PI / 4,
-                dotSize = Math.floor( 0.5 + (7 / (19 - zoom)) ),
-                symbology = Site.current.symbology,
-                imageFactor = 1,
-                imageFactor_2 = 0.5,
-                scale = 256 * Math.pow( 2, zoom ),
-                xscale = canvas.width / Math.abs( xmax - xmin ),
-                yscale = canvas.height / Math.abs( ymax - ymin ),
-                initialTopLeftPointX = this.map._initialTopLeftPoint.x,
-                initialTopLeftPointY = this.map._initialTopLeftPoint.y,
-                DEG_TO_RAD = Math.PI / 180,
-                labelCache = [];
-
-
-            function drawLabel(ctx, txt, size, x, y, angle, color) {
-                var _measure = ctx.measureText( txt ),
-                    _width = _measure.width,
-                    offset_x = size * imageFactor_2 + 1,
-                    offset_y = 0;
-
-                ctx.save();
-                ctx.fillStyle = color;
-                ctx.translate( x, y );
-                if (angle) {
-                    ctx.rotate( angle * DEG_TO_RAD );
-                    offset_x = -_width / 2;
-                    offset_y = -4;
-                }
-                ctx.font = (size / 2) + 'px Arial';
-                ctx.strokeText( txt, offset_x, offset_y );
-                ctx.fillText( txt, offset_x, offset_y );
-                ctx.restore();
-            }
-
-            function drawLabels(ctx) {
-                var cur;
-                var lineWidth = ctx.lineWidth;
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = 'white';
-                for (var i = 0, lim = labelCache.length; i < lim; i++) {
-                    cur = labelCache[i];
-                    drawLabel( ctx, cur.txt, cur.size, cur.x, cur.y, cur.angle, cur.color );
-                }
-                ctx.lineWidth = lineWidth;
-            }
-
-            function addLabel(txt, size, x, y, angle, color) {
-                labelCache.push( {
-                    txt: txt,
-                    x: x,
-                    y: y,
-                    size: size,
-                    color: color,
-                    angle: angle
-                } );
-            }
-
-            function convertToLinearArray(complexAsset, response) {
-                response = response || [];
-                if (complexAsset.synced) {
-                    return;
-                }
-                if (complexAsset.geometry && !complexAsset.synced) {
-                    response.push( complexAsset );
-                }
-                for (var i = 0; i < complexAsset.children.length; i++) {
-                    convertToLinearArray( complexAsset.children[i], response );
-                }
-            }
-
-            function swap(ar) {
-                var b = ar[0];
-                ar[0] = ar[1];
-                ar[1] = b;
-                return ar;
-            }
-
-            if (!census || (census && !census.length)) {
-                return;
-            }
-
-            var assets = [];
-
-            for (var k = 0; k < census.length; k++) {
-                convertToLinearArray( census[k], assets );
-            }
-
-            if (!assets.length) {
-                return;
-            }
-
-            for (var i = 0, length = assets.length; i < length; i++) {
-                var prevX = false,
-                    prevY = false,
-                    asset = assets[i],
-                    assetSymbology = symbology[asset.okey + "0"],
-                    coord,
-                    coord_ = {}, image;
-
-                if (G3ME.active_layers && G3ME.active_layers.indexOf( asset.okey ) < 0) {
-                    continue ;
-                }
-                if (!((assetSymbology.minzoom <= zoom || assetSymbology.minzoom === null) &&
-                    (assetSymbology.maxzoom >= zoom || assetSymbology.maxzoom === null))) {
-                    continue ;
-                }
-
-                asset.angle = 0 ;
-                asset.maplabel = '(' + asset.fields[window.SMARTGEO_CURRENT_SITE.metamodel[asset.okey].ukey] + ')';
-
-                var geom = {};
-                if (asset.geometry.length === 2 && asset.geometry[0] * 1 === asset.geometry[0]) {
-                    geom.type = "Point" ;
-                    geom.coordinates = swap( asset.geometry );
-                } else {
-                    geom.coordinates = [];
-                    geom.type = "LineString";
-                    for (var z = 0; z < asset.geometry.length; z++) {
-                        geom.coordinates.push( swap( asset.geometry[z] ) );
-                    }
-                }
-                if (geom.type === "LineString" || geom.type === "MultiLineString" || geom.type === "Polygon") {
-                    ctx.beginPath();
-                    for (var j = 0, l = geom.coordinates.length; j < l; j++) {
-                        coord = geom.coordinates[j];
-                        if (zoom < 15) {
-                            coord_.x = Math.floor( 0.5 + ((coord[0] - xmin) * xscale) );
-                            coord_.y = Math.floor( 0.5 + ((ymax - coord[1]) * yscale) );
-                        } else {
-                            coord_.x = coord[0] * 0.017453292519943295;
-                            coord_.y = Math.log( Math.tan( _pi4 + (coord[1] * 0.008726646259971648) ) );
-
-                            coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                            coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                            coord_.x = Math.floor( 0.5 + coord_.x ) - initialTopLeftPointX - nwmerc.x;
-                            coord_.y = Math.floor( 0.5 + coord_.y ) - initialTopLeftPointY - nwmerc.y;
-                        }
-
-                        if (!!!prevX) {
-                            ctx.moveTo( coord_.x, coord_.y );
-                        } else if (coord_.x === prevX && coord_.y === prevY) {
-                            continue;
-                        } else {
-                            ctx.lineTo( coord_.x, coord_.y );
-                        }
-
-                        prevX = coord_.x;
-                        prevY = coord_.y;
-                    }
-                    if ((geom.type === "LineString" || geom.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
-                        var middle = G3ME.getLineStringMiddle( geom ),
-                            _middle = {},
-                            _segmentBegin = {};
-
-                        _middle.x = middle[1] * 0.017453292519943295;
-                        _middle.y = Math.log( Math.tan( _pi4 + (middle[0] * 0.008726646259971648) ) );
-
-                        _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
-                        _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
-
-                        _middle.x = Math.floor( 0.5 + _middle.x ) - initialTopLeftPointX - nwmerc.x;
-                        _middle.y = Math.floor( 0.5 + _middle.y ) - initialTopLeftPointY - nwmerc.y;
-
-                        _segmentBegin.x = middle[2][0] * 0.017453292519943295;
-                        _segmentBegin.y = Math.log( Math.tan( _pi4 + (middle[2][1] * 0.008726646259971648) ) );
-
-                        _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
-                        _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
-
-                        _segmentBegin.x = Math.floor( 0.5 + _segmentBegin.x ) - initialTopLeftPointX - nwmerc.x;
-                        _segmentBegin.y = Math.floor( 0.5 + _segmentBegin.y ) - initialTopLeftPointY - nwmerc.y;
-
-
-                        var dx = _middle.x - _segmentBegin.x,
-                            dy = _middle.y - _segmentBegin.y;
-                        if (dy < 0) {
-                            dx = -dx;
-                        }
-                        _middle.angle = Math.acos( dx / Math.sqrt( dx * dx + dy * dy ) ) * (180 / Math.PI);
-
-                        if (_middle.angle > 90) {
-                            _middle.angle -= 180;
-                        }
-
-                        addLabel( asset.maplabel, assetSymbology.label.size * 2, _middle.x, _middle.y, _middle.angle, assetSymbology.label.color );
-                    }
-                    ctx.strokeStyle = assetSymbology.style.strokecolor;
-                    ctx.stroke();
-                } else if (geom.type === "Point") {
-                    coord_.x = geom.coordinates[0] * 0.017453292519943295;
-                    coord_.y = Math.log( Math.tan( _pi4 + (geom.coordinates[1] * 0.008726646259971648) ) );
-
-                    coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                    coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                    coord_.x = Math.floor( 0.5 + coord_.x ) - initialTopLeftPointX - nwmerc.x;
-                    coord_.y = Math.floor( 0.5 + coord_.y ) - initialTopLeftPointY - nwmerc.y;
-
-                    image = window.SMARTGEO_CURRENT_SITE_IMG[asset.okey + "0"];
-
-                    if (image) {
-                        ctx.save();
-                        ctx.translate( coord_.x, coord_.y );
-                        ctx.rotate( -asset.angle * DEG_TO_RAD );
-                        ctx.drawImage( image, -image.width * imageFactor_2, -image.height * imageFactor_2,
-                            image.width * imageFactor,
-                            image.height * imageFactor );
-                        ctx.restore();
-                        if (zoom > 16 && asset.maplabel) {
-                            addLabel( asset.maplabel, image.width, coord_.x, coord_.y, null, assetSymbology.label.color );
-                        }
-                    } else {
-                        ctx.beginPath();
-                        ctx.arc( coord_.x, coord_.y, dotSize, 0, _2pi, true );
-                        ctx.fillStyle = assetSymbology.style.fillcolor;
-                        ctx.fill();
-                        ctx.fillText( asset.maplabel, coord_.x + 1, coord_.y + 1 );
-                    }
-                }
-            }
-            if (zoom > 16) {
-                drawLabels( ctx );
-            }
-        },
-
         baseRequest: " SELECT '##UUID##' as tileUuid, geometry, symbolId, maplabel, angle FROM ASSETS  WHERE ( xmax > ? AND ? > xmin AND ymax > ? AND ? > ymin) AND ( ( minzoom <= 1*? OR minzoom = 'null' ) AND ( maxzoom >= 1*? OR maxzoom = 'null' ) ) ",
 
         drawTile: function(canvas, tilePoint) {
@@ -476,13 +265,12 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 ymax = nw.y + margin,
                 xmin = nw.x - margin,
                 xmax = se.x + margin,
-                dotSize = Math.floor( 0.5 + (7 / (19 - zoom)) ),
-                scale = 256 * Math.pow( 2, zoom ),
-                xscale = 256 / Math.abs( xmax - xmin ),
-                yscale = 256 / Math.abs( ymax - ymin ),
+                scale = 256 * pow( 2, zoom ),
+                xscale = 256 / abs( xmax - xmin ),
+                yscale = 256 / abs( ymax - ymin ),
                 buffer = 100 / xscale,
-                initialTopLeftPointX = this.map._initialTopLeftPoint.x,
-                initialTopLeftPointY = this.map._initialTopLeftPoint.y;
+                initialTopLeftPointX = this.map._initialTopLeftPoint.x + nwmerc.x,
+                initialTopLeftPointY = this.map._initialTopLeftPoint.y + nwmerc.y;
 
             var initargs = [xmin - buffer, xmax + buffer, ymin - buffer, ymax + buffer, zoom, zoom],
                 tileExtent = {
@@ -492,11 +280,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     xmax: xmax
                 },
                 uuid = window.uuid(),
-                request = G3ME.baseRequest.replace( "##UUID##", uuid );
-
-            if (this.active_layers) {
-                request += this.active_layers.length ? ' and (symbolId like "' + this.active_layers.join( '%" or symbolId like "' ) + '%" )' : ' and 1=2 ';
-            }
+                request = G3ME.baseRequest.replace( "##UUID##", uuid ) + ' and (symbolId like "' + G3ME.getActiveLayersForRequest() + '%" )';
 
             if (G3ME.map.getZoom() !== zoom) {
                 return G3ME.canvasTile.tileDrawn( canvas );
@@ -508,11 +292,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     G3ME.requestPool[window.SMARTGEO_CURRENT_SITE.zones[i].database_name][uuid] = {
                         request: request,
                         initargs: initargs,
-                        callback: (function(uuid, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize, canvas) {
+                        callback: (function(uuid, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, canvas) {
                             return function(results) {
-                                drawCanvasForZone( uuid, results, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize, canvas );
+                                drawCanvasForZone( uuid, results, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, canvas );
                             };
-                        })( uuid, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize, canvas )
+                        })( uuid, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, canvas )
                     };
                 }
             }
@@ -557,19 +341,18 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     } );
             } );
         }
-
     };
 
-
-
-    function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, nwmerc, dotSize, canvas) {
+    function drawCanvasForZone(uuid, results, ctx, zoom, xmin, xscale, ymax, xmax, ymin, yscale, scale, initialTopLeftPointX, initialTopLeftPointY, canvas) {
 
         var rows = results.rows,
-            previousSymbolId = null,
-            changeContext = false, image, assetSymbology, uuidHasBeenSeen,
             currentMapBounds = G3ME.map.getBounds(),
             labelCache = [],
-            drawnLabels = [];
+            drawnLabels = [],
+            zoomUpper16 = zoom > 16,
+            previousX , previousY , coord, geometry , symbolId , _middlex, _middley, _middleangle,
+            coord_x, coord_y, dx, dy , asset, imageWidth, imageHeight, imageWidthHalf, imageHeightHalf,
+            previousSymbolId, image, assetSymbology, uuidHasBeenSeen;
 
         if (!G3ME.extents_match( {
                 xmin: xmin,
@@ -586,147 +369,118 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         }
         for (var i = 0, length = rows.length; i < length; i++) {
 
-            var asset = rows.item( i );
+            asset = rows.item( i );
+            geometry = JSON.parse( asset.geometry );
 
             if (asset.tileUuid !== uuid && !uuidHasBeenSeen) {
                 continue ;
             } else if (asset.tileUuid === uuid && !uuidHasBeenSeen) {
                 uuidHasBeenSeen = true ;
             } else if (asset.tileUuid !== uuid && uuidHasBeenSeen) {
-                if (zoom > 16) {
+                if (zoomUpper16) {
                     drawLabels( ctx, labelCache, drawnLabels );
                 }
                 return G3ME.canvasTile.tileDrawn( canvas );
             }
 
-            var previousX = false,
-                previousY = false, coord,
-                coord_ = {},
-                geometry = JSON.parse( asset.geometry );
-
-            if (changeContext = (previousSymbolId !== asset.symbolId)) {
-                assetSymbology = G3ME.symbology[asset.symbolId];
+            if ( (previousSymbolId !== (symbolId = "" + asset.symbolId)) ) {
+                assetSymbology = G3ME.symbology[symbolId];
                 ctx.strokeStyle = assetSymbology.style.strokecolor;
                 ctx.fillStyle = assetSymbology.style.fillcolor;
-                image = window.SMARTGEO_CURRENT_SITE_IMG[asset.symbolId.toString()];
+                image = window.SMARTGEO_CURRENT_SITE_IMG[symbolId];
+                imageWidth = window.SMARTGEO_CURRENT_SITE_IMG_W[symbolId];
+                imageHeight = window.SMARTGEO_CURRENT_SITE_IMG_H[symbolId];
+                imageWidthHalf = window.SMARTGEO_CURRENT_SITE_IMG_W_HALF[symbolId];
+                imageHeightHalf = window.SMARTGEO_CURRENT_SITE_IMG_H_HALF[symbolId];
+                previousSymbolId = symbolId;
             }
-
-            previousSymbolId = asset.symbolId;
 
             if (geometry.type === "MultiLineString" || geometry.type === "Polygon") {
                 geometry.coordinates = geometry.coordinates[0];
             }
-            if (geometry.type === "LineString" || geometry.type === "MultiLineString" || geometry.type === "Polygon") {
+            if (geometry.type !== "Point") {
+                previousX = false;
+                previousY = false;
                 ctx.beginPath();
                 for (var j = 0, l = geometry.coordinates.length; j < l; j++) {
                     coord = geometry.coordinates[j];
-                    if (zoom < 15) {
-                        coord_.x = Math.floor( 0.5 + ((coord[0] - xmin) * xscale) );
-                        coord_.y = Math.floor( 0.5 + ((ymax - coord[1]) * yscale) );
+                    if (!zoomUpper16) {
+                        coord_x = ~~(0.5 + ((coord[0] - xmin) * xscale));
+                        coord_y = ~~(0.5 + ((ymax - coord[1]) * yscale));
                     } else {
-                        coord_.x = coord[0] * 0.017453292519943295;
-                        coord_.y = Math.log( Math.tan( G3ME._pi4 + (coord[1] * 0.008726646259971648) ) );
-
-                        coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                        coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                        coord_.x = Math.floor( 0.5 + coord_.x ) - initialTopLeftPointX - nwmerc.x;
-                        coord_.y = Math.floor( 0.5 + coord_.y ) - initialTopLeftPointY - nwmerc.y;
+                        coord_x = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * coord[0] + 0.5)) - initialTopLeftPointX;
+                        coord_y = ~~(0.5 + scale * (M_INV_2PI * log( tan( G3ME.PI_4 + (coord[1] * H_DEG2RAD) ) ) + 0.5)) - initialTopLeftPointY;
                     }
 
-                    if (!!!previousX) {
-                        ctx.moveTo( coord_.x, coord_.y );
-                    } else if (coord_.x === previousX && coord_.y === previousY) {
+                    if (!previousX) {
+                        ctx.moveTo( coord_x, coord_y );
+                    } else if (coord_x === previousX && coord_y === previousY) {
                         continue;
                     } else {
-                        ctx.lineTo( coord_.x, coord_.y );
+                        ctx.lineTo( coord_x, coord_y );
                     }
 
-                    previousX = coord_.x;
-                    previousY = coord_.y;
+                    previousX = coord_x;
+                    previousY = coord_y;
                 }
-                if ((geometry.type === "LineString" || geometry.type === "MultiLineString") && zoom > 16 && asset.maplabel) {
-                    var middle = G3ME.getLineStringMiddle( geometry ),
-                        _middle = {},
-                        _segmentBegin = {};
+                if (geometry.type !== "Polygon" && zoomUpper16 && asset.maplabel) {
+                    var middle = G3ME.getLineStringMiddle( geometry );
 
-                    _middle.x = middle[1] * 0.017453292519943295;
-                    _middle.y = Math.log( Math.tan( G3ME._pi4 + (middle[0] * 0.008726646259971648) ) );
+                    _middlex = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * middle[1] + 0.5) - initialTopLeftPointX);
+                    _middley = ~~(0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[0] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY);
 
-                    _middle.x = scale * (0.15915494309189535 * _middle.x + 0.5);
-                    _middle.y = scale * (-0.15915494309189535 * _middle.y + 0.5);
+                    dx = _middlex - ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * middle[2][0] + 0.5) + initialTopLeftPointX);
+                    dy = _middley - ~~(0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[2][1] * H_DEG2RAD) ) ) + 0.5) + initialTopLeftPointY);
 
-                    _middle.x = Math.floor( 0.5 + _middle.x ) - initialTopLeftPointX - nwmerc.x;
-                    _middle.y = Math.floor( 0.5 + _middle.y ) - initialTopLeftPointY - nwmerc.y;
-
-                    _segmentBegin.x = middle[2][0] * 0.017453292519943295;
-                    _segmentBegin.y = Math.log( Math.tan( G3ME._pi4 + (middle[2][1] * 0.008726646259971648) ) );
-
-                    _segmentBegin.x = scale * (0.15915494309189535 * _segmentBegin.x + 0.5);
-                    _segmentBegin.y = scale * (-0.15915494309189535 * _segmentBegin.y + 0.5);
-
-                    _segmentBegin.x = Math.floor( 0.5 + _segmentBegin.x ) - initialTopLeftPointX - nwmerc.x;
-                    _segmentBegin.y = Math.floor( 0.5 + _segmentBegin.y ) - initialTopLeftPointY - nwmerc.y;
-
-
-                    var dx = _middle.x - _segmentBegin.x,
-                        dy = _middle.y - _segmentBegin.y;
                     if (dy < 0) {
                         dx = -dx;
                     }
-                    _middle.angle = Math.acos( dx / Math.sqrt( dx * dx + dy * dy ) ) * (180 / Math.PI);
 
-                    if (_middle.angle > 90) {
-                        _middle.angle -= 180;
+                    _middleangle = acos( dx / sqrt( dx * dx + dy * dy ) ) * RAD2DEG;
+
+                    if (_middleangle > 90) {
+                        _middleangle -= 180;
                     }
 
                     labelCache.push( {
                         txt: asset.maplabel.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ),
-                        x: _middle.x,
-                        y: _middle.y,
+                        x: _middlex,
+                        y: _middley,
                         size: assetSymbology.label.size * 3,
                         color: assetSymbology.label.color,
-                        angle: _middle.angle
+                        angle: _middleangle
                     } );
                 }
                 ctx.stroke();
                 if (geometry.type === "Polygon") {
                     ctx.fill();
                 }
-            } else if (geometry.type === "Point" && image) {
-
-                coord_.x = geometry.coordinates[0] * 0.017453292519943295;
-                coord_.y = Math.log( Math.tan( G3ME._pi4 + (geometry.coordinates[1] * 0.008726646259971648) ) );
-
-                coord_.x = scale * (0.15915494309189535 * coord_.x + 0.5);
-                coord_.y = scale * (-0.15915494309189535 * coord_.y + 0.5);
-
-                coord_.x = Math.floor( 0.5 + coord_.x ) - initialTopLeftPointX - nwmerc.x;
-                coord_.y = Math.floor( 0.5 + coord_.y ) - initialTopLeftPointY - nwmerc.y;
-
+            } else {
+                coord_x = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * geometry.coordinates[0] + 0.5) - initialTopLeftPointX);
+                coord_y = ~~(0.5 + scale * (M_INV_2PI * log( tan( G3ME.PI_4 + (geometry.coordinates[1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY);
                 ctx.save();
-                ctx.translate( coord_.x, coord_.y );
-                ctx.rotate( -asset.angle * G3ME.DEG_TO_RAD );
-                ctx.drawImage( image, -image.width * 0.5, -image.height * 0.5, image.width, image.height );
+                ctx.translate( coord_x, coord_y );
+                if (asset.angle) {
+                    ctx.rotate( asset.angle * M_DEG2RAD );
+                }
+                ctx.drawImage( image, imageWidthHalf, imageHeightHalf, imageWidth, imageHeight );
                 ctx.restore();
-                if (zoom > 16 && asset.maplabel) {
+                if (zoomUpper16 && asset.maplabel) {
                     labelCache.push( {
-                        txt: asset.maplabel.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ),
-                        x: coord_.x,
-                        y: coord_.y,
-                        size: image.width,
+                        txt: asset.maplabel.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ), // FAUT FAIRE CA A L'INSTALL
+                        x: coord_x,
+                        y: coord_y,
+                        size: imageWidth,
                         color: assetSymbology.label.color,
                         angle: null
                     } );
                 }
             }
-
         }
-        if (zoom > 16) {
+        if (zoomUpper16) {
             drawLabels( ctx, labelCache, drawnLabels );
         }
         G3ME.canvasTile.tileDrawn( canvas );
-
     }
 
     function isPointInRect(x, y, minx, miny, maxx, maxy) {
@@ -797,13 +551,13 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         }
 
         ctx.save();
-        if (ctx.fillStyle !== color.toLowerCase()) {
+        if (ctx.fillStyle.toLowerCase() !== color.toLowerCase()) {
             ctx.fillStyle = color;
         }
 
         ctx.translate( x, y );
         if (angle) {
-            ctx.rotate( angle * G3ME.DEG_TO_RAD );
+            ctx.rotate( angle * DEG2RAD );
         }
 
         drawnLabels_.push( {
@@ -819,9 +573,9 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
     }
 
     function drawLabels(ctx, labelCache_, drawnLabels_) {
-        var cur;
-        var lineWidth = ctx.lineWidth;
-        var strokeStyle = ctx.strokeStyle;
+        var cur,
+            lineWidth = ctx.lineWidth,
+            strokeStyle = ctx.strokeStyle;
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'white';
         for (var i = 0, lim = labelCache_.length; i < lim; i++) {
@@ -831,7 +585,5 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = strokeStyle;
     }
-
-
     return G3ME;
 } );
