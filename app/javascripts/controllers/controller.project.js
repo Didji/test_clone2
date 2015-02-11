@@ -6,14 +6,14 @@
         .module( 'smartgeomobile' )
         .controller( 'ProjectController', ProjectController );
 
-    ProjectController.$inject = ["$scope", "Project"];
+    ProjectController.$inject = ["$scope", "$rootScope", "Project"];
 
     /**
      * @class ProjectController
      * @desc Controlleur de la page des projets.
      */
 
-    function ProjectController($scope, Project) {
+    function ProjectController($scope, $rootScope, Project) {
 
         var vm = this;
 
@@ -39,6 +39,9 @@
                     }
                 }
                 $scope.$digest();
+            } );
+            $rootScope.$on( 'UPDATE_PROJECTS', function() {
+                getLocalProjects();
             } );
         }
 

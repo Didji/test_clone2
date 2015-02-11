@@ -31,6 +31,7 @@
             scope.missions = $rootScope.missions;
             scope.currentLoadedProject = Project.currentLoadedProject ;
 
+            scope.addToCurrentProject = addToCurrentProject;
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
             scope.toggleMapVisibility = toggleMapVisibility;
@@ -38,6 +39,16 @@
 
             scope.$on( '$destroy', destroy );
 
+
+            /**
+             * @name addToCurrentSelection
+             * @param {Event} event
+             */
+            function addToCurrentProject(asset) {
+                Project.currentLoadedProject.addAsset( asset, function() {
+                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                } );
+            }
 
             /**
              * @name addToCurrentSelection

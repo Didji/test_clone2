@@ -42,7 +42,7 @@
         </button>
         <button ng-if="reportActivity.length && asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection(asset, $event)"><i class="fa fa-minus"></i>
         </button>
-        <button ng-if="currentLoadedProject" class="consultation-btn" ng-click="currentLoadedProject.addAsset(asset)"><i class="fa fa-meh-o"></i>
+        <button ng-if="currentLoadedProject" class="consultation-btn" ng-click="addToCurrentProject(asset)"><i class="fa fa-meh-o"></i>
         </button>
         <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
         </button>

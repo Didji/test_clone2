@@ -173,7 +173,9 @@
          * @param {String} okey
          */
         function addMultiselectionToCurrentProject(okey) {
-            vm.currentLoadedProject.addAssets( vm.multiselection[okey] );
+            vm.currentLoadedProject.addAssets( vm.multiselection[okey], function() {
+                $rootScope.$broadcast( "UPDATE_PROJECTS" );
+            } );
         }
 
         /**

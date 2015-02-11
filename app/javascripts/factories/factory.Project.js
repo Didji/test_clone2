@@ -179,10 +179,10 @@
          * @name addAsset
          * @desc
          */
-        Project.prototype.addAsset = function(asset) {
+        Project.prototype.addAsset = function(asset, callback) {
             if (this.added.indexOf( +asset.id ) === -1) {
                 this.added.push( +asset.id );
-                this.save();
+                this.save( callback );
             }
         };
 
@@ -190,9 +190,9 @@
          * @name addAssets
          * @desc
          */
-        Project.prototype.addAssets = function(assets) {
+        Project.prototype.addAssets = function(assets, callback) {
             for (var i = 0; i < assets.length; i++) {
-                this.addAsset( assets[i] );
+                this.addAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
             }
         };
 
