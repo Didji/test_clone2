@@ -45,10 +45,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
-            this._2pi = 2 * PI;
-            this.PI_4 = PI / 4;
-            this.DEG_TO_RAD = PI / 180;
-            this.minDistanceToALabel = 3;
             this.map = new L.map( this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
@@ -74,7 +70,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             }
             var BackgroundTile;
 
-            if (this.filecacheIsEnable) {
+            if (this.filecacheIsEnable && navigator.userAgent.match( /Android/i )) {
                 BackgroundTile = L.TileLayer.FileCache;
             } else {
                 BackgroundTile = L.TileLayer;
@@ -90,13 +86,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 async: true,
                 updateWhenIdle: true
             } );
-
-            this.tempAssetTile = new L.TileLayer.Canvas( {
-                maxZoom: G3ME._MAX_ZOOM,
-                minZoom: G3ME._MIN_ZOOM
-            } );
-
-            this.tempAssetTile.isTemp = true;
 
             this.canvasTile.drawTile = function(canvas, tilePoint) {
                 G3ME.drawTile( canvas, tilePoint );
@@ -405,11 +394,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 for (var j = 0, l = geometry.coordinates.length; j < l; j++) {
                     coord = geometry.coordinates[j];
                     if (!zoomUpper16) {
-                        coord_x = ~~(0.5 + ((coord[0] - xmin) * xscale));
-                        coord_y = ~~(0.5 + ((ymax - coord[1]) * yscale));
+                        coord_x = (0.5 + ((coord[0] - xmin) * xscale)) | 0;
+                        coord_y = (0.5 + ((ymax - coord[1]) * yscale)) | 0;
                     } else {
-                        coord_x = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * coord[0] + 0.5)) - initialTopLeftPointX;
-                        coord_y = ~~(0.5 + scale * (M_INV_2PI * log( tan( G3ME.PI_4 + (coord[1] * H_DEG2RAD) ) ) + 0.5)) - initialTopLeftPointY;
+                        coord_x = (0.5 + scale * (INV_2PI_T_DEG2RAD * coord[0] + 0.5) - initialTopLeftPointX) | 0;
+                        coord_y = (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (coord[1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
                     }
 
                     if (!previousX) {
@@ -426,11 +415,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 if (geometry.type !== "Polygon" && zoomUpper16 && asset.maplabel) {
                     var middle = G3ME.getLineStringMiddle( geometry );
 
-                    _middlex = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * middle[1] + 0.5) - initialTopLeftPointX);
-                    _middley = ~~(0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[0] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY);
+                    _middlex = (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[1] + 0.5) - initialTopLeftPointX) | 0;
+                    _middley = (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[0] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
 
-                    dx = _middlex - ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * middle[2][0] + 0.5) + initialTopLeftPointX);
-                    dy = _middley - ~~(0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[2][1] * H_DEG2RAD) ) ) + 0.5) + initialTopLeftPointY);
+                    dx = _middlex - (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[2][0] + 0.5) + initialTopLeftPointX) | 0;
+                    dy = _middley - (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[2][1] * H_DEG2RAD) ) ) + 0.5) + initialTopLeftPointY) | 0;
 
                     if (dy < 0) {
                         dx = -dx;
@@ -456,8 +445,8 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     ctx.fill();
                 }
             } else {
-                coord_x = ~~(0.5 + scale * (INV_2PI_T_DEG2RAD * geometry.coordinates[0] + 0.5) - initialTopLeftPointX);
-                coord_y = ~~(0.5 + scale * (M_INV_2PI * log( tan( G3ME.PI_4 + (geometry.coordinates[1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY);
+                coord_x = (0.5 + scale * (INV_2PI_T_DEG2RAD * geometry.coordinates[0] + 0.5) - initialTopLeftPointX) | 0;
+                coord_y = (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (geometry.coordinates[1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
                 ctx.save();
                 ctx.translate( coord_x, coord_y );
                 if (asset.angle) {
@@ -467,7 +456,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 ctx.restore();
                 if (zoomUpper16 && asset.maplabel) {
                     labelCache.push( {
-                        txt: asset.maplabel.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ), // FAUT FAIRE CA A L'INSTALL
+                        txt: asset.maplabel, //.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ), // FAUT FAIRE CA A L'INSTALL
                         x: coord_x,
                         y: coord_y,
                         size: imageWidth,
@@ -483,17 +472,8 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         G3ME.canvasTile.tileDrawn( canvas );
     }
 
-    function isPointInRect(x, y, minx, miny, maxx, maxy) {
-        return (
-            x >= minx &&
-            x <= maxx &&
-            y >= miny &&
-            y <= maxy
-        );
-    }
-
     function isThereAnAutoCollision(x, y, width, height, drawnLabels_) {
-        var cur, curXmin, curXmax, curYmin, curYmax,
+        var cur, intersectXmin, intersectXmax, intersectYmin, intersectYmax,
             myXmin = x,
             myYmin = y,
             myXmax = x + width,
@@ -501,27 +481,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
 
         for (var i = 0, lim = drawnLabels_.length; i < lim; i++) {
             cur = drawnLabels_[i];
-            curXmin = cur.x - G3ME.minDistanceToALabel;
-            curXmax = cur.x + cur.width + G3ME.minDistanceToALabel;
-            curYmin = cur.y - G3ME.minDistanceToALabel;
-            curYmax = cur.y + cur.height + G3ME.minDistanceToALabel;
-
-            // Premier cas : je chevauche sur l'emprise courante :
-            if (isPointInRect( myXmin, myYmin, curXmin, curYmin, curXmax, curYmax )) {
-                return true;
-            }
-            if (isPointInRect( myXmin, myYmax, curXmin, curYmin, curXmax, curYmax )) {
-                return true;
-            }
-            if (isPointInRect( myXmax, myYmin, curXmin, curYmin, curXmax, curYmax )) {
-                return true;
-            }
-            if (isPointInRect( myXmax, myYmax, curXmin, curYmin, curXmax, curYmax )) {
-                return true;
-            }
-
-            // Deuxième cas : j'englobe complètement l'emprise courante.
-            if (myXmin <= curXmin && myXmax >= curXmax && myYmin <= curYmin && myYmax >= curYmax) {
+            intersectXmin = (cur.xmin > myXmin) ? cur.xmin : myXmin;
+            intersectXmax = (cur.xmax < myXmax) ? cur.xmax : myXmax;
+            intersectYmin = (cur.ymin > myYmin) ? cur.ymin : myYmin;
+            intersectYmax = (cur.ymax < myYmax) ? cur.ymax : myYmax;
+            if (intersectXmin < intersectXmax && intersectYmin < intersectYmax) {
                 return true;
             }
         }
@@ -530,46 +494,42 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
 
 
     function drawLabel(ctx, txt, size, x, y, angle, color, drawnLabels_) {
+        // Cette évaluation de la longueur du texte est très pessimiste,
+        // mais l'appel à ctx.measureText() est très lent.
+        var _height = size * 0.5,
+            _width = _height * txt.length,
+            offset_x = angle ? _width * -0.5 : _height + 1,
+            offset_y = angle ? -4 : 0,
+            newFont = _height + 'px Arial',
+            tolerance = 3,
+            curx = x + offset_x,
+            cury = y + offset_y;
 
-        var offset_x = size * 0.5 + 1;
-        var offset_y = 0;
-        if (angle) {
-            offset_x = -_width / 2;
-            offset_y = -4;
-        }
-        var newFont = (size / 2) + 'px Arial';
         if (ctx.font !== newFont) {
             ctx.font = newFont;
         }
 
-        var _measure = ctx.measureText( txt );
-        var _height = size / 2;
-        var _width = _measure.width;
-
-        if (isThereAnAutoCollision( x + offset_x, y + offset_y, _width, _height, drawnLabels_ )) {
+        if (isThereAnAutoCollision( curx, cury, _width, _height, drawnLabels_ )) {
             return;
         }
 
-        ctx.save();
         if (ctx.fillStyle.toLowerCase() !== color.toLowerCase()) {
             ctx.fillStyle = color;
         }
-
         ctx.translate( x, y );
         if (angle) {
             ctx.rotate( angle * DEG2RAD );
         }
-
-        drawnLabels_.push( {
-            x: x + offset_x,
-            y: y + offset_y,
-            width: _width,
-            height: _height
-        } );
-
         ctx.strokeText( txt, offset_x, offset_y );
         ctx.fillText( txt, offset_x, offset_y );
-        ctx.restore();
+        ctx.translate( -x, -y );
+
+        drawnLabels_.push( {
+            xmin: curx - tolerance,
+            xmax: curx + _width + tolerance,
+            ymin: cury - tolerance,
+            ymax: cury + _height + tolerance
+        } );
     }
 
     function drawLabels(ctx, labelCache_, drawnLabels_) {
