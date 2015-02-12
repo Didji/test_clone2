@@ -96,7 +96,7 @@
             this.getSynchronizePayload( function(payload) {
                 $http.post( Smartgeo.getServiceUrl( 'mobility.installation.assets.json', {
                     project: project.id
-                }, payload ) ).success( function() {
+                } ), payload ).success( function() {
                     project.discardChanges( callback );
                 } ).error( Project.smartgeoReachError ).finally( function() {
                     project.synchronizing = false ;
@@ -210,10 +210,15 @@
          * @desc
          */
         Project.prototype.addAsset = function(asset, callback) {
-            if (this.added.indexOf( +asset.id ) === -1) {
-                this.added.push( +asset.id );
-                this.save( callback );
-            }
+            var project = this;
+            Relationship.findRelated( asset, function(related) {
+                for (var i = 0; i < related.length; i++) {
+                    if (project.added.indexOf( +related[i].id ) === -1) {
+                        project.added.push( +related[i].id );
+                    }
+                }
+                project.save( callback );
+            } );
         };
 
         /**

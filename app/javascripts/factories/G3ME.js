@@ -513,16 +513,18 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             return;
         }
 
+        ctx.save();
         if (ctx.fillStyle.toLowerCase() !== color.toLowerCase()) {
             ctx.fillStyle = color;
         }
+
         ctx.translate( x, y );
         if (angle) {
             ctx.rotate( angle * DEG2RAD );
         }
         ctx.strokeText( txt, offset_x, offset_y );
         ctx.fillText( txt, offset_x, offset_y );
-        ctx.translate( -x, -y );
+        ctx.restore();
 
         drawnLabels_.push( {
             xmin: curx - tolerance,

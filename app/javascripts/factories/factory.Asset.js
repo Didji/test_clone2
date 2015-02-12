@@ -350,14 +350,15 @@
          * @param {Array} zones
          */
         Asset.delete = function(guids, callback, zones) {
+
+            guids = ((+guids === guids) ? [guids] : guids) || [];
+
             if (!zones) {
                 zones = Site.current.zones;
             }
             if (!zones.length || guids.length === 0) {
-                return callback();
+                return (callback || function() {})();
             }
-
-            guids = (+guids === guids) ? [guids] : guids ;
 
             var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function() {

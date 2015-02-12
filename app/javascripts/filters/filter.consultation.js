@@ -32,6 +32,7 @@
          * @desc
          */
         function _consultationTabsFilter(tabsIn, asset) {
+            tabsIn = tabsIn || [];
             var tabsOut = [];
             for (var i = 0; i < tabsIn.length; i++) {
                 for (var j = 0; j < tabsIn[i].fields.length; j++) {
