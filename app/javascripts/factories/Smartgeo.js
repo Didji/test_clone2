@@ -328,7 +328,7 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (search.criteria[criter] === 1 * search.criteria[criter]) {
+                        if (typeof search.criteria[criter] === "number") {
                             regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
                         } else {
                             regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
