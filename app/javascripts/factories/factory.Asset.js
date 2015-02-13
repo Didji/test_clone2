@@ -392,7 +392,7 @@
         Asset.remoteDeleteAssets = function(assets) {
             var toDelete = [];
             angular.forEach( assets, function(asset) {
-                asset.toggleMapVisibility();
+                asset.hideFromMap();
                 toDelete.push( {guid: asset.guid, okey: asset.okey} );
             } );
             $http.post(

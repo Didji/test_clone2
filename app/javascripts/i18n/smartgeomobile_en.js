@@ -35,6 +35,7 @@ window.smartgeo_i18n_lang.en = {
     _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
     _CONFIRM_DISCONNECT_: "Do you really want to exit?",
     _CONFIRM_DELETE_ASSET_: "Do you really want to delete this asset ?",
+    _CONFIRM_DELETE_ASSETS_: "Do you really want to delete these assets ?",
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)",
     _CONSULTATION_LOADING: "Loading ...",
     _CONSULTATION_REPORT: "Report",

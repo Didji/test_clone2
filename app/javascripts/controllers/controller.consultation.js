@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ConsultationController', ConsultationController );
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project", "Asset", "i18n"];
 
     /**
      * @class ConsultationController
@@ -19,7 +19,7 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project, Asset, i18n) {
 
         var vm = this;
 
@@ -31,6 +31,7 @@
         vm.dropAssetFromMultiselection = dropAssetFromMultiselection;
         vm.emptyMultiselectionForOkey = emptyMultiselectionForOkey;
         vm.addMultiselectionToCurrentProject = addMultiselectionToCurrentProject;
+        vm.deleteAssets = deleteAssets;
 
         vm.metamodel = Site.current.metamodel;
         vm.siteid = Site.current.id;
@@ -309,6 +310,26 @@
             if (!$scope.$$phase) {
                 $scope.$digest();
             }
+        }
+
+        /**
+         * @desc Supprime les objets de la multiselection
+         * @param {Array} assets
+         */
+        function deleteAssets(assets) {
+            alertify.confirm( i18n.get( '_CONFIRM_DELETE_ASSETS_' ), function(yes) {
+                if (!yes) {
+                    return;
+                }
+                var notUpdatableAssets = [];
+                angular.forEach( assets, function(asset, index) {
+                    if (asset.attributes._rights !== 'U') {
+                        notUpdatableAssets.push( asset );
+                        assets.splice(index, 1);
+                    }
+                });
+                Asset.remoteDeleteAssets(assets);
+            });
         }
 
     }

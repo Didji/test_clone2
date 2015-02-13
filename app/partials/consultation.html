@@ -33,6 +33,9 @@
                         <button ng-if='!consultationController.multiselection[okey].close' ng-click="consultationController.emptyMultiselectionForOkey(okey)" type="button" class="consultation-btn">
                             <i class="fa fa-minus"></i>
                         </button>
+                        <button ng-click="consultationController.deleteAssets(assets)" type="button" class="consultation-btn">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
