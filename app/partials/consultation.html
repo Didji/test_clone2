@@ -17,7 +17,7 @@
                     <div class="panel-body multiselection-body">
                         <div ng-repeat='asset in assets' ng-if='!consultationController.multiselection[okey].close' class="consultation-multiselection-assets-list">
                             {{::asset.label}}
-                            <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-trash consultation-multiselection-trash"></i>
+                            <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-times consultation-multiselection-trash"></i>
                         </div>
                         <div ng-if="rights.report && !consultationController.multiselection[okey].close" class="btn-group consultation-multiselection-report-button">
                             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
@@ -31,7 +31,7 @@
                             <button ng-if="consultationController.currentLoadedProject" class="consultation-btn" ng-click="consultationController.addMultiselectionToCurrentProject(okey)"><i class="fa fa-meh-o"></i>
                         </div>
                         <button ng-if='!consultationController.multiselection[okey].close' ng-click="consultationController.emptyMultiselectionForOkey(okey)" type="button" class="consultation-btn">
-                            <i class="fa fa-trash"></i>
+                            <i class="fa fa-minus"></i>
                         </button>
                     </div>
                 </div>
