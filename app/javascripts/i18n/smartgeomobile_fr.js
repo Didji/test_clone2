@@ -32,6 +32,7 @@ window.smartgeo_i18n_lang.fr = {
     _REGISTER_RECORD_ID_: "Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
     _CONFIRM_CHANGE_SITE_: "Voulez-vous vraiment changer de site&nbsp?",
     _CONFIRM_DISCONNECT_: "Voulez-vous vraiment quitter l'application&nbsp?",
+    _CONFIRM_DELETE_ASSET_: "Souhaitez-vous vraiment supprimer cet objet ?",
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)",
     _SMARTGEO_ONLINE: "Smartgeo est connecté",
     _SMARTGEO_OFFLINE: "Smartgeo est déconnecté",

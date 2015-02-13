@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n"];
 
-    function assetConsultation($rootScope, Asset, Site, Project) {
+    function assetConsultation($rootScope, Asset, Site, Project, i18n) {
 
         var directive = {
             link: link,
@@ -36,6 +36,7 @@
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
             scope.toggleMapVisibility = toggleMapVisibility;
             scope.openInApp = openInApp;
+            scope.deleteAsset = deleteAsset;
 
             scope.$on( '$destroy', destroy );
 
@@ -111,6 +112,20 @@
              */
             function destroy() {
                 scope.asset.hideFromMap();
+            }
+
+            /**
+             * @name deleteAsset
+             * @desc
+             * @param  {Object} asset
+             */
+            function deleteAsset(asset) {
+                alertify.confirm( i18n.get( '_CONFIRM_DELETE_ASSET_' ), function(yes) {
+                    if (!yes) {
+                        return;
+                    }
+                    Asset.remoteDeleteAssets([asset]);
+                });
             }
 
         }

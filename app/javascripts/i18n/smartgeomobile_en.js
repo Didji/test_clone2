@@ -34,6 +34,7 @@ window.smartgeo_i18n_lang.en = {
     _REGISTER_RECORD_ID_: "Your license has been accepted. Please, record the following ID in case of loss or theft: ",
     _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
     _CONFIRM_DISCONNECT_: "Do you really want to exit?",
+    _CONFIRM_DELETE_ASSET_: "Do you really want to delete this asset ?",
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)",
     _CONSULTATION_LOADING: "Loading ...",
     _CONSULTATION_REPORT: "Report",

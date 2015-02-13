@@ -46,6 +46,8 @@
         </button>
         <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
         </button>
+        <button class="consultation-btn" ng-click="deleteAsset(complex || asset)" ng-if="asset.attributes._rights === 'U'"><i class="fa fa-trash"></i>
+        </button>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.historyAction.html'"></ng-include>
