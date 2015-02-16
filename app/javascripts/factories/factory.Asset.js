@@ -40,6 +40,7 @@
                 if (!root) {
                     return (callback || angular.noop)();
                 }
+                console.log( arguments );
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
 
                     if (assets_.length === 1) {
@@ -54,7 +55,6 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    self.relatedAssetsTree = tree ;
                     (callback || angular.noop)();
                 } );
             } );
@@ -393,18 +393,25 @@
             var toDelete = [];
             angular.forEach( assets, function(asset) {
                 asset.toggleMapVisibility();
-                toDelete.push( {guid: asset.guid, okey: asset.okey} );
+                toDelete.push( {
+                    guid: asset.guid,
+                    okey: asset.okey
+                } );
             } );
             $http.post(
                 Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
-                { deleted: toDelete },
-                { timeout: 100000 }
+                {
+                    deleted: toDelete
+                },
+                {
+                    timeout: 100000
+                }
             ).success( function(data) {
                 Asset.handleDeleteAssets( data.deleted );
             } ).error( function(data) {
                 Asset.handleDeleteAssets( data.deleted );
             } );
-        }
+        };
 
         /**
          * @name handleDeleteAssets
@@ -414,11 +421,11 @@
             guids = ((+guids === guids) ? [guids] : guids) || [];
 
             angular.forEach( guids, function(guid) {
-                Relationship.findSubtree(guid, function(root, tree) {
-                    Asset.delete( Object.keys( tree) );
-                });
-            })
-        }
+                Relationship.findSubtree( guid, function(root, tree) {
+                    Asset.delete( Object.keys( tree ) );
+                } );
+            } );
+        };
 
         window.AssetFactory = Asset ;
 
