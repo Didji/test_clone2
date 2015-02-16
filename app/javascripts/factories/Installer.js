@@ -54,6 +54,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                     site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
                     site.metamodel['PROJECT_' + okey].okey = 'PROJECT_' + okey;
                     site.metamodel['PROJECT_' + okey].group = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].group;
+                    site.metamodel['PROJECT_' + okey].label = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].label;
                 }
             }
             for (okey in site.dependancies) {
