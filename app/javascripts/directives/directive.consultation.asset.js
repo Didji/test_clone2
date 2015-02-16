@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n"];
 
-    function assetConsultation($rootScope, Asset, Site, Project) {
+    function assetConsultation($rootScope, Asset, Site, Project, i18n) {
 
         var directive = {
             link: link,
@@ -46,6 +46,7 @@
              */
             function addToCurrentProject(asset) {
                 Project.currentLoadedProject.addAsset( asset, function() {
+                    alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", scope.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                 } );
             }

@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ConsultationController', ConsultationController );
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project", "i18n"];
 
     /**
      * @class ConsultationController
@@ -19,7 +19,7 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project) {
+    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project, i18n) {
 
         var vm = this;
 
@@ -174,6 +174,7 @@
          */
         function addMultiselectionToCurrentProject(okey) {
             vm.currentLoadedProject.addAssets( vm.multiselection[okey], function() {
+                alertify.alert( i18n.get( "PROJECT_ASSETS_ADDED", vm.currentLoadedProject.name ) );
                 $rootScope.$broadcast( "UPDATE_PROJECTS" );
             } );
         }
