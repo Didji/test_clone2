@@ -145,6 +145,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         },
 
         saveSite: function(site, callback) {
+            SQLite.exec( "parameters", "DELETE FROM PROJECTS WHERE 1=1" );
             Storage.get_( 'sites', function(sites) {
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {

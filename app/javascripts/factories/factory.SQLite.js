@@ -114,6 +114,7 @@
          */
         SQLite.exec = function(database, request, args, callback) {
             callback = callback || function() {};
+            args = args || [];
             SQLite.openDatabase( {
                 name: database
             } ).transaction( function(t) {

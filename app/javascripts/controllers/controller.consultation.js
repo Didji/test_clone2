@@ -174,7 +174,7 @@
          */
         function addMultiselectionToCurrentProject(okey) {
             vm.currentLoadedProject.addAssets( vm.multiselection[okey], function() {
-                alertify.alert( i18n.get( "PROJECT_ASSETS_ADDED", vm.currentLoadedProject.name ) );
+                alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", vm.currentLoadedProject.name ) );
                 $rootScope.$broadcast( "UPDATE_PROJECTS" );
             } );
         }

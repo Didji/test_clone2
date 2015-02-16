@@ -38,6 +38,9 @@
                         break;
                     }
                 }
+                if (!vm.projects.length) {
+                    getRemoteProjects();
+                }
                 $scope.$digest();
             } );
             $rootScope.$on( 'UPDATE_PROJECTS', function() {

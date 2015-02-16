@@ -275,6 +275,10 @@
          * @desc Enregistre un projet en base de données
          */
         Project.prototype.save = function(callback) {
+            if (!this.id) {
+                callback( false );
+                return false;
+            }
             SQLite.exec( Project.database, 'INSERT OR REPLACE INTO ' + Project.table + '(' + Project.columns.join( ',' ) + ') VALUES (' + Project.prepareStatement + ')', this.serializeForSQL(), callback );
             return this;
         };
