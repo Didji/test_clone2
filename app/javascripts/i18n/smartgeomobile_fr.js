@@ -109,6 +109,8 @@ window.smartgeo_i18n_lang.fr = {
     _MAP_GPS_FAIL: "Erreur lors de la récupération des coordonnées GPS",
     _MAP_CONSULTATION_CONTROL: "Consultation",
     _MAP_REFERENCE_VIEW_CONTROL: "Vue de référence",
+    _NOT_ALLOWED_TO_DELETE_ASSETS_: "Les objets %s ne seront pas supprimés car votre profil ne le permet pas.",
+    _NOT_ALLOWED_TO_DELETE_ASSET_: "L'objet %s ne sera pas supprimé car votre profil ne le permet pas.",
     _PLANNING_SYNC_FAIL_: "Erreur lors de la mise à jour des missions",
     _PLANNING_OBJECT_NOT_FOUND_: "Les objets de cette mission n'ont pas été trouvés.",
     _PLANNING_REFRESH_: "Actualiser",

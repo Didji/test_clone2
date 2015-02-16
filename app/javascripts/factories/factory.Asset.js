@@ -399,23 +399,27 @@
                 Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
                 { deleted: toDelete },
                 { timeout: 100000 }
-            ).success( function(data) {
-                Asset.handleDeleteAssets( data.deleted );
-            } ).error( function(data) {
-                Asset.handleDeleteAssets( data.deleted );
-            } );
+            ).success( Asset.handleDeleteAssets
+            ).error( Asset.handleDeleteAssets
+            );
         }
 
         /**
          * @name handleDeleteAssets
          * @param  {Array} guids
          */
-        Asset.handleDeleteAssets = function(guids) {
-            guids = ((+guids === guids) ? [guids] : guids) || [];
+        Asset.handleDeleteAssets = function(data) {
+            if ( !data.deleted) {
+                return false;
+            }
+
+            var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
 
             angular.forEach( guids, function(guid) {
                 Relationship.findSubtree(guid, function(root, tree) {
-                    Asset.delete( Object.keys( tree) );
+                    var ids = Object.keys( tree );
+                    Asset.delete( ids );
+                    $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
                 });
             })
         }
