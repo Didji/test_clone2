@@ -40,6 +40,7 @@
                 if (!root) {
                     return (callback || angular.noop)();
                 }
+                console.log( arguments );
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
 
                     if (assets_.length === 1) {
@@ -54,7 +55,6 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    self.relatedAssetsTree = tree ;
                     (callback || angular.noop)();
                 } );
             } );

@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .factory( 'Relationship', RelationshipFactory );
 
-    RelationshipFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS"];
+    RelationshipFactory.$inject = ["G3ME", "Marker", "SQLite"];
 
 
     function RelationshipFactory(G3ME, Marker, SQLite) {
