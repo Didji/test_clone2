@@ -384,6 +384,42 @@
             } );
         };
 
+        /**
+         * @name remoteDeleteAssets
+         * @desc Supprime une liste d'objets sur le serveur
+         * @param  {Array} assets
+         */
+        Asset.remoteDeleteAssets = function(assets) {
+            var toDelete = [];
+            angular.forEach( assets, function(asset) {
+                asset.toggleMapVisibility();
+                toDelete.push( {guid: asset.guid, okey: asset.okey} );
+            } );
+            $http.post(
+                Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
+                { deleted: toDelete },
+                { timeout: 100000 }
+            ).success( function(data) {
+                Asset.handleDeleteAssets( data.deleted );
+            } ).error( function(data) {
+                Asset.handleDeleteAssets( data.deleted );
+            } );
+        }
+
+        /**
+         * @name handleDeleteAssets
+         * @param  {Array} guids
+         */
+        Asset.handleDeleteAssets = function(guids) {
+            guids = ((+guids === guids) ? [guids] : guids) || [];
+
+            angular.forEach( guids, function(guid) {
+                Relationship.findSubtree(guid, function(root, tree) {
+                    Asset.delete( Object.keys( tree) );
+                });
+            })
+        }
+
         window.AssetFactory = Asset ;
 
         return Asset;
