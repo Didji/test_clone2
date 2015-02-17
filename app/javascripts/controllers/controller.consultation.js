@@ -359,11 +359,14 @@
                 if (!yes) {
                     return;
                 }
-                var notUpdatableAssets = [];
+                var notUpdatableAssets = [], projectAssets = [];
+
                 angular.forEach( assets, function(asset, index) {
                     if (asset.attributes._rights !== 'U') {
                         notUpdatableAssets.push( asset.label );
-                        console.log(asset);
+                        assets.splice(index, 1);
+                    } else if ( Project.currentLoadedProject.assets.indexOf( asset.id ) > -1 ) {
+                        Project.currentLoadedProject.deleteAsset( asset );
                         assets.splice(index, 1);
                     }
                 });
@@ -375,7 +378,9 @@
                     ) );
                 }
 
-                Asset.remoteDeleteAssets( assets );
+                if ( assets.length ) {
+                    Asset.remoteDeleteAssets( assets );
+                }
             });
         }
 

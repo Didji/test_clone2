@@ -125,8 +125,14 @@
                     if (!yes) {
                         return;
                     }
-                    Asset.remoteDeleteAssets([asset]);
-                });
+
+                    if ( Project.currentLoadedProject.assets.indexOf( asset.id ) > -1 ) {
+                        Project.currentLoadedProject.deleteAsset( asset );
+                    } else {
+                        Asset.remoteDeleteAssets([asset]);
+                    }
+
+                } );
             }
 
         }
