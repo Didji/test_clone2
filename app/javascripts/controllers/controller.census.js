@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'CensusController', CensusController );
 
-    CensusController.$inject = ["Site"];
+    CensusController.$inject = ["Site", "Project"];
 
     /**
      * @class CensusController
@@ -14,12 +14,14 @@
      *
      * @property {String} classindex Okey de l'objet recencé en cours
      */
-    function CensusController(Site) {
+    function CensusController(Site, Project) {
 
         var vm = this;
 
         vm.startCensus = startCensus;
         vm.cancel = cancel;
+        vm.projectFilter = projectFilter;
+
         vm.symbology = Site.current.symbology;
         vm.dependancies = Site.current.dependancies;
         vm.metamodel = Site.current.metamodel;
@@ -51,6 +53,15 @@
          */
         function cancel() {
             vm.okey = null;
+        }
+
+        /**
+         * @name projectFilter
+         * @desc
+         */
+        function projectFilter() {
+            console.log( arguments );
+            // Project.currentLoadedProject
         }
 
     }
