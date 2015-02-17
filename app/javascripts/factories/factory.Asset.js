@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship", "Right"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship, Right) {
 
         /**
          * @class AssetFactory
@@ -109,6 +109,22 @@
         Asset.prototype.zoomOn = function() {
             G3ME.map.setView( this.getCenter(), 18 );
             $rootScope.stopPosition();
+        };
+
+        /**
+         * @name isUpdatable
+         * @desc
+         */
+        Asset.prototype.isUpdatable = function() {
+            return Right.isUpdatable( this );
+        };
+
+        /**
+         * @name isReadOnly
+         * @desc
+         */
+        Asset.prototype.isReadOnly = function() {
+            return Right.isReadOnly( this );
         };
 
         /**

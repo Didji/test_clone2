@@ -168,12 +168,12 @@
     }
 
 
-    guirlandeFilter.$inject = ["Site", "Project", "$filter"];
+    guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right"];
 
-    function guirlandeFilter(Site, Project, $filter) {
+    function guirlandeFilter(Site, Project, $filter, Right) {
         /**
          * @name _guirlandeFilter
-         * @desc
+         * @desc Définie la liste des boutons dans un bloc de consultation en fonction d'un Asset
          */
 
         var actions = {
@@ -217,16 +217,16 @@
         function _guirlandeFilter(asset) {
             var authAction = [],
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length,
-                isUpdatable = asset.attributes._rights && asset.attributes._rights === 'U',
+                isUpdatable = Right.isUpdatable( asset ),
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
-                hasAlreadyFetchHistory = asset.reports && asset.reports.length,
+                hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
                 isThereAProjectLoaded = !!Project.currentLoadedProject;
 
             if (isGraphical) {
                 authAction.push( actions.zoomon );
             }
 
-            if (isGraphical /*&& rights.goto*/ ) {
+            if (isGraphical && Right.get( 'goto' )) {
                 authAction.push( actions.goto );
             }
 
@@ -242,7 +242,7 @@
                 authAction.push( actions.addtocurrentproject );
             }
 
-            if (isReportable && /*rights.history && */ hasAlreadyFetchHistory) {
+            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
                 authAction.push( actions.fetchhistory );
             }
 

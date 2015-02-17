@@ -1,29 +1,11 @@
 angular
     .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
-    .config( config ).run( function($rootScope /* ,LicenseManager*/ ) {
+    .config( config ).run( function($rootScope, Right /* ,LicenseManager*/ ) {
 
     "use strict" ;
     // Pour activer le serveur de license :
     // Activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
-    $rootScope.rights = {
-        census: true,
-        consultation: true,
-        search: true,
-        logout: true,
-        report: true,
-        parameters: true,
-        planning: true,
-        history: false,
-        photo: true,
-        project: true,
-        media: true,
-        myposition: true,
-        activelayers: true,
-        goto: true,
-        synccenter: true,
-        siteselection: true,
-        _DONT_REALLY_RESET: false
-    };
+    $rootScope.rights = Right.values ;
 } );
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide"];
