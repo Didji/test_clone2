@@ -142,6 +142,9 @@
             Project.save( this, callback );
             Project.currentLoadedProject = this ;
             $rootScope.$broadcast( 'NEW_PROJECT_LOADED' );
+            if (!$rootScope.$$phase) {
+                $rootScope.$apply();
+            }
             G3ME.__updateMapLayers();
         };
 
@@ -157,6 +160,9 @@
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
                 G3ME.__updateMapLayers();
+                if (!$rootScope.$$phase) {
+                    $rootScope.$apply();
+                }
             } );
         };
 

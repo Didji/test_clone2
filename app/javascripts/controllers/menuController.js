@@ -45,7 +45,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 label: i18n.get( '_MENU_CENSUS' ),
                 icon: "fa fa-plus",
                 template: 'partials/census.html',
-                forceLoadDOM: false
+                forceLoadDOM: true
                 }, {
                 id: 'project',
                 label: i18n.get( '_MENU_PROJECT' ),

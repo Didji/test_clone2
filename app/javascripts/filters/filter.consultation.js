@@ -10,7 +10,8 @@
         .filter( 'reportTabsFilter', reportTabsFilter )
         .filter( 'reportFieldsFilter', reportFieldsFilter )
         .filter( 'activityListFilter', activityListFilter )
-        .filter( 'isLink', isLink );
+        .filter( 'isLink', isLink )
+        .filter( 'guirlandeFilter', guirlandeFilter );
 
     function prettifyField() {
         /**
@@ -164,6 +165,94 @@
             return ((s + '') || '').search( /(https?:\/\/.*)$/ );
         }
         return _isLink;
+    }
+
+
+    guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right"];
+
+    function guirlandeFilter(Site, Project, $filter, Right) {
+        /**
+         * @name _guirlandeFilter
+         * @desc Définie la liste des boutons dans un bloc de consultation en fonction d'un Asset
+         */
+
+        var actions = {
+            "zoomon": {
+                id: "zoomon",
+                icon: "map-marker",
+                method: "asset.zoomOn"
+            },
+            "goto": {
+                id: "goto",
+                icon: "location-arrow",
+                method: "asset.goTo"
+            },
+            "addtoselection": {
+                id: "addtoselection",
+                icon: "plus",
+                method: "scope.addToCurrentSelection"
+            },
+            "dropfromcurrentselection": {
+                id: "dropfromcurrentselection",
+                icon: "minus",
+                method: "scope.dropFromCurrentSelection"
+            },
+            "addtocurrentproject": {
+                id: "addtocurrentproject",
+                icon: "meh-o",
+                method: "scope.addToCurrentProject"
+            },
+            "fetchhistory": {
+                id: "fetchhistory",
+                icon: "history",
+                method: "asset.fetchHistory"
+            },
+            "delete": {
+                id: "delete",
+                icon: "trash",
+                method: "scope.deleteAsset"
+            },
+        };
+
+        function _guirlandeFilter(asset) {
+            var authAction = [],
+                isReportable = !!$filter( 'activityListFilter' )( asset ).length,
+                isUpdatable = Right.isUpdatable( asset ),
+                isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
+                hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
+                isThereAProjectLoaded = !!Project.currentLoadedProject;
+
+            if (isGraphical) {
+                authAction.push( actions.zoomon );
+            }
+
+            if (isGraphical && Right.get( 'goto' )) {
+                authAction.push( actions.goto );
+            }
+
+            if (isReportable && asset.isInMultiselection) {
+                authAction.push( actions.dropfromcurrentselection );
+            }
+
+            if (isReportable && !asset.isInMultiselection) {
+                authAction.push( actions.addtoselection );
+            }
+
+            if (isThereAProjectLoaded) {
+                authAction.push( actions.addtocurrentproject );
+            }
+
+            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
+                authAction.push( actions.fetchhistory );
+            }
+
+            if (isUpdatable) {
+                authAction.push( actions.delete );
+            }
+
+            return authAction;
+        }
+        return _guirlandeFilter;
     }
 
 })();

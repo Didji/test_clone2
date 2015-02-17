@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship", "Right"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship, Right) {
 
         /**
          * @class AssetFactory
@@ -40,7 +40,6 @@
                 if (!root) {
                     return (callback || angular.noop)();
                 }
-                console.log( arguments );
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
 
                     if (assets_.length === 1) {
@@ -110,6 +109,22 @@
         Asset.prototype.zoomOn = function() {
             G3ME.map.setView( this.getCenter(), 18 );
             $rootScope.stopPosition();
+        };
+
+        /**
+         * @name isUpdatable
+         * @desc
+         */
+        Asset.prototype.isUpdatable = function() {
+            return Right.isUpdatable( this );
+        };
+
+        /**
+         * @name isReadOnly
+         * @desc
+         */
+        Asset.prototype.isReadOnly = function() {
+            return Right.isReadOnly( this );
         };
 
         /**
@@ -412,20 +427,20 @@
          * @param  {Array} guids
          */
         Asset.handleDeleteAssets = function(data) {
-            if ( !data.deleted) {
+            if (!data.deleted) {
                 return false;
             }
 
             var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
 
             angular.forEach( guids, function(guid) {
-                Relationship.findSubtree(guid, function(root, tree) {
+                Relationship.findSubtree( guid, function(root, tree) {
                     var ids = Object.keys( tree );
                     Asset.delete( ids );
                     $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                });
-            })
-        }
+                } );
+            } );
+        };
 
         window.AssetFactory = Asset ;
 
