@@ -22,21 +22,25 @@
         return directive;
 
         function link(scope, element) {
-            // scope.asset = !(scope.asset instanceof Asset) ? new Asset( scope.asset ) : scope.asset;
+
             scope.asset.findRelated( function() {
                 scope.$digest();
             } );
+
+            /* Scope Attributes */
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
             scope.missions = $rootScope.missions;
             scope.currentLoadedProject = Project.currentLoadedProject ;
 
+            /* Scope Methodes */
             scope.addToCurrentProject = addToCurrentProject;
             scope.addToCurrentSelection = addToCurrentSelection;
             scope.dropFromCurrentSelection = dropFromCurrentSelection;
             scope.toggleMapVisibility = toggleMapVisibility;
             scope.openInApp = openInApp;
             scope.deleteAsset = deleteAsset;
+            scope.exec = exec;
 
             scope.$on( '$destroy', destroy );
 
@@ -90,17 +94,17 @@
              * @param {Event} event
              */
             function sendAssetToHeaven(event) {
-                var html = '' + scope.site.metamodel[scope.asset.okey].label + ':' + scope.asset.label + '';
-                var x = event.pageX,
-                    y = event.pageY;
-                var angel = $( '<div>' ).addClass( 'angel' ).appendTo( element ).html( html ).css( {
-                    position: 'fixed',
-                    top: y,
-                    left: x - 100
-                } );
-                setTimeout( function() {
-                    angel.addClass( 'ascending' );
-                }, 1000 );
+                // var html = '' + scope.site.metamodel[scope.asset.okey].label + ':' + scope.asset.label + '';
+                // var x = event.pageX,
+                //     y = event.pageY;
+                // var angel = $( '<div>' ).addClass( 'angel' ).appendTo( element ).html( html ).css( {
+                //     position: 'fixed',
+                //     top: y,
+                //     left: x - 100
+                // } );
+                // setTimeout( function() {
+                //     angel.addClass( 'ascending' );
+                // }, 1000 );
             }
 
             function toggleMapVisibility(asset) {
@@ -125,12 +129,24 @@
                     if (!yes) {
                         return;
                     }
-                    Asset.remoteDeleteAssets([asset]);
-                });
+                    Asset.remoteDeleteAssets( [asset] );
+                } );
             }
 
+            /**
+             * @name exec
+             * @desc
+             * @param  {String} method
+             */
+            function exec(method) {
+                method = method.split( '.' );
+                if (method[0] === "asset") {
+                    scope.asset[method[1]]();
+                } else {
+                    eval( method[1] + '(scope.asset);' );
+                }
+            }
         }
-
     }
 
 })();

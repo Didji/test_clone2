@@ -40,7 +40,6 @@
                 if (!root) {
                     return (callback || angular.noop)();
                 }
-                console.log( arguments );
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
 
                     if (assets_.length === 1) {
@@ -393,36 +392,43 @@
             var toDelete = [];
             angular.forEach( assets, function(asset) {
                 asset.hideFromMap();
-                toDelete.push( {guid: asset.guid, okey: asset.okey} );
+                toDelete.push( {
+                    guid: asset.guid,
+                    okey: asset.okey
+                } );
             } );
             $http.post(
                 Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
-                { deleted: toDelete },
-                { timeout: 100000 }
+                {
+                    deleted: toDelete
+                },
+                {
+                    timeout: 100000
+                }
             ).success( Asset.handleDeleteAssets
             ).error( Asset.handleDeleteAssets
             );
-        }
+        };
 
         /**
          * @name handleDeleteAssets
          * @param  {Array} guids
          */
         Asset.handleDeleteAssets = function(data) {
-            if ( !data.deleted) {
+            if (!data.deleted) {
                 return false;
             }
 
             var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
 
             angular.forEach( guids, function(guid) {
-                Relationship.findSubtree(guid, function(root, tree) {
+                Relationship.findSubtree( guid, function(root, tree) {
                     var ids = Object.keys( tree );
                     Asset.delete( ids );
                     $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                });
-            })
-        }
+                } );
+            } );
+        };
 
         window.AssetFactory = Asset ;
 

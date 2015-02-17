@@ -34,7 +34,10 @@
                 </li>
             </ul>
         </div>
-        <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
+
+        <button ng-repeat="action in (asset|guirlandeFilter)" class="consultation-btn" ng-click="exec(action.method)"><i class="fa fa-{{action.icon}}"></i></button>
+
+     <!--    <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
         </button>
         <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
         </button>
@@ -47,7 +50,7 @@
         <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
         </button>
         <button class="consultation-btn" ng-click="deleteAsset(complex || asset)" ng-if="asset.attributes._rights === 'U'"><i class="fa fa-trash"></i>
-        </button>
+        </button> -->
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.historyAction.html'"></ng-include>
