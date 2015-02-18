@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", function($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site) {
+angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
 
         "use strict";
 
@@ -20,9 +20,15 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 scope.metamodel = Site.current.metamodel;
                 scope.dependancies = Site.current.dependancies;
                 scope.defaultClassIndex = scope.classindex || "0";
+
                 scope.$watch( 'okey', function(okey) {
                     if (okey) {
-                        window.root = scope.root = scope.node = new ComplexAsset( okey );
+                        if (okey.search( /PROJECT_/ ) === 0) {
+                            scope.isProject = true ;
+                            scope.defaultClassIndex = (Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )].added) || 0 ;
+                            // TODO right symbology
+                        }
+                        scope.root = scope.node = new ComplexAsset( okey );
                     }
                 }, true );
 
@@ -153,7 +159,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         if (node.layer) {
                             return;
                         }
-
                         var iconUrl = Site.current.symbology['' + node.okey + scope.defaultClassIndex].style.symbol.icon,
                             image = new Image();
 
