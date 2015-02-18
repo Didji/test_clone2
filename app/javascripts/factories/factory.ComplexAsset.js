@@ -196,17 +196,18 @@
 
             for (var i = 0; i < assets.length; i++) {
                 assets[i].project_status = "added";
+                Project.currentLoadedProject.new.push( assets[i].guid );
             }
+
+            Project.currentLoadedProject.save();
 
             Asset.save( assets, function() {
                 Relationship.saveRelationship( relationships );
                 G3ME.reloadLayers();
             } );
 
-            console.log( "je vais m'enregistrer en tant qu'objet complexe dans un table CENSUS" );
-            console.log( "je vais modifier le projet pour m'ajouter a lui, ou alors je garde un identifiant de projet chargé?" );
+            // TODO: enregistrer le l'object complexe 'this', pour l'envoyer au dechargement du projet
         };
-
 
         /**
          * @method
@@ -218,7 +219,6 @@
             var masterBounds = null ;
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i] ;
-                console.log( (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 );
                 asset.guid = asset.uuid;
                 asset.attributes = asset.fields ;
                 asset.classindex = (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;

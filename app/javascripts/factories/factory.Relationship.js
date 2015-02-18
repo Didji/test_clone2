@@ -54,7 +54,7 @@
         };
 
         Relationship.findChildren = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = "' + id + '" ', [], function(rows) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ' + id, [], function(rows) {
                 var response = [];
                 for (var i = 0; i < rows.length; i++) {
                     response.push( rows.item( i ).child );
@@ -63,25 +63,8 @@
             } );
         };
 
-        Relationship.findRelatives = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = "' + id + '" or child = "' + id + '"', [], function(rows) {
-                var response = {
-                    daddy: [],
-                    child: []
-                };
-                for (var i = 0; i < rows.length; i++) {
-                    if (rows.item( i ).child === id) {
-                        response.daddy.push( rows.item( i ).daddy );
-                    } else {
-                        response.child.push( rows.item( i ).child );
-                    }
-                }
-                callback( response );
-            } );
-        };
-
         Relationship.findRoot = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE child = "' + id + '" ', [], function(rows) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE child = ? ', [id], function(rows) {
                 if (rows.length === 0) {
                     callback( id );
                 } else {
@@ -96,7 +79,7 @@
             } ).transaction( function(transaction) {
                 for (var daddy in relationship) {
                     for (var child in relationship[daddy]) {
-                        transaction.executeSql( 'INSERT INTO relationship VALUES ("' + (daddy) + '", "' + (relationship[daddy][child]) + '");' );
+                        transaction.executeSql( 'INSERT INTO relationship VALUES (' + (daddy) + ', ' + (relationship[daddy][child]) + ');' );
                     }
                 }
             } );

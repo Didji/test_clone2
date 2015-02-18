@@ -35,7 +35,6 @@
             if (this.isComplex !== undefined) {
                 (callback || angular.noop)();
             }
-            console.log( "findRelated" );
             var self = this ;
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
                 if (!root) {
@@ -347,7 +346,7 @@
                 return callback( partial_response );
             }
 
-            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = "' + guids[0] + '"' : ' in ( "' + guids.join( '","' ) + '")');
+            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] + '' : ' in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function(results) {
                 for (var i = 0; i < results.length; i++) {
                     var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
