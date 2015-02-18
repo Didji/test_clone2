@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Project", "Asset", "Relationship"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Project, Asset, Relationship) {
 
         /**
          * @class ComplexAssetFactory
@@ -16,6 +16,7 @@
          */
         var ComplexAsset = function(okey, father, root) {
             this.okey = okey;
+            this.isProject = (this.okey.search( /PROJECT_/ ) === 0);
             this.uuid = window.uuid();
             this.children = [];
             this.father = father && father.uuid;
@@ -188,11 +189,119 @@
         /**
          * @method
          * @memberOf ComplexAsset
+         */
+        ComplexAsset.prototype.saveForProject = function() {
+            var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
+                assets = ComplexAsset.formatComplexToSimple( this );
+
+            for (var i = 0; i < assets.length; i++) {
+                assets[i].project_status = "added";
+            }
+
+            Asset.save( assets, function() {
+                Relationship.saveRelationship( relationships );
+                G3ME.reloadLayers();
+            } );
+
+            console.log( "je vais m'enregistrer en tant qu'objet complexe dans un table CENSUS" );
+            console.log( "je vais modifier le projet pour m'ajouter a lui, ou alors je garde un identifiant de projet chargé?" );
+        };
+
+
+        /**
+         * @method
+         * @memberOf ComplexAsset
+         */
+        ComplexAsset.formatComplexToSimple = function(complex) {
+            var assets = complex.gimmeYourLinearSubtree(), asset , i  ;
+            var masterGeom = null ;
+            var masterBounds = null ;
+            for (i = 0; i < assets.length; i++) {
+                asset = assets[i] ;
+                console.log( (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 );
+                asset.guid = asset.uuid;
+                asset.attributes = asset.fields ;
+                asset.classindex = (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
+                asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
+                asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
+                asset.maplabel = "";
+                delete asset.father;
+                delete asset.fields;
+                delete asset.formVisible;
+                delete asset.isProject;
+                delete asset.layer;
+                delete asset.uuid;
+                delete asset.root;
+                masterGeom = masterGeom || asset.geometry;
+                masterBounds = masterBounds || asset.bounds;
+            }
+            for (i = 0; i < assets.length; i++) {
+                if (!assets[i].geometry) {
+                    assets[i].geometry = masterGeom ;
+                    assets[i].bounds = masterBounds ;
+                    assets[i].classindex = 0 ;
+                }
+            }
+            return assets;
+        };
+
+        ComplexAsset.getGeometryFromCensusAsset = function(complex) {
+            var type ;
+            if (complex.geometry.length === 2 && typeof complex.geometry[0] === "number") {
+                type = "Point";
+                complex.geometry = [complex.geometry[1], complex.geometry[0]];
+            } else {
+                type = "LineString";
+            }
+            return {
+                type: type,
+                coordinates: complex.geometry
+            };
+        };
+
+        ComplexAsset.getBoundsFromCensusAsset = function(complex) {
+            if (complex.geometry.type === "Point") {
+                return {
+                    sw: {
+                        lng: complex.geometry.coordinates[0],
+                        lat: complex.geometry.coordinates[1]
+                    },
+                    ne: {
+                        lng: complex.geometry.coordinates[0],
+                        lat: complex.geometry.coordinates[1]
+                    }
+                };
+            } else {
+                // TODO : GERER LES LINESTRING
+                return false;
+            }
+        };
+
+        /**
+         * @method
+         * @memberOf ComplexAsset
+         */
+        ComplexAsset.prototype.gimmeYourLinearSubtree = function() {
+            var linearMe = angular.copy( this );
+            delete linearMe.children;
+            var linearSubtree = [linearMe];
+            for (var i = 0; i < this.children.length; i++) {
+                linearSubtree = linearSubtree.concat( this.children[i].gimmeYourLinearSubtree() );
+            }
+            return linearSubtree;
+        };
+
+
+        /**
+         * @method
+         * @memberOf ComplexAsset
          *
          * @returns {Boolean} True si l'objet a été supprimé
          */
         ComplexAsset.prototype.save = function() {
-
+            if (this.isProject) {
+                return this.saveForProject();
+            }
             var node = this.__clone( true );
             node.timestamp = (new Date()).getTime();
             node.__clean();
@@ -204,11 +313,7 @@
                 census.push( node );
                 Storage.set_( 'census', census, function() {
                     $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
-                    for (var i in G3ME.map._layers) {
-                        if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url && G3ME.map._layers[i].isTemp) {
-                            G3ME.map._layers[i].redraw();
-                        }
-                    }
+                    G3ME.reloadLayers();
                     $rootScope.refreshSyncCenter();
                     deferred.resolve();
                 } );
@@ -243,11 +348,7 @@
 
                     Storage.set_( 'census', census, function() {
                         $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
-                        for (var i in G3ME.map._layers) {
-                            if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
-                                G3ME.map._layers[i].redraw();
-                            }
-                        }
+                        G3ME.reloadLayers();
                         $rootScope.refreshSyncCenter();
                         deferred.resolve();
                     } );

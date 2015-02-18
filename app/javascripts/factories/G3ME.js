@@ -134,6 +134,14 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             return this.active_layers.join( '%" or symbolId like "' );
         },
 
+        reloadLayers: function() {
+            for (var i in G3ME.map._layers) {
+                if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
+                    G3ME.map._layers[i].redraw();
+                }
+            }
+        },
+
         zoomOnAsset: function(asset) {
             G3ME.map.setView( G3ME.getLineStringMiddle( asset.geometry.coordinates ), 18 );
             G3ME.invalidateMapSize();

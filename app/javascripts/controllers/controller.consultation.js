@@ -42,7 +42,10 @@
         vm.groups = null;
         vm.spinnerOptions = {};
         vm.multiselection = {};
-        vm.selectedAssets = { inList: {}, inMulti: {} };
+        vm.selectedAssets = {
+            inList: {},
+            inMulti: {}
+        };
 
         var PREOPEN_TIMER, initialXPosition, initialWidth,
             currentXPosition,
@@ -131,7 +134,7 @@
                 vm.groups[assets[i].priority] = vm.groups[assets[i].priority] || {};
                 vm.groups[assets[i].priority][assets[i].okey] = vm.groups[assets[i].priority][assets[i].okey] || [];
                 vm.groups[assets[i].priority][assets[i].okey].push( assets[i] );
-                vm.selectedAssets.inList[ assets[i].guid ] = assets[i];
+                vm.selectedAssets.inList[assets[i].guid] = assets[i];
             }
             vm.open();
             vm.loading = false;
@@ -144,14 +147,14 @@
          */
         function dropAssetsFromListAndMulti(guids) {
             angular.forEach( guids, function(guid) {
-                if ( vm.selectedAssets.inMulti[ guid ] ) {
-                    dropAssetFromMultiselection( vm.selectedAssets.inMulti[ guid ] );
+                if (vm.selectedAssets.inMulti[guid]) {
+                    dropAssetFromMultiselection( vm.selectedAssets.inMulti[guid] );
                 }
-                if ( vm.selectedAssets.inList[ guid ] ) {
-                    dropAssetFromList( vm.selectedAssets.inList[ guid ] )
+                if (vm.selectedAssets.inList[guid]) {
+                    dropAssetFromList( vm.selectedAssets.inList[guid] );
                 }
                 $scope.$digest();
-            });
+            } );
         }
 
         /**
@@ -160,8 +163,8 @@
          * @param {Asset}
          */
         function dropAssetFromList(asset) {
-            vm.groups[ asset.priority ][ asset.okey ].splice( vm.groups[ asset.priority ][ asset.okey ].indexOf( asset ), 1 );
-            delete vm.selectedAssets.inList[ asset.guid ];
+            vm.groups[asset.priority][asset.okey].splice( vm.groups[asset.priority][asset.okey].indexOf( asset ), 1 );
+            delete vm.selectedAssets.inList[asset.guid];
         }
 
         /**
@@ -176,7 +179,7 @@
             vm.multiselection.length = (vm.multiselection.length || 0) + 1;
             if (vm.multiselection[asset.okey].indexOf( asset ) === -1) {
                 vm.multiselection[asset.okey].push( asset );
-                vm.selectedAssets.inMulti[ asset.guid ] = asset;
+                vm.selectedAssets.inMulti[asset.guid] = asset;
             }
             asset.isInMultiselection = true;
         }
@@ -189,7 +192,7 @@
          */
         function dropAssetFromMultiselection(asset) {
             vm.multiselection[asset.okey].splice( vm.multiselection[asset.okey].indexOf( asset ), 1 );
-            delete vm.selectedAssets.inMulti[ asset.guid ];
+            delete vm.selectedAssets.inMulti[asset.guid];
             asset.isInMultiselection = false;
             vm.multiselection.length--;
         }
@@ -203,7 +206,7 @@
             vm.multiselection.length -= vm.multiselection[okey].length;
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
                 vm.multiselection[okey][i].isInMultiselection = false;
-                delete vm.selectedAssets.inMulti[ vm.multiselection[okey][i].guid ];
+                delete vm.selectedAssets.inMulti[vm.multiselection[okey][i].guid];
             }
             vm.multiselection[okey] = [];
         }
@@ -359,29 +362,29 @@
                 if (!yes) {
                     return;
                 }
-                var notUpdatableAssets = [], projectAssets = [];
+                var notUpdatableAssets = [];
 
                 angular.forEach( assets, function(asset, index) {
                     if (asset.attributes._rights !== 'U') {
                         notUpdatableAssets.push( asset.label );
-                        assets.splice(index, 1);
-                    } else if ( Project.currentLoadedProject.assets.indexOf( asset.id ) > -1 ) {
+                        assets.splice( index, 1 );
+                    } else if (Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
                         Project.currentLoadedProject.deleteAsset( asset );
-                        assets.splice(index, 1);
+                        assets.splice( index, 1 );
                     }
-                });
+                } );
 
-                if ( notUpdatableAssets.length ) {
+                if (notUpdatableAssets.length) {
                     alertify.alert( i18n.get(
                         notUpdatableAssets.length === 1 ? '_NOT_ALLOWED_TO_DELETE_ASSET_' : '_NOT_ALLOWED_TO_DELETE_ASSETS_',
-                        [ notUpdatableAssets.join(",") ]
+                        [notUpdatableAssets.join( "," )]
                     ) );
                 }
 
-                if ( assets.length ) {
+                if (assets.length) {
                     Asset.remoteDeleteAssets( assets );
                 }
-            });
+            } );
         }
 
     }

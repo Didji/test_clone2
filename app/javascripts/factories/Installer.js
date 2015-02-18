@@ -21,7 +21,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
             if (assets.length <= 0) {
                 callback();
             } else {
-                var request = " DELETE FROM ASSETS WHERE id in ( " + assets.join( "," ) + " ) ";
+                var request = ' DELETE FROM ASSETS WHERE id in ( "' + assets.join( "," ) + '" ) ';
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {
                         name: site.zones[i].database_name
@@ -63,7 +63,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 site.dependancies["PROJECT_" + okey] = "PROJECT_" + site.dependancies[okey];
             }
 
-            console.log( site.dependancies );
             activities._byId = [];
             for (i = 0; i < site.activities.length; i++) {
                 if (update || site.number[site.activities[i].okeys[0]] !== 0) {

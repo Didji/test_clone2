@@ -21,7 +21,7 @@
         };
         return directive;
 
-        function link(scope, element) {
+        function link(scope) {
 
             scope.asset.findRelated( function() {
                 scope.$digest();
@@ -104,7 +104,7 @@
              * @desc
              * @param {Event} event
              */
-            function sendAssetToHeaven(event) {
+            function sendAssetToHeaven( /*event*/ ) {
                 // var html = '' + scope.site.metamodel[scope.asset.okey].label + ':' + scope.asset.label + '';
                 // var x = event.pageX,
                 //     y = event.pageY;
@@ -141,10 +141,10 @@
                         return;
                     }
 
-                    if ( Project.currentLoadedProject.assets.indexOf( asset.id ) > -1 ) {
+                    if (Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
                         Project.currentLoadedProject.deleteAsset( asset );
                     } else {
-                        Asset.remoteDeleteAssets([asset]);
+                        Asset.remoteDeleteAssets( [asset] );
                     }
                 } );
             }

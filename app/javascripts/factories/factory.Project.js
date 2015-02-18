@@ -25,6 +25,7 @@
         Project.prototype.added = [] ;
         Project.prototype.deleted = [] ;
         Project.prototype.updated = [] ;
+        Project.prototype.new = [] ;
         Project.prototype.bilan = undefined ;
         Project.prototype.estimated_end_date = undefined;
         Project.prototype.last_update_date = undefined;
@@ -41,8 +42,8 @@
 
         Project.database = "parameters" ;
         Project.table = "PROJECTS" ;
-        Project.columns = ['id', 'json', 'added', 'deleted', 'updated', 'loaded'];
-        Project.prepareStatement = ' ?, ?, ?, ?, ?, ?';
+        Project.columns = ['id', 'json', 'added', 'deleted', 'updated', 'new', 'loaded'];
+        Project.prepareStatement = Project.columns.join( ',' ).replace( /[a-z]+/gi, '?' );
         Project.currentLoadedProject = undefined ;
 
         /**
@@ -50,6 +51,9 @@
          * @desc Télécharge et charge un projet depuis le serveur
          */
         Project.prototype.load = function(callback) {
+            if (this.loaded) {
+                return this.setProjectLoaded( callback );
+            }
             var project = this ;
             if (Project.currentLoadedProject && Project.currentLoadedProject.id !== this.id) {
                 return Project.currentLoadedProject.unload( function() {
@@ -113,6 +117,7 @@
             var payload = {
                     'added': [],
                     'deleted': [],
+                    'new': [],
                     'updated': []
                 },
                 project = this ;
@@ -156,6 +161,7 @@
             var project = this ;
             this.loaded = false ;
             this.unloading = false ;
+            Asset.deleteAllProjectAsset();
             Asset.delete( this.assets.concat( this.added ), function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
@@ -171,7 +177,7 @@
          * @desc
          */
         Project.prototype.hasBeenModified = function() {
-            return (this.added.length + this.deleted.length + this.updated.length) > 0;
+            return (this.added.length + this.deleted.length + this.updated.length + this.new.length) > 0;
         };
 
         Project.smartgeoReachError = function() {
@@ -206,6 +212,7 @@
             this.added = [];
             this.updated = [];
             this.deleted = [];
+            this.new = [];
             Asset.delete( this.added, function() {
                 project.unload( callback );
             } );
@@ -267,7 +274,7 @@
                 }
                 project.save( callback );
             } );
-        }
+        };
 
         /**
          * @name   deleteAssets
@@ -280,7 +287,7 @@
             for (var i = 0; i < assets.length; i++) {
                 this.deleteAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
             }
-        }
+        };
 
 
         /**
@@ -298,7 +305,7 @@
          * @desc Serialize les attributs du projet pour la requête SQL
          */
         Project.prototype.serializeForSQL = function() {
-            return [this.id, JSON.stringify( this ), JSON.stringify( this.added ), JSON.stringify( this.deleted ), JSON.stringify( this.updated ), this.loaded];
+            return [this.id, JSON.stringify( this ), JSON.stringify( this.added ), JSON.stringify( this.deleted ), JSON.stringify( this.updated ), JSON.stringify( this.new ), this.loaded];
         };
 
         /**
