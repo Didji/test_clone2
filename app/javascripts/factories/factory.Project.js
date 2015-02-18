@@ -249,8 +249,8 @@
 
             Relationship.findSubtree( asset, function(root, tree) {
                 for (var i = 0; i < tree.length; i++) {
-                    if (project.assets.indexOf( +tree[i].id ) > -1) {
-                        project.assets.splice( project.assets.indexOf( +tree[i].id ), 1);
+                    if (project.deleted.indexOf( +tree[i].id ) === -1) {
+                        project.deleted.splice( project.deleted.indexOf( +tree[i].id ), 1);
                     }
                 }
                 project.save( callback );
