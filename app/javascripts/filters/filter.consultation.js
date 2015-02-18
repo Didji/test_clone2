@@ -202,6 +202,11 @@
                 icon: "meh-o",
                 method: "scope.addToCurrentProject"
             },
+            "removefromproject": {
+                id: "removefromproject",
+                icon: "meh-o fa-flip-vertical",
+                method: "scope.removeFromProject"
+            },
             "fetchhistory": {
                 id: "fetchhistory",
                 icon: "history",
@@ -220,7 +225,9 @@
                 isUpdatable = Right.isUpdatable( asset ),
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
                 hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
-                isThereAProjectLoaded = !!Project.currentLoadedProject;
+                isThereAProjectLoaded = !!Project.currentLoadedProject,
+                isProjectAsset = ( Project.currentLoadedProject.assets.indexOf( asset.guid ) !== -1 );
+
 
             if (isGraphical) {
                 authAction.push( actions.zoomon );
@@ -238,8 +245,12 @@
                 authAction.push( actions.addtoselection );
             }
 
-            if (isThereAProjectLoaded) {
+            if (isThereAProjectLoaded && !isProjectAsset) {
                 authAction.push( actions.addtocurrentproject );
+            }
+
+            if (isThereAProjectLoaded && isProjectAsset) {
+                authAction.push( actions.removefromproject );
             }
 
             if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {

@@ -218,14 +218,11 @@
         Project.prototype.addAsset = function(asset, callback) {
             var project = this;
 
-            Relationship.findSubtree( asset, function(root, tree) {
-                for (var i = 0; i < tree.length; i++) {
-                    if (project.assets.indexOf( +tree[i].id ) === -1) {
-                        project.assets.push( +tree[i].id ) );
-                    }
-                }
-                project.save( callback );
-            } );
+            if (project.assets.indexOf( asset.guid ) === -1) {
+                project.assets.push( +asset.guid );
+            }
+
+            project.save( callback );
         }
 
         /**
@@ -245,14 +242,11 @@
         Project.prototype.removeAsset = function(asset, callback) {
             var project = this;
 
-            Relationship.findSubtree( asset, function(root, tree) {
-                for (var i = 0; i < tree.length; i++) {
-                    if (project.assets.indexOf( +tree[i].id ) !== -1) {
-                        project.assets.splice( (project.assets.indexOf( +tree[i].id ), 1 );
-                    }
-                }
-                project.save( callback );
-            } );
+            if (project.assets.indexOf( asset.guid ) !== -1) {
+                project.assets.splice( project.assets.indexOf( asset.guid ), 1 );
+            }
+
+            project.save( callback );
         }
 
         /**

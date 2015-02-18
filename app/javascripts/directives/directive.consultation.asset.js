@@ -47,11 +47,22 @@
 
             /**
              * @name addToCurrentSelection
-             * @param {Event} event
+             * @param {Asset} asset
              */
             function addToCurrentProject(asset) {
                 Project.currentLoadedProject.addAsset( asset, function() {
                     alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", scope.currentLoadedProject.name ) );
+                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                } );
+            }
+
+            /**
+             * @name removeFromProject
+             * @param {Asset} asset
+             */
+            function removeFromProject(asset) {
+                Project.currentLoadedProject.removeAsset( asset, function() {
+                    alertify.alert( i18n.get( "_PROJECT_ASSETS_REMOVED_", scope.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                 } );
             }

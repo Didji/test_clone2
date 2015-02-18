@@ -148,5 +148,6 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_DISCARD_PROJECT_: "Discard",
     _PROJECTS_CANNOT_REACH_SMARTGEO_: "Cannot reach Smartgeo",
     _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
-    _PROJECT_ASSETS_ADDED_: "Asset added to project %s"
+    _PROJECT_ASSETS_ADDED_: "Asset added to project %s",
+    _PROJECT_ASSETS_REMOVED_: "Asset removed from project %s"
 };
