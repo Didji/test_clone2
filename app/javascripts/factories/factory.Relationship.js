@@ -40,7 +40,7 @@
             function findSubtree_rec() {
                 for (var id in tree) {
                     if (tree[id] === null) {
-                        return Relationship.findChildren( id, function(children) {
+                        return Relationship.findChildren( +id, function(children) {
                             tree[id] = children;
                             for (var i = 0; i < children.length; i++) {
                                 tree[children[i]] = null;
@@ -54,10 +54,27 @@
         };
 
         Relationship.findChildren = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ' + id, [], function(rows) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ? ', [id], function(rows) {
                 var response = [];
                 for (var i = 0; i < rows.length; i++) {
                     response.push( rows.item( i ).child );
+                }
+                callback( response );
+            } );
+        };
+
+        Relationship.findRelatives = function(id, callback) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ? or child = ?', [id, id], function(rows) {
+                var response = {
+                    daddy: [],
+                    child: []
+                };
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows.item( i ).child === id) {
+                        response.daddy.push( rows.item( i ).daddy );
+                    } else {
+                        response.child.push( rows.item( i ).child );
+                    }
                 }
                 callback( response );
             } );
@@ -73,31 +90,18 @@
             } );
         };
 
-        Relationship.saveRelationship = function(relationship) {
-            SQLite.openDatabase( {
-                name: 'parameters'
-            } ).transaction( function(transaction) {
-                for (var daddy in relationship) {
-                    for (var child in relationship[daddy]) {
-                        transaction.executeSql( 'INSERT INTO relationship VALUES (' + (daddy) + ', ' + (relationship[daddy][child]) + ');' );
-                    }
-                }
-            } );
+        Relationship.saveRelationship = function() {
+            // SQLite.openDatabase( {
+            //     name: 'parameters'
+            // } ).transaction( function(transaction) {
+            //     for (var daddy in relationship) {
+            //         for (var child in relationship[daddy]) {
+            //             transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
+            //         }
+            //     }
+            // } );
         };
 
-        Relationship.getRelationshipsFromComplexAsset = function(complex) {
-            var tree = {} ;
-            Relationship.getRelationshipsFromComplexAssetSubtree( complex, tree );
-            return tree;
-        };
-
-        Relationship.getRelationshipsFromComplexAssetSubtree = function(complex, tree) {
-            tree[complex.id || complex.uuid] = tree[complex.id || complex.uuid] || [] ;
-            for (var i = 0; i < complex.children.length; i++) {
-                tree[complex.id || complex.uuid].push( complex.children[i].id || complex.children[i].uuid );
-                Relationship.getRelationshipsFromComplexAssetSubtree( complex.children[i], tree );
-            }
-        };
 
         return Relationship;
     }

@@ -53,6 +53,7 @@
                 Project.currentLoadedProject.addAsset( asset, function() {
                     alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", scope.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                    scope.$apply();
                 } );
             }
 
@@ -64,6 +65,7 @@
                 Project.currentLoadedProject.removeAsset( asset, function() {
                     alertify.alert( i18n.get( "_PROJECT_ASSETS_REMOVED_", scope.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                    scope.$apply();
                 } );
             }
 

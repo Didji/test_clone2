@@ -225,12 +225,18 @@
         Project.prototype.addAsset = function(asset, callback) {
             var project = this;
 
-            if (project.assets.indexOf( asset.guid ) === -1) {
-                project.assets.push( +asset.guid );
-            }
+            Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
+                var guids = Object.keys( tree );
 
-            project.save( callback );
-        }
+                for (var i = 0; i < guids.length; i++) {
+                    if ( project.assets.indexOf( +guids[i] ) === -1 ) {
+                        project.assets.push( +guids[i] );
+                    }
+                }
+
+                project.save( callback );
+            });
+        };
 
         /**
          * @name addAssets
@@ -249,12 +255,18 @@
         Project.prototype.removeAsset = function(asset, callback) {
             var project = this;
 
-            if (project.assets.indexOf( asset.guid ) !== -1) {
-                project.assets.splice( project.assets.indexOf( asset.guid ), 1 );
-            }
+            Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
+                var guids = Object.keys( tree );
 
-            project.save( callback );
-        }
+                for (var i = 0; i < guids.length; i++) {
+                    if (project.assets.indexOf( +guids[i] ) !== -1) {
+                        project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
+                    }
+                }
+
+                project.save( callback );
+            });
+        };
 
         /**
          * @name   deleteAsset
