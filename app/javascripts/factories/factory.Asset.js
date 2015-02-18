@@ -420,25 +420,28 @@
          * @param  {Array} assets
          */
         Asset.remoteDeleteAssets = function(assets) {
-            var toDelete = [];
+            var originals = [];
             angular.forEach( assets, function(asset) {
                 asset.hideFromMap();
-                toDelete.push( {
+                originals.push( {
                     guid: asset.guid,
                     okey: asset.okey
                 } );
             } );
-            $http.post(
-                Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
-                {
-                    deleted: toDelete
-                },
-                {
-                    timeout: 100000
-                }
-            ).success( Asset.handleDeleteAssets
-            ).error( Asset.handleDeleteAssets
-            );
+
+            if (originals.length) {
+                $http.post(
+                    Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
+                    {
+                        deleted: originals
+                    },
+                    {
+                        timeout: 100000
+                    }
+                ).success( Asset.handleDeleteAssets
+                ).error( Asset.handleDeleteAssets
+                );
+            }
         };
 
         /**

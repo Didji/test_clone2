@@ -224,10 +224,11 @@
          */
         Project.prototype.addAsset = function(asset, callback) {
             var project = this;
-            Relationship.findRelated( asset, function(related) {
-                for (var i = 0; i < related.length; i++) {
-                    if (project.added.indexOf( +related[i].id ) === -1) {
-                        project.added.push( +related[i].id );
+
+            Relationship.findSubtree( asset, function(root, tree) {
+                for (var i = 0; i < tree.length; i++) {
+                    if (project.assets.indexOf( +tree[i].id ) === -1) {
+                        project.assets.push( +tree[i].id );
                     }
                 }
                 project.save( callback );
@@ -243,6 +244,57 @@
                 this.addAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
             }
         };
+
+        /**
+         * @name removeAsset
+         * @desc
+         */
+        Project.prototype.removeAsset = function(asset, callback) {
+            var project = this;
+
+            Relationship.findSubtree( asset, function(root, tree) {
+                for (var i = 0; i < tree.length; i++) {
+                    if (project.assets.indexOf( +tree[i].id ) !== -1) {
+                        project.assets.splice( project.assets.indexOf( +tree[i].id ), 1 );
+                    }
+                }
+                project.save( callback );
+            } );
+        };
+
+        /**
+         * @name   deleteAsset
+         * @desc
+         * @param  {Asset}    asset
+         * @param  {Function} callback
+         * @return {void}
+         */
+        Project.prototype.deleteAsset = function(asset, callback) {
+            var project = this;
+
+            Relationship.findSubtree( asset, function(root, tree) {
+                for (var i = 0; i < tree.length; i++) {
+                    if (project.deleted.indexOf( +tree[i].id ) === -1) {
+                        project.deleted.push( +tree[i].id );
+                    }
+                }
+                project.save( callback );
+            } );
+        };
+
+        /**
+         * @name   deleteAssets
+         * @desc
+         * @param  {[Assets]} assets
+         * @param  {Function} callback
+         * @return {void}
+         */
+        Project.prototype.deleteAssets = function(assets, callback) {
+            for (var i = 0; i < assets.length; i++) {
+                this.deleteAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
+            }
+        };
+
 
         /**
          * @name setAssets
