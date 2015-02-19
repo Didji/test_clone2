@@ -28,12 +28,16 @@
             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                 <i class="fa fa-pencil-square-o"></i>
             </button>
+
             <ul class="dropdown-menu" role="menu">
                 <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
                     <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{::activity.label}}</a>
                 </li>
             </ul>
         </div>
+        <button class="consultation-btn" ng-click="asset.toggleEdit()">
+            <i class="fa fa-pencil"></i>
+        </button>
         <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
         </button>
         <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>

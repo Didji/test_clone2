@@ -45,7 +45,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 label: i18n.get( '_MENU_CENSUS' ),
                 icon: "fa fa-plus",
                 template: 'partials/census.html',
-                forceLoadDOM: false
+                forceLoadDOM: true
                 }, {
                 id: 'project',
                 label: i18n.get( '_MENU_PROJECT' ),
@@ -217,20 +217,43 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             }
         };
 
-        /**
-         * @method
-         * @memberOf menuController
-         * @param {object} item Element du menu
-         * @desc Ouvre un élement du menu
-         */
-        vm.showItem = function(item) {
-            vm.homeIsDisplayed = false;
-            for (var menuItem in vm.menuItems) {
-                vm.menuItems[menuItem].displayMenuItem = false;
-                vm.menuItems[menuItem].displayItemContent = false;
+    /**
+     * @method
+     * @memberOf menuController
+     * @param {object} item Element du menu
+     * @desc Ouvre un élement du menu
+     */
+    vm.showItem = function(item) {
+        vm.homeIsDisplayed = false;
+        for (var menuItem in vm.menuItems) {
+            vm.menuItems[menuItem].displayMenuItem = false;
+            vm.menuItems[menuItem].displayItemContent = false;
+        }
+        item.displayItemContent = true;
+    };
+
+    /**
+     * @method
+     * @memberOf menuController
+     * @param {object} item Element du menu
+     * @desc Ouvre un élement du menu
+     */
+    $rootScope.showMenuItemById = function(id) {
+        vm.homeIsDisplayed = false;
+        for (var menuItem in vm.menuItems) {
+            vm.menuItems[menuItem].displayMenuItem = false;
+            vm.menuItems[menuItem].displayItemContent = false;
+            if(vm.menuItems[menuItem].id === id){
+                vm.menuItems[menuItem].displayItemContent = true;
             }
-            item.displayItemContent = true;
-        };
+        }
+
+        vm.showMenu();
+        //censusController.startCensus('ep-armoire');
+
+        //$rootScope.startCensus1('ep-armoire');
+
+    };
 
         /**
          * @method
@@ -316,6 +339,10 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
         $rootScope.hideLeftMenu = vm.hideMenu = function() {
             vm.display = false;
         };
+
+        window.menuController = angular.extend( vm , {
+            "kk" :  []
+        });
 
     }
 

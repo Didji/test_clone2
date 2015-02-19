@@ -54,8 +54,8 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    self.relatedAssetsTree = tree ;
-                    (callback || angular.noop)();
+                    //self.relatedAssetsTree = tree ;
+                    (callback || angular.noop)(self);
                 } );
             } );
         };
@@ -381,6 +381,12 @@
                 asset: undefined,
                 label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )
             } );
+        };
+
+        Asset.prototype.toggleEdit = function(){
+            $rootScope.showMenuItemById("census");
+            console.log('fire START_NEW_CENSUS');
+            $rootScope.$broadcast("START_NEW_CENSUS", this);
         };
 
         window.AssetFactory = Asset ;
