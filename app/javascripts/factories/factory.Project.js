@@ -99,7 +99,7 @@
             var project = this ;
             this.synchronizing = true ;
             this.getSynchronizePayload( function(payload) {
-                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets', {
+                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
                     id_project: project.id
                 } ), payload ).success( function() {
                     project.remoteSave( callback );
@@ -127,7 +127,6 @@
             } );
         };
 
-
         /**
          * @name getSynchronizePayload
          * @desc
@@ -140,8 +139,9 @@
                 },
                 project = this ;
 
-            Asset.findAssetsByGuids( this.added.concat( this.deleted.concat( this.updated ) ), function(assets) {
+            Asset.findAssetsByGuids( this.new.concat( this.deleted.concat( this.updated ) ), function(assets) {
                 for (var i = 0; i < assets.length; i++) {
+                    console.log( assets[i] );
                     if (project.new.indexOf( assets[i].id ) !== -1) {
                         payload.new.push( assets[i] );
                     } else if (project.deleted.indexOf( assets[i].id ) !== -1) {
@@ -165,7 +165,6 @@
             Asset.findAssetsByGuids( this.assets , function(assets) {
                 for (var i = 0; i < assets.length; i++) {
                     payload[assets[i].okey] = payload[ assets[i].okey ] || [];
-                    console.log(payload);
                     payload[assets[i].okey].push( assets[i].guid );
                 }
                 callback( payload );
@@ -311,7 +310,6 @@
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
                     }
                 }
-
                 project.save( callback );
             });
         };
@@ -326,10 +324,12 @@
         Project.prototype.deleteAsset = function(asset, callback) {
             var project = this;
 
-            Relationship.findSubtree( asset, function(root, tree) {
-                for (var i = 0; i < tree.length; i++) {
-                    if (project.deleted.indexOf( +tree[i].id ) === -1) {
-                        project.deleted.push( +tree[i].id );
+            Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
+                var guids = Object.keys( tree );
+
+                for (var i = 0; i < guids.length; i++) {
+                    if (project.deleted.indexOf( +guids[i] ) === -1) {
+                        project.deleted.push( +guids[i] );
                     }
                 }
                 project.save( callback );

@@ -142,9 +142,10 @@
                     if (!yes) {
                         return;
                     }
-
-                    if (Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
-                        Project.currentLoadedProject.deleteAsset( asset );
+                    if ( "PROJECT_" === asset.okey.substr(0, 8) ) {
+                        Project.currentLoadedProject.deleteAsset( asset, function() {
+                            $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                        } );
                     } else {
                         Asset.remoteDeleteAssets( [asset] );
                     }

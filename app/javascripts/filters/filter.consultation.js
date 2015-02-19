@@ -226,7 +226,7 @@
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
                 hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
-                isProjectAsset = ( Project.currentLoadedProject.assets.indexOf( asset.guid ) !== -1 );
+                isProjectAsset = !!Project.currentLoadedProject && ( Project.currentLoadedProject.assets.indexOf( asset.guid ) !== -1 );
 
 
             if (isGraphical) {
