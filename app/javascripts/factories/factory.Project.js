@@ -22,10 +22,11 @@
 
         Project.prototype.id = undefined ;
         Project.prototype.assets = [] ;
-        Project.prototype.added = [] ;
-        Project.prototype.deleted = [] ;
-        Project.prototype.updated = [] ;
-        Project.prototype.new = [] ;
+        Project.prototype.new = [] ;     // Créés dans le projet
+        Project.prototype.deleted = [] ; // Supprimés dans le projet
+        Project.prototype.updated = [] ; // Modifiés dans le projet
+        Project.prototype.added = [] ;   // Ajoutés au projet
+        Project.prototype.removed = [] ; // Retirés du projet
         Project.prototype.bilan = undefined ;
         Project.prototype.estimated_end_date = undefined;
         Project.prototype.last_update_date = undefined;
@@ -98,8 +99,26 @@
             var project = this ;
             this.synchronizing = true ;
             this.getSynchronizePayload( function(payload) {
-                $http.post( Smartgeo.getServiceUrl( 'mobility.installation.assets.json', {
-                    project: project.id
+                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets', {
+                    id_project: project.id
+                } ), payload ).success( function() {
+                    project.remoteSave( callback );
+                } ).error( Project.smartgeoReachError ).finally( function() {
+                    project.synchronizing = false ;
+                } );
+            } );
+        };
+
+        /**
+         * @name unload
+         * @desc Décharge un projet, localement, et sur le serveur
+         */
+        Project.prototype.remoteSave = function(callback) {
+            var project = this ;
+            this.synchronizing = true ;
+            this.getRemoteSavePayload( function(payload) {
+                $http.put( Smartgeo.getServiceUrl( 'project.mobility.save.json', {
+                    id_project: project.id
                 } ), payload ).success( function() {
                     project.discardChanges( callback );
                 } ).error( Project.smartgeoReachError ).finally( function() {
@@ -115,7 +134,6 @@
          */
         Project.prototype.getSynchronizePayload = function(callback) {
             var payload = {
-                    'added': [],
                     'deleted': [],
                     'new': [],
                     'updated': []
@@ -124,8 +142,8 @@
 
             Asset.findAssetsByGuids( this.added.concat( this.deleted.concat( this.updated ) ), function(assets) {
                 for (var i = 0; i < assets.length; i++) {
-                    if (project.added.indexOf( assets[i].id ) !== -1) {
-                        payload.added.push( assets[i] );
+                    if (project.new.indexOf( assets[i].id ) !== -1) {
+                        payload.new.push( assets[i] );
                     } else if (project.deleted.indexOf( assets[i].id ) !== -1) {
                         payload.deleted.push( assets[i] );
                     } else if (project.updated.indexOf( assets[i].id ) !== -1) {
@@ -136,6 +154,23 @@
             } );
         };
 
+        /**
+         * @name getSynchronizePayload
+         * @desc
+         */
+        Project.prototype.getRemoteSavePayload = function(callback) {
+            var payload = {},
+                project = this ;
+
+            Asset.findAssetsByGuids( this.assets , function(assets) {
+                for (var i = 0; i < assets.length; i++) {
+                    payload[assets[i].okey] = payload[ assets[i].okey ] || [];
+                    console.log(payload);
+                    payload[assets[i].okey].push( assets[i].guid );
+                }
+                callback( payload );
+            } );
+        };
 
         /**
          * @name setProjectLoaded
@@ -177,7 +212,7 @@
          * @desc
          */
         Project.prototype.hasBeenModified = function() {
-            return (this.added.length + this.deleted.length + this.updated.length + this.new.length) > 0;
+            return (this.new.length + this.deleted.length + this.updated.length + this.added.length + this.removed.length) > 0;
         };
 
         Project.smartgeoReachError = function() {
@@ -210,9 +245,10 @@
         Project.prototype.discardChanges = function(callback) {
             var project = this ;
             this.added = [];
+            this.removed = [];
+            this.new = [];
             this.updated = [];
             this.deleted = [];
-            this.new = [];
             Asset.delete( this.added, function() {
                 project.unload( callback );
             } );
@@ -231,6 +267,12 @@
                 for (var i = 0; i < guids.length; i++) {
                     if ( project.assets.indexOf( +guids[i] ) === -1 ) {
                         project.assets.push( +guids[i] );
+                    }
+                    if ( project.added.indexOf( +guids[i] ) === -1 ) {
+                        project.added.push( +guids[i] );
+                    }
+                    if ( project.removed.indexOf( +guids[i] ) !== -1 ) {
+                        project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
                     }
                 }
 
@@ -261,6 +303,12 @@
                 for (var i = 0; i < guids.length; i++) {
                     if (project.assets.indexOf( +guids[i] ) !== -1) {
                         project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
+                    }
+                    if ( project.removed.indexOf( +guids[i] ) === -1 ) {
+                        project.removed.push( +guids[i] );
+                    }
+                    if ( project.added.indexOf( +guids[i] ) !== -1 ) {
+                        project.added.splice( project.added.indexOf( +guids[i] ), 1 );
                     }
                 }
 
