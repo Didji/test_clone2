@@ -249,9 +249,6 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
         }
 
         vm.showMenu();
-        //censusController.startCensus('ep-armoire');
-
-        //$rootScope.startCensus1('ep-armoire');
 
     };
 

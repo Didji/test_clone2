@@ -21,29 +21,30 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 scope.metamodel = Site.current.metamodel;
                 scope.dependancies = Site.current.dependancies;
                 scope.defaultClassIndex = scope.classindex || "0";
-                //scope.$watch( 'asset', function(asset) {
-                //    if( scope.asset){
-                //        window.root = scope.root = scope.node = scope.asset;
-                //        console.log(scope.node);
-                //
-                //        scope.okey = scope.asset.okey ;
-                //
-                //    }
-                //}, true );
+                scope.$watch(watchAsset, function(asset) {
+                    if( asset !== undefined){
+                        console.log('scopeasset',scope.asset);
+                        window.root = scope.root = scope.node = scope.asset;
+                        //console.log(scope.node);
 
+                        scope.okey = scope.asset.okey ;
+
+                    }
+                }, true );
+
+                function watchAsset(){
+                    return scope.asset.id;
+                }
                 scope.$watch( 'okey', function(okey) {
                     if (okey && !scope.asset) {
                         window.root = scope.root = scope.node = new ComplexAsset( okey );
-                        console.log('okey ',scope.node);
 
                     }
-                    if( scope.asset){
-                                window.root = scope.root = scope.node = scope.asset;
-                                console.log('asset ', scope.node);
-
-                                scope.okey = scope.asset.okey ;
-
-                            }
+                    //if (scope.asset) {
+                    //    window.root = scope.root = scope.node = scope.asset;
+                    //    scope.okey = scope.asset.okey;
+                    //
+                    //}
                 }, true );
 
                 scope.android = navigator.userAgent.match( /Android/i );

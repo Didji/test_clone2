@@ -386,7 +386,7 @@
         Asset.prototype.toggleEdit = function(){
             $rootScope.showMenuItemById("census");
             console.log('fire START_NEW_CENSUS');
-            $rootScope.$broadcast("START_NEW_CENSUS", this);
+            $rootScope.$broadcast("START_UPDATE_ASSET", this);
         };
 
         window.AssetFactory = Asset ;

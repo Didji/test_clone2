@@ -36,22 +36,27 @@
          */
         function activate() {
             vm.classindex = "0";
-            $rootScope.$on('START_NEW_CENSUS', startNewCensusEventHandler);
+            //Event pour l'édition d'un asset
+            $rootScope.$on('START_UPDATE_ASSET', startUpdateAssetHandler);
         }
 
         /**
          * @name startCensus
-         * @desc Initialise un recensement avec un objet correspondant à l'okey passé en parametre
+         * @desc Initialise un recensement avec un objet correspondant à l'okey passé en parametre ou l'asset (dans le cas de l'édition d'un objet)
          * @param {String} okey Okey de l'objet à recenser
          */
-        function startCensus(asset) {
+        function startCensus(data) {
 
-            if (asset.okey) {
-                vm.okey = asset.okey;
-                vm.asset = asset;
+            if (data.okey) {
+
+                vm.okey = data.okey;
+                vm.asset = data;
+                console.log('here',vm.asset);
+
             }
             else {
-                vm.okey = asset;
+
+                vm.okey = data;
                 vm.asset = null;
             }
 
@@ -69,30 +74,35 @@
         }
 
         /**
-         *
+         * Handler pour l'édition d'un asset
          * @param $event
          * @param data
          */
-        function startNewCensusEventHandler($event, asset) {
+        function startUpdateAssetHandler($event, asset) {
             if (!asset) {
                 return;
             }
 
             asset.findRelated(function (data) {
 
-                console.log('data',data);
+                if(data == undefined)
+                {
+                    var theAsset = formatAsset(asset);
+                    var complex = new ComplexAsset(null,null,'',theAsset);
+                    theAsset.root = complex;
+                    startCensus(theAsset);
 
-                var theAsset = formatAsset(data);
-                console.log('formatedasset',theAsset);
+                }
+                else
+                {
+                    var theAsset = formatAsset(data);
+                    var root = theAsset.relatedAssets[theAsset.root];
+                    var complex = new ComplexAsset(null, null, '', root);
+                    fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
+                    startCensus(complex);
+                }
 
-                var root = theAsset.relatedAssets[theAsset.root];
 
-                console.log('root',root);
-
-                var complex = new ComplexAsset(null, null, '', root);
-                fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
-                console.log(complex);
-                startCensus(complex);
 
             })
 
