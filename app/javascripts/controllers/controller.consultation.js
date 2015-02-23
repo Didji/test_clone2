@@ -111,7 +111,6 @@
             } );
 
 
-
             $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
 
         }

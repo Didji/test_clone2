@@ -51,7 +51,7 @@
              */
             function addToCurrentProject(asset) {
                 Project.currentLoadedProject.addAsset( asset, function() {
-                    alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", scope.currentLoadedProject.name ) );
+                    alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
                 } );
@@ -63,7 +63,7 @@
              */
             function removeFromProject(asset) {
                 Project.currentLoadedProject.removeAsset( asset, function() {
-                    alertify.alert( i18n.get( "_PROJECT_ASSETS_REMOVED_", scope.currentLoadedProject.name ) );
+                    alertify.alert( i18n.get( "_PROJECT_ASSETS_REMOVED_", Project.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
                 } );
