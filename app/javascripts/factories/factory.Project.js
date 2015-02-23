@@ -141,7 +141,6 @@
 
             Asset.findAssetsByGuids( this.new.concat( this.deleted.concat( this.updated ) ), function(assets) {
                 for (var i = 0; i < assets.length; i++) {
-                    console.log( assets[i] );
                     if (project.new.indexOf( assets[i].id ) !== -1) {
                         payload.new.push( assets[i] );
                     } else if (project.deleted.indexOf( assets[i].id ) !== -1) {
@@ -159,14 +158,23 @@
          * @desc
          */
         Project.prototype.getRemoteSavePayload = function(callback) {
-            var payload = {},
+            var payload = {
+                    'added': {},
+                    'removed': {}
+                },
                 project = this ;
 
-            Asset.findAssetsByGuids( this.assets , function(assets) {
+            Asset.findAssetsByGuids( this.added.concat( this.removed ) , function(assets) {
                 for (var i = 0; i < assets.length; i++) {
-                    payload[assets[i].okey] = payload[ assets[i].okey ] || [];
-                    payload[assets[i].okey].push( assets[i].guid );
+                    if (project.added.indexOf( assets[i].id ) !== -1) {
+                        payload.added[ assets[i].okey ] = payload.added[ assets[i].okey ] || [];
+                        payload.added[ assets[i].okey ].push( assets[i].id );
+                    } else if (project.removed.indexOf( assets[i].id ) !== -1) {
+                        payload.removed[ assets[i].okey ] = payload.removed[ assets[i].okey ] || [];
+                        payload.removed[ assets[i].okey ].push( assets[i].id );
+                    }
                 }
+
                 callback( payload );
             } );
         };
@@ -267,11 +275,11 @@
                     if ( project.assets.indexOf( +guids[i] ) === -1 ) {
                         project.assets.push( +guids[i] );
                     }
-                    if ( project.added.indexOf( +guids[i] ) === -1 ) {
-                        project.added.push( +guids[i] );
-                    }
+
                     if ( project.removed.indexOf( +guids[i] ) !== -1 ) {
                         project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
+                    } else if ( project.added.indexOf( +guids[i] ) === -1 ) {
+                        project.added.push( +guids[i] );
                     }
                 }
 
@@ -303,11 +311,11 @@
                     if (project.assets.indexOf( +guids[i] ) !== -1) {
                         project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
                     }
-                    if ( project.removed.indexOf( +guids[i] ) === -1 ) {
-                        project.removed.push( +guids[i] );
-                    }
+
                     if ( project.added.indexOf( +guids[i] ) !== -1 ) {
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
+                    } else if ( project.removed.indexOf( +guids[i] ) === -1 ) {
+                        project.removed.push( +guids[i] );
                     }
                 }
                 project.save( callback );
