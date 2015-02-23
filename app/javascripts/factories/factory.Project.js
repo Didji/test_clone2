@@ -40,6 +40,7 @@
         Project.prototype.loading = false;
         Project.prototype.unloading = false;
         Project.prototype.synchronizing = false;
+        Project.prototype.is_open = false;
 
         Project.database = "parameters" ;
         Project.table = "PROJECTS" ;
@@ -455,6 +456,10 @@
                 deleted: JSON.parse( p.deleted ),
                 updated: JSON.parse( p.updated )
             }, JSON.parse( p.json ) );
+        };
+
+        Project.prototype.toggleCollapse = function() {
+            this.is_open = !this.is_open;
         };
 
         SQLite.exec( Project.database, 'CREATE TABLE IF NOT EXISTS ' + Project.table + '(' + Project.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
