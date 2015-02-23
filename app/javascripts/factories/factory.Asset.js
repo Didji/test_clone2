@@ -430,7 +430,7 @@
 
             if (originals.length) {
                 $http.post(
-                    Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets' ),
+                    Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
                     {
                         deleted: originals
                     },
