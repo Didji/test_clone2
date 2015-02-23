@@ -142,8 +142,7 @@
                     if (!yes) {
                         return;
                     }
-
-                    if (Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
+                    if (Project.currentLoadedProject && Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
                         Project.currentLoadedProject.deleteAsset( asset );
                     } else {
                         Asset.remoteDeleteAssets( [asset] );

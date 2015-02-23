@@ -1,10 +1,10 @@
 <div ng-controller="ProjectController as projectController" class="project-controller">
     <div ng-repeat="project in (projectController.projects | orderBy:'id') track by project.id" class="project-block">
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading" ng-click="project.toggleCollapse()">
                 <h3 class="panel-title">{{project.name}}</h3>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" ng-show="project.is_open">
                 <p ng-if="project.estimated_end_date"><i18n class="project-desc-title">_PROJECTS_ESTIMATED_END_DATE_</i18n> : {{project.estimated_end_date}}</p>
                 <p ng-if="project.last_update_date"><i18n class="project-desc-title">_PROJECTS_LAST_UPDATE_</i18n> : {{project.last_update_date}}</p>
                 <p ng-if="project.project_manager"><i18n class="project-desc-title">_PROJECTS_PROJECT_MANAGER_</i18n> : {{project.project_manager}}</p>
