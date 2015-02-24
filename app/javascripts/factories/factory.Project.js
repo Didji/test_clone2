@@ -201,17 +201,19 @@
          * @desc
          */
         Project.prototype.setProjectUnloaded = function(callback) {
-            var project = this ;
+            var project = this,
+                assets = project.assets;
             this.loaded = false ;
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
-            Asset.delete( this.assets.concat( this.added ), function() {
+            Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
-                G3ME.__updateMapLayers();
+                $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", assets );
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
                 }
+                G3ME.__updateMapLayers();
             } );
         };
 
@@ -257,7 +259,7 @@
             this.new = [];
             this.updated = [];
             this.deleted = [];
-            Asset.delete( this.added, function() {
+            Asset.delete( [], function() {
                 project.unload( callback );
             } );
         };
@@ -273,10 +275,6 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if ( project.assets.indexOf( +guids[i] ) === -1 ) {
-                        project.assets.push( +guids[i] );
-                    }
-
                     if ( project.removed.indexOf( +guids[i] ) !== -1 ) {
                         project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
                     } else if ( project.added.indexOf( +guids[i] ) === -1 ) {
@@ -309,10 +307,6 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if (project.assets.indexOf( +guids[i] ) !== -1) {
-                        project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
-                    }
-
                     if ( project.added.indexOf( +guids[i] ) !== -1 ) {
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
                     } else if ( project.removed.indexOf( +guids[i] ) === -1 ) {
@@ -358,13 +352,21 @@
             }
         };
 
+        /**
+         * @name   hasAsset
+         * @param  {Asset}
+         * @return {Boolean}
+         */
+        Project.prototype.hasAsset = function(asset) {
+            return ( this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1 );
+        }
 
         /**
          * @name setAssets
          * @desc
          */
         Project.prototype.consult = function() {
-            Asset.findAssetsByGuids( this.assets, function(assets) {
+            Asset.getAllProjectAsset( function(assets) {
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
             } );
         };

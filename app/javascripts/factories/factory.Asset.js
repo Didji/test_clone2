@@ -357,6 +357,27 @@
             } );
         };
 
+        Asset.getAllProjectAsset = function(callback, zones, partial_response) {
+            if (!zones) {
+                zones = Site.current.zones;
+                partial_response = [];
+            }
+
+            if (!zones.length) {
+                return callback( partial_response );
+            }
+
+            var request = 'SELECT * FROM ASSETS WHERE symbolId like "PROJECT_%" OR asset like "%PROJECT_%"';
+            SQLite.exec( zones[0].database_name, request, [], function(results) {
+                for (var i = 0; i < results.length; i++) {
+                    var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
+                    Asset.cache[tmp.id] = tmp;
+                    partial_response.push( angular.copy( Asset.cache[tmp.id] ) );
+                }
+                Asset.getAllProjectAsset( callback, zones.slice( 1 ), partial_response );
+            } );
+        }
+
         Asset.deleteAllProjectAsset = function(callback, zones) {
 
             if (!zones) {
