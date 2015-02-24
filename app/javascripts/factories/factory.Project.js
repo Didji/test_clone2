@@ -201,17 +201,19 @@
          * @desc
          */
         Project.prototype.setProjectUnloaded = function(callback) {
-            var project = this ;
+            var project = this,
+                assets = project.assets;
             this.loaded = false ;
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
-                G3ME.__updateMapLayers();
+                $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", assets );
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
                 }
+                G3ME.__updateMapLayers();
             } );
         };
 
@@ -359,13 +361,12 @@
             return ( this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1 );
         }
 
-
         /**
          * @name setAssets
          * @desc
          */
         Project.prototype.consult = function() {
-            Asset.findAssetsByGuids( this.assets, function(assets) {
+            Asset.getAllProjectAsset( function(assets) {
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
             } );
         };
