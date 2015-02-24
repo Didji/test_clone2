@@ -330,16 +330,39 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
     Asset.save = function(asset, site, callback) {
         site = site || Site.current ;
         var zones = Asset.__distributeAssetsInZone( asset, site );
+        var uuidcallback = window.uuid();
+        Asset.checkpointCallbackRegister( uuidcallback, zones.length, callback );
         for (var i = 0; i < zones.length; i++) {
             var zone = zones[i];
             if (!zone.assets.length) {
+                Asset.checkpointCallback( uuidcallback );
                 continue;
             }
             var request = Asset.__buildRequest( zone.assets, site );
-            SQLite.exec( zone.database_name, request.request, request.args, (callback || function() {}), function(tx, sqlerror) {
-                console.error( sqlerror.message );
-            } );
+            SQLite.exec( zone.database_name, request.request, request.args, function() {
+                Asset.checkpointCallback( uuidcallback );
+            }, function(tx, sqlerror) {
+                    console.error( sqlerror.message );
+                } );
         }
+    };
+
+    Asset.checkpointCallbackId = {} ;
+
+    Asset.checkpointCallback = function(uuid) {
+        if (Asset.checkpointCallbackId[uuid].count <= 1) {
+            (Asset.checkpointCallbackId[uuid].callback || function() {})();
+            delete Asset.checkpointCallbackId[uuid];
+        } else {
+            Asset.checkpointCallbackId[uuid].count-- ;
+        }
+    };
+
+    Asset.checkpointCallbackRegister = function(uuid, count, callback) {
+        Asset.checkpointCallbackId[uuid] = {
+            count: count,
+            callback: callback
+        };
     };
 
     /**
