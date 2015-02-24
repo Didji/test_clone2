@@ -480,6 +480,7 @@
                     var ids = Object.keys( tree );
                     Asset.delete( ids );
                     $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
+                    G3ME.__updateMapLayers();
                 } );
             } );
         };
