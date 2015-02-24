@@ -205,7 +205,7 @@
             this.loaded = false ;
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
-            Asset.delete( this.assets.concat( this.added ), function() {
+            Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
                 G3ME.__updateMapLayers();
@@ -257,7 +257,7 @@
             this.new = [];
             this.updated = [];
             this.deleted = [];
-            Asset.delete( this.added, function() {
+            Asset.delete( [], function() {
                 project.unload( callback );
             } );
         };
@@ -273,10 +273,6 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if ( project.assets.indexOf( +guids[i] ) === -1 ) {
-                        project.assets.push( +guids[i] );
-                    }
-
                     if ( project.removed.indexOf( +guids[i] ) !== -1 ) {
                         project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
                     } else if ( project.added.indexOf( +guids[i] ) === -1 ) {
@@ -309,10 +305,6 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if (project.assets.indexOf( +guids[i] ) !== -1) {
-                        project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
-                    }
-
                     if ( project.added.indexOf( +guids[i] ) !== -1 ) {
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
                     } else if ( project.removed.indexOf( +guids[i] ) === -1 ) {
@@ -357,6 +349,15 @@
                 this.deleteAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
             }
         };
+
+        /**
+         * @name   hasAsset
+         * @param  {Asset}
+         * @return {Boolean}
+         */
+        Project.prototype.hasAsset = function(asset) {
+            return ( this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1 );
+        }
 
 
         /**

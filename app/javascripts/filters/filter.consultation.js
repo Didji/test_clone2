@@ -226,7 +226,7 @@
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
                 hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
-                isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.assets.indexOf( asset.guid ) !== -1 );
+                isProjectAsset = ( isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset ) );
 
             if (isGraphical) {
                 authAction.push( actions.zoomon );

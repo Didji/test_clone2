@@ -389,7 +389,7 @@
                 return (callback || function() {})();
             }
 
-            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( "' + guids.join( '","' ) + '")');
+            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
