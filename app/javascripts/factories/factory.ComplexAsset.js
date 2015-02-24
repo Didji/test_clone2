@@ -191,12 +191,16 @@
          * @memberOf ComplexAsset
          */
         ComplexAsset.prototype.saveForProject = function() {
+
+            ComplexAsset.convertUuidToFakeGuid( this );
+
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this );
 
             for (var i = 0; i < assets.length; i++) {
                 assets[i].project_status = "added";
                 Project.currentLoadedProject.new.push( assets[i].guid );
+                Project.currentLoadedProject.assets.push( assets[i].guid );
             }
 
             Project.currentLoadedProject.save();
@@ -209,6 +213,13 @@
             // TODO: enregistrer le l'object complexe 'this', pour l'envoyer au dechargement du projet
         };
 
+        ComplexAsset.convertUuidToFakeGuid = function(complexasset) {
+            complexasset.uuid = 10000000 + (Math.random() * 10000000 | 0);
+            for (var i = 0; i < complexasset.children.length; i++) {
+                ComplexAsset.convertUuidToFakeGuid( complexasset.children[i] );
+            }
+        };
+
         /**
          * @method
          * @memberOf ComplexAsset
@@ -219,7 +230,7 @@
             var masterBounds = null ;
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i] ;
-                asset.guid = asset.uuid;
+                asset.guid = asset.uuid ;
                 asset.attributes = asset.fields ;
                 asset.classindex = (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );

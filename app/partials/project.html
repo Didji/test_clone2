@@ -10,7 +10,7 @@
                 <p ng-if="project.project_manager"><i18n class="project-desc-title">_PROJECTS_PROJECT_MANAGER_</i18n> : {{project.project_manager}}</p>
                 <p ng-if="project.status"><i18n class="project-desc-title">_PROJECTS_PROJECT_STATUS_</i18n> : {{project.status}}</p>
                 <p ng-if="project.url"><i18n class="project-desc-title">_PROJECTS_PROJECT_URL_</i18n> : {{project.url}}</p>
-                <p ng-if="project.bilan"><i18n class="project-desc-title">_PROJECTS_PROJECT_BILAN_</i18n> : <p ng-bind-html="project.bilan"></p></p>
+                <!-- <p ng-if="project.bilan"><i18n class="project-desc-title">_PROJECTS_PROJECT_BILAN_</i18n> : <p ng-bind-html="project.bilan"></p></p> -->
                 <button ng-if="project.loaded != true" ng-disabled="project.loading"    class="btn btn-block" ng-click="projectController.loadProject(project)">
                     <i18n ng-if="!project.loading">_PROJECTS_LOAD_PROJECT_</i18n>
                     <i ng-if="project.loading" class="fa fa-refresh fa-spin"></i> <i18n ng-if=" project.loading">_PROJECTS_LOADING_PROJECT_</i18n>
