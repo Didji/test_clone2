@@ -327,7 +327,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @method
      * @memberOf Asset
      */
-    Asset.save = function(asset, site) {
+    Asset.save = function(asset, site, callback) {
         site = site || Site.current ;
         var zones = Asset.__distributeAssetsInZone( asset, site );
         for (var i = 0; i < zones.length; i++) {
@@ -336,7 +336,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
                 continue;
             }
             var request = Asset.__buildRequest( zone.assets, site );
-            SQLite.exec( zone.database_name, request.request, request.args, function() {}, function(tx, sqlerror) {
+            SQLite.exec( zone.database_name, request.request, request.args, (callback || function() {}), function(tx, sqlerror) {
                 console.error( sqlerror.message );
             } );
         }

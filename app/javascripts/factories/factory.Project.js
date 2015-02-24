@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship"];
+    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship", "ComplexAsset"];
 
 
-    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship) {
+    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship, ComplexAsset) {
 
         /**
          * @class ProjectFactory
@@ -22,10 +22,10 @@
 
         Project.prototype.id = undefined ;
         Project.prototype.assets = [] ;
-        Project.prototype.new = [] ;     // Créés dans le projet
+        Project.prototype.new = [] ; // Créés dans le projet
         Project.prototype.deleted = [] ; // Supprimés dans le projet
         Project.prototype.updated = [] ; // Modifiés dans le projet
-        Project.prototype.added = [] ;   // Ajoutés au projet
+        Project.prototype.added = [] ; // Ajoutés au projet
         Project.prototype.removed = [] ; // Retirés du projet
         Project.prototype.bilan = undefined ;
         Project.prototype.estimated_end_date = undefined;
@@ -66,8 +66,9 @@
             $http.get( Smartgeo.getServiceUrl( 'project.mobility.load.json', {
                 id: this.id
             } ) ).success( function(data) {
-                project.setAssets( data.assets, data.relations );
-                project.setProjectLoaded( callback );
+                project.setAssets( data.assets, data.relations, function() {
+                    project.setProjectLoaded( callback );
+                } );
             } ).error( Project.smartgeoReachError ).finally( function() {
                 project.loading = false ;
             } );
@@ -139,18 +140,18 @@
                     'updated': []
                 },
                 project = this ;
-
-            Asset.findAssetsByGuids( this.new.concat( this.deleted.concat( this.updated ) ), function(assets) {
-                for (var i = 0; i < assets.length; i++) {
-                    if (project.new.indexOf( assets[i].id ) !== -1) {
-                        payload.new.push( assets[i] );
-                    } else if (project.deleted.indexOf( assets[i].id ) !== -1) {
-                        payload.deleted.push( assets[i] );
-                    } else if (project.updated.indexOf( assets[i].id ) !== -1) {
-                        payload.updated.push( assets[i] );
+            ComplexAsset.find( this.new, function(complexes) {
+                payload.new = complexes;
+                Asset.findAssetsByGuids( project.deleted.concat( project.updated ), function(assets) {
+                    for (var i = 0; i < assets.length; i++) {
+                        if (project.deleted.indexOf( assets[i].id ) !== -1) {
+                            payload.deleted.push( assets[i] );
+                        } else if (project.updated.indexOf( assets[i].id ) !== -1) {
+                            payload.updated.push( assets[i] );
+                        }
                     }
-                }
-                callback( payload );
+                    callback( payload );
+                } );
             } );
         };
 
@@ -165,14 +166,14 @@
                 },
                 project = this ;
 
-            Asset.findAssetsByGuids( this.added.concat( this.removed ) , function(assets) {
+            Asset.findAssetsByGuids( this.added.concat( this.removed ), function(assets) {
                 for (var i = 0; i < assets.length; i++) {
                     if (project.added.indexOf( assets[i].id ) !== -1) {
-                        payload.added[ assets[i].okey ] = payload.added[ assets[i].okey ] || [];
-                        payload.added[ assets[i].okey ].push( assets[i].id );
+                        payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
+                        payload.added[assets[i].okey].push( assets[i].id );
                     } else if (project.removed.indexOf( assets[i].id ) !== -1) {
-                        payload.removed[ assets[i].okey ] = payload.removed[ assets[i].okey ] || [];
-                        payload.removed[ assets[i].okey ].push( assets[i].id );
+                        payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
+                        payload.removed[assets[i].okey].push( assets[i].id );
                     }
                 }
 
@@ -233,7 +234,7 @@
          * @name setAssets
          * @desc
          */
-        Project.prototype.setAssets = function(assets, relations) {
+        Project.prototype.setAssets = function(assets, relations, callback) {
             if (relations && relations.length) {
                 Relationship.saveRelationship( relations );
             }
@@ -243,7 +244,7 @@
                 assets[i].okey = "PROJECT_" + assets[i].okey;
             }
             Asset.delete( this.assets, function() {
-                AssetFactory.save( assets );
+                AssetFactory.save( assets, null, callback );
             } );
             this.save();
         };
@@ -275,15 +276,15 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if ( project.removed.indexOf( +guids[i] ) !== -1 ) {
+                    if (project.removed.indexOf( +guids[i] ) !== -1) {
                         project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
-                    } else if ( project.added.indexOf( +guids[i] ) === -1 ) {
+                    } else if (project.added.indexOf( +guids[i] ) === -1) {
                         project.added.push( +guids[i] );
                     }
                 }
 
                 project.save( callback );
-            });
+            } );
         };
 
         /**
@@ -307,14 +308,14 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if ( project.added.indexOf( +guids[i] ) !== -1 ) {
+                    if (project.added.indexOf( +guids[i] ) !== -1) {
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
-                    } else if ( project.removed.indexOf( +guids[i] ) === -1 ) {
+                    } else if (project.removed.indexOf( +guids[i] ) === -1) {
                         project.removed.push( +guids[i] );
                     }
                 }
                 project.save( callback );
-            });
+            } );
         };
 
         /**
@@ -358,8 +359,8 @@
          * @return {Boolean}
          */
         Project.prototype.hasAsset = function(asset) {
-            return ( this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1 );
-        }
+            return (this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1);
+        };
 
         /**
          * @name setAssets

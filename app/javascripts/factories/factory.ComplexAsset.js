@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Project", "Asset", "Relationship"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Asset", "Relationship", "SQLite"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Project, Asset, Relationship) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Asset, Relationship, SQLite) {
 
         /**
          * @class ComplexAssetFactory
@@ -190,12 +190,12 @@
          * @method
          * @memberOf ComplexAsset
          */
-        ComplexAsset.prototype.saveForProject = function() {
+        ComplexAsset.prototype.saveForProject = function(Project) {
 
             ComplexAsset.convertUuidToFakeGuid( this );
 
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
-                assets = ComplexAsset.formatComplexToSimple( this );
+                assets = ComplexAsset.formatComplexToSimple( this, Project );
 
             for (var i = 0; i < assets.length; i++) {
                 assets[i].project_status = "added";
@@ -210,7 +210,10 @@
                 G3ME.reloadLayers();
             } );
 
-            // TODO: enregistrer le l'object complexe 'this', pour l'envoyer au dechargement du projet
+            SQLite.exec( ComplexAsset.database, 'INSERT OR REPLACE INTO ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ) + ') VALUES (' + ComplexAsset.prepareStatement + ')', this.serializeForSQL(), function() {
+                console.log( 'OKKKKKK' );
+            } );
+
         };
 
         ComplexAsset.convertUuidToFakeGuid = function(complexasset) {
@@ -224,7 +227,7 @@
          * @method
          * @memberOf ComplexAsset
          */
-        ComplexAsset.formatComplexToSimple = function(complex) {
+        ComplexAsset.formatComplexToSimple = function(complex, Project) {
             var assets = complex.gimmeYourLinearSubtree(), asset , i  ;
             var masterGeom = null ;
             var masterBounds = null ;
@@ -309,9 +312,9 @@
          *
          * @returns {Boolean} True si l'objet a été supprimé
          */
-        ComplexAsset.prototype.save = function() {
+        ComplexAsset.prototype.save = function(Project) {
             if (this.isProject) {
-                return this.saveForProject();
+                return this.saveForProject( Project );
             }
             var node = this.__clone( true );
             node.timestamp = (new Date()).getTime();
@@ -526,6 +529,38 @@
             }
             return children;
         };
+
+
+        ComplexAsset.find = function(id, callback) {
+            id = id.length !== undefined ? id : [id];
+            if (!id.length) {
+                callback( [] );
+            }
+            SQLite.exec( ComplexAsset.database, 'SELECT * FROM ' + ComplexAsset.table + ' WHERE id in (' + id.join( ',' ) + ')', [], function(rows) {
+                var complexes = [], complex;
+                for (var i = 0; i < rows.length; i++) {
+                    complex = angular.extend( rows.item( i ), JSON.parse( rows.item( i ).json ) );
+                    complexes.push( complex );
+                }
+                (callback || function() {})( complexes );
+            } );
+        };
+
+        /**
+         * @name serializeForSQL
+         * @desc Serialize les attributs de l'object complexe pour la requête SQL
+         */
+        ComplexAsset.prototype.serializeForSQL = function() {
+            return [this.uuid || this.guid || this.id, JSON.stringify( this.__clean( true ) ), this.okey.search( /PROJECT_/ ) === 0];
+        };
+
+        ComplexAsset.database = "parameters" ;
+        ComplexAsset.table = "COMPLEXASSET" ;
+        ComplexAsset.columns = ['id', 'json', 'project'];
+        ComplexAsset.prepareStatement = ComplexAsset.columns.join( ',' ).replace( /[a-z]+/gi, '?' );
+
+        SQLite.exec( ComplexAsset.database, 'CREATE TABLE IF NOT EXISTS ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
+
         return ComplexAsset;
 
     }

@@ -62,7 +62,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     }
                     scope.onsave();
                     scope.removeLayers();
-                    scope.root.save();
+                    scope.root.save( Project );
                 };
 
                 scope.snap = function(node) {
