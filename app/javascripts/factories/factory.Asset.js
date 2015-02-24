@@ -487,7 +487,7 @@
                 asset_ = JSON.parse( JSON.stringify( asset ) );
                 guid = asset.guid;
                 bounds = asset.bounds;
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' "' + guid + '" as id ';
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
                 symbolId = ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
 
@@ -561,9 +561,9 @@
         };
 
         /**
-             * @method
-             * @memberOf Asset
-             */
+         * @method
+         * @memberOf Asset
+         */
         Asset.save = function(asset, callback) {
             var zones = Asset.__distributeAssetsInZone( asset );
             for (var i = 0; i < zones.length; i++) {

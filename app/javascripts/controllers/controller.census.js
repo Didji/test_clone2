@@ -34,7 +34,7 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-            vm.classindex = "0";
+            vm.classindex = "0" ;
         }
 
         /**
