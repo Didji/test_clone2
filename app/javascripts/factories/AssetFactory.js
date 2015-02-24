@@ -328,6 +328,9 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @memberOf Asset
      */
     Asset.save = function(asset, site, callback) {
+        if ( !asset.length ) {
+            (callback || function() {})();
+        }
         site = site || Site.current ;
         var zones = Asset.__distributeAssetsInZone( asset, site );
         var uuidcallback = window.uuid();
