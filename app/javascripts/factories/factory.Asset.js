@@ -244,7 +244,7 @@
                 return callback( null );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = "' + id + '"', [], function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function(rows) {
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
@@ -389,7 +389,7 @@
                 return (callback || function() {})();
             }
 
-            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( "' + guids.join( '","' ) + '")');
+            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
