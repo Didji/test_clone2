@@ -231,11 +231,10 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
             }
 
             var _this = this,
-                request = 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( "' + guids.join( '","' ) + '")';
+                request = 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ) + ')';
             SQLite.openDatabase( {
                 name: zones[0].database_name
             } ).transaction( function(t) {
-                t.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)' );
                 t.executeSql( request, [], function(tx, rslt) {
                     var asset;
                     for (var i = 0; i < rslt.rows.length; i++) {

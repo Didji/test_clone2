@@ -244,7 +244,7 @@
                 return callback( null );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = "' + id + '"', [], function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function(rows) {
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
