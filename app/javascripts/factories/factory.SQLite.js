@@ -87,6 +87,25 @@
             } );
         };
 
+        ///**
+        // * @name set
+        // * @desc Met à jour une valeur dans la base de données 'parameters'
+        // * @param {String} parameter
+        // * @param {*} value
+        // * @param {Function} callback
+        // */
+        //SQLite.update = function(parameter, value, callback) {
+        //    SQLite.parameters().transaction( function(transaction) {
+        //        transaction.executeSql( 'UPDATE PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify( value )], function() {
+        //            (callback || function() {})();
+        //        }, function(transaction, SqlError) {
+        //            console.error( SqlError );
+        //            (callback || function() {})( undefined );
+        //        } );
+        //    } );
+        //};
+
+
         /**
          * @name unset
          * @desc Supprime une valeur dans la base de données 'parameters'

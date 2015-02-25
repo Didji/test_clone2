@@ -51,8 +51,6 @@
 
                 vm.okey = data.okey;
                 vm.asset = data;
-                console.log('here',vm.asset);
-
             }
             else {
 
@@ -82,30 +80,43 @@
             if (!asset) {
                 return;
             }
+            if (asset.isComplex) {
+                asset.findRelated(function (data) {
+                    if (data !== undefined) {
+                        if (data.root == data.id && data.isComplex) {
+                            //Cet élément est déjà la racine, on cherche ses enfants
 
-            asset.findRelated(function (data) {
+                            var theAsset = formatAsset(data);
+                            var complex = new ComplexAsset(null, null, '', theAsset);
+                            fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
+                            theAsset.root = complex;
+                            theAsset.isProject = false;
+                            theAsset.relatedAssets = {};
+                            startCensus(theAsset);
 
-                if(data == undefined)
-                {
-                    var theAsset = formatAsset(asset);
-                    var complex = new ComplexAsset(null,null,'',theAsset);
-                    theAsset.root = complex;
-                    startCensus(theAsset);
+                        }
+                        else if (data.isComplex) {
+                            //Pas la racine, il faut retrouver son père (spoiler : c'est Dark Vador, non je déconne c'est root, "je suis gRoot")
 
-                }
-                else
-                {
-                    var theAsset = formatAsset(data);
-                    var root = theAsset.relatedAssets[theAsset.root];
-                    var complex = new ComplexAsset(null, null, '', root);
-                    fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
-                    startCensus(complex);
-                }
-
-
-
-            })
-
+                            var root = data.relatedAssets[data.root];
+                            var theAsset = formatAsset(root);
+                            var complex = new ComplexAsset(null, null, '', theAsset);
+                            fillChildren(complex, data.tree, data.relatedAssets, complex);
+                            theAsset.root = complex;
+                            theAsset.isProject = false;
+                            theAsset.relatedAssets = {};
+                            startCensus(theAsset);
+                        }
+                    }
+                })
+            }
+            else {
+                var theAsset = formatAsset(asset);
+                var complex = new ComplexAsset(null, null, '', theAsset);
+                theAsset.root = complex;
+                theAsset.isProject = false;
+                startCensus(theAsset);
+            }
         }
 
         /**
@@ -123,6 +134,7 @@
             object.relatedAssets = asset.relatedAssets;
             object.guid = asset.guid;
             object.geometry = asset.geometry
+            object.isProject = false;
             return object;
         }
 

@@ -16,23 +16,23 @@
          */
         var ComplexAsset = function (okey, father, root, asset) {
             asset = asset || {
-                id : null,
-                okey : null,
-                guid : null,
-                children : [],
-                relatedAssets : {},
-                geometry : null,
-                fields : {}
+                id: null,
+                okey: null,
+                guid: null,
+                children: [],
+                relatedAssets: {},
+                geometry: null,
+                fields: {}
 
             };
             this.id = asset.id || null;
             this.okey = okey || asset.okey;
             this.uuid = window.uuid() || null;
-            this.children =  asset.children || [];
+            this.children = asset.children || [];
             this.father = father && father.uuid;
             this.root = root || this;
-            this.fields =  asset.attributes || {};
-            this.tree =  {};
+            this.fields = asset.attributes || {};
+            this.tree = {};
             this.relatedAssets = asset.relatedAssets || {};
             this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
             this.guid = asset.id || null;
@@ -206,8 +206,9 @@
          *
          * @returns {Boolean} True si l'objet a été supprimé
          */
-        ComplexAsset.prototype.save = function () {
+        ComplexAsset.prototype.save = function (update) {
 
+            update = update || false;
             var node = this.__clone(true);
             node.timestamp = (new Date()).getTime();
             node.__clean();
@@ -237,7 +238,14 @@
                 }
                 for (var okey in data) {
                     for (var i = 0; i < data[okey].length; i++) {
-                        AssetFactory.save(data[okey][i], Site.current);
+
+                        if (update) {
+                            AssetFactory.update(data[okey][i], Site.current);
+                        }
+                        else {
+
+                            AssetFactory.save(data[okey][i], Site.current);
+                        }
                     }
                 }
                 Storage.get_('census', function (census) {
