@@ -49,7 +49,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 }, {
                 id: 'project',
                 label: i18n.get( '_MENU_PROJECT' ),
-                icon: "fa fa-exclamation-triangle",
+                icon: "fa fa-wrench",
                 template: 'partials/project.html',
                 forceLoadDOM: true
                 }, {

@@ -227,7 +227,7 @@
         };
 
         Project.prototype.getAssetLength = function() {
-            return this.new.length + this.deleted.length + this.updated.length + this.added.length + this.removed.length;
+            return this.new.length + this.deleted.length + this.updated.length + this.added.length + this.removed.length + this.assets.length;
         };
 
         Project.smartgeoReachError = function() {
@@ -239,18 +239,20 @@
          * @desc
          */
         Project.prototype.setAssets = function(assets, relations, callback) {
+            var project = this ;
             if (relations && relations.length) {
                 Relationship.saveRelationship( relations );
             }
-            this.assets = [];
+            project.assets = [];
             for (var i = 0; i < assets.length; i++) {
-                this.assets.push( assets[i].guid );
+                project.assets.push( assets[i].guid );
                 assets[i].okey = "PROJECT_" + assets[i].okey;
             }
-            Asset.delete( this.assets, function() {
-                AssetFactory.save( assets, null, callback );
+            Asset.delete( project.assets, function() {
+                AssetFactory.save( assets, null, function() {
+                    project.save( callback );
+                } );
             } );
-            this.save();
         };
 
         /**
@@ -369,7 +371,7 @@
         };
 
         /**
-         * @name setAssets
+         * @name consult
          * @desc
          */
         Project.prototype.consult = function() {

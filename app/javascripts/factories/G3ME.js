@@ -319,7 +319,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     request.push( pool[databaseName][uuid].request );
                     args = args.concat( pool[databaseName][uuid].initargs );
                 }
-                request = request.join( ' UNION ALL ' ) + ' ORDER BY tileUuid, symbolId ';
+                request = request.join( ' UNION ALL ' ) + ' ORDER BY tileUuid, symbolId DESC';
                 G3ME.prevAnonFunction( pool[databaseName], databaseName, request, args );
             }
         },
