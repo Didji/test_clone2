@@ -150,6 +150,7 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_CANNOT_REACH_SMARTGEO_: "Impossible de charger/decharger/enregistrer un projet, le serveur est injoignable.",
     _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
     _PROJECT_ASSETS_ADDED_: "Objet(s) ajouté(s) au projet %s",
-    _PROJECT_ASSETS_REMOVED_: "Objet(s) retiré(s) du projet %s"
+    _PROJECT_ASSETS_REMOVED_: "Objet(s) retiré(s) du projet %s",
+    _PROJECT_ASSETS_ARE_LOCKED_: "Le projet ne peut être sauvegardé car les objets suivants sont bloqués : \n %s"
 
 };
