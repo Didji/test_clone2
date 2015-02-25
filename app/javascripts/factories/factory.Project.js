@@ -282,6 +282,7 @@
                 for (var i = 0; i < guids.length; i++) {
                     if (project.removed.indexOf( +guids[i] ) !== -1) {
                         project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
+                        project.assets.push( +guids[i] );
                     } else if (project.added.indexOf( +guids[i] ) === -1) {
                         project.added.push( +guids[i] );
                     }
@@ -316,6 +317,7 @@
                         project.added.splice( project.added.indexOf( +guids[i] ), 1 );
                     } else if (project.removed.indexOf( +guids[i] ) === -1) {
                         project.removed.push( +guids[i] );
+                        project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
                     }
                 }
                 project.save( callback );
