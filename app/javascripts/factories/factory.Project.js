@@ -226,6 +226,10 @@
             return (this.new.length + this.deleted.length + this.updated.length + this.added.length + this.removed.length) > 0;
         };
 
+        Project.prototype.getAssetLength = function() {
+            return this.new.length + this.deleted.length + this.updated.length + this.added.length + this.removed.length;
+        };
+
         Project.smartgeoReachError = function() {
             alertify.alert( i18n.get( '_PROJECTS_CANNOT_REACH_SMARTGEO_' ) );
         };
@@ -367,8 +371,8 @@
          * @desc
          */
         Project.prototype.consult = function() {
-            Asset.getAllProjectAsset( function(assets) {
-                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
+            Asset.getAllProjectAsset( this, function(assets) {
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets, false );
             } );
         };
 
