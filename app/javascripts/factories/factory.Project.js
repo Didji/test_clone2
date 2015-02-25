@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship", "ComplexAsset"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship", "ComplexAsset"];
 
 
-    function ProjectFactory($http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship, ComplexAsset) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship, ComplexAsset) {
 
         /**
          * @class ProjectFactory
@@ -94,32 +94,92 @@
         };
 
         /**
-         * @name unload
+         * @name synchronize
          * @desc Décharge un projet, localement, et sur le serveur
          */
-        Project.prototype.synchronize = function(callback) {
+        Project.prototype.synchronize = function(callback)
+        {
+            var project = this;
+            this.synchronizing = true;
+            this.remoteAddRemoveAssets( callback );
+        }
+
+        /**
+         * @name remoteAddRemoveAssets
+         * @desc Synchronize l'ajout et le relachement d'asset avec le serveur
+         */
+        Project.prototype.remoteAddRemoveAssets = function(callback) {
             var project = this ;
-            this.synchronizing = true ;
-            this.getSynchronizePayload( function(payload) {
-                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
+            this.getAddRemovePayload( function(payload) {
+                $http.put( Smartgeo.getServiceUrl( 'project.mobility.save.json', {
                     id_project: project.id
                 } ), payload ).success( function() {
-                    project.remoteSave( callback );
-                } ).error( Project.smartgeoReachError ).finally( function() {
+                    project.remoteNewUpdateDeleteAssets( callback );
+                } ).error( Project.handleRemoteSaveError ).finally( function() {
                     project.synchronizing = false ;
                 } );
             } );
         };
 
+
         /**
-         * @name unload
-         * @desc Décharge un projet, localement, et sur le serveur
+         * @name getAddRemovePayload
+         * @desc Construit la payload pour le service d'ajout et de relachement d'asset
          */
-        Project.prototype.remoteSave = function(callback) {
+        Project.prototype.getAddRemovePayload = function(callback) {
+            var payload = {
+                    'added': {},
+                    'removed': {}
+                },
+                project = this ;
+
+            Asset.findAssetsByGuids( this.added.concat( this.removed ), function(assets) {
+                for (var i = 0; i < assets.length; i++) {
+                    if (project.added.indexOf( assets[i].id ) !== -1) {
+                        payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
+                        payload.added[assets[i].okey].push( assets[i].id );
+                    } else if (project.removed.indexOf( assets[i].id ) !== -1) {
+                        payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
+                        payload.removed[assets[i].okey].push( assets[i].id );
+                    }
+                }
+
+                callback( payload );
+            } );
+        };
+
+        /**
+         * @name handleRemoteSaveError
+         * @desc Gére les erreurs remontées du service d'ajout/relachement d'asset
+         */
+        Project.handleRemoteSaveError = function(data, status) {
+            switch(status) {
+                case 400:
+                    if ( data.locked ) {
+                        var locked = [];
+                        Asset.findAssetsByGuids( data.locked, function(assets) {
+                            for (var i = 0; i < assets.length; i++) {
+                                locked.push( Site.current.metamodel[ assets[i].okey ].label +  " " + assets[i].label );
+                            }
+                            alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join(", ") ) );
+                        });
+                    }
+                    break;
+                case 500:
+                default:
+                    Project.smartgeoReachError();
+                    break;
+            }
+        }
+
+        /**
+         * @name remoteNewUpdateDeleteAssets
+         * @desc Synchronise la création, la modification et la suppression d'asset
+         */
+        Project.prototype.remoteNewUpdateDeleteAssets = function(callback) {
             var project = this ;
-            this.synchronizing = true ;
-            this.getRemoteSavePayload( function(payload) {
-                $http.put( Smartgeo.getServiceUrl( 'project.mobility.save.json', {
+            this.getNewUpdateDeletePayload( function(payload) {
+                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
                     id_project: project.id
                 } ), payload ).success( function() {
                     project.discardChanges( callback );
@@ -129,11 +189,12 @@
             } );
         };
 
+
         /**
-         * @name getSynchronizePayload
-         * @desc
+         * @name getNewUpdateDeletePayload
+         * @desc Construit la payload pour le service de création, modification et suppression d'asset
          */
-        Project.prototype.getSynchronizePayload = function(callback) {
+        Project.prototype.getNewUpdateDeletePayload = function(callback) {
             var payload = {
                     'deleted': [],
                     'new': [],
@@ -155,31 +216,7 @@
             } );
         };
 
-        /**
-         * @name getSynchronizePayload
-         * @desc
-         */
-        Project.prototype.getRemoteSavePayload = function(callback) {
-            var payload = {
-                    'added': {},
-                    'removed': {}
-                },
-                project = this ;
 
-            Asset.findAssetsByGuids( this.added.concat( this.removed ), function(assets) {
-                for (var i = 0; i < assets.length; i++) {
-                    if (project.added.indexOf( assets[i].id ) !== -1) {
-                        payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
-                        payload.added[assets[i].okey].push( assets[i].id );
-                    } else if (project.removed.indexOf( assets[i].id ) !== -1) {
-                        payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
-                        payload.removed[assets[i].okey].push( assets[i].id );
-                    }
-                }
-
-                callback( payload );
-            } );
-        };
 
         /**
          * @name setProjectLoaded
