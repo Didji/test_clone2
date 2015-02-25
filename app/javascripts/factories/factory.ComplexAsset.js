@@ -210,9 +210,7 @@
                 G3ME.reloadLayers();
             } );
 
-            SQLite.exec( ComplexAsset.database, 'INSERT OR REPLACE INTO ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ) + ') VALUES (' + ComplexAsset.prepareStatement + ')', this.serializeForSQL(), function() {
-                console.log( 'OKKKKKK' );
-            } );
+            SQLite.exec( ComplexAsset.database, 'INSERT OR REPLACE INTO ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ) + ') VALUES (' + ComplexAsset.prepareStatement + ')', this.serializeForSQL(), function() {} );
 
         };
 
@@ -534,7 +532,7 @@
         ComplexAsset.find = function(id, callback) {
             id = id.length !== undefined ? id : [id];
             if (!id.length) {
-                callback( [] );
+                return callback( [] );
             }
             SQLite.exec( ComplexAsset.database, 'SELECT * FROM ' + ComplexAsset.table + ' WHERE id in (' + id.join( ',' ) + ')', [], function(rows) {
                 var complexes = [], complex;
