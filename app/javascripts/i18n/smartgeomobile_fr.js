@@ -32,6 +32,8 @@ window.smartgeo_i18n_lang.fr = {
     _REGISTER_RECORD_ID_: "Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
     _CONFIRM_CHANGE_SITE_: "Voulez-vous vraiment changer de site&nbsp?",
     _CONFIRM_DISCONNECT_: "Voulez-vous vraiment quitter l'application&nbsp?",
+    _CONFIRM_DELETE_ASSET_: "Souhaitez-vous vraiment supprimer cet objet ?",
+    _CONFIRM_DELETE_ASSETS_: "Souhaitez-vous vraiment supprimer ces objets ?",
     _G3ME_UNKNOWN_GEOMETRY: "Géometrie inconnue (%s)",
     _SMARTGEO_ONLINE: "Smartgeo est connecté",
     _SMARTGEO_OFFLINE: "Smartgeo est déconnecté",
@@ -107,6 +109,8 @@ window.smartgeo_i18n_lang.fr = {
     _MAP_GPS_FAIL: "Erreur lors de la récupération des coordonnées GPS",
     _MAP_CONSULTATION_CONTROL: "Consultation",
     _MAP_REFERENCE_VIEW_CONTROL: "Vue de référence",
+    _NOT_ALLOWED_TO_DELETE_ASSETS_: "Les objets %s ne seront pas supprimés car votre profil ne le permet pas.",
+    _NOT_ALLOWED_TO_DELETE_ASSET_: "L'objet %s ne sera pas supprimé car votre profil ne le permet pas.",
     _PLANNING_SYNC_FAIL_: "Erreur lors de la mise à jour des missions",
     _PLANNING_OBJECT_NOT_FOUND_: "Les objets de cette mission n'ont pas été trouvés.",
     _PLANNING_REFRESH_: "Actualiser",
@@ -144,6 +148,8 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_SAVE_PROJECT_: "Enregister",
     _PROJECTS_DISCARD_PROJECT_: "Annuler",
     _PROJECTS_CANNOT_REACH_SMARTGEO_: "Impossible de charger/decharger/enregistrer un projet, le serveur est injoignable.",
-    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing"
+    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
+    _PROJECT_ASSETS_ADDED_: "Objet(s) ajouté(s) au projet %s",
+    _PROJECT_ASSETS_REMOVED_: "Objet(s) retiré(s) du projet %s"
 
 };

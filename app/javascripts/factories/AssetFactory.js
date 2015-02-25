@@ -68,10 +68,10 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
         asset.syncInProgress = true;
 
-        $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.json'), asset, {
+        $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), asset, {
             timeout: 100000
-        }).success(function (data) {
-            asset.syncInProgress = false;
+        } ).success( function(data) {
+            asset.syncInProgress = false ;
 
             for (var okey in data) {
                 if (window.SMARTGEO_CURRENT_SITE.metamodel[okey]) {
@@ -82,48 +82,46 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
             for (var okey_ in data) {
                 for (var i = 0; i < data[okey_].length; i++) {
-                    Asset.save(data[okey_][i], window.SMARTGEO_CURRENT_SITE);
+                    Asset.save( data[okey_][i], window.SMARTGEO_CURRENT_SITE );
                 }
             }
-            Storage.get_('census', function (census) {
+            Storage.get_( 'census', function(census) {
                 census = census || [];
-                var alreadySaved = false;
+                var alreadySaved = false ;
                 for (var i = 0; i < census.length; i++) {
                     if (census[i].uuid === asset.uuid) {
-                        alreadySaved = true;
+                        alreadySaved = true ;
                         break;
                     }
                 }
                 if (alreadySaved) {
-                    census[i].synced = true;
+                    census[i].synced = true ;
                 } else {
-                    asset.synced = true;
-                    census.push(asset);
+                    asset.synced = true ;
+                    census.push( asset );
                 }
 
-                Storage.set_('census', census, function () {
-                    $rootScope.$broadcast("REPORT_LOCAL_NUMBER_CHANGE");
+                Storage.set_( 'census', census, function() {
+                    $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
                     for (var i in G3ME.map._layers) {
                         if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
                             G3ME.map._layers[i].redraw();
                         }
                     }
                     $rootScope.refreshSyncCenter();
-                    (callback || function () {
-                    })(asset);
-                });
-            });
-        }).error(function (data, code) {
-            Asset.synchronizeErrorCallback(data, code, asset);
-            (callback || function () {
-            })(asset);
-        }).finally(function () {
+                    (callback || function() {})( asset );
+                } );
+            } );
+        } ).error( function(data, code) {
+            Asset.synchronizeErrorCallback( data, code, asset );
+            (callback || function() {})( asset );
+        } ).finally( function() {
             Asset.m.release();
-            Asset.log(asset);
-        });
+            Asset.log( asset );
+        } );
     };
 
-    Asset.synchronizeErrorCallback = function (data, code, asset) {
+    Asset.synchronizeErrorCallback = function(data, code, asset) {
         if (code) {
             asset.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
         } else {
@@ -136,34 +134,34 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.checkSynchronizedAssets = function () {
+    Asset.checkSynchronizedAssets = function() {
 
-        Asset.getAll(function (assets) {
+        Asset.getAll( function(assets) {
 
             var luuids = [];
 
             for (var i = 0; i < assets.length; i++) {
                 if (assets[i].synced) {
-                    luuids.push(assets[i].uuid);
+                    luuids.push( assets[i].uuid );
                 }
             }
 
-            $http.post(Smartgeo.getServiceUrl('gi.maintenance.mobility.census.check.json'), {
+            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.check.json' ), {
                 uuids: luuids
-            })
-                .success(function (data) {
-                    var ruuids = data.uuids || data;
+            } )
+                .success( function(data) {
+                    var ruuids = data.uuids || data ;
                     for (var uuid in ruuids) {
                         if (ruuids[uuid]) {
-                            console.warn(uuid + ' must be deleted');
-                            Asset.deleteInDatabase(uuid);
+                            console.warn( uuid + ' must be deleted' );
+                            Asset.deleteInDatabase( uuid );
                         } else {
-                            console.warn(uuid + ' must be resync');
-                            Asset.synchronize(uuid);
+                            console.warn( uuid + ' must be resync' );
+                            Asset.synchronize( uuid );
                         }
                     }
-                });
-        });
+                } );
+        } );
     };
 
 
@@ -171,16 +169,16 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.log = function (asset) {
-        asset = angular.copy(asset);
+    Asset.log = function(asset) {
+        asset = angular.copy( asset );
         delete asset.ged;
         if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
-            ChromiumCallbacks[11] = function (success) {
+            ChromiumCallbacks[11] = function(success) {
                 if (!success) {
-                    console.error("writeJSONError while writing " + 'assets/' + asset.uuid + '.json');
+                    console.error( "writeJSONError while writing " + 'assets/' + asset.uuid + '.json' );
                 }
             };
-            SmartgeoChromium.writeJSON(JSON.stringify(asset), 'assets/' + asset.uuid + '.json');
+            SmartgeoChromium.writeJSON( JSON.stringify( asset ), 'assets/' + asset.uuid + '.json' );
         }
         return this;
     };
@@ -190,14 +188,14 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @memberOf Asset
      */
 
-    Asset.getByUUID = function (uuid, callback) {
+    Asset.getByUUID = function(uuid, callback) {
         if (!Asset.m.take()) {
-            return Smartgeo.sleep(Asset.m.getTime(), function () {
-                Asset.getByUUID(uuid, callback);
-            });
+            return Smartgeo.sleep( Asset.m.getTime(), function() {
+                Asset.getByUUID( uuid, callback );
+            } );
         }
 
-        Storage.get_('census', function (assets) {
+        Storage.get_( 'census', function(assets) {
 
             Asset.m.release();
             assets = assets || [];
@@ -209,11 +207,10 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
                 }
             }
             if (!asset) {
-                console.error('AssetFactory->getByUUID(' + uuid + ') : UUID NOT FOUND IN DATABASE');
+                console.error( 'AssetFactory->getByUUID(' + uuid + ') : UUID NOT FOUND IN DATABASE' );
             }
-            (callback || function () {
-            })(asset);
-        });
+            (callback || function() {})( asset );
+        } );
 
     };
 
@@ -222,46 +219,44 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.getAll = function (callback) {
+    Asset.getAll = function(callback) {
         if (!Asset.m.take()) {
-            return Smartgeo.sleep(Asset.m.getTime(), function () {
-                Asset.getAll(callback);
-            });
+            return Smartgeo.sleep( Asset.m.getTime(), function() {
+                Asset.getAll( callback );
+            } );
         }
-        callback = callback || function () {
-        };
-        Storage.get_('census', function (assets) {
+        callback = callback || function() {};
+        Storage.get_( 'census', function(assets) {
             Asset.m.release();
-            callback(assets || []);
-        });
+            callback( assets || [] );
+        } );
     };
 
     /**
      * @method
      * @memberOf Asset
      */
-    Asset.addToDatabase = function (asset, callback) {
+    Asset.addToDatabase = function(asset, callback) {
         if (!Asset.m.take()) {
-            return Smartgeo.sleep(Asset.m.getTime(), function () {
-                Asset.addToDatabase(asset, callback);
-            });
+            return Smartgeo.sleep( Asset.m.getTime(), function() {
+                Asset.addToDatabase( asset, callback );
+            } );
         }
-        callback = callback || function () {
-        };
-        Storage.get_('census', function (assets) {
+        callback = callback || function() {};
+        Storage.get_( 'census', function(assets) {
             assets = assets || [];
             for (var i = 0; i < assets.length; i++) {
                 if (assets[i].uuid === asset.uuid) {
                     Asset.m.release();
-                    return Asset.updateInDatabase(asset, callback);
+                    return Asset.updateInDatabase( asset, callback );
                 }
             }
-            assets.push(asset);
-            Storage.set_('census', assets, function () {
+            assets.push( asset );
+            Storage.set_( 'census', assets, function() {
                 Asset.m.release();
-                callback(asset);
-            });
-        });
+                callback( asset );
+            } );
+        } );
     };
 
 
@@ -269,27 +264,26 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.updateInDatabase = function (asset, callback) {
+    Asset.updateInDatabase = function(asset, callback) {
         if (!Asset.m.take()) {
-            return Smartgeo.sleep(Asset.m.getTime(), function () {
-                Asset.updateInDatabase(asset, callback);
-            });
+            return Smartgeo.sleep( Asset.m.getTime(), function() {
+                Asset.updateInDatabase( asset, callback );
+            } );
         }
-        callback = callback || function () {
-        };
-        Storage.get_('census', function (assets) {
+        callback = callback || function() {};
+        Storage.get_( 'census', function(assets) {
             for (var i = 0; i < assets.length; i++) {
                 if (assets[i].uuid === asset.uuid) {
                     assets[i] = asset;
-                    return Storage.set_('census', assets, function () {
+                    return Storage.set_( 'census', assets, function() {
                         Asset.m.release();
-                        callback(asset);
-                    });
+                        callback( asset );
+                    } );
                 }
             }
             Asset.m.release();
-            return Asset.addToDatabase(asset, callback);
-        });
+            return Asset.addToDatabase( asset, callback );
+        } );
     };
 
 
@@ -297,59 +291,82 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.deleteInDatabase = function (asset, callback) {
+    Asset.deleteInDatabase = function(asset, callback) {
 
         if (typeof asset === "string") {
-            return Asset.getByUUID(asset, function (asset) {
-                Asset.deleteInDatabase(asset, callback);
-            });
+            return Asset.getByUUID( asset, function(asset) {
+                Asset.deleteInDatabase( asset, callback );
+            } );
         }
 
         if (!Asset.m.take()) {
-            return Smartgeo.sleep(Asset.m.getTime(), function () {
-                Asset.deleteInDatabase(asset, callback);
-            });
+            return Smartgeo.sleep( Asset.m.getTime(), function() {
+                Asset.deleteInDatabase( asset, callback );
+            } );
         }
 
-        callback = callback || function () {
-        };
+        callback = callback || function() {};
 
-        Storage.get_('census', function (assets) {
+        Storage.get_( 'census', function(assets) {
             assets = assets || [];
             for (var i = 0; i < assets.length; i++) {
                 if (assets[i].uuid === asset.uuid) {
-                    assets.splice(i, 1);
-                    return Storage.set_('census', assets, function () {
+                    assets.splice( i, 1 );
+                    return Storage.set_( 'census', assets, function() {
                         Asset.m.release();
                         G3ME.__updateMapLayers();
                         callback();
-                    });
+                    } );
                 }
             }
-            console.error('AssetFactory->deleteInDatabase(' + asset.uuid + ') : UUID NOT FOUND IN DATABASE');
-            callback(undefined);
-        });
+            console.error( 'AssetFactory->deleteInDatabase(' + asset.uuid + ') : UUID NOT FOUND IN DATABASE' );
+            callback( undefined );
+        } );
     };
 
     /**
      * @method
      * @memberOf Asset
      */
-    Asset.save = function (asset, site) {
-        site = site || Site.current;
-        var zones = Asset.__distributeAssetsInZone(asset, site);
+    Asset.save = function(asset, site, callback) {
+        if ( !asset.length ) {
+            (callback || function() {})();
+        }
+        site = site || Site.current ;
+        var zones = Asset.__distributeAssetsInZone( asset, site );
+        var uuidcallback = window.uuid();
+        Asset.checkpointCallbackRegister( uuidcallback, zones.length, callback );
         for (var i = 0; i < zones.length; i++) {
             var zone = zones[i];
             if (!zone.assets.length) {
+                Asset.checkpointCallback( uuidcallback );
                 continue;
             }
-            var request = Asset.__buildRequest(zone.assets, site);
-
-            SQLite.exec(zone.database_name, request.request, request.args, function () {
-            }, function (tx, sqlerror) {
-                console.error(sqlerror.message);
-            });
+            var request = Asset.__buildRequest( zone.assets, site );
+            SQLite.exec( zone.database_name, request.request, request.args, function() {
+                Asset.checkpointCallback( uuidcallback );
+            }, function(tx, sqlerror) {
+                    console.error( sqlerror.message );
+                } );
         }
+    };
+
+    Asset.checkpointCallbackId = {} ;
+
+    Asset.checkpointCallback = function(uuid) {
+        if (Asset.checkpointCallbackId[uuid].count <= 1) {
+            (Asset.checkpointCallbackId[uuid].callback || function() {})();
+            delete Asset.checkpointCallbackId[uuid];
+        } else {
+            Asset.checkpointCallbackId[uuid].count-- ;
+        }
+    };
+
+    Asset.checkpointCallbackRegister = function(uuid, count, callback) {
+        Asset.checkpointCallbackId[uuid] = {
+            count: count,
+            callback: callback
+        };
     };
 
     Asset.update = function (asset, site) {
@@ -388,7 +405,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @method
      * @memberOf Asset
      */
-    Asset.__buildRequest = function (asset_s, site) {
+    Asset.__buildRequest = function(asset_s, site) {
 
         var assets = asset_s.length ? asset_s : [asset_s];
 
@@ -404,10 +421,10 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
         for (i = 0; i < assets.length; i++) {
             asset = assets[i];
-            asset_ = JSON.parse(JSON.stringify(asset));
+            asset_ = JSON.parse( JSON.stringify( asset ) );
             guid = asset.guid;
             bounds = asset.bounds;
-            request += (request === '' ? "INSERT or replace INTO ASSETS SELECT " : " UNION SELECT ") + " " + guid + " as id ";
+            request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " " + guid + " as id ";
 
             for (k = 0; k < fields_to_delete.length; k++) {
                 delete asset_[fields_to_delete[k]];
@@ -415,15 +432,15 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
 
             values_in_request = [
                 bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
-                JSON.stringify(asset.geometry), ("" + asset.okey + asset.classindex), (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
+                JSON.stringify( asset.geometry ), ("" + asset.okey + asset.classindex), (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
                 asset.maplabel || '',
                 1 * symbology[("" + asset.okey + asset.classindex)].minzoom,
                 1 * symbology[("" + asset.okey + asset.classindex)].maxzoom,
-                JSON.stringify(asset_)
+                JSON.stringify( asset_ )
             ];
 
             for (j = 0; j < fields_in_request.length; j++) {
-                request += ' , \'' + ((typeof values_in_request[j] === 'string' && values_in_request[j].length) || typeof values_in_request[j] !== 'string' ? JSON.stringify(values_in_request[j]) : '').replace(/^"(.+)"$/, '$1').replace(/\\"/g, '"').replace(/'/g, '&#039;') + '\' as ' + fields_in_request[j];
+                request += ' , \'' + ((typeof values_in_request[j] === 'string' && values_in_request[j].length) || typeof values_in_request[j] !== 'string' ? JSON.stringify( values_in_request[j] ) : '').replace( /^"(.+)"$/, '$1' ).replace( /\\"/g, '"' ).replace( /'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
             }
 
             if (assets[i]) {
@@ -436,7 +453,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         };
     };
 
-    Asset.__distributeAssetsInZone = function (asset_s, site) {
+    Asset.__distributeAssetsInZone = function(asset_s, site) {
 
         var assets = asset_s.length ? asset_s : [asset_s];
 
@@ -445,7 +462,7 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         }
 
         var asset, bounds, asset_extent,
-            zones = angular.copy(site.zones);
+            zones = angular.copy( site.zones );
 
         for (var i = 0; i < assets.length; i++) {
             asset = assets[i];
@@ -460,8 +477,8 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
                 ymax: bounds.ne.lat
             };
             for (var j = 0, zones_length = zones.length; j < zones_length; j++) {
-                if (G3ME.extents_match(zones[j].extent, asset_extent)) {
-                    zones[j].assets.push(asset);
+                if (G3ME.extents_match( zones[j].extent, asset_extent )) {
+                    zones[j].assets.push( asset );
                 }
             }
         }
@@ -477,11 +494,11 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
         $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.history', {
             id: asset.guid,
             limit: 5
-        })).success(function (data) {
-            callback(data);
-        }).error(function () {
-            console.error(arguments);
-        });
+        } ) ).success( function(data) {
+            callback( data );
+        } ).error( function() {
+            console.error( arguments );
+        } );
     };
 
     /**
@@ -489,25 +506,22 @@ angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartg
      * @memberOf Asset
      * @private
      */
-    Asset.prototype.__log = function () {
-    };
+    Asset.prototype.__log = function() {};
 
     /**
      * @method
      * @memberOf Asset
      * @private
      */
-    Asset.prototype.__clone = function () {
-    };
+    Asset.prototype.__clone = function() {};
 
     /**
      * @method
      * @memberOf Asset
      * @private
      */
-    Asset.prototype.__clean = function () {
-    };
+    Asset.prototype.__clean = function() {};
 
     return Asset;
 
-});
+} );

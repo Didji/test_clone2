@@ -10,7 +10,8 @@
         .filter( 'reportTabsFilter', reportTabsFilter )
         .filter( 'reportFieldsFilter', reportFieldsFilter )
         .filter( 'activityListFilter', activityListFilter )
-        .filter( 'isLink', isLink );
+        .filter( 'isLink', isLink )
+        .filter( 'guirlandeFilter', guirlandeFilter );
 
     function prettifyField() {
         /**
@@ -32,6 +33,7 @@
          * @desc
          */
         function _consultationTabsFilter(tabsIn, asset) {
+            tabsIn = tabsIn || [];
             var tabsOut = [];
             for (var i = 0; i < tabsIn.length; i++) {
                 for (var j = 0; j < tabsIn[i].fields.length; j++) {
@@ -163,6 +165,106 @@
             return ((s + '') || '').search( /(https?:\/\/.*)$/ );
         }
         return _isLink;
+    }
+
+
+    guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right"];
+
+    function guirlandeFilter(Site, Project, $filter, Right) {
+        /**
+         * @name _guirlandeFilter
+         * @desc Définie la liste des boutons dans un bloc de consultation en fonction d'un Asset
+         */
+
+        var actions = {
+            "zoomon": {
+                id: "zoomon",
+                icon: "map-marker",
+                method: "asset.zoomOn"
+            },
+            "goto": {
+                id: "goto",
+                icon: "location-arrow",
+                method: "asset.goTo"
+            },
+            "addtoselection": {
+                id: "addtoselection",
+                icon: "plus",
+                method: "scope.addToCurrentSelection"
+            },
+            "dropfromcurrentselection": {
+                id: "dropfromcurrentselection",
+                icon: "minus",
+                method: "scope.dropFromCurrentSelection"
+            },
+            "addtocurrentproject": {
+                id: "addtocurrentproject",
+                icon: "wrench",
+                method: "scope.addToCurrentProject",
+                suffix: "plus-circle"
+            },
+            "removefromproject": {
+                id: "removefromproject",
+                icon: "wrench",
+                method: "scope.removeFromProject",
+                suffix: "minus-circle"
+            },
+            "fetchhistory": {
+                id: "fetchhistory",
+                icon: "history",
+                method: "asset.fetchHistory"
+            },
+            "delete": {
+                id: "delete",
+                icon: "trash",
+                method: "scope.deleteAsset"
+            },
+        };
+
+        function _guirlandeFilter(asset) {
+            var authAction = [],
+                isReportable = !!$filter( 'activityListFilter' )( asset ).length,
+                isUpdatable = Right.isUpdatable( asset ),
+                isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
+                hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
+                isThereAProjectLoaded = !!Project.currentLoadedProject,
+                isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset ));
+
+            if (isGraphical) {
+                authAction.push( actions.zoomon );
+            }
+
+            if (isGraphical && Right.get( 'goto' )) {
+                authAction.push( actions.goto );
+            }
+
+            if (isReportable && asset.isInMultiselection) {
+                authAction.push( actions.dropfromcurrentselection );
+            }
+
+            if (isReportable && !asset.isInMultiselection) {
+                authAction.push( actions.addtoselection );
+            }
+
+            if (isThereAProjectLoaded && !isProjectAsset) {
+                authAction.push( actions.addtocurrentproject );
+            }
+
+            if (isThereAProjectLoaded && isProjectAsset) {
+                authAction.push( actions.removefromproject );
+            }
+
+            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
+                authAction.push( actions.fetchhistory );
+            }
+
+            if (isUpdatable) {
+                authAction.push( actions.delete );
+            }
+
+            return authAction;
+        }
+        return _guirlandeFilter;
     }
 
 })();

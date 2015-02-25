@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship", "Right"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship, Right) {
 
         /**
          * @class AssetFactory
@@ -54,8 +54,7 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    //self.relatedAssetsTree = tree ;
-                    (callback || angular.noop)(self);
+                    (callback || angular.noop)();
                 } );
             } );
         };
@@ -110,6 +109,22 @@
         Asset.prototype.zoomOn = function() {
             G3ME.map.setView( this.getCenter(), 18 );
             $rootScope.stopPosition();
+        };
+
+        /**
+         * @name isUpdatable
+         * @desc
+         */
+        Asset.prototype.isUpdatable = function() {
+            return Right.isUpdatable( this );
+        };
+
+        /**
+         * @name isReadOnly
+         * @desc
+         */
+        Asset.prototype.isReadOnly = function() {
+            return Right.isReadOnly( this );
         };
 
         /**
@@ -331,7 +346,7 @@
                 return callback( partial_response );
             }
 
-            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
+            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] + '' : ' in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function(results) {
                 for (var i = 0; i < results.length; i++) {
                     var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
@@ -342,6 +357,44 @@
             } );
         };
 
+        Asset.getAllProjectAsset = function(project, callback, zones, partial_response) {
+            if (!zones) {
+                zones = Site.current.zones;
+                partial_response = [];
+            }
+
+            if (!zones.length) {
+                return callback( partial_response );
+            }
+
+            var request = 'SELECT * FROM ASSETS WHERE symbolId like "PROJECT_%" OR asset like "%PROJECT_%" ';
+            if (project.added.length) {
+                request += 'OR id in (' + project.added.join( "," ) + ')';
+            }
+            SQLite.exec( zones[0].database_name, request, [], function(results) {
+                for (var i = 0; i < results.length; i++) {
+                    var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
+                    Asset.cache[tmp.id] = tmp;
+                    partial_response.push( angular.copy( Asset.cache[tmp.id] ) );
+                }
+                Asset.getAllProjectAsset( project, callback, zones.slice( 1 ), partial_response );
+            } );
+        };
+
+        Asset.deleteAllProjectAsset = function(callback, zones) {
+
+            if (!zones) {
+                zones = Site.current.zones;
+            }
+            if (!zones.length) {
+                return (callback || function() {})();
+            }
+
+            var request = 'DELETE FROM ASSETS WHERE symbolId like "PROJECT_%" OR asset like "%PROJECT_%"';
+            SQLite.exec( zones[0].database_name, request, [], function() {
+                Asset.deleteAllProjectAsset( callback, zones.slice( 1 ) );
+            } );
+        };
         /**
          * @name delete
          * @desc Supprime les objets Asset en base de données correspondant au guids passé en paramètre.
@@ -350,16 +403,17 @@
          * @param {Array} zones
          */
         Asset.delete = function(guids, callback, zones) {
+
+            guids = ((+guids === guids) ? [guids] : guids) || [];
+
             if (!zones) {
                 zones = Site.current.zones;
             }
             if (!zones.length || guids.length === 0) {
-                return callback();
+                return (callback || function() {})();
             }
 
-            guids = (+guids === guids) ? [guids] : guids ;
-
-            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : 'in ( ' + guids.join( ',' ) + ')');
+            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
             SQLite.exec( zones[0].database_name, request, [], function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
@@ -388,6 +442,171 @@
             $rootScope.$broadcast("START_UPDATE_ASSET", this);
         };
 
+        /**
+         * @name remoteDeleteAssets
+         * @desc Supprime une liste d'objets sur le serveur
+         * @param  {Array} assets
+         */
+        Asset.remoteDeleteAssets = function(assets) {
+            var originals = [];
+            angular.forEach( assets, function(asset) {
+                asset.hideFromMap();
+                originals.push( {
+                    guid: asset.guid,
+                    okey: asset.okey
+                } );
+            } );
+            if (originals.length) {
+                $http.post(
+                    Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
+                    {
+                        deleted: originals
+                    },
+                    {
+                        timeout: 100000
+                    }
+                ).success( Asset.handleDeleteAssets
+                ).error( Asset.handleDeleteAssets
+                );
+            }
+        };
+
+        /**
+         * @name handleDeleteAssets
+         * @param  {Array} guids
+         */
+        Asset.handleDeleteAssets = function(data) {
+            if (!data.deleted) {
+                return false;
+            }
+
+            var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
+
+            angular.forEach( guids, function(guid) {
+                Relationship.findSubtree( guid, function(root, tree) {
+                    var ids = Object.keys( tree );
+                    Asset.delete( ids );
+                    $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
+                    G3ME.__updateMapLayers();
+                } );
+            } );
+        };
+
+        /**
+         * @method
+         * @memberOf Asset
+         */
+        Asset.__buildRequest = function(asset_s) {
+
+            var assets = asset_s.length ? asset_s : [asset_s];
+
+            var request = '',
+                asset, asset_, guid,
+                metamodel = Site.current.metamodel,
+                symbology = Site.current.symbology,
+                bounds,
+                fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
+                fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
+                values_in_request,
+                i, j, k, symbolId, mySymbology;
+
+            for (i = 0; i < assets.length; i++) {
+                asset = assets[i];
+                asset_ = JSON.parse( JSON.stringify( asset ) );
+                guid = asset.guid;
+                bounds = asset.bounds;
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
+                symbolId = ("" + asset.okey + asset.classindex);
+                mySymbology = symbology[symbolId];
+
+                if (!mySymbology) {
+                    symbolId = symbolId.replace( 'PROJECT_', '' );
+                    mySymbology = symbology[symbolId];
+                    if (!mySymbology) {
+                        console.error( 'OBJET IGNORé', asset );
+                        continue ;
+                    }
+                }
+
+                for (k = 0; k < fields_to_delete.length; k++) {
+                    delete asset_[fields_to_delete[k]];
+                }
+
+                values_in_request = [
+                    bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
+                    JSON.stringify( asset.geometry ), symbolId, (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
+                    asset.maplabel || '',
+                    +mySymbology.minzoom,
+                    +mySymbology.maxzoom,
+                    JSON.stringify( asset_ )
+                ];
+
+                for (j = 0; j < fields_in_request.length; j++) {
+                    request += ' , \'' + ((typeof values_in_request[j] === 'string' && values_in_request[j].length) || typeof values_in_request[j] !== 'string' ? JSON.stringify( values_in_request[j] ) : '').replace( /^"(.+)"$/, '$1' ).replace( /\\"/g, '"' ).replace( /'/g, '&#039;' ) + '\' as ' + fields_in_request[j];
+                }
+
+                if (assets[i]) {
+                    delete assets[i];
+                }
+            }
+            return {
+                request: ((request !== '') ? request : 'SELECT 1'),
+                args: []
+            };
+        };
+
+        Asset.__distributeAssetsInZone = function(asset_s) {
+
+            var assets = asset_s.length ? asset_s : [asset_s];
+
+            if (!assets) {
+                return false;
+            }
+
+            var asset, bounds, asset_extent,
+                zones = angular.copy( Site.current.zones );
+
+            for (var i = 0; i < assets.length; i++) {
+                asset = assets[i];
+                if (!asset || !asset.bounds) {
+                    continue;
+                }
+                bounds = asset.bounds;
+                asset_extent = {
+                    xmin: bounds.sw.lng,
+                    xmax: bounds.ne.lng,
+                    ymin: bounds.sw.lat,
+                    ymax: bounds.ne.lat
+                };
+                for (var j = 0, zones_length = zones.length; j < zones_length; j++) {
+                    if (G3ME.extents_match( zones[j].extent, asset_extent )) {
+                        zones[j].assets.push( asset );
+                    }
+                }
+            }
+
+            return zones;
+        };
+
+        /**
+         * @method
+         * @memberOf Asset
+         */
+        Asset.save = function(asset, callback) {
+            var zones = Asset.__distributeAssetsInZone( asset );
+            for (var i = 0; i < zones.length; i++) {
+                var zone = zones[i];
+                if (!zone.assets.length) {
+                    continue;
+                }
+                var request = Asset.__buildRequest( zone.assets );
+                SQLite.exec( zone.database_name, request.request, request.args, callback, function(tx, sqlerror) {
+                    console.error( sqlerror.message );
+                } );
+            }
+        };
+        
+        
         window.AssetFactory = Asset ;
 
         return Asset;

@@ -21,7 +21,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
             if (assets.length <= 0) {
                 callback();
             } else {
-                var request = " DELETE FROM ASSETS WHERE id in ( " + assets.join( "," ) + " ) ";
+                var request = ' DELETE FROM ASSETS WHERE id in ( ' + assets.join( "," ) + ' ) ';
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {
                         name: site.zones[i].database_name
@@ -40,7 +40,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 symbology = {},
                 activities = [],
                 stats = [],
-                i = 0;
+                i = 0,
+                okey;
 
             for (i = 0; i < site.metamodel.length; i++) {
                 if (update || site.number[site.metamodel[i].okey] !== 0) {
@@ -52,10 +53,14 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
             for (okey in metamodel) {
                 if (metamodel[okey].is_project) {
                     site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
-                    //site.metamodel['PROJECT_' + okey].is_census = true ;
                     site.metamodel['PROJECT_' + okey].okey = 'PROJECT_' + okey;
                     site.metamodel['PROJECT_' + okey].group = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].group;
+                    site.metamodel['PROJECT_' + okey].label = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].label;
+                    site.metamodel[okey].is_project = false;
                 }
+            }
+            for (okey in site.dependancies) {
+                site.dependancies["PROJECT_" + okey] = "PROJECT_" + site.dependancies[okey];
             }
 
             activities._byId = [];
@@ -146,6 +151,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         },
 
         saveSite: function(site, callback) {
+            SQLite.exec( "parameters", "DELETE FROM PROJECTS WHERE 1=1" );
             Storage.get_( 'sites', function(sites) {
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {

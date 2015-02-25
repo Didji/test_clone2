@@ -20,6 +20,7 @@
 
         vm.startCensus = startCensus;
         vm.cancel = cancel;
+
         vm.symbology = Site.current.symbology;
         vm.dependancies = Site.current.dependancies;
         vm.metamodel = Site.current.metamodel;

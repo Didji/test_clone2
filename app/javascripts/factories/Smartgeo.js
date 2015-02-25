@@ -235,7 +235,6 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
             SQLite.openDatabase( {
                 name: zones[0].database_name
             } ).transaction( function(t) {
-                t.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_RUSTINE ON ASSETS (id)' );
                 t.executeSql( request, [], function(tx, rslt) {
                     var asset;
                     for (var i = 0; i < rslt.rows.length; i++) {
@@ -328,7 +327,7 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (search.criteria[criter] === 1 * search.criteria[criter]) {
+                        if (typeof search.criteria[criter] === "number") {
                             regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
                         } else {
                             regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";

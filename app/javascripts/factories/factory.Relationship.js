@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .factory( 'Relationship', RelationshipFactory );
 
-    RelationshipFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS"];
+    RelationshipFactory.$inject = ["G3ME", "Marker", "SQLite"];
 
 
     function RelationshipFactory(G3ME, Marker, SQLite) {
@@ -90,18 +90,31 @@
             } );
         };
 
-        Relationship.saveRelationship = function() {
-            // SQLite.openDatabase( {
-            //     name: 'parameters'
-            // } ).transaction( function(transaction) {
-            //     for (var daddy in relationship) {
-            //         for (var child in relationship[daddy]) {
-            //             transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
-            //         }
-            //     }
-            // } );
+        Relationship.saveRelationship = function(relationship) {
+            SQLite.openDatabase( {
+                name: 'parameters'
+            } ).transaction( function(transaction) {
+                for (var daddy in relationship) {
+                    for (var child in relationship[daddy]) {
+                        transaction.executeSql( 'INSERT INTO relationship VALUES (' + (+daddy) + ', ' + (+relationship[daddy][child]) + ');' );
+                    }
+                }
+            } );
         };
 
+        Relationship.getRelationshipsFromComplexAsset = function(complex) {
+            var tree = {} ;
+            Relationship.getRelationshipsFromComplexAssetSubtree( complex, tree );
+            return tree;
+        };
+
+        Relationship.getRelationshipsFromComplexAssetSubtree = function(complex, tree) {
+            tree[complex.id || complex.uuid] = tree[complex.id || complex.uuid] || [] ;
+            for (var i = 0; i < complex.children.length; i++) {
+                tree[complex.id || complex.uuid].push( complex.children[i].id || complex.children[i].uuid );
+                Relationship.getRelationshipsFromComplexAssetSubtree( complex.children[i], tree );
+            }
+        };
 
         return Relationship;
     }

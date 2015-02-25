@@ -28,7 +28,6 @@
             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                 <i class="fa fa-pencil-square-o"></i>
             </button>
-
             <ul class="dropdown-menu" role="menu">
                 <li ng-repeat="activity in reportActivity" ng-show='(activity.id == report_activity || !report_activity)'>
                     <a ng-href="#/report/{{site.id}}/{{activity.id}}/{{asset.guid}}">{{::activity.label}}</a>
@@ -38,20 +37,14 @@
         <button class="consultation-btn" ng-click="asset.toggleEdit()">
             <i class="fa fa-pencil"></i>
         </button>
-        <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.zoomOn()"><i class="fa fa-map-marker"></i>
-        </button>
-        <button ng-if='site.metamodel[asset.okey].is_graphical' class="consultation-btn" ng-click="asset.goTo()" ng-if="rights.goto"><i class="fa fa-location-arrow"></i>
-        </button>
-        <button ng-if="reportActivity.length && !asset.isInMultiselection" id="addToSelectionButton" class="consultation-btn" ng-click="addToCurrentSelection(asset, $event);"><i class="fa fa-plus"></i>
-        </button>
-        <button ng-if="reportActivity.length && asset.isInMultiselection" class="consultation-btn" ng-click="dropFromCurrentSelection(asset, $event)"><i class="fa fa-minus"></i>
-        </button>
-        <button ng-if="currentLoadedProject" class="consultation-btn" ng-click="addToCurrentProject(asset)"><i class="fa fa-meh-o"></i>
-        </button>
-        <button class="consultation-btn" ng-click="asset.fetchHistory()" ng-if="reportActivity.length && rights.history && !asset.reports.length"><i class="fa fa-history"></i>
+        <button ng-repeat="action in (asset|guirlandeFilter)" class="consultation-btn" ng-click="exec(action.method)">
+            <i class="fa fa-{{action.icon}}"></i>
+            <i ng-if="action.suffix" class="fa fa-{{action.suffix}} suffix"></i>
         </button>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.missionsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.historyAction.html'"></ng-include>
     </div>
+    
+    
 </div>

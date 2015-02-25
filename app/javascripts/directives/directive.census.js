@@ -1,10 +1,10 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", function ($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site) {
+angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
 
-    "use strict";
+        "use strict";
 
-    return {
+        return {
 
-        restrict: 'E',
+            restrict: 'E',
 
         scope: {
             'asset': '=',
@@ -38,7 +38,14 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
             }
 
             scope.$watch('okey', function (okey) {
-                if (okey && !scope.asset) {
+                if (okey) {
+                    if (okey.search( /PROJECT_/ ) === 0) {
+                        scope.isProject = true ;
+                        scope.defaultClassIndex = (Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )].added) || 0 ;
+                    }
+                    scope.root = scope.node = new ComplexAsset( okey );
+                }
+                else if (okey && !scope.asset) {
                     window.root = scope.root = scope.node = new ComplexAsset(okey);
                 }
             }, true);
@@ -174,6 +181,12 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
             scope.drawPoint = function (node) {
 
                 node.geometry = undefined;
+                    function initializeNodeLayer(e) {
+                        if (node.layer) {
+                            return;
+                        }
+                        var iconUrl = Site.current.symbology['' + node.okey + scope.defaultClassIndex].style.symbol.icon,
+                            image = new Image();
 
                 function initializeNodeLayer(e) {
                     if (node.layer) {

@@ -34,6 +34,8 @@ window.smartgeo_i18n_lang.en = {
     _REGISTER_RECORD_ID_: "Your license has been accepted. Please, record the following ID in case of loss or theft: ",
     _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
     _CONFIRM_DISCONNECT_: "Do you really want to exit?",
+    _CONFIRM_DELETE_ASSET_: "Do you really want to delete this asset ?",
+    _CONFIRM_DELETE_ASSETS_: "Do you really want to delete these assets ?",
     _G3ME_UNKNOWN_GEOMETRY: "Unknown geometry (%s)",
     _CONSULTATION_LOADING: "Loading ...",
     _CONSULTATION_REPORT: "Report",
@@ -107,6 +109,8 @@ window.smartgeo_i18n_lang.en = {
     _MAP_GPS_FAIL: "Error while retrieving GPS coordinates",
     _MAP_CONSULTATION_CONTROL: "Consultation",
     _MAP_REFERENCE_VIEW_CONTROL: "Reference view",
+    _NOT_ALLOWED_TO_DELETE_ASSETS_: "Assets %s will not be deleted because you do not have sufficient permission.",
+    _NOT_ALLOWED_TO_DELETE_ASSET_: "Asset %s will not be deleted because you do not have sufficient permission.",
     _PLANNING_SYNC_FAIL_: "Error while updating missions",
     _PLANNING_OBJECT_NOT_FOUND_: "Mission's objects not found",
     _PLANNING_REFRESH_: "Refresh",
@@ -143,5 +147,7 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_SAVE_PROJECT_: "Save",
     _PROJECTS_DISCARD_PROJECT_: "Discard",
     _PROJECTS_CANNOT_REACH_SMARTGEO_: "Cannot reach Smartgeo",
-    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing"
+    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
+    _PROJECT_ASSETS_ADDED_: "Asset added to project %s",
+    _PROJECT_ASSETS_REMOVED_: "Asset removed from project %s"
 };

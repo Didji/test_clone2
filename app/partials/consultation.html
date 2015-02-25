@@ -17,7 +17,7 @@
                     <div class="panel-body multiselection-body">
                         <div ng-repeat='asset in assets' ng-if='!consultationController.multiselection[okey].close' class="consultation-multiselection-assets-list">
                             {{::asset.label}}
-                            <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-trash consultation-multiselection-trash"></i>
+                            <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-times consultation-multiselection-trash"></i>
                         </div>
                         <div ng-if="rights.report && !consultationController.multiselection[okey].close" class="btn-group consultation-multiselection-report-button">
                             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
@@ -28,9 +28,12 @@
                                     <a ng-href="#/report/{{consultationController.siteid}}/{{activity.id}}/{{consultationController.getMultiselectionAssetsIds(okey)}}">{{::activity.label}}</a>
                                 </li>
                             </ul>
-                            <button ng-if="consultationController.currentLoadedProject" class="consultation-btn" ng-click="consultationController.addMultiselectionToCurrentProject(okey)"><i class="fa fa-meh-o"></i>
+                            <button ng-if="consultationController.currentLoadedProject" class="consultation-btn" ng-click="consultationController.addMultiselectionToCurrentProject(okey)"><i class="fa fa-exclamation-triangle"></i>
                         </div>
                         <button ng-if='!consultationController.multiselection[okey].close' ng-click="consultationController.emptyMultiselectionForOkey(okey)" type="button" class="consultation-btn">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button ng-click="consultationController.deleteAssets(assets)" type="button" class="consultation-btn">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
@@ -42,7 +45,7 @@
             <i class="fa fa-refresh fa-spin"></i>
         </div>
         <div ng-repeat="priority in consultationController.groups" ng-if="!consultationController.loading">
-            <div class="panel-group" ng-repeat="(okey, assets) in priority">
+            <div class="panel-group" ng-repeat="(okey, assets) in priority" ng-if="assets.length">
                 <h4 class="family-title">{{::consultationController.metamodel[assets[0].okey].label}}</h4>
                 <div class="panel consultation-group">
                     <asset-consultation asset='::asset' ng-repeat='asset in assets track by asset.id' class="assetConsultationDirective" />
@@ -50,7 +53,7 @@
             </div>
         </div>
 
-        <div style="margin-top: 25px;" >
+        <div style="margin-top: 25px;" ng-if="consultationController.coordinates && consultationController.coordinates.lat && consultationController.coordinates.lng">
             <button class="btn btn-primary btn-block" ng-click="openLocatedReport(consultationController.coordinates.lat, consultationController.coordinates.lng)">
                 <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
             </button>
