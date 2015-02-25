@@ -199,13 +199,15 @@
             },
             "addtocurrentproject": {
                 id: "addtocurrentproject",
-                icon: "meh-o",
-                method: "scope.addToCurrentProject"
+                icon: "wrench",
+                method: "scope.addToCurrentProject",
+                suffix: "plus-circle"
             },
             "removefromproject": {
                 id: "removefromproject",
-                icon: "meh-o fa-flip-vertical",
-                method: "scope.removeFromProject"
+                icon: "wrench",
+                method: "scope.removeFromProject",
+                suffix: "minus-circle"
             },
             "fetchhistory": {
                 id: "fetchhistory",

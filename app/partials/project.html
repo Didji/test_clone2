@@ -27,7 +27,7 @@
                     <i18n ng-if="!project.unloading">_PROJECTS_UNLOAD_PROJECT_</i18n>
                     <i ng-if="project.unloading" class="fa fa-refresh fa-spin"></i> <i18n ng-if="project.unloading">_PROJECTS_UNLOADING_PROJECT_</i18n>
                 </button>
-                <button ng-if="project.loaded == true && project.assets.length > 0" class="btn btn-block" ng-click="project.consult()">
+                <button ng-if="project.loaded == true && project.getAssetLength() > 0" class="btn btn-block" ng-click="project.consult()">
                     <i18n>_PROJECTS_CONSULT_ASSETS_</i18n>
                 </button>
             </div>

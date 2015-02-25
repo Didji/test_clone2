@@ -86,7 +86,10 @@
                 $scope.$digest();
             } );
 
-            $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets) {
+            $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets, coordinates) {
+                if (coordinates === false) {
+                    vm.coordinates = coordinates;
+                }
                 cancelPreopenTimer();
                 updateAssetsList( assets );
                 $scope.$digest();
