@@ -410,7 +410,9 @@
                 zones = Site.current.zones;
             }
             if (!zones.length || guids.length === 0) {
-                return (callback || function() {})();
+                return Relationship.delete( guids, function() {
+                    return (callback || function() {})();
+                } );
             }
 
             var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
@@ -482,14 +484,15 @@
 
             var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
 
-            angular.forEach( guids, function(guid) {
-                Relationship.findSubtree( guid, function(root, tree) {
+            for (var i = 0; i < guids.length; i++) {
+                Relationship.findSubtree( guids[i], function(root, tree) {
                     var ids = Object.keys( tree );
-                    Asset.delete( ids );
-                    $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                    G3ME.__updateMapLayers();
+                    Asset.delete( ids, function() {
+                        $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
+                        G3ME.__updateMapLayers();
+                    } );
                 } );
-            } );
+            }
         };
 
         /**

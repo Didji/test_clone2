@@ -218,16 +218,10 @@
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this, Project );
 
-            for (var i = 0; i < assets.length; i++) {
-                assets[i].project_status = "added";
-                Project.currentLoadedProject.new.push( assets[i].guid );
-                Project.currentLoadedProject.assets.push( assets[i].guid );
-            }
-
-            Project.currentLoadedProject.save();
+            Project.currentLoadedProject.addNew( assets );
 
             Asset.save( assets, function() {
-                Relationship.saveRelationship( relationships );
+                Relationship.save( relationships );
                 G3ME.reloadLayers();
             } );
 
