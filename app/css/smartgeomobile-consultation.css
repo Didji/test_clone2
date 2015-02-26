@@ -1,7 +1,16 @@
 .consultation-btn .suffix{
     position: relative;
-    left: 11px;
-    top: -27px;
-    color: rgb(123, 123, 123);
-    font-size: 75%;
+    left: 16px;
+    top: -22px;
+    color: white;
+    font-size: 70%;
+    background: rgb(123,123,123);
+    border-radius: 20px;
+    padding: 3px;
+    min-width: 26px;
+}
+
+hr  {
+    margin-bottom: 10px;
+    margin-top: 0;
 }

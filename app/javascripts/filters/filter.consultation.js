@@ -177,6 +177,8 @@
          */
 
         var actions = {
+
+            // GEO ACTIONS
             "zoomon": {
                 id: "zoomon",
                 icon: "map-marker",
@@ -187,38 +189,67 @@
                 icon: "location-arrow",
                 method: "asset.goTo"
             },
+
+            // MULTI SELECTION ACTIONS
             "addtoselection": {
                 id: "addtoselection",
-                icon: "plus",
+                icon: "shopping-cart",
+                suffix: "plus",
                 method: "scope.addToCurrentSelection"
             },
             "dropfromcurrentselection": {
                 id: "dropfromcurrentselection",
-                icon: "minus",
+                icon: "shopping-cart",
+                suffix: "minus",
                 method: "scope.dropFromCurrentSelection"
             },
-            "addtocurrentproject": {
-                id: "addtocurrentproject",
+
+            // OBJECT ACTIONS
+            "edit": {
+                id: "edit",
                 icon: "wrench",
-                method: "scope.addToCurrentProject",
-                suffix: "plus-circle"
-            },
-            "removefromproject": {
-                id: "removefromproject",
-                icon: "wrench",
-                method: "scope.removeFromProject",
-                suffix: "minus-circle"
-            },
-            "fetchhistory": {
-                id: "fetchhistory",
-                icon: "history",
-                method: "asset.fetchHistory"
+                method: ""
             },
             "delete": {
                 id: "delete",
                 icon: "trash",
                 method: "scope.deleteAsset"
             },
+            "fetchhistory": {
+                id: "fetchhistory",
+                icon: "history",
+                method: "asset.fetchHistory"
+            },
+
+            // PROJECT ACTIONS
+            "markobjectasdeleteforproject": {
+                id: "markobjectasdeleteforproject",
+                icon: "trash",
+                method: "",
+                suffix: "wrench"
+            },
+            "editobjectforproject": {
+                id: "editobjectforproject",
+                icon: "pencil",
+                method: "",
+                suffix: "wrench"
+            },
+            "addtocurrentproject": {
+                id: "addtocurrentproject",
+                icon: "plus",
+                method: "scope.addToCurrentProject",
+                suffix: "wrench"
+            },
+            "deleteobjectfromprojectandreleaseit": {
+                id: "deleteobjectfromprojectandreleaseit",
+                icon: "minus",
+                method: "scope.removeFromProject",
+                suffix: "wrench"
+            },
+            "separator": {
+                separator: true
+            }
+
         };
 
         function _guirlandeFilter(asset) {
@@ -230,6 +261,11 @@
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
                 isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset ));
 
+            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
+                authAction.push( actions.fetchhistory );
+            }
+
+            // GEO ACTIONS
             if (isGraphical) {
                 authAction.push( actions.zoomon );
             }
@@ -238,28 +274,27 @@
                 authAction.push( actions.goto );
             }
 
-            if (isReportable && asset.isInMultiselection) {
-                authAction.push( actions.dropfromcurrentselection );
-            }
+            authAction.push( actions.separator );
 
-            if (isReportable && !asset.isInMultiselection) {
-                authAction.push( actions.addtoselection );
-            }
-
-            if (isThereAProjectLoaded && !isProjectAsset) {
-                authAction.push( actions.addtocurrentproject );
-            }
-
-            if (isThereAProjectLoaded && isProjectAsset) {
-                authAction.push( actions.removefromproject );
-            }
-
-            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
-                authAction.push( actions.fetchhistory );
-            }
-
-            if (isUpdatable) {
+            // OBJECT ACTIONS
+            if (isUpdatable && !isProjectAsset) {
+                authAction.push( actions.edit );
                 authAction.push( actions.delete );
+            }
+
+            // MULTI SELECTION ACTIONS
+            if (isReportable) {
+                authAction.push( asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection );
+            }
+
+            // PROJECT ACTIONS
+            if (isThereAProjectLoaded) {
+                authAction.push( actions.separator );
+                if (isProjectAsset) {
+                    authAction.push( actions.editobjectforproject );
+                    authAction.push( actions.markobjectasdeleteforproject );
+                }
+                authAction.push( isProjectAsset ? actions.deleteobjectfromprojectandreleaseit : actions.addtocurrentproject );
             }
 
             return authAction;
