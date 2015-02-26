@@ -97,8 +97,7 @@
          * @name synchronize
          * @desc Décharge un projet, localement, et sur le serveur
          */
-        Project.prototype.synchronize = function(callback)
-        {
+        Project.prototype.synchronize = function(callback) {
             var project = this;
             this.synchronizing = true;
             this.getSynchronizePayload( function(payload) {
@@ -110,7 +109,7 @@
                     project.synchronizing = false ;
                 } );
             } );
-        }
+        };
 
         /**
          * @name getSynchronizePayload
@@ -160,14 +159,14 @@
         Project.handleSynchronizeError = function(data, status) {
             switch(status) {
                 case 400:
-                    if ( data.locked ) {
+                    if (data.locked) {
                         var locked = [];
                         Asset.findAssetsByGuids( data.locked, function(assets) {
                             for (var i = 0; i < assets.length; i++) {
-                                locked.push( Site.current.metamodel[ assets[i].okey ].label +  " " + assets[i].label );
+                                locked.push( Site.current.metamodel[assets[i].okey].label + " " + assets[i].label );
                             }
-                            alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join(", ") ) );
-                        });
+                            alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join( ", " ) ) );
+                        } );
                     }
                     break;
                 case 500:
@@ -175,7 +174,7 @@
                     Project.smartgeoReachError();
                     break;
             }
-        }
+        };
 
         /**
          * @name setProjectLoaded
@@ -237,7 +236,7 @@
         Project.prototype.setAssets = function(assets, relations, callback) {
             var project = this ;
             if (relations && relations.length) {
-                Relationship.saveRelationship( relations );
+                Relationship.save( relations );
             }
             project.assets = [];
             for (var i = 0; i < assets.length; i++) {
@@ -298,6 +297,22 @@
             for (var i = 0; i < assets.length; i++) {
                 this.addAsset( assets[i], (i === assets.length - 1) ? callback : undefined );
             }
+        };
+
+        /**
+         * @name addNew
+         * @desc
+         */
+        Project.prototype.addNew = function(assets, callback) {
+            if (!assets.length) {
+                assets = [assets];
+            }
+            for (var i = 0; i < assets.length; i++) {
+                assets[i].project_status = "added";
+                this.new.push( assets[i].guid );
+                this.assets.push( assets[i].guid );
+            }
+            this.save( callback );
         };
 
         /**

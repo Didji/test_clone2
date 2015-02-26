@@ -135,6 +135,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 } );
         },
 
+        //TODO(@gulian): remplace par Relationship.eraseAll + Relationship.save
         saveRelationship: function(relationship) {
             SQLite.openDatabase( {
                 name: 'parameters'
