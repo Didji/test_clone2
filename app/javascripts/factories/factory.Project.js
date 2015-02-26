@@ -341,6 +341,22 @@
         };
 
         /**
+         * @name addNew
+         * @desc
+         */
+        Project.prototype.addNew = function(assets, callback) {
+            if (!assets.length) {
+                assets = [assets];
+            }
+            for (var i = 0; i < assets.length; i++) {
+                assets[i].project_status = "added";
+                this.new.push( assets[i].guid );
+                this.assets.push( assets[i].guid );
+            }
+            this.save( callback );
+        };
+
+        /**
          * @name removeAsset
          * @desc
          */
