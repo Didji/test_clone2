@@ -25,7 +25,10 @@
                 fields: {}
 
             };
-            this.id = asset.id || null;
+            if(asset.id !== null){
+                this.id = asset.id;
+            }
+            //this.id = asset.id || null;
             this.okey = okey;
             this.isProject = (this.okey !== null)?(this.okey.search( /PROJECT_/ ) === 0):false;
             this.uuid = window.uuid() || null;
@@ -328,19 +331,19 @@
          *
          * @returns {Boolean} True si l'objet a été supprimé
          */
-        ComplexAsset.prototype.save = function (data) {
+        ComplexAsset.prototype.save = function (Project, update) {
 
-            if(data)
-            {
+            //if(data)
+            //{
                 if (this.isProject) {
-                    var Project = data;
+                    var Project = Project;
                     return this.saveForProject( Project );
                 }
                 else
                 {
-                    var update = data || false;
+                    var update = update || false;
                 }
-            }
+            //}
 
             var node = this.__clone(true);
             node.timestamp = (new Date()).getTime();
@@ -372,7 +375,6 @@
                             AssetFactory.update(data[okey][i], Site.current);
                         }
                         else {
-
                             AssetFactory.save(data[okey][i], Site.current);
                         }
                     }
@@ -573,6 +575,7 @@
                 var complexes = [], complex;
                 for (var i = 0; i < rows.length; i++) {
                     complex = angular.extend( rows.item( i ), JSON.parse( rows.item( i ).json ) );
+
                     complexes.push( complex );
                 }
                 (callback || function() {})( complexes );

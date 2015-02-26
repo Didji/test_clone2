@@ -1,10 +1,10 @@
-angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function ($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
 
-        "use strict";
+    "use strict";
 
-        return {
+    return {
 
-            restrict: 'E',
+        restrict: 'E',
 
         scope: {
             'asset': '=',
@@ -38,15 +38,17 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
             }
 
             scope.$watch('okey', function (okey) {
-                if (okey) {
-                    if (okey.search( /PROJECT_/ ) === 0) {
-                        scope.isProject = true ;
-                        scope.defaultClassIndex = (Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )].added) || 0 ;
+
+                if (okey && !scope.asset) {
+
+                    if (okey.search(/PROJECT_/) === 0) {
+                        scope.isProject = true;
+                        scope.defaultClassIndex = (Project.currentLoadedProject.expressions[okey.replace('PROJECT_', '')] && Project.currentLoadedProject.expressions[okey.replace('PROJECT_', '')].added) || 0;
+                        scope.root = scope.node = new ComplexAsset(okey);
                     }
-                    scope.root = scope.node = new ComplexAsset( okey );
-                }
-                else if (okey && !scope.asset) {
-                    window.root = scope.root = scope.node = new ComplexAsset(okey);
+                    else {
+                        window.root = scope.root = scope.node = new ComplexAsset(okey);
+                    }
                 }
             }, true);
 
@@ -81,7 +83,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 }
                 scope.onsave();
                 scope.removeLayers();
-                scope.root.save();
+                scope.root.save(Project, false);
             };
 
             scope.updateAsset = function () {
@@ -91,7 +93,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 }
                 scope.onsave();
                 scope.removeLayers();
-                scope.root.save(true);
+                scope.root.save(null, true);
             }
             scope.snap = function (node) {
                 Camera.snap(function (picture) {
