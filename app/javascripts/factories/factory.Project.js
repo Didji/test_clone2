@@ -97,12 +97,11 @@
          * @name synchronize
          * @desc Décharge un projet, localement, et sur le serveur
          */
-        Project.prototype.synchronize = function(callback)
-        {
+        Project.prototype.synchronize = function(callback) {
             var project = this;
             this.synchronizing = true;
             this.remoteAddRemoveAssets( callback );
-        }
+        };
 
         /**
          * @name remoteAddRemoveAssets
@@ -153,16 +152,16 @@
          * @desc Gére les erreurs remontées du service d'ajout/relachement d'asset
          */
         Project.handleRemoteSaveError = function(data, status) {
-            switch(status) {
+            switch (status) {
                 case 400:
-                    if ( data.locked ) {
+                    if (data.locked) {
                         var locked = [];
                         Asset.findAssetsByGuids( data.locked, function(assets) {
                             for (var i = 0; i < assets.length; i++) {
-                                locked.push( Site.current.metamodel[ assets[i].okey ].label +  " " + assets[i].label );
+                                locked.push( Site.current.metamodel[assets[i].okey].label + " " + assets[i].label );
                             }
-                            alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join(", ") ) );
-                        });
+                            alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join( ", " ) ) );
+                        } );
                     }
                     break;
                 case 500:
@@ -170,7 +169,7 @@
                     Project.smartgeoReachError();
                     break;
             }
-        }
+        };
 
         /**
          * @name remoteNewUpdateDeleteAssets
@@ -278,7 +277,7 @@
         Project.prototype.setAssets = function(assets, relations, callback) {
             var project = this ;
             if (relations && relations.length) {
-                Relationship.saveRelationship( relations );
+                Relationship.save( relations );
             }
             project.assets = [];
             for (var i = 0; i < assets.length; i++) {

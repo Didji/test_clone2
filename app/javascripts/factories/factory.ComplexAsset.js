@@ -206,7 +206,7 @@
             Project.currentLoadedProject.save();
 
             Asset.save( assets, function() {
-                Relationship.saveRelationship( relationships );
+                Relationship.save( relationships );
                 G3ME.reloadLayers();
             } );
 
