@@ -181,12 +181,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
             scope.drawPoint = function (node) {
 
                 node.geometry = undefined;
-                    function initializeNodeLayer(e) {
-                        if (node.layer) {
-                            return;
-                        }
-                        var iconUrl = Site.current.symbology['' + node.okey + scope.defaultClassIndex].style.symbol.icon,
-                            image = new Image();
 
                 function initializeNodeLayer(e) {
                     if (node.layer) {
@@ -234,6 +228,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 });
             };
         }
-    };
+    }
 }
 ]);
