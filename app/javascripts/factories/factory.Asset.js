@@ -32,16 +32,16 @@
         Asset.prototype.consultationMarker = false;
 
         Asset.prototype.findRelated = function(callback) {
-            if (this.isComplex !== undefined) {
-                (callback || angular.noop)();
-            }
             var self = this ;
+
+            if (this.isComplex !== undefined) {
+                return (callback || angular.noop)(self);
+            }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
                 if (!root) {
-                    return (callback || angular.noop)();
+                    return (callback || angular.noop)(self);
                 }
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
-
                     if (assets_.length === 1) {
                         self.isComplex = false ;
                         return;
@@ -54,7 +54,7 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    (callback || angular.noop)();
+                    (callback || angular.noop)(self);
                 } );
             } );
         };

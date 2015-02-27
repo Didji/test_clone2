@@ -81,43 +81,60 @@
             if (!asset) {
                 return;
             }
-            if (asset.isComplex) {
-                asset.findRelated(function (data) {
-                    if (data !== undefined) {
-                        if (data.root == data.id && data.isComplex) {
-                            //Cet élément est déjà la racine, on cherche ses enfants
 
-                            var theAsset = formatAsset(data);
-                            var complex = new ComplexAsset(null, null, '', theAsset);
-                            fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
-                            theAsset.root = complex;
-                            theAsset.isProject = false;
-                            theAsset.relatedAssets = {};
-                            startCensus(theAsset);
+            console.log('asset',asset);
+            //asset.findRelated(function(data){
+            //    console.log('data',data);
+            //
+            //    var theAsset = formatAsset(asset);
+            //
+            //    console.log('theAsset',theAsset);
+            //    var complex = new ComplexAsset(null, null, '', theAsset);
+            //    fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
+            //    theAsset.root = complex;
+            //    theAsset.isProject = false;
+            //    theAsset.relatedAssets = {};
+            //    console.log('complex',complex);
+            //    startCensus(complex);
+            //
+            //})
 
-                        }
-                        else if (data.isComplex) {
-                            //Pas la racine, il faut retrouver son père (spoiler : c'est Dark Vador, non je déconne c'est root, "je suis gRoot")
 
-                            var root = data.relatedAssets[data.root];
-                            var theAsset = formatAsset(root);
-                            var complex = new ComplexAsset(null, null, '', theAsset);
-                            fillChildren(complex, data.tree, data.relatedAssets, complex);
-                            theAsset.root = complex;
-                            theAsset.isProject = false;
-                            theAsset.relatedAssets = {};
-                            startCensus(theAsset);
-                        }
+            asset.findRelated(function (data) {
+                if (data !== undefined) {
+                    if (data.root == data.id && data.isComplex) {
+                        //Cet élément est déjà la racine, on cherche ses enfants
+
+                        var theAsset = formatAsset(data);
+                        var complex = new ComplexAsset(null, null, '', theAsset);
+                        fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
+                        theAsset.root = complex;
+                        theAsset.isProject = false;
+                        theAsset.relatedAssets = {};
+                        startCensus(theAsset);
+
                     }
-                })
-            }
-            else {
-                var theAsset = formatAsset(asset);
-                var complex = new ComplexAsset(null, null, '', theAsset);
-                theAsset.root = complex;
-                theAsset.isProject = false;
-                startCensus(theAsset);
-            }
+                    else {
+                        //Pas la racine, il faut retrouver son père (spoiler : c'est Dark Vador, non je déconne c'est root, "je suis gRoot")
+
+                        var root = data.relatedAssets[data.root];
+                        var theAsset = formatAsset(root);
+                        var complex = new ComplexAsset(null, null, '', theAsset);
+                        fillChildren(complex, data.tree, data.relatedAssets, complex);
+                        theAsset.root = complex;
+                        theAsset.isProject = false;
+                        theAsset.relatedAssets = {};
+                        startCensus(theAsset);
+                    }
+                }
+                else {
+                    var theAsset = formatAsset(asset);
+                    var complex = new ComplexAsset(null, null, '', theAsset);
+                    theAsset.root = complex;
+                    theAsset.isProject = false;
+                    startCensus(theAsset);
+                }
+            })
         }
 
         /**

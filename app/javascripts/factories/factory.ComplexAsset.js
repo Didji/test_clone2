@@ -29,7 +29,7 @@
                 this.id = asset.id;
             }
             //this.id = asset.id || null;
-            this.okey = okey;
+            this.okey = okey||asset.okey;
             this.isProject = (this.okey !== null)?(this.okey.search( /PROJECT_/ ) === 0):false;
             this.uuid = window.uuid() || null;
             this.children = asset.children || [];
