@@ -361,19 +361,23 @@
          */
         Project.prototype.removeAsset = function(asset, callback) {
             var project = this;
-
             Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
-                var guids = Object.keys( tree );
-
+                var guids = Object.keys( tree ),
+                    toBeHardDeleted = [], guid;
                 for (var i = 0; i < guids.length; i++) {
-                    if (project.added.indexOf( +guids[i] ) !== -1) {
-                        project.added.splice( project.added.indexOf( +guids[i] ), 1 );
-                    } else if (project.removed.indexOf( +guids[i] ) === -1) {
-                        project.removed.push( +guids[i] );
-                        project.assets.splice( project.assets.indexOf( +guids[i] ), 1 );
+                    guid = +guids[i];
+                    if (project.added.indexOf( guid ) !== -1) {
+                        project.added.splice( project.added.indexOf( guid ), 1 );
+                    } else if (project.removed.indexOf( guid ) === -1) {
+                        project.removed.push( guid );
+                        project.assets.splice( project.assets.indexOf( guid ), 1 );
+                        toBeHardDeleted.push( guid );
                     }
                 }
-                project.save( callback );
+                Asset.delete( toBeHardDeleted, function() {
+                    G3ME.__updateMapLayers();
+                    project.save( callback );
+                } );
             } );
         };
 
