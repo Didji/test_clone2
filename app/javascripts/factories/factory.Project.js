@@ -272,8 +272,7 @@
          */
         Project.prototype.addAsset = function(asset, callback) {
             var project = this;
-
-            Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
+            asset.duplicate( function(tree) {
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
@@ -286,7 +285,7 @@
                 }
 
                 project.save( callback );
-            } );
+            } , project);
         };
 
         /**

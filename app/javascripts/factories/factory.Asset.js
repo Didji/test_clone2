@@ -357,6 +357,56 @@
             } );
         };
 
+        Asset.prototype.duplicate = function(callback, project) {
+            var asset = this;
+            Relationship.findRelated( asset.guid, function(root, tree) {
+                var guids = Object.keys( tree );
+                Asset.findAssetsByGuids( guids, function(assets) {
+                    var trad = {} , duplicates = [] ;
+
+                    for ( var i = 0 ; i < assets.length ; i++ ) {
+                        var newAsset = angular.copy( assets[i] ),
+                            uuid = 10000000 + (Math.random() * 10000000 | 0);
+
+                        trad[newAsset.guid] = uuid ;
+
+                        newAsset.guid = uuid;
+                        newAsset.id = uuid;
+
+                        if ( project ) {
+                            newAsset.okey = "PROJECT_" + assets[i].okey;
+                            if ( project.expressions[assets[i].okey] ) {
+                                newAsset.symbolId = "PROJECT_" + assets[i].okey + project.expressions[assets[i].okey].unchanged;
+                            } else {
+                                newAsset.symbolId = "PROJECT_" + assets[i].symbolId;
+                            }
+                        }
+
+                        newAsset.bounds = {
+                            sw: {lat : newAsset.ymin, lng : newAsset.xmin},
+                            ne: {lat : newAsset.ymax, lng : newAsset.xmax}
+                        }
+
+                        duplicates.push(newAsset) ;
+                    }
+
+                    var relationships = {};
+
+                    for(var idfather in tree){
+                        relationships[trad[idfather]] = []
+                        for (i = 0; i < tree[idfather].length; i++) {
+                            relationships[trad[idfather]].push(trad[tree[idfather][i]]);
+                        }
+                    }
+
+                    Asset.save( duplicates );
+
+                    Relationship.save( relationships );
+                    callback( relationships );
+                } );
+            });
+        }
+
         Asset.getAllProjectAsset = function(project, callback, zones, partial_response) {
             if (!zones) {
                 zones = Site.current.zones;
@@ -516,9 +566,8 @@
                 guid = asset.guid;
                 bounds = asset.bounds;
                 request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
-                symbolId = ("" + asset.okey + asset.classindex);
+                symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
-
                 if (!mySymbology) {
                     symbolId = symbolId.replace( 'PROJECT_', '' );
                     mySymbology = symbology[symbolId];
@@ -568,16 +617,21 @@
 
             for (var i = 0; i < assets.length; i++) {
                 asset = assets[i];
-                if (!asset || !asset.bounds) {
+                if (!asset) {
                     continue;
                 }
-                bounds = asset.bounds;
-                asset_extent = {
-                    xmin: bounds.sw.lng,
-                    xmax: bounds.ne.lng,
-                    ymin: bounds.sw.lat,
-                    ymax: bounds.ne.lat
-                };
+                bounds = asset.bounds ;
+                if(bounds){
+                    asset_extent = {
+                        xmin: bounds.sw.lng,
+                        xmax: bounds.ne.lng,
+                        ymin: bounds.sw.lat,
+                        ymax: bounds.ne.lat
+                    };
+                } else {
+                    continue;
+                }
+
                 for (var j = 0, zones_length = zones.length; j < zones_length; j++) {
                     if (G3ME.extents_match( zones[j].extent, asset_extent )) {
                         zones[j].assets.push( asset );
