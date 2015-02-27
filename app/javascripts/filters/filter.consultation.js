@@ -207,7 +207,7 @@
             // OBJECT ACTIONS
             "edit": {
                 id: "edit",
-                icon: "wrench",
+                icon: "pencil",
                 method: ""
             },
             "delete": {

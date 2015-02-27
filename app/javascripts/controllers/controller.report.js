@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage", "Smartgeo"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage", "Smartgeo", "Synchronizator"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage, Smartgeo) {
+    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage, Smartgeo, Synchronizator) {
 
         var vm = this;
 
@@ -37,7 +37,7 @@
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
 
-        var intent = Storage.get( 'intent' );
+        var intent = Storage.get( 'intent' ) || {};
 
         activate();
 
@@ -120,16 +120,8 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            var report = prepareReport( vm.report );
-            ReportSynchronizer.synchronize( report, function() {
-                vm.sendingReport = false;
-                if (!intent) {
-                    endOfReport();
-                }
-            }, 5000 );
-            if (intent) {
-                endOfReport();
-            }
+            Synchronizator.addNew( prepareReport( vm.report ) );
+            endOfReport();
         }
 
         /**
@@ -163,6 +155,7 @@
                 }
             }
             report.activity = report.activity.id;
+            return report;
         }
 
         /**

@@ -1,0 +1,26 @@
+<div id="left_panel_synchronization" ng-controller="SyncCenterController as syncCenterController">
+<!--     <button
+        ng-if="toBeSyncLength()"
+        ng-click='synchronizeReports(0);synchronizeAssets(0);'
+        ng-class="{active:globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress}"
+        class="btn btn-primary has-spinner btn-block"
+        ng-disabled="globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress || !toBeSyncLength()">
+            <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+            <i18n ng-if=" (globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress)">_SYNC_SYNC_IN_PROGRESS</i18n>
+            <i18n ng-if="!(globalReportsSynchronizationIsInProgress || globalAssetsSynchronizationIsInProgress)">_SYNC_SYNC_EVERYTHING </i18n>
+            <i18n ng-if="!toBeSyncLength()"> </i18n>
+    </button> -->
+    <!-- <div class="list-group" ng-show="toBeSyncLength()"> -->
+    <div class="list-group" ng-if="syncCenterController.syncItems.length != 0">
+        <!-- Reports Section -->
+        <div class="list-group-item" ng-repeat="item in syncCenterController.syncItems track by $index" ng-hide="item.hide">
+            <span class="label label-success pull-right" ng-show="item.synced">Synchronisé</span>
+            <button ng-click="syncCenterController.deleteItem(item)" type="button" class="close">&times;</button>
+            <span ng-show='item.syncInProgress' class="has-spinner pull-right" ng-class="{active:item.syncInProgress}"> <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span></span>
+            <small class="label label-default">{{item.label}}</small>
+          <!--   <h6>{{::activities._byId[item.activity].label}} <span ng-if='::item.site'>({{item.site}})</span> <small> {{::(item.timestamp | date:'dd/MM à HH:mm')}}</small></h6> -->
+         <!--    <small ng-if=item.error ng-class='{"text-muted":item.syncInProgress, "text-danger":!item.syncInProgress}'>{{item.error}} <a ng-if="!item.syncInProgress && !globalReportsSynchronizationIsInProgress" ng-click='synchronizeReport(item)'>Réessayer ?</a></small> -->
+        </div>
+    </div>
+    <p ng-if="syncCenterController.syncItems.length == 0" class="nothing-to-sync"><i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></p>
+</div>

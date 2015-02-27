@@ -6,15 +6,15 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Asset", "Relationship", "SQLite"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Asset", "Relationship", "SQLite", "Synchronizator"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Asset, Relationship, SQLite) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Asset, Relationship, SQLite, Synchronizator) {
 
         /**
          * @class ComplexAssetFactory
          * @desc Factory de la classe ComplexAsset
          */
-        var ComplexAsset = function(okey, father, root) {
+        function ComplexAsset(okey, father, root) {
             this.okey = okey;
             this.isProject = (this.okey.search( /PROJECT_/ ) === 0);
             this.uuid = window.uuid();
@@ -34,7 +34,7 @@
             }
 
             return this;
-        };
+        }
 
         /**
          * @method
@@ -179,6 +179,14 @@
          * @method
          * @memberOf ComplexAsset
          */
+        ComplexAsset.prototype.getLabel = function() {
+            return Site.current.metamodel[this.okey].label;
+        };
+
+        /**
+         * @method
+         * @memberOf ComplexAsset
+         */
         ComplexAsset.prototype.__closeTreeForm = function() {
             this.formVisible = false;
             for (var i = 0; i < this.children.length; i++) {
@@ -204,7 +212,7 @@
                 G3ME.reloadLayers();
             } );
 
-            SQLite.exec( ComplexAsset.database, 'INSERT OR REPLACE INTO ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ) + ') VALUES (' + ComplexAsset.prepareStatement + ')', this.serializeForSQL(), function() {} );
+            Synchronizator.add( "project", this.__clean() );
 
         };
 
@@ -313,54 +321,7 @@
             node.__clean();
             node.geometry = this.geometry;
             var deferred = $q.defer();
-
-            Storage.get_( 'census', function(census) {
-                census = census || [];
-                census.push( node );
-                Storage.set_( 'census', census, function() {
-                    $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
-                    G3ME.reloadLayers();
-                    $rootScope.refreshSyncCenter();
-                    deferred.resolve();
-                } );
-            } );
-
-            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), node, {
-                timeout: 100000
-            } ).success( function(data) {
-                if (!data[node.okey] || !Array.isArray( data[node.okey] ) || !data[node.okey].length) {
-                    return;
-                }
-                for (var okey in data) {
-                    for (var i = 0; i < data[okey].length; i++) {
-                        AssetFactory.save( data[okey][i], Site.current );
-                    }
-                }
-                Storage.get_( 'census', function(census) {
-                    census = census || [];
-                    var alreadySaved = false;
-                    for (var i = 0; i < census.length; i++) {
-                        if (census[i].uuid === node.uuid) {
-                            alreadySaved = true;
-                            break;
-                        }
-                    }
-                    if (alreadySaved) {
-                        census[i].synced = true;
-                    } else {
-                        node.synced = true;
-                        census.push( node );
-                    }
-
-                    Storage.set_( 'census', census, function() {
-                        $rootScope.$broadcast( "REPORT_LOCAL_NUMBER_CHANGE" );
-                        G3ME.reloadLayers();
-                        $rootScope.refreshSyncCenter();
-                        deferred.resolve();
-                    } );
-                } );
-            } );
-
+            Synchronizator.addNew( node );
             return deferred.promise;
         };
 

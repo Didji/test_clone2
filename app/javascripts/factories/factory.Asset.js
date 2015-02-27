@@ -362,9 +362,10 @@
             Relationship.findRelated( asset.guid, function(root, tree) {
                 var guids = Object.keys( tree );
                 Asset.findAssetsByGuids( guids, function(assets) {
-                    var trad = {} , duplicates = [] ;
+                    var trad = {} ,
+                        duplicates = [] ;
 
-                    for ( var i = 0 ; i < assets.length ; i++ ) {
+                    for (var i = 0; i < assets.length; i++) {
                         var newAsset = angular.copy( assets[i] ),
                             uuid = 10000000 + (Math.random() * 10000000 | 0);
 
@@ -373,9 +374,9 @@
                         newAsset.guid = uuid;
                         newAsset.id = uuid;
 
-                        if ( project ) {
+                        if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;
-                            if ( project.expressions[assets[i].okey] ) {
+                            if (project.expressions[assets[i].okey]) {
                                 newAsset.symbolId = "PROJECT_" + assets[i].okey + project.expressions[assets[i].okey].unchanged;
                             } else {
                                 newAsset.symbolId = "PROJECT_" + assets[i].symbolId;
@@ -383,19 +384,25 @@
                         }
 
                         newAsset.bounds = {
-                            sw: {lat : newAsset.ymin, lng : newAsset.xmin},
-                            ne: {lat : newAsset.ymax, lng : newAsset.xmax}
-                        }
+                            sw: {
+                                lat: newAsset.ymin,
+                                lng: newAsset.xmin
+                            },
+                            ne: {
+                                lat: newAsset.ymax,
+                                lng: newAsset.xmax
+                            }
+                        };
 
-                        duplicates.push(newAsset) ;
+                        duplicates.push( newAsset );
                     }
 
                     var relationships = {};
 
-                    for(var idfather in tree){
-                        relationships[trad[idfather]] = []
+                    for (var idfather in tree) {
+                        relationships[trad[idfather]] = [];
                         for (i = 0; i < tree[idfather].length; i++) {
-                            relationships[trad[idfather]].push(trad[tree[idfather][i]]);
+                            relationships[trad[idfather]].push( trad[tree[idfather][i]] );
                         }
                     }
 
@@ -404,8 +411,8 @@
                     Relationship.save( relationships );
                     callback( relationships );
                 } );
-            });
-        }
+            } );
+        };
 
         Asset.getAllProjectAsset = function(project, callback, zones, partial_response) {
             if (!zones) {
@@ -621,7 +628,7 @@
                     continue;
                 }
                 bounds = asset.bounds ;
-                if(bounds){
+                if (bounds) {
                     asset_extent = {
                         xmin: bounds.sw.lng,
                         xmax: bounds.ne.lng,

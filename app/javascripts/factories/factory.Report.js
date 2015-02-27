@@ -63,6 +63,10 @@
             }
         }
 
+        Report.prototype.getLabel = function() {
+            return Site.current.activities._byId[this.activity].label;
+        };
+
         Report.prototype.roFields = {};
         Report.prototype.overrides = {};
 
