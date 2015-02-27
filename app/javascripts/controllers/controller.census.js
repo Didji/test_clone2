@@ -82,24 +82,6 @@
                 return;
             }
 
-            console.log('asset',asset);
-            //asset.findRelated(function(data){
-            //    console.log('data',data);
-            //
-            //    var theAsset = formatAsset(asset);
-            //
-            //    console.log('theAsset',theAsset);
-            //    var complex = new ComplexAsset(null, null, '', theAsset);
-            //    fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
-            //    theAsset.root = complex;
-            //    theAsset.isProject = false;
-            //    theAsset.relatedAssets = {};
-            //    console.log('complex',complex);
-            //    startCensus(complex);
-            //
-            //})
-
-
             asset.findRelated(function (data) {
                 if (data !== undefined) {
                     if (data.root == data.id && data.isComplex) {
@@ -116,7 +98,6 @@
                     }
                     else {
                         //Pas la racine, il faut retrouver son père (spoiler : c'est Dark Vador, non je déconne c'est root, "je suis gRoot")
-
                         var root = data.relatedAssets[data.root];
                         var theAsset = formatAsset(root);
                         var complex = new ComplexAsset(null, null, '', theAsset);
