@@ -32,16 +32,16 @@
         Asset.prototype.consultationMarker = false;
 
         Asset.prototype.findRelated = function(callback) {
-            if (this.isComplex !== undefined) {
-                (callback || angular.noop)();
-            }
             var self = this ;
+
+            if (this.isComplex !== undefined) {
+                return (callback || angular.noop)( self );
+            }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
                 if (!root) {
-                    return (callback || angular.noop)();
+                    return (callback || angular.noop)( self );
                 }
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
-
                     if (assets_.length === 1) {
                         self.isComplex = false ;
                         return;
@@ -54,7 +54,7 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    (callback || angular.noop)();
+                    (callback || angular.noop)( self );
                 } );
             } );
         };
@@ -234,6 +234,11 @@
          */
         Asset.findOne = function(id, callback, zones) {
 
+            var tmp = +id ;
+            if (!isNaN( tmp )) {
+                id = +id;
+            }
+
             if (Asset.cache[id]) {
                 return callback( angular.copy( Asset.cache[id] ) );
             }
@@ -244,7 +249,7 @@
                 return callback( null );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ?', [id], function(rows) {
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
@@ -334,20 +339,22 @@
             if (typeof guids !== 'object') {
                 guids = [guids];
             }
-
-            for (var i = 0; i < guids.length; i++) {
+            var i = 0 ;
+            for (i = 0; i < guids.length; i++) {
+                if (!isNaN( +guids[i] )) {
+                    guids[i] = +guids[i];
+                }
+            }
+            for (i = 0; i < guids.length; i++) {
                 if (Asset.cache[guids[i]]) {
                     partial_response.push( angular.copy( Asset.cache[guids[i]] ) );
                     guids.splice( i, 1 );
                 }
             }
-
             if (guids.length === 0) {
                 return callback( partial_response );
             }
-
-            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] + '' : ' in ( ' + guids.join( ',' ) + ')');
-            SQLite.exec( zones[0].database_name, request, [], function(results) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids, function(results) {
                 for (var i = 0; i < results.length; i++) {
                     var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
                     Asset.cache[tmp.id] = tmp;
@@ -496,6 +503,11 @@
             } );
         };
 
+        Asset.prototype.toggleEdit = function() {
+            $rootScope.showMenuItemById( "census" );
+            $rootScope.$broadcast( "START_UPDATE_ASSET", this );
+        };
+
         /**
          * @name remoteDeleteAssets
          * @desc Supprime une liste d'objets sur le serveur
@@ -510,7 +522,6 @@
                     okey: asset.okey
                 } );
             } );
-
             if (originals.length) {
                 $http.post(
                     Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
@@ -548,10 +559,10 @@
             }
         };
 
-
         /**
-         * @method
-         * @memberOf Asset
+         * @name __buildRequest
+         * @desc
+         * @param {Array} asset_s
          */
         Asset.__buildRequest = function(asset_s) {
 
@@ -570,7 +581,7 @@
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i];
                 asset_ = JSON.parse( JSON.stringify( asset ) );
-                guid = asset.guid;
+                guid = asset.guid + "";
                 bounds = asset.bounds;
                 request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
                 symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
@@ -611,6 +622,11 @@
             };
         };
 
+        /**
+         * @name __distributeAssetsInZone
+         * @desc
+         * @param {Array} asset_s
+         */
         Asset.__distributeAssetsInZone = function(asset_s) {
 
             var assets = asset_s.length ? asset_s : [asset_s];
@@ -650,8 +666,10 @@
         };
 
         /**
-         * @method
-         * @memberOf Asset
+         * @name save
+         * @desc
+         * @param {Number|Array} guids
+         * @param {function} callback
          */
         Asset.save = function(asset, callback) {
             var zones = Asset.__distributeAssetsInZone( asset );
@@ -666,6 +684,19 @@
                 } );
             }
         };
+
+        /**
+         * @name update
+         * @desc
+         * @param {Number|Array} guids
+         * @param {function} callback
+         */
+        Asset.update = function(asset, callback) {
+            Asset.delete( asset, function() {
+                Asset.save( asset, callback );
+            } );
+        };
+
         return Asset;
     }
 

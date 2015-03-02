@@ -6,23 +6,42 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "AssetFactory", "Site", "Asset", "Relationship", "SQLite", "Synchronizator"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, AssetFactory, Site, Asset, Relationship, SQLite, Synchronizator) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, Site, Asset, Relationship, SQLite, Synchronizator) {
 
         /**
          * @class ComplexAssetFactory
          * @desc Factory de la classe ComplexAsset
          */
-        function ComplexAsset(okey, father, root) {
-            this.okey = okey;
-            this.isProject = (this.okey.search( /PROJECT_/ ) === 0);
-            this.uuid = window.uuid();
-            this.children = [];
+        function ComplexAsset(okey, father, root, asset) {
+            asset = asset || {
+                id: null,
+                okey: null,
+                guid: null,
+                children: [],
+                relatedAssets: {},
+                geometry: null,
+                fields: {}
+
+            };
+            if (asset.id !== null) {
+                this.id = asset.id;
+            }
+            this.okey = okey || asset.okey;
+            this.isProject = (this.okey !== null) ? (this.okey.search( /PROJECT_/ ) === 0) : false;
+            this.uuid = window.uuid() || null;
+            this.children = asset.children || [];
             this.father = father && father.uuid;
             this.root = root || this;
-            this.fields = {};
-            this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
+            this.fields = asset.attributes || {};
+            this.tree = {};
+            this.relatedAssets = asset.relatedAssets || {};
+            if (this.okey) {
+                this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
+            }
+            this.guid = asset.id || null;
+            this.geometry = asset.geometry || null;
 
             if (!this.okey) {
                 console.error( 'You must provide a root okey.' );
@@ -37,12 +56,9 @@
         }
 
         /**
-         * @method
-         * @memberOf    ComplexAsset
+         * @name add
          * @desc        Ajoute un noeud à l'uuid renseigné
-         *
          * @returns     {ComplexAsset} Objet complexe créé
-         *
          */
         ComplexAsset.prototype.add = function() {
 
@@ -59,15 +75,10 @@
 
 
         /**
-         * @method
-         * @memberOf    ComplexAsset
-         *
-         * @param       {string} uuid
-         *
-         * @returns     {ComplexAsset} Objet correspondant à l'UUID
-         *
-         *
+         * @name get
          * @desc        Cherche le noeud correspondant à l'UUID en paramêtre
+         * @param       {string} uuid
+         * @returns     {ComplexAsset} Objet correspondant à l'UUID
          */
         ComplexAsset.prototype.get = function(uuid) {
 
@@ -95,11 +106,9 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         *
+         * @name duplicate
+         * @desc
          * @returns {ComplexAsset} Objet complexe créé
-         *
          */
         ComplexAsset.prototype.duplicate = function() {
 
@@ -129,13 +138,10 @@
 
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         *
+         * @name delete
+         * @desc
          * @param {string} uuid
-         *
          * @returns {Boolean} True si l'objet a été supprimé
-         *
          */
         ComplexAsset.prototype.delete = function() {
 
@@ -166,8 +172,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name toggleForm
+         * @desc
          */
         ComplexAsset.prototype.toggleForm = function() {
             var visibility = this.formVisible;
@@ -176,16 +182,16 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name getLabel
+         * @desc
          */
         ComplexAsset.prototype.getLabel = function() {
             return Site.current.metamodel[this.okey].label;
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name __closeTreeForm
+         * @desc
          */
         ComplexAsset.prototype.__closeTreeForm = function() {
             this.formVisible = false;
@@ -194,28 +200,11 @@
             }
         };
 
+
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name convertUuidToFakeGuid
+         * @desc
          */
-        ComplexAsset.prototype.saveForProject = function(Project) {
-
-            ComplexAsset.convertUuidToFakeGuid( this );
-
-            var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
-                assets = ComplexAsset.formatComplexToSimple( this, Project );
-
-            Project.currentLoadedProject.addNew( assets );
-
-            Asset.save( assets, function() {
-                Relationship.save( relationships );
-                G3ME.reloadLayers();
-            } );
-
-            Synchronizator.add( "project", this.__clean() );
-
-        };
-
         ComplexAsset.convertUuidToFakeGuid = function(complexasset) {
             complexasset.uuid = 10000000 + (Math.random() * 10000000 | 0);
             for (var i = 0; i < complexasset.children.length; i++) {
@@ -224,8 +213,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name formatComplexToSimple
+         * @desc
          */
         ComplexAsset.formatComplexToSimple = function(complex, Project) {
             var assets = complex.gimmeYourLinearSubtree(), asset , i  ;
@@ -235,7 +224,7 @@
                 asset = assets[i] ;
                 asset.guid = asset.uuid ;
                 asset.attributes = asset.fields ;
-                asset.classindex = (Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
+                asset.classindex = (Project && Project.currentLoadedProject && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
                 asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
                 asset.maplabel = "";
@@ -259,6 +248,10 @@
             return assets;
         };
 
+        /**
+         * @name getGeometryFromCensusAsset
+         * @desc
+         */
         ComplexAsset.getGeometryFromCensusAsset = function(complex) {
             var type ;
             if (complex.geometry.length === 2 && typeof complex.geometry[0] === "number") {
@@ -273,6 +266,10 @@
             };
         };
 
+        /**
+         * @name getBoundsFromCensusAsset
+         * @desc
+         */
         ComplexAsset.getBoundsFromCensusAsset = function(complex) {
             if (complex.geometry.type === "Point") {
                 return {
@@ -292,8 +289,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name gimmeYourLinearSubtree
+         * @desc
          */
         ComplexAsset.prototype.gimmeYourLinearSubtree = function() {
             var linearMe = angular.copy( this );
@@ -307,30 +304,51 @@
 
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         *
-         * @returns {Boolean} True si l'objet a été supprimé
+         * @name save
+         * @desc
          */
-        ComplexAsset.prototype.save = function(Project) {
-            if (this.isProject) {
-                return this.saveForProject( Project );
+        ComplexAsset.prototype.save = function(Project, update) {
+
+            var node = this.__clone( true ).__clean(),
+                method = node.isProject ? "project" : (update ? "update" : "new");
+
+            this.timestamp = node.timestamp = Date.now();
+
+            var assets = node.convertToTempLinearAndSave( update, Project );
+
+            if (node.isProject) {
+                Project.currentLoadedProject.addNew( assets );
             }
-            var node = this.__clone( true );
-            node.timestamp = (new Date()).getTime();
-            node.__clean();
-            node.geometry = this.geometry;
-            var deferred = $q.defer();
-            Synchronizator.addNew( node );
-            return deferred.promise;
+
+            Synchronizator.add( method, this.__clean() );
+
         };
 
+        /**
+         * @name convertToTempLinearAndSave
+         * @desc
+         */
+        ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
+
+            ComplexAsset.convertUuidToFakeGuid( this );
+
+            var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
+                assets = ComplexAsset.formatComplexToSimple( this, Project ),
+                method = update ? "update" : "save" ;
+
+            Asset[method]( assets, function() {
+                if (!update) {
+                    Relationship.save( relationships );
+                }
+                G3ME.reloadLayers();
+            } );
+
+            return assets;
+        };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @param {integer} level
-         * @private
+         * @name __log
+         * @desc
          */
         ComplexAsset.prototype.__log = function() {
             console.groupCollapsed( Site.current.metamodel[this.okey].label + ':' + this.uuid );
@@ -342,10 +360,9 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @param {integer} level
-         * @private
+         * @name __clone
+         * @desc
+         * @param {boolean} preserveGeometry
          */
         ComplexAsset.prototype.__clone = function(preserveGeometry) {
             var root = this.root,
@@ -371,9 +388,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @private
+         * @name __deleteRoot
+         * @desc
          */
         ComplexAsset.prototype.__deleteRoot = function() {
             delete this.root;
@@ -383,9 +399,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @private
+         * @name __deleteGeometry
+         * @desc
          */
         ComplexAsset.prototype.__deleteGeometry = function() {
             delete this.geometry;
@@ -395,9 +410,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @private
+         * @name __deleteLayer
+         * @desc
          */
         ComplexAsset.prototype.__deleteLayer = function() {
             delete this.layer;
@@ -407,30 +421,27 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @param {ComplexAsset} root
-         * @private
+         * @name __restoreGeometry
+         * @desc
+         * @param {*} geometry
          */
         ComplexAsset.prototype.__restoreGeometry = function(geometry) {
             this.geometry = geometry;
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @param {ComplexAsset} root
-         * @private
+         * @name __restoreLayer
+         * @desc
+         * @param {*} layer
          */
         ComplexAsset.prototype.__restoreLayer = function(layer) {
             this.layer = layer;
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
+         * @name __restoreRoot
+         * @desc
          * @param {ComplexAsset} root
-         * @private
          */
         ComplexAsset.prototype.__restoreRoot = function(root) {
             this.root = root;
@@ -440,9 +451,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @private
+         * @name __clean
+         * @desc
          */
         ComplexAsset.prototype.__clean = function() {
             this.__deleteRoot();
@@ -457,9 +467,8 @@
         };
 
         /**
-         * @method
-         * @memberOf ComplexAsset
-         * @private
+         * @name __updateUuid
+         * @desc
          */
         ComplexAsset.prototype.__updateUuid = function(father) {
             this.uuid = window.uuid();
@@ -469,6 +478,10 @@
             }
         };
 
+        /**
+         * @name isGeometryOk
+         * @desc
+         */
         ComplexAsset.prototype.isGeometryOk = function() {
             if (Site.current.metamodel[this.okey].is_graphical && !this.geometry) {
                 return false;
@@ -483,7 +496,10 @@
             return children;
         };
 
-
+        /**
+         * @name find
+         * @desc
+         */
         ComplexAsset.find = function(id, callback) {
             id = id.length !== undefined ? id : [id];
             if (!id.length) {
@@ -493,6 +509,7 @@
                 var complexes = [], complex;
                 for (var i = 0; i < rows.length; i++) {
                     complex = angular.extend( rows.item( i ), JSON.parse( rows.item( i ).json ) );
+
                     complexes.push( complex );
                 }
                 (callback || function() {})( complexes );
@@ -506,13 +523,6 @@
         ComplexAsset.prototype.serializeForSQL = function() {
             return [this.uuid || this.guid || this.id, JSON.stringify( this.__clean( true ) ), this.okey.search( /PROJECT_/ ) === 0];
         };
-
-        ComplexAsset.database = "parameters" ;
-        ComplexAsset.table = "COMPLEXASSET" ;
-        ComplexAsset.columns = ['id', 'json', 'project'];
-        ComplexAsset.prepareStatement = ComplexAsset.columns.join( ',' ).replace( /[a-z]+/gi, '?' );
-
-        SQLite.exec( ComplexAsset.database, 'CREATE TABLE IF NOT EXISTS ' + ComplexAsset.table + '(' + ComplexAsset.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
 
         return ComplexAsset;
 

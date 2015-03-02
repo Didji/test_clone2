@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smartgeo, G3ME, SQLite, Storage, $rootScope, Site) {
+angular.module('smartgeomobile').factory('AssetFactory', function ($http, Smartgeo, G3ME, SQLite, Storage, $rootScope, Site) {
 
     'use strict';
 
@@ -9,6 +9,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
         this.name = "AssetError";
         this.message = message || "Unhandled AssetError";
     }
+
     AssetError.prototype = new Error();
     AssetError.prototype.constructor = AssetError;
 
@@ -16,7 +17,7 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
     /**
      * @class Asset
      */
-    var Asset = function() {
+    var Asset = function () {
         return this;
     };
 
@@ -27,15 +28,15 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      */
     Asset.m = {
         f: false,
-        take: function() {
+        take: function () {
             var t = this.f;
             this.f = true;
             return !t;
         },
-        release: function() {
+        release: function () {
             this.f = false;
         },
-        getTime: function() {
+        getTime: function () {
             return Math.random() * (this.m_max_t - this.m_min_t) + this.m_min_t;
         },
         m_max_t: 5000,
@@ -51,18 +52,18 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @method
      * @memberOf Asset
      */
-    Asset.synchronize = function(asset, callback, timeout) {
+    Asset.synchronize = function (asset, callback, timeout) {
 
         if (typeof asset === "string") {
-            return Asset.getByUUID( asset, function(asset) {
-                Asset.synchronize( asset, callback, timeout );
-            } );
+            return Asset.getByUUID(asset, function (asset) {
+                Asset.synchronize(asset, callback, timeout);
+            });
         }
 
         if (!Asset.m.take()) {
-            return Smartgeo.sleep( Asset.m.getTime(), function() {
-                Asset.synchronize( asset, callback, timeout );
-            } );
+            return Smartgeo.sleep(Asset.m.getTime(), function () {
+                Asset.synchronize(asset, callback, timeout);
+            });
         }
 
         asset.syncInProgress = true;
@@ -368,6 +369,38 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
         };
     };
 
+    Asset.update = function (asset, site) {
+        //TODO : Vérifier si c'est vraiment la bonne façon de faire
+        site = site || Site.current;
+
+        var zones = Asset.__distributeAssetsInZone(asset, site);
+
+        for (var i = 0; i < zones.length; i++) {
+            var zone = zones[i];
+            if (!zone.assets.length) {
+                continue;
+            }
+            var request = {
+                request: 'DELETE FROM ASSETS WHERE id = ' + asset.guid,
+                args: []
+            };
+
+            SQLite.exec(zone.database_name, request.request, request.args, function () {
+            }, function (tx, sqlerror) {
+                console.error(sqlerror.message);
+            });
+
+
+            var request = Asset.__buildRequest(zone.assets, site);
+
+            SQLite.exec(zone.database_name, request.request, request.args, function () {
+            }, function (tx, sqlerror) {
+                console.error(sqlerror.message);
+            });
+
+        }
+    };
+
     /**
      * @method
      * @memberOf Asset
@@ -457,8 +490,8 @@ angular.module( 'smartgeomobile' ).factory( 'AssetFactory', function($http, Smar
      * @method
      * @memberOf Asset
      */
-    Asset.fetchAssetsHistory = function(asset, callback) {
-        $http.get( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.history', {
+    Asset.fetchAssetsHistory = function (asset, callback) {
+        $http.get(Smartgeo.getServiceUrl('gi.maintenance.mobility.history', {
             id: asset.guid,
             limit: 5
         } ) ).success( function(data) {

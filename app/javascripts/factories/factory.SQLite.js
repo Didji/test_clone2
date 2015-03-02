@@ -16,7 +16,8 @@
         var SQLite = {
             DATABASE_SIZE: 1024 * 1024 * 4,
             DATABASE_VERSION: '0.0.1-angular',
-            DATABASES: {}
+            DATABASES: {},
+            DEBUG: false
         };
 
         /**
@@ -87,6 +88,25 @@
             } );
         };
 
+        ///**
+        // * @name set
+        // * @desc Met à jour une valeur dans la base de données 'parameters'
+        // * @param {String} parameter
+        // * @param {*} value
+        // * @param {Function} callback
+        // */
+        //SQLite.update = function(parameter, value, callback) {
+        //    SQLite.parameters().transaction( function(transaction) {
+        //        transaction.executeSql( 'UPDATE PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify( value )], function() {
+        //            (callback || function() {})();
+        //        }, function(transaction, SqlError) {
+        //            console.error( SqlError );
+        //            (callback || function() {})( undefined );
+        //        } );
+        //    } );
+        //};
+
+
         /**
          * @name unset
          * @desc Supprime une valeur dans la base de données 'parameters'
@@ -113,19 +133,25 @@
          * @param {Function} callback
          */
         SQLite.exec = function(database, request, args, callback) {
+            if (typeof request === 'string') {
+                request = [request];
+                args = [args];
+            }
             callback = callback || function() {};
-            args = args || [];
+            var calledCallback = function() {};
             SQLite.openDatabase( {
                 name: database
             } ).transaction( function(t) {
-                t.executeSql( request, args || [], function(t, r) {
-                    callback( r.rows );
-                }, function() {
-                        console.error( arguments[1], request, args || [] );
-                    } );
-            }, function() {
-                    console.error( arguments );
-                } );
+                for (var i = 0; i < request.length; i++) {
+                    if (i === request.length - 1) {
+                        calledCallback = callback ;
+                    }
+                    t.executeSql( request[i], args[i] || [], function(t, r) {
+                        console.sqlite( "SQLITE_REQUEST", request[0], args[0], r.rows );
+                        calledCallback( r.rows );
+                    }, console.sqliteerror );
+                }
+            }, console.sqliteerror );
         };
 
         /**
@@ -133,10 +159,20 @@
          * @desc Crée la base de données 'parameters' et ses index
          */
         SQLite.initialize = function() {
+
+            console.sqlite = SQLite.DEBUG ? console.info : angular.noop ;
+            console.sqliteerror = SQLite.DEBUG ? function() {
+                console.error( arguments );
+            } : angular.noop ;
+
             SQLite.parameters().transaction( function(transaction) {
                 transaction.executeSql( 'CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)' );
                 transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)' );
+                transaction.executeSql( 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)' );
+                transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_REL_DADDY ON relationship (daddy)' );
+                transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_REL_CHILD ON relationship (child)' );
             } );
+
         };
 
         SQLite.initialize();

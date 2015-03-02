@@ -230,34 +230,22 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
                 return callback( [] );
             }
 
-            var _this = this,
-                request = 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ) + ')';
-            SQLite.openDatabase( {
-                name: zones[0].database_name
-            } ).transaction( function(t) {
-                t.executeSql( request, [], function(tx, rslt) {
-                    var asset;
-                    for (var i = 0; i < rslt.rows.length; i++) {
-                        asset = rslt.rows.item( i );
-                        partial_response.push( {
-                            guid: asset.id,
-                            label: asset.label,
-                            geometry: JSON.parse( asset.geometry ),
-                            xmin: asset.xmin,
-                            xmax: asset.xmax,
-                            ymin: asset.ymin,
-                            ymax: asset.ymax
-                        } );
-                    }
-                    _this.findGeometryByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
-                }, function(tx, SqlError) {
-                        console.error( SqlError.message );
-                        alertify.log( SqlError.message );
+            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', [guids], function(rows) {
+                var asset;
+                for (var i = 0; i < rows.length; i++) {
+                    asset = rows.item( i );
+                    partial_response.push( {
+                        guid: asset.id,
+                        label: asset.label,
+                        geometry: JSON.parse( asset.geometry ),
+                        xmin: asset.xmin,
+                        xmax: asset.xmax,
+                        ymin: asset.ymin,
+                        ymax: asset.ymax
                     } );
-            }, function(SqlError) {
-                    console.error( SqlError.message );
-                    alertify.log( SqlError.message );
-                } );
+                }
+                Smartgeo.findGeometryByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
+            } );
         },
 
         findAssetsByLabel: function(site, label, callback, zones, partial_response) {

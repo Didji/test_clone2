@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory, i18n) {
+angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory, i18n, Relationship) {
 
     'use strict';
 
@@ -49,7 +49,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 }
             }
             site.metamodel = angular.copy( metamodel );
-
+            var okey;
             for (okey in metamodel) {
                 if (metamodel[okey].is_project) {
                     site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
@@ -99,7 +99,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
 
             var relationship = site.relationship;
 
-            this.saveRelationship( relationship );
+            Relationship.eraseAll( function() {
+                Relationship.save( relationship );
+            } );
 
             delete site.relationship;
 
@@ -133,22 +135,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                         } );
                     }
                 } );
-        },
-
-        //TODO(@gulian): remplace par Relationship.eraseAll + Relationship.save
-        saveRelationship: function(relationship) {
-            SQLite.openDatabase( {
-                name: 'parameters'
-            } ).transaction( function(transaction) {
-                transaction.executeSql( 'DROP TABLE IF EXISTS relationship' );
-                transaction.executeSql( 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)', [], function() {
-                    for (var daddy in relationship) {
-                        for (var child in relationship[daddy]) {
-                            transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
-                        }
-                    }
-                } );
-            } );
         },
 
         saveSite: function(site, callback) {
