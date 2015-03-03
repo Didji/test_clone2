@@ -60,7 +60,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 }
             } );
 
-            $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset );
+            $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset; );
 
 
             $scope.$watch( 'nightTourRecording', function(newval) {

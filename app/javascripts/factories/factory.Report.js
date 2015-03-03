@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Report', ReportFactory );
 
-    ReportFactory.$inject = ["Activity", "Site"];
+    ReportFactory.$inject = ["Activity", "Site", "i18n"];
 
 
-    function ReportFactory(Activity, Site) {
+    function ReportFactory(Activity, Site, i18n) {
 
         /**
          * @class ReportFactory
@@ -64,7 +64,11 @@
         }
 
         Report.prototype.getLabel = function() {
-            return Site.current.activities._byId[this.activity].label;
+            return i18n.get( "_REPORT_REPORT" );
+        };
+
+        Report.prototype.getDescription = function() {
+            return Site.current.activities._byId[this.activity].label + ' (' + this.site + ')';
         };
 
         Report.prototype.roFields = {};

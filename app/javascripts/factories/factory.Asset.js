@@ -583,7 +583,7 @@
                 asset_ = JSON.parse( JSON.stringify( asset ) );
                 guid = asset.guid + "";
                 bounds = asset.bounds;
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' "' + guid + '" as id ';
                 symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
                 if (!mySymbology) {

@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Synchronizator', SynchronizatorFactory );
 
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo"];
+    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n"];
 
 
-    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo) {
+    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n) {
 
         /**
          * @class SyncItemFactory
@@ -19,6 +19,7 @@
         function SyncItem(syncitem, action) {
             angular.extend( this, {
                 label: (syncitem.getLabel && syncitem.getLabel()) || syncitem.label || this.type || syncitem.type || syncitem.constructor.name,
+                description: (syncitem.getDescription && syncitem.getDescription()) || syncitem.description || "",
                 type: syncitem.constructor.name,
                 action: action,
                 id: syncitem.id || syncitem.uuid
@@ -32,6 +33,7 @@
         SyncItem.prototype.deleted = false ;
         SyncItem.prototype.synced = false ;
 
+
         SyncItem.database = "parameters" ;
         SyncItem.table = "SYNCITEM" ;
         SyncItem.columns = ['id', 'json', 'type', 'action', 'deleted', 'synced'];
@@ -42,7 +44,10 @@
          * @desc
          */
         SyncItem.prototype.save = function(callback) {
-            SQLite.exec( SyncItem.database, 'INSERT OR REPLACE INTO ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ) + ') VALUES (' + SyncItem.prepareStatement + ')', this.serializeForSQL(), callback );
+            SQLite.exec( SyncItem.database, 'INSERT OR REPLACE INTO ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ) + ') VALUES (' + SyncItem.prepareStatement + ')', this.serializeForSQL(), function() {
+                $rootScope.$broadcast( 'synchronizator_update' );
+                (callback || function() {})();
+            } );
         };
 
         /**
@@ -51,9 +56,7 @@
          */
         SyncItem.prototype.delete = function() {
             this.deleted = true ;
-            this.save( function() {
-                $rootScope.$broadcast( 'synchronizator_update' );
-            } );
+            this.save();
         };
 
         /**
@@ -69,11 +72,14 @@
          * @desc
          */
         SyncItem.list = function(callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true"', [], function(rows) {
+            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced != "true" ', [], function(rows) {
                 var syncItems = [], syncItem ;
                 for (var i = 0; i < rows.length; i++) {
                     syncItem = new SyncItem( rows.item( i ) ) ;
                     syncItem = angular.extend( syncItem, JSON.parse( syncItem.json ) );
+                    syncItem.deleted = syncItem.deleted === "true";
+                    syncItem.synced = syncItem.synced === "true";
+                    delete syncItem.json;
                     syncItems.push( syncItem );
                 }
                 (callback || function() {})( syncItems );
@@ -90,10 +96,12 @@
         function Synchronizator() {
         }
 
+        Synchronizator.globalSyncInProgress = false ;
+
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
             syncItem.save( function() {
-                $rootScope.$broadcast( 'synchronizator_update' );
+                $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
         };
 
@@ -113,13 +121,21 @@
             SyncItem.list( callback );
         };
 
-        Synchronizator.syncItems = function(items, callback) {
+        Synchronizator.syncItems = function(items, callback, force) {
+
+            if (Synchronizator.globalSyncInProgress && !force) {
+                return;
+            }
+
+            Synchronizator.globalSyncInProgress = true ;
 
             if (items.length === undefined) {
                 items = [items];
             }
 
             if (!items.length) {
+                // TODO: actualiser la carte
+                Synchronizator.globalSyncInProgress = false ;
                 return (callback || function() {})();
             }
 
@@ -128,7 +144,7 @@
             }
 
             Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
-                Synchronizator.syncItems( items.slice( 1 ), callback );
+                Synchronizator.syncItems( items.slice( 1 ), callback, true );
             } );
 
         };
@@ -138,45 +154,50 @@
         };
 
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
-
+            var assets = [] ;
+            complexasset.syncInProgress = true;
             $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
-                timeout: 100000
+                timeout: 1e5
             } ).success( function(data) {
-                if (!data[complexasset.okey] || !Array.isArray( data[complexasset.okey] ) || !data[complexasset.okey].length) {
-                    return;
+                if (data[complexasset.okey] && Array.isArray( data[complexasset.okey] ) && data[complexasset.okey].length) {
+                    complexasset.synced = true ;
+                    for (var okey in data) {
+                        for (var i = 0; i < data[okey].length; i++) {
+                            assets.push( data[okey][i] );
+                        }
+                    }
+                    Asset.delete( complexasset.uuids, function() {
+                        Asset.save( assets );
+                    } );
+                } else {
+                    complexasset.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
                 }
-                complexasset.synced = true ;
-                complexasset.save();
-                // for (var okey in data) {
-                //     for (var i = 0; i < data[okey].length; i++) {
-                //         Asset.save( data[okey][i] );
-                //     }
-                // }
-                (callback || function() {})();
+            } ).error( function(data) {
+                complexasset.error = (data && data.error && data.error.text) ;
+            } ).finally( function() {
+                complexasset.syncInProgress = false;
+                complexasset.save( callback );
             } );
 
         };
 
         Synchronizator.newReportSynchronizator = function(report, callback) {
-
             report.syncInProgress = true;
-
             $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
                 timeout: 3e6
             } ).success( function(data) {
-                if (!data.cri || !data.cri.length) {
-                    report.error = "Erreur inconnue lors de la synchronisation de l'objet.";
-                } else {
+                if (data.cri && data.cri.length) {
                     report.synced = true;
                     report.error = undefined;
+                } else {
+                    report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
                 }
             } ).error( function(data) {
-                report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation de l'objet.";
+                report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
             } ).finally( function() {
-                // log to disk
-                (callback || function() {})();
+                report.syncInProgress = false;
+                report.save( callback );
             } );
-
         };
 
         return Synchronizator;

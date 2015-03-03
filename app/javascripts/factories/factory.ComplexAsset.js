@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator", "i18n"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, Site, Asset, Relationship, SQLite, Synchronizator) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, Site, Asset, Relationship, SQLite, Synchronizator, i18n) {
 
         /**
          * @class ComplexAssetFactory
@@ -186,6 +186,14 @@
          * @desc
          */
         ComplexAsset.prototype.getLabel = function() {
+            return i18n.get( "_MENU_CENSUS" );
+        };
+
+        /**
+         * @name getDescription
+         * @desc
+         */
+        ComplexAsset.prototype.getDescription = function() {
             return Site.current.metamodel[this.okey].label;
         };
 
@@ -309,18 +317,24 @@
          */
         ComplexAsset.prototype.save = function(Project, update) {
 
-            var node = this.__clone( true ).__clean(),
+            var node = this.__clone( true ),
                 method = node.isProject ? "project" : (update ? "update" : "new");
 
-            this.timestamp = node.timestamp = Date.now();
+            node.timestamp = node.timestamp = Date.now();
 
             var assets = node.convertToTempLinearAndSave( update, Project );
+
+            node.uuids = [];
+
+            for (var i = 0; i < assets.length; i++) {
+                node.uuids.push( assets[i].uuid || assets[i].guid );
+            }
 
             if (node.isProject) {
                 Project.currentLoadedProject.addNew( assets );
             }
 
-            Synchronizator.add( method, this.__clean() );
+            Synchronizator.add( method, node.__clean() );
 
         };
 
@@ -330,8 +344,7 @@
          */
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
 
-            ComplexAsset.convertUuidToFakeGuid( this );
-
+            // ComplexAsset.convertUuidToFakeGuid( this );
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this, Project ),
                 method = update ? "update" : "save" ;
