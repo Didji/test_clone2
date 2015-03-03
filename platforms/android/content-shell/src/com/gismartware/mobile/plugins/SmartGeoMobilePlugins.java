@@ -185,14 +185,19 @@ public class SmartGeoMobilePlugins {
     public void launchCamera(int callbackId) throws IOException {
         Log.d(TAG, "Request camera");
         Activity act = (Activity)context;
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photoFile = File.createTempFile(
-                pictureFileNameFormater.format(new Date()),
-                ".jpg",
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-        ((GimapMobileMainActivity)context).setLastPicturePath(photoFile.getAbsolutePath());
-        act.startActivityForResult(intent, ActivityCode.CAPTURE_IMAGE.getCode());
+        Intent pickIntent = new Intent();
+        pickIntent.setType("image/*");
+        pickIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // On ne peut pas renseigner facilement des chaines de caractères externalisées
+        String pickTitle = "";
+        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+        chooserIntent.putExtra(
+          Intent.EXTRA_INITIAL_INTENTS, 
+          new Intent[] { takePhotoIntent }
+        );
+        act.startActivityForResult(chooserIntent, ActivityCode.CAPTURE_IMAGE.getCode());
     }
 
     @JavascriptInterface

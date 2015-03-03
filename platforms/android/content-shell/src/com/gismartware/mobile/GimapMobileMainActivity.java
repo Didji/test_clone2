@@ -414,40 +414,43 @@ public class GimapMobileMainActivity extends Activity {
 				requestToken();
 			} else if (requestCode == ActivityCode.CAPTURE_IMAGE.getCode()) {
 				try {
-
+                    Uri selectedImageUri = intent.getData();
+                    //User had pick an image.
+                    Cursor cursor = getContentResolver().query(selectedImageUri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+                    cursor.moveToFirst();
+                    //Link to the image
+                    final String selectedImagePath = cursor.getString(0);
+                    cursor.close();
                     BitmapFactory.Options bounds = new BitmapFactory.Options();
                     bounds.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(lastPicturePath, bounds);
+                    BitmapFactory.decodeFile(selectedImagePath, bounds);
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inSampleSize = 2;
 
                     // On retourne la photo si jamais elle n'est pas dans le bon sens.
-                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath, options);
-                    ExifInterface exif = new ExifInterface(lastPicturePath);
+                    Bitmap bm = BitmapFactory.decodeFile(selectedImagePath, options);
+                    ExifInterface exif = new ExifInterface(selectedImagePath);
                     String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
                     int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
                     int rotationAngle = 0;
                     if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
                     if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
                     if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-
                     Matrix matrix = new Matrix();
                     matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+
                     Bitmap photo = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight()  , matrix, true);
 
 					//on divise la taille (dimension) de la photo par 2
-					File file = new File(lastPicturePath);
-					//BitmapFactory.Options options = new BitmapFactory.Options();
-					//options.inSampleSize = 2;
-					//Bitmap photo = BitmapFactory.decodeFile(lastPicturePath, options);
+					File file = new File(selectedImagePath);
 					//on compresse la photo
 					OutputStream out = new FileOutputStream(file);
 					photo.compress(Bitmap.CompressFormat.JPEG, 75, out);
 					out.flush();
 					out.close();
 					getActiveShell().getContentView().evaluateJavaScript("window.ChromiumCallbacks[1](\"" + file.getAbsolutePath() + "\");");
-				} catch (IOException e) {
+				} catch (Exception e) {
 					Log.e(TAG, "Erreur enregistrement photo");
 				}
 			} else if (requestCode == ActivityCode.GEOLOCATE.getCode()) {
