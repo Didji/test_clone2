@@ -134,7 +134,7 @@
             }
 
             if (!items.length) {
-                // TODO: actualiser la carte
+                G3ME.__updateMapLayers();
                 Synchronizator.globalSyncInProgress = false ;
                 return (callback || function() {})();
             }
@@ -167,18 +167,24 @@
                         }
                     }
                     Asset.delete( complexasset.uuids, function() {
-                        Asset.save( assets );
+                        Asset.save( assets, function() {
+                            complexasset.syncInProgress = false;
+                            complexasset.save( callback );
+                        } );
                     } );
                 } else {
                     complexasset.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
                 }
             } ).error( function(data) {
                 complexasset.error = (data && data.error && data.error.text) ;
-            } ).finally( function() {
                 complexasset.syncInProgress = false;
                 complexasset.save( callback );
             } );
 
+        };
+
+        Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
+            Synchronizator.newComplexAssetSynchronizator( complexasset, callback );
         };
 
         Synchronizator.newReportSynchronizator = function(report, callback) {
@@ -199,6 +205,54 @@
                 report.save( callback );
             } );
         };
+
+        // Synchronizator.log = function(report) {
+        //     report = angular.copy( report );
+        //     delete report.ged;
+        //     if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
+        //         ChromiumCallbacks[11] = function(success) {
+        //             if (!success) {
+        //                 console.error( "writeJSONError while writing " + report );
+        //             }
+        //         };
+        //         SmartgeoChromium.writeJSON( JSON.stringify( report ), 'reports/' + report.uuid + '.json' );
+        //     }
+        //     return this;
+        // };
+
+        // Synchronizator.checkSynchronizedReports = function() {
+        //     ReportSynchronizer.getAll( function(reports) {
+
+        //         var luuids = [];
+
+        //         for (var i = 0; i < reports.length; i++) {
+        //             if (reports[i].synced) {
+        //                 luuids.push( reports[i].uuid );
+        //             }
+        //         }
+
+        //         $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
+        //             uuids: luuids
+        //         } )
+        //             .success( function(data) {
+        //                 if ((typeof data) === "string") {
+        //                     return;
+        //                 }
+        //                 var ruuids = data.uuids || data;
+        //                 for (var uuid in ruuids) {
+        //                     if (ruuids[uuid]) {
+        //                         console.warn( uuid + ' must be deleted' );
+        //                         ReportSynchronizer.deleteInDatabase( uuid );
+        //                     } else {
+        //                         console.warn( uuid + ' must be resync' );
+        //                         ReportSynchronizer.synchronize( uuid );
+        //                     }
+        //                 }
+        //             } )
+        //             .error( function() {} );
+
+        //     } );
+        // };
 
         return Synchronizator;
     }

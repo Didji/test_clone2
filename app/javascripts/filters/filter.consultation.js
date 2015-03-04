@@ -208,7 +208,7 @@
             "edit": {
                 id: "edit",
                 icon: "pencil",
-                method: ""
+                method: "asset.toggleEdit"
             },
             "delete": {
                 id: "delete",

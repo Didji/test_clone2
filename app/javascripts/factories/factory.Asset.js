@@ -479,8 +479,8 @@
                 } );
             }
 
-            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
-            SQLite.exec( zones[0].database_name, request, [], function() {
+            var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
+            SQLite.exec( zones[0].database_name, request, guids, function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
         };
@@ -564,14 +564,16 @@
          * @desc
          * @param {Array} asset_s
          */
-        Asset.__buildRequest = function(asset_s) {
+        Asset.__buildRequest = function(asset_s, site) {
 
             var assets = asset_s.length ? asset_s : [asset_s];
 
+            site = site || Site.current ;
+
             var request = '',
                 asset, asset_, guid,
-                metamodel = Site.current.metamodel,
-                symbology = Site.current.symbology,
+                metamodel = site.metamodel,
+                symbology = site.symbology,
                 bounds,
                 fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
                 fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
@@ -583,7 +585,7 @@
                 asset_ = JSON.parse( JSON.stringify( asset ) );
                 guid = asset.guid + "";
                 bounds = asset.bounds;
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' "' + guid + '" as id ';
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " " + guid + " as id ";
                 symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
                 if (!mySymbology) {
@@ -627,16 +629,18 @@
          * @desc
          * @param {Array} asset_s
          */
-        Asset.__distributeAssetsInZone = function(asset_s) {
-
+        Asset.__distributeAssetsInZone = function(asset_s, site) {
+            console.log( 'ici' );
             var assets = asset_s.length ? asset_s : [asset_s];
+
+            site = site || Site.current;
 
             if (!assets) {
                 return false;
             }
 
             var asset, bounds, asset_extent,
-                zones = angular.copy( Site.current.zones );
+                zones = angular.copy( site.zones );
 
             for (var i = 0; i < assets.length; i++) {
                 asset = assets[i];
@@ -666,24 +670,50 @@
         };
 
         /**
-         * @name save
-         * @desc
-         * @param {Number|Array} guids
-         * @param {function} callback
+         * @method
+         * @memberOf Asset
          */
-        Asset.save = function(asset, callback) {
-            var zones = Asset.__distributeAssetsInZone( asset );
+        Asset.save = function(asset, site, callback) {
+            if (!asset.length) {
+                (callback || function() {})();
+            }
+            site = site || Site.current ;
+            var zones = Asset.__distributeAssetsInZone( asset, site );
+            var uuidcallback = window.uuid();
+            Asset.checkpointCallbackRegister( uuidcallback, zones.length, callback );
             for (var i = 0; i < zones.length; i++) {
                 var zone = zones[i];
                 if (!zone.assets.length) {
+                    Asset.checkpointCallback( uuidcallback );
                     continue;
                 }
-                var request = Asset.__buildRequest( zone.assets );
-                SQLite.exec( zone.database_name, request.request, request.args, callback, function(tx, sqlerror) {
-                    console.error( sqlerror.message );
-                } );
+                var request = Asset.__buildRequest( zone.assets, site );
+                SQLite.exec( zone.database_name, request.request, request.args, function() {
+                    Asset.checkpointCallback( uuidcallback );
+                }, function(tx, sqlerror) {
+                        console.error( sqlerror.message );
+                    } );
             }
         };
+
+        Asset.checkpointCallbackId = {} ;
+
+        Asset.checkpointCallback = function(uuid) {
+            if (Asset.checkpointCallbackId[uuid].count <= 1) {
+                (Asset.checkpointCallbackId[uuid].callback || function() {})();
+                delete Asset.checkpointCallbackId[uuid];
+            } else {
+                Asset.checkpointCallbackId[uuid].count-- ;
+            }
+        };
+
+        Asset.checkpointCallbackRegister = function(uuid, count, callback) {
+            Asset.checkpointCallbackId[uuid] = {
+                count: count,
+                callback: callback
+            };
+        };
+
 
         /**
          * @name update

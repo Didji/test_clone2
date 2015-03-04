@@ -208,18 +208,6 @@
             }
         };
 
-
-        /**
-         * @name convertUuidToFakeGuid
-         * @desc
-         */
-        ComplexAsset.convertUuidToFakeGuid = function(complexasset) {
-            complexasset.uuid = 10000000 + (Math.random() * 10000000 | 0);
-            for (var i = 0; i < complexasset.children.length; i++) {
-                ComplexAsset.convertUuidToFakeGuid( complexasset.children[i] );
-            }
-        };
-
         /**
          * @name formatComplexToSimple
          * @desc
@@ -344,7 +332,6 @@
          */
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
 
-            // ComplexAsset.convertUuidToFakeGuid( this );
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this, Project ),
                 method = update ? "update" : "save" ;

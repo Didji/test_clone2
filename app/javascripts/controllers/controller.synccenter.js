@@ -45,7 +45,6 @@
          */
         function synchronizeAll() {
             vm.synchronizing = true;
-            console.log( vm.synchronizing );
             updateList( function() {
                 Synchronizator.syncItems( vm.syncItems, function() {
                     vm.synchronizing = false ;
