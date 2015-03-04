@@ -14,6 +14,9 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
 
         'use strict';
 
+        var secureInterval,
+            secureIntervalTime = 30000;
+
         /**
          * @memberOf nightTourController
          * @desc
@@ -60,7 +63,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 }
             } );
 
-            $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset; );
+            $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset );
 
 
             $scope.$watch( 'nightTourRecording', function(newval) {
@@ -209,6 +212,11 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.stopNightTour = function(ok, ko) {
+
+            if (secureInterval) {
+                clearInterval( secureInterval );
+            }
+
             $rootScope.nightTourInProgress = false;
             $rootScope.nightTourRecording = false;
             $scope.stopFollowingPosition();
@@ -338,6 +346,15 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.startNightTour = function(event, mission, assetsCache) {
 
+            if (secureInterval) {
+                clearInterval( secureInterval );
+            }
+
+            setInterval( function() {
+                $scope.secureData();
+            }, secureIntervalTime );
+
+
             $rootScope.stopConsultation();
 
             if ($rootScope.nightTourInProgress) {
@@ -417,6 +434,31 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             }
             asset.isWorking = (asset.isWorking === undefined ? false : !asset.isWorking);
             asset.marker.setIcon( asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON );
+        };
+
+        /**
+         * @memberOf nightTourController
+         * @desc
+         */
+        $scope.secureData = function() {
+            var now = Date.now(),
+                payloadKO = [] ,
+                payloadOK = [] ;
+            for (var i = 0; i < $scope.assetsCache.length; i++) {
+                if (!$scope.assetsCache[i].alreadySent && (now - $scope.assetsCache[i].timestamp) > secureIntervalTime) {
+                    if ($scope.assetsCache[i].isWorking) {
+                        payloadOK.push( $scope.assetsCache[i].guid );
+                    } else {
+                        payloadKO.push( $scope.assetsCache[i].guid );
+                    }
+                    $scope.assetsCache[i].alreadySent = true ;
+                }
+            }
+            $scope.sendKoReports( payloadKO, function() {
+                $scope.sendOkReports( payloadOK, function() {
+                    console.log( "data secured", payloadOK, payloadKO );
+                } );
+            } );
         };
 
     }
