@@ -55,8 +55,13 @@
          * @desc
          */
         SyncItem.prototype.delete = function() {
-            this.deleted = true ;
-            this.save();
+            var item = this ;
+            (SyncItem["delete" + item.type] || function(item, callback) {
+                (callback || function() {})();
+            })( item, function() {
+                item.deleted = true ;
+                item.save();
+            } );
         };
 
         /**
@@ -66,6 +71,17 @@
         SyncItem.prototype.serializeForSQL = function() {
             return [this.id, JSON.stringify( this ), this.type, this.action, this.deleted, this.synced];
         };
+
+
+        SyncItem.deleteComplexAsset = function(item, callback) {
+            Asset.delete( item.uuids, function() {
+                G3ME.reloadLayers();
+                (callback || function() {})();
+            } );
+        };
+
+        SyncItem.prototype.deleteReport = function() {};
+
 
         /**
          * @name list
@@ -100,6 +116,7 @@
 
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
+            Synchronizator.log( object );
             syncItem.save( function() {
                 $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
@@ -134,13 +151,13 @@
             }
 
             if (!items.length) {
-                G3ME.__updateMapLayers();
+                G3ME.reloadLayers();
                 Synchronizator.globalSyncInProgress = false ;
                 return (callback || function() {})();
             }
-
             if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
-                return Synchronizator.syncItems( items.slice( 1 ), callback );
+                console.info( items[0].action + items[0].type + "Synchronizator", "not found" );
+                return Synchronizator.syncItems( items.slice( 1 ), callback, true );
             }
 
             Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
@@ -183,7 +200,7 @@
 
         };
 
-        Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
+        Synchronizator.updateComplexAssetSynchronizator = function(complexasset, callback) {
             Synchronizator.newComplexAssetSynchronizator( complexasset, callback );
         };
 
@@ -206,19 +223,32 @@
             } );
         };
 
-        // Synchronizator.log = function(report) {
-        //     report = angular.copy( report );
-        //     delete report.ged;
-        //     if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
-        //         ChromiumCallbacks[11] = function(success) {
-        //             if (!success) {
-        //                 console.error( "writeJSONError while writing " + report );
-        //             }
-        //         };
-        //         SmartgeoChromium.writeJSON( JSON.stringify( report ), 'reports/' + report.uuid + '.json' );
-        //     }
-        //     return this;
-        // };
+        Synchronizator.log = function(item) {
+            item = angular.copy( item );
+            if (item.ged) {
+                delete item.ged;
+            }
+            if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
+                SmartgeoChromium.writeJSON( JSON.stringify( item ), 'report/' + item.uuid || item.id + '.json' );
+            }
+            return this;
+        };
+
+        /**
+         * @param strClass:
+         *          class name
+         * @param optionals:
+         *          constructor arguments
+         */
+        Synchronizator.newInstance = function(strClass) {
+            var args = Array.prototype.slice.call( arguments, 1 );
+            var clsClass = eval( strClass );
+            function F() {
+                return clsClass.apply( this, args );
+            }
+            F.prototype = clsClass.prototype;
+            return new F();
+        };
 
         // Synchronizator.checkSynchronizedReports = function() {
         //     ReportSynchronizer.getAll( function(reports) {

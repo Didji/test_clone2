@@ -17,7 +17,7 @@
             DATABASE_SIZE: 1024 * 1024 * 4,
             DATABASE_VERSION: '0.0.1-angular',
             DATABASES: {},
-            DEBUG: false
+            DEBUG: 1
         };
 
         /**
@@ -88,25 +88,6 @@
             } );
         };
 
-        ///**
-        // * @name set
-        // * @desc Met à jour une valeur dans la base de données 'parameters'
-        // * @param {String} parameter
-        // * @param {*} value
-        // * @param {Function} callback
-        // */
-        //SQLite.update = function(parameter, value, callback) {
-        //    SQLite.parameters().transaction( function(transaction) {
-        //        transaction.executeSql( 'UPDATE PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify( value )], function() {
-        //            (callback || function() {})();
-        //        }, function(transaction, SqlError) {
-        //            console.error( SqlError );
-        //            (callback || function() {})( undefined );
-        //        } );
-        //    } );
-        //};
-
-
         /**
          * @name unset
          * @desc Supprime une valeur dans la base de données 'parameters'
@@ -160,8 +141,8 @@
          */
         SQLite.initialize = function() {
 
-            console.sqlite = SQLite.DEBUG ? console.info : angular.noop ;
-            console.sqliteerror = SQLite.DEBUG ? function() {
+            console.sqlite = SQLite.DEBUG >= 2 ? console.info : angular.noop ;
+            console.sqliteerror = SQLite.DEBUG >= 1 ? function() {
                 console.error( arguments );
             } : angular.noop ;
 

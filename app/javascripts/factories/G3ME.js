@@ -212,14 +212,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             G3ME.invalidateMapSize();
         },
 
-        __updateMapLayers: function() {
-            for (var i in G3ME.map._layers) {
-                if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
-                    G3ME.map._layers[i].redraw();
-                }
-            }
-        },
-
         setVisibility: function(groups) {
             this.active_layers = [];
             for (var j in groups) {

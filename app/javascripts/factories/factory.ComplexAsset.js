@@ -186,7 +186,7 @@
          * @desc
          */
         ComplexAsset.prototype.getLabel = function() {
-            return i18n.get( "_MENU_CENSUS" );
+            return this.isProject ? i18n.get( "_MENU_PROJECT" ) : i18n.get( "_MENU_CENSUS" );
         };
 
         /**
@@ -331,16 +331,15 @@
          * @desc
          */
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
-
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this, Project ),
                 method = update ? "update" : "save" ;
+
 
             Asset[method]( assets, function() {
                 if (!update) {
                     Relationship.save( relationships );
                 }
-                G3ME.reloadLayers();
             } );
 
             return assets;

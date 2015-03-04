@@ -235,7 +235,7 @@
             if (!$rootScope.$$phase) {
                 $rootScope.$apply();
             }
-            G3ME.__updateMapLayers();
+            G3ME.reloadLayers();
         };
 
         /**
@@ -255,7 +255,7 @@
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
                 }
-                G3ME.__updateMapLayers();
+                G3ME.reloadLayers();
             } );
         };
 
@@ -290,7 +290,7 @@
                 assets[i].okey = "PROJECT_" + assets[i].okey;
             }
             Asset.delete( project.assets, function() {
-                Asset.save( assets, null, function() {
+                Asset.save( assets, function() {
                     project.save( callback );
                 } );
             } );
@@ -380,7 +380,7 @@
                     }
                 }
                 Asset.delete( toBeHardDeleted, function() {
-                    G3ME.__updateMapLayers();
+                    G3ME.reloadLayers();
                     project.save( callback );
                 } );
             } );

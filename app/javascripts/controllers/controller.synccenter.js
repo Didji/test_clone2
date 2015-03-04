@@ -58,8 +58,8 @@
          */
         function updateList(callback) {
             Synchronizator.listItems( function(syncItems) {
-                $scope.$digest();
                 vm.syncItems = syncItems;
+                $scope.$digest();
                 (typeof callback === "function" ? callback : function() {})();
             } );
         }

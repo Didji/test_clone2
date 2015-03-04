@@ -553,7 +553,7 @@
                     var ids = Object.keys( tree );
                     Asset.delete( ids, function() {
                         $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                        G3ME.__updateMapLayers();
+                        G3ME.reloadLayers();
                     } );
                 } );
             }
@@ -578,14 +578,15 @@
                 fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
                 fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
                 values_in_request,
-                i, j, k, symbolId, mySymbology;
+                i, j, k, symbolId, mySymbology,
+                guids = [];
 
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i];
                 asset_ = JSON.parse( JSON.stringify( asset ) );
                 guid = asset.guid + "";
                 bounds = asset.bounds;
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " " + guid + " as id ";
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " ? as id ";
                 symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
                 if (!mySymbology) {
@@ -600,6 +601,7 @@
                 for (k = 0; k < fields_to_delete.length; k++) {
                     delete asset_[fields_to_delete[k]];
                 }
+                guids.push( guid );
 
                 values_in_request = [
                     bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
@@ -620,7 +622,7 @@
             }
             return {
                 request: ((request !== '') ? request : 'SELECT 1'),
-                args: []
+                args: guids
             };
         };
 
@@ -630,7 +632,6 @@
          * @param {Array} asset_s
          */
         Asset.__distributeAssetsInZone = function(asset_s, site) {
-            console.log( 'ici' );
             var assets = asset_s.length ? asset_s : [asset_s];
 
             site = site || Site.current;
@@ -673,7 +674,7 @@
          * @method
          * @memberOf Asset
          */
-        Asset.save = function(asset, site, callback) {
+        Asset.save = function(asset, callback, site) {
             if (!asset.length) {
                 (callback || function() {})();
             }
