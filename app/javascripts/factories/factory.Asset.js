@@ -473,11 +473,14 @@
          */
         Asset.delete = function(guids, callback, zones) {
 
-            guids = ((+guids === guids) ? [guids] : guids) || [];
+            if (typeof guids !== "object") {
+                guids = [guids];
+            }
 
             if (!zones) {
                 zones = Site.current.zones;
             }
+
             if (!zones.length || guids.length === 0) {
                 return Relationship.delete( guids, function() {
                     return (callback || function() {})();
@@ -485,9 +488,10 @@
             }
 
             var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
-            SQLite.exec( zones[0].database_name, request, guids, function() {
+            SQLite.exec( zones[0].database_name, request, guids.map( String ), function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
+
         };
 
         /**

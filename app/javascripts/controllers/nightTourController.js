@@ -457,9 +457,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 }
             }
             $scope.sendKoReports( payloadKO, function() {
-                $scope.sendOkReports( payloadOK, function() {
-                    console.log( "data secured", payloadOK, payloadKO );
-                } );
+                $scope.sendOkReports( payloadOK, function() {} );
             } );
         };
 

@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Synchronizator', SynchronizatorFactory );
 
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n"];
+    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship"];
 
 
-    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n) {
+    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship) {
 
         /**
          * @class SyncItemFactory
@@ -208,15 +208,33 @@
             } ).success( function(data) {
                 if (data[complexasset.okey] && Array.isArray( data[complexasset.okey] ) && data[complexasset.okey].length) {
                     complexasset.synced = true ;
+                    var savedGeometry , i , savedbounds ;
                     for (var okey in data) {
-                        for (var i = 0; i < data[okey].length; i++) {
+                        if (okey === "relationship") {
+                            continue ;
+                        }
+                        for (i = 0; i < data[okey].length; i++) {
+                            if (data[okey][i].geometry) {
+                                savedGeometry = data[okey][i].geometry;
+                                savedbounds = data[okey][i].bounds;
+                            }
                             assets.push( data[okey][i] );
                         }
                     }
+
+                    // PROPAGATION DE GEOMETRIE A SUPPRIMER //
+                    for (i = 0; i < assets.length; i++) {
+                        assets[i].geometry = assets[i].geometry || savedGeometry ;
+                        assets[i].bounds = assets[i].bounds || savedbounds ;
+                    }
+                    console.log( "// PROPAGATION DE GEOMETRIE A SUPPRIMER //" );
+                    //////////////////////////////////////////
                     Asset.delete( complexasset.uuids, function() {
                         Asset.save( assets, function() {
-                            complexasset.syncInProgress = false;
-                            complexasset.save( callback );
+                            Relationship.save( data.relationship, function() {
+                                complexasset.syncInProgress = false;
+                                complexasset.save( callback );
+                            } );
                         } );
                     } );
                 } else {

@@ -130,9 +130,13 @@
                     t.executeSql( request[i], args[i] || [], function(t, r) {
                         console.sqlite( "SQLITE_REQUEST", request[0], args[0], r.rows );
                         calledCallback( r.rows );
-                    }, console.sqliteerror );
+                    }, function(tx, sqlerror) {
+                            console.sqliteerror( request, args, sqlerror.message );
+                        } );
                 }
-            }, console.sqliteerror );
+            }, function(tx, sqlerror) {
+                    console.sqliteerror( request, args, sqlerror.message );
+                } );
         };
 
         /**
@@ -142,8 +146,8 @@
         SQLite.initialize = function() {
 
             console.sqlite = SQLite.DEBUG >= 2 ? console.info : angular.noop ;
-            console.sqliteerror = SQLite.DEBUG >= 1 ? function() {
-                console.error( arguments );
+            console.sqliteerror = SQLite.DEBUG >= 1 ? function(request, args, err) {
+                console.error( request, args, err );
             } : angular.noop ;
 
             SQLite.parameters().transaction( function(transaction) {

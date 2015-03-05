@@ -338,7 +338,7 @@
 
             Asset[method]( assets, function() {
                 if (!update) {
-                    Relationship.save( relationships );
+                    Relationship.save( relationships, G3ME.reloadLayers );
                 }
             } );
 

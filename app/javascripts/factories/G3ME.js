@@ -111,7 +111,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
             }
 
             this.canvasTile.addTo( this.map );
-            // this.tempAssetTile.addTo( this.map );
 
             return this.map;
         },
@@ -296,11 +295,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         },
 
         poolRequestInvokator: function() {
-            clearTimeout( G3ME.poolRequestExecutorTimeout );
-            G3ME.poolRequestExecutorTimeout = setTimeout( function() {
-                G3ME.poolRequestExecutor( angular.copy( G3ME.requestPool ) );
-                G3ME.requestPool = {};
-            }, 20 );
+            // clearTimeout( G3ME.poolRequestExecutorTimeout );
+            // G3ME.poolRequestExecutorTimeout = setTimeout( function() {
+            G3ME.poolRequestExecutor( angular.copy( G3ME.requestPool ) );
+            G3ME.requestPool = {};
+            // }, 20 );
         },
 
         poolRequestExecutor: function(pool) {
@@ -325,8 +324,8 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                     for (var uuid in currentRequestPool) {
                         currentRequestPool[uuid].callback( results );
                     }
-                }, function() {
-                        console.error( arguments );
+                }, function(tx, sqlerror) {
+                        console.error( req, args, sqlerror.message );
                     } );
             } );
         }

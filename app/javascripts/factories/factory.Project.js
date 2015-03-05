@@ -317,11 +317,9 @@
          * @desc
          */
         Project.prototype.addAsset = function(asset, callback, updateConsultation) {
-            console.log( "addAsset" );
             var project = this;
             asset.duplicate( function(duplicates, tree) {
                 var guids = Object.keys( tree );
-                console.log( "duplicate" );
 
                 for (var i = 0; i < guids.length; i++) {
                     if (project.removed.indexOf( +guids[i] ) !== -1) {
@@ -333,8 +331,7 @@
                 }
                 project.save( callback );
                 if (updateConsultation) {
-                    console.log( "updateConsultation" );
-                    $rootScope.$broadcast( 'UPDATE_CONSULTATION_ASSETS_LIST', duplicates );
+                    $rootScope.$broadcast( 'UPDATE_CONSULTATION_ASSETS_LIST', duplicates, false );
                 }
             }, project );
         };
@@ -381,12 +378,13 @@
                     } else if (project.removed.indexOf( guid ) === -1) {
                         project.removed.push( guid );
                         project.assets.splice( project.assets.indexOf( guid ), 1 );
-                        toBeHardDeleted.push( guid );
                     }
+                    toBeHardDeleted.push( guid );
                 }
                 Asset.delete( toBeHardDeleted, function() {
                     G3ME.reloadLayers();
                     project.save( callback );
+                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST" );
                 } );
             } );
         };
@@ -432,7 +430,7 @@
          * @return {Boolean}
          */
         Project.prototype.hasAsset = function(asset) {
-            return (this.assets.indexOf( asset.guid ) !== -1 || this.added.indexOf( asset.guid ) !== -1);
+            return (this.assets.indexOf( +asset.guid ) !== -1 || this.added.indexOf( +asset.guid ) !== -1);
         };
 
         /**

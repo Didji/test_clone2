@@ -101,25 +101,6 @@
                 }
             }
 
-            /**
-             * @name sendAssetToHeaven
-             * @desc
-             * @param {Event} event
-             */
-            function sendAssetToHeaven( /*event*/ ) {
-                // var html = '' + scope.site.metamodel[scope.asset.okey].label + ':' + scope.asset.label + '';
-                // var x = event.pageX,
-                //     y = event.pageY;
-                // var angel = $( '<div>' ).addClass( 'angel' ).appendTo( element ).html( html ).css( {
-                //     position: 'fixed',
-                //     top: y,
-                //     left: x - 100
-                // } );
-                // setTimeout( function() {
-                //     angel.addClass( 'ascending' );
-                // }, 1000 );
-            }
-
             function toggleMapVisibility(asset) {
                 asset.toggleMapVisibility();
             }

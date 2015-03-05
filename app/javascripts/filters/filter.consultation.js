@@ -253,7 +253,6 @@
         };
 
         function _guirlandeFilter(asset) {
-            console.log( asset );
             var authAction = [],
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length,
                 isUpdatable = Right.isUpdatable( asset ),
