@@ -19,6 +19,13 @@
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
         function Asset(asset, callback, getRelated) {
+            var self = this ;
+            if (+asset === asset) {
+                Asset.findOne( asset, function(asset) {
+                    angular.extend( self, new Asset( asset ) );
+                } );
+                return;
+            }
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
