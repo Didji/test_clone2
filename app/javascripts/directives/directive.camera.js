@@ -37,14 +37,30 @@
                             var imageElement = document.createElement( "img" );
                             imageElement.src = path;
                             imageElement.onload = function() {
+                                // On redimensionne l'image pour qu'elle soit inférieure à 800x600.
+                                // Ceci est fait côté JS afin de ne pas écraser l'image initiale.
+                                var maxSize = 800, 
+                                    imageWidth = imageElement.width,
+                                    imageHeight = imageElement.height;
+                                if (imageWidth > imageHeight) {
+                                    if (imageWidth > maxSize) {
+                                        imageHeight *= maxSize / imageWidth;
+                                        imageWidth = maxSize;
+                                    }
+                                } else {
+                                    if (imageHeight > maxSize) {
+                                        imageWidth *= maxSize / imageHeight;
+                                        imageHeight = maxSize;
+                                    }
+                                }
                                 var canvasElement = document.createElement( "canvas" );
-                                canvasElement.width = imageElement.width;
-                                canvasElement.height = imageElement.height;
-                                canvasElement.getContext( "2d" ).drawImage( imageElement, 0, 0 );
+                                canvasElement.width = imageWidth;
+                                canvasElement.height = imageHeight;
+                                canvasElement.getContext( "2d" ).drawImage( imageElement, 0, 0, imageWidth, imageHeight );
                                 scope.$apply( function() {
                                     ctrl.$viewValue = ctrl.$viewValue || [];
                                     ctrl.$viewValue.push( {
-                                        content: canvasElement.toDataURL( "image/jpeg", 0.75 )
+                                        content: canvasElement.toDataURL( "image/jpeg" )
                                     } );
                                     scope.isTakingPhoto = false;
                                 } );

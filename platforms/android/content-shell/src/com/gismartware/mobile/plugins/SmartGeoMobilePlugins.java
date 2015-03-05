@@ -190,6 +190,12 @@ public class SmartGeoMobilePlugins {
         pickIntent.setAction(Intent.ACTION_GET_CONTENT);
 
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = File.createTempFile(
+                pictureFileNameFormater.format(new Date()),
+                ".jpg",
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+        ((GimapMobileMainActivity)context).setLastPicturePath(photoFile.getAbsolutePath());
         // On ne peut pas renseigner facilement des chaines de caractères externalisées
         String pickTitle = "";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
