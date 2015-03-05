@@ -33,7 +33,6 @@
         SyncItem.prototype.deleted = false ;
         SyncItem.prototype.synced = false ;
 
-
         SyncItem.database = "parameters" ;
         SyncItem.table = "SYNCITEM" ;
         SyncItem.columns = ['id', 'json', 'type', 'action', 'deleted', 'synced'];
@@ -72,16 +71,16 @@
             return [this.id, JSON.stringify( this ), this.type, this.action, this.deleted, this.synced];
         };
 
-
+        /**
+         * @name deleteComplexAsset
+         * @desc
+         */
         SyncItem.deleteComplexAsset = function(item, callback) {
             Asset.delete( item.uuids, function() {
                 G3ME.reloadLayers();
                 (callback || function() {})();
             } );
         };
-
-        SyncItem.prototype.deleteReport = function() {};
-
 
         /**
          * @name list
@@ -104,7 +103,6 @@
 
         SQLite.exec( SyncItem.database, 'CREATE TABLE IF NOT EXISTS ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
 
-
         /**
          * @class Synchronizator
          * @desc Factory de la classe Synchronizator
@@ -114,6 +112,10 @@
 
         Synchronizator.globalSyncInProgress = false ;
 
+        /**
+         * @name add
+         * @desc
+         */
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
             Synchronizator.log( object );
@@ -122,22 +124,42 @@
             } );
         };
 
+        /**
+         * @name addNew
+         * @desc
+         */
         Synchronizator.addNew = function(object) {
             Synchronizator.add( "new", object );
         };
 
+        /**
+         * @name addDeleted
+         * @desc
+         */
         Synchronizator.addDeleted = function(object) {
             Synchronizator.add( "delete", object );
         };
 
+        /**
+         * @name addUpdated
+         * @desc
+         */
         Synchronizator.addUpdated = function(object) {
             Synchronizator.add( "update", object );
         };
 
+        /**
+         * @name listItems
+         * @desc
+         */
         Synchronizator.listItems = function(callback) {
             SyncItem.list( callback );
         };
 
+        /**
+         * @name syncItems
+         * @desc
+         */
         Synchronizator.syncItems = function(items, callback, force) {
 
             if (Synchronizator.globalSyncInProgress && !force) {
@@ -166,10 +188,18 @@
 
         };
 
+        /**
+         * @name deleteItem
+         * @desc
+         */
         Synchronizator.deleteItem = function(item) {
             item.delete();
         };
 
+        /**
+         * @name newComplexAssetSynchronizator
+         * @desc
+         */
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
             var assets = [] ;
             complexasset.syncInProgress = true;
@@ -200,10 +230,18 @@
 
         };
 
+        /**
+         * @name updateComplexAssetSynchronizator
+         * @desc
+         */
         Synchronizator.updateComplexAssetSynchronizator = function(complexasset, callback) {
             Synchronizator.newComplexAssetSynchronizator( complexasset, callback );
         };
 
+        /**
+         * @name newReportSynchronizator
+         * @desc
+         */
         Synchronizator.newReportSynchronizator = function(report, callback) {
             report.syncInProgress = true;
             $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
@@ -223,6 +261,10 @@
             } );
         };
 
+        /**
+         * @name log
+         * @desc
+         */
         Synchronizator.log = function(item) {
             item = angular.copy( item );
             if (item.ged) {
@@ -232,22 +274,6 @@
                 SmartgeoChromium.writeJSON( JSON.stringify( item ), 'report/' + item.uuid || item.id + '.json' );
             }
             return this;
-        };
-
-        /**
-         * @param strClass:
-         *          class name
-         * @param optionals:
-         *          constructor arguments
-         */
-        Synchronizator.newInstance = function(strClass) {
-            var args = Array.prototype.slice.call( arguments, 1 );
-            var clsClass = eval( strClass );
-            function F() {
-                return clsClass.apply( this, args );
-            }
-            F.prototype = clsClass.prototype;
-            return new F();
         };
 
         // Synchronizator.checkSynchronizedReports = function() {
