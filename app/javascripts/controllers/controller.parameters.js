@@ -56,6 +56,7 @@
             vm.updating = true;
             Installer.update( Site.current, function() {
                 vm.updating = false;
+                $scope.$digest();
             } );
         }
 
@@ -65,7 +66,7 @@
          */
         function uninstall() {
             $location.path( 'sites/uninstall/' + Site.current.id );
-            $scope.$apply();
+            $scope.$digest();
         }
     }
 

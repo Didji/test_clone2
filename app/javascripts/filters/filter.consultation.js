@@ -253,12 +253,14 @@
         };
 
         function _guirlandeFilter(asset) {
+            console.log( asset );
             var authAction = [],
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length,
                 isUpdatable = Right.isUpdatable( asset ),
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
                 hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
+                isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
                 isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset ));
 
             if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
@@ -288,7 +290,7 @@
             }
 
             // PROJECT ACTIONS
-            if (isThereAProjectLoaded) {
+            if (isProjectable && isThereAProjectLoaded) {
                 authAction.push( actions.separator );
                 if (isProjectAsset) {
                     authAction.push( actions.editobjectforproject );

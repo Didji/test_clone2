@@ -87,6 +87,7 @@
             } );
 
             $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets, coordinates) {
+                console.log( assets );
                 if (coordinates === false) {
                     vm.coordinates = coordinates;
                 }

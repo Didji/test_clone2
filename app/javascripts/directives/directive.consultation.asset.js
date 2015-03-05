@@ -54,7 +54,7 @@
                     alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
-                } );
+                }, true );
             }
 
             /**
@@ -142,7 +142,7 @@
                     if (!yes) {
                         return;
                     }
-                    if ( "PROJECT_" === asset.okey.substr(0, 8) ) {
+                    if ("PROJECT_" === asset.okey.substr( 0, 8 )) {
                         Project.currentLoadedProject.deleteAsset( asset, function() {
                             $rootScope.$broadcast( "UPDATE_PROJECTS" );
                         } );

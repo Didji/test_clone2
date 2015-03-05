@@ -19,6 +19,13 @@
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
         function Asset(asset, callback, getRelated) {
+            var self = this ;
+            if (+asset === asset) {
+                Asset.findOne( asset, function(asset) {
+                    angular.extend( self, new Asset( asset ) );
+                } );
+                return;
+            }
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
@@ -249,7 +256,7 @@
                 return callback( null );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ?', [id], function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ?', ["" + id], function(rows) {
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
@@ -337,13 +344,11 @@
                 return callback( partial_response );
             }
             if (typeof guids !== 'object') {
-                guids = [guids];
+                guids = ["" + guids];
             }
             var i = 0 ;
             for (i = 0; i < guids.length; i++) {
-                if (!isNaN( +guids[i] )) {
-                    guids[i] = +guids[i];
-                }
+                guids[i] = "" + guids[i];
             }
             for (i = 0; i < guids.length; i++) {
                 if (Asset.cache[guids[i]]) {
@@ -373,7 +378,7 @@
                         duplicates = [] ;
 
                     for (var i = 0; i < assets.length; i++) {
-                        var newAsset = angular.copy( assets[i] ),
+                        var newAsset = new Asset( angular.copy( assets[i] ) ),
                             uuid = 10000000 + (Math.random() * 10000000 | 0);
 
                         trad[newAsset.guid] = uuid ;
@@ -416,7 +421,7 @@
                     Asset.save( duplicates );
 
                     Relationship.save( relationships );
-                    callback( relationships );
+                    callback( duplicates, relationships );
                 } );
             } );
         };
@@ -591,21 +596,27 @@
                 mySymbology = symbology[symbolId];
                 if (!mySymbology) {
                     symbolId = symbolId.replace( 'PROJECT_', '' );
+                    symbolId = symbolId.replace( 'undefined', '' );
                     mySymbology = symbology[symbolId];
                     if (!mySymbology) {
-                        console.error( 'OBJET IGNORé', asset );
-                        continue ;
+                        mySymbology = {
+                            minzoom: asset.minzoom,
+                            maxzoom: asset.maxzoom
+                        };
+                        // console.error( 'OBJET IGNORé', asset );
+                        // continue ;
                     }
                 }
 
                 for (k = 0; k < fields_to_delete.length; k++) {
                     delete asset_[fields_to_delete[k]];
                 }
+
                 guids.push( guid );
 
                 values_in_request = [
                     bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
-                    JSON.stringify( asset.geometry ), symbolId, (asset.angle || ""), ('' + (asset.attributes[metamodel[asset.okey].ukey] || "")),
+                    JSON.stringify( asset.geometry ), symbolId, (asset.angle || ""), ('' + (asset.attributes[(metamodel[asset.okey] || metamodel[asset.okey.replace( 'PROJECT_', '' )]).ukey] || "")),
                     asset.maplabel || '',
                     +mySymbology.minzoom,
                     +mySymbology.maxzoom,

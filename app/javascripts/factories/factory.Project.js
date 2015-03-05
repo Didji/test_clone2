@@ -316,10 +316,12 @@
          * @name addAsset
          * @desc
          */
-        Project.prototype.addAsset = function(asset, callback) {
+        Project.prototype.addAsset = function(asset, callback, updateConsultation) {
+            console.log( "addAsset" );
             var project = this;
-            asset.duplicate( function(tree) {
+            asset.duplicate( function(duplicates, tree) {
                 var guids = Object.keys( tree );
+                console.log( "duplicate" );
 
                 for (var i = 0; i < guids.length; i++) {
                     if (project.removed.indexOf( +guids[i] ) !== -1) {
@@ -329,8 +331,11 @@
                         project.added.push( +guids[i] );
                     }
                 }
-
                 project.save( callback );
+                if (updateConsultation) {
+                    console.log( "updateConsultation" );
+                    $rootScope.$broadcast( 'UPDATE_CONSULTATION_ASSETS_LIST', duplicates );
+                }
             }, project );
         };
 

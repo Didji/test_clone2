@@ -374,6 +374,9 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
 
             if ( (previousSymbolId !== (symbolId = "" + asset.symbolId)) ) {
                 assetSymbology = G3ME.symbology[symbolId];
+                if (!assetSymbology) {
+                    continue;
+                }
                 ctx.strokeStyle = assetSymbology.style.strokecolor;
                 ctx.fillStyle = assetSymbology.style.fillcolor;
                 image = window.SMARTGEO_CURRENT_SITE_IMG[symbolId];

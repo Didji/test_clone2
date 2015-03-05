@@ -232,10 +232,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 angular.extend( Site.current, formatedSite );
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
-                        if (G3ME.canvasTile) {
-                            G3ME.canvasTile.redraw();
-                        }
-                        callback();
+                        Site.save( Site.current, callback );
+                        (G3ME.canvasTile && G3ME.reloadLayers)();
                     }, true );
                 } );
             } );

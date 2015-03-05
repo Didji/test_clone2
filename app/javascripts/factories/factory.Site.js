@@ -70,6 +70,18 @@
             return deferred.promise;
         };
 
+        /**
+            * @name get
+            * @desc Retourne un site en particulier
+            * @param {String} id Identifiant du site
+            */
+        Site.save = function(site, callback) {
+            Site.all( function(sites) {
+                sites[site.id] = site;
+                Storage.set_( 'sites', sites, callback );
+            } );
+        };
+
 
         Site.getList = function(pkey, okey) {
             var mm = Site.current.metamodel[okey];
