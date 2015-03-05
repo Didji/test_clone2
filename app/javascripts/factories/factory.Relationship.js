@@ -46,7 +46,7 @@
             function findSubtree_rec() {
                 for (var id in tree) {
                     if (tree[id] === null) {
-                        return Relationship.findChildren( +id, function(children) {
+                        return Relationship.findChildren( "" + id, function(children) {
                             tree[id] = children;
                             for (var i = 0; i < children.length; i++) {
                                 tree[children[i]] = null;
@@ -66,7 +66,7 @@
          * @param {Function} callback
          */
         Relationship.findChildren = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ? ', [id], function(rows) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ? ', ["" + id], function(rows) {
                 var response = [];
                 for (var i = 0; i < rows.length; i++) {
                     response.push( rows.item( i ).child );
@@ -82,7 +82,7 @@
          * @param {Function} callback
          */
         Relationship.findRoot = function(id, callback) {
-            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE child = ? ', [id], function(rows) {
+            SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE child = ? ', ["" + id], function(rows) {
                 if (rows.length === 0) {
                     callback( id );
                 } else {
@@ -102,8 +102,8 @@
             if (!ids.length) {
                 return callback();
             }
-            ids = ids.join( ',' );
-            SQLite.exec( 'parameters', 'DELETE FROM relationship WHERE child in (' + ids + ') or daddy in (' + ids + ')', [], callback );
+            var statement = ids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' );
+            SQLite.exec( 'parameters', 'DELETE FROM relationship WHERE child in (' + statement + ') or daddy in (' + statement + ')', ids.concat( ids ), callback );
         };
 
         /**
@@ -112,17 +112,30 @@
          * @param {Map} relationship
          * @param {Function} TODO:callback
          */
-        Relationship.save = function(relationship /*, callback*/ ) {
-            SQLite.openDatabase( {
-                name: 'parameters'
-            } ).transaction( function(transaction) {
-                for (var daddy in relationship) {
-                    for (var child in relationship[daddy]) {
-                        transaction.executeSql( 'INSERT INTO relationship VALUES (' + (+daddy) + ', ' + (+relationship[daddy][child]) + ');' );
-                    }
+        Relationship.save = function(relationship, callback) {
+            var request = [],
+                args = [];
+
+            for (var daddy in relationship) {
+                for (var child in relationship[daddy]) {
+                    request.push( 'INSERT INTO relationship VALUES ( ? , ? );' );
+                    args.push( ["" + daddy, "" + relationship[daddy][child]] );
                 }
+            }
+
+            SQLite.exec( 'parameters', request, args, callback );
+        };
+
+        /**
+         * @name eraseAll
+         * @desc
+         */
+        Relationship.eraseAll = function(callback) {
+            SQLite.exec( 'parameters', 'DROP TABLE IF EXISTS relationship', [], function() {
+                SQLite.exec( 'parameters', 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)', [], callback );
             } );
         };
+
 
         /**
          * @name getRelationshipsFromComplexAsset

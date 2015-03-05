@@ -150,5 +150,6 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
     _PROJECT_ASSETS_ADDED_: "Asset added to project %s",
     _PROJECT_ASSETS_REMOVED_: "Asset removed from project %s",
-    _PROJECT_ASSETS_ARE_LOCKED_: "Le projet ne peut être sauvegardé car les objets suivants sont bloqués : \n %s"
+    _PROJECT_ASSETS_ARE_LOCKED_: "Le projet ne peut être sauvegardé car les objets suivants sont bloqués : \n %s",
+    _RETRY_: "Retry"
 };

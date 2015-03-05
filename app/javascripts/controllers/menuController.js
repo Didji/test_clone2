@@ -235,6 +235,26 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
         /**
          * @method
          * @memberOf menuController
+         * @param {object} item Element du menu
+         * @desc Ouvre un élement du menu
+         */
+        $rootScope.showMenuItemById = function(id) {
+            vm.homeIsDisplayed = false;
+            for (var menuItem in vm.menuItems) {
+                vm.menuItems[menuItem].displayMenuItem = false;
+                vm.menuItems[menuItem].displayItemContent = false;
+                if (vm.menuItems[menuItem].id === id) {
+                    vm.menuItems[menuItem].displayItemContent = true;
+                }
+            }
+
+            vm.showMenu();
+
+        };
+
+        /**
+         * @method
+         * @memberOf menuController
          * @desc Retourne à la racine du menu
          */
         vm.home = function() {

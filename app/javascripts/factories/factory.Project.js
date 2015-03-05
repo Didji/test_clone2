@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "AssetFactory", "Asset", "i18n", "Relationship", "ComplexAsset"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship", "ComplexAsset"];
 
 
-    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, AssetFactory, Asset, i18n, Relationship, ComplexAsset) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship, ComplexAsset) {
 
         /**
          * @class ProjectFactory
@@ -147,7 +147,7 @@
 
                     callback( payload );
                 } );
-            });
+            } );
         };
 
 
@@ -157,7 +157,7 @@
          * @desc Gére les erreurs remontées du service d'ajout/relachement d'asset
          */
         Project.handleSynchronizeError = function(data, status) {
-            switch(status) {
+            switch (status) {
                 case 400:
                     if (data.locked) {
                         var locked = [];
@@ -177,6 +177,52 @@
         };
 
         /**
+
+         * @name remoteNewUpdateDeleteAssets
+         * @desc Synchronise la création, la modification et la suppression d'asset
+         */
+        Project.prototype.remoteNewUpdateDeleteAssets = function(callback) {
+            var project = this ;
+            this.getNewUpdateDeletePayload( function(payload) {
+                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
+                    id_project: project.id
+                } ), payload ).success( function() {
+                    project.discardChanges( callback );
+                } ).error( Project.smartgeoReachError ).finally( function() {
+                    project.synchronizing = false ;
+                } );
+            } );
+        };
+
+
+        /**
+         * @name getNewUpdateDeletePayload
+         * @desc Construit la payload pour le service de création, modification et suppression d'asset
+         */
+        Project.prototype.getNewUpdateDeletePayload = function(callback) {
+            var payload = {
+                    'deleted': [],
+                    'new': [],
+                    'updated': []
+                },
+                project = this ;
+            ComplexAsset.find( this.new, function(complexes) {
+                payload.new = complexes;
+                Asset.findAssetsByGuids( project.deleted.concat( project.updated ), function(assets) {
+                    for (var i = 0; i < assets.length; i++) {
+                        if (project.deleted.indexOf( assets[i].id ) !== -1) {
+                            payload.deleted.push( assets[i] );
+                        } else if (project.updated.indexOf( assets[i].id ) !== -1) {
+                            payload.updated.push( assets[i] );
+                        }
+                    }
+                    callback( payload );
+                } );
+            } );
+        };
+
+
+        /**
          * @name setProjectLoaded
          * @desc
          */
@@ -189,7 +235,7 @@
             if (!$rootScope.$$phase) {
                 $rootScope.$apply();
             }
-            G3ME.__updateMapLayers();
+            G3ME.reloadLayers();
         };
 
         /**
@@ -209,7 +255,7 @@
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
                 }
-                G3ME.__updateMapLayers();
+                G3ME.reloadLayers();
             } );
         };
 
@@ -244,7 +290,7 @@
                 assets[i].okey = "PROJECT_" + assets[i].okey;
             }
             Asset.delete( project.assets, function() {
-                AssetFactory.save( assets, null, function() {
+                Asset.save( assets, function() {
                     project.save( callback );
                 } );
             } );
@@ -285,7 +331,7 @@
                 }
 
                 project.save( callback );
-            } , project);
+            }, project );
         };
 
         /**
@@ -334,7 +380,7 @@
                     }
                 }
                 Asset.delete( toBeHardDeleted, function() {
-                    G3ME.__updateMapLayers();
+                    G3ME.reloadLayers();
                     project.save( callback );
                 } );
             } );

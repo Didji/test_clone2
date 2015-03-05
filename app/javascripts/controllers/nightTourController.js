@@ -10,9 +10,12 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "ReportSynchronizer", "GPS", "Site", function($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, ReportSynchronizer, GPS, Site) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", function($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site) {
 
         'use strict';
+
+        var secureInterval,
+            secureIntervalTime = 30000;
 
         /**
          * @memberOf nightTourController
@@ -209,6 +212,11 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.stopNightTour = function(ok, ko) {
+
+            if (secureInterval) {
+                clearInterval( secureInterval );
+            }
+
             $rootScope.nightTourInProgress = false;
             $rootScope.nightTourRecording = false;
             $scope.stopFollowingPosition();
@@ -255,7 +263,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             };
             applyDefaultValues( report, $scope.activity );
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-            ReportSynchronizer.synchronize( report, callback );
+            Synchronizator.addNew( report );
+            callback();
         };
 
 
@@ -278,7 +287,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             };
             applyDefaultValues( report, $scope.activity );
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-            ReportSynchronizer.synchronize( report, callback );
+            Synchronizator.addNew( report );
+            callback();
         };
 
         function applyDefaultValues(report, act) {
@@ -337,6 +347,15 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.startNightTour = function(event, mission, assetsCache) {
+
+            if (secureInterval) {
+                clearInterval( secureInterval );
+            }
+
+            setInterval( function() {
+                $scope.secureData();
+            }, secureIntervalTime );
+
 
             $rootScope.stopConsultation();
 
@@ -417,6 +436,31 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             }
             asset.isWorking = (asset.isWorking === undefined ? false : !asset.isWorking);
             asset.marker.setIcon( asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON );
+        };
+
+        /**
+         * @memberOf nightTourController
+         * @desc
+         */
+        $scope.secureData = function() {
+            var now = Date.now(),
+                payloadKO = [] ,
+                payloadOK = [] ;
+            for (var i = 0; i < $scope.assetsCache.length; i++) {
+                if (!$scope.assetsCache[i].alreadySent && (now - $scope.assetsCache[i].timestamp) > secureIntervalTime) {
+                    if ($scope.assetsCache[i].isWorking) {
+                        payloadOK.push( $scope.assetsCache[i].guid );
+                    } else {
+                        payloadKO.push( $scope.assetsCache[i].guid );
+                    }
+                    $scope.assetsCache[i].alreadySent = true ;
+                }
+            }
+            $scope.sendKoReports( payloadKO, function() {
+                $scope.sendOkReports( payloadOK, function() {
+                    console.log( "data secured", payloadOK, payloadKO );
+                } );
+            } );
         };
 
     }

@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "ReportSynchronizer", "Asset", "Site", "Report", "Storage", "Smartgeo", "Synchronizator"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Smartgeo", "Synchronizator"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, ReportSynchronizer, Asset, Site, Report, Storage, Smartgeo, Synchronizator) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Smartgeo, Synchronizator) {
 
         var vm = this;
 

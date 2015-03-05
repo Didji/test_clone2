@@ -126,7 +126,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 }
             } else {
                 for (var i = 0; i < this.active_layers.length; i++) {
-                    if (!Site.current.metamodel[this.active_layers[i]].is_graphical) {
+                    if (Site.current.metamodel[this.active_layers[i]] && !Site.current.metamodel[this.active_layers[i]].is_graphical) {
                         this.active_layers.splice( i, 1 );
                     }
                 }
@@ -210,14 +210,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
         reduceMapWidth: function(px) {
             document.getElementById( G3ME.mapDivId ).style.width = (window.innerWidth - px) + 'px';
             G3ME.invalidateMapSize();
-        },
-
-        __updateMapLayers: function() {
-            for (var i in G3ME.map._layers) {
-                if (G3ME.map._layers[i].redraw && !G3ME.map._layers[i]._url) {
-                    G3ME.map._layers[i].redraw();
-                }
-            }
         },
 
         setVisibility: function(groups) {

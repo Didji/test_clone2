@@ -34,7 +34,6 @@
                 </li>
             </ul>
         </div>
-
         <span ng-repeat="action in (asset|guirlandeFilter) track by $index">
             <button class="consultation-btn" ng-click="exec(action.method)" ng-if="!action.separator">
                 <i class="fa fa-{{action.icon}}"></i>
@@ -47,4 +46,6 @@
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.callsAction.html'"></ng-include>
         <ng-include ng-if="reportActivity.length" src="'javascripts/directives/template/consultation.asset.historyAction.html'"></ng-include>
     </div>
+
+
 </div>

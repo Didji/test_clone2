@@ -6,31 +6,25 @@
         .module( 'smartgeomobile' )
         .controller( 'SyncCenterController', SyncCenterController );
 
-    SyncCenterController.$inject = ["$rootScope", "Synchronizator"];
+    SyncCenterController.$inject = ["$scope", "$rootScope", "Synchronizator"];
 
     /**
      * @class SyncCenterController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function SyncCenterController($rootScope, Synchronizator) {
+    function SyncCenterController($scope, $rootScope, Synchronizator) {
 
         var vm = this;
 
-        // vm.activities = Site.current.activities;
-        // vm.metamodel = Site.current.metamodel;
-
-        // var synchronizationCheckTimeout = 1000 * 60 * 10,
-        //     synchronizationTimeout = 1000 * 60 * 5,
-        //     reportsSynchronizationCheckTimeoutId = false,
-        //     reportsSynchronizationTimeoutId = false,
-        //     assetsSynchronizationTimeoutId = false;
-
         vm.synchronize = synchronize ;
+        vm.synchronizeAll = synchronizeAll ;
+        vm.updateList = updateList ;
         vm.deleteItem = deleteItem ;
 
         vm.syncItems = [];
+        vm.synchronizing = false;
 
-        $rootScope.$on( 'synchronizator_update', activate );
+        var globaltimeout = 1000 * 60 * 10;
 
         activate();
 
@@ -39,8 +33,34 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
+            $rootScope.$on( 'synchronizator_update', updateList );
+            $rootScope.$on( 'synchronizator_new_item', synchronizeAll );
+            setTimeout( synchronizeAll, globaltimeout );
+            synchronizeAll();
+        }
+
+        /**
+         * @name synchronizeAll
+         * @desc Synchronize tous les items
+         */
+        function synchronizeAll() {
+            vm.synchronizing = true;
+            updateList( function() {
+                Synchronizator.syncItems( vm.syncItems, function() {
+                    vm.synchronizing = false ;
+                } );
+            } );
+        }
+
+        /**
+         * @name updateList
+         * @desc Synchronize tous les items
+         */
+        function updateList(callback) {
             Synchronizator.listItems( function(syncItems) {
-                Synchronizator.syncItems( vm.syncItems = syncItems );
+                vm.syncItems = syncItems;
+                $scope.$digest();
+                (typeof callback === "function" ? callback : function() {})();
             } );
         }
 

@@ -32,16 +32,16 @@
         Asset.prototype.consultationMarker = false;
 
         Asset.prototype.findRelated = function(callback) {
-            if (this.isComplex !== undefined) {
-                (callback || angular.noop)();
-            }
             var self = this ;
+
+            if (this.isComplex !== undefined) {
+                return (callback || angular.noop)( self );
+            }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
                 if (!root) {
-                    return (callback || angular.noop)();
+                    return (callback || angular.noop)( self );
                 }
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
-
                     if (assets_.length === 1) {
                         self.isComplex = false ;
                         return;
@@ -54,7 +54,7 @@
                     self.tree = tree ;
                     self.root = root;
                     self.relatedAssets = assets_byId ;
-                    (callback || angular.noop)();
+                    (callback || angular.noop)( self );
                 } );
             } );
         };
@@ -234,6 +234,11 @@
          */
         Asset.findOne = function(id, callback, zones) {
 
+            var tmp = +id ;
+            if (!isNaN( tmp )) {
+                id = +id;
+            }
+
             if (Asset.cache[id]) {
                 return callback( angular.copy( Asset.cache[id] ) );
             }
@@ -244,7 +249,7 @@
                 return callback( null );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ' + id, [], function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id = ?', [id], function(rows) {
                 if (!rows.length) {
                     return Asset.findOne( id, callback, zones.slice( 1 ) );
                 }
@@ -334,20 +339,22 @@
             if (typeof guids !== 'object') {
                 guids = [guids];
             }
-
-            for (var i = 0; i < guids.length; i++) {
+            var i = 0 ;
+            for (i = 0; i < guids.length; i++) {
+                if (!isNaN( +guids[i] )) {
+                    guids[i] = +guids[i];
+                }
+            }
+            for (i = 0; i < guids.length; i++) {
                 if (Asset.cache[guids[i]]) {
                     partial_response.push( angular.copy( Asset.cache[guids[i]] ) );
                     guids.splice( i, 1 );
                 }
             }
-
             if (guids.length === 0) {
                 return callback( partial_response );
             }
-
-            var request = 'SELECT * FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] + '' : ' in ( ' + guids.join( ',' ) + ')');
-            SQLite.exec( zones[0].database_name, request, [], function(results) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids, function(results) {
                 for (var i = 0; i < results.length; i++) {
                     var tmp = new Asset( Asset.convertRawRow( results.item( i ) ) );
                     Asset.cache[tmp.id] = tmp;
@@ -472,8 +479,8 @@
                 } );
             }
 
-            var request = 'DELETE FROM ASSETS WHERE id ' + (guids.length === 1 ? ' = ' + guids[0] : ' in ( ' + guids.join( ',' ) + ')');
-            SQLite.exec( zones[0].database_name, request, [], function() {
+            var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
+            SQLite.exec( zones[0].database_name, request, guids, function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
         };
@@ -496,6 +503,11 @@
             } );
         };
 
+        Asset.prototype.toggleEdit = function() {
+            $rootScope.showMenuItemById( "census" );
+            $rootScope.$broadcast( "START_UPDATE_ASSET", this );
+        };
+
         /**
          * @name remoteDeleteAssets
          * @desc Supprime une liste d'objets sur le serveur
@@ -510,7 +522,6 @@
                     okey: asset.okey
                 } );
             } );
-
             if (originals.length) {
                 $http.post(
                     Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
@@ -542,37 +553,40 @@
                     var ids = Object.keys( tree );
                     Asset.delete( ids, function() {
                         $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                        G3ME.__updateMapLayers();
+                        G3ME.reloadLayers();
                     } );
                 } );
             }
         };
 
-
         /**
-         * @method
-         * @memberOf Asset
+         * @name __buildRequest
+         * @desc
+         * @param {Array} asset_s
          */
-        Asset.__buildRequest = function(asset_s) {
+        Asset.__buildRequest = function(asset_s, site) {
 
             var assets = asset_s.length ? asset_s : [asset_s];
 
+            site = site || Site.current ;
+
             var request = '',
                 asset, asset_, guid,
-                metamodel = Site.current.metamodel,
-                symbology = Site.current.symbology,
+                metamodel = site.metamodel,
+                symbology = site.symbology,
                 bounds,
                 fields_in_request = ['xmin', 'xmax', 'ymin', 'ymax', 'geometry', 'symbolId', 'angle', 'label', 'maplabel', 'minzoom', 'maxzoom', 'asset'],
                 fields_to_delete = ['guids', 'bounds', 'geometry', 'classindex', 'angle'],
                 values_in_request,
-                i, j, k, symbolId, mySymbology;
+                i, j, k, symbolId, mySymbology,
+                guids = [];
 
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i];
                 asset_ = JSON.parse( JSON.stringify( asset ) );
-                guid = asset.guid;
+                guid = asset.guid + "";
                 bounds = asset.bounds;
-                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + ' ' + guid + ' as id ';
+                request += (request === '' ? "INSERT INTO ASSETS SELECT " : " UNION SELECT ") + " ? as id ";
                 symbolId = asset.symbolId || ("" + asset.okey + asset.classindex);
                 mySymbology = symbology[symbolId];
                 if (!mySymbology) {
@@ -587,6 +601,7 @@
                 for (k = 0; k < fields_to_delete.length; k++) {
                     delete asset_[fields_to_delete[k]];
                 }
+                guids.push( guid );
 
                 values_in_request = [
                     bounds.sw.lng, bounds.ne.lng, bounds.sw.lat, bounds.ne.lat,
@@ -607,20 +622,26 @@
             }
             return {
                 request: ((request !== '') ? request : 'SELECT 1'),
-                args: []
+                args: guids
             };
         };
 
-        Asset.__distributeAssetsInZone = function(asset_s) {
-
+        /**
+         * @name __distributeAssetsInZone
+         * @desc
+         * @param {Array} asset_s
+         */
+        Asset.__distributeAssetsInZone = function(asset_s, site) {
             var assets = asset_s.length ? asset_s : [asset_s];
+
+            site = site || Site.current;
 
             if (!assets) {
                 return false;
             }
 
             var asset, bounds, asset_extent,
-                zones = angular.copy( Site.current.zones );
+                zones = angular.copy( site.zones );
 
             for (var i = 0; i < assets.length; i++) {
                 asset = assets[i];
@@ -653,19 +674,60 @@
          * @method
          * @memberOf Asset
          */
-        Asset.save = function(asset, callback) {
-            var zones = Asset.__distributeAssetsInZone( asset );
+        Asset.save = function(asset, callback, site) {
+            if (!asset.length) {
+                (callback || function() {})();
+            }
+            site = site || Site.current ;
+            var zones = Asset.__distributeAssetsInZone( asset, site );
+            var uuidcallback = window.uuid();
+            Asset.checkpointCallbackRegister( uuidcallback, zones.length, callback );
             for (var i = 0; i < zones.length; i++) {
                 var zone = zones[i];
                 if (!zone.assets.length) {
+                    Asset.checkpointCallback( uuidcallback );
                     continue;
                 }
-                var request = Asset.__buildRequest( zone.assets );
-                SQLite.exec( zone.database_name, request.request, request.args, callback, function(tx, sqlerror) {
-                    console.error( sqlerror.message );
-                } );
+                var request = Asset.__buildRequest( zone.assets, site );
+                SQLite.exec( zone.database_name, request.request, request.args, function() {
+                    Asset.checkpointCallback( uuidcallback );
+                }, function(tx, sqlerror) {
+                        console.error( sqlerror.message );
+                    } );
             }
         };
+
+        Asset.checkpointCallbackId = {} ;
+
+        Asset.checkpointCallback = function(uuid) {
+            if (Asset.checkpointCallbackId[uuid].count <= 1) {
+                (Asset.checkpointCallbackId[uuid].callback || function() {})();
+                delete Asset.checkpointCallbackId[uuid];
+            } else {
+                Asset.checkpointCallbackId[uuid].count-- ;
+            }
+        };
+
+        Asset.checkpointCallbackRegister = function(uuid, count, callback) {
+            Asset.checkpointCallbackId[uuid] = {
+                count: count,
+                callback: callback
+            };
+        };
+
+
+        /**
+         * @name update
+         * @desc
+         * @param {Number|Array} guids
+         * @param {function} callback
+         */
+        Asset.update = function(asset, callback) {
+            Asset.delete( asset, function() {
+                Asset.save( asset, callback );
+            } );
+        };
+
         return Asset;
     }
 

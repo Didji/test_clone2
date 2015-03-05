@@ -65,8 +65,11 @@
         </div>
 
         <div class="btn-group">
-            <button class='btn btn-primary' ng-click="save()">
+            <button ng-show = "!asset" class='btn btn-primary' ng-click="save()">
                 <span class="fa fa-save"></span>Enregistrer
+            </button>
+            <button ng-show = "asset" class='btn btn-primary' ng-click="updateAsset()">
+                <span class="fa fa-save"></span>Modifier
             </button>
         </div>
     </div>

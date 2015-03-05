@@ -284,6 +284,7 @@
             finalXPosition = $event.clientX;
             movePhase = 0;
             if (Math.abs(( initialXPosition - finalXPosition )) < 20) {
+
                 toggleConsultationPanel();
             }
             $( '.toggleConsultationPanelButton' ).bind( 'touchmove', toggleConsultationPanelButtonMousedownHandler );

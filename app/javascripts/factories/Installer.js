@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, AssetFactory, i18n) {
+angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, Asset, i18n, Relationship) {
 
     'use strict';
 
@@ -49,7 +49,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 }
             }
             site.metamodel = angular.copy( metamodel );
-
+            var okey;
             for (okey in metamodel) {
                 if (metamodel[okey].is_project) {
                     site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
@@ -99,7 +99,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
 
             var relationship = site.relationship;
 
-            this.saveRelationship( relationship );
+            Relationship.eraseAll( function() {
+                Relationship.save( relationship );
+            } );
 
             delete site.relationship;
 
@@ -133,22 +135,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                         } );
                     }
                 } );
-        },
-
-        //TODO(@gulian): remplace par Relationship.eraseAll + Relationship.save
-        saveRelationship: function(relationship) {
-            SQLite.openDatabase( {
-                name: 'parameters'
-            } ).transaction( function(transaction) {
-                transaction.executeSql( 'DROP TABLE IF EXISTS relationship' );
-                transaction.executeSql( 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)', [], function() {
-                    for (var daddy in relationship) {
-                        for (var child in relationship[daddy]) {
-                            transaction.executeSql( "INSERT INTO relationship VALUES (" + (+daddy) + ", " + (+relationship[daddy][child]) + ");" );
-                        }
-                    }
-                } );
-            } );
         },
 
         saveSite: function(site, callback) {
@@ -341,7 +327,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         },
 
         save: function(site, assets, callback) {
-            site.zones = AssetFactory.__distributeAssetsInZone( assets, site );
+            site.zones = Asset.__distributeAssetsInZone( assets, site );
             Installer.save_zones_to_database( site, function() {
                 Installer.clean_zones( site );
                 callback();
@@ -371,7 +357,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                     }
                     while (temp_zone.length) {
                         sub_zone = temp_zone.slice( 0, Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST );
-                        zone.insert_requests.push( AssetFactory.__buildRequest( sub_zone, site ) );
+                        zone.insert_requests.push( Asset.__buildRequest( sub_zone, site ) );
                         temp_zone = temp_zone.slice( Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST );
                     }
                     Installer.execute_requests_for_zone( site, zone, function() {
