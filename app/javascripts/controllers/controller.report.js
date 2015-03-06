@@ -33,6 +33,7 @@
         vm.report = {};
         vm.sendingReport = false;
         vm.isAndroid = navigator.userAgent.match( /Android/i );
+        vm.isIOS = navigator.userAgent.match( /iP(od|hone|ad)/i );
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;

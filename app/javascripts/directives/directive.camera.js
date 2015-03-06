@@ -39,7 +39,7 @@
                             imageElement.onload = function() {
                                 // On redimensionne l'image pour qu'elle soit inférieure à 800x600.
                                 // Ceci est fait côté JS afin de ne pas écraser l'image initiale.
-                                var maxSize = 800, 
+                                var maxSize = 800,
                                     imageWidth = imageElement.width,
                                     imageHeight = imageElement.height;
                                 if (imageWidth > imageHeight) {
@@ -150,9 +150,9 @@
                                 ctrl.$setValidity( "error", false );
                             }, {
                                 quality: 100,
-                                sourceType: navigator.camera.PictureSourceType.CAMERA,
+                                sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.PHOTOLIBRARY : navigator.camera.PictureSourceType.CAMERA,
                                 mediaType: navigator.camera.MediaType.PICTURE,
-                                destinationType: Camera.DestinationType.FILE_URI,
+                                destinationType: navigator.camera.DestinationType.FILE_URI,
                                 correctOrientation: false,
                                 saveToPhotoAlbum: true
                             } );
