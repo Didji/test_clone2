@@ -451,7 +451,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $
                 coord_y = (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (geometry.coordinates[1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
                 ctx.save();
                 ctx.translate( coord_x, coord_y );
-                if (asset.angle) {
+                if (asset.angle % 360) {
                     ctx.rotate( asset.angle * M_DEG2RAD );
                 }
                 ctx.drawImage( image, imageWidthHalf, imageHeightHalf, imageWidth, imageHeight );

@@ -17,7 +17,13 @@
             <span ng-show='item.syncInProgress' class="has-spinner pull-right" ng-class="{active:item.syncInProgress}">
                 <span class="spinnerb"> <i class="icon-spin icon-refresh"> </i> </span>
             </span>
-            <p><small class="label label-default">{{item.label}}</small></p>
+            <p><small class="label label-default">
+                <i ng-if="item.action == 'delete' " class="fa fa-trash"></i>
+                <i ng-if="item.action == 'new' " class="fa fa-plus"></i>
+                <i ng-if="item.action == 'update' " class="fa fa-pencil-square-o"></i>
+                {{item.label}}
+                </small>
+            </p>
             <p>{{item.description}} <small>{{::(item.timestamp | date:'dd/MM à HH:mm')}}</small></p>
             <small ng-if=item.error ng-class='{"text-muted":item.syncInProgress, "text-danger":!item.syncInProgress}'>
                 {{item.error}} <a ng-if="!item.syncInProgress && !syncCenterController.synchronizing" ng-click='syncCenterController.synchronizeAll()'><i18n>_RETRY_</i18n> ?</a>
@@ -26,8 +32,4 @@
     </div>
 
     <p ng-if="syncCenterController.syncItems.length == 0" class="nothing-to-sync"><i18n>_SYNC_EVERYTHING_IS_SYNCED</i18n></p>
-
 </div>
-
-<!--   <h6>{{::activities._byId[item.activity].label}} <span ng-if='::item.site'>({{item.site}})</span> <small> {{::(item.timestamp | date:'dd/MM à HH:mm')}}</small></h6>
-         //    <small ng-if=item.error ng-class='{"text-muted":item.syncInProgress, "text-danger":!item.syncInProgress}'>{{item.error}} <a ng-if="!item.syncInProgress && !syncCenterController.synchronizing" ng-click='synchronizeReport(item)'>Réessayer ?</a></small> -->

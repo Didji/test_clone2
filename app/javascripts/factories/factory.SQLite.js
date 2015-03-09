@@ -17,7 +17,7 @@
             DATABASE_SIZE: 1024 * 1024 * 4,
             DATABASE_VERSION: '0.0.1-angular',
             DATABASES: {},
-            DEBUG: 2
+            DEBUG: 1
         };
 
         /**

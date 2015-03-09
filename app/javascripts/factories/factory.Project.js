@@ -362,6 +362,17 @@
             this.save( callback );
         };
 
+
+
+        Project.prototype.markObjectAsToBeRemoved = function(asset, callback) {
+            this.deleted.push( asset.guid );
+            asset.symbolId = asset.okey + this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted;
+            Asset.update( asset, function() {
+                G3ME.reloadLayers();
+            } );
+            this.save( callback );
+        };
+
         /**
          * @name removeAsset
          * @desc

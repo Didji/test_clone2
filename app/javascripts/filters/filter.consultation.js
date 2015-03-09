@@ -225,7 +225,7 @@
             "markobjectasdeleteforproject": {
                 id: "markobjectasdeleteforproject",
                 icon: "trash",
-                method: "",
+                method: "scope.markObjectAsDeletedForCurrentProject",
                 suffix: "wrench"
             },
             "editobjectforproject": {
@@ -260,7 +260,8 @@
                 hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
                 isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
-                isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset ));
+                isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset )) || (asset.okey.search( 'PROJECT_' ) === 0),
+                hasNotBeenMarkedAsRemoved = Project.currentLoadedProject.deleted.indexOf( +asset.guid ) === -1;
 
             if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
                 authAction.push( actions.fetchhistory );
@@ -275,10 +276,10 @@
                 authAction.push( actions.goto );
             }
 
-            authAction.push( actions.separator );
 
             // OBJECT ACTIONS
             if (isUpdatable && !isProjectAsset) {
+                authAction.push( actions.separator );
                 authAction.push( actions.edit );
                 authAction.push( actions.delete );
             }
@@ -291,7 +292,7 @@
             // PROJECT ACTIONS
             if (isProjectable && isThereAProjectLoaded) {
                 authAction.push( actions.separator );
-                if (isProjectAsset) {
+                if (isProjectAsset && hasNotBeenMarkedAsRemoved) {
                     authAction.push( actions.editobjectforproject );
                     authAction.push( actions.markobjectasdeleteforproject );
                 }

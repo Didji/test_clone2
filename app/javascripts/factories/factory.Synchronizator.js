@@ -68,6 +68,8 @@
          * @desc
          */
         SyncItem.prototype.serializeForSQL = function() {
+            delete this.relatedAssets;
+            delete this.consultationMarker;
             return [this.id, JSON.stringify( this ), this.type, this.action, this.deleted, this.synced];
         };
 
@@ -227,7 +229,6 @@
                         assets[i].geometry = assets[i].geometry || savedGeometry ;
                         assets[i].bounds = assets[i].bounds || savedbounds ;
                     }
-                    console.log( "// PROPAGATION DE GEOMETRIE A SUPPRIMER //" );
                     //////////////////////////////////////////
                     Asset.delete( complexasset.uuids, function() {
                         Asset.save( assets, function() {
@@ -254,6 +255,51 @@
          */
         Synchronizator.updateComplexAssetSynchronizator = function(complexasset, callback) {
             Synchronizator.newComplexAssetSynchronizator( complexasset, callback );
+        };
+
+        /**
+         * @name updateComplexAssetSynchronizator
+         * @desc
+         */
+        Synchronizator.deleteAssetSynchronizator = function(item, callback) {
+            $http.post(
+                Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
+                {
+                    deleted: [{
+                        okey: item.okey,
+                        guid: item.guids
+                    }]
+                }
+            ).success( function(data) {
+                Asset.handleDeleteAssets( data, callback, item );
+            } ).error( function(data) {
+                Asset.handleDeleteAssets( data, callback );
+            } );
+        };
+
+        /**
+          * @name handleDeleteAssets
+          * @param  {Array} guids
+          */
+        Synchronizator.handleDeleteAssets = function(data, callback, item) {
+            if (!data.deleted) {
+                (callback || function() {})();
+                return false;
+            }
+
+            var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
+
+            for (var i = 0; i < guids.length; i++) {
+                Relationship.findSubtree( guids[i], function(root, tree) {
+                    var ids = Object.keys( tree );
+                    Asset.delete( ids, function() {
+                        $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
+                        G3ME.reloadLayers();
+                    } );
+                } );
+            }
+            Synchronizator.deleteItem( item );
+            (callback || function() {})();
         };
 
         /**

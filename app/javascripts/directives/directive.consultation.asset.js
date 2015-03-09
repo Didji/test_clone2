@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n", "Synchronizator"];
 
-    function assetConsultation($rootScope, Asset, Site, Project, i18n) {
+    function assetConsultation($rootScope, Asset, Site, Project, i18n, Synchronizator) {
 
         var directive = {
             link: link,
@@ -40,6 +40,7 @@
             scope.toggleMapVisibility = toggleMapVisibility;
             scope.openInApp = openInApp;
             scope.deleteAsset = deleteAsset;
+            scope.markObjectAsDeletedForCurrentProject = markObjectAsDeletedForCurrentProject;
             scope.exec = exec;
 
             scope.$on( '$destroy', destroy );
@@ -55,6 +56,10 @@
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
                 }, true );
+            }
+
+            function markObjectAsDeletedForCurrentProject(asset) {
+                Project.currentLoadedProject.markObjectAsToBeRemoved( asset );
             }
 
             /**
@@ -74,7 +79,6 @@
              * @param {Event} event
              */
             function addToCurrentSelection(asset, event) {
-                sendAssetToHeaven( event );
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", asset );
             }
 
@@ -123,12 +127,15 @@
                     if (!yes) {
                         return;
                     }
+                    // TODO VERIFIER SI ON EN A TOUJOURS BESOIN
                     if ("PROJECT_" === asset.okey.substr( 0, 8 )) {
                         Project.currentLoadedProject.deleteAsset( asset, function() {
                             $rootScope.$broadcast( "UPDATE_PROJECTS" );
                         } );
                     } else {
-                        Asset.remoteDeleteAssets( [asset] );
+                        asset.hideFromMap();
+                        asset.timestamp = Date.now();
+                        Synchronizator.addDeleted( asset );
                     }
                 } );
             }

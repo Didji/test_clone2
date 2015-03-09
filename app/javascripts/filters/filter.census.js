@@ -14,14 +14,13 @@
          * @desc
          */
 
-        var metamodelWithoutProjectsOkeys;
-
         function _getIconFromModelOkeyForCensus(okey) {
+            var currentSymbology = Site.current.symbology;
             if (okey.search( /PROJECT_/ ) === 0) {
                 var classIndex = (Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )].added) || 0 ;
-                return Site.current.symbology[okey + classIndex + ""] && Site.current.symbology[okey + classIndex + ""].style.symbol.icon;
+                return currentSymbology[okey + classIndex + ""] && currentSymbology[okey + classIndex + ""].style.symbol.icon;
             } else {
-                return Site.current.symbology[okey + "0"].style.symbol.icon;
+                return currentSymbology[okey + "0"].style.symbol.icon;
             }
 
         }

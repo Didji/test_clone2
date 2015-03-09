@@ -464,6 +464,7 @@
                 Asset.deleteAllProjectAsset( callback, zones.slice( 1 ) );
             } );
         };
+
         /**
          * @name delete
          * @desc Supprime les objets Asset en base de données correspondant au guids passé en paramètre.
@@ -472,6 +473,10 @@
          * @param {Array} zones
          */
         Asset.delete = function(guids, callback, zones) {
+
+            if (guids instanceof Asset) {
+                guids = [guids.guid];
+            }
 
             if (typeof guids !== "object") {
                 guids = [guids];
@@ -486,7 +491,6 @@
                     return (callback || function() {})();
                 } );
             }
-
             var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
             SQLite.exec( zones[0].database_name, request, guids.map( String ), function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
@@ -518,40 +522,12 @@
         };
 
         /**
-         * @name remoteDeleteAssets
-         * @desc Supprime une liste d'objets sur le serveur
-         * @param  {Array} assets
-         */
-        Asset.remoteDeleteAssets = function(assets) {
-            var originals = [];
-            angular.forEach( assets, function(asset) {
-                asset.hideFromMap();
-                originals.push( {
-                    guid: asset.guid,
-                    okey: asset.okey
-                } );
-            } );
-            if (originals.length) {
-                $http.post(
-                    Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
-                    {
-                        deleted: originals
-                    },
-                    {
-                        timeout: 100000
-                    }
-                ).success( Asset.handleDeleteAssets
-                ).error( Asset.handleDeleteAssets
-                );
-            }
-        };
-
-        /**
          * @name handleDeleteAssets
          * @param  {Array} guids
          */
-        Asset.handleDeleteAssets = function(data) {
+        Asset.handleDeleteAssets = function(data, callback) {
             if (!data.deleted) {
+                (callback || function() {})();
                 return false;
             }
 
@@ -566,6 +542,7 @@
                     } );
                 } );
             }
+            (callback || function() {})();
         };
 
         /**
@@ -592,6 +569,8 @@
 
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i];
+                delete asset.consultationMarker;
+                delete asset.relatedAssets;
                 asset_ = JSON.parse( JSON.stringify( asset ) );
                 guid = asset.guid + "";
                 bounds = asset.bounds;
@@ -607,8 +586,6 @@
                             minzoom: asset.minzoom,
                             maxzoom: asset.maxzoom
                         };
-                        // console.error( 'OBJET IGNORé', asset );
-                        // continue ;
                     }
                 }
 
@@ -690,9 +667,9 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
-            if (!asset.length) {
-                (callback || function() {})();
-            }
+            // if (!asset.length) {
+            //     return (callback || function() {})();
+            // }
             site = site || Site.current ;
             var zones = Asset.__distributeAssetsInZone( asset, site );
             var uuidcallback = window.uuid();
