@@ -52,7 +52,7 @@
              */
             function addToCurrentProject(asset) {
                 Project.currentLoadedProject.addAsset( asset, function() {
-                    alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name ) );
+                    alertify.log( i18n.get( "_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
                 }, true );

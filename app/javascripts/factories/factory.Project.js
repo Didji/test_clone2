@@ -366,7 +366,7 @@
 
         Project.prototype.markObjectAsToBeRemoved = function(asset, callback) {
             this.deleted.push( asset.guid );
-            asset.symbolId = asset.okey + this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted;
+            asset.symbolId = asset.okey + (this.expressions[asset.okey.replace( "PROJECT_", "" )] && this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted) || 0 ;
             Asset.update( asset, function() {
                 G3ME.reloadLayers();
             } );
