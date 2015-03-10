@@ -223,13 +223,6 @@
                             assets.push( data[okey][i] );
                         }
                     }
-
-                    // PROPAGATION DE GEOMETRIE A SUPPRIMER //
-                    for (i = 0; i < assets.length; i++) {
-                        assets[i].geometry = assets[i].geometry || savedGeometry ;
-                        assets[i].bounds = assets[i].bounds || savedbounds ;
-                    }
-                    //////////////////////////////////////////
                     Asset.delete( complexasset.uuids, function() {
                         Asset.save( assets, function() {
                             Relationship.save( data.relationship, function() {
