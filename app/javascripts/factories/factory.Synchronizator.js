@@ -120,8 +120,8 @@
          */
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
-            Synchronizator.log( object );
             syncItem.save( function() {
+                Synchronizator.log( object );
                 $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
         };
@@ -323,7 +323,6 @@
          * @desc
          */
         Synchronizator.log = function(item) {
-            item = angular.copy( item );
             if (item.ged) {
                 delete item.ged;
             }
