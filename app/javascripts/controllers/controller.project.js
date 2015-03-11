@@ -6,14 +6,14 @@
         .module( 'smartgeomobile' )
         .controller( 'ProjectController', ProjectController );
 
-    ProjectController.$inject = ["$scope", "$rootScope", "Project"];
+    ProjectController.$inject = ["$scope", "$rootScope", "Project", "i18n"];
 
     /**
      * @class ProjectController
      * @desc Controlleur de la page des projets.
      */
 
-    function ProjectController($scope, $rootScope, Project) {
+    function ProjectController($scope, $rootScope, Project, i18n) {
 
         var vm = this;
 
@@ -53,12 +53,16 @@
          * @desc Récupère la liste des projets sur le serveur
          */
         function getRemoteProjects() {
-            Project.list().success( function(data) {
-                vm.projects = data ;
-                for (var i = 0; i < vm.projects.length; i++) {
-                    vm.projects[i] = Project.save( vm.projects[i] );
-                }
-            } );
+            if (Project.currentLoadedProject) {
+                alertify.alert( i18n.get( '_PROJECTS_LIST_CANT_BE_LOAD_' ) );
+            } else {
+                Project.list().success( function(data) {
+                    vm.projects = data ;
+                    for (var i = 0; i < vm.projects.length; i++) {
+                        vm.projects[i] = Project.save( vm.projects[i] );
+                    }
+                } );
+            }
         }
 
         /**
