@@ -260,7 +260,7 @@
                 {
                     deleted: [{
                         okey: item.okey,
-                        guid: item.guids
+                        guid: item.guid
                     }]
                 }
             ).success( function(data) {
