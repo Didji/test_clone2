@@ -78,7 +78,7 @@
              * @name addToCurrentSelection
              * @param {Event} event
              */
-            function addToCurrentSelection(asset, event) {
+            function addToCurrentSelection(asset) {
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", asset );
             }
 
@@ -127,16 +127,9 @@
                     if (!yes) {
                         return;
                     }
-                    // TODO VERIFIER SI ON EN A TOUJOURS BESOIN
-                    if ("PROJECT_" === asset.okey.substr( 0, 8 )) {
-                        Project.currentLoadedProject.deleteAsset( asset, function() {
-                            $rootScope.$broadcast( "UPDATE_PROJECTS" );
-                        } );
-                    } else {
-                        asset.hideFromMap();
-                        asset.timestamp = Date.now();
-                        Synchronizator.addDeleted( asset );
-                    }
+                    asset.hideFromMap();
+                    asset.timestamp = Date.now();
+                    Synchronizator.addDeleted( asset );
                 } );
             }
 

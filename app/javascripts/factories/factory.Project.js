@@ -440,7 +440,25 @@
          * @return {Boolean}
          */
         Project.prototype.hasAsset = function(asset) {
-            return (this.assets.indexOf( +asset.guid ) !== -1 || this.added.indexOf( +asset.guid ) !== -1);
+            return (this.assets.concat( this.added ).indexOf( +asset.guid ) !== -1);
+        };
+
+        /**
+         * @name   hasDuplicatedAsset
+         * @param  {Asset}
+         * @return {Boolean}
+         */
+        Project.prototype.hasDuplicatedAsset = function(asset) {
+            var assets = this.assets.concat( this.added );
+            var originals = [];
+            for (var i = 0, ii = assets.length; i < ii; i++) {
+                if ((assets[i] + "").indexOf( '|' ) === -1) {
+                    continue;
+                }
+                originals.push( +assets[i].split( '|' )[0] );
+            }
+            assets = assets.concat( originals );
+            return (assets.indexOf( +asset.guid ) !== -1);
         };
 
         /**
@@ -535,7 +553,7 @@
         Project.convertRawRow = function(p) {
             return angular.extend( {
                 id: p.id,
-                loaded: !( !p.loaded || p.loaded === "false" ),
+                loaded: !(!p.loaded || p.loaded === "false"),
                 added: JSON.parse( p.added ),
                 deleted: JSON.parse( p.deleted ),
                 updated: JSON.parse( p.updated )

@@ -74,17 +74,6 @@
         };
 
         /**
-         * @name deleteComplexAsset
-         * @desc
-         */
-        SyncItem.deleteComplexAsset = function(item, callback) {
-            Asset.delete( item.uuids, function() {
-                G3ME.reloadLayers();
-                (callback || function() {})();
-            } );
-        };
-
-        /**
          * @name list
          * @desc
          */

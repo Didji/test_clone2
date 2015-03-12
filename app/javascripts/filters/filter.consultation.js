@@ -142,7 +142,7 @@
          * @desc
          */
         function _activityListFilter(asset) {
-            if (asset.length) {
+            if (asset && asset.length) {
                 asset = asset[0];
             }
             var activitiesOut = [];
@@ -261,6 +261,7 @@
                 isThereAProjectLoaded = !!Project.currentLoadedProject,
                 isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
                 isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset )) || (asset.okey.search( 'PROJECT_' ) === 0),
+                hasBeenDuplicatedForProjet = Project.currentLoadedProject && Project.currentLoadedProject.hasDuplicatedAsset( asset ),
                 hasNotBeenMarkedAsRemoved = isThereAProjectLoaded && (Project.currentLoadedProject.deleted.indexOf( +asset.guid ) === -1) ;
 
             if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
@@ -278,7 +279,7 @@
 
 
             // OBJECT ACTIONS
-            if (isUpdatable && !isProjectAsset) {
+            if (isUpdatable && !isProjectAsset && !hasBeenDuplicatedForProjet) {
                 authAction.push( actions.separator );
                 authAction.push( actions.edit );
                 authAction.push( actions.delete );
@@ -296,7 +297,9 @@
                     authAction.push( actions.editobjectforproject );
                     authAction.push( actions.markobjectasdeleteforproject );
                 }
-                authAction.push( isProjectAsset ? actions.deleteobjectfromprojectandreleaseit : actions.addtocurrentproject );
+                if (!hasBeenDuplicatedForProjet) {
+                    authAction.push( isProjectAsset ? actions.deleteobjectfromprojectandreleaseit : actions.addtocurrentproject );
+                }
             }
 
             return authAction;

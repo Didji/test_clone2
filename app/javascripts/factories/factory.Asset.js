@@ -379,7 +379,7 @@
 
                     for (var i = 0; i < assets.length; i++) {
                         var newAsset = new Asset( angular.copy( assets[i] ) ),
-                            _uuid = window.uuid();
+                            _uuid = newAsset.id + '|' + window.uuid();
 
                         trad[newAsset.guid] = _uuid ;
 
