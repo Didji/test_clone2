@@ -192,62 +192,6 @@ angular.module( 'smartgeomobile' ).factory( 'Smartgeo', function($http, $window,
             return JSON.parse( asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) );
         },
 
-        findGeometryByGuids_big: function(site, guids, callback, partial_response) {
-            partial_response = partial_response || [];
-            if (guids.length === 0) {
-                return callback( partial_response );
-            } else {
-                Smartgeo.findGeometryByGuids( site, guids.slice( 0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), function(assets) {
-                    Smartgeo.findGeometryByGuids_big( site, guids.slice( Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), callback, partial_response.concat( assets ) );
-                } );
-            }
-        },
-
-        findGeometryByGuids: function(site, guids, callback, zones, partial_response) {
-            if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
-                return Smartgeo.findGeometryByGuids_big( site, guids, callback );
-            }
-
-            if (!zones) {
-                zones = site.zones;
-                partial_response = [];
-            }
-
-            if (window._SMARTGEO_STOP_SEARCH) {
-                window._SMARTGEO_STOP_SEARCH = false;
-                return callback( [] );
-            }
-
-            if (!zones || !zones.length) {
-                return callback( partial_response );
-            }
-
-            if (typeof guids !== 'object') {
-                guids = [guids];
-            }
-
-            if (guids.length === 0) {
-                return callback( [] );
-            }
-
-            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', [guids], function(rows) {
-                var asset;
-                for (var i = 0; i < rows.length; i++) {
-                    asset = rows.item( i );
-                    partial_response.push( {
-                        guid: asset.id,
-                        label: asset.label,
-                        geometry: JSON.parse( asset.geometry ),
-                        xmin: asset.xmin,
-                        xmax: asset.xmax,
-                        ymin: asset.ymin,
-                        ymax: asset.ymax
-                    } );
-                }
-                Smartgeo.findGeometryByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
-            } );
-        },
-
         findAssetsByLabel: function(site, label, callback, zones, partial_response) {
             if (!zones) {
                 zones = site.zones;

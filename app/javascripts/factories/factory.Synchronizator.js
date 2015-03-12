@@ -103,6 +103,25 @@
             } );
         };
 
+        /**
+         * @name listSynced
+         * @desc
+         */
+        SyncItem.listSynced = function(callback) {
+            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced == "true" ', [], function(rows) {
+                var syncItems = [], syncItem ;
+                for (var i = 0; i < rows.length; i++) {
+                    syncItem = new SyncItem( rows.item( i ) ) ;
+                    syncItem = angular.extend( syncItem, JSON.parse( syncItem.json ) );
+                    syncItem.deleted = syncItem.deleted === "true";
+                    syncItem.synced = syncItem.synced === "true";
+                    delete syncItem.json;
+                    syncItems.push( syncItem );
+                }
+                (callback || function() {})( syncItems );
+            } );
+        };
+
         SQLite.exec( SyncItem.database, 'CREATE TABLE IF NOT EXISTS ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
 
         /**
@@ -156,6 +175,14 @@
          */
         Synchronizator.listItems = function(callback) {
             SyncItem.list( callback );
+        };
+
+        /**
+         * @name listItems
+         * @desc
+         */
+        Synchronizator.listSyncedItems = function(callback) {
+            SyncItem.listSynced( callback );
         };
 
         /**
@@ -319,6 +346,38 @@
         };
 
         /**
+         * @name getAll
+         * @desc
+         */
+        Synchronizator.getAll = function(type, callback) {
+            Synchronizator.listItems( function(items) {
+                var typedItems = [];
+                for (var i = 0, ii = items.length; i < ii; i++) {
+                    if (items[i].type === type) {
+                        typedItems.push( items[i] );
+                    }
+                }
+                (callback || function() {})( typedItems );
+            } );
+        };
+
+        /**
+         * @name getAll
+         * @desc
+         */
+        Synchronizator.getAllSynced = function(type, callback) {
+            Synchronizator.listSyncedItems( function(items) {
+                var typedItems = [];
+                for (var i = 0, ii = items.length; i < ii; i++) {
+                    if (items[i].type === type) {
+                        typedItems.push( items[i] );
+                    }
+                }
+                (callback || function() {})( typedItems );
+            } );
+        };
+
+        /**
          * @name log
          * @desc
          */
@@ -332,39 +391,31 @@
             return this;
         };
 
-        // Synchronizator.checkSynchronizedReports = function() {
-        //     ReportSynchronizer.getAll( function(reports) {
-
-        //         var luuids = [];
-
-        //         for (var i = 0; i < reports.length; i++) {
-        //             if (reports[i].synced) {
-        //                 luuids.push( reports[i].uuid );
-        //             }
-        //         }
-
-        //         $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
-        //             uuids: luuids
-        //         } )
-        //             .success( function(data) {
-        //                 if ((typeof data) === "string") {
-        //                     return;
-        //                 }
-        //                 var ruuids = data.uuids || data;
-        //                 for (var uuid in ruuids) {
-        //                     if (ruuids[uuid]) {
-        //                         console.warn( uuid + ' must be deleted' );
-        //                         ReportSynchronizer.deleteInDatabase( uuid );
-        //                     } else {
-        //                         console.warn( uuid + ' must be resync' );
-        //                         ReportSynchronizer.synchronize( uuid );
-        //                     }
-        //                 }
-        //             } )
-        //             .error( function() {} );
-
-        //     } );
-        // };
+        /**
+         * @name checkSynchronizedReports
+         * @desc
+         */
+        Synchronizator.checkSynchronizedReports = function() {
+            Synchronizator.getAllSynced( 'Report', function(reports) {
+                var luuids = [];
+                for (var i = 0; i < reports.length; i++) {
+                    luuids.push( reports[i].uuid );
+                }
+                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
+                    uuids: luuids
+                } ).success( function(data) {
+                    if ((typeof data) === "string") {
+                        return;
+                    }
+                    var ruuids = data.uuids || data;
+                    for (var i = 0, ii = reports.length; i < ii; i++) {
+                        if (ruuids[reports[i].uuid]) {
+                            reports[i].delete();
+                        }
+                    }
+                } );
+            } );
+        };
 
         return Synchronizator;
     }

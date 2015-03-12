@@ -38,19 +38,13 @@ function config($routeProvider, $httpProvider, $provide) {
             controller: 'SiteListController',
             resolve: prefetchPromise
         } ).
-        when( "/report/:site//:assets/:mission", {
+        when( "/report/:site//:assets/:mission?", {
             templateUrl: "partials/activitySelector.html",
             controllerAs: 'activitySelectorController',
             controller: 'ActivitySelectorController',
             resolve: prefetchPromise
         } ).
-        when( "/report/:site/:activity/:assets", {
-            templateUrl: "partials/report.html",
-            controllerAs: 'reportController',
-            controller: 'ReportController',
-            resolve: prefetchPromise
-        } ).
-        when( "/report/:site/:activity/:assets/:mission", {
+        when( "/report/:site/:activity/:assets/:mission?", {
             templateUrl: "partials/report.html",
             controllerAs: 'reportController',
             controller: 'ReportController',
@@ -62,7 +56,6 @@ function config($routeProvider, $httpProvider, $provide) {
         when( "/licenseRevoked", {
             templateUrl: "partials/licenseRevoked.html"
         } ).
-
         when( "/sites/install/:site", {
             templateUrl: "partials/installation.html"
         } ).

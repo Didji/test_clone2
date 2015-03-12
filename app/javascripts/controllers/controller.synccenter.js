@@ -24,7 +24,7 @@
         vm.syncItems = [];
         vm.synchronizing = false;
 
-        var globaltimeout = 1000 * 60 * 10;
+        var globalinterval = 1000 * 60;
 
         activate();
 
@@ -35,7 +35,8 @@
         function activate() {
             $rootScope.$on( 'synchronizator_update', updateList );
             $rootScope.$on( 'synchronizator_new_item', synchronizeAll );
-            setTimeout( synchronizeAll, globaltimeout );
+            setInterval( synchronizeAll, globalinterval );
+            setInterval( Synchronizator.checkSynchronizedReports, globalinterval );
             synchronizeAll();
         }
 
