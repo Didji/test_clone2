@@ -531,12 +531,12 @@
 
         /**
          * @name convertRawRow
-         * @desc Converti un projet brute, de la base de données en projet utilisable par l'application
+         * @desc Converti un projet brut, de la base de données en projet utilisable par l'application
          */
         Project.convertRawRow = function(p) {
             return angular.extend( {
                 id: p.id,
-                loaded: p.loaded,
+                loaded: !( !p.loaded || p.loaded === "false" ),
                 added: JSON.parse( p.added ),
                 deleted: JSON.parse( p.deleted ),
                 updated: JSON.parse( p.updated )
