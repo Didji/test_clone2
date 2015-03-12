@@ -319,6 +319,22 @@
         };
 
         /**
+         * @name getAll
+         * @desc
+         */
+        Synchronizator.getAll = function(type, callback) {
+            Synchronizator.listItems( function(items) {
+                var typedItems = [];
+                for (var i = 0, ii = items.length; i < ii; i++) {
+                    if (items[i].type === type) {
+                        typedItems.push( items[i] );
+                    }
+                }
+                (callback || function() {})( typedItems );
+            } );
+        };
+
+        /**
          * @name log
          * @desc
          */

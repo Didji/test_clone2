@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n", "Synchronizator"];
+    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n", "Synchronizator", "Storage"];
 
-    function assetConsultation($rootScope, Asset, Site, Project, i18n, Synchronizator) {
+    function assetConsultation($rootScope, Asset, Site, Project, i18n, Synchronizator, Storage) {
 
         var directive = {
             link: link,
@@ -30,7 +30,7 @@
             /* Scope Attributes */
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
-            scope.missions = $rootScope.missions;
+            scope.missions = Storage.get( 'missions_' + Storage.get( 'lastUser' ) ) || {};
             scope.currentLoadedProject = Project.currentLoadedProject ;
 
             /* Scope Methodes */

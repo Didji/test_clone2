@@ -438,7 +438,7 @@
 
             var request = 'SELECT * FROM ASSETS WHERE symbolId like "PROJECT_%" OR asset like "%PROJECT_%" ';
             if (project.added.length) {
-                request += 'OR id in (' + project.added.join( "," ) + ')';
+                request += 'OR id in ("' + project.added.join( '","' ) + '")';
             }
             SQLite.exec( zones[0].database_name, request, [], function(results) {
                 for (var i = 0; i < results.length; i++) {
@@ -707,6 +707,60 @@
             };
         };
 
+        Asset.findGeometryByGuids_big = function(site, guids, callback, partial_response) {
+            partial_response = partial_response || [];
+            if (guids.length === 0) {
+                return callback( partial_response );
+            } else {
+                Asset.findGeometryByGuids( site, guids.slice( 0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), function(assets) {
+                    Asset.findGeometryByGuids_big( site, guids.slice( Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), callback, partial_response.concat( assets ) );
+                } );
+            }
+        };
+
+        Asset.findGeometryByGuids = function(site, guids, callback, zones, partial_response) {
+            if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
+                return Asset.findGeometryByGuids_big( site, guids, callback );
+            }
+
+            if (!zones) {
+                zones = site.zones;
+                partial_response = [];
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
+                return callback( [] );
+            }
+
+            if (!zones || !zones.length) {
+                return callback( partial_response );
+            }
+            if (typeof guids !== 'object') {
+                guids = [guids];
+            }
+
+            if (guids.length === 0) {
+                return callback( [] );
+            }
+
+            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids, function(rows) {
+                var asset;
+                for (var i = 0; i < rows.length; i++) {
+                    asset = rows.item( i );
+                    partial_response.push( {
+                        guid: asset.id,
+                        label: asset.label,
+                        geometry: JSON.parse( asset.geometry ),
+                        xmin: asset.xmin,
+                        xmax: asset.xmax,
+                        ymin: asset.ymin,
+                        ymax: asset.ymax
+                    } );
+                }
+                Asset.findGeometryByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
+            } );
+        };
 
         /**
          * @name update
