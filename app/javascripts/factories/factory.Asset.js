@@ -379,12 +379,15 @@
 
                     for (var i = 0; i < assets.length; i++) {
                         var newAsset = new Asset( angular.copy( assets[i] ) ),
-                            uuid = 10000000 + (Math.random() * 10000000 | 0);
+                            _uuid = window.uuid();
 
-                        trad[newAsset.guid] = uuid ;
+                        trad[newAsset.guid] = _uuid ;
 
-                        newAsset.guid = uuid;
-                        newAsset.id = uuid;
+                        newAsset.guid = _uuid;
+                        newAsset.id = _uuid;
+
+                        newAsset.attributes = newAsset.attributes || {};
+                        newAsset.attributes._original = assets[i].guid;
 
                         if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;

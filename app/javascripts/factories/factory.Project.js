@@ -129,10 +129,9 @@
                 payload.new = complexes;
                 Asset.findAssetsByGuids( project.added.concat( project.removed.concat( project.deleted.concat( project.updated ) ) ), function(assets) {
                     for (var i = 0; i < assets.length; i++) {
-
                         if (project.added.indexOf( assets[i].id ) !== -1) {
                             payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
-                            payload.added[assets[i].okey].push( assets[i].id );
+                            payload.added[assets[i].okey].push( assets[i].attributes._original );
                         } else if (project.removed.indexOf( assets[i].id ) !== -1) {
                             payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
                             payload.removed[assets[i].okey].push( assets[i].id );
@@ -322,11 +321,11 @@
                 var guids = Object.keys( tree );
 
                 for (var i = 0; i < guids.length; i++) {
-                    if (project.removed.indexOf( +guids[i] ) !== -1) {
-                        project.removed.splice( project.removed.indexOf( +guids[i] ), 1 );
-                        project.assets.push( +guids[i] );
-                    } else if (project.added.indexOf( +guids[i] ) === -1) {
-                        project.added.push( +guids[i] );
+                    if (project.removed.indexOf( guids[i] ) !== -1) {
+                        project.removed.splice( project.removed.indexOf( guids[i] ), 1 );
+                        project.assets.push( guids[i] );
+                    } else if (project.added.indexOf( guids[i] ) === -1) {
+                        project.added.push( guids[i] );
                     }
                 }
                 project.save( callback );
