@@ -526,7 +526,7 @@
          * @param  {Array} guids
          */
         Asset.handleDeleteAssets = function(data, callback) {
-            if (!data.deleted) {
+            if (!data || !data.deleted) {
                 (callback || function() {})();
                 return false;
             }
@@ -543,6 +543,7 @@
                 } );
             }
             (callback || function() {})();
+            return true;
         };
 
         /**
@@ -744,7 +745,7 @@
                 return callback( [] );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids, function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
                 var asset;
                 for (var i = 0; i < rows.length; i++) {
                     asset = rows.item( i );

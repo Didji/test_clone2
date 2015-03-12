@@ -64,7 +64,7 @@
             day *= 1;
             for (var id in in_) {
                 mission = in_[id];
-                if ($filter( 'sanitizeDate' )( mission.end ) > day && $filter( 'sanitizeDate' )( mission.begin ) > day && $filter( 'sanitizeDate' )( mission.begin ) < (day + 86400000) && (mission.assets.length || !mission.activity)) {
+                if ($filter( 'sanitizeDate' )( mission.end ) > day && $filter( 'sanitizeDate' )( mission.begin ) >= day && $filter( 'sanitizeDate' )( mission.begin ) < (day + 86400000) && (mission.assets.length || !mission.activity)) {
                     out.push( mission );
                 }
             }

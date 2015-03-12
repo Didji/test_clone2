@@ -25,6 +25,7 @@
         vm.toggleAssetsMarkerForNightTour = toggleAssetsMarkerForNightTour;
         vm.toggleDoneAssetsVisibility = toggleDoneAssetsVisibility;
         vm.hideDoneAssets = hideDoneAssets;
+        vm.showDoneAssets = showDoneAssets;
         vm.locateAsset = locateAsset;
         vm.removeAssetFromMission = removeAssetFromMission;
         vm.getAssetLabel = getAssetLabel;
@@ -50,10 +51,6 @@
         activate();
 
         function activate() {
-
-            $rootScope.$watch( 'missions', function() {
-                Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions || {} );
-            } );
 
             applyFilterOnMission();
 
@@ -141,6 +138,7 @@
                     }
 
                     vm.missions = data.results;
+                    Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions || {} );
                     vm.maxBeginDate = 0;
                     for (i in vm.missions) {
                         i *= 1;
@@ -165,7 +163,7 @@
                             vm.toggleMission( mission, false );
                             if (done.indexOf( i ) >= 0) {
                                 mission.displayDone = false;
-                                showDoneAssets( mission );
+                                vm.showDoneAssets( mission );
                             }
                         }
                         mission.extent = missionsExtents[i];
@@ -232,7 +230,7 @@
                     vm.toggleMission( mission, false );
                     if (mission.displayDone) {
                         mission.displayDone = false;
-                        showDoneAssets( mission );
+                        vm.showDoneAssets( mission );
                     }
                 }
             }
@@ -377,6 +375,7 @@
                 }
             }
             vm.missions = missions;
+            Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions || {} );
         }
 
         /**
@@ -430,7 +429,7 @@
                         $rootScope.$broadcast( "DESACTIVATE_POSITION" );
                     }
                     if (mission.displayDone) {
-                        showDoneAssets( mission );
+                        vm.showDoneAssets( mission );
                     }
                     for (i in assetsCache[mission.id]) {
                         delete assetsCache[mission.id][i].xmin;
@@ -447,7 +446,7 @@
             } else if (mission.openned && assetsCache[mission.id] && (mission.assets.length || !mission.activity)) {
                 highlightMission( mission );
                 if (mission.displayDone) {
-                    showDoneAssets( mission );
+                    vm.showDoneAssets( mission );
                 }
                 if (mission.activity && vm.activities._byId[mission.activity.id].type === "night_tour") {
                     $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
@@ -523,7 +522,7 @@
             var mission = vm.missions[missionId],
                 asset = assetsCache[missionId][assetId],
                 method = (mission.activity && vm.activities._byId[mission.activity.id].type === "night_tour") ? "NightTour" : "Mission";
-            $scope["toggleAssetsMarkerFor" + method]( mission, asset );
+            vm["toggleAssetsMarkerFor" + method]( mission, asset );
         }
 
         /**
@@ -561,7 +560,7 @@
          */
         function toggleDoneAssetsVisibility(mission) {
             mission.displayDone = !!!mission.displayDone;
-            $scope[(mission.displayDone ? 'show' : 'hide') + 'DoneAssets']( mission );
+            vm[(mission.displayDone ? 'show' : 'hide') + 'DoneAssets']( mission );
         }
 
         /**
@@ -585,7 +584,7 @@
                             }
                         }
                     }
-                    showDoneAssets( mission );
+                    vm.showDoneAssets( mission );
                 } );
             }
 
@@ -697,23 +696,6 @@
             } );
         }
 
-
-        /**
-         * @name removeAssetFromMission
-         * @param {Object} asset
-         * @param {Object} mission
-         * @desc
-         */
-        function removeAssetFromMission(assetid, mission) {
-            var asset = assetsCache[mission.id]._byId[assetid];
-            mission.assets.splice( mission.assets.indexOf( asset.guid ), 1 );
-            mission.postAddedAssets.assets.splice( mission.postAddedAssets.assets.indexOf( asset.guid ), 1 );
-            Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions );
-            highlightMission( mission );
-            $rootScope.$broadcast( "DELETEMARKERFORMISSION", mission, assetsCache[mission.id]._byId[assetid].marker );
-        }
-
-
         /**
          * @name getAssetLabel
          * @param {Object} asset
@@ -726,8 +708,6 @@
                 return "";
             }
         }
-
-
     }
 
 })();

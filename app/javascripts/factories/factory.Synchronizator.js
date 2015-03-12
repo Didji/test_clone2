@@ -281,19 +281,25 @@
          * @name updateComplexAssetSynchronizator
          * @desc
          */
-        Synchronizator.deleteAssetSynchronizator = function(item, callback) {
+        Synchronizator.deleteAssetSynchronizator = function(asset, callback) {
+            asset.syncInProgress = true;
             $http.post(
                 Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
                 {
                     deleted: [{
-                        okey: item.okey,
-                        guid: item.guid
+                        okey: asset.okey,
+                        guid: asset.guid
                     }]
                 }
             ).success( function(data) {
-                Asset.handleDeleteAssets( data, callback, item );
+                if (Asset.handleDeleteAssets( data, callback )) {
+                    asset.synced = true;
+                    asset.save();
+                }
             } ).error( function(data) {
                 Asset.handleDeleteAssets( data, callback );
+            } ).finally( function() {
+                asset.syncInProgress = false;
             } );
         };
 
