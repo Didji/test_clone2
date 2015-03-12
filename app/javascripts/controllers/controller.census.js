@@ -1,12 +1,12 @@
-(function () {
+(function() {
 
     'use strict';
 
     angular
-        .module('smartgeomobile')
-        .controller('CensusController', CensusController);
+        .module( 'smartgeomobile' )
+        .controller( 'CensusController', CensusController );
 
-    CensusController.$inject = ["Site", "$rootScope", "Asset", "$scope", "ComplexAsset"];
+    CensusController.$inject = ["Site", "$rootScope", "Asset", "$scope", "ComplexAsset", "Relationship"];
 
     /**
      * @class CensusController
@@ -14,7 +14,7 @@
      *
      * @property {String} classindex Okey de l'objet recencé en cours
      */
-    function CensusController(Site, $rootScope, Asset, $scope, ComplexAsset) {
+    function CensusController(Site, $rootScope, Asset, $scope, ComplexAsset, Relationship) {
 
         var vm = this;
 
@@ -38,7 +38,7 @@
         function activate() {
             vm.classindex = "0";
             //Event pour l'édition d'un asset
-            $rootScope.$on('START_UPDATE_ASSET', startUpdateAssetHandler);
+            $rootScope.$on( 'START_UPDATE_ASSET', startUpdateAssetHandler );
         }
 
         /**
@@ -52,8 +52,7 @@
 
                 vm.okey = data.okey;
                 vm.asset = data;
-            }
-            else {
+            } else {
 
                 vm.okey = data;
                 vm.asset = null;
@@ -82,40 +81,41 @@
                 return;
             }
 
-            asset.findRelated(function (data) {
+            asset.findRelated( function(data) {
                 if (data !== undefined) {
                     if (data.root == data.id && data.isComplex) {
                         //Cet élément est déjà la racine, on cherche ses enfants
 
-                        var theAsset = formatAsset(data);
-                        var complex = new ComplexAsset(null, null, '', theAsset);
-                        fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
+                        var theAsset = formatAsset( data );
+                        var complex = new ComplexAsset( null, null, '', theAsset );
+                        fillChildren( complex, theAsset.tree, theAsset.relatedAssets, complex );
                         theAsset.root = complex;
                         theAsset.isProject = false;
                         theAsset.relatedAssets = {};
-                        startCensus(theAsset);
+                        startCensus( theAsset );
+
+                    } else {
+                        Relationship.findRoot( data.id, function(r) {
+                            Asset.findOne( r, function(root) {
+                                var theAsset = formatAsset( root );
+                                var complex = new ComplexAsset( null, null, '', theAsset );
+                                fillChildren( complex, data.tree, data.relatedAssets, complex );
+                                theAsset.root = complex;
+                                theAsset.isProject = false;
+                                theAsset.relatedAssets = {};
+                                startCensus( theAsset );
+                            } );
+                        } );
 
                     }
-                    else {
-                        //Pas la racine, il faut retrouver son père (spoiler : c'est Dark Vador, non je déconne c'est root, "je suis gRoot")
-                        var root = data.relatedAssets[data.root];
-                        var theAsset = formatAsset(root);
-                        var complex = new ComplexAsset(null, null, '', theAsset);
-                        fillChildren(complex, data.tree, data.relatedAssets, complex);
-                        theAsset.root = complex;
-                        theAsset.isProject = false;
-                        theAsset.relatedAssets = {};
-                        startCensus(theAsset);
-                    }
-                }
-                else {
-                    var theAsset = formatAsset(asset);
-                    var complex = new ComplexAsset(null, null, '', theAsset);
+                } else {
+                    var theAsset = formatAsset( asset );
+                    var complex = new ComplexAsset( null, null, '', theAsset );
                     theAsset.root = complex;
                     theAsset.isProject = false;
-                    startCensus(theAsset);
+                    startCensus( theAsset );
                 }
-            })
+            } );
         }
 
         /**
@@ -123,7 +123,7 @@
          * @param asset
          */
         function formatAsset(asset, father) {
-            var object = new ComplexAsset(asset.okey);
+            var object = new ComplexAsset( asset.okey );
             object.id = asset.id;
             object.fields = asset.attributes;
             object.children = [];
@@ -132,7 +132,7 @@
             object.tree = asset.tree;
             object.relatedAssets = asset.relatedAssets;
             object.guid = asset.guid;
-            object.geometry = asset.geometry
+            object.geometry = asset.geometry;
             object.isProject = false;
             return object;
         }
@@ -147,7 +147,7 @@
                 for (var id in tree[node.id]) {
                     var j = tree[node.id][id];
                     relatedAssets[j].root = rootId;
-                    node.children.push(formatAsset(relatedAssets[j], node))
+                    node.children.push( formatAsset( relatedAssets[j], node ) );
                 }
             }
 
@@ -156,7 +156,7 @@
             }
 
             for (var i = 0; i < node.children.length; i++) {
-                fillChildren(node.children[i], tree, relatedAssets, rootId);
+                fillChildren( node.children[i], tree, relatedAssets, rootId );
             }
 
         }

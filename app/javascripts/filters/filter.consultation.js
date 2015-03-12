@@ -231,7 +231,7 @@
             "editobjectforproject": {
                 id: "editobjectforproject",
                 icon: "pencil",
-                method: "",
+                method: "asset.toggleEdit",
                 suffix: "wrench"
             },
             "addtocurrentproject": {

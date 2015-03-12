@@ -494,6 +494,7 @@
                     return (callback || function() {})();
                 } );
             }
+
             var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
             SQLite.exec( zones[0].database_name, request, guids.map( String ), function() {
                 Asset.delete( guids, callback, zones.slice( 1 ) );
