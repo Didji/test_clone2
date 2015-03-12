@@ -123,12 +123,27 @@
              * @param  {Object} asset
              */
             function deleteAsset(asset) {
+
                 alertify.confirm( i18n.get( '_CONFIRM_DELETE_ASSET_' ), function(yes) {
                     if (!yes) {
                         return;
                     }
+                    asset.payload = [{
+                        okey: asset.okey,
+                        guid: asset.guid
+                    }];
+
+                    if (asset.relatedAssets) {
+                        for (var i in asset.relatedAssets) {
+                            asset.payload.push( {
+                                okey: asset.relatedAssets[i].okey,
+                                guid: asset.relatedAssets[i].guid
+                            } );
+                        }
+                    }
                     asset.hideFromMap();
                     asset.timestamp = Date.now();
+
                     Synchronizator.addDeleted( asset );
                 } );
             }

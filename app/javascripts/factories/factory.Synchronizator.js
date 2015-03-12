@@ -267,7 +267,7 @@
         };
 
         /**
-         * @name updateComplexAssetSynchronizator
+         * @name deleteAssetSynchronizator
          * @desc
          */
         Synchronizator.deleteAssetSynchronizator = function(asset, callback) {
@@ -275,10 +275,7 @@
             $http.post(
                 Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
                 {
-                    deleted: [{
-                        okey: asset.okey,
-                        guid: asset.guid
-                    }]
+                    deleted: asset.payload
                 }
             ).success( function(data) {
                 if (Asset.handleDeleteAssets( data, callback )) {
@@ -290,31 +287,6 @@
             } ).finally( function() {
                 asset.syncInProgress = false;
             } );
-        };
-
-        /**
-          * @name handleDeleteAssets
-          * @param  {Array} guids
-          */
-        Synchronizator.handleDeleteAssets = function(data, callback, item) {
-            if (!data.deleted) {
-                (callback || function() {})();
-                return false;
-            }
-
-            var guids = ((+data.deleted === data.deleted) ? [data.deleted] : data.deleted) || [];
-
-            for (var i = 0; i < guids.length; i++) {
-                Relationship.findSubtree( guids[i], function(root, tree) {
-                    var ids = Object.keys( tree );
-                    Asset.delete( ids, function() {
-                        $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", ids );
-                        G3ME.reloadLayers();
-                    } );
-                } );
-            }
-            Synchronizator.deleteItem( item );
-            (callback || function() {})();
         };
 
         /**
