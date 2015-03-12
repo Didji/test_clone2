@@ -379,19 +379,22 @@
 
                     for (var i = 0; i < assets.length; i++) {
                         var newAsset = new Asset( angular.copy( assets[i] ) ),
-                            uuid = 10000000 + (Math.random() * 10000000 | 0);
+                            _uuid = window.uuid();
 
-                        trad[newAsset.guid] = uuid ;
+                        trad[newAsset.guid] = _uuid ;
 
-                        newAsset.guid = uuid;
-                        newAsset.id = uuid;
+                        newAsset.guid = _uuid;
+                        newAsset.id = _uuid;
+
+                        newAsset.attributes = newAsset.attributes || {};
+                        newAsset.attributes._original = assets[i].guid;
 
                         if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;
-                            if (project.expressions[assets[i].okey]) {
+                            if ( project.expressions[assets[i].okey] && project.expressions[assets[i].okey].unchanged ) {
                                 newAsset.symbolId = "PROJECT_" + assets[i].okey + project.expressions[assets[i].okey].unchanged;
                             } else {
-                                newAsset.symbolId = "PROJECT_" + assets[i].symbolId;
+                                newAsset.symbolId = assets[i].symbolId;
                             }
                         }
 
@@ -589,6 +592,7 @@
                         };
                     }
                 }
+                console.log(mySymbology);
 
                 for (k = 0; k < fields_to_delete.length; k++) {
                     delete asset_[fields_to_delete[k]];
