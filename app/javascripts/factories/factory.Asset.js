@@ -391,7 +391,7 @@
 
                         if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;
-                            if ( project.expressions[assets[i].okey] && project.expressions[assets[i].okey].unchanged ) {
+                            if (project.expressions[assets[i].okey] && project.expressions[assets[i].okey].unchanged) {
                                 newAsset.symbolId = "PROJECT_" + assets[i].okey + project.expressions[assets[i].okey].unchanged;
                             } else {
                                 newAsset.symbolId = assets[i].symbolId;
@@ -592,7 +592,6 @@
                         };
                     }
                 }
-                console.log(mySymbology);
 
                 for (k = 0; k < fields_to_delete.length; k++) {
                     delete asset_[fields_to_delete[k]];
