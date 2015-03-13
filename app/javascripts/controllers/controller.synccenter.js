@@ -45,6 +45,9 @@
          * @desc Synchronize tous les items
          */
         function synchronizeAll() {
+            if (vm.synchronizing) {
+                return;
+            }
             vm.synchronizing = true;
             updateList( function() {
                 Synchronizator.syncItems( vm.syncItems, function() {

@@ -179,7 +179,6 @@
          * @desc
          */
         Synchronizator.syncItems = function(items, callback, force) {
-
             if (Synchronizator.globalSyncInProgress && !force) {
                 return;
             }
@@ -278,14 +277,15 @@
                     deleted: asset.payload
                 }
             ).success( function(data) {
-                if (Asset.handleDeleteAssets( data, callback )) {
+                if (Asset.handleDeleteAssets( data )) {
                     asset.synced = true;
                     asset.save();
                 }
             } ).error( function(data) {
-                Asset.handleDeleteAssets( data, callback );
+                Asset.handleDeleteAssets( data );
             } ).finally( function() {
                 asset.syncInProgress = false;
+                (callback || function() {})();
             } );
         };
 
