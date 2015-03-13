@@ -482,7 +482,10 @@
             } else if (guids.length && (guids[0] instanceof Asset || guids[0] instanceof Object)) {
                 var guidsbis = [];
                 for (var i = 0, ii = guids.length; i < ii; i++) {
-                    guidsbis.push( guids[i].id );
+                    var id = guids[i].id || guids[i].uuid ;
+                    if (id) {
+                        guidsbis.push( id );
+                    }
                 }
                 guids = guidsbis;
             }

@@ -279,6 +279,9 @@
          * @desc
          */
         Project.prototype.setAssets = function(assets, relations, callback) {
+            if (!assets || !assets.length) {
+                return (callback || function() {})();
+            }
             var project = this ;
             if (relations && relations.length) {
                 Relationship.save( relations );
