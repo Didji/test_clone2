@@ -458,10 +458,10 @@
                 if ((assets[i] + "").indexOf( '|' ) === -1) {
                     continue;
                 }
-                originals.push( +assets[i].split( '|' )[0] );
+                originals.push( assets[i].split( '|' )[0] );
             }
             assets = assets.concat( originals );
-            return (assets.indexOf( +asset.guid ) !== -1);
+            return (assets.indexOf( asset.guid ) !== -1);
         };
 
         /**
