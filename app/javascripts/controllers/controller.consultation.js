@@ -116,6 +116,10 @@
             $rootScope.$on( "_REMOTE_DELETE_ASSETS_", function(event, guids) {
                 dropAssetsFromListAndMulti( guids );
             } );
+            
+            $rootScope.$on( "RELOAD_ASSET_SHEET", function(event, asset) {
+                reloadAssetSheet( asset );
+            });
 
 
             $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
@@ -144,6 +148,18 @@
             }
             vm.open();
             vm.loading = false;
+        }
+        
+        function reloadAssetSheet(asset) {
+//            updateAssetsList( [] );
+            vm.groups[asset.priority] = vm.groups[asset.priority] || {};
+            vm.groups[asset.priority][asset.okey] = vm.groups[asset.priority][asset.okey] || [];
+            vm.groups[asset.priority][asset.okey].push( asset );
+            vm.selectedAssets.inList[asset.guid] = asset;
+//            updateAssetsList([asset])
+//            vm.open();
+//            vm.loading = false;
+            $scope.$digest();
         }
 
         /**

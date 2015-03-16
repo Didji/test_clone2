@@ -289,7 +289,7 @@
          * @desc
          */
         ComplexAsset.prototype.gimmeYourLinearSubtree = function() {
-            var linearMe = angular.copy( this );
+            var linearMe = angular.copy( this.__clean() );
             delete linearMe.children;
             var linearSubtree = [linearMe];
             for (var i = 0; i < this.children.length; i++) {

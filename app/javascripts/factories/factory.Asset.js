@@ -787,6 +787,16 @@
                 Asset.save( asset, callback );
             } );
         };
+        
+        Asset.emptyCache = function(ids) {
+            if (!ids.length) {
+                delete Asset.cache;
+                return;
+            }
+            for (var i in ids) {
+                delete Asset.cache[ids[i]];
+            }
+        }
 
         return Asset;
     }

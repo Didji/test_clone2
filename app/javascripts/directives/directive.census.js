@@ -1,4 +1,4 @@
-angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function ($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
+angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", "Asset", "Relationship", function ($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project, Asset, Relationship) {
 
     "use strict";
 
@@ -93,6 +93,11 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
                 scope.onclose();
                 scope.removeLayers();
                 scope.root.save(null, true);
+//                Relationship.findRelated(scope.asset.id, function(root, tree) {
+//                    var objects = Object.keys(tree);
+//                    Asset.emptyCache(objects);
+//                    $rootScope.$broadcast( "RELOAD_ASSET_SHEET", scope.root );
+//                });
             }
             scope.snap = function (node) {
                 Camera.snap(function (picture) {
