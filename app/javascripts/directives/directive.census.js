@@ -10,8 +10,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
             'asset': '=',
             'okey': '=',
             'classindex': '=',
-            'onsave': '&',
-            'oncancel': '&'
+            'onclose': '&'
         },
 
         templateUrl: 'partials/censusDirectiveTemplate.html',
@@ -56,7 +55,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
 
             scope.cancel = function () {
                 scope.okey = undefined;
-                scope.oncancel();
+                scope.onclose();
                 scope.removeLayers();
             };
 
@@ -81,7 +80,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
                     alertify.alert('Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
                     return;
                 }
-                scope.onsave();
+                scope.onclose();
                 scope.removeLayers();
                 scope.root.save(Project, false);
             };
@@ -91,7 +90,7 @@ angular.module('smartgeomobile').directive("census", ['$compile', "ComplexAsset"
                     alertify.alert('Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>');
                     return;
                 }
-                scope.onsave();
+                scope.onclose();
                 scope.removeLayers();
                 scope.root.save(null, true);
             }

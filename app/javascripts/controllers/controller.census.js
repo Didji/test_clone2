@@ -19,7 +19,7 @@
         var vm = this;
 
         vm.startCensus = startCensus;
-        vm.cancel = cancel;
+        vm.close = close;
 
         vm.symbology = Site.current.symbology;
         vm.dependancies = Site.current.dependancies;
@@ -64,10 +64,10 @@
         }
 
         /**
-         * @name cancel
-         * @desc Annule le recensement en cours
+         * @name close
+         * @desc Ferme le recensement en cours
          */
-        function cancel() {
+        function close() {
             vm.okey = null;
         }
 
