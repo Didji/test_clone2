@@ -781,6 +781,24 @@
         };
 
         /**
+         * @name getIds
+         * @desc
+         */
+        Asset.getIds = function(complex, ids) {
+            ids = ids || [] ;
+
+            complex.children = complex.children || [] ;
+
+            ids.push( complex.id );
+
+            for (var i = 0, ii = complex.children.length; i < ii; i++) {
+                Asset.getIds( complex.children[i], ids );
+            }
+
+            return ids;
+        };
+
+        /**
          * @name update
          * @desc
          * @param {Number|Array} guids
