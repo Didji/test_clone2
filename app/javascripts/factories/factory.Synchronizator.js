@@ -248,6 +248,7 @@
                     } );
                 } else {
                     complexasset.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
+                    (callback || function() {})();
                 }
             } ).error( function(data) {
                 complexasset.error = (data && data.error && data.error.text) ;

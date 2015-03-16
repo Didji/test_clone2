@@ -113,9 +113,11 @@
          * @param {Function} TODO:callback
          */
         Relationship.save = function(relationship, callback) {
+            if (!relationship) {
+                return (callback || function() {})();
+            }
             var request = [],
                 args = [];
-
             for (var daddy in relationship) {
                 for (var child in relationship[daddy]) {
                     request.push( 'INSERT INTO relationship VALUES ( ? , ? );' );

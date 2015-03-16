@@ -477,6 +477,10 @@
          */
         Asset.delete = function(guids, callback, zones) {
 
+            if (guids instanceof Array && guids.length === 0) {
+                return (callback || function() {})();
+            }
+
             if ((guids instanceof Asset || guids instanceof Object) && !guids.length) {
                 guids = [guids.guid];
             } else if (guids.length && (guids[0] instanceof Asset || guids[0] instanceof Object)) {
@@ -787,7 +791,7 @@
                 Asset.save( asset, callback );
             } );
         };
-        
+
         Asset.emptyCache = function(ids) {
             if (!ids.length) {
                 delete Asset.cache;
@@ -796,7 +800,7 @@
             for (var i in ids) {
                 delete Asset.cache[ids[i]];
             }
-        }
+        };
 
         return Asset;
     }
