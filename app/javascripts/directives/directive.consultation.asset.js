@@ -68,7 +68,7 @@
              */
             function removeFromProject(asset) {
                 Project.currentLoadedProject.removeAsset( asset, function() {
-                    alertify.alert( i18n.get( "_PROJECT_ASSETS_REMOVED_", Project.currentLoadedProject.name ) );
+                    alertify.log( i18n.get( "_PROJECT_ASSETS_REMOVED_", Project.currentLoadedProject.name ) );
                     $rootScope.$broadcast( "UPDATE_PROJECTS" );
                     scope.$apply();
                 } );
