@@ -250,8 +250,16 @@
                     complexasset.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
                     (callback || function() {})();
                 }
-            } ).error( function(data) {
-                complexasset.error = (data && data.error && data.error.text) ;
+            } ).error( function(data, code) {
+                if (+code === 404) {
+                    complexasset.synced = true ;
+                    complexasset.syncInProgress = false;
+                    complexasset.save( callback );
+                    alertify.alert( i18n.get( "_SYNC_UPDATE_HAS_BEEN_DELETED" ) );
+                    Asset.delete( Asset.getIds( complexasset ) );
+                } else {
+                    complexasset.error = (data && data.error && data.error.text) ;
+                }
                 complexasset.syncInProgress = false;
                 complexasset.save( callback );
             } );

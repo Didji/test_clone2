@@ -101,6 +101,7 @@ window.smartgeo_i18n_lang.fr = {
     _SYNC_UNKNOWN_ERROR_: "Erreur inconnue lors de la synchronisation.",
     _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?",
     _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?",
+    _SYNC_UPDATE_HAS_BEEN_DELETED: "L'objet à mettre à jour n'a pas été trouvé.",
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",
     _INTENT_AUTH_FAILED: "L'authentification a échoué (%s)",
@@ -153,7 +154,7 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECT_ASSETS_ADDED_: "Objet(s) ajouté(s) au projet %s",
     _PROJECT_ASSETS_REMOVED_: "Objet(s) retiré(s) du projet %s",
     _PROJECT_ASSETS_ARE_LOCKED_: "Le projet ne peut être sauvegardé car les objets suivants sont bloqués : \n %s",
-    _PROJECTS_LIST_CANT_BE_LOAD_ : "Impossible d'actualiser la liste tant qu'un projet est chargé.",
+    _PROJECTS_LIST_CANT_BE_LOAD_: "Impossible d'actualiser la liste tant qu'un projet est chargé.",
     _RETRY_: "Réessayer"
 
 };
