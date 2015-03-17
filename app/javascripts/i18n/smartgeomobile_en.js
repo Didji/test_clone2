@@ -101,6 +101,7 @@ window.smartgeo_i18n_lang.en = {
     _SYNC_UNKNOWN_ERROR_: "Unknown error while synchronizing reports",
     _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s?",
     _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s?",
+    _SYNC_UPDATE_HAS_BEEN_DELETED: "Object not found",
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",
     _INTENT_AUTH_FAILED: "%s",
@@ -152,6 +153,6 @@ window.smartgeo_i18n_lang.en = {
     _PROJECT_ASSETS_ADDED_: "Asset added to project %s",
     _PROJECT_ASSETS_REMOVED_: "Asset removed from project %s",
     _PROJECT_ASSETS_ARE_LOCKED_: "The project can not be saved because the following assets are locked : \n %s",
-    _PROJECTS_LIST_CANT_BE_LOAD_ : "Cannot refresh the list while a project is loaded.",
+    _PROJECTS_LIST_CANT_BE_LOAD_: "Cannot refresh the list while a project is loaded.",
     _RETRY_: "Retry"
 };
