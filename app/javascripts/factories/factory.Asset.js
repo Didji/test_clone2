@@ -334,6 +334,10 @@
             }
         };
 
+        Asset.prototype.getLabel = function() {
+            return this.label || Site.current.metamodel[this.okey].label;
+        };
+
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
             if (!zones) {
                 zones = Site.current.zones;

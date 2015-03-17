@@ -144,6 +144,8 @@
         function _activityListFilter(asset) {
             if (asset && asset.length) {
                 asset = asset[0];
+            } else if (!asset) {
+                return [];
             }
             var activitiesOut = [];
             for (var i = 0; i < Site.current.activities.length; i++) {
@@ -253,6 +255,9 @@
         };
 
         function _guirlandeFilter(asset) {
+            if (!asset) {
+                return [];
+            }
             var authAction = [],
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length,
                 isUpdatable = Right.isUpdatable( asset ),
