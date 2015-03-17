@@ -59,7 +59,11 @@
             }
 
             function markObjectAsDeletedForCurrentProject(asset) {
-                Project.currentLoadedProject.markObjectAsToBeRemoved( asset );
+                Project.currentLoadedProject.deleteAsset( asset, function() {
+                    alertify.log( i18n.get( "_PROJECT_ASSETS_DELETED_", Project.currentLoadedProject.name ) );
+                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                    scope.$apply();
+                } );
             }
 
             /**
