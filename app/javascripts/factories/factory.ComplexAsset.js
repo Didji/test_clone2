@@ -250,11 +250,20 @@
          */
         ComplexAsset.getGeometryFromCensusAsset = function(complex) {
             var type ;
-            if (complex.geometry.coordinates.length === 2 && typeof complex.geometry.coordinates[0] === "number") {
-                type = "Point";
-                complex.geometry = [complex.geometry.coordinates[0], complex.geometry.coordinates[1]];
+            if (complex.geometry.coordinates) {
+                if (complex.geometry.coordinates.length === 2 && typeof complex.geometry.coordinates[0] === "number") {
+                    type = "Point";
+                    complex.geometry = [complex.geometry.coordinates[0], complex.geometry.coordinates[1]];
+                } else {
+                    type = "LineString";
+                }
             } else {
-                type = "LineString";
+                if (complex.geometry.length === 2 && typeof complex.geometry[0] === "number") {
+                    type = "Point";
+                    complex.geometry = [complex.geometry[1], complex.geometry[0]];
+                } else {
+                    type = "LineString";
+                }
             }
             return {
                 type: type,
@@ -307,7 +316,7 @@
         ComplexAsset.prototype.save = function(Project, update) {
 
             var node = this.__clone( true ),
-                method = node.isProject ? "project" : (update ? "update" : "new");
+                method = node.okey.search( /PROJECT_/ ) === 0 ? "project" : (update ? "update" : "new");
 
             node.timestamp = node.timestamp = Date.now();
 

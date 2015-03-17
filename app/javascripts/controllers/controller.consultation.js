@@ -128,7 +128,7 @@
                     for (var i = 0; i < results.length; i++) {
                         assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
                     }
-                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets, false );
+                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                     $scope.$digest();
                 } );
 
