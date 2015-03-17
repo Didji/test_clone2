@@ -90,12 +90,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     }
                     scope.onclose();
                     scope.removeLayers();
-                    scope.root.save( null, true );
-                    //                Relationship.findRelated(scope.asset.id, function(root, tree) {
-                    //                    var objects = Object.keys(tree);
-                    //                    Asset.emptyCache(objects);
-                    //                    $rootScope.$broadcast( "RELOAD_ASSET_SHEET", scope.root );
-                    //                });
+                    scope.root.save( Project, true );
                 };
 
                 scope.snap = function(node) {

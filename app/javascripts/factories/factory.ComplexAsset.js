@@ -212,13 +212,13 @@
          * @name formatComplexToSimple
          * @desc
          */
-        ComplexAsset.formatComplexToSimple = function(complex, Project) {
+        ComplexAsset.formatComplexToSimple = function(complex, Project, update) {
             var assets = complex.gimmeYourLinearSubtree(), asset , i  ;
             var masterGeom = null ;
             var masterBounds = null ;
             for (i = 0; i < assets.length; i++) {
                 asset = assets[i] ;
-                asset.guid = asset.uuid ;
+                asset.guid = update ? asset.guid : asset.uuid ;
                 asset.attributes = asset.fields ;
                 asset.classindex = (Project && Project.currentLoadedProject && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
@@ -250,9 +250,9 @@
          */
         ComplexAsset.getGeometryFromCensusAsset = function(complex) {
             var type ;
-            if (complex.geometry.length === 2 && typeof complex.geometry[0] === "number") {
+            if (complex.geometry.coordinates.length === 2 && typeof complex.geometry.coordinates[0] === "number") {
                 type = "Point";
-                complex.geometry = [complex.geometry[1], complex.geometry[0]];
+                complex.geometry = [complex.geometry.coordinates[0], complex.geometry.coordinates[1]];
             } else {
                 type = "LineString";
             }
@@ -333,13 +333,14 @@
          */
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
-                assets = ComplexAsset.formatComplexToSimple( this, Project ),
+                assets = ComplexAsset.formatComplexToSimple( this, Project, update ),
                 method = update ? "update" : "save" ;
-
 
             Asset[method]( assets, function() {
                 if (!update) {
                     Relationship.save( relationships, G3ME.reloadLayers );
+                } else {
+                    $rootScope.$broadcast( "REFRESH_CONSULTATION" );
                 }
             } );
 
