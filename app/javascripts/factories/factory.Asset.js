@@ -335,6 +335,8 @@
         };
 
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
+            var guidsbis = [];
+
             if (!zones) {
                 zones = Site.current.zones;
                 partial_response = [];
@@ -343,14 +345,14 @@
                 window._SMARTGEO_STOP_SEARCH = false;
                 return callback( partial_response );
             }
-            if (typeof guids !== 'object') {
-                guids = ["" + guids];
+            if (!(guids instanceof Array)) {
+                guids = [guids];
             }
-            var i = 0 ;
             guids = guids.map( String );
-            for (i = 0; i < guids.length; i++) {
-                if (Asset.cache[guids[i]]) {
-                    partial_response.push( angular.copy( Asset.cache[guids[i]] ) );
+            guidsbis = angular.copy( guids );
+            for (var i = 0; i < guidsbis.length; i++) {
+                if (Asset.cache[guidsbis[i]]) {
+                    partial_response.push( angular.copy( Asset.cache[guidsbis[i]] ) );
                     guids.splice( i, 1 );
                 }
             }
