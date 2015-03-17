@@ -132,11 +132,10 @@
                         if (project.added.indexOf( assets[i].id ) !== -1) {
                             payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
                             payload.added[assets[i].okey].push( assets[i].attributes._original );
-                        } else if (project.removed.indexOf( assets[i].id ) !== -1) {
+                        } else if (project.removed.indexOf( assets[i].guid ) !== -1) {
                             payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
                             payload.removed[assets[i].okey].push( assets[i].id );
                         }
-
                         if (project.deleted.indexOf( assets[i].id ) !== -1) {
                             payload.deleted.push( assets[i] );
                         } else if (project.updated.indexOf( assets[i].id ) !== -1) {
@@ -250,6 +249,7 @@
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
+                project.assets = [];
                 $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", assets );
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
@@ -385,7 +385,7 @@
                 var guids = Object.keys( tree ),
                     toBeHardDeleted = [], guid;
                 for (var i = 0; i < guids.length; i++) {
-                    guid = +guids[i];
+                    guid = guids[i];
                     if (project.added.indexOf( guid ) !== -1) {
                         project.added.splice( project.added.indexOf( guid ), 1 );
                     } else if (project.removed.indexOf( guid ) === -1) {

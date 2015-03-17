@@ -116,7 +116,7 @@
             $rootScope.$on( "_REMOTE_DELETE_ASSETS_", function(event, guids) {
                 dropAssetsFromListAndMulti( guids );
             } );
-            
+
             $rootScope.$on( "RELOAD_ASSET_SHEET", function(event, asset) {
                 reloadAssetSheet( asset );
             });
@@ -149,7 +149,7 @@
             vm.open();
             vm.loading = false;
         }
-        
+
         function reloadAssetSheet(asset) {
 //            updateAssetsList( [] );
             vm.groups[asset.priority] = vm.groups[asset.priority] || {};
@@ -172,7 +172,7 @@
                 if (vm.selectedAssets.inMulti[guid]) {
                     dropAssetFromMultiselection( vm.selectedAssets.inMulti[guid] );
                 }
-                if (vm.selectedAssets.inList[guid]) {
+                if (vm.selectedAssets.inList && vm.selectedAssets.inList[guid]) {
                     dropAssetFromList( vm.selectedAssets.inList[guid] );
                 }
                 $scope.$digest();
