@@ -152,6 +152,7 @@ window.smartgeo_i18n_lang.en = {
     _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
     _PROJECT_ASSETS_ADDED_: "Asset added to project %s",
     _PROJECT_ASSETS_REMOVED_: "Asset removed from project %s",
+    _PROJECT_ASSETS_DELETED_: "Asset mark as deleted in project %s",
     _PROJECT_ASSETS_ARE_LOCKED_: "The project can not be saved because the following assets are locked : \n %s",
     _PROJECTS_LIST_CANT_BE_LOAD_: "Cannot refresh the list while a project is loaded.",
     _RETRY_: "Retry"

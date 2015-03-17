@@ -364,17 +364,6 @@
             this.save( callback );
         };
 
-
-
-        Project.prototype.markObjectAsToBeRemoved = function(asset, callback) {
-            this.deleted.push( asset.guid );
-            asset.symbolId = asset.okey + (this.expressions[asset.okey.replace( "PROJECT_", "" )] && this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted) || 0 ;
-            Asset.update( asset, function() {
-                G3ME.reloadLayers();
-            } );
-            this.save( callback );
-        };
-
         /**
          * @name removeAsset
          * @desc
@@ -403,24 +392,23 @@
         };
 
         /**
-         * @name   deleteAsset
+         * @name deleteAsset
          * @desc
-         * @param  {Asset}    asset
-         * @param  {Function} callback
-         * @return {void}
          */
         Project.prototype.deleteAsset = function(asset, callback) {
-            var project = this;
-
+            var _this = this;
             Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
                 var guids = Object.keys( tree );
-
                 for (var i = 0; i < guids.length; i++) {
-                    if (project.deleted.indexOf( +guids[i] ) === -1) {
-                        project.deleted.push( +guids[i] );
+                    if (_this.deleted.indexOf( guids[i] ) === -1) {
+                        _this.deleted.push( guids[i] );
                     }
                 }
-                project.save( callback );
+                asset.symbolId = asset.okey + (_this.expressions[asset.okey.replace( "PROJECT_", "" )] && _this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted) || 0 ;
+                Asset.update( asset, function() {
+                    G3ME.reloadLayers();
+                } );
+                _this.save( callback );
             } );
         };
 

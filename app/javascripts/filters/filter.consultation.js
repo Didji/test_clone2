@@ -262,7 +262,7 @@
                 isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
                 isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset )) || (asset.okey.search( 'PROJECT_' ) === 0),
                 hasBeenDuplicatedForProjet = Project.currentLoadedProject && Project.currentLoadedProject.hasDuplicatedAsset( asset ),
-                hasNotBeenMarkedAsRemoved = isThereAProjectLoaded && (Project.currentLoadedProject.deleted.indexOf( +asset.guid ) === -1) ;
+                hasNotBeenMarkedAsRemoved = isThereAProjectLoaded && (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) ;
 
             if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
                 authAction.push( actions.fetchhistory );
