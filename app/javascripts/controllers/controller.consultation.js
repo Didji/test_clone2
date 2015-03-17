@@ -87,7 +87,6 @@
             } );
 
             $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets, coordinates) {
-
                 if (coordinates === false) {
                     vm.coordinates = coordinates;
                 }
@@ -117,10 +116,24 @@
                 dropAssetsFromListAndMulti( guids );
             } );
 
-            $rootScope.$on( "RELOAD_ASSET_SHEET", function(event, asset) {
-                reloadAssetSheet( asset );
-            });
+            $rootScope.$on( "REFRESH_CONSULTATION", function() {
+                var ids = [];
+                for (var id in vm.selectedAssets.inList) {
+                    ids.push( id );
+                }
+                Asset.cache = {} ;
 
+                Asset.findAssetsByGuids( ids, function(results) {
+                    var assets = [];
+                    for (var i = 0; i < results.length; i++) {
+                        assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
+                    }
+                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets, false );
+                    $scope.$digest();
+                } );
+
+
+            } );
 
             $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
 
@@ -151,14 +164,10 @@
         }
 
         function reloadAssetSheet(asset) {
-//            updateAssetsList( [] );
             vm.groups[asset.priority] = vm.groups[asset.priority] || {};
             vm.groups[asset.priority][asset.okey] = vm.groups[asset.priority][asset.okey] || [];
             vm.groups[asset.priority][asset.okey].push( asset );
             vm.selectedAssets.inList[asset.guid] = asset;
-//            updateAssetsList([asset])
-//            vm.open();
-//            vm.loading = false;
             $scope.$digest();
         }
 

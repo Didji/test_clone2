@@ -347,9 +347,7 @@
                 guids = ["" + guids];
             }
             var i = 0 ;
-            for (i = 0; i < guids.length; i++) {
-                guids[i] = "" + guids[i];
-            }
+            guids = guids.map( String );
             for (i = 0; i < guids.length; i++) {
                 if (Asset.cache[guids[i]]) {
                     partial_response.push( angular.copy( Asset.cache[guids[i]] ) );
@@ -510,6 +508,9 @@
 
             var request = 'DELETE FROM ASSETS WHERE id in (' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')';
             SQLite.exec( zones[0].database_name, request, guids.map( String ), function() {
+                if (zones.length === 1) {
+                    return (callback || function() {})();
+                }
                 Asset.delete( guids, callback, zones.slice( 1 ) );
             } );
 
@@ -521,16 +522,20 @@
          * @param {Object} asset
          */
         Asset.convertRawRow = function(asset) {
-            var a = angular.copy( asset ),
-                parsed = JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) );
-            return angular.extend( a, {
-                okey: parsed.okey,
-                attributes: parsed.attributes,
-                guid: a.id,
-                geometry: JSON.parse( a.geometry ),
-                asset: undefined,
-                label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )
-            } );
+            var a = angular.copy( asset ), parsed ;
+            try {
+                parsed = a.asset ? JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) ) : a ;
+                return angular.extend( a, {
+                    okey: parsed.okey,
+                    attributes: parsed.attributes,
+                    guid: a.id,
+                    geometry: JSON.parse( a.geometry ),
+                    asset: undefined,
+                    label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )
+                } );
+            } catch ( e ) {
+                return asset;
+            }
         };
 
         Asset.prototype.toggleEdit = function() {
@@ -667,6 +672,7 @@
                         ymax: bounds.ne.lat
                     };
                 } else {
+
                     continue;
                 }
 
@@ -685,6 +691,7 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
+
             // if (!asset.length) {
             //     return (callback || function() {})();
             // }

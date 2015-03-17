@@ -133,6 +133,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                         Smartgeo.silentLogin( function() {
                             $route.reload();
                         } );
+                    } else {
+                        (callback || function() {})();
                     }
                 } );
         },
@@ -227,6 +229,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         update: function(site, callback) {
             callback = callback || function() {};
             Installer.getUpdateJSON( site, function(site) {
+                if (!site) {
+                    (callback || function() {})();
+                }
                 var formatedSite = Installer.formatSiteMetadata( site, true );
                 Site.current.oldTimestamp = Site.current.timestamp;
                 angular.extend( Site.current, formatedSite );
