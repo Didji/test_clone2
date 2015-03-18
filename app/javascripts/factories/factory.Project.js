@@ -249,7 +249,6 @@
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
-                project.assets = [];
                 $rootScope.$broadcast( "_REMOTE_DELETE_ASSETS_", assets );
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
@@ -309,6 +308,7 @@
             this.new = [];
             this.updated = [];
             this.deleted = [];
+            this.assets = [];
             Asset.delete( [], function() {
                 project.unload( callback );
             } );
