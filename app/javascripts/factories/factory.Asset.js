@@ -537,7 +537,8 @@
                     guid: a.id,
                     geometry: JSON.parse( a.geometry ),
                     asset: undefined,
-                    label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" )
+                    label: a.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ),
+                    project_status: parsed.project_status
                 } );
             } catch ( e ) {
                 return asset;
