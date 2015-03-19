@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, G3lic, i18n, Smartgeo) {
+angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, G3lic, i18n, Smartgeo, Right) {
 
     'use strict';
 
@@ -109,7 +109,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
      * @returns {LicenseManager} LicenseManager
      */
     LicenseManager.prototype.__dispatchRights = function(rights) {
-        $rootScope.rights = this.__rights = (rights || this.__rights);
+        $rootScope.rights = Right.values = this.__rights = (rights || this.__rights);
         return this;
     };
 

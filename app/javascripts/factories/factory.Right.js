@@ -55,26 +55,6 @@
             Right.values[right] = value ;
         };
 
-        Right.values = {
-            census: true,
-            consultation: true,
-            search: true,
-            logout: true,
-            report: true,
-            parameters: true,
-            planning: true,
-            history: true,
-            photo: true,
-            project: true,
-            media: true,
-            myposition: true,
-            activelayers: true,
-            goto: true,
-            synccenter: true,
-            siteselection: true,
-            _DONT_REALLY_RESET: false
-        };
-
         return Right;
     }
 
