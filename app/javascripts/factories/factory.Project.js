@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship", "ComplexAsset"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship", "ComplexAsset", "Synchronizator"];
 
 
-    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship, ComplexAsset) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship, ComplexAsset, Synchronizator) {
 
         /**
          * @class ProjectFactory
@@ -124,8 +124,7 @@
                     'updated': []
                 },
                 project = this ;
-
-            ComplexAsset.find( this.new, function(complexes) {
+            Synchronizator.getAll('ComplexAsset', 'project_new', function(complexes) {
                 payload.new = complexes;
                 Asset.findAssetsByGuids( project.added.concat( project.removed.concat( project.deleted.concat( project.updated ) ) ), function(assets) {
                     for (var i = 0; i < assets.length; i++) {
@@ -246,6 +245,7 @@
             this.loaded = false ;
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
+            Synchronizator.deleteAllProjectItems();
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
@@ -360,6 +360,21 @@
                 assets[i].project_status = "added";
                 this.new.push( assets[i].guid );
                 this.assets.push( assets[i].guid );
+            }
+            this.save( callback );
+        };
+
+        /**
+         * @name addUpdated
+         * @desc
+         */
+        Project.prototype.addUpdated = function(assets, callback) {
+            if (!assets.length) {
+                assets = [assets];
+            }
+            for (var i = 0; i < assets.length; i++) {
+                assets[i].project_status = "updated";
+                this.updated.push( assets[i].guid );
             }
             this.save( callback );
         };

@@ -316,7 +316,8 @@
         ComplexAsset.prototype.save = function(Project, update) {
 
             var node = this.__clone( true ),
-                method = node.okey.search( /PROJECT_/ ) === 0 ? "project" : (update ? "update" : "new");
+                prefix = node.okey.search( /PROJECT_/ ) === 0 ? "project_" : "",
+                method = prefix + (update ? "update" : "new");
 
             node.timestamp = node.timestamp = Date.now();
 
@@ -328,8 +329,10 @@
                 node.uuids.push( assets[i].uuid || assets[i].guid );
             }
 
-            if (node.isProject) {
+            if (node.isProject && !update) {
                 Project.currentLoadedProject.addNew( assets );
+            } else if (node.isProject && update) {
+                Project.currentLoadedProject.addUpdated( assets );
             }
 
             Synchronizator.add( method, node.__clean() );

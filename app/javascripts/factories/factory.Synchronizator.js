@@ -322,6 +322,29 @@
         };
 
         /**
+         * @name deleteAll
+         * @desc
+         */
+        Synchronizator.deleteAll = function(type, actions, callback) {
+            Synchronizator.listItems( function(items) {
+                for (var i = 0, ii = items.length; i < ii; i++) {
+                    if ((type ? items[i].type === type : true) && (actions ? actions.indexOf(items[i].action) !== -1 : true)) {
+                        Synchronizator.deleteItem(items[i]);
+                    }
+                }
+                (callback || function() {})( );
+            } );
+        }
+
+        /**
+         * @name deleteAllProjectItems
+         * @desc
+         */
+        Synchronizator.deleteAllProjectItems = function(callback) {
+            Synchronizator.deleteAll(null, ["project_new", "project_update"], callback);
+        }
+
+        /**
          * @name getAll
          * @desc
          */
