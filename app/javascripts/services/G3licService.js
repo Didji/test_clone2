@@ -2,7 +2,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3lic', ['$resource', function($res
 
         "use strict";
 
-        return $resource( 'http://localhost:3000/licenses/:method', {}, {
+        return $resource( 'http://10.133.110.30:8081/licenses/:method', {}, {
             register: {
                 method: 'POST',
                 params: {

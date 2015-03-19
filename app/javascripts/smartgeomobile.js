@@ -1,12 +1,6 @@
 angular
     .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
-    .config( config ).run( function($rootScope, Right /* ,LicenseManager*/ ) {
-
-    "use strict" ;
-    // Pour activer le serveur de license :
-    // Activer la licence + changer l'url du serveur dans app/javascripts/services/G3licService.js + supprimer la ligne suivante
-    $rootScope.rights = Right.values ;
-} );
+    .config( config ).run( function(LicenseManager) {} );
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide"];
 
