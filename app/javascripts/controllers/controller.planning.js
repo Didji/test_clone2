@@ -56,7 +56,7 @@
 
             // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
             $timeout( function() {
-                Synchronizator.getAll( 'Report', function(reports) {
+                Synchronizator.getAllByType( 'Report', function(reports) {
                     removeObsoleteMission( reports );
                     vm.synchronize();
                 } );

@@ -325,17 +325,33 @@
          * @name getAll
          * @desc
          */
-        Synchronizator.getAll = function(type, callback) {
+        Synchronizator.getAll = function(type, action, callback) {
             Synchronizator.listItems( function(items) {
                 var typedItems = [];
                 for (var i = 0, ii = items.length; i < ii; i++) {
-                    if (items[i].type === type) {
+                    if ((type ? items[i].type === type : true) && (action ? items[i].action === action : true)) {
                         typedItems.push( items[i] );
                     }
                 }
                 (callback || function() {})( typedItems );
             } );
         };
+
+        /**
+         * @name getAllByType
+         * @desc
+         */
+        Synchronizator.getAllByType = function(type, callback) {
+            Synchronizator.getAll(type, null, callback);
+        }
+
+        /**
+         * @name getAllByAction
+         * @desc
+         */
+        Synchronizator.getAllByAction = function(action, callback) {
+            Synchronizator.getAll(null, action, callback);
+        }
 
         /**
          * @name getAll
