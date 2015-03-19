@@ -179,12 +179,13 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Applique la visibilité aux éléments du menu en fonction des droits et de l'attribut 'specialVisibility' s'il est défini.
          */
         vm.applyVisibility = function() {
-            for (var menuItem in vm.menuItems) {
+            var menuItem;
+            for (menuItem in vm.menuItems) {
                 vm.menuItems[menuItem].displayMenuItem = (vm.menuItems[menuItem].specialVisibility ? vm[vm.menuItems[menuItem].specialVisibility]() : true);
                 vm.menuItems[menuItem].displayItemContent = false;
             }
 
-            for (var menuItem in vm.bottomMenuItems) {
+            for (menuItem in vm.bottomMenuItems) {
                 vm.bottomMenuItems[menuItem].displayMenuItem = (vm.bottomMenuItems[menuItem].specialVisibility ? vm[vm.bottomMenuItems[menuItem].specialVisibility]() : true);
                 vm.bottomMenuItems[menuItem].displayItemContent = false;
             }
