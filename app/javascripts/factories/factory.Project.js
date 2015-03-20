@@ -69,7 +69,7 @@
                 project.setAssets( data.assets, data.relations, function() {
                     project.setProjectLoaded( callback );
                 } );
-            } ).error( Project.smartgeoReachError ).finally( function() {
+            } ).error( Project.handleLoadError ).finally( function() {
                 project.loading = false ;
             } );
         };
@@ -148,8 +148,6 @@
             } );
         };
 
-
-
         /**
          * @name handleSynchronizeError
          * @desc Gére les erreurs remontées du service d'ajout/relachement d'asset
@@ -166,6 +164,22 @@
                             alertify.alert( i18n.get( '_PROJECT_ASSETS_ARE_LOCKED_', locked.sort().join( ", " ) ) );
                         } );
                     }
+                    break;
+                case 500:
+                default:
+                    Project.smartgeoReachError();
+                    break;
+            }
+        };
+
+        /**
+         * @name handleLoadError
+         * @desc Gére les erreurs remontées du service de chargement de projet
+         */
+        Project.handleLoadError = function(data, status) {
+            switch (status) {
+                case 423:
+                    alertify.alert( i18n.get('_PROJECT_IS_LOCKED_BY_ANOTHER_USER_') );
                     break;
                 case 500:
                 default:

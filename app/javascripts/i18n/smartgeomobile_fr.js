@@ -156,6 +156,8 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECT_ASSETS_DELETED_: "Objet(s) marqué(s) comme supprimé(s) sur le projet %s",
     _PROJECT_ASSETS_ARE_LOCKED_: "Le projet ne peut être sauvegardé car les objets suivants sont bloqués : \n %s",
     _PROJECTS_LIST_CANT_BE_LOAD_: "Impossible d'actualiser la liste tant qu'un projet est chargé.",
+    _PROJECT_IS_LOCKED_BY_ANOTHER_USER_: "Le projet est verrouillé par un autre utilisateur.",
+    _PROJECT_IS_LOCKED_: "Projet verrouillé",
     _RETRY_: "Réessayer"
 
 };
