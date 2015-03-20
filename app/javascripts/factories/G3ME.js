@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, Smartgeo, $rootScope, i18n, Storage, Site) {
+angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope, i18n, Storage, Site) {
 
     'use strict';
 

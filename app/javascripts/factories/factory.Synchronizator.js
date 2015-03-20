@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Synchronizator', SynchronizatorFactory );
 
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship"];
+    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "Utils"];
 
 
-    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship) {
+    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, Utils) {
 
         /**
          * @class SyncItemFactory
@@ -220,7 +220,7 @@
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
             var assets = [] ;
             complexasset.syncInProgress = true;
-            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
+            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
                 timeout: 1e5
             } ).success( function(data) {
                 if (data[complexasset.okey] && Array.isArray( data[complexasset.okey] ) && data[complexasset.okey].length) {
@@ -281,7 +281,7 @@
         Synchronizator.deleteAssetSynchronizator = function(asset, callback) {
             asset.syncInProgress = true;
             $http.post(
-                Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
+                Utils.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
                 {
                     deleted: asset.payload
                 }
@@ -304,7 +304,7 @@
          */
         Synchronizator.newReportSynchronizator = function(report, callback) {
             report.syncInProgress = true;
-            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
+            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
                 timeout: 3e6
             } ).success( function(data) {
                 if (data.cri && data.cri.length) {
@@ -416,7 +416,7 @@
                 for (var i = 0; i < reports.length; i++) {
                     luuids.push( reports[i].uuid );
                 }
-                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
+                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
                     uuids: luuids
                 } ).success( function(data) {
                     if ((typeof data) === "string") {

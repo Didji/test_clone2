@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Smartgeo", "Synchronizator"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Smartgeo, Synchronizator) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils) {
 
         var vm = this;
 
@@ -37,6 +37,8 @@
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
+        vm._MAX_MEDIA_PER_REPORT = 3 ;
+
 
         var intent = Storage.get( 'intent' ) || {};
 
@@ -139,10 +141,10 @@
                 i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
-                    report.fields[i] = Smartgeo.pad( report.fields[i].getHours() ) + ":" + Smartgeo.pad( report.fields[i].getMinutes() );
+                    report.fields[i] = Utils.pad( report.fields[i].getHours() ) + ":" + Utils.pad( report.fields[i].getMinutes() );
                 }
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
-                    report.fields[i] = report.fields[i].getFullYear() + "-" + Smartgeo.pad( report.fields[i].getMonth() + 1 ) + "-" + Smartgeo.pad( report.fields[i].getDate() );
+                    report.fields[i] = report.fields[i].getFullYear() + "-" + Utils.pad( report.fields[i].getMonth() + 1 ) + "-" + Utils.pad( report.fields[i].getDate() );
                 }
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
@@ -150,7 +152,7 @@
             }
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
-                    'content': Smartgeo.getBase64Image( report.ged[i].content )
+                    'content': Utils.getBase64Image( report.ged[i].content )
                 };
             }
             for (i in report.overrides) {
@@ -243,7 +245,7 @@
                 } else if ('string' === typeof def) {
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
-                        def = date.getUTCFullYear() + '-' + Smartgeo.pad( date.getUTCMonth() + 1 ) + '-' + Smartgeo.pad( date.getUTCDate() );
+                        def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
                         fields[field.id] = new Date( def );
                         vm.report.fields[field.id] = new Date( def );
                     } else {

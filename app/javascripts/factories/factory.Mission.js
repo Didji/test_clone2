@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Mission', MissionFactory );
 
-    MissionFactory.$inject = ["$http", "Smartgeo"];
+    MissionFactory.$inject = ["$http", "Utils"];
 
 
-    function MissionFactory($http, Smartgeo) {
+    function MissionFactory($http, Utils) {
 
         /**
          * @class MissionFactory
@@ -23,7 +23,7 @@
          * @desc Requête le serveur pour récupérer les missions de l'utilisateur connecté.
          */
         Mission.query = function() {
-            return $http.get( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.showOT.json' ) );
+            return $http.get( Utils.getServiceUrl( 'gi.maintenance.mobility.showOT.json' ) );
         };
 
         return Mission;

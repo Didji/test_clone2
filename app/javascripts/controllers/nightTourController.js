@@ -10,7 +10,7 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", function($scope, $rootScope, $window, $location, Smartgeo, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils) {
 
         'use strict';
 
@@ -91,7 +91,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.startFollowingPosition = function() {
             $scope.stopFollowingPosition();
-            Smartgeo.startWatchingPosition( $scope.whereIAm );
+            GPS.startWatchingPosition( $scope.whereIAm );
         };
 
         /**
@@ -100,7 +100,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.stopFollowingPosition = function() {
             $rootScope.$broadcast( '__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission );
-            Smartgeo.stopWatchingPosition( $scope.whereIAm );
+            GPS.stopWatchingPosition( $scope.whereIAm );
         };
 
         /**
@@ -324,7 +324,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                     if ('string' === typeof def) {
                         if (field.type === 'D' && def === '#TODAY#') {
                             date = new Date();
-                            def = date.getUTCFullYear() + '-' + Smartgeo.pad( date.getUTCMonth() + 1 ) + '-' + Smartgeo.pad( date.getUTCDate() );
+                            def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
                         }
                     } else {
                         def = getValueFromAssets( def.pkey, act.okeys[0] );
@@ -396,12 +396,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if ($scope.state === 'open') {
                 return;
             }
-            G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
-            if (Smartgeo.isRunningOnLittleScreen()) {
+            G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );
+            if (Utils.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast( '_MENU_CLOSE_' );
             }
             $scope.state = 'open';
-            $( $( ".consultation-panel" )[1] ).addClass( 'open' ).css( 'width', Smartgeo._SIDE_MENU_WIDTH );
+            $( $( ".consultation-panel" )[1] ).addClass( 'open' ).css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
         };
 
         /**
