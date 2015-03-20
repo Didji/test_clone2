@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "Smartgeo", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, Smartgeo, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
+angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
 
         "use strict";
 

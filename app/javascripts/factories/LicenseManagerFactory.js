@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, G3lic, i18n, Smartgeo, Right) {
+angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, G3lic, i18n, Right, Utils) {
 
     'use strict';
 
@@ -50,7 +50,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
      * @member {number} __max_time_between_check
      * @desc Temps max entre 2 vérifications de licence en millisecond (86400000 === 1 jour)
      */
-    LicenseManager.prototype.__max_time_between_check = 86400000;
+    LicenseManager.prototype.__max_time_between_check = 1;
 
     /**
      * @method
@@ -200,7 +200,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
         }, function(response) {
                 if (+response.status === 401) {
                     localStorage.clear();
-                    Smartgeo.reset();
+                    Utils.reset();
                     $location.path( '/' );
                     document.location.reload();
                     return;

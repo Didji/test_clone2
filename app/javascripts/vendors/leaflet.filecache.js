@@ -1,13 +1,13 @@
-if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
-    L.TileLayer.FileCache = L.TileLayer.extend({
+if (!(navigator.userAgent.match( /Android/i ) && window.SmartgeoChromium)) {
+    L.TileLayer.FileCache = L.TileLayer.extend( {
 
         initialize: function(url, options) {
-            options = L.setOptions(this, options);
+            options = L.setOptions( this, options );
 
             // detecting retina displays, adjusting tileSize and zoom levels
             if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
 
-                options.tileSize = Math.floor(options.tileSize / 2);
+                options.tileSize = Math.floor( options.tileSize / 2 );
                 options.zoomOffset++;
 
                 if (options.minZoom > 0) {
@@ -17,7 +17,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             }
 
             if (options.bounds) {
-                options.bounds = L.latLngBounds(options.bounds);
+                options.bounds = L.latLngBounds( options.bounds );
             }
 
             this._url = url;
@@ -25,7 +25,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var subdomains = this.options.subdomains;
 
             if (typeof subdomains === 'string') {
-                this.options.subdomains = subdomains.split('');
+                this.options.subdomains = subdomains.split( '' );
             }
 
             this.initFS();
@@ -41,21 +41,21 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             this._initContainer();
 
             // set up events
-            map.on({
+            map.on( {
                 'viewreset': this._reset,
                 'moveend': this._update
-            }, this);
+            }, this );
 
             if (this._animated) {
-                map.on({
+                map.on( {
                     'zoomanim': this._animateZoom,
                     'zoomend': this._endZoomAnim
-                }, this);
+                }, this );
             }
 
             if (!this.options.updateWhenIdle) {
-                this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-                map.on('move', this._limitedUpdate, this);
+                this._limitedUpdate = L.Util.limitExecByInterval( this._update, 150, this );
+                map.on( 'move', this._limitedUpdate, this );
             }
 
             this._reset();
@@ -63,27 +63,27 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         addTo: function(map) {
-            map.addLayer(this);
+            map.addLayer( this );
             return this;
         },
 
         onRemove: function(map) {
-            this._container.parentNode.removeChild(this._container);
+            this._container.parentNode.removeChild( this._container );
 
-            map.off({
+            map.off( {
                 'viewreset': this._reset,
                 'moveend': this._update
-            }, this);
+            }, this );
 
             if (this._animated) {
-                map.off({
+                map.off( {
                     'zoomanim': this._animateZoom,
                     'zoomend': this._endZoomAnim
-                }, this);
+                }, this );
             }
 
             if (!this.options.updateWhenIdle) {
-                map.off('move', this._limitedUpdate, this);
+                map.off( 'move', this._limitedUpdate, this );
             }
 
             this._container = null;
@@ -94,8 +94,8 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var pane = this._map._panes.tilePane;
 
             if (this._container) {
-                pane.appendChild(this._container);
-                this._setAutoZIndex(pane, Math.max);
+                pane.appendChild( this._container );
+                this._setAutoZIndex( pane, Math.max );
             }
 
             return this;
@@ -105,8 +105,8 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var pane = this._map._panes.tilePane;
 
             if (this._container) {
-                pane.insertBefore(this._container, pane.firstChild);
-                this._setAutoZIndex(pane, Math.min);
+                pane.insertBefore( this._container, pane.firstChild );
+                this._setAutoZIndex( pane, Math.min );
             }
 
             return this;
@@ -149,9 +149,9 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
         redraw: function() {
             if (this._map) {
-                this._reset({
+                this._reset( {
                     hard: true
-                });
+                } );
                 this._update();
             }
             return this;
@@ -166,22 +166,21 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         _setAutoZIndex: function(pane, compare) {
 
             var layers = pane.children,
-                edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
+                edgeZIndex = -compare( Infinity, -Infinity ), // -Infinity for max, Infinity for min
                 zIndex, i, len;
 
             for (i = 0, len = layers.length; i < len; i++) {
 
                 if (layers[i] !== this._container) {
-                    zIndex = parseInt(layers[i].style.zIndex, 10);
+                    zIndex = parseInt( layers[i].style.zIndex, 10 );
 
-                    if (!isNaN(zIndex)) {
-                        edgeZIndex = compare(edgeZIndex, zIndex);
+                    if (!isNaN( zIndex )) {
+                        edgeZIndex = compare( edgeZIndex, zIndex );
                     }
                 }
             }
 
-            this.options.zIndex = this._container.style.zIndex =
-                (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
+            this.options.zIndex = this._container.style.zIndex = (isFinite( edgeZIndex ) ? edgeZIndex : 0) + compare( 1, -1 );
         },
 
         _updateOpacity: function() {
@@ -190,10 +189,10 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             if (L.Browser.ielt9) {
                 for (i in tiles) {
-                    L.DomUtil.setOpacity(tiles[i], this.options.opacity);
+                    L.DomUtil.setOpacity( tiles[i], this.options.opacity );
                 }
             } else {
-                L.DomUtil.setOpacity(this._container, this.options.opacity);
+                L.DomUtil.setOpacity( this._container, this.options.opacity );
             }
         },
 
@@ -201,21 +200,21 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var tilePane = this._map._panes.tilePane;
 
             if (!this._container) {
-                this._container = L.DomUtil.create('div', 'leaflet-layer');
+                this._container = L.DomUtil.create( 'div', 'leaflet-layer' );
 
                 this._updateZIndex();
 
                 if (this._animated) {
                     var className = 'leaflet-tile-container leaflet-zoom-animated';
 
-                    this._bgBuffer = L.DomUtil.create('div', className, this._container);
-                    this._tileContainer = L.DomUtil.create('div', className, this._container);
+                    this._bgBuffer = L.DomUtil.create( 'div', className, this._container );
+                    this._tileContainer = L.DomUtil.create( 'div', className, this._container );
 
                 } else {
                     this._tileContainer = this._container;
                 }
 
-                tilePane.appendChild(this._container);
+                tilePane.appendChild( this._container );
 
                 if (this.options.opacity < 1) {
                     this._updateOpacity();
@@ -225,9 +224,9 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
         _reset: function(e) {
             for (var key in this._tiles) {
-                this.fire('tileunload', {
+                this.fire( 'tileunload', {
                     tile: this._tiles[key]
-                });
+                } );
             }
 
             this._tiles = {};
@@ -253,7 +252,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                 tileSize = this.options.tileSize;
 
             if (zoomN && zoom > zoomN) {
-                tileSize = Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * tileSize);
+                tileSize = Math.round( map.getZoomScale( zoom ) / map.getZoomScale( zoomN ) * tileSize );
             }
 
             return tileSize;
@@ -275,13 +274,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             }
 
             var tileBounds = L.bounds(
-                bounds.min.divideBy(tileSize)._floor(),
-                bounds.max.divideBy(tileSize)._floor());
+                bounds.min.divideBy( tileSize )._floor(),
+                bounds.max.divideBy( tileSize )._floor() );
 
-            this._addTilesFromCenterOut(tileBounds);
+            this._addTilesFromCenterOut( tileBounds );
 
             if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
-                this._removeOtherTiles(tileBounds);
+                this._removeOtherTiles( tileBounds );
             }
         },
 
@@ -293,10 +292,10 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             for (j = bounds.min.y; j <= bounds.max.y; j++) {
                 for (i = bounds.min.x; i <= bounds.max.x; i++) {
-                    point = new L.Point(i, j);
+                    point = new L.Point( i, j );
 
-                    if (this._tileShouldBeLoaded(point)) {
-                        queue.push(point);
+                    if (this._tileShouldBeLoaded( point )) {
+                        queue.push( point );
                     }
                 }
             }
@@ -308,24 +307,24 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             }
 
             // load tiles in order of their distance to center
-            queue.sort(function(a, b) {
-                return a.distanceTo(center) - b.distanceTo(center);
-            });
+            queue.sort( function(a, b) {
+                return a.distanceTo( center ) - b.distanceTo( center );
+            } );
 
             var fragment = document.createDocumentFragment();
 
             // if its the first batch of tiles to load
             if (!this._tilesToLoad) {
-                this.fire('loading');
+                this.fire( 'loading' );
             }
 
             this._tilesToLoad += tilesToLoad;
 
             for (i = 0; i < tilesToLoad; i++) {
-                this._addTile(queue[i], fragment);
+                this._addTile( queue[i], fragment );
             }
 
-            this._tileContainer.appendChild(fragment);
+            this._tileContainer.appendChild( fragment );
         },
 
         _tileShouldBeLoaded: function(tilePoint) {
@@ -347,10 +346,10 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             if (options.bounds) {
                 var tileSize = options.tileSize,
-                    nwPoint = tilePoint.multiplyBy(tileSize),
-                    sePoint = nwPoint.add([tileSize, tileSize]),
-                    nw = this._map.unproject(nwPoint),
-                    se = this._map.unproject(sePoint);
+                    nwPoint = tilePoint.multiplyBy( tileSize ),
+                    sePoint = nwPoint.add( [tileSize, tileSize] ),
+                    nw = this._map.unproject( nwPoint ),
+                    se = this._map.unproject( sePoint );
 
                 // TODO temporary hack, will be removed after refactoring projections
                 // https://github.com/Leaflet/Leaflet/issues/1618
@@ -359,7 +358,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                     se = se.wrap();
                 }
 
-                if (!options.bounds.intersects([nw, se])) {
+                if (!options.bounds.intersects( [nw, se] )) {
                     return false;
                 }
             }
@@ -371,13 +370,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var kArr, x, y, key;
 
             for (key in this._tiles) {
-                kArr = key.split(':');
-                x = parseInt(kArr[0], 10);
-                y = parseInt(kArr[1], 10);
+                kArr = key.split( ':' );
+                x = parseInt( kArr[0], 10 );
+                y = parseInt( kArr[1], 10 );
 
                 // remove tile if it's out of bounds
                 if (x < bounds.min.x || x > bounds.max.x || y < bounds.min.y || y > bounds.max.y) {
-                    this._removeTile(key);
+                    this._removeTile( key );
                 }
             }
         },
@@ -385,17 +384,17 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         _removeTile: function(key) {
             var tile = this._tiles[key];
 
-            this.fire('tileunload', {
+            this.fire( 'tileunload', {
                 tile: tile,
                 url: tile.src
-            });
+            } );
 
             if (this.options.reuseTiles) {
-                L.DomUtil.removeClass(tile, 'leaflet-tile-loaded');
-                this._unusedTiles.push(tile);
+                L.DomUtil.removeClass( tile, 'leaflet-tile-loaded' );
+                this._unusedTiles.push( tile );
 
             } else if (tile.parentNode === this._tileContainer) {
-                this._tileContainer.removeChild(tile);
+                this._tileContainer.removeChild( tile );
             }
 
             // for https://github.com/CloudMade/Leaflet/issues/137
@@ -408,7 +407,7 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         _addTile: function(tilePoint, container) {
-            var tilePos = this._getTilePos(tilePoint);
+            var tilePos = this._getTilePos( tilePoint );
 
             // get unused tile - or create a new tile
             var tile = this._getTile(),
@@ -420,13 +419,13 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         (reappear after zoom) https://github.com/CloudMade/Leaflet/issues/866
         (other browsers don't currently care) - see debug/hacks/jitter.html for an example
         */
-            L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
+            L.DomUtil.setPosition( tile, tilePos, L.Browser.chrome || L.Browser.android23 );
 
             this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
-            this._loadTile(tile, tilePoint);
+            this._loadTile( tile, tilePoint );
             if (tile.parentNode !== this._tileContainer) {
-                container.appendChild(tile);
+                container.appendChild( tile );
             }
         },
 
@@ -441,30 +440,30 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             zoom += options.zoomOffset;
 
-            return options.maxNativeZoom ? Math.min(zoom, options.maxNativeZoom) : zoom;
+            return options.maxNativeZoom ? Math.min( zoom, options.maxNativeZoom ) : zoom;
         },
 
         _getTilePos: function(tilePoint) {
             var origin = this._map.getPixelOrigin(),
                 tileSize = this._getTileSize();
 
-            return tilePoint.multiplyBy(tileSize).subtract(origin);
+            return tilePoint.multiplyBy( tileSize ).subtract( origin );
         },
 
         // image-specific code (override to implement e.g. Canvas or SVG tile layer)
 
         getTileUrl: function(tilePoint, zoom) {
-            return L.Util.template(this._url, L.extend({
-                s: this._getSubdomain(tilePoint),
+            return L.Util.template( this._url, L.extend( {
+                s: this._getSubdomain( tilePoint ),
                 z: zoom,
                 x: tilePoint.x,
                 y: tilePoint.y
-            }, this.options));
+            }, this.options ) );
         },
 
         _getWrapTileNum: function() {
             // TODO refactor, limit is not valid for non-standard projections
-            return Math.pow(2, this._getZoomForUrl());
+            return Math.pow( 2, this._getZoomForUrl() );
         },
 
         _adjustTilePoint: function(tilePoint) {
@@ -484,14 +483,14 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         _getSubdomain: function(tilePoint) {
-            var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
+            var index = Math.abs( tilePoint.x + tilePoint.y ) % this.options.subdomains.length;
             return this.options.subdomains[index];
         },
 
         _getTile: function() {
             if (this.options.reuseTiles && this._unusedTiles.length > 0) {
                 var tile = this._unusedTiles.pop();
-                this._resetTile(tile);
+                this._resetTile( tile );
                 return tile;
             }
             return this._createTile();
@@ -501,14 +500,14 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         _resetTile: function( /*tile*/ ) {},
 
         _createTile: function() {
-            var tile = L.DomUtil.create('img', 'leaflet-tile');
+            var tile = L.DomUtil.create( 'img', 'leaflet-tile' );
             tile.style.width = tile.style.height = this._getTileSize() + 'px';
             tile.galleryimg = 'no';
 
             tile.onselectstart = tile.onmousemove = L.Util.falseFn;
 
             if (L.Browser.ielt9 && this.options.opacity !== undefined) {
-                L.DomUtil.setOpacity(tile, this.options.opacity);
+                L.DomUtil.setOpacity( tile, this.options.opacity );
             }
             return tile;
         },
@@ -518,21 +517,21 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             tile.onload = this._tileOnLoad;
             tile.onerror = this._tileOnError;
 
-            this._adjustTilePoint(tilePoint);
+            this._adjustTilePoint( tilePoint );
             // tile.src     = this.getTileUrl(tilePoint);
             // this._getTile(tile, tilePoint,zoom);
-            this.fetchTileFromCache(tile, tilePoint.z, tilePoint.x, tilePoint.y);
+            this.fetchTileFromCache( tile, tilePoint.z, tilePoint.x, tilePoint.y );
         },
 
         _tileLoaded: function() {
             this._tilesToLoad--;
             if (!this._tilesToLoad) {
-                this.fire('load');
+                this.fire( 'load' );
 
                 if (this._animated) {
                     // clear scaled tiles after all new tiles are loaded (for performance)
-                    clearTimeout(this._clearBgBufferTimer);
-                    this._clearBgBufferTimer = setTimeout(L.bind(this._clearBgBuffer, this), 500);
+                    clearTimeout( this._clearBgBufferTimer );
+                    this._clearBgBufferTimer = setTimeout( L.bind( this._clearBgBuffer, this ), 500 );
                 }
             }
         },
@@ -542,12 +541,12 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             //Only if we are loading an actual image
             if (this.src !== L.Util.emptyImageUrl) {
-                L.DomUtil.addClass(this, 'leaflet-tile-loaded');
+                L.DomUtil.addClass( this, 'leaflet-tile-loaded' );
 
-                layer.fire('tileload', {
+                layer.fire( 'tileload', {
                     tile: this,
                     url: this.src
-                });
+                } );
             }
 
             layer._tileLoaded();
@@ -556,10 +555,10 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         _tileOnError: function() {
             var layer = this._layer;
 
-            layer.fire('tileerror', {
+            layer.fire( 'tileerror', {
                 tile: this,
                 url: this.src
-            });
+            } );
 
             var newUrl = layer.options.errorTileUrl;
             if (newUrl) {
@@ -574,15 +573,15 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             grantedBytes = grantedBytes || 100 * 1024 * 1024;
             var this_ = this;
 
-            this.requestQuota(function() {
+            this.requestQuota( function() {
                 if (window.requestFileSystem || window.webkitRequestFileSystem) {
-                    (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, grantedBytes, function(fs) {
+                    (window.requestFileSystem || window.webkitRequestFileSystem)( window.PERSISTENT, grantedBytes, function(fs) {
                         this_.filesystem = fs;
-                    }, this_.log_fs_error);
+                    }, this_.log_fs_error );
                 } else {
                     this_.filesystem = true;
                 }
-            });
+            } );
         },
 
         log_fs_error: function(e) {
@@ -607,17 +606,17 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
                     msg = 'Unknown Error';
                     break;
             }
-            console.error('Error: ' + msg);
+            console.error( 'Error: ' + msg );
         },
 
         requestQuota: function(callback) {
-            window.requestFileSystem
+            window.requestFileSystem;
             if (navigator.webkitPersistentStorage) {
-                navigator.webkitPersistentStorage.requestQuota(1024 * 1024 * 500, callback);
+                navigator.webkitPersistentStorage.requestQuota( 1024 * 1024 * 500, callback );
             } else if (window.storageInfo) {
-                window.storageInfo.requestQuota(window.PERSISTENT, 0, callback);
+                window.storageInfo.requestQuota( window.PERSISTENT, 0, callback );
             } else {
-                console.error("no filesystem found");
+                console.error( "no filesystem found" );
                 callback();
             }
         },
@@ -634,75 +633,74 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
             var this_ = this;
 
-            this.filesystem.root.getDirectory(path.split('/').slice(0, step).join('/'), {
+            this.filesystem.root.getDirectory( path.split( '/' ).slice( 0, step ).join( '/' ), {
                 create: true
             }, function(dirEntry) {
-                this_.createDirectory(path, callback, ++step);
-            }, this_.log_fs_error);
+                    this_.createDirectory( path, callback, ++step );
+                }, this_.log_fs_error );
 
         },
 
 
         writeTileToCache: function(tileObject, dataUrl, callback) {
             var this_ = this;
-            var path = this.getTilePath(tileObject);
-            var data = this.convertDataURIToBinary(dataUrl);
+            var path = this.getTilePath( tileObject );
+            var data = this.convertDataURIToBinary( dataUrl );
 
-            this.createDirectory(path, function() {
-                this_.filesystem.root.getFile(path + '/' + tileObject.x + '_' + tileObject.y + '.png', {
+            this.createDirectory( path, function() {
+                this_.filesystem.root.getFile( path + '/' + tileObject.x + '_' + tileObject.y + '.png', {
                     create: true
                 }, function(fileEntry) {
-                    fileEntry.createWriter(function(writer) {
-                        writer.onwriteend = (callback || function() {});
-                        writer.onerror = function(e) {
-                            console.error('Write failed: ' + e.toString());
-                        };
+                        fileEntry.createWriter( function(writer) {
+                            writer.onwriteend = (callback || function() {});
+                            writer.onerror = function(e) {
+                                console.error( 'Write failed: ' + e.toString() );
+                            };
 
-                        var blob, datatype = 'image/png';
+                            var blob,
+                                datatype = 'image/png';
 
-                        try {
-                            // Chrome browser
-                            blob = new Blob([data], {
-                                type: datatype
-                            });
-                            writer.write(blob);
-                        } catch (e) {
-                            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
-                            if (e.name == 'TypeError' && window.BlobBuilder) {
-                                // Android browser
-                                cordova.exec(
-                                    function() {
-                                        console.info('Fichier écrit avec succes');
-                                    },
-                                    function(error) {
-                                        console.error(JSON.stringify(error));
-                                    },
-                                    "WriteFilePlugin",
-                                    "writeBase64toPNG", [dataUrl.split(',')[1], path + '/' + tileObject.x + '_' + tileObject.y + '.png']
-                                );
-
-                            } else if (e.name === "InvalidStateError") {
-                                blob = new Blob([data], {
+                            try {
+                                // Chrome browser
+                                blob = new Blob( [data], {
                                     type: datatype
-                                });
-                                writer.write(blob);
-                            } else {
-                                console.error("Error when building blob");
-                            }
-                        }
+                                } );
+                                writer.write( blob );
+                            } catch ( e ) {
+                                window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+                                if (e.name == 'TypeError' && window.BlobBuilder) {
+                                    // Android browser
+                                    cordova.exec( function() {
+                                        console.info( 'Fichier écrit avec succes' );
+                                    }, function(error) {
+                                            console.error( JSON.stringify( error ) );
+                                        },
+                                        "WriteFilePlugin",
+                                        "writeBase64toPNG", [dataUrl.split( ',' )[1], path + '/' + tileObject.x + '_' + tileObject.y + '.png']
+                                    );
 
-                    }, this_.log_fs_error);
-                }, this_.log_fs_error);
-            });
+                                } else if (e.name === "InvalidStateError") {
+                                    blob = new Blob( [data], {
+                                        type: datatype
+                                    } );
+                                    writer.write( blob );
+                                } else {
+                                    console.error( "Error when building blob" );
+                                }
+                            }
+
+                        }, this_.log_fs_error );
+                    }, this_.log_fs_error );
+            } );
         },
 
         getDataURL: function(img) {
-            img.crossOrigin="anonymous";
-            var canvas = document.createElement("canvas");
+            img.crossOrigin = "anonymous";
+            var canvas = document.createElement( "canvas" );
             canvas.width = img.width;
             canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
+            var ctx = canvas.getContext( "2d" );
+            ctx.drawImage( img, 0, 0 );
             return canvas.toDataURL();
         },
 
@@ -710,9 +708,9 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
             var this_ = this;
 
             if (!this.filesystem) {
-                return setTimeout(function() {
-                    this_.fetchTileFromCache(image, z, x, y);
-                }, 400);
+                return setTimeout( function() {
+                    this_.fetchTileFromCache( image, z, x, y );
+                }, 400 );
             }
 
             var tileObject = {
@@ -727,102 +725,100 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
 
             if (this.filesystem !== true) {
-                this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function(fileEntry) {
-                    fileEntry.file(function(file) {
+                this.filesystem.root.getFile( this.getTilePath( tileObject ) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function(fileEntry) {
+                    fileEntry.file( function(file) {
                         var reader = new FileReader();
-                        reader.readAsArrayBuffer(file);
+                        reader.readAsArrayBuffer( file );
                         reader.onloadend = function(event) {
                             var data = event.target.result,
                                 datatype = "image/png",
                                 blob, bb;
                             try {
-                                blob = new Blob([data], {
+                                blob = new Blob( [data], {
                                     type: datatype
-                                });
-                            } catch (e) {
+                                } );
+                            } catch ( e ) {
                                 window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
                                 if (e.name == 'TypeError' && window.BlobBuilder) {
                                     bb = new BlobBuilder();
-                                    bb.append(data);
-                                    blob = bb.getBlob(datatype);
+                                    bb.append( data );
+                                    blob = bb.getBlob( datatype );
                                 } else if (e.name == "InvalidStateError") {
-                                    blob = new Blob([data], {
+                                    blob = new Blob( [data], {
                                         type: datatype
-                                    });
+                                    } );
                                 } else {
-                                    console.error("Error when building blob");
+                                    console.error( "Error when building blob" );
                                 }
                             }
                             // image.style.border  = 'solid 1px blue';
                             window.URL = window.URL || window.webkitURL;
-                            image.src = URL.createObjectURL(blob);
+                            image.src = URL.createObjectURL( blob );
                             image.onerror = this_._tileOnError;
                             image.onload = function() {
-                                this_._tileOnLoad.call(this);
-                                this_.doINeedToReCacheThisTile(tileObject, file, function(yes) {
+                                this_._tileOnLoad.call( this );
+                                this_.doINeedToReCacheThisTile( tileObject, file, function(yes) {
                                     if (yes) {
                                         var oldTile = image.src;
-                                        image.src = this_.getTileUrl({
+                                        image.src = this_.getTileUrl( {
                                             x: x,
                                             y: y
-                                        }, z);
+                                        }, z );
                                         image.onerror = function() {
                                             image.src = oldTile;
-                                            this_._tileOnError.call(this);
-                                        }
+                                            this_._tileOnError.call( this );
+                                        };
                                         image.onload = function() {
-                                            this_._tileOnLoad.call(this);
-                                            this_.writeTileToCache(tileObject, this_.getDataURL(image), function() {
-                                                this_.getRemoteETag(tileObject, function(remoteETag) {
+                                            this_._tileOnLoad.call( this );
+                                            this_.writeTileToCache( tileObject, this_.getDataURL( image ), function() {
+                                                this_.getRemoteETag( tileObject, function(remoteETag) {
                                                     if (remoteETag !== null) {
-                                                        this_.writeMetadataTileFile(tileObject, {
+                                                        this_.writeMetadataTileFile( tileObject, {
                                                             etag: remoteETag
-                                                        });
+                                                        } );
                                                     }
-                                                });
-                                            });
+                                                } );
+                                            } );
                                             image.onerror = image.onload = null;
                                         };
                                     }
-                                });
-                            }
+                                } );
+                            };
                         };
-                    });
+                    } );
 
                 }, function(fileError) {
-                    var oldTile = image.src;
-                    image.src = this_.getTileUrl({
-                        x: x,
-                        y: y
-                    }, z);
-                    image.onerror = function(event) {
-                        this_._tileOnError.call(this);
-                        image.src = oldTile;
-                        image.onerror = image.onload = null;
-                        if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
-                            // Smartgeo.silentLogin(function() {
-                            //     for (var i in this_._map._layers) {
-                            //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                            //     }
-                            // });
-                        }
-                    };
-                    image.onload = function() {
-                        this_._tileOnLoad.call(this);
-                        this_.writeTileToCache(tileObject, this_.getDataURL(image));
-                        image.onerror = image.onload = null;
-                    };
-                });
+                        var oldTile = image.src;
+                        image.src = this_.getTileUrl( {
+                            x: x,
+                            y: y
+                        }, z );
+                        image.onerror = function(event) {
+                            this_._tileOnError.call( this );
+                            image.src = oldTile;
+                            image.onerror = image.onload = null;
+                            if (!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL) {
+                                //     for (var i in this_._map._layers) {
+                                //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
+                                //     }
+                                // });
+                            }
+                        };
+                        image.onload = function() {
+                            this_._tileOnLoad.call( this );
+                            this_.writeTileToCache( tileObject, this_.getDataURL( image ) );
+                            image.onerror = image.onload = null;
+                        };
+                    } );
             } else {
-                image.src = this_.getTileUrl({
+                image.src = this_.getTileUrl( {
                     x: x,
                     y: y
-                }, z);
+                }, z );
                 image.onerror = function(event) {
-                    this_._tileOnError.call(this);
+                    this_._tileOnError.call( this );
                     image.onerror = image.onload = null;
-                    if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
-                        // Smartgeo.silentLogin(function() {
+                    if (!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL) {
                         //     for (var i in this_._map._layers) {
                         //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
                         //     }
@@ -834,100 +830,100 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
         },
 
         readMetadataTileFile: function(tileObject, callback) {
-            this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
+            this.filesystem.root.getFile( this.getTilePath( tileObject ) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
                 create: true
             }, function(fileEntry) {
-                fileEntry.file(function(file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function() {
-                        var metadata;
-                        try {
-                            metadata = JSON.parse(reader.result || '{}');
-                            callback(metadata);
-                        } catch (e) {
-                            callback({
-                                etag: undefined
-                            });
-                        }
-                    };
-                    reader.readAsText(file);
-                });
-            });
+                    fileEntry.file( function(file) {
+                        var reader = new FileReader();
+                        reader.onloadend = function() {
+                            var metadata;
+                            try {
+                                metadata = JSON.parse( reader.result || '{}' );
+                                callback( metadata );
+                            } catch ( e ) {
+                                callback( {
+                                    etag: undefined
+                                } );
+                            }
+                        };
+                        reader.readAsText( file );
+                    } );
+                } );
         },
 
         writeMetadataTileFile: function(tileObject, metadata, callback) {
             var _this = this;
-            this.filesystem.root.getFile(this.getTilePath(tileObject) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
+            this.filesystem.root.getFile( this.getTilePath( tileObject ) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
                 create: true
             }, function(fileEntry) {
-                fileEntry.createWriter(function(writer) {
-                    writer.onwriteend = function() {
-                        writer.onwriteend = (callback || function() {});
-                        var blob, datatype = 'text/plain';
-                        try {
-                            // Chrome browser
-                            blob = new Blob([JSON.stringify(metadata)], {
-                                type: datatype
-                            });
-                            writer.write(blob);
-                        } catch (e) {
-                            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
-                            if (e.name == "InvalidStateError") {
-                                blob = new Blob([JSON.stringify(metadata)], {
+                    fileEntry.createWriter( function(writer) {
+                        writer.onwriteend = function() {
+                            writer.onwriteend = (callback || function() {});
+                            var blob,
+                                datatype = 'text/plain';
+                            try {
+                                // Chrome browser
+                                blob = new Blob( [JSON.stringify( metadata )], {
                                     type: datatype
-                                });
-                                writer.write(blob);
+                                } );
+                                writer.write( blob );
+                            } catch ( e ) {
+                                window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+                                if (e.name == "InvalidStateError") {
+                                    blob = new Blob( [JSON.stringify( metadata )], {
+                                        type: datatype
+                                    } );
+                                    writer.write( blob );
+                                }
                             }
-                        }
-                    }
-                    writer.truncate(0);
-                    writer.onerror = function(e) {
-                        console.error('Write failed: ' + e.toString());
-                    }
-                }, _this.log_fs_error);
-            });
+                        };
+                        writer.truncate( 0 );
+                        writer.onerror = function(e) {
+                            console.error( 'Write failed: ' + e.toString() );
+                        };
+                    }, _this.log_fs_error );
+                } );
         },
 
         doINeedToReCacheThisTile: function(tileObject, file, callback) {
             var _this = this;
-            this.readMetadataTileFile(tileObject, function(metadata) {
+            this.readMetadataTileFile( tileObject, function(metadata) {
                 // if (!metadata.etag) {
                 //     callback(true);
                 // } else {
-                _this.getRemoteETag(tileObject, function(remoteETag) {
+                _this.getRemoteETag( tileObject, function(remoteETag) {
                     if (metadata.etag != remoteETag && remoteETag !== null) {
-                        callback(true);
+                        callback( true );
                     } else {
-                        callback(false);
+                        callback( false );
                     }
-                });
+                } );
                 // }
-            });
+            } );
         },
 
         getRemoteETag: function(tileObject, callback) {
             var http = new XMLHttpRequest(),
-                url = this.getTileUrl({
+                url = this.getTileUrl( {
                     x: tileObject.x,
                     y: tileObject.y
-                }, tileObject.z),
+                }, tileObject.z ),
                 self = this;
             http.withCredentials = true;
-            http.open('HEAD', url, true);
+            http.open( 'HEAD', url, true );
             http.onreadystatechange = function() {
                 if (this.readyState == this.DONE && this.status === 200) {
-                    callback(this.getResponseHeader("etag"));
+                    callback( this.getResponseHeader( "etag" ) );
                 } else if (this.readyState == this.DONE && this.status === 403) {
-                    if(!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL){
-                        // Smartgeo.silentLogin(function() {
+                    if (!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL) {
                         //     for (var i in self._map._layers) {
                         //         self._map._layers[i].redraw && self._map._layers[i].redraw();
                         //     }
                         // });
                     }
-                    callback(null);
+                    callback( null );
                 } else {
-                    callback(null);
+                    callback( null );
                 }
 
             };
@@ -936,18 +932,18 @@ if (!(navigator.userAgent.match(/Android/i) && window.SmartgeoChromium)) {
 
         convertDataURIToBinary: function(dataURI) {
             var BASE64_MARKER = ';base64,';
-            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-            var base64 = dataURI.substring(base64Index);
-            var raw = window.atob(base64);
+            var base64Index = dataURI.indexOf( BASE64_MARKER ) + BASE64_MARKER.length;
+            var base64 = dataURI.substring( base64Index );
+            var raw = window.atob( base64 );
             var rawLength = raw.length;
-            var array = new Uint8Array(new ArrayBuffer(rawLength));
+            var array = new Uint8Array( new ArrayBuffer( rawLength ) );
 
             for (i = 0; i < rawLength; i++) {
-                array[i] = raw.charCodeAt(i);
+                array[i] = raw.charCodeAt( i );
             }
             return array;
         }
 
 
-    });
+    } );
 }

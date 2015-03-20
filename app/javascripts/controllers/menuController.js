@@ -8,7 +8,7 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "$timeout", "$http", "$location", "$filter", "Storage", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, $timeout, $http, $location, $filter, Storage) {
+angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$routeParams", "$window", "$rootScope", "i18n", "$timeout", "$http", "$location", "$filter", "Storage", "Utils", function($scope, $routeParams, $window, $rootScope, i18n, $timeout, $http, $location, $filter, Storage, Utils) {
 
         'use strict';
 
@@ -168,7 +168,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          */
         vm.toggleDisplay = function() {
             vm.display = !vm.display;
-            if (vm.display && Smartgeo.isRunningOnLittleScreen()) {
+            if (vm.display && Utils.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast( "CLOSE_CONSULTATION_PANEL" );
             }
         };

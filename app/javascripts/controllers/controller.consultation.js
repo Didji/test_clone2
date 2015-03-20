@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ConsultationController', ConsultationController );
 
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "Smartgeo", "G3ME", "$timeout", "Site", "Storage", "Project", "Asset", "i18n"];
+    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "G3ME", "$timeout", "Site", "Storage", "Project", "Asset", "i18n", "Utils"];
 
     /**
      * @class ConsultationController
@@ -19,7 +19,7 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, Smartgeo, G3ME, $timeout, Site, Storage, Project, Asset, i18n) {
+    function ConsultationController($scope, $rootScope, $window, $location, G3ME, $timeout, Site, Storage, Project, Asset, i18n, Utils) {
 
         var vm = this;
 
@@ -280,7 +280,7 @@
 
 
             initialXPosition = $event.clientX;
-            initialWidth = Smartgeo._SIDE_MENU_WIDTH;
+            initialWidth = window.Smartgeo._SIDE_MENU_WIDTH;
             $( window ).bind( 'mousemove touchmove', mousemoveHandler );
             $( window ).bind( 'mouseup touchend', mouseupHandler );
 
@@ -296,13 +296,13 @@
                 currentXPosition = $event.originalEvent.touches[0].clientX;
             }
             if (!(++movePhase % 5) && Math.abs(( initialXPosition - currentXPosition )) > 30) {
-                Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
-                $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
-                G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
+                window.Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
+                $( ".consultation-panel" ).first().css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
+                G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );
             }
-            if (vm.isOpen === false && Smartgeo._SIDE_MENU_WIDTH >= 80) {
+            if (vm.isOpen === false && window.Smartgeo._SIDE_MENU_WIDTH >= 80) {
                 _open();
-            } else if (Smartgeo._SIDE_MENU_WIDTH < 80) {
+            } else if (window.Smartgeo._SIDE_MENU_WIDTH < 80) {
                 _close();
             }
         }
@@ -371,15 +371,15 @@
          * @desc Oulala faut faire mieux la.
          */
         function _open() {
-            if (Smartgeo._SIDE_MENU_WIDTH > window.innerWidth) {
-                Smartgeo._SIDE_MENU_WIDTH = window.innerWidth - 70;
+            if (window.Smartgeo._SIDE_MENU_WIDTH > window.innerWidth) {
+                window.Smartgeo._SIDE_MENU_WIDTH = window.innerWidth - 70;
             }
-            G3ME.reduceMapWidth( Smartgeo._SIDE_MENU_WIDTH );
-            if (Smartgeo.isRunningOnLittleScreen()) {
+            G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );
+            if (Utils.isRunningOnLittleScreen()) {
                 $rootScope.$broadcast( '_MENU_CLOSE_' );
             }
             vm.isOpen = true;
-            $( ".consultation-panel" ).first().css( 'width', Smartgeo._SIDE_MENU_WIDTH );
+            $( ".consultation-panel" ).first().css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
             if (!$scope.$$phase) {
                 $scope.$digest();
             }

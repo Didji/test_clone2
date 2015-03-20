@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$routeParams", "$window", "$rootScope", "Smartgeo", "i18n", "Asset", "Site", function($scope, $routeParams, $window, $rootScope, Smartgeo, i18n, Asset, Site) {
+angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$routeParams", "$window", "$rootScope", "i18n", "Asset", "Site", function($scope, $routeParams, $window, $rootScope, i18n, Asset, Site) {
 
         'use strict';
 
@@ -45,7 +45,7 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
 
             $scope.searchMessage = '_SEARCH_SEARCH_IN_PROGRESS';
             $scope.searchIsPerforming = true;
-            Smartgeo.findAssetsByLabel( Site.current, angular.copy( $scope.searchTerms ), function(results) {
+            Asset.findAssetsByLabel( angular.copy( $scope.searchTerms ), function(results) {
                 $scope.searchIsPerforming = false;
 
                 if (!results.length) {
@@ -121,7 +121,7 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
             }
 
             $scope.searchIsPerforming = true;
-            Smartgeo.findAssetsByCriteria( Site.current, advancedSearch, function(results) {
+            Asset.findAssetsByCriteria( advancedSearch, function(results) {
                 $scope.searchIsPerforming = false;
 
                 if (!results.length) {
@@ -136,7 +136,6 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
                 var assets = [];
                 for (var i = 0; i < results.length; i++) {
                     assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
-                    //TODO(@gulian): mettre findAssetsByCriteria dans factory.Asset.js pour eviter ce genre de ligne
                 }
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                 $scope.$digest();

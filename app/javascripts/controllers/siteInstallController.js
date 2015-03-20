@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "Smartgeo", "$location", "G3ME", "Installer", "Storage", "Site", function($scope, $rootScope, $routeParams, $http, Smartgeo, $location, G3ME, Installer, Storage, Site) {
+angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "$location", "G3ME", "Installer", "Storage", "Site", "Utils", "Authenticator", function($scope, $rootScope, $routeParams, $http, $location, G3ME, Installer, Storage, Site, Utils, Authenticator) {
 
         'use strict';
 
@@ -61,7 +61,7 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
             }
         }
 
-        var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.site.json' );
+        var url = Utils.getServiceUrl( 'gi.maintenance.mobility.site.json' );
 
         $http.get( url ).success( function(sites) {
             for (var i in sites) {
@@ -74,7 +74,7 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
             }
             $scope.site = $scope.site || sites[0];
             $scope.steps[0].progress = 50;
-            Smartgeo.selectSiteRemotely( $routeParams.site, function() {
+            Authenticator.selectSiteRemotely( $routeParams.site, function() {
                 Installer.getInstallJSON( $scope.site, function(site) {
                     $scope.steps[0].progress = 100;
                     var formatedSite = Installer.formatSiteMetadata( site );
