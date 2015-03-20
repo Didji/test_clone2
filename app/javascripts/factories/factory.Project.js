@@ -363,6 +363,7 @@
                 this.assets.push( assets[i].guid );
             }
             this.save( callback );
+            $rootScope.$broadcast('UPDATE_PROJECTS');
         };
 
         /**
@@ -378,6 +379,7 @@
                 this.updated.push( assets[i].guid );
             }
             this.save( callback );
+            $rootScope.$broadcast('UPDATE_PROJECTS');
         };
 
         /**
