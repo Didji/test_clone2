@@ -81,6 +81,8 @@
                 return;
             }
 
+            var isProjectAsset = (asset.okey.search( 'PROJECT_' ) === 0);
+
             asset.findRelated( function(data) {
                 if (data !== undefined) {
                     if (data.root == data.id && data.isComplex) {
@@ -90,7 +92,7 @@
                         var complex = new ComplexAsset( null, null, '', theAsset );
                         fillChildren( complex, theAsset.tree, theAsset.relatedAssets, complex );
                         theAsset.root = complex;
-                        theAsset.isProject = false;
+                        theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
                         startCensus( theAsset );
 
@@ -101,7 +103,7 @@
                                 var complex = new ComplexAsset( null, null, '', theAsset );
                                 fillChildren( complex, data.tree, data.relatedAssets, complex );
                                 theAsset.root = complex;
-                                theAsset.isProject = false;
+                                theAsset.isProject = isProjectAsset;
                                 theAsset.relatedAssets = {};
                                 startCensus( theAsset );
                             } );
@@ -112,7 +114,7 @@
                     var theAsset = formatAsset( asset );
                     var complex = new ComplexAsset( null, null, '', theAsset );
                     theAsset.root = complex;
-                    theAsset.isProject = false;
+                    theAsset.isProject = isProjectAsset;
                     startCensus( theAsset );
                 }
             } );

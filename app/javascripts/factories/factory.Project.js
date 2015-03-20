@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "ComplexAsset", "Utils"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "ComplexAsset", "Utils", "Synchronizator"];
 
 
-    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, ComplexAsset, Utils) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, ComplexAsset, Utils, Synchronizator) {
 
         /**
          * @class ProjectFactory
@@ -124,26 +124,26 @@
                     'updated': []
                 },
                 project = this ;
-
-            ComplexAsset.find( this.new, function(complexes) {
-                payload.new = complexes;
-                Asset.findAssetsByGuids( project.added.concat( project.removed.concat( project.deleted.concat( project.updated ) ) ), function(assets) {
-                    for (var i = 0; i < assets.length; i++) {
-                        if (project.added.indexOf( assets[i].id ) !== -1) {
-                            payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
-                            payload.added[assets[i].okey].push( assets[i].attributes._original );
-                        } else if (project.removed.indexOf( assets[i].guid ) !== -1) {
-                            payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
-                            payload.removed[assets[i].okey].push( assets[i].id );
+            Synchronizator.getAll( 'ComplexAsset', 'project_new', function(newAssets) {
+                payload.new = newAssets;
+                Synchronizator.getAll( 'ComplexAsset', 'project_update', function(updatedAssets) {
+                    payload.updated = updatedAssets;
+                    Asset.findAssetsByGuids( project.added.concat( project.removed.concat( project.deleted ) ), function(assets) {
+                        for (var i = 0; i < assets.length; i++) {
+                            if (project.added.indexOf( assets[i].id ) !== -1) {
+                                payload.added[assets[i].okey] = payload.added[assets[i].okey] || [];
+                                payload.added[assets[i].okey].push( assets[i].attributes._original );
+                            } else if (project.removed.indexOf( assets[i].guid ) !== -1) {
+                                payload.removed[assets[i].okey] = payload.removed[assets[i].okey] || [];
+                                payload.removed[assets[i].okey].push( assets[i].id );
+                            }
+                            if (project.deleted.indexOf( assets[i].id ) !== -1) {
+                                payload.deleted.push( assets[i] );
+                            }
                         }
-                        if (project.deleted.indexOf( assets[i].id ) !== -1) {
-                            payload.deleted.push( assets[i] );
-                        } else if (project.updated.indexOf( assets[i].id ) !== -1) {
-                            payload.updated.push( assets[i] );
-                        }
-                    }
 
-                    callback( payload );
+                        callback( payload );
+                    } );
                 } );
             } );
         };
@@ -246,6 +246,7 @@
             this.loaded = false ;
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
+            Synchronizator.deleteAllProjectItems();
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;
@@ -362,6 +363,23 @@
                 this.assets.push( assets[i].guid );
             }
             this.save( callback );
+            $rootScope.$broadcast( 'UPDATE_PROJECTS' );
+        };
+
+        /**
+         * @name addUpdated
+         * @desc
+         */
+        Project.prototype.addUpdated = function(assets, callback) {
+            if (!assets.length) {
+                assets = [assets];
+            }
+            for (var i = 0; i < assets.length; i++) {
+                assets[i].project_status = "updated";
+                this.updated.push( assets[i].guid );
+            }
+            this.save( callback );
+            $rootScope.$broadcast( 'UPDATE_PROJECTS' );
         };
 
         /**
