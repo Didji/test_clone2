@@ -155,6 +155,7 @@ window.smartgeo_i18n_lang.en = {
     _PROJECT_ASSETS_DELETED_: "Asset mark as deleted in project %s",
     _PROJECT_ASSETS_ARE_LOCKED_: "The project can not be saved because the following assets are locked : \n %s",
     _PROJECTS_LIST_CANT_BE_LOAD_: "Cannot refresh the list while a project is loaded.",
+    _PROJECT_IS_NOT_UPDATABLE_: "Project is not updatable.",
     _PROJECT_IS_LOCKED_BY_ANOTHER_USER_: "Project is locked by another user.",
     _PROJECT_IS_LOCKED_: "Project locked",
     _RETRY_: "Retry"
