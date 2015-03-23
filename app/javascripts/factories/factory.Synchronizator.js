@@ -77,8 +77,8 @@
          * @name list
          * @desc
          */
-        SyncItem.list = function(callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced != "true" ', [], function(rows) {
+        SyncItem.list = function(wheres, callback) {
+            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + SyncItem.buildListWhere(wheres), [], function(rows) {
                 var syncItems = [], syncItem ;
                 for (var i = 0; i < rows.length; i++) {
                     syncItem = new SyncItem( rows.item( i ) ) ;
@@ -93,22 +93,73 @@
         };
 
         /**
+         * @name buildListWhere
+         * @desc
+         */
+        SyncItem.buildListWhere = function(wheres) {
+            if ( !wheres.length ) {
+                return "";
+            }
+            var where = " where ";
+            for (var i=0 ; i < wheres.length ; i++) {
+                where += wheres[i].column + ' ' + wheres[i].operator + ' "' + wheres[i].value + '" and ';
+            }
+            return where.slice(0, -4);
+        }
+
+        /**
          * @name listSynced
          * @desc
          */
         SyncItem.listSynced = function(callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced == "true" ', [], function(rows) {
-                var syncItems = [], syncItem ;
-                for (var i = 0; i < rows.length; i++) {
-                    syncItem = new SyncItem( rows.item( i ) ) ;
-                    syncItem = angular.extend( syncItem, JSON.parse( syncItem.json ) );
-                    syncItem.deleted = syncItem.deleted === "true";
-                    syncItem.synced = syncItem.synced === "true";
-                    delete syncItem.json;
-                    syncItems.push( syncItem );
+            var wheres = [
+                {
+                    column: 'deleted',
+                    operator: '!=',
+                    value: 'true'
+                },
+                {
+                    column: 'synced',
+                    operator: '==',
+                    value: 'true'
                 }
-                (callback || function() {})( syncItems );
-            } );
+            ];
+            SyncItem.list( wheres, callback );
+        };
+
+        /**
+         * @name listSynced
+         * @desc
+         */
+        SyncItem.listNotSynced = function(callback) {
+            var wheres = [
+                {
+                    column: 'deleted',
+                    operator: '!=',
+                    value: 'true'
+                },
+                {
+                    column: 'synced',
+                    operator: '!=',
+                    value: 'true'
+                }
+            ];
+            SyncItem.list( wheres, callback );
+        };
+
+        /**
+         * @name listSynced
+         * @desc
+         */
+        SyncItem.listWithoutProject = function(callback) {
+            var wheres = [
+                {
+                    column: 'action',
+                    operator: 'NOT LIKE',
+                    value: 'project_%'
+                }
+            ];
+            SyncItem.list( wheres, callback );
         };
 
         SQLite.exec( SyncItem.database, 'CREATE TABLE IF NOT EXISTS ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
@@ -163,7 +214,7 @@
          * @desc
          */
         Synchronizator.listItems = function(callback) {
-            SyncItem.list( callback );
+            SyncItem.listNotSynced( callback );
         };
 
         /**
@@ -172,6 +223,14 @@
          */
         Synchronizator.listSyncedItems = function(callback) {
             SyncItem.listSynced( callback );
+        };
+
+        /**
+         * @name listItems
+         * @desc
+         */
+        Synchronizator.listItemsNotInProject = function(callback) {
+            SyncItem.listWithoutProject( callback );
         };
 
         /**
