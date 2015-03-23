@@ -157,6 +157,11 @@
                     column: 'action',
                     operator: 'NOT LIKE',
                     value: 'project_%'
+                },
+                {
+                    column: 'synced',
+                    operator: '!=',
+                    value: 'true'
                 }
             ];
             SyncItem.list( wheres, callback );
