@@ -179,7 +179,7 @@
         Project.handleLoadError = function(data, status) {
             switch (status) {
                 case 423:
-                    alertify.alert( i18n.get('_PROJECT_IS_LOCKED_BY_ANOTHER_USER_') );
+                    alertify.alert( i18n.get( '_PROJECT_IS_LOCKED_BY_ANOTHER_USER_' ) );
                     break;
                 case 500:
                 default:
@@ -389,7 +389,7 @@
                 assets = [assets];
             }
             for (var i = 0; i < assets.length; i++) {
-                assets[i].classindex = this.getClassIndexForUpdatedAsset(assets[i].okey);
+                assets[i].classindex = this.getClassIndexForUpdatedAsset( assets[i].okey );
                 assets[i].project_status = "updated";
                 this.updated.push( assets[i].guid );
             }
@@ -530,7 +530,7 @@
          */
         Project.prototype.save = function(callback) {
             if (!this.id) {
-                callback( false );
+                (callback || function() {})( false );
                 return false;
             }
             SQLite.exec( Project.database, 'INSERT OR REPLACE INTO ' + Project.table + '(' + Project.columns.join( ',' ) + ') VALUES (' + Project.prepareStatement + ')', this.serializeForSQL(), callback );
@@ -594,39 +594,39 @@
          */
         Project.prototype.getClassIndex = function(okey, status) {
             return this.expressions[okey.replace( 'PROJECT_', '' )] && this.expressions[okey.replace( 'PROJECT_', '' )][status] || 0;
-        }
+        };
 
         /**
          * @name getClassIndexForUnchangedAsset
          * @desc Renvoie le class index pour un asset inchangé
          */
         Project.prototype.getClassIndexForUnchangedAsset = function(okey) {
-            return this.getClassIndex(okey, 'unchanged');
-        }
+            return this.getClassIndex( okey, 'unchanged' );
+        };
 
         /**
          * @name getClassIndexForAddedAsset
          * @desc Renvoie le class index pour un asset créé
          */
         Project.prototype.getClassIndexForAddedAsset = function(okey) {
-            return this.getClassIndex(okey, 'added');
-        }
+            return this.getClassIndex( okey, 'added' );
+        };
 
         /**
          * @name getClassIndexForUpdatedAsset
          * @desc Renvoie le class index pour un asset modifié
          */
         Project.prototype.getClassIndexForUpdatedAsset = function(okey) {
-            return this.getClassIndex(okey, 'updated');
-        }
+            return this.getClassIndex( okey, 'updated' );
+        };
 
         /**
          * @name getClassIndexForDeletedAsset
          * @desc Renvoie le class index pour un asset supprimé
          */
         Project.prototype.getClassIndexForDeletedAsset = function(okey) {
-            return this.getClassIndex(okey, 'deleted');
-        }
+            return this.getClassIndex( okey, 'deleted' );
+        };
 
         SQLite.exec( Project.database, 'CREATE TABLE IF NOT EXISTS ' + Project.table + '(' + Project.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
 

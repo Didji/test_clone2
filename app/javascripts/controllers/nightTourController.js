@@ -10,12 +10,13 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report) {
 
         'use strict';
 
         var secureInterval,
-            secureIntervalTime = 30000;
+            secureIntervalTime = 30000,
+            assetsCache = [];
 
         /**
          * @memberOf nightTourController
@@ -64,7 +65,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
 
             $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset );
-
+            $rootScope.$on( "mapClickHandlerForNighttour", mapClickHandlerForNighttour );
 
             $scope.$watch( 'nightTourRecording', function(newval) {
                 $scope.isFollowingMe = newval;
@@ -84,6 +85,28 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
             $scope.saving = false;
         };
+
+        function mapClickHandlerForNighttour(e, assets) {
+            for (var i = 0, ii = assets.length; i < ii; i++) {
+                var asset = assets[i] ;
+
+                if ($scope.mission.assets.indexOf( +asset.guid ) === -1 || asset.geometry.type === "LineString" || asset.marker) {
+                    continue;
+                }
+
+                asset.marker = L.marker( [asset.geometry.coordinates[1], asset.geometry.coordinates[0]] );
+                asset.marker.setIcon( $scope._KO_ASSET_ICON );
+                asset.isWorking = false;
+                (function(asset) {
+                    asset.marker.on( 'click', function(e) {
+                        $scope.toggleAsset( e, $scope.mission, asset );
+                    } );
+                })( asset );
+                G3ME.map.addLayer( asset.marker );
+                assetsCache.push( asset );
+            }
+
+        }
 
         /**
          * @memberOf nightTourController
@@ -198,10 +221,17 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 var ok = [],
                     ko = [],
                     asset;
-                for (var i in $scope.assetsCache) {
-                    asset = $scope.assetsCache[i];
+                for (var i in assetsCache) {
+                    asset = assetsCache[i];
                     (!!asset.isWorking || asset.isWorking === undefined ? ok : ko).push( asset.guid );
                 }
+
+                for (var j = 0, jj = $scope.mission.assets.length; j < jj; j++) {
+                    if (ok.indexOf( $scope.mission.assets[j] ) === -1 && ko.indexOf( $scope.mission.assets[j] ) === -1) {
+                        ok.push( $scope.mission.assets[j] );
+                    }
+                }
+
                 $scope.mission.displayDone = false;
                 $scope.stopNightTour( ok, ko );
             } );
@@ -226,13 +256,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             var asset;
 
             if ((ko.length + ok.length) === 0) {
-                for (var i in $scope.assetsCache) {
-                    asset = $scope.assetsCache[i];
+                for (var i in assetsCache) {
+                    asset = assetsCache[i];
                     if (asset.isWorking !== undefined) {
                         (!!asset.isWorking ? ok : ko).push( asset.guid );
                     }
                 }
-                return false;
             }
             $scope.saving = true;
             $scope.sendKoReports( ko, function() {
@@ -254,13 +283,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 return callback();
             }
 
-            var report = {
+            var report = angular.extend( new Report( ok, $scope.mission.activity.id, $scope.mission.id ), {
                 assets: ok,
                 fields: {},
-                mission: $scope.mission.id,
-                activity: $scope.mission.activity.id,
                 uuid: window.uuid()
-            };
+            } );
+
             applyDefaultValues( report, $scope.activity );
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
             Synchronizator.addNew( report );
@@ -278,13 +306,13 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if (!ko.length) {
                 return callback();
             }
-            var report = {
+
+            var report = angular.extend( new Report( ko, $scope.mission.activity.id, $scope.mission.id ), {
                 assets: ko,
                 fields: {},
-                mission: $scope.mission.id,
-                activity: $scope.mission.activity.id,
                 uuid: window.uuid()
-            };
+            } );
+
             applyDefaultValues( report, $scope.activity );
             report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
             Synchronizator.addNew( report );
@@ -346,7 +374,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @param {array}  assetsCache  Array of mission's assets, fetched from database
          * @desc
          */
-        $scope.startNightTour = function(event, mission, assetsCache) {
+        $scope.startNightTour = function(event, mission) {
 
             if (secureInterval) {
                 clearInterval( secureInterval );
@@ -367,7 +395,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
 
             $scope.activity = Site.current.activities._byId[mission.activity.id];
 
-            $scope.assetsCache = assetsCache;
             $scope.mission = mission;
             $scope.isFollowingMe = true;
 
@@ -418,7 +445,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.locateMission = function() {
             if (!$scope.mission.extent) {
-                $scope.mission.extent = G3ME.getExtentsFromAssetsList( $scope.assetsCache[$scope.mission.id] );
+                $scope.mission.extent = G3ME.getExtentsFromAssetsList( assetsCache[$scope.mission.id] );
             }
             $rootScope.$broadcast( '__MAP_SETVIEW__', $scope.mission.extent );
         };
@@ -434,7 +461,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if (!$rootScope.nightTourRecording) {
                 return;
             }
-            asset.isWorking = (asset.isWorking === undefined ? false : !asset.isWorking);
+            asset.isWorking = !asset.isWorking ;
             asset.marker.setIcon( asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON );
         };
 
@@ -446,14 +473,14 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             var now = Date.now(),
                 payloadKO = [] ,
                 payloadOK = [] ;
-            for (var i = 0; i < $scope.assetsCache.length; i++) {
-                if (!$scope.assetsCache[i].alreadySent && (now - $scope.assetsCache[i].timestamp) > secureIntervalTime) {
-                    if ($scope.assetsCache[i].isWorking) {
-                        payloadOK.push( $scope.assetsCache[i].guid );
+            for (var i = 0; i < assetsCache.length; i++) {
+                if (!assetsCache[i].alreadySent && (now - assetsCache[i].timestamp) > secureIntervalTime) {
+                    if (assetsCache[i].isWorking) {
+                        payloadOK.push( assetsCache[i].guid );
                     } else {
-                        payloadKO.push( $scope.assetsCache[i].guid );
+                        payloadKO.push( assetsCache[i].guid );
                     }
-                    $scope.assetsCache[i].alreadySent = true ;
+                    assetsCache[i].alreadySent = true ;
                 }
             }
             $scope.sendKoReports( payloadKO, function() {
