@@ -389,6 +389,7 @@
                 assets = [assets];
             }
             for (var i = 0; i < assets.length; i++) {
+                assets[i].classindex = this.getClassIndexForUpdatedAsset(assets[i].okey);
                 assets[i].project_status = "updated";
                 this.updated.push( assets[i].guid );
             }
@@ -586,6 +587,46 @@
         Project.prototype.toggleCollapse = function() {
             this.is_open = !this.is_open;
         };
+
+        /**
+         * @name getClassIndex
+         * @desc Renvoie le class index d'un asset pour un status donné
+         */
+        Project.prototype.getClassIndex = function(okey, status) {
+            return this.expressions[okey.replace( 'PROJECT_', '' )] && this.expressions[okey.replace( 'PROJECT_', '' )][status] || 0;
+        }
+
+        /**
+         * @name getClassIndexForUnchangedAsset
+         * @desc Renvoie le class index pour un asset inchangé
+         */
+        Project.prototype.getClassIndexForUnchangedAsset = function(okey) {
+            return this.getClassIndex(okey, 'unchanged');
+        }
+
+        /**
+         * @name getClassIndexForAddedAsset
+         * @desc Renvoie le class index pour un asset créé
+         */
+        Project.prototype.getClassIndexForAddedAsset = function(okey) {
+            return this.getClassIndex(okey, 'added');
+        }
+
+        /**
+         * @name getClassIndexForUpdatedAsset
+         * @desc Renvoie le class index pour un asset modifié
+         */
+        Project.prototype.getClassIndexForUpdatedAsset = function(okey) {
+            return this.getClassIndex(okey, 'updated');
+        }
+
+        /**
+         * @name getClassIndexForDeletedAsset
+         * @desc Renvoie le class index pour un asset supprimé
+         */
+        Project.prototype.getClassIndexForDeletedAsset = function(okey) {
+            return this.getClassIndex(okey, 'deleted');
+        }
 
         SQLite.exec( Project.database, 'CREATE TABLE IF NOT EXISTS ' + Project.table + '(' + Project.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
 

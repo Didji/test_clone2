@@ -40,7 +40,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     if (okey && !scope.asset) {
                         if (okey.search( /PROJECT_/ ) === 0) {
                             scope.isProject = true;
-                            scope.defaultClassIndex = (Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[okey.replace( 'PROJECT_', '' )].added) || 0;
+                            scope.defaultClassIndex = Project.currentLoadedProject.getClassIndexForAddedAsset(okey);
                             scope.root = scope.node = new ComplexAsset( okey );
                             scope.root.isProject = true;
                         } else {

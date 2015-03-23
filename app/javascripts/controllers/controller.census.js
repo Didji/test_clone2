@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'CensusController', CensusController );
 
-    CensusController.$inject = ["Site", "$rootScope", "Asset", "$scope", "ComplexAsset", "Relationship"];
+    CensusController.$inject = ["Site", "$rootScope", "Asset", "$scope", "ComplexAsset", "Relationship", "Project"];
 
     /**
      * @class CensusController
@@ -14,7 +14,7 @@
      *
      * @property {String} classindex Okey de l'objet recencé en cours
      */
-    function CensusController(Site, $rootScope, Asset, $scope, ComplexAsset, Relationship) {
+    function CensusController(Site, $rootScope, Asset, $scope, ComplexAsset, Relationship, Project) {
 
         var vm = this;
 
@@ -83,11 +83,14 @@
 
             var isProjectAsset = (asset.okey.search( 'PROJECT_' ) === 0);
 
+            if (isProjectAsset) {
+                vm.classindex = Project.currentLoadedProject.getClassIndexForUpdatedAsset(asset.okey);
+            }
+
             asset.findRelated( function(data) {
                 if (data !== undefined) {
                     if (data.root == data.id && data.isComplex) {
                         //Cet élément est déjà la racine, on cherche ses enfants
-
                         var theAsset = formatAsset( data );
                         var complex = new ComplexAsset( null, null, '', theAsset );
                         fillChildren( complex, theAsset.tree, theAsset.relatedAssets, complex );
@@ -95,7 +98,6 @@
                         theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
                         startCensus( theAsset );
-
                     } else {
                         Relationship.findRoot( data.id, function(r) {
                             Asset.findOne( r, function(root) {
