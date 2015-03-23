@@ -284,7 +284,7 @@
             for (var i in vm.missions) {
                 if (vm.missions[i].postAddedAssets && vm.missions[i].postAddedAssets.assets && vm.missions[i].postAddedAssets.assets.length) {
                     (function(mission) {
-                        Asset.findGeometryByGuids( Site.current, mission.postAddedAssets.assets, function(assets) {
+                        Asset.findGeometryByGuids( mission.postAddedAssets.assets, function(assets) {
                             if (!assetsCache[mission.id]) {
                                 assetsCache[mission.id] = [];
                             }
@@ -307,7 +307,7 @@
                 if (vm.missions[i].postAddedAssets && vm.missions[i].postAddedAssets.done && vm.missions[i].postAddedAssets.done.length) {
                     (function(mission) {
 
-                        Asset.findGeometryByGuids( Site.current, mission.postAddedAssets.done, function(assets) {
+                        Asset.findGeometryByGuids( mission.postAddedAssets.done, function(assets) {
 
                             if (!vm.doneAssetsCache[mission.id]) {
                                 vm.doneAssetsCache[mission.id] = [];
@@ -392,7 +392,7 @@
                 $rootScope.$broadcast( "DESACTIVATE_POSITION" );
             }
             if (mission.openned && (!assetsCache[mission.id] || assetsCache[mission.id].length < mission.assets.length) && (mission.assets.length || !mission.activity)) {
-                return Asset.findGeometryByGuids( Site.current, mission.assets, function(assets) {
+                return Asset.findGeometryByGuids( mission.assets, function(assets) {
                     if (!assets.length) {
                         mission.isLoading = false;
                         mission.objectNotFound = true;
@@ -401,28 +401,29 @@
                         }
                         return;
                     }
-
+                    var i;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
-                    for (var i = 0; i < assets.length; i++) {
-                        if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
-                            assetsCache[mission.id].push( assets[i] );
+                    if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
+                        for (i = 0; i < assets.length; i++) {
+                            if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
+                                assetsCache[mission.id].push( assets[i] );
+                            }
                         }
-                    }
-                    assetsCache[mission.id]._byId = {};
-                    for (i = 0; i < assetsCache[mission.id].length; i++) {
-                        assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
-                    }
-                    angular.extend( mission, {
-                        selectedAssets: 0,
-                        extent: G3ME.getExtentsFromAssetsList( assetsCache[mission.id] ),
-                        isLoading: false
-                    } );
-                    if (mission.activity && vm.activities._byId[mission.activity.id].type === "night_tour") {
+                        assetsCache[mission.id]._byId = {};
+                        for (i = 0; i < assetsCache[mission.id].length; i++) {
+                            assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
+                        }
+                    } else {
                         mission.activity.isNightTour = true;
                         var traces = Storage.get( 'traces' ) || [];
                         mission.trace = traces[mission.id];
                         $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
                     }
+                    angular.extend( mission, {
+                        selectedAssets: 0,
+                        extent: G3ME.getExtentsFromAssetsList( assets ),
+                        isLoading: false
+                    } );
                     highlightMission( mission );
                     if (locate !== false) {
                         $rootScope.$broadcast( '__MAP_SETVIEW__', mission.extent );
@@ -503,13 +504,15 @@
         }
 
 
-        /**
+        /**g
          * @name highlightMission
          * @param {Object} mission concerned mission
          * @desc
          */
         function highlightMission(mission) {
-            $rootScope.$broadcast( 'HIGHLIGHT_ASSETS_FOR_MISSION', mission, assetsCache[mission.id], null, markerClickHandler );
+            if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
+                $rootScope.$broadcast( 'HIGHLIGHT_ASSETS_FOR_MISSION', mission, assetsCache[mission.id], null, markerClickHandler );
+            }
         }
 
         /**
@@ -643,7 +646,7 @@
 
             Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions );
 
-            Asset.findGeometryByGuids( Site.current, asset.guid, function(assets) {
+            Asset.findGeometryByGuids( asset.guid, function(assets) {
 
                 if (!assetsCache[mission.id]) {
                     assetsCache[mission.id] = [];

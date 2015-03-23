@@ -1,5 +1,5 @@
 <div ng-controller="ProjectController as projectController" class="project-controller">
-    <div ng-repeat="project in (projectController.projects | orderBy:'id') track by project.id" class="project-block">
+    <div ng-repeat="project in (projectController.projects | orderBy:'id') track by $index" class="project-block">
         <div class="panel panel-default">
             <div class="panel-heading" ng-click="project.toggleCollapse()">
                 <h3 class="panel-title" ng-class="project.loaded == true ? 'project-loaded' : ''">{{project.name}}</h3>

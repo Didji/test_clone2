@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Smartgeo", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Smartgeo, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport) {
+    function MapController($scope, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator) {
 
         var LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -41,9 +41,9 @@
             ] )
                 .on( 'click', mapClickHandler )
                 .on( 'dragend', dragEndHandler )
-                .addControl( Smartgeo.makeControl( i18n.get( '_MAP_REFERENCE_VIEW_CONTROL' ), "fa-arrows-alt", setReferenceView ) );
+                .addControl( Utils.makeControl( i18n.get( '_MAP_REFERENCE_VIEW_CONTROL' ), "fa-arrows-alt", setReferenceView ) );
 
-            Smartgeo.silentLogin( G3ME.BackgroundTile.redraw );
+            Authenticator.silentLogin( G3ME.BackgroundTile.redraw );
 
             (Storage.get( 'user_position_activated' ) ? activatePosition : angular.noop)();
 
@@ -154,7 +154,7 @@
          * @param {Event} e
          */
         function mapClickHandler(e) {
-            if (!consultationIsEnabled) {
+            if (!consultationIsEnabled && !$rootScope.nightTourInProgress) {
                 console.info( e.latlng.lat, e.latlng.lng );
                 return false;
             }
@@ -166,11 +166,15 @@
                     weight: 1
                 } ).addTo( G3ME.map );
 
-            $rootScope.$broadcast( "CONSULTATION_CLICK_REQUESTED", coords );
+            if (!$rootScope.nightTourInProgress) {
+                $rootScope.$broadcast( "CONSULTATION_CLICK_REQUESTED", e.latlng );
+            }
 
             Asset.findInBounds( coords, circle.getBounds(), function(assets) {
                 if (!assets.length) {
                     noConsultableAssets( coords );
+                } else if ($rootScope.nightTourInProgress) {
+                    $rootScope.$broadcast( "mapClickHandlerForNighttour", assets );
                 } else {
                     $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                 }
@@ -188,7 +192,7 @@
         function activateConsultation() {
             stopConsultation();
             consultationIsEnabled = true;
-            CONSULTATION_CONTROL = CONSULTATION_CONTROL || Smartgeo.makeControl( i18n.get( '_MAP_CONSULTATION_CONTROL' ), "fa-info-circle", stopConsultation );
+            CONSULTATION_CONTROL = CONSULTATION_CONTROL || Utils.makeControl( i18n.get( '_MAP_CONSULTATION_CONTROL' ), "fa-info-circle", stopConsultation );
             G3ME.map.addControl( CONSULTATION_CONTROL );
         }
 
@@ -217,7 +221,7 @@
             }
 
             if (GPS.startWatchingPosition( setLocationMarker )) {
-                POSITION_CONTROL = POSITION_CONTROL || Smartgeo.makeControl( i18n.get( '_MAP_MY_POSITION_CONTROL' ), "fa-compass", stopPosition );
+                POSITION_CONTROL = POSITION_CONTROL || Utils.makeControl( i18n.get( '_MAP_MY_POSITION_CONTROL' ), "fa-compass", stopPosition );
                 G3ME.map.addControl( POSITION_CONTROL );
             }
         }

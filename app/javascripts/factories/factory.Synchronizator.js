@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Synchronizator', SynchronizatorFactory );
 
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship"];
+    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "Utils"];
 
 
-    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship) {
+    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, Utils) {
 
         /**
          * @class SyncItemFactory
@@ -77,8 +77,8 @@
          * @name list
          * @desc
          */
-        SyncItem.list = function(callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced != "true" ', [], function(rows) {
+        SyncItem.list = function(wheres, callback) {
+            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + SyncItem.buildListWhere(wheres), [], function(rows) {
                 var syncItems = [], syncItem ;
                 for (var i = 0; i < rows.length; i++) {
                     syncItem = new SyncItem( rows.item( i ) ) ;
@@ -93,22 +93,73 @@
         };
 
         /**
+         * @name buildListWhere
+         * @desc
+         */
+        SyncItem.buildListWhere = function(wheres) {
+            if ( !wheres.length ) {
+                return "";
+            }
+            var where = " where ";
+            for (var i=0 ; i < wheres.length ; i++) {
+                where += wheres[i].column + ' ' + wheres[i].operator + ' "' + wheres[i].value + '" and ';
+            }
+            return where.slice(0, -4);
+        }
+
+        /**
          * @name listSynced
          * @desc
          */
         SyncItem.listSynced = function(callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + ' where deleted != "true" and synced == "true" ', [], function(rows) {
-                var syncItems = [], syncItem ;
-                for (var i = 0; i < rows.length; i++) {
-                    syncItem = new SyncItem( rows.item( i ) ) ;
-                    syncItem = angular.extend( syncItem, JSON.parse( syncItem.json ) );
-                    syncItem.deleted = syncItem.deleted === "true";
-                    syncItem.synced = syncItem.synced === "true";
-                    delete syncItem.json;
-                    syncItems.push( syncItem );
+            var wheres = [
+                {
+                    column: 'deleted',
+                    operator: '!=',
+                    value: 'true'
+                },
+                {
+                    column: 'synced',
+                    operator: '==',
+                    value: 'true'
                 }
-                (callback || function() {})( syncItems );
-            } );
+            ];
+            SyncItem.list( wheres, callback );
+        };
+
+        /**
+         * @name listSynced
+         * @desc
+         */
+        SyncItem.listNotSynced = function(callback) {
+            var wheres = [
+                {
+                    column: 'deleted',
+                    operator: '!=',
+                    value: 'true'
+                },
+                {
+                    column: 'synced',
+                    operator: '!=',
+                    value: 'true'
+                }
+            ];
+            SyncItem.list( wheres, callback );
+        };
+
+        /**
+         * @name listSynced
+         * @desc
+         */
+        SyncItem.listWithoutProject = function(callback) {
+            var wheres = [
+                {
+                    column: 'action',
+                    operator: 'NOT LIKE',
+                    value: 'project_%'
+                }
+            ];
+            SyncItem.list( wheres, callback );
         };
 
         SQLite.exec( SyncItem.database, 'CREATE TABLE IF NOT EXISTS ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
@@ -163,7 +214,7 @@
          * @desc
          */
         Synchronizator.listItems = function(callback) {
-            SyncItem.list( callback );
+            SyncItem.listNotSynced( callback );
         };
 
         /**
@@ -172,6 +223,14 @@
          */
         Synchronizator.listSyncedItems = function(callback) {
             SyncItem.listSynced( callback );
+        };
+
+        /**
+         * @name listItems
+         * @desc
+         */
+        Synchronizator.listItemsNotInProject = function(callback) {
+            SyncItem.listWithoutProject( callback );
         };
 
         /**
@@ -220,7 +279,7 @@
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
             var assets = [] ;
             complexasset.syncInProgress = true;
-            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
+            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
                 timeout: 1e5
             } ).success( function(data) {
                 if (data[complexasset.okey] && Array.isArray( data[complexasset.okey] ) && data[complexasset.okey].length) {
@@ -281,7 +340,7 @@
         Synchronizator.deleteAssetSynchronizator = function(asset, callback) {
             asset.syncInProgress = true;
             $http.post(
-                Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
+                Utils.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
                 {
                     deleted: asset.payload
                 }
@@ -304,7 +363,7 @@
          */
         Synchronizator.newReportSynchronizator = function(report, callback) {
             report.syncInProgress = true;
-            $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
+            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
                 timeout: 3e6
             } ).success( function(data) {
                 if (data.cri && data.cri.length) {
@@ -416,7 +475,7 @@
                 for (var i = 0; i < reports.length; i++) {
                     luuids.push( reports[i].uuid );
                 }
-                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
+                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
                     uuids: luuids
                 } ).success( function(data) {
                     if ((typeof data) === "string") {

@@ -61,7 +61,7 @@
          * @desc Synchronize tous les items
          */
         function updateList(callback) {
-            Synchronizator.listItems( function(syncItems) {
+            Synchronizator.listItemsNotInProject( function(syncItems) {
                 vm.syncItems = syncItems;
                 $scope.$digest();
                 (typeof callback === "function" ? callback : function() {})();

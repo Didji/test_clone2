@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'ComplexAsset', ComplexAssetFactory );
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Smartgeo", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator", "i18n"];
+    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator", "i18n"];
 
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Smartgeo, Storage, Site, Asset, Relationship, SQLite, Synchronizator, i18n) {
+    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Storage, Site, Asset, Relationship, SQLite, Synchronizator, i18n) {
 
         /**
          * @class ComplexAssetFactory
@@ -220,7 +220,7 @@
                 asset = assets[i] ;
                 asset.guid = update ? asset.guid : asset.uuid ;
                 asset.attributes = asset.fields ;
-                asset.classindex = (Project && Project.currentLoadedProject && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )] && Project.currentLoadedProject.expressions[asset.okey.replace( 'PROJECT_', '' )].added) || 0 ;
+                asset.classindex = (Project && Project.currentLoadedProject && Project.currentLoadedProject.getClassIndexForAddedAsset(asset.okey))
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
                 asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
                 asset.maplabel = "";

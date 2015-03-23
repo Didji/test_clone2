@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Smartgeo", "Asset", "i18n", "Relationship", "ComplexAsset", "Synchronizator"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "ComplexAsset", "Utils", "Synchronizator"];
 
 
-    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Smartgeo, Asset, i18n, Relationship, ComplexAsset, Synchronizator) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, ComplexAsset, Utils, Synchronizator) {
 
         /**
          * @class ProjectFactory
@@ -63,7 +63,7 @@
                 } );
             }
             this.loading = true ;
-            $http.get( Smartgeo.getServiceUrl( 'project.mobility.load.json', {
+            $http.get( Utils.getServiceUrl( 'project.mobility.load.json', {
                 id: this.id
             } ) ).success( function(data) {
                 project.setAssets( data.assets, data.relations, function() {
@@ -84,7 +84,7 @@
                 return alertify.alert( i18n.get( '_PROJECTS_LOADED_PROJECT_NOT_SAVE_' ) );
             }
             this.unloading = true ;
-            $http.get( Smartgeo.getServiceUrl( 'project.mobility.unload.json', {
+            $http.get( Utils.getServiceUrl( 'project.mobility.unload.json', {
                 id: this.id
             } ) ).success( function() {
                 project.setProjectUnloaded( callback );
@@ -101,7 +101,7 @@
             var project = this;
             this.synchronizing = true;
             this.getSynchronizePayload( function(payload) {
-                $http.put( Smartgeo.getServiceUrl( 'project.mobility.save.json', {
+                $http.put( Utils.getServiceUrl( 'project.mobility.save.json', {
                     id_project: project.id
                 } ), payload ).success( function() {
                     project.discardChanges( callback );
@@ -124,9 +124,9 @@
                     'updated': []
                 },
                 project = this ;
-            Synchronizator.getAll('ComplexAsset', 'project_new', function(newAssets) {
+            Synchronizator.getAll( 'ComplexAsset', 'project_new', function(newAssets) {
                 payload.new = newAssets;
-                Synchronizator.getAll('ComplexAsset', 'project_update', function(updatedAssets) {
+                Synchronizator.getAll( 'ComplexAsset', 'project_update', function(updatedAssets) {
                     payload.updated = updatedAssets;
                     Asset.findAssetsByGuids( project.added.concat( project.removed.concat( project.deleted ) ), function(assets) {
                         for (var i = 0; i < assets.length; i++) {
@@ -198,7 +198,7 @@
         Project.prototype.remoteNewUpdateDeleteAssets = function(callback) {
             var project = this ;
             this.getNewUpdateDeletePayload( function(payload) {
-                $http.post( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
+                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
                     id_project: project.id
                 } ), payload ).success( function() {
                     project.discardChanges( callback );
@@ -379,7 +379,7 @@
                 this.assets.push( assets[i].guid );
             }
             this.save( callback );
-            $rootScope.$broadcast('UPDATE_PROJECTS');
+            $rootScope.$broadcast( 'UPDATE_PROJECTS' );
         };
 
         /**
@@ -391,11 +391,12 @@
                 assets = [assets];
             }
             for (var i = 0; i < assets.length; i++) {
+                assets[i].classindex = this.getClassIndexForUpdatedAsset( assets[i].okey );
                 assets[i].project_status = "updated";
                 this.updated.push( assets[i].guid );
             }
             this.save( callback );
-            $rootScope.$broadcast('UPDATE_PROJECTS');
+            $rootScope.$broadcast( 'UPDATE_PROJECTS' );
         };
 
         /**
@@ -531,7 +532,7 @@
          */
         Project.prototype.save = function(callback) {
             if (!this.id) {
-                callback( false );
+                (callback || function() {})( false );
                 return false;
             }
             SQLite.exec( Project.database, 'INSERT OR REPLACE INTO ' + Project.table + '(' + Project.columns.join( ',' ) + ') VALUES (' + Project.prepareStatement + ')', this.serializeForSQL(), callback );
@@ -567,7 +568,7 @@
          * @desc Requête le serveur pour récupérer les projets de l'utilisateur connecté.
          */
         Project.list = function() {
-            return $http.get( Smartgeo.getServiceUrl( 'project.mobility.list.json' ) );
+            return $http.get( Utils.getServiceUrl( 'project.mobility.list.json' ) );
         };
 
 
@@ -587,6 +588,46 @@
 
         Project.prototype.toggleCollapse = function() {
             this.is_open = !this.is_open;
+        };
+
+        /**
+         * @name getClassIndex
+         * @desc Renvoie le class index d'un asset pour un status donné
+         */
+        Project.prototype.getClassIndex = function(okey, status) {
+            return this.expressions[okey.replace( 'PROJECT_', '' )] && this.expressions[okey.replace( 'PROJECT_', '' )][status] || 0;
+        };
+
+        /**
+         * @name getClassIndexForUnchangedAsset
+         * @desc Renvoie le class index pour un asset inchangé
+         */
+        Project.prototype.getClassIndexForUnchangedAsset = function(okey) {
+            return this.getClassIndex( okey, 'unchanged' );
+        };
+
+        /**
+         * @name getClassIndexForAddedAsset
+         * @desc Renvoie le class index pour un asset créé
+         */
+        Project.prototype.getClassIndexForAddedAsset = function(okey) {
+            return this.getClassIndex( okey, 'added' );
+        };
+
+        /**
+         * @name getClassIndexForUpdatedAsset
+         * @desc Renvoie le class index pour un asset modifié
+         */
+        Project.prototype.getClassIndexForUpdatedAsset = function(okey) {
+            return this.getClassIndex( okey, 'updated' );
+        };
+
+        /**
+         * @name getClassIndexForDeletedAsset
+         * @desc Renvoie le class index pour un asset supprimé
+         */
+        Project.prototype.getClassIndexForDeletedAsset = function(okey) {
+            return this.getClassIndex( okey, 'deleted' );
         };
 
         SQLite.exec( Project.database, 'CREATE TABLE IF NOT EXISTS ' + Project.table + '(' + Project.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );

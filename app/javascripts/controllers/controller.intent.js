@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "Smartgeo", "Storage", "Site", "prefetchedlocalsites", "Asset"];
+    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Smartgeo, Storage, Site, prefetchedlocalsites, Asset) {
+    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils) {
 
         var intent = {};
 
@@ -31,7 +31,7 @@
             } else {
                 preprocessIntentTarget( function() {
                     Storage.set( 'intent', intent );
-                    Smartgeo.tokenAuth( intent.token, redirect, redirect );
+                    Authenticator.tokenAuth( intent.token, redirect, redirect );
                 } );
             }
         }
@@ -67,9 +67,9 @@
          */
         function firstLaunch() {
             if (!Storage.get( "url" ) || Storage.get( "url" ).indexOf( intent.url ) === -1) {
-                Smartgeo.setGimapUrl( intent.url );
+                Utils.setGimapUrl( intent.url );
             }
-            Smartgeo.tokenAuth( intent.token, redirect, redirect );
+            Authenticator.tokenAuth( intent.token, redirect, redirect );
         }
 
         /**

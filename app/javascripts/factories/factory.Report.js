@@ -40,7 +40,7 @@
                 reportTargets = assets ;
             }
 
-            if (mission && mission.indexOf( 'call-' ) !== -1) {
+            if (mission && ("" + mission).indexOf( 'call-' ) !== -1) {
                 this.isCall = true;
                 mission = mission.substr( 5 );
             }
@@ -68,7 +68,7 @@
         };
 
         Report.prototype.getDescription = function() {
-            return Site.current.activities._byId[this.activity].label + ' (' + this.site + ')';
+            return (Site.current.activities._byId["" + this.activity] || Site.current.activities._byId["" + this.activity.id]).label + ' (' + this.site + ')';
         };
 
         Report.prototype.roFields = {};

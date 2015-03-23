@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'SiteListController', SiteListController );
 
-    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "Smartgeo", "i18n", "Storage", "prefetchedlocalsites", "Site"];
+    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "i18n", "Storage", "prefetchedlocalsites", "Site", "Utils", "Authenticator"];
 
     /**
      * @class SiteListController
@@ -17,7 +17,7 @@
      * @property {Array} sites Sites chargés
      */
 
-    function SiteListController($scope, $rootScope, $http, $location, Smartgeo, i18n, Storage, prefetchedlocalsites, Site) {
+    function SiteListController($scope, $rootScope, $http, $location, i18n, Storage, prefetchedlocalsites, Site, Utils, Authenticator) {
 
         var vm = this;
 
@@ -57,7 +57,7 @@
          * @desc Récupère la liste des sites sur le serveur
          */
         function getRemoteSites(knownSites) {
-            var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.site.json' );
+            var url = Utils.getServiceUrl( 'gi.maintenance.mobility.site.json' );
             $http.get( url )
                 .success( function(sites) {
                     var sitesById = {},
@@ -109,7 +109,7 @@
         function select(site) {
             Site.current = site;
             vm.ready = false;
-            Smartgeo.selectSiteRemotely( site.id, function() {
+            Authenticator.selectSiteRemotely( site.id, function() {
                 redirect( site );
             }, function() {
                     redirect( site );

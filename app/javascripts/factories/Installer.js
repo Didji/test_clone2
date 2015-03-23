@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartgeo, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, Asset, i18n, Relationship) {
+angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, Asset, i18n, Relationship, Utils, Authenticator) {
 
     'use strict';
 
@@ -109,7 +109,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         },
 
         getInstallJSON: function(site, callback) {
-            var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.json', {
+            var url = Utils.getServiceUrl( 'gi.maintenance.mobility.installation.json', {
                 'site': site.id
             } );
 
@@ -121,7 +121,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
         },
 
         getUpdateJSON: function(site, callback) {
-            var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.json', {
+            var url = Utils.getServiceUrl( 'gi.maintenance.mobility.installation.json', {
                 'site': site.id,
                 'timestamp': site.timestamp
             } );
@@ -130,7 +130,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 .success( callback )
                 .error( function(response, code) {
                     if (code === 403) {
-                        Smartgeo.silentLogin( function() {
+                        Authenticator.silentLogin( function() {
                             $route.reload();
                         } );
                     } else {
@@ -258,7 +258,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
             if (objectType.amount > Installer._INSTALL_MAX_ASSETS_PER_HTTP_REQUEST) {
                 Installer.installOkeyPerSlice( site, objectType, 0, callback, update );
             } else {
-                var url = Smartgeo.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
+                var url = Utils.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json', {
                     okey: objectType.okey
                 } );
                 if (update) {
@@ -400,7 +400,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, Smartg
                 } ).transaction( function(transaction) {
                     transaction.executeSql( 'DROP TABLE IF EXISTS ASSETS', [], function() {
                         Installer.checkpoint( "destroy_zones_databases", site.zones.length, callback );
-                    }, Smartgeo.log );
+                    } );
                 } );
             }
         }

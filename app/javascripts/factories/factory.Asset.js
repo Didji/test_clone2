@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "Smartgeo", "$http", "Site", "GPS", "Relationship", "Right"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "$http", "Site", "GPS", "Relationship", "Right", "Utils"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, Smartgeo, $http, Site, GPS, Relationship, Right) {
+    function AssetFactory(G3ME, Marker, SQLite, $rootScope, $http, Site, GPS, Relationship, Right, Utils) {
 
         /**
          * @class AssetFactory
@@ -33,6 +33,9 @@
         }
 
         Asset.cache = { } ;
+
+        Asset.__maxIdPerRequest = 4000 ;
+        Asset.__maxResultPerSearch = 10 ;
 
         Asset.prototype.onMap = false;
 
@@ -140,7 +143,7 @@
          */
         Asset.prototype.fetchHistory = function() {
             var self = this;
-            $http.get( Smartgeo.getServiceUrl( 'gi.maintenance.mobility.history', {
+            $http.get( Utils.getServiceUrl( 'gi.maintenance.mobility.history', {
                 id: this.guid,
                 limit: 5
             } ) ).success( function(data) {
@@ -739,24 +742,13 @@
             };
         };
 
-        Asset.findGeometryByGuids_big = function(site, guids, callback, partial_response) {
-            partial_response = partial_response || [];
-            if (guids.length === 0) {
-                return callback( partial_response );
-            } else {
-                Asset.findGeometryByGuids( site, guids.slice( 0, Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), function(assets) {
-                    Asset.findGeometryByGuids_big( site, guids.slice( Smartgeo._MAX_ID_FOR_SELECT_REQUEST ), callback, partial_response.concat( assets ) );
-                } );
-            }
-        };
-
-        Asset.findGeometryByGuids = function(site, guids, callback, zones, partial_response) {
-            if (guids.length > Smartgeo._MAX_ID_FOR_SELECT_REQUEST) {
-                return Asset.findGeometryByGuids_big( site, guids, callback );
+        Asset.findGeometryByGuids = function(guids, callback, zones, partial_response) {
+            if (guids.length > Asset.__maxIdPerRequest) {
+                return Asset.findGeometryByGuids_big( guids, callback );
             }
 
             if (!zones) {
-                zones = site.zones;
+                zones = Site.current.zones;
                 partial_response = [];
             }
 
@@ -790,8 +782,109 @@
                         ymax: asset.ymax
                     } );
                 }
-                Asset.findGeometryByGuids( site, guids, callback, zones.slice( 1 ), partial_response );
+                Asset.findGeometryByGuids( guids, callback, zones.slice( 1 ), partial_response );
             } );
+        };
+
+        Asset.findGeometryByGuids_big = function(guids, callback, partial_response) {
+            partial_response = partial_response || [];
+            if (guids.length === 0) {
+                return callback( partial_response );
+            } else {
+                Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ), function(assets) {
+                    Asset.findGeometryByGuids_big( guids.slice( Asset.__maxIdPerRequest ), callback, partial_response.concat( assets ) );
+                } );
+            }
+        };
+
+
+        Asset.findAssetsByLabel = function(label, callback, zones, partial_response) {
+            if (!zones) {
+                zones = Site.current.zones;
+                partial_response = [];
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
+                return callback( [] );
+            }
+
+            if (!zones.length) {
+                partial_response.sort( function(a, b) {
+                    return (a.label < b.label) ? -1 : 1;
+                } );
+                return callback( partial_response );
+            }
+
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE label like ? limit 0, 10', ["%" + label + "%"], function(rows) {
+                for (var i = 0; i < rows.length; i++) {
+                    var asset = angular.copy( rows.item( i ) );
+                    asset.label = asset.label.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" );
+                    asset.okey = Asset.sanitizeAsset( asset.asset ).okey;
+                    partial_response.push( asset );
+                }
+                Asset.findAssetsByLabel( label, callback, zones.slice( 1 ), partial_response );
+            } );
+
+        };
+
+        Asset.findAssetsByCriteria = function(search, callback, zones, partial_response, request) {
+            if (!zones) {
+                zones = Site.current.zones;
+                partial_response = [];
+                console.time( 'Recherche' );
+            }
+
+            if (window._SMARTGEO_STOP_SEARCH) {
+                window._SMARTGEO_STOP_SEARCH = false;
+                return callback( [] );
+            }
+            if (!zones.length || partial_response.length >= Asset.__maxResultPerSearch) {
+                console.timeEnd( 'Recherche' );
+                return callback( partial_response );
+            }
+
+            if (!request) {
+
+                request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
+
+                var regex;
+
+                for (var criter in search.criteria) {
+                    if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
+                        if (typeof search.criteria[criter] === "number") {
+                            regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
+                        } else {
+                            regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                        }
+                        request += " AND LOWER(asset) REGEXP(" + regex + ") ";
+                    }
+                }
+                request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
+            }
+
+            SQLite.exec( zones[0].database_name, request, [], function(rows) {
+                for (var i = 0; i < rows.length; i++) {
+                    var asset = rows.item( i );
+                    try {
+                        asset.okey = Asset.sanitizeAsset( asset.asset ).okey;
+                    } catch ( e ) {}
+                    partial_response.push( asset );
+                }
+                Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
+            } );
+        };
+
+
+
+        /**
+         * @memberOf Smartgeo
+         * @param {string} asset serialized asset
+         * @returns {Object} Satitized parsed asset
+         * @desc Sanitize asset eg. replace horrible characters
+         */
+        Asset.sanitizeAsset = function(asset) {
+            return JSON.parse( asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) );
         };
 
         /**

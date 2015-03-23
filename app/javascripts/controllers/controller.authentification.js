@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'AuthController', AuthController );
 
-    AuthController.$inject = ["$rootScope", "$location", "Smartgeo", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites"];
+    AuthController.$inject = ["$rootScope", "$location", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites", "Utils", "Authenticator"];
 
     /**
      * @class AuthController
@@ -19,7 +19,7 @@
      * @property {Boolean}  loginInProgress Authentification en cours ?
      */
 
-    function AuthController($rootScope, $location, Smartgeo, Storage, i18n, $route, $http, prefetchedlocalsites) {
+    function AuthController($rootScope, $location, Storage, i18n, $route, $http, prefetchedlocalsites, Utils, Authenticator) {
 
         var vm = this;
 
@@ -40,7 +40,6 @@
          */
         function activate() {
 
-            Smartgeo.initialize();
             Storage.remove( 'lastLeafletMapExtent' );
 
             $rootScope.currentPage = "Authentification";
@@ -49,7 +48,7 @@
                 "rememberme": true
             };
             vm.gimapServer = (Storage.get( 'url' ) || "");
-            vm.firstAuth = vm.gimapServer.length ? Smartgeo.ping() && false : true;
+            vm.firstAuth = vm.gimapServer.length ? Utils.ping() && false : true;
 
         }
 
@@ -95,7 +94,7 @@
                 $location.path( '/map/' + localSites[0].id );
             } else if (remoteSites.length === 1 && localSites.length === 1 && !!localSites[0].installed && localSites[0].id === remoteSites[0].id) {
                 // Online avec un site installé : Authentification nécessaire
-                Smartgeo.selectSiteRemotely( localSites[0].id, function() {
+                Authenticator.selectSiteRemotely( localSites[0].id, function() {
                     $location.path( '/map/' + localSites[0].id );
                 }, function() {
                         vm.errorMessage = (i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ));
@@ -143,16 +142,16 @@
 
             vm.loginInProgress = true;
             vm.errorMessage = "";
-            vm.gimapServer = vm.firstAuth ? Smartgeo.setGimapUrl( vm.gimapServer ) : vm.gimapServer;
+            vm.gimapServer = vm.firstAuth ? Utils.setGimapUrl( vm.gimapServer ) : vm.gimapServer;
 
-            var url = Smartgeo.getServiceUrl( 'global.auth.json', {
+            var url = Utils.getServiceUrl( 'global.auth.json', {
                 'login': encodeURIComponent( vm.user.username ),
                 'pwd': encodeURIComponent( vm.user.password ),
                 'forcegimaplogin': true
             } );
 
             $http.post( url, {}, {
-                timeout: Smartgeo._SERVER_UNREACHABLE_THRESHOLD
+                timeout: 10000
             } )
                 .success( loginSuccess )
                 .error( loginError );
@@ -164,7 +163,7 @@
          * @desc Reset le formulaire, et Smartgeo Mobile
          */
         function reset() {
-            Smartgeo.reset();
+            Utils.reset();
             $route.reload();
         }
 

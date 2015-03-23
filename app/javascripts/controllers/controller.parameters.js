@@ -65,8 +65,9 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function uninstall() {
-            $location.path( 'sites/uninstall/' + Site.current.id );
-            $scope.$digest();
+            $scope.$apply( function() {
+                $location.path( 'sites/uninstall/' + Site.current.id );
+            });
         }
     }
 
