@@ -56,6 +56,7 @@
             this.site = Site.current.label;
             this.fields = {};
             this.ged = [];
+            this.version = Smartgeo._SMARTGEO_MOBILE_VERSION ;
             this.uuid = window.uuid();
             this.timestamp = new Date().getTime();
             if (reportLatLng) {
