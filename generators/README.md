@@ -1,5 +1,5 @@
-![GI](http://gismartware.com/images/logo.png) smartgeomobile
-======================
+generator-smartgeomobile
+========================
 
 ## Generators
 
@@ -7,16 +7,24 @@ Prérequis : nodejs (iojs), npm, yeoman
 
 ### Installation
 
-`cd generators/generator-smartgeomobile/`
-`npm install`
-`npm link`
+```
+$ cd generators/generator-smartgeomobile/
+$ npm install
+$ npm link
+```
 
 ### Utilisation
 
 #### Controllers
 
-`yo smartgeomobile:controller`
+```
+$ cd smartgeomobile
+$ yo smartgeomobile:controller
+```
 
 #### Factories
 
-`yo smartgeomobile:factory`
+```
+$ cd smartgeomobile
+$ yo smartgeomobile:factory
+```
