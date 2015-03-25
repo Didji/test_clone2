@@ -187,7 +187,8 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             return;
                         }
 
-                        var iconUrl = Site.current.symbology['' + node.okey + scope.defaultClassIndex].style.symbol.icon,
+                        var symbology = Site.current.symbology['' + node.okey + scope.defaultClassIndex] || Site.current.symbology['' + node.okey.replace('PROJECT_', '') + scope.defaultClassIndex],
+                            iconUrl = symbology.style.symbol.icon,
                             image = new Image();
 
                         image.src = iconUrl;
