@@ -162,6 +162,11 @@
                     column: 'synced',
                     operator: '!=',
                     value: 'true'
+                },
+                {
+                    column: 'deleted',
+                    operator: '!=',
+                    value: 'true'
                 }
             ];
             SyncItem.list( wheres, callback );
