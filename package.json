@@ -1,0 +1,25 @@
+{
+  "name": "smartgeomobile",
+  "private": true,
+  "main": "app/smartgeomobile.js",
+  "author": {
+    "name": "Gulian",
+    "email": "gulian@orange.fr",
+    "url": "https://github.com/gulian"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "*",
+    "yeoman": "*",
+    "jshint-stylish" : "*",
+    "gulp-jshint" : "*",
+    "gulp-uglify" : "*",
+    "gulp-concat" : "*",
+    "gulp-webserver" : "*",
+    "gulp-open" : "*",
+    "gulp-notify" : "*"
+  }
+}
