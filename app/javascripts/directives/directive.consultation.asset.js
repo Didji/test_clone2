@@ -42,6 +42,7 @@
             scope.deleteAsset = deleteAsset;
             scope.markObjectAsDeletedForCurrentProject = markObjectAsDeletedForCurrentProject;
             scope.exec = exec;
+            scope.removeFromProject = removeFromProject ;
 
             scope.$on( '$destroy', destroy );
 

@@ -163,14 +163,6 @@
             vm.loading = false;
         }
 
-        function reloadAssetSheet(asset) {
-            vm.groups[asset.priority] = vm.groups[asset.priority] || {};
-            vm.groups[asset.priority][asset.okey] = vm.groups[asset.priority][asset.okey] || [];
-            vm.groups[asset.priority][asset.okey].push( asset );
-            vm.selectedAssets.inList[asset.guid] = asset;
-            $scope.$digest();
-        }
-
         /**
          * @name  dropAssetsFromListAndMulti
          * @desc
@@ -295,7 +287,7 @@
             if (!currentXPosition) {
                 currentXPosition = $event.originalEvent.touches[0].clientX;
             }
-            if (!(++movePhase % 5) && Math.abs(( initialXPosition - currentXPosition )) > 30) {
+            if ((++movePhase % 5) === 0 && Math.abs(( initialXPosition - currentXPosition )) > 30) {
                 window.Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
                 $( ".consultation-panel" ).first().css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
                 G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );

@@ -3,10 +3,6 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
         'use strict';
 
         $scope.searchIsPerforming = false;
-        $scope.select2Options = {
-            allowClear: true
-        };
-
         $scope.metamodel = Site.current.metamodel;
         $scope.lists = Site.current.lists;
 
@@ -73,7 +69,6 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
             $scope.selectedFamily = null;
             $scope.selectedCriteria = [];
             $scope.selectedCriteriaChangeHandler();
-            $( '[ng-model=selectedCriteria]' ).select2( "val", "" );
         };
 
         $scope.selectedCriteriaChangeHandler = function() {

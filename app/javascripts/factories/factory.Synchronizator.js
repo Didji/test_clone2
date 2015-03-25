@@ -78,7 +78,7 @@
          * @desc
          */
         SyncItem.list = function(wheres, callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + SyncItem.buildListWhere(wheres), [], function(rows) {
+            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + SyncItem.buildListWhere( wheres ), [], function(rows) {
                 var syncItems = [], syncItem ;
                 for (var i = 0; i < rows.length; i++) {
                     syncItem = new SyncItem( rows.item( i ) ) ;
@@ -97,15 +97,15 @@
          * @desc
          */
         SyncItem.buildListWhere = function(wheres) {
-            if ( !wheres.length ) {
+            if (!wheres.length) {
                 return "";
             }
             var where = " where ";
-            for (var i=0 ; i < wheres.length ; i++) {
+            for (var i = 0; i < wheres.length; i++) {
                 where += wheres[i].column + ' ' + wheres[i].operator + ' "' + wheres[i].value + '" and ';
             }
-            return where.slice(0, -4);
-        }
+            return where.slice( 0, -4 );
+        };
 
         /**
          * @name listSynced
@@ -392,21 +392,21 @@
         Synchronizator.deleteAll = function(type, actions, callback) {
             Synchronizator.listItems( function(items) {
                 for (var i = 0, ii = items.length; i < ii; i++) {
-                    if ((type ? items[i].type === type : true) && (actions ? actions.indexOf(items[i].action) !== -1 : true)) {
-                        Synchronizator.deleteItem(items[i]);
+                    if ((type ? items[i].type === type : true) && (actions ? actions.indexOf( items[i].action ) !== -1 : true)) {
+                        Synchronizator.deleteItem( items[i] );
                     }
                 }
-                (callback || function() {})( );
+                (callback || function() {})();
             } );
-        }
+        };
 
         /**
          * @name deleteAllProjectItems
          * @desc
          */
         Synchronizator.deleteAllProjectItems = function(callback) {
-            Synchronizator.deleteAll(null, ["project_new", "project_update"], callback);
-        }
+            Synchronizator.deleteAll( null, ["project_new", "project_update"], callback );
+        };
 
         /**
          * @name getAll
@@ -429,16 +429,16 @@
          * @desc
          */
         Synchronizator.getAllByType = function(type, callback) {
-            Synchronizator.getAll(type, null, callback);
-        }
+            Synchronizator.getAll( type, null, callback );
+        };
 
         /**
          * @name getAllByAction
          * @desc
          */
         Synchronizator.getAllByAction = function(action, callback) {
-            Synchronizator.getAll(null, action, callback);
-        }
+            Synchronizator.getAll( null, action, callback );
+        };
 
         /**
          * @name getAll
