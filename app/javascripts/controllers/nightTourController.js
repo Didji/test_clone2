@@ -10,7 +10,7 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset) {
 
         'use strict';
 
@@ -23,6 +23,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.initialize = function() {
+
 
             $scope._DRAG_THRESHOLD = 50;
 
@@ -97,6 +98,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 asset.marker = L.marker( [asset.geometry.coordinates[1], asset.geometry.coordinates[0]] );
                 asset.marker.setIcon( $scope._KO_ASSET_ICON );
                 asset.isWorking = false;
+                asset.timestamp = Date.now();
                 (function(asset) {
                     asset.marker.on( 'click', function(e) {
                         $scope.toggleAsset( e, $scope.mission, asset );
@@ -384,7 +386,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 $scope.secureData();
             }, secureIntervalTime );
 
-
             $rootScope.stopConsultation();
 
             if ($rootScope.nightTourInProgress) {
@@ -444,9 +445,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.locateMission = function() {
-            if (!$scope.mission.extent) {
-                $scope.mission.extent = G3ME.getExtentsFromAssetsList( assetsCache[$scope.mission.id] );
-            }
             $rootScope.$broadcast( '__MAP_SETVIEW__', $scope.mission.extent );
         };
 

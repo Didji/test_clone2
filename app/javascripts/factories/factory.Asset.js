@@ -34,7 +34,7 @@
 
         Asset.cache = { } ;
 
-        Asset.__maxIdPerRequest = 4000 ;
+        Asset.__maxIdPerRequest = 999 ;
         Asset.__maxResultPerSearch = 10 ;
 
         Asset.prototype.onMap = false;
@@ -752,11 +752,6 @@
                 partial_response = [];
             }
 
-            if (window._SMARTGEO_STOP_SEARCH) {
-                window._SMARTGEO_STOP_SEARCH = false;
-                return callback( [] );
-            }
-
             if (!zones || !zones.length) {
                 return callback( partial_response );
             }
@@ -793,6 +788,44 @@
             } else {
                 Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ), function(assets) {
                     Asset.findGeometryByGuids_big( guids.slice( Asset.__maxIdPerRequest ), callback, partial_response.concat( assets ) );
+                } );
+            }
+        };
+
+        Asset.findExtentByGuids = function(guids, callback, zones, partial_response) {
+            if (guids.length > Asset.__maxIdPerRequest) {
+                return Asset.findExtentByGuids_big( guids, callback );
+            }
+
+            if (!zones) {
+                zones = Site.current.zones;
+                partial_response = [];
+            }
+
+            if (!zones || !zones.length) {
+                return callback( partial_response );
+            }
+            if (typeof guids !== 'object') {
+                guids = [guids];
+            }
+
+            if (guids.length === 0) {
+                return callback( [] );
+            }
+
+            SQLite.exec( zones[0].database_name, 'SELECT min(xmin) as xmin, max(xmax) as xmax, min(ymin) as ymin, max(ymax) as ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
+                partial_response.push( rows.item( 0 ) );
+                Asset.findExtentByGuids( guids, callback, zones.slice( 1 ), partial_response );
+            } );
+        };
+
+        Asset.findExtentByGuids_big = function(guids, callback, partial_response) {
+            partial_response = partial_response || [];
+            if (guids.length === 0) {
+                return callback( partial_response );
+            } else {
+                Asset.findExtentByGuids( guids.slice( 0, Asset.__maxIdPerRequest ), function(assets) {
+                    Asset.findExtentByGuids_big( guids.slice( Asset.__maxIdPerRequest ), callback, partial_response.concat( assets ) );
                 } );
             }
         };
@@ -874,8 +907,6 @@
                 Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
             } );
         };
-
-
 
         /**
          * @memberOf Smartgeo
