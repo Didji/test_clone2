@@ -70,7 +70,7 @@
                     project.setProjectLoaded( callback );
                 } );
             } ).error( function(data, status) {
-                project.handleLoadError(data, status);
+                project.handleLoadError( data, status );
             } ).finally( function() {
                 project.loading = false ;
             } );
@@ -167,7 +167,6 @@
                         } );
                     }
                     break;
-                case 500:
                 default:
                     Project.smartgeoReachError();
                     break;
@@ -178,14 +177,14 @@
          * @name handleLoadError
          * @desc Gére les erreurs remontées du service de chargement de projet
          */
-        Project.prototype.handleLoadError = function(data, status) {
+        Project.prototype.handleLoadError = function(data) {
             switch (data.error.code) {
                 case 4007:
-                    alertify.alert( i18n.get('_PROJECT_STATUS_DOESNT_ALLOW_UPDATE_') );
+                    alertify.alert( i18n.get( '_PROJECT_STATUS_DOESNT_ALLOW_UPDATE_' ) );
                     break;
                 case 4231:
                     this.updatable = false;
-                    alertify.alert( i18n.get('_PROJECT_IS_LOCKED_BY_ANOTHER_USER_') );
+                    alertify.alert( i18n.get( '_PROJECT_IS_LOCKED_BY_ANOTHER_USER_' ) );
                     break;
                 default:
                     Project.smartgeoReachError();

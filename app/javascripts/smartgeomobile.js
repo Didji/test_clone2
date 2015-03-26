@@ -1,5 +1,5 @@
 angular
-    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", "ui.select2", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
+    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
     .config( config ).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
 
     "use strict";

@@ -19,7 +19,7 @@
         var vm = this;
 
         vm.startCensus = startCensus;
-        vm.close = close;
+        vm.close = close_;
 
         vm.symbology = Site.current.symbology;
         vm.dependancies = Site.current.dependancies;
@@ -64,10 +64,10 @@
         }
 
         /**
-         * @name close
+         * @name close_
          * @desc Ferme le recensement en cours
          */
-        function close() {
+        function close_() {
             vm.okey = null;
         }
 
@@ -84,15 +84,16 @@
             var isProjectAsset = (asset.okey.search( 'PROJECT_' ) === 0);
 
             if (isProjectAsset) {
-                vm.classindex = Project.currentLoadedProject.getClassIndexForUpdatedAsset(asset.okey);
+                vm.classindex = Project.currentLoadedProject.getClassIndexForUpdatedAsset( asset.okey );
             }
 
             asset.findRelated( function(data) {
+                var theAsset, complex;
                 if (data !== undefined) {
-                    if (data.root == data.id && data.isComplex) {
+                    if ((data.root === data.id || +data.root === +data.id) && data.isComplex) {
                         //Cet élément est déjà la racine, on cherche ses enfants
-                        var theAsset = formatAsset( data );
-                        var complex = new ComplexAsset( null, null, '', theAsset );
+                        theAsset = formatAsset( data );
+                        complex = new ComplexAsset( null, null, '', theAsset );
                         fillChildren( complex, theAsset.tree, theAsset.relatedAssets, complex );
                         theAsset.root = complex;
                         theAsset.isProject = isProjectAsset;
@@ -101,8 +102,8 @@
                     } else {
                         Relationship.findRoot( data.id, function(r) {
                             Asset.findOne( r, function(root) {
-                                var theAsset = formatAsset( root );
-                                var complex = new ComplexAsset( null, null, '', theAsset );
+                                theAsset = formatAsset( root );
+                                complex = new ComplexAsset( null, null, '', theAsset );
                                 fillChildren( complex, data.tree, data.relatedAssets, complex );
                                 theAsset.root = complex;
                                 theAsset.isProject = isProjectAsset;
@@ -113,8 +114,8 @@
 
                     }
                 } else {
-                    var theAsset = formatAsset( asset );
-                    var complex = new ComplexAsset( null, null, '', theAsset );
+                    theAsset = formatAsset( asset );
+                    complex = new ComplexAsset( null, null, '', theAsset );
                     theAsset.root = complex;
                     theAsset.isProject = isProjectAsset;
                     startCensus( theAsset );

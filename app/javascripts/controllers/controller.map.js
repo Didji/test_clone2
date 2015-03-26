@@ -32,7 +32,7 @@
             $rootScope.currentPage = "Cartographie";
 
             if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-                // Installer.update( Site.current );
+                Installer.update( Site.current );
             }
 
             G3ME.initialize( [

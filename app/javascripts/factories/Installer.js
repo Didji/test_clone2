@@ -49,7 +49,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 }
             }
             site.metamodel = angular.copy( metamodel );
-            var okey;
+
             for (okey in metamodel) {
                 if (metamodel[okey].is_project) {
                     site.metamodel['PROJECT_' + okey] = metamodel[okey] ;

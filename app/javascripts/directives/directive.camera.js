@@ -13,7 +13,7 @@
 
     camera.$inject = ['Camera'];
 
-    function camera(Camera) {
+    function camera() {
         return {
             restrict: "A",
             require: "ngModel",
