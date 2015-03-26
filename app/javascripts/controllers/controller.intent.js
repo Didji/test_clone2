@@ -42,7 +42,7 @@
          */
         function redirect() {
             var redirection;
-            if (intent.controller === 'oauth') {
+            if (!Site.current || intent.controller === 'oauth') {
                 redirection = 'sites/';
             } else {
                 redirection = 'map/' + Site.current.id;

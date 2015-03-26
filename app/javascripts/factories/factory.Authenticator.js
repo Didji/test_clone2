@@ -38,7 +38,9 @@
             if (window.SmartgeoChromium) {
                 var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )];
                 ChromiumCallbacks[16] = function() {};
-                SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site );
+                if (user) {
+                    SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site );
+                }
             }
 
             var url = Utils.getServiceUrl( 'global.auth.json', {
