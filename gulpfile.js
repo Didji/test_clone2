@@ -1,9 +1,11 @@
 var gulp = require('gulp');
 var os = require('os');
+var fs = require('fs');
 var jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
+    prompt = require('gulp-prompt'),
     open = require('gulp-open'),
     webserver = require('gulp-webserver');
 
@@ -13,6 +15,46 @@ gulp.task('default', function() {
             livereload: true,
             open: "http://localhost:8000/index.html"
         }));
+});
+
+gulp.task('bump-version', function() {
+    var versionJSContent = "";
+    var testt = "hh";
+    gulp.src('app/javascripts/version.js')
+        .pipe(prompt.prompt({
+            type: 'input',
+            name: 'version',
+            message: 'Numero de version'
+        }, function(res) {
+                res.version = res.version.split('rc');
+                versionJSContent += 'window.smargeomobileversion = "' + res.version[0] + '" ;';
+                if (res.version[1]) {
+                    versionJSContent += 'window.smargeomobilebuild = "rc' + res.version[1] + '" ;';
+                }
+
+                fs.writeSync(fs.openSync("./app/javascripts/version.js", "w"), versionJSContent);
+
+                var androidManifestPath = "./platforms/android/content-shell/AndroidManifest.xml" ;
+                var androidManifestContent = fs.readFileSync(androidManifestPath, 'utf8');
+                androidManifestContent = androidManifestContent.replace(/versionName="([0-9|\.]*)"/, function(match, p1) {
+                    return match.replace(p1, res.version.join('rc'));
+                });
+                androidManifestContent = androidManifestContent.replace(/versionCode="([0-9]*)"/, function(match, p1) {
+                    return match.replace(p1, res.version.join('').replace('.', '') + "000");
+                });
+                fs.writeSync(fs.openSync(androidManifestPath, "w"), androidManifestContent);
+
+                var iosPlistPath = "./platforms/ios/platforms/ios/Smartgeo/Smartgeo-Info.plist" ;
+                var iosPlistContent = fs.readFileSync(iosPlistPath, 'utf8');
+                iosPlistContent = iosPlistContent.replace(/<key>CFBundleShortVersionString<\/key>\s*<string>([0-9|\.]*)<\/string>/gi, function(match, p1) {
+                    return match.replace(p1, res.version[0]);
+                });
+                iosPlistContent = iosPlistContent.replace(/<key>CFBundleVersion<\/key>\s*<string>([0-9a-z|\.]*)<\/string>/gi, function(match, p1) {
+                    return match.replace(p1, res.version[1]);
+                });
+                fs.writeSync(fs.openSync(iosPlistPath, "w"), iosPlistContent);
+                return versionJSContent;
+            }));
 });
 
 gulp.task('dist', function() {
