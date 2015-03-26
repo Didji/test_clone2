@@ -21,7 +21,7 @@
         vm.loadProject = loadProject ;
 
         vm.projects = [];
-        vm.loading = true ;
+        vm.loading = false ;
 
         activate();
 
@@ -80,11 +80,11 @@
             vm.loading = true;
             Project.findAll( function(projects) {
                 vm.projects = projects || [] ;
+                vm.loading = false;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
                 callback();
-                vm.loading = false;
             } );
         }
 
