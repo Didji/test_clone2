@@ -1,10 +1,12 @@
 var gulp = require('gulp');
 var os = require('os');
 var fs = require('fs');
+var zip = require('gulp-zip');
 var jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
+    exec = require('gulp-exec'),
     prompt = require('gulp-prompt'),
     open = require('gulp-open'),
     webserver = require('gulp-webserver');
@@ -55,6 +57,22 @@ gulp.task('bump-version', function() {
                 fs.writeSync(fs.openSync(iosPlistPath, "w"), iosPlistContent);
                 return versionJSContent;
             }));
+});
+
+gulp.task('package-android', function() {
+    gulp.src('./app/**/*')
+        .pipe(zip('gimap-mobile.zip'))
+        .pipe(gulp.dest('platforms/android/content-shell/assets/'));
+
+    gulp.src('./platforms/android/content-shell').pipe(exec('pwd')); //.pipe(exec('../gradlew --continue --no-rebuild --parallel --quiet --stacktrace build'));
+});
+
+gulp.task('package-ios', function() {
+    gulp.src('app/*')
+        .pipe(gulp.dest('platforms/ios/www/'));
+    gulp.src('app/*')
+        .pipe(gulp.dest('platforms/ios/platforms/ios/www/'))
+
 });
 
 gulp.task('dist', function() {
