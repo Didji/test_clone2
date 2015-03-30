@@ -21,7 +21,7 @@
         vm.loadProject = loadProject ;
 
         vm.projects = [];
-        vm.loading = true ;
+        vm.loading = false ;
 
         activate();
 
@@ -56,11 +56,17 @@
             if (Project.currentLoadedProject) {
                 alertify.alert( i18n.get( '_PROJECTS_LIST_CANT_BE_LOAD_' ) );
             } else {
+            	vm.loading = true;
                 Project.list().success( function(data) {
+                	if (!data.length || "string" === typeof data) {
+                		return false;
+                	}
                     vm.projects = data ;
                     for (var i = 0; i < vm.projects.length; i++) {
                         vm.projects[i] = Project.save( vm.projects[i] );
                     }
+                } ).finally( function(){
+                	vm.loading = false;
                 } );
             }
         }
@@ -71,8 +77,10 @@
          */
         function getLocalProjects(callback) {
             callback = callback || function() {};
+            vm.loading = true;
             Project.findAll( function(projects) {
                 vm.projects = projects || [] ;
+                vm.loading = false;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }

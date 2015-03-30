@@ -20,6 +20,7 @@
     "gulp-concat" : "*",
     "gulp-webserver" : "*",
     "gulp-open" : "*",
+    "gulp-zip" : "*",
     "gulp-notify" : "*"
   }
 }
