@@ -36,13 +36,11 @@
                 </div>
                 <div ng-switch-when="L">
                     <select
-            style="margin-bottom: 10px;width:100%;"
-
+                        style="margin-bottom: 10px;width:100%;"
                         ng-model="selectedCriteriaValues[fieldKey]">
                         <option value=""></option>
-                        <option
-                            ng-repeat="(value, label) in lists[criteria[selectedFamily.okey]._byKey[fieldKey].options]"
-                            value="{{value}}">{{label}}</option>
+                            <option ng-repeat="o in ::(lists[criteria[selectedFamily.okey]._byKey[fieldKey].options] | orderByObjects) track by o.value"
+                            value="{{o.value}}">{{o.label}}</option>
                     </select>
                 </div>
                 <div ng-switch-when="O">
