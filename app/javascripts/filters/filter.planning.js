@@ -131,27 +131,20 @@
         return _sanitizeDate;
     }
 
-    opennedMissions.$inject = [];
+    opennedMissions.$inject = ["Site"];
 
-    function opennedMissions() {
+    function opennedMissions(Site) {
         /**
          * @name _opennedMissions
          * @desc
          */
-        function _opennedMissions(in_, asset, site) {
+        function _opennedMissions(in_, asset) {
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity) {
                     continue;
                 }
-                var missionsOkeys = site.activities._byId[in_[i].activity.id].okeys,
-                    isCompatible = false;
-                for (var j in missionsOkeys) {
-                    if (missionsOkeys[j].indexOf( asset.okey ) !== -1) {
-                        isCompatible = true;
-                        break;
-                    }
-                }
+                var isCompatible = Site.current.activities._byId[+in_[i].activity.id].okeys[0] === asset.okey;
                 if (isCompatible && in_[i].openned) {
                     out.push( in_[i] );
                 }

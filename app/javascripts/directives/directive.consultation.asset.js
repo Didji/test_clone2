@@ -30,7 +30,7 @@
             /* Scope Attributes */
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
-            scope.missions = Storage.get( 'missions_' + Storage.get( 'lastUser' ) ) || {};
+            scope.missions = $rootScope.missions;
             scope.currentLoadedProject = Project.currentLoadedProject ;
 
             /* Scope Methodes */
@@ -45,7 +45,6 @@
             scope.removeFromProject = removeFromProject ;
 
             scope.$on( '$destroy', destroy );
-
 
             /**
              * @name addToCurrentSelection
