@@ -260,8 +260,6 @@
                     fields[field.id] = def;
                 }
             }
-
-            $scope.$digest();
         }
 
         /**
