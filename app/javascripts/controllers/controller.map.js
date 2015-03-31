@@ -51,6 +51,10 @@
                 activateConsultation();
             } );
 
+            $scope.$on( "ACTIVATE_POSITION", function() {
+                activatePosition();
+            } );
+
             $scope.$on( "$destroy", controllerDestroyHandler );
 
             $rootScope.activatePosition = activatePosition;
