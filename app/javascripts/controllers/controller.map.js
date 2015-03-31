@@ -201,10 +201,13 @@
          * @name stopConsultation
          * @desc Désactive la consultation
          */
-        function stopConsultation() {
+        function stopConsultation(e) {
             consultationIsEnabled = false;
             if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
                 G3ME.map.removeControl( CONSULTATION_CONTROL );
+            }
+            if (e) {
+                return false;
             }
         }
 
