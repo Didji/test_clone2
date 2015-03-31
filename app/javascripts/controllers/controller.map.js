@@ -366,7 +366,7 @@
             }
             for (var i = 0; i < assetsCache.length; i++) {
                 if (assetsCache[i].marker) {
-                    if (mission.assets.indexOf( assetsCache[i].guid ) === -1 && mission.done.indexOf( assetsCache[i].guid ) === -1 && mission.postAddedAssets.assets.indexOf( assetsCache[i].guid ) && mission.postAddedAssets.done.indexOf( assetsCache[i].guid )) {
+                    if (mission.assets.indexOf( assetsCache[i].guid ) === -1 && mission.done.indexOf( assetsCache[i].guid ) === -1 && mission.postAddedAssets && mission.postAddedAssets.assets.indexOf( assetsCache[i].guid ) && mission.postAddedAssets && mission.postAddedAssets.done.indexOf( assetsCache[i].guid )) {
                         missionsClusters[mission.id].removeLayer( "" + assetsCache[i].marker );
                         continue;
                     }

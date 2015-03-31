@@ -340,7 +340,7 @@
         };
 
         Asset.prototype.getLabel = function() {
-            return this.label || this.okey && Site.current.metamodel[this.okey] && this.attributes[Site.current.metamodel[this.okey].ukey] && this.attributes[Site.current.metamodel[this.okey].ukey].length ? this.attributes[Site.current.metamodel[this.okey].ukey] : Site.current.metamodel[this.okey].label;
+            return this.label || this.okey && Site.current.metamodel[this.okey] && this.attributes[Site.current.metamodel[this.okey].ukey] && this.attributes[Site.current.metamodel[this.okey].ukey].length ? this.attributes[Site.current.metamodel[this.okey].ukey] : (Site.current.metamodel[this.okey] && Site.current.metamodel[this.okey].label) || "";
         };
 
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
