@@ -85,6 +85,7 @@
              */
             function addToCurrentSelection(asset) {
                 $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", asset );
+                asset.isInMultiselection = true;
             }
 
             /**
@@ -93,6 +94,7 @@
              */
             function dropFromCurrentSelection(asset) {
                 $rootScope.$broadcast( "UPDATE_DROP_CONSULTATION_MULTISELECTION", asset );
+                asset.isInMultiselection = false;
             }
 
             /**

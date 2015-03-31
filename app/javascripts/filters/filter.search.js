@@ -16,7 +16,6 @@
         var filtered = [];
 
         function _orderByObjects(items) {
-            console.log( ' ' );
             filtered = [];
             angular.forEach( items, function(item, i) {
                 filtered.push( {
