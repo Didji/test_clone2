@@ -200,7 +200,7 @@ public class SmartGeoMobilePlugins {
         String pickTitle = "";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
         chooserIntent.putExtra(
-          Intent.EXTRA_INITIAL_INTENTS, 
+          Intent.EXTRA_INITIAL_INTENTS,
           new Intent[] { takePhotoIntent }
         );
         act.startActivityForResult(chooserIntent, ActivityCode.CAPTURE_IMAGE.getCode());
@@ -437,7 +437,7 @@ public class SmartGeoMobilePlugins {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if (statusCode == 403 && !params[4].contains("getTuileTMS")) {
+                if (statusCode == 403 && !url.contains("getTuileTMS")) {
                     return request(params);
                 } else if (statusCode == 403) {
                     authenticate(params[4], params[5], params[6], params[7]);
