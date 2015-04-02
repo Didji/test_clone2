@@ -83,7 +83,7 @@ public class SmartGeoMobilePlugins {
     private String tilePassword;
     private String tileSite;
 
-    private static Header[] COOKIES = null;
+    private static String PHPSESSIONID = null;
 
     @SuppressLint("SimpleDateFormat")
     public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
@@ -426,18 +426,16 @@ public class SmartGeoMobilePlugins {
             //quand on requête OSM, besoin user agent sinon 403
             request.setHeader("User-Agent", USER_AGENT);
 
-            if (COOKIES != null) {
-                request.setHeaders(COOKIES);
-                for (int i=0; i<COOKIES.length ; i++) {
-                    Log.i(TAG, "[G3DB::request] COOKIES["+i+"]->"+COOKIES[i].getName()+"="+COOKIES[i].getValue());
-                }
+            if (PHPSESSIONID != null) {
+                request.setHeader("Cookie", PHPSESSIONID);
             }
             try {
                 HttpResponse  response = client.execute(request);
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if (statusCode == 403 && !url.contains("getTuileTMS")) {
+                if (statusCode == 403 && !params[4].contains("getTuileTMS")) {
+                    PHPSESSIONID = null ;
                     return request(params);
                 } else if (statusCode == 403) {
                     authenticate(params[4], params[5], params[6], params[7]);
@@ -462,7 +460,7 @@ public class SmartGeoMobilePlugins {
                 databasesPointer[databaseIndex]++ ;
                 SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
                         //SQLiteDatabase.openDatabase(
-                	//GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+                    //GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
 
@@ -501,7 +499,7 @@ public class SmartGeoMobilePlugins {
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
-        StringBuffer bufUrl = new StringBuffer(this.tileUrl);
+        StringBuffer bufUrl = new StringBuffer(url);
         bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
 
         HttpPost req = new HttpPost(bufUrl.toString());
@@ -509,30 +507,15 @@ public class SmartGeoMobilePlugins {
             HttpResponse response = client.execute(req);
             if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 //auth OK, on recupere l'identifiant de session
+                PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
 
                 //nouvelle requete  effectuer : slection du site
-                bufUrl = new StringBuffer(this.tileUrl);
+                bufUrl = new StringBuffer(url);
                 bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
                 req = new HttpPost(bufUrl.toString());
                 response = client.execute(req);
                 if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    //auth OK, on recupere l'identifiant de session
-                    COOKIES = response.getHeaders("Set-Cookie");
-                    for (int i=0; i<COOKIES.length ; i++) {
-                        Log.i(TAG, "[G3DB::Authenticate] COOKIES["+i+"]->"+COOKIES[i].getName()+"="+COOKIES[i].getValue());
-                    }
-                    //nouvelle requete  effectuer : slection du site
-                    bufUrl = new StringBuffer(url);
-                    bufUrl.append("&app=mapcite").append("&site=").append(this.tileSite).append("&auto_load_map=true");
-                    req = new HttpPost(bufUrl.toString());
-                    response = client.execute(req);
-                    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        Log.d(TAG, "User " + this.tileUser + " authenticated on " + bufUrl);
-                        return;
-                    } else {
-                        Log.d(TAG, "Site " + this.tileSite + " unavailable for user " + this.tileUser);
-                        return;
-                    }
+                    Log.d(TAG, "User " + user + " authenticated on " + url);
                 } else {
                     Log.d(TAG, "Site " + site + " unavailable for user " + user);
                 }
