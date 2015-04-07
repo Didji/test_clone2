@@ -344,7 +344,7 @@
         };
 
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
-            var guidsbis = [];
+            var guidsbis = [], i, response, tmp ;
 
             if (!zones) {
                 zones = Site.current.zones;
@@ -352,21 +352,41 @@
             }
             if (!zones || !zones.length || guids.length === 0 || window._SMARTGEO_STOP_SEARCH) {
                 window._SMARTGEO_STOP_SEARCH = false;
-                return callback( partial_response );
+                response = [];
+                tmp = {};
+                for (var j = 0, jj = partial_response.length; j < jj; j++) {
+                    if (tmp[partial_response[j].id]) {
+                        continue;
+                    } else {
+                        tmp[partial_response[j].id] = true;
+                        response.push( partial_response[j] );
+                    }
+                }
+                return callback( response );
             }
             if (!(guids instanceof Array)) {
                 guids = [guids];
             }
             guids = guids.map( String );
             guidsbis = angular.copy( guids );
-            for (var i = 0; i < guidsbis.length; i++) {
+            for (i = 0; i < guidsbis.length; i++) {
                 if (Asset.cache[guidsbis[i]]) {
                     partial_response.push( angular.copy( Asset.cache[guidsbis[i]] ) );
-                    guids.splice( guids.indexOf(guidsbis[i]), 1 );
+                    guids.splice( guids.indexOf( guidsbis[i] ), 1 );
                 }
             }
             if (guids.length === 0) {
-                return callback( partial_response );
+                response = [];
+                tmp = {};
+                for (var k = 0, kk = partial_response.length; k < kk; k++) {
+                    if (tmp[partial_response[k].id]) {
+                        continue;
+                    } else {
+                        tmp[partial_response[k].id] = true;
+                        response.push( partial_response[k] );
+                    }
+                }
+                return callback( response );
             }
             SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids, function(results) {
                 for (var i = 0; i < results.length; i++) {
