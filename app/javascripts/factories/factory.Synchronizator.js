@@ -292,7 +292,7 @@
             $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
                 timeout: 1e5
             } ).success( function(data) {
-                if (data[complexasset.okey] && Array.isArray( data[complexasset.okey] ) && data[complexasset.okey].length) {
+                if (data instanceof Object) {
                     complexasset.synced = true ;
                     var savedGeometry , i , savedbounds ;
                     for (var okey in data) {

@@ -374,6 +374,10 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
             if ( (previousSymbolId !== (symbolId = "" + asset.symbolId)) ) {
                 assetSymbology = G3ME.symbology[symbolId];
                 if (!assetSymbology) {
+                    symbolId += '0';
+                    assetSymbology = G3ME.symbology[symbolId] ;
+                }
+                if (!assetSymbology) {
                     continue;
                 }
                 ctx.strokeStyle = assetSymbology.style.strokecolor;
