@@ -23,7 +23,7 @@ window.smartgeo_i18n_lang.en = {
     _REGISTER_REGISTER_: "Register",
     _REGISTER_ERROR_OFFLINE: "You must be connected to register.",
     _REGISTER_ERROR_NOT_FOUND: "The supplied license doesn't exist.",
-    _REGISTER_ERROR_CONFLICT: "This license has already been registered.",
+    _REGISTER_ERROR_CONFLICT: "This license has already been registered. Updating ...",
     _REGISTER_ERROR_G3LIC: "An error has occured, please contact your support.",
     _REGISTER_ERROR_UNKNOWN: "An error has occured, please contact your support.",
     _REGISTER_ERROR_NO_MORE_LICENSE: "The maximum use of this license has been reached.",

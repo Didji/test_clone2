@@ -60,7 +60,6 @@ angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "
                     break;
                 case 409:
                     $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_CONFLICT" ));
-                    $scope.continue();
                     break;
                 case 500:
                     $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_G3LIC" ));

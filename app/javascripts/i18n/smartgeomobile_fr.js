@@ -21,7 +21,7 @@ window.smartgeo_i18n_lang.fr = {
     _REGISTER_REGISTER_: "Enregister",
     _REGISTER_ERROR_OFFLINE: "Vous devez être connecté à Internet pour vous enregister.",
     _REGISTER_ERROR_NOT_FOUND: "Le numéro de licence fourni n'existe pas.",
-    _REGISTER_ERROR_CONFLICT: "Cette licence a déjà été enregistée.",
+    _REGISTER_ERROR_CONFLICT: "Cette licence a déjà été enregistée. Mise à jour des droits en cours.",
     _REGISTER_ERROR_G3LIC: "Une erreur s'est produite, veuillez contacter votre support.",
     _REGISTER_ERROR_UNKNOWN: "Une erreur s'est produite, veuillez contacter votre support.",
     _REGISTER_ERROR_NO_MORE_LICENSE: "Le nombre d'utilisation maximal de cette licence a été atteint.",

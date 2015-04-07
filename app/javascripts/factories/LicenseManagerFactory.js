@@ -236,7 +236,20 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
                 this_.__setRights( this_.__parseG3licResponse( options ) );
                 this_.__setLicense( license );
                 success( license );
-            }, error );
+            }, function(response) {
+                    if (response.status === 409) {
+                        license.registered = true;
+                        license.lastcheck = now;
+                        this_.__setLicense( license );
+                        this_.update( true, function() {
+                            success( license );
+                        }, function() {
+                                (error || function() {})( response );
+                            } );
+                    } else {
+                        (error || function() {})( response );
+                    }
+                } );
         } );
 
 
