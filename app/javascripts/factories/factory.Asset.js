@@ -362,7 +362,7 @@
             for (var i = 0; i < guidsbis.length; i++) {
                 if (Asset.cache[guidsbis[i]]) {
                     partial_response.push( angular.copy( Asset.cache[guidsbis[i]] ) );
-                    guids.splice( i, 1 );
+                    guids.splice( guids.indexOf(guidsbis[i]), 1 );
                 }
             }
             if (guids.length === 0) {

@@ -7,10 +7,7 @@ test/coverage/*
 web.config
 aspnet_client
 node_modules/
-dist/css/
-dist/images/
-dist/javascripts/
-dist/partials/
+dist
 zip/
 docs/ngdocs/
 platforms/ios/www/*
