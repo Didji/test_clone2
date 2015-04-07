@@ -20,15 +20,17 @@
          */
         function Asset(asset, callback, getRelated) {
             var self = this ;
-            if (+asset === asset) {
+            if (typeof asset === 'string') {
                 Asset.findOne( asset, function(asset) {
-                    angular.extend( self, new Asset( asset ) );
+                    angular.extend( self, new Asset( asset, callback, getRelated ) );
                 } );
                 return;
             }
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
+            } else {
+                (callback || function() {})();
             }
         }
 
@@ -52,7 +54,7 @@
                     return (callback || angular.noop)( self );
                 }
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
-                    if (assets_.length === 1) {
+                    if (assets_.length <= 1 || assets_[0].guid === assets_[1].guid) {
                         self.isComplex = false ;
                         return;
                     }
@@ -338,7 +340,7 @@
         };
 
         Asset.prototype.getLabel = function() {
-            return this.label || Site.current.metamodel[this.okey].label;
+            return this.label || this.okey && Site.current.metamodel[this.okey] && this.attributes[Site.current.metamodel[this.okey].ukey] && this.attributes[Site.current.metamodel[this.okey].ukey].length ? this.attributes[Site.current.metamodel[this.okey].ukey] : (Site.current.metamodel[this.okey] && Site.current.metamodel[this.okey].label) || "";
         };
 
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {

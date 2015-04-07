@@ -15,8 +15,9 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
             $scope.criteria[i]._byKey = [];
             for (var j = 0; j < Site.current.metamodel[i].tabs.length; j++) {
                 for (var k = 0; k < Site.current.metamodel[i].tabs[j].fields.length; k++) {
-                    $scope.criteria[i].push( Site.current.metamodel[i].tabs[j].fields[k] );
-                    $scope.criteria[i]._byKey[Site.current.metamodel[i].tabs[j].fields[k].key] = Site.current.metamodel[i].tabs[j].fields[k];
+                    var field = Site.current.metamodel[i].tabs[j].fields[k] ;
+                    $scope.criteria[i].push( field );
+                    $scope.criteria[i]._byKey[field.key] = field;
                 }
             }
         }

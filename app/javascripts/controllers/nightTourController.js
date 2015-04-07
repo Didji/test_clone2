@@ -292,8 +292,10 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
 
             applyDefaultValues( report, $scope.activity );
-            report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-            Synchronizator.addNew( report );
+            var tmp = angular.copy( report );
+            tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
+            tmp.activity = tmp.activity.id;
+            Synchronizator.addNew( tmp );
             callback();
         };
 
@@ -316,8 +318,10 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
 
             applyDefaultValues( report, $scope.activity );
-            report.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-            Synchronizator.addNew( report );
+            var tmp = angular.copy( report );
+            tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
+            tmp.activity = tmp.activity.id;
+            Synchronizator.addNew( tmp );
             callback();
         };
 

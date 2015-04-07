@@ -65,6 +65,11 @@
             for (var i = 0; i < vm.report.assets.length; i++) {
                 vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
             }
+            setTimeout( function() {
+                if (!$scope.$$phase) {
+                    $scope.$digest();
+                }
+            }, 1000 );
         }
 
         /**
@@ -260,8 +265,9 @@
                     fields[field.id] = def;
                 }
             }
-
-            $scope.$digest();
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         }
 
         /**

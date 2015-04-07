@@ -20,7 +20,7 @@
         vm.confirmRemove = confirmRemove;
 
         vm.site = Site.current.label;
-        vm.lastUpdate = Site.current.timestamp;
+        vm.lastUpdate = Site.current.timestamp * 1000;
         vm.updating = false;
 
         /**
@@ -56,6 +56,7 @@
             vm.updating = true;
             Installer.update( Site.current, function() {
                 vm.updating = false;
+                vm.lastUpdate = Site.current.timestamp * 1000;
                 $scope.$digest();
             } );
         }
@@ -67,7 +68,7 @@
         function uninstall() {
             $scope.$apply( function() {
                 $location.path( 'sites/uninstall/' + Site.current.id );
-            });
+            } );
         }
     }
 

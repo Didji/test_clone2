@@ -35,7 +35,7 @@
         vm.lateMissionsLength = 0;
         vm.todayMissionsLength = 0;
         vm.doneMissionsLength = 0;
-        vm.missions = Storage.get( 'missions_' + Storage.get( 'lastUser' ) ) || {};
+        $rootScope.missions = Storage.get( 'missions_' + Storage.get( 'lastUser' ) ) || {};
         vm.currentNextDay = getMidnightTimestamp( (new Date()).getTime() );
         vm.maxBeginDate = 0 ;
         vm.nextMissions = {};

@@ -48,8 +48,13 @@
             (Storage.get( 'user_position_activated' ) ? activatePosition : angular.noop)();
 
             $scope.$on( "ACTIVATE_CONSULTATION", function() {
-                consultationIsEnabled = true;
+                activateConsultation();
             } );
+
+            $scope.$on( "ACTIVATE_POSITION", function() {
+                activatePosition();
+            } );
+
             $scope.$on( "$destroy", controllerDestroyHandler );
 
             $rootScope.activatePosition = activatePosition;
@@ -200,10 +205,13 @@
          * @name stopConsultation
          * @desc Désactive la consultation
          */
-        function stopConsultation() {
+        function stopConsultation(e) {
             consultationIsEnabled = false;
             if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
                 G3ME.map.removeControl( CONSULTATION_CONTROL );
+            }
+            if (e) {
+                return false;
             }
         }
 
@@ -362,7 +370,7 @@
             }
             for (var i = 0; i < assetsCache.length; i++) {
                 if (assetsCache[i].marker) {
-                    if (mission.assets.indexOf( assetsCache[i].guid ) === -1 && mission.done.indexOf( assetsCache[i].guid ) === -1 && mission.postAddedAssets.assets.indexOf( assetsCache[i].guid ) && mission.postAddedAssets.done.indexOf( assetsCache[i].guid )) {
+                    if (mission.assets.indexOf( assetsCache[i].guid ) === -1 && mission.done.indexOf( assetsCache[i].guid ) === -1 && mission.postAddedAssets && mission.postAddedAssets.assets.indexOf( assetsCache[i].guid ) && mission.postAddedAssets && mission.postAddedAssets.done.indexOf( assetsCache[i].guid )) {
                         missionsClusters[mission.id].removeLayer( "" + assetsCache[i].marker );
                         continue;
                     }

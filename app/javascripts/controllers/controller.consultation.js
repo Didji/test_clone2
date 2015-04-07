@@ -196,10 +196,14 @@
          * @param {Asset} asset
          */
         function addAssetToMultiselection(asset) {
-            if (!vm.multiselection[asset.okey]) {
-                vm.multiselection[asset.okey] = [];
-            }
+            vm.multiselection[asset.okey] = vm.multiselection[asset.okey] || [];
             vm.multiselection.length = (vm.multiselection.length || 0) + 1;
+            for (var i = 0, ii = vm.multiselection[asset.okey].length; i < ii; i++) {
+                if (vm.multiselection[asset.okey][i].id === asset.id) {
+                    asset.isInMultiselection = true;
+                    return;
+                }
+            }
             if (vm.multiselection[asset.okey].indexOf( asset ) === -1) {
                 vm.multiselection[asset.okey].push( asset );
                 vm.selectedAssets.inMulti[asset.guid] = asset;

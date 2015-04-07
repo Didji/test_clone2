@@ -29,17 +29,15 @@
         function Report(assets, activity, mission) {
             var reportTargets = [],
                 reportLatLng, match;
-
-            if ( (match = ("" + assets).match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            if ( (match = ("" + assets).match( /^(\d+);(-?\d+.\d+),(-?\d+.\d+)$/ )) ) {
                 reportTargets = match[0];
-            } else if ( (match = ("" + assets).match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            } else if (assets.search && assets.search( ',' ) !== -1 && assets.search && assets.search( '.' ) === -1) {
                 reportLatLng = match[0] + ',' + match[1];
-            } else if (assets.search && assets.search( ',' ) !== -1) {
+            } else if ( (match = ("" + assets).match( /^(-?\d+.\d+),(-?\d+.\d+)$/ )) ) {
                 reportTargets = assets.split( ',' );
             } else {
                 reportTargets = assets ;
             }
-
             if (mission && ("" + mission).indexOf( 'call-' ) !== -1) {
                 this.isCall = true;
                 mission = mission.substr( 5 );

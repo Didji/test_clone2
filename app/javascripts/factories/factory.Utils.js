@@ -168,6 +168,10 @@
                     SQLite.exec( site.zones[i].database_name, 'DROP TABLE IF EXISTS ASSETS', [], angular.noop );
                 }
             }
+            SQLite.exec( 'parameters', 'DELETE FROM PARAMETERS' );
+            SQLite.exec( 'parameters', 'DELETE FROM PROJECTS' );
+            SQLite.exec( 'parameters', 'DELETE FROM SYNCITEM' );
+            SQLite.exec( 'parameters', 'DELETE FROM relationship' );
         };
 
         /**
