@@ -238,7 +238,7 @@
          * @name stopPosition
          * @desc Désactive la fonction "Ma position"
          */
-        function stopPosition() {
+        function stopPosition(e) {
             GPS.stopWatchingPosition( setLocationMarker );
             LAST_USERS_LOCATION = [];
             if (POSITION_CONTROL && POSITION_CONTROL._map) {
@@ -251,7 +251,9 @@
                 G3ME.map.removeLayer( POSITION_MARKER );
             }
             POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
-            return;
+            if (e) {
+                return false;
+            }
         }
 
         /**
