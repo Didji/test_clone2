@@ -37,15 +37,15 @@
             } else if ( (match = $routeParams.assets.match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 vm.latlng = match[0];
             } else {
-                vm.assets = $routeParams.assets.split( ',' );
+                vm.assets = $routeParams.assets;
             }
 
             vm.mission = $routeParams.mission;
             vm.site = $routeParams.site;
 
-            if (vm.asset) {
-                var asset = new Asset( $routeParams.assets.split( ',' )[0], function() {
-                    vm.activities = $filter( 'activityListFilter' )( asset );
+            if (vm.assets) {
+                var asset = new Asset( vm.assets.split('!')[0], function(newAsset) {
+                    vm.activities = $filter( 'activityListFilter' )( newAsset );
                     $scope.$digest();
                 } );
             } else if (vm.latlng) {

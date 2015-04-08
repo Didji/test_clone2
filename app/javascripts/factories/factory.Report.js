@@ -31,10 +31,10 @@
                 reportLatLng, match;
             if ( (match = ("" + assets).match( /^(\d+);(-?\d+.\d+),(-?\d+.\d+)$/ )) ) {
                 reportTargets = match[0];
-            } else if (assets.search && assets.search( ',' ) !== -1 && assets.search && assets.search( '.' ) === -1) {
-                reportLatLng = match[0] + ',' + match[1];
-            } else if ( (match = ("" + assets).match( /^(-?\d+.\d+),(-?\d+.\d+)$/ )) ) {
-                reportTargets = assets.split( ',' );
+            } else if ( (match = ("" + assets).match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+                reportLatLng = match[0];
+            } else if ( "string" === typeof assets ) {
+                reportTargets = assets.split( '!' );
             } else {
                 reportTargets = assets ;
             }

@@ -488,9 +488,9 @@
                 }
             }
             if (mission.activity) {
-                $location.path( 'report/' + Site.current.id + '/' + mission.activity.id + '/' + selectedAssets.join( ',' ) + '/' + mission.id );
+                $location.path( 'report/' + Site.current.id + '/' + mission.activity.id + '/' + selectedAssets.join( '!' ) + '/' + mission.id );
             } else {
-                $location.path( 'report/' + Site.current.id + '//' + selectedAssets.join( ',' ) + '/' + mission.id );
+                $location.path( 'report/' + Site.current.id + '//' + selectedAssets.join( '!' ) + '/' + mission.id );
             }
         }
 

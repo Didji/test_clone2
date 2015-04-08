@@ -30,7 +30,7 @@
             if (getRelated) {
                 this.findRelated( callback );
             } else {
-                (callback || function() {})();
+                (callback || function() {})(this);
             }
         }
 
