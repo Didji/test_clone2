@@ -86,16 +86,16 @@
                 now = (new Date()).getTime();
             for (var id in in_) {
                 mission = in_[id];
-                mission.sanitizedEnd =  mission.sanitizedEnd || $filter( 'sanitizeDate' )( mission.end );
-                mission.sanitizedBegin =  mission.sanitizedBegin || $filter( 'sanitizeDate' )( mission.begin );
+                mission.sanitizedEnd = mission.sanitizedEnd || $filter( 'sanitizeDate' )( mission.end );
+                mission.sanitizedBegin = mission.sanitizedBegin || $filter( 'sanitizeDate' )( mission.begin );
                 if (mission.sanitizedEnd < now && (mission.assets.length || !mission.activity)) {
                     mission.isLate = true;
-                    out.push(mission);
+                    out.push( mission );
                 }
             }
-            out.sort(function(a, b) {
+            out.sort( function(a, b) {
                 return a.sanitizedEnd - b.sanitizedEnd;
-            });
+            } );
             return out;
         }
         return _lateMissions;
