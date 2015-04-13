@@ -7,9 +7,9 @@ Intents
 
 #### Exemple
 * OI (avec id mission) :
-    * sur équipement : `adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=2407301&activity=496410&marker=true&mission=342566&zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'
-    * sur X,Y : `adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=45.80307994417619,4.773500561714172&activity=496410&marker=true&mission=342566zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'
-    * sur X,Y et équipement : `adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=2407301%3B45.80307994417619,4.773500561714172&activity=496410&marker=true&mission=342566zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'
+    * sur équipement : ```adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=2407301&activity=496410&marker=true&mission=342566&zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'```
+    * sur X,Y : ```adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=45.80307994417619,4.773500561714172&activity=496410&marker=true&mission=342566zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'```
+    * sur X,Y et équipement : ```adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://map/view?target=2407301%3B45.80307994417619,4.773500561714172&activity=496410&marker=true&mission=342566zoom=16&redirect=https%3A%2F%2Fwww.google.fr"'```
 
 
 ### Test des Intents sur Chrome Bureau
