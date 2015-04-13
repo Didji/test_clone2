@@ -259,7 +259,10 @@
             }
 
             if (!items.length) {
-                G3ME.reloadLayers();
+                if (Synchronizator.needRefresh) {
+                    G3ME.reloadLayers();
+                    delete Synchronizator.needRefresh;
+                }
                 Synchronizator.globalSyncInProgress = false ;
                 return (callback || function() {})();
             }
@@ -311,6 +314,7 @@
                         Asset.save( assets, function() {
                             Relationship.save( data.relationship, function() {
                                 complexasset.syncInProgress = false;
+                                Synchronizator.needRefresh = true;
                                 complexasset.save( callback );
                             } );
                         } );
@@ -357,6 +361,7 @@
             ).success( function(data) {
                 if (Asset.handleDeleteAssets( data )) {
                     asset.synced = true;
+                    Synchronizator.needRefresh = true;
                     asset.save();
                 }
             } ).error( function(data) {
