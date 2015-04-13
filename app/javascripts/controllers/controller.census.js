@@ -83,6 +83,7 @@
                 return;
             }
 
+
             var isProjectAsset = (asset.okey.search( 'PROJECT_' ) === 0);
 
             if (isProjectAsset) {
@@ -100,6 +101,7 @@
                         theAsset.root = complex;
                         theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
+                        fixListTypeField( theAsset );
                         startCensus( theAsset );
                     } else {
                         Relationship.findRoot( data.id, function(r) {
@@ -110,6 +112,7 @@
                                 theAsset.root = complex;
                                 theAsset.isProject = isProjectAsset;
                                 theAsset.relatedAssets = {};
+                                fixListTypeField( theAsset );
                                 startCensus( theAsset );
                             } );
                         } );
@@ -120,10 +123,13 @@
                     complex = new ComplexAsset( null, null, '', theAsset );
                     theAsset.root = complex;
                     theAsset.isProject = isProjectAsset;
+                    fixListTypeField( theAsset );
                     startCensus( theAsset );
                 }
             } );
         }
+
+
 
         /**
          * Mise en forme de l'asset
@@ -142,6 +148,29 @@
             object.geometry = asset.geometry;
             object.isProject = false;
             return object;
+        }
+
+
+        function fixListTypeField(complex) {
+            if (complex.children.length) {
+                for (var k = 0, kk = complex.children.length; k < kk; k++) {
+                    fixListTypeField( complex.children[k] );
+                }
+            }
+
+            var tab, field, idValue;
+            for (var i = 0, ii = vm.metamodel[complex.okey].tabs.length; i < ii; i++) {
+                tab = vm.metamodel[complex.okey].tabs[i];
+                for (var j = 0, jj = tab.fields.length; j < jj; j++) {
+                    field = tab.fields[j];
+                    if (complex.fields[field.key] && field.type === "L") {
+                        for (idValue in Site.current.lists[field.options]) {
+                            complex.fields[field.key] = idValue;
+                        }
+                    }
+                }
+            }
+
         }
 
         /**
