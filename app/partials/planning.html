@@ -8,7 +8,7 @@
       <h5 class="planning_section_header" ng-click='planningController.hideLate = !planningController.hideLate'>
         <span>En retard ({{planningController.lateMissionsLength}})</span><small>{{planningController.hideLate ? 'afficher' : 'masquer'}} <span class="fa fa-caret-{{planningController.hideLate ? 'down' : 'up'}}"></span></small>
       </h5>
-      <div ng-repeat="(key,mission) in (planningController.missions|lateMissions)" ng-hide="planningController.hideLate">
+      <div ng-repeat="mission in (planningController.missions|lateMissions) track by mission.id" ng-hide="planningController.hideLate">
         <ng-include src="'partials/mission.html'"></ng-include>
       </div>
     </div>
