@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'ParametersController', ParametersController );
 
-    ParametersController.$inject = ["$scope", "i18n", "$location", "Site", "Installer"];
+    ParametersController.$inject = ["$scope", "i18n", "$location", "Site", "Installer", "LicenseManager"];
 
     /**
      * @class ParametersController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function ParametersController($scope, i18n, $location, Site, Installer) {
+    function ParametersController($scope, i18n, $location, Site, Installer, LicenseManager) {
 
         var vm = this;
 
@@ -54,6 +54,7 @@
          */
         function update() {
             vm.updating = true;
+            LicenseManager.update( true );
             Installer.update( Site.current, function() {
                 vm.updating = false;
                 vm.lastUpdate = Site.current.timestamp * 1000;
