@@ -106,7 +106,7 @@
                 dropAssetFromMultiselection( asset );
             } );
 
-            $scope.$on( "CLOSE_CONSULTATION_PANEL", close );
+            $scope.$on( "CLOSE_CONSULTATION_PANEL", _close );
 
             $rootScope.$on( "NEW_PROJECT_LOADED", function() {
                 vm.currentLoadedProject = Project.currentLoadedProject ;
@@ -336,7 +336,7 @@
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
                 tmp.push( vm.multiselection[okey][i].id );
             }
-            return tmp.join( ',' );
+            return tmp.join( '!' );
         }
 
         /**
