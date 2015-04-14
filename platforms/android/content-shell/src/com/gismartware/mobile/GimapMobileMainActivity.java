@@ -634,6 +634,7 @@ public class GimapMobileMainActivity extends Activity {
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "[OAUTH] Impossible to retreive token!");
+                e.printStackTrace();
 				finishActivityInit();
 			}
 		}

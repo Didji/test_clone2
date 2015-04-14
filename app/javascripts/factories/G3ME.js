@@ -64,11 +64,13 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
             G3ME.map.fitBounds( Storage.get( 'lastLeafletMapExtent' ) || extent );
 
             // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
-            if (!this.tileUrl) {
+            if (!this.tileUrl || !this.tileUrl.length || Storage.get( 'intent' )) {
                 this.tileUrl = Storage.get( 'url' ).replace( /index.php.+$/, '' );
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
             var BackgroundTile;
+
+            this.filecacheIsEnable = this.filecacheIsEnable && !Storage.get( 'intent' );
 
             if (this.filecacheIsEnable && navigator.userAgent.match( /Android/i )) {
                 BackgroundTile = L.TileLayer.FileCache;

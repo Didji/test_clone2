@@ -127,7 +127,9 @@ function config($routeProvider, $httpProvider, $provide) {
                 var Authenticator = $injector.get( 'Authenticator' );
                 var $location = $injector.get( '$location' );
                 var $http = $injector.get( '$http' );
-                if (rejection.status === 403 && $location.path() !== "/" && rejection.config.url.indexOf( 'global.auth' ) === -1) {
+                if (rejection.status === 403 && $location.path() !== "/"
+                    && rejection.config.url.indexOf( 'global.auth' ) === -1
+                    && rejection.config.url.indexOf( 'gi.maintenance.mobility.site.json' ) === -1) {
                     Authenticator.silentLogin();
                     return $http( rejection.config );
                 }

@@ -35,11 +35,11 @@
          */
         Authenticator.selectSiteRemotely = function(site, success, error) {
 
-            if (window.SmartgeoChromium) {
-                var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )];
+            if (window.SmartgeoChromium && !Storage.get( 'intent' )) {
+                var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || Storage.get( 'user' );
                 ChromiumCallbacks[16] = function() {};
                 if (user) {
-                    SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site );
+                    SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site, user.token );
                 }
             }
 

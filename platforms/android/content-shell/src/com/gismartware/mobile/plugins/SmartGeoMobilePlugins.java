@@ -81,6 +81,7 @@ public class SmartGeoMobilePlugins {
     private String tileUrl ;
     private String tileUser;
     private String tilePassword;
+    private String tileToken;
     private String tileSite;
 
     private static String PHPSESSIONID = null;
@@ -391,7 +392,7 @@ public class SmartGeoMobilePlugins {
                     + " on database n°" + databaseIndex);
 
 
-                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite);
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite, this.tileToken);
             } catch (Exception e){
                 Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
@@ -434,11 +435,20 @@ public class SmartGeoMobilePlugins {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                if (statusCode == 403 && !params[4].contains("getTuileTMS")) {
+                Log.d(TAG, "param 1 " + params[1]);
+                Log.d(TAG, "param 2 " + params[2]);
+                Log.d(TAG, "param 3 " + params[3]);
+                Log.d(TAG, "param 4 " + params[4]);
+                Log.d(TAG, "param 5 " + params[5]);
+                Log.d(TAG, "param 6 " + params[6]);
+                Log.d(TAG, "param 7 " + params[7]);
+                Log.d(TAG, "param 8 " + params[8]);
+
+                if (statusCode == 403 && url != null && !url.contains("getTuileTMS")) {
                     PHPSESSIONID = null ;
                     return request(params);
                 } else if (statusCode == 403) {
-                    authenticate(params[4], params[5], params[6], params[7]);
+                    authenticate(params[4], params[5], params[6], params[7], params[8]);
                     return request(params);
                 } else if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
@@ -490,17 +500,34 @@ public class SmartGeoMobilePlugins {
 
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @JavascriptInterface
-    public void authenticate(String url, String user, String password, String site) {
+    public void authenticate(String url, String user, String password, String site, String token) {
 
         this.tileUrl = url ;
         this.tileUser = user ;
         this.tilePassword = password;
+        this.tileToken = token;
         this.tileSite = site ;
+
+        Log.d(TAG, "tileUrl " + this.tileUrl );
+        Log.d(TAG, "tileUser " + this.tileUser );
+        Log.d(TAG, "tilePassword " + this.tilePassword );
+        Log.d(TAG, "tileToken " + this.tileToken );
+        Log.d(TAG, "tileSite " + this.tileSite );
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
-        StringBuffer bufUrl = new StringBuffer(url);
-        bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
+        StringBuffer bufUrl = new StringBuffer();
+
+        bufUrl.append(this.tileUrl);
+
+        if(token == null){
+            bufUrl.append("&login=").append(user);
+            bufUrl.append("&pwd=").append(password);
+        } else {
+            bufUrl.append("&token=").append(token);
+        }
+        bufUrl.append("&forcegimaplogin=true");
+        bufUrl.append("&mobility=true");
 
         HttpPost req = new HttpPost(bufUrl.toString());
         try {
@@ -511,7 +538,7 @@ public class SmartGeoMobilePlugins {
 
                 //nouvelle requete  effectuer : slection du site
                 bufUrl = new StringBuffer(url);
-                bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
+                bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true").append("&mobility=true").append("&forcegimaplogin=true");
                 req = new HttpPost(bufUrl.toString());
                 response = client.execute(req);
                 if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

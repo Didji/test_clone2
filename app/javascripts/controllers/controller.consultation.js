@@ -260,13 +260,14 @@
             var intent = Storage.get( 'intent' ),
                 path = 'report/' + Site.current.id + '/';
 
-            path += (intent ? intent.report_activity : '') + '/' + lat + ',' + lng + '/';
+            path += (intent && intent.report_activity ? intent.report_activity : '') + '/' + lat + ',' + lng + '/';
 
             if (intent && intent.report_mission) {
                 path += intent.report_mission + '/';
             }
 
             $location.path( path );
+            $scope.$apply();
         }
 
         function toggleConsultationPanelButtonMousedownHandler($event) {
