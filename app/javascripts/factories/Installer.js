@@ -226,7 +226,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
 
         },
 
-        update: function(site, callback) {
+        update: function(site, callback, onlySite) {
             callback = callback || function() {};
             Installer.getUpdateJSON( site, function(site) {
                 if (!site) {
@@ -235,6 +235,10 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 var formatedSite = Installer.formatSiteMetadata( site, true );
                 Site.current.oldTimestamp = Site.current.timestamp;
                 angular.extend( Site.current, formatedSite );
+                if (onlySite) {
+                    Site.save( Site.current, callback );
+                    return;
+                }
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
                         Site.save( Site.current, callback );
