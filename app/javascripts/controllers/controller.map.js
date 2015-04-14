@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator"];
+    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator) {
+    function MapController($scope, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
 
         var LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
