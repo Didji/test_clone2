@@ -80,7 +80,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         return;
                     }
                     if (!scope.root.isFieldOk()) {
-                        alertify.alert( 'Veuillez remplir toutes les champs obligatoires' );
+                        alertify.alert( 'Veuillez remplir tous les champs obligatoires' );
                         return;
                     }
                     scope.onclose();
