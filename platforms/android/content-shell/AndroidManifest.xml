@@ -8,7 +8,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gismartware.mobile"
-    android:versionCode="126000"
+    android:versionCode="127000"
     android:versionName="1.2rc4">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
