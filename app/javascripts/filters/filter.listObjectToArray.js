@@ -18,10 +18,16 @@
         var listsArray = {};
 
         function _listObjectToArray(options) {
+            var currentList ;
+            if (typeof options !== "string") {
+                currentList = angular.copy( options );
+                options = JSON.stringify( options );
+            }
             if (listsArray[options]) {
                 return listsArray[options];
+            } else {
+                currentList = currentList || lists[options];
             }
-            var currentList = lists[options];
             var out = [];
             for (var value in currentList) {
                 out.push( {
