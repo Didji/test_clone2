@@ -492,6 +492,28 @@
         };
 
         /**
+         * @name isFieldOk
+         * @desc
+         */
+        ComplexAsset.prototype.isFieldOk = function() {
+            for (var i = 0, ii = this.children.length; i < ii; i++) {
+                if (!this.children[i].isFieldOk()) {
+                    return false;
+                }
+            }
+            for (var j = 0, jj = Site.current.metamodel[this.okey].tabs.length; j < jj; j++) {
+                var tab = Site.current.metamodel[this.okey].tabs[j] ;
+                for (var k = 0, kk = tab.fields.length; k < kk; k++) {
+                    var field = tab.fields[k] ;
+                    if (field.required && (!this.fields[field.key] || !this.fields[field.key])) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        };
+
+        /**
          * @name isGeometryOk
          * @desc
          */

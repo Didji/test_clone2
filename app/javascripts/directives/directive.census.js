@@ -79,6 +79,10 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         alertify.alert( 'Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>' );
                         return;
                     }
+                    if (!scope.root.isFieldOk()) {
+                        alertify.alert( 'Veuillez remplir toutes les champs obligatoires' );
+                        return;
+                    }
                     scope.onclose();
                     scope.removeLayers();
                     scope.root.save( Project, false );
