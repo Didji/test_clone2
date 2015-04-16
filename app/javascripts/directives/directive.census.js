@@ -18,6 +18,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
             link: function(scope) {
                 scope.mapLayers = [];
                 scope.metamodel = Site.current.metamodel;
+                scope.lists = Site.current.lists;
                 scope.dependancies = Site.current.dependancies;
                 scope.defaultClassIndex = scope.classindex || "0";
                 scope.$watch( watchAsset, function(asset) {
@@ -40,7 +41,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     if (okey && !scope.asset) {
                         if (okey.search( /PROJECT_/ ) === 0) {
                             scope.isProject = true;
-                            scope.defaultClassIndex = Project.currentLoadedProject.getClassIndexForAddedAsset(okey);
+                            scope.defaultClassIndex = Project.currentLoadedProject.getClassIndexForAddedAsset( okey );
                             scope.root = scope.node = new ComplexAsset( okey );
                             scope.root.isProject = true;
                         } else {
@@ -187,7 +188,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             return;
                         }
 
-                        var symbology = Site.current.symbology['' + node.okey + scope.defaultClassIndex] || Site.current.symbology['' + node.okey.replace('PROJECT_', '') + scope.defaultClassIndex],
+                        var symbology = Site.current.symbology['' + node.okey + scope.defaultClassIndex] || Site.current.symbology['' + node.okey.replace( 'PROJECT_', '' ) + scope.defaultClassIndex],
                             iconUrl = symbology.style.symbol.icon,
                             image = new Image();
 

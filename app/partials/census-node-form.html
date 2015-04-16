@@ -11,7 +11,9 @@
                         <input class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
                     </span>
                     <span ng-switch-when="L">
-                        <select class="form-control" ng-model="node.fields[field.key]" ng-options="c.value as c.label for c in  ( (field.options | listObjectToArray) | orderBy:'label')">
+                        <select ng-if="!field.dependancy" class="form-control" ng-model="node.fields[field.key]" ng-options="c.value as c.label for c in  ( (field.options | listObjectToArray) | orderBy:'label')">
+                        </select>
+                        <select ng-if="field.dependancy" class="form-control" ng-model="node.fields[field.key]" ng-options="c.value as c.label for c in  ( (lists[field.options][node.fields[field.dependancy]] | listObjectToArray) | orderBy:'label')">
                         </select>
                     </span>
                     <span ng-switch-when="D">
