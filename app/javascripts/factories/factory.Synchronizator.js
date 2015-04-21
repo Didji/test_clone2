@@ -311,11 +311,13 @@
                         }
                     }
                     Asset.delete( complexasset.uuids, function() {
-                        Asset.save( assets, function() {
-                            Relationship.save( data.relationship, function() {
-                                complexasset.syncInProgress = false;
-                                Synchronizator.needRefresh = true;
-                                complexasset.save( callback );
+                        Relationship.delete( complexasset.uuids, function() {
+                            Asset.save( assets, function() {
+                                Relationship.save( data.relationship, function() {
+                                    complexasset.syncInProgress = false;
+                                    Synchronizator.needRefresh = true;
+                                    complexasset.save( callback );
+                                } );
                             } );
                         } );
                     } );
