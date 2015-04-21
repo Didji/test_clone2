@@ -723,10 +723,6 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
-
-            // if (!asset.length) {
-            //     return (callback || function() {})();
-            // }
             site = site || Site.current ;
             var zones = Asset.__distributeAssetsInZone( asset, site );
             var uuidcallback = window.uuid();
