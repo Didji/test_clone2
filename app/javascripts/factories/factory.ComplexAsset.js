@@ -505,7 +505,7 @@
                 var tab = Site.current.metamodel[this.okey].tabs[j] ;
                 for (var k = 0, kk = tab.fields.length; k < kk; k++) {
                     var field = tab.fields[k] ;
-                    if (field.required && (!this.fields[field.key] || !this.fields[field.key])) {
+                    if (field.required && !field.readonly && !this.fields[field.key]) {
                         return false;
                     }
                 }
