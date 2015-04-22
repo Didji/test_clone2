@@ -30,7 +30,7 @@
             }
             this.okey = okey || asset.okey;
             this.isProject = (this.okey !== null) ? (this.okey.search( /PROJECT_/ ) === 0) : false;
-            this.uuid = window.uuid() || null;
+            this.uuid = asset.uuid || window.uuid();
             this.children = asset.children || [];
             this.father = father && father.uuid;
             this.root = root || this;
@@ -320,6 +320,7 @@
                 method = prefix + (update ? "update" : "new");
 
             node.timestamp = node.timestamp = Date.now();
+            node.__restoreAllDate();
 
             var assets = node.convertToTempLinearAndSave( update, Project );
 
@@ -349,9 +350,8 @@
                 method = update ? "update" : "save" ;
 
             Asset[method]( assets, function() {
-                if (!update) {
-                    Relationship.save( relationships, G3ME.reloadLayers );
-                } else {
+                Relationship.save( relationships, G3ME.reloadLayers );
+                if (update) {
                     $rootScope.$broadcast( "REFRESH_CONSULTATION" );
                 }
             } );
@@ -430,6 +430,26 @@
             delete this.layer;
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__deleteLayer();
+            }
+        };
+        
+        /**
+         * @name __restoreAllDate
+         * @desc
+         */
+        ComplexAsset.prototype.__restoreAllDate = function() {
+            for (var i = 0; i < this.children.length; i++) {
+                this.children[i].__restoreAllDate();
+            }
+            for (var j in this.fields) {
+                var field = this.fields[j];
+                if (!angular.isDate(field)) {
+                    continue;
+                }
+                var yyyy = field.getFullYear().toString(),
+                    mm = (field.getMonth()+1).toString(),
+                    dd  = field.getDate().toString();
+                this.fields[j] = yyyy +'-'+ (mm[1]?mm:"0"+mm[0]) +'-'+ (dd[1]?dd:"0"+dd[0]);
             }
         };
 
