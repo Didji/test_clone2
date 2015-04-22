@@ -30,7 +30,7 @@
             }
             this.okey = okey || asset.okey;
             this.isProject = (this.okey !== null) ? (this.okey.search( /PROJECT_/ ) === 0) : false;
-            this.uuid = window.uuid() || null;
+            this.uuid = asset.uuid || window.uuid();
             this.children = asset.children || [];
             this.father = father && father.uuid;
             this.root = root || this;
