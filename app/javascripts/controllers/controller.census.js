@@ -141,7 +141,7 @@
             object.fields = asset.attributes;
             object.children = [];
             object.root = asset.root;
-            object.father = father && father.id;
+            object.father = father && father.uuid;
             object.tree = asset.tree;
             object.relatedAssets = asset.relatedAssets;
             object.guid = asset.guid;
@@ -170,7 +170,7 @@
                             }
                         }
                     }
-                    if (complex.fields[field.key] && field.type === "D") {
+                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate(complex.fields[field.key])) {
                         var pattern = /(\d{2})\/(\d{2})\/(\d{2})/;
                         complex.fields[field.key] = new Date(complex.fields[field.key].replace(pattern,'20$3-$2-$1'));
                     }
