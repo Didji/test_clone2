@@ -350,9 +350,8 @@
                 method = update ? "update" : "save" ;
 
             Asset[method]( assets, function() {
-                if (!update) {
-                    Relationship.save( relationships, G3ME.reloadLayers );
-                } else {
+                Relationship.save( relationships, G3ME.reloadLayers );
+                if (update) {
                     $rootScope.$broadcast( "REFRESH_CONSULTATION" );
                 }
             } );

@@ -509,6 +509,13 @@
             if (guids instanceof Array && guids.length === 0) {
                 return (callback || function() {})();
             }
+            // Il se peut qu'on passe des guids nuls
+            // dans le cas d'un ajout d'objet enfant en modification
+            for (var i = 0, l = guids.length; i < l; i++) {
+                if (!guids[i]) {
+                    guids.splice(i, 1);
+                  }
+            }
 
             if ((guids instanceof Asset || guids instanceof Object) && !guids.length) {
                 guids = [guids.guid];
