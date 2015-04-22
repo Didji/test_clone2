@@ -146,6 +146,9 @@
          */
         function updateAssetsList(assets) {
             if (assets.length) {
+                angular.forEach(vm.selectedAssets.inList, function(asset) {
+                    asset.hideFromMap();
+                });
                 vm.groups = {};
                 vm.selectedAssets.inList = {};
             } else {
