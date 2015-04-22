@@ -46,7 +46,7 @@
         Asset.prototype.findRelated = function(callback) {
             var self = this ;
 
-            if (this.isComplex !== undefined) {
+            if (this.isComplex != undefined) {
                 return (callback || angular.noop)( self );
             }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
