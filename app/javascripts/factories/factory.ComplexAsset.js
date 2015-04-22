@@ -220,10 +220,16 @@
                 asset = assets[i] ;
                 asset.guid = update ? asset.guid : asset.uuid ;
                 asset.attributes = asset.fields ;
-                asset.classindex = (Project && Project.currentLoadedProject && Project.currentLoadedProject.getClassIndexForAddedAsset( asset.okey ));
+                if (Project && Project.currentLoadedProject) {
+                    asset.classindex = Project.currentLoadedProject.getClassIndexForAddedAsset( asset.okey );
+                }
+                asset.classindex = asset.classindex || 0;
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
                 asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
                 asset.maplabel = "";
+                var getZooms = SMARTGEO_CURRENT_SITE.symbology[asset.okey+asset.classindex];
+                asset.maxzoom = getZooms.maxzoom;
+                asset.minzoom = getZooms.minzoom;
                 delete asset.father;
                 delete asset.fields;
                 delete asset.formVisible;
