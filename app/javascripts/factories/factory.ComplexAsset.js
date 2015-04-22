@@ -320,6 +320,7 @@
                 method = prefix + (update ? "update" : "new");
 
             node.timestamp = node.timestamp = Date.now();
+            node.__restoreAllDate();
 
             var assets = node.convertToTempLinearAndSave( update, Project );
 
@@ -430,6 +431,26 @@
             delete this.layer;
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__deleteLayer();
+            }
+        };
+        
+        /**
+         * @name __restoreAllDate
+         * @desc
+         */
+        ComplexAsset.prototype.__restoreAllDate = function() {
+            for (var i = 0; i < this.children.length; i++) {
+                this.children[i].__restoreAllDate();
+            }
+            for (var j in this.fields) {
+                var field = this.fields[j];
+                if (!angular.isDate(field)) {
+                    continue;
+                }
+                var yyyy = field.getFullYear().toString(),
+                    mm = (field.getMonth()+1).toString(),
+                    dd  = field.getDate().toString();
+                this.fields[j] = yyyy +'-'+ (mm[1]?mm:"0"+mm[0]) +'-'+ (dd[1]?dd:"0"+dd[0]);
             }
         };
 

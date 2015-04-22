@@ -46,7 +46,7 @@
         Asset.prototype.findRelated = function(callback) {
             var self = this ;
 
-            if (this.isComplex !== undefined) {
+            if (this.isComplex != undefined) {
                 return (callback || angular.noop)( self );
             }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
@@ -723,10 +723,6 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
-
-            // if (!asset.length) {
-            //     return (callback || function() {})();
-            // }
             site = site || Site.current ;
             var zones = Asset.__distributeAssetsInZone( asset, site );
             var uuidcallback = window.uuid();
