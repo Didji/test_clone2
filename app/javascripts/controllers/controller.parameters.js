@@ -54,7 +54,7 @@
          */
         function update() {
             vm.updating = true;
-            LicenseManager.update( true );
+            // LicenseManager.update( true );
             Installer.update( Site.current, function() {
                 vm.updating = false;
                 vm.lastUpdate = Site.current.timestamp * 1000;
