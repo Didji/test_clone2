@@ -39,6 +39,7 @@
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
+        vm.rights = $rootScope.rights;
         vm.groups = null;
         vm.spinnerOptions = {};
         vm.multiselection = {};
@@ -146,9 +147,9 @@
          */
         function updateAssetsList(assets) {
             if (assets.length) {
-                angular.forEach(vm.selectedAssets.inList, function(asset) {
+                angular.forEach( vm.selectedAssets.inList, function(asset) {
                     asset.hideFromMap();
-                });
+                } );
                 vm.groups = {};
                 vm.selectedAssets.inList = {};
             } else {
