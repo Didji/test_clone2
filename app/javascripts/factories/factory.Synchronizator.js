@@ -74,6 +74,16 @@
         };
 
         /**
+         * @name JSONify
+         * @desc
+         */
+        SyncItem.prototype.JSONify = function() {
+            delete this.relatedAssets;
+            delete this.consultationMarker;
+            return JSON.stringify( this );
+        };
+
+        /**
          * @name list
          * @desc
          */
@@ -190,7 +200,7 @@
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
             syncItem.save( function() {
-                Synchronizator.log( object );
+                Synchronizator.log( syncItem );
                 $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
         };
@@ -477,7 +487,7 @@
                 delete item.ged;
             }
             if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
-                SmartgeoChromium.writeJSON( JSON.stringify( item ), 'report/' + item.uuid || item.id + '.json' );
+                SmartgeoChromium.writeJSON( item.JSONify(), 'report/' + item.uuid || item.id + '.json' );
             }
             return this;
         };
