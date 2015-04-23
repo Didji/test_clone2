@@ -42,7 +42,7 @@
          * @param {String} right Nom du droit
          */
         Right.get = function(right) {
-            return (Right.values || $rootScope)[right];
+            return (Right.values || $rootScope.rights)[right];
         };
 
         /**
