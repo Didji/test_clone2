@@ -128,6 +128,7 @@
                 if (father.children[i].uuid === this.uuid) {
                     var newNode = father.children[i].__clone();
                     newNode.__updateUuid( father.uuid );
+                    newNode.__updateGuid();
                     newNode.__closeTreeForm();
                     father.children.push( newNode );
                     return newNode;
@@ -514,6 +515,17 @@
             this.father = father;
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__updateUuid( this.uuid );
+            }
+        };
+
+        /**
+         * @name __updateGuid
+         * @desc
+         */
+        ComplexAsset.prototype.__updateGuid = function(guid) {
+            this.id = this.guid = this.uuid;
+            for (var i = 0; i < this.children.length; i++) {
+                this.children[i].__updateGuid(guid);
             }
         };
 
