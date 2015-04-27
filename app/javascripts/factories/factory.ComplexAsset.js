@@ -40,7 +40,7 @@
             if (this.okey) {
                 this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
             }
-            this.guid = asset.id || null;
+            this.guid = this.id || this.uuid;
             this.geometry = asset.geometry || null;
 
             if (!this.okey) {
@@ -438,7 +438,7 @@
                 this.children[i].__deleteLayer();
             }
         };
-        
+
         /**
          * @name __restoreAllDate
          * @desc
