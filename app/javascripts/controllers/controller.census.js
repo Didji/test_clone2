@@ -165,7 +165,7 @@
                     field = tab.fields[j];
                     if (complex.fields[field.key] && field.type === "L") {
                         for (idValue in Site.current.lists[field.options]) {
-                            if (complex.fields[field.key] === Site.current.lists[field.options][idValue]) {
+                            if (complex.fields[field.key] == Site.current.lists[field.options][idValue]) {
                                 complex.fields[field.key] = idValue;
                             }
                         }
