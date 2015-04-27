@@ -75,18 +75,22 @@
          * @name showOnMap
          * @desc Montre l'objet sur la carte avec un marqueur
          */
-        Asset.prototype.showOnMap = function() {
+        Asset.prototype.showOnMap = function(dontPlaceMarker) {
             if (this.relatedAssets && this.relatedAssets[this.id]) {
-                this.relatedAssets[this.id].showOnMap();
+               this.relatedAssets[this.id].showOnMap(true);
             }
+
             var self = this;
             this.onMap = true;
-            this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
-                self.zoomOn();
-            } );
-            if (G3ME.map) {
-                this.consultationMarker.addTo( G3ME.map );
+            if (!dontPlaceMarker) {
+                this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
+                    self.zoomOn();
+                } );
+                if (G3ME.map) {
+                    this.consultationMarker.addTo( G3ME.map );
+                }
             }
+
         };
 
         /**
@@ -110,8 +114,8 @@
          * @name toggleMapVisibility
          * @desc Change la visibilité de l'objet sur la carte
          */
-        Asset.prototype.toggleMapVisibility = function() {
-            this[this.onMap ? "hideFromMap" : "showOnMap"]();
+        Asset.prototype.toggleMapVisibility = function(dontPlaceMarker) {
+            this[this.onMap ? "hideFromMap" : "showOnMap"](dontPlaceMarker);
         };
 
         /**

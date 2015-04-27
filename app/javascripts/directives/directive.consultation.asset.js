@@ -111,8 +111,8 @@
                 }
             }
 
-            function toggleMapVisibility(asset) {
-                asset.toggleMapVisibility();
+            function toggleMapVisibility(asset, dontPlaceMarker) {
+                asset.toggleMapVisibility(dontPlaceMarker);
             }
 
             /**
@@ -145,6 +145,8 @@
                                 okey: asset.relatedAssets[i].okey,
                                 guid: asset.relatedAssets[i].guid
                             } );
+                            asset.relatedAssets[i].hideFromMap();
+
                         }
                     }
                     asset.hideFromMap();
