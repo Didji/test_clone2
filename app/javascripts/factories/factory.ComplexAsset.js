@@ -228,7 +228,7 @@
                 asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
                 asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
                 asset.maplabel = "";
-                var getZooms = SMARTGEO_CURRENT_SITE.symbology[asset.okey+asset.classindex];
+                var getZooms = SMARTGEO_CURRENT_SITE.symbology[asset.okey + asset.classindex];
                 asset.maxzoom = getZooms.maxzoom;
                 asset.minzoom = getZooms.minzoom;
                 delete asset.father;
@@ -295,8 +295,28 @@
                     }
                 };
             } else {
-                // TODO : GERER LES LINESTRING
-                return false;
+                var coord ,
+                    lngmin = +Infinity,
+                    lngmax = -Infinity,
+                    latmin = +Infinity,
+                    latmax = -Infinity;
+                for (var i = 0, ii = complex.geometry.coordinates.length; i < ii; i++) {
+                    coord = complex.geometry.coordinates[i];
+                    lngmin = coord[0] < lngmin ? coord[0] : lngmin ;
+                    latmin = coord[1] < latmin ? coord[0] : latmin ;
+                    lngmax = coord[0] > lngmax ? coord[0] : lngmax ;
+                    latmax = coord[1] > latmax ? coord[0] : latmax ;
+                }
+                return {
+                    sw: {
+                        lng: lngmin,
+                        lat: latmin
+                    },
+                    ne: {
+                        lng: lngmax,
+                        lat: latmax
+                    }
+                };
             }
         };
 
@@ -450,13 +470,13 @@
             }
             for (var j in this.fields) {
                 var field = this.fields[j];
-                if (!angular.isDate(field)) {
+                if (!angular.isDate( field )) {
                     continue;
                 }
                 var yyyy = field.getFullYear().toString(),
-                    mm = (field.getMonth()+1).toString(),
-                    dd  = field.getDate().toString();
-                this.fields[j] = yyyy +'-'+ (mm[1]?mm:"0"+mm[0]) +'-'+ (dd[1]?dd:"0"+dd[0]);
+                    mm = (field.getMonth() + 1).toString(),
+                    dd = field.getDate().toString();
+                this.fields[j] = yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
             }
         };
 
