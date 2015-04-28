@@ -20,7 +20,7 @@
          */
         function Asset(asset, callback, getRelated) {
             var self = this ;
-            if (typeof asset === 'string') {
+            if (typeof asset === 'string' || typeof asset === 'number') {
                 Asset.findOne( asset, function(asset) {
                     angular.extend( self, new Asset( asset, callback, getRelated ) );
                 } );
@@ -30,7 +30,7 @@
             if (getRelated) {
                 this.findRelated( callback );
             } else {
-                (callback || function() {})(this);
+                (callback || function() {})( this );
             }
         }
 
@@ -77,7 +77,7 @@
          */
         Asset.prototype.showOnMap = function(dontPlaceMarker) {
             if (this.relatedAssets && this.relatedAssets[this.id]) {
-               this.relatedAssets[this.id].showOnMap(true);
+                this.relatedAssets[this.id].showOnMap( true );
             }
 
             var self = this;
@@ -115,7 +115,7 @@
          * @desc Change la visibilité de l'objet sur la carte
          */
         Asset.prototype.toggleMapVisibility = function(dontPlaceMarker) {
-            this[this.onMap ? "hideFromMap" : "showOnMap"](dontPlaceMarker);
+            this[this.onMap ? "hideFromMap" : "showOnMap"]( dontPlaceMarker );
         };
 
         /**
@@ -517,8 +517,8 @@
             // dans le cas d'un ajout d'objet enfant en modification
             for (var i = 0, l = guids.length; i < l; i++) {
                 if (!guids[i]) {
-                    guids.splice(i, 1);
-                  }
+                    guids.splice( i, 1 );
+                }
             }
 
             if ((guids instanceof Asset || guids instanceof Object) && !guids.length) {
