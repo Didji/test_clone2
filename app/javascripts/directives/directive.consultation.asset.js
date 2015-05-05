@@ -59,11 +59,17 @@
             }
 
             function markObjectAsDeletedForCurrentProject(asset) {
-                Project.currentLoadedProject.deleteAsset( asset, function() {
-                    alertify.log( i18n.get( "_PROJECT_ASSETS_DELETED_", Project.currentLoadedProject.name ) );
-                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
-                    scope.$apply();
-                } );
+                var name = Project.currentLoadedProject.name;
+                alertify.confirm( i18n.get( '_PROJECT_CONFIRM_ASSETS_DELETED_', name ), function(yes) {
+                    if (!yes) {
+                        return;
+                    }
+                    Project.currentLoadedProject.deleteAsset( asset, function() {
+                        alertify.log( i18n.get( "_PROJECT_ASSETS_DELETED_", name ) );
+                        $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                        scope.$apply();
+                    });
+                });
             }
 
             /**
@@ -71,11 +77,17 @@
              * @param {Asset} asset
              */
             function removeFromProject(asset) {
-                Project.currentLoadedProject.removeAsset( asset, function() {
-                    alertify.log( i18n.get( "_PROJECT_ASSETS_REMOVED_", Project.currentLoadedProject.name ) );
-                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
-                    scope.$apply();
-                } );
+                var name = Project.currentLoadedProject.name;
+                alertify.confirm( i18n.get( '_PROJECT_CONFIRM_ASSETS_REMOVED_', name ), function(yes) {
+                    if (!yes) {
+                        return;
+                    }
+                    Project.currentLoadedProject.removeAsset( asset, function() {
+                        alertify.log( i18n.get( "_PROJECT_ASSETS_REMOVED_", name ) );
+                        $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                        scope.$apply();
+                    });
+                });
             }
 
             /**
