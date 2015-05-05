@@ -276,6 +276,17 @@
             } );
         };
 
+        Project.checkRemoteLockedAssets = function() {
+            $http.get ( Utils.getServiceUrl('project.mobility.assets.locked') )
+                 .success(
+                    function(guids) {
+                        Asset.lock( guids, function() {
+                            // UPDATE CONSULT
+                        });
+                    }
+            );
+        };
+
         /**
          * @name hasBeenModified
          * @desc

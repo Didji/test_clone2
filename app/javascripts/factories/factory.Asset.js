@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "$http", "Site", "GPS", "Relationship", "Right", "Utils"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "Storage", "$rootScope", "$http", "Site", "GPS", "Relationship", "Right", "Utils"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, $http, Site, GPS, Relationship, Right, Utils) {
+    function AssetFactory(G3ME, Marker, SQLite, Storage, $rootScope, $http, Site, GPS, Relationship, Right, Utils) {
 
         /**
          * @class AssetFactory
@@ -19,13 +19,16 @@
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
         function Asset(asset, callback, getRelated) {
-            var self = this ;
+            var self = this,
+                locked_assets = Storage.get('locked_assets');
+
             if (typeof asset === 'string' || typeof asset === 'number') {
                 Asset.findOne( asset, function(asset) {
                     angular.extend( self, new Asset( asset, callback, getRelated ) );
                 } );
                 return;
             }
+            asset.locked = locked_assets.indexOf(+asset.id) !== -1;
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
@@ -564,7 +567,7 @@
          * @param {Object} asset
          */
         Asset.convertRawRow = function(asset) {
-            var a = angular.copy( asset ), parsed ;
+            var a = angular.copy( asset ), parsed;
             try {
                 parsed = a.asset ? JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) ) : a ;
                 return angular.extend( a, {
@@ -986,6 +989,10 @@
                 delete Asset.cache[ids[i]];
             }
         };
+
+        Asset.lock = function(guids, callback) {
+            Storage.set( 'locked_assets', guids, callback );
+        }
 
         return Asset;
     }
