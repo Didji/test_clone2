@@ -162,5 +162,8 @@ window.smartgeo_i18n_lang.en = {
     _PROJECT_IS_LOCKED_BY_ANOTHER_USER_: "Project is locked by another user.",
     _PROJECT_IS_LOCKED_: "Project locked",
     _NO_PROJECTS_: "No projects",
-    _RETRY_: "Retry"
+    _RETRY_: "Retry",
+    _CANCEL: "Cancel",
+    _SAVE: "Save",
+    _UPDATE: "Update"
 };
