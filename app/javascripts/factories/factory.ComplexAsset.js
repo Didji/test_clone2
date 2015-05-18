@@ -22,6 +22,7 @@
                 children: [],
                 relatedAssets: {},
                 geometry: null,
+                angle: false,
                 fields: {}
 
             };
@@ -39,6 +40,7 @@
             this.relatedAssets = asset.relatedAssets || {};
             if (this.okey) {
                 this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
+                this.angle = Site.current.metamodel[this.okey].angle;
             }
             this.guid = this.id || this.uuid;
             this.geometry = asset.geometry || null;

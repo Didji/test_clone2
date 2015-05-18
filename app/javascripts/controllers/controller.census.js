@@ -147,6 +147,7 @@
             object.guid = asset.guid;
             object.geometry = asset.geometry;
             object.isProject = false;
+            object.angle = vm.metamodel[asset.okey].angle;
             return object;
         }
 

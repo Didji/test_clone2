@@ -69,12 +69,15 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
 
                 scope.removeLayers = function() {
                     for (var i = 0; i < scope.mapLayers.length; i++) {
+                        if (scope.mapLayers[i].isOriented) {
+                            scope.root.angle = scope.mapLayers[i].options.angle *-1;
+                        }
                         G3ME.map.removeLayer( scope.mapLayers[i] );
                     }
                     scope.mapLayers = [];
                 };
 
-                scope.save = function() {
+                scope.save = function(update) {
                     if (!scope.root.isGeometryOk()) {
                         alertify.alert( 'Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>' );
                         return;
@@ -85,18 +88,8 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     }
                     scope.onclose();
                     scope.removeLayers();
-                    scope.root.save( Project, false );
-                };
-
-                scope.updateAsset = function() {
-                    if (!scope.root.isGeometryOk()) {
-                        alertify.alert( 'Veuillez remplir toutes les géometries <span ng-if="metamodel[node.okey].is_graphical" style="background-color:#d9534f" class="badge"><span class="fa fa-map-marker"></span></span>' );
-                        return;
-                    }
-                    scope.onclose();
-                    scope.removeLayers();
-                    scope.root.save( Project, true );
-                };
+                    scope.root.save( Project, update );
+                }
 
                 scope.snap = function(node) {
                     Camera.snap( function(picture) {
@@ -197,13 +190,18 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             image = new Image();
 
                         image.src = iconUrl;
-
-                        node.layer = L.marker( e.latlng, {
+                        var options = {
+                            orientationLineWeight: 10,
                             icon: L.icon( {
                                 iconUrl: iconUrl,
                                 iconAnchor: [image.width / 2, image.height / 2]
                             } )
-                        } ).addTo( G3ME.map );
+                        };
+                        if (Site.current.metamodel[node.okey].angle) {
+                            node.layer = L.orientedMarker( e.latlng, options ).addTo( G3ME.map ).activateOrientation();
+                        } else {
+                            node.layer = L.marker( e.latlng, options ).addTo( G3ME.map );
+                        }
                         scope.mapLayers.push( node.layer );
                     }
 

@@ -163,5 +163,8 @@ window.smartgeo_i18n_lang.en = {
     _PROJECT_IS_LOCKED_: "Project locked",
     _PROJECT_ASSET_IS_LOCKED_: "Asset locked by project",
     _NO_PROJECTS_: "No projects",
-    _RETRY_: "Retry"
+    _RETRY_: "Retry",
+    _CANCEL: "Cancel",
+    _SAVE: "Save",
+    _UPDATE: "Update"
 };

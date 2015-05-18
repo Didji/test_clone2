@@ -164,6 +164,9 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECT_IS_LOCKED_: "Projet verrouillé",
     _PROJECT_ASSET_IS_LOCKED_: "Objet verrouillé par un projet",
     _NO_PROJECTS_: "Aucun projet",
-    _RETRY_: "Réessayer"
+    _RETRY_: "Réessayer",
+    _CANCEL: "Annuler",
+    _SAVE: "Enregistrer",
+    _UPDATE: "Modifer"
 
 };
