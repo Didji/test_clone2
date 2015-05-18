@@ -162,6 +162,7 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECT_STATUS_DOESNT_ALLOW_UPDATE_: "Le statut du projet ne permet pas de le modifier.",
     _PROJECT_IS_LOCKED_BY_ANOTHER_USER_: "Le projet est verrouillé par un autre utilisateur.",
     _PROJECT_IS_LOCKED_: "Projet verrouillé",
+    _PROJECT_ASSET_IS_LOCKED_: "Objet verrouillé par un projet",
     _NO_PROJECTS_: "Aucun projet",
     _RETRY_: "Réessayer"
 

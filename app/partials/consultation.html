@@ -19,7 +19,7 @@
                             {{::asset.label}}
                             <i ng-click="consultationController.dropAssetFromMultiselection(asset)" class="fa fa-times consultation-multiselection-trash"></i>
                         </div>
-                        <div ng-if="rights.report && !consultationController.multiselection[okey].close" class="btn-group consultation-multiselection-report-button">
+                        <div ng-if="asset.locked && rights.report && !consultationController.multiselection[okey].close" class="btn-group consultation-multiselection-report-button">
                             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                                 <i class="fa fa-pencil-square-o"></i>
                             </button>

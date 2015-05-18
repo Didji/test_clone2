@@ -267,9 +267,10 @@
                 isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
                 isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset )) || (asset.okey.search( 'PROJECT_' ) === 0),
                 hasBeenDuplicatedForProjet = Project.currentLoadedProject && Project.currentLoadedProject.hasDuplicatedAsset( asset ),
+                isLocked = asset.locked,
                 hasNotBeenMarkedAsRemoved = isThereAProjectLoaded && (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted") ;
 
-            if (isReportable && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
+            if (isReportable && !isLocked && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
                 authAction.push( actions.fetchhistory );
             }
 
@@ -284,14 +285,14 @@
 
 
             // OBJECT ACTIONS
-            if (isUpdatable && !isProjectAsset && !hasBeenDuplicatedForProjet) {
+            if (isUpdatable && !isLocked && !isProjectAsset && !hasBeenDuplicatedForProjet) {
                 authAction.push( actions.separator );
                 authAction.push( actions.edit );
                 authAction.push( actions.delete );
             }
 
             // MULTI SELECTION ACTIONS
-            if (isReportable) {
+            if (isReportable && !isLocked) {
                 authAction.push( asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection );
             }
 

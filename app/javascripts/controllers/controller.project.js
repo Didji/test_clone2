@@ -15,16 +15,15 @@
 
     function ProjectController($scope, $rootScope, $interval, Project, i18n) {
 
-        var vm = this;
+        var vm = this,
+            _CHECK_REMOTE_LOCKED_INTERVAL = 60000,
+            _CHECK_REMOTE_LOCKED_ID ;
 
         vm.getRemoteProjects = getRemoteProjects ;
         vm.loadProject = loadProject ;
 
         vm.projects = [];
         vm.loading = false ;
-
-        var _CHECK_REMOTE_LOCKED_INTERVAL = 6000;
-        var _CHECK_REMOTE_LOCKED_ID ;
 
         activate();
 
@@ -50,9 +49,9 @@
                 getLocalProjects();
             } );
 
-            //_CHECK_REMOTE_LOCKED_ID = $interval( function() {
+            _CHECK_REMOTE_LOCKED_ID = $interval( function() {
                 checkRemoteLockedAssets();
-            //}, _CHECK_REMOTE_LOCKED_INTERVAL );
+            }, _CHECK_REMOTE_LOCKED_INTERVAL );
 
             $scope.$on( "$destroy", function() {
                 $interval.cancel( _CHECK_REMOTE_LOCKED_ID );
