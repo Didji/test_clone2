@@ -45,13 +45,13 @@
                 }
                 $scope.$digest();
             } );
+
             $rootScope.$on( 'UPDATE_PROJECTS', function() {
                 getLocalProjects();
             } );
 
-            _CHECK_REMOTE_LOCKED_ID = $interval( function() {
-                checkRemoteLockedAssets();
-            }, _CHECK_REMOTE_LOCKED_INTERVAL );
+            checkRemoteLockedAssets();
+            _CHECK_REMOTE_LOCKED_ID = $interval( checkRemoteLockedAssets, _CHECK_REMOTE_LOCKED_INTERVAL );
 
             $scope.$on( "$destroy", function() {
                 $interval.cancel( _CHECK_REMOTE_LOCKED_ID );
