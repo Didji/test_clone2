@@ -1,4 +1,4 @@
-<span ng-show="( filteredOpennedMission = (missions|opennedMissions:asset) ).length != 0 " />
+<span ng-show="( filteredOpennedMission = ($root.missions|opennedMissions:asset) ).length != 0 " />
 <button class="btn btn-primary btn-block two-lines" ng-show="filteredOpennedMission.length == 1" ng-click="asset.addToMission(filteredOpennedMission[0]);">
     <i class="fa fa-wrench"> </i>
     <i18n>_CONSULTATION_ADD_TO_</i18n>{{filteredOpennedMission[0].activity.label}} n°{{filteredOpennedMission[0].number}}

@@ -388,6 +388,7 @@
             mission = vm.missions[mission.id];
             mission.isLoading = true;
             mission.openned = !mission.openned;
+
             if (mission.opened) {
                 $rootScope.$broadcast( "DESACTIVATE_POSITION" );
             }
@@ -399,6 +400,7 @@
                         if (!$scope.$$phase) {
                             $scope.$apply();
                         }
+                        $rootScope.missions[mission.id] = mission;
                         return;
                     }
                     var i;
@@ -442,6 +444,7 @@
                     if (!$scope.$$phase) {
                         $scope.$apply();
                     }
+                    $rootScope.missions[mission.id] = mission;
                 } );
 
             } else if (mission.openned && assetsCache[mission.id] && (mission.assets.length || !mission.activity)) {
@@ -460,6 +463,7 @@
                 }
             }
             mission.isLoading = false;
+            $rootScope.missions[mission.id] = mission;
         }
 
         /**
