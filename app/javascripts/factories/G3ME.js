@@ -45,6 +45,10 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
             this.tileUrl = Site.current.EXTERNAL_TILEURL;
             this.crs = L.CRS.EPSG4326;
             this.margin = 0.00005;
+            // Si la carte est déjà initialisée, on l'utilise pour récupérer les bounds
+            if (this.map) {
+                extent = this.map;
+            }
             this.map = new L.map( this.mapDiv, {
                 attributionControl: false,
                 zoomControl: false,
@@ -61,7 +65,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                 'imperial': false
             } ).addTo( this.map );
 
-            G3ME.map.fitBounds( Storage.get( 'lastLeafletMapExtent' ) || extent );
+            G3ME.map.fitBounds(extent);
 
             // this.tileUrl = 'http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
             if (!this.tileUrl || !this.tileUrl.length || Storage.get( 'intent' )) {
