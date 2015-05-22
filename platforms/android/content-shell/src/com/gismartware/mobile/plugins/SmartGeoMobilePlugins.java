@@ -246,14 +246,19 @@ public class SmartGeoMobilePlugins {
               	filePath.getParentFile().mkdirs();
 
 				boolean result = true;
+                FileOutputStream os = null;
 				try {
-				    FileOutputStream os = new FileOutputStream(filePath, false);
+				    os = new FileOutputStream(filePath, false);
 				    os.write(json.getBytes());
 				    os.flush();
-				    os.close();
 				} catch (IOException e) {
 				    Log.d(TAG, "Error when writing base64 data to " + path, e);
 				    result = false;
+                    try {
+                        if (os != null) {
+                            os.close();
+                        }
+                    } catch(IOException ioe) {}
 				}
 				view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
     		}
@@ -339,13 +344,18 @@ public class SmartGeoMobilePlugins {
        if (!file.exists()) {
            file.getParentFile().mkdirs();
            String header = config.getString("logger.header");
+           FileOutputStream os = null;
            try {
-               FileOutputStream os = new FileOutputStream(path, true);
+               os = new FileOutputStream(path, true);
                os.write(header.getBytes());
                os.flush();
-               os.close();
            } catch (IOException e) {
                Log.e(TAG, "Error writing '" + header + "' to " + path, e);
+               try {
+                    if (os != null) {
+                        os.close();
+                    }
+               } catch(IOException ioe) {}
            }
        } else {
            Log.d(TAG, path + " exists");
@@ -456,12 +466,11 @@ public class SmartGeoMobilePlugins {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
                 String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+                baos.close();
 
                 final int databaseIndex = Integer.parseInt(y) % 10 ;
                 databasesPointer[databaseIndex]++ ;
                 SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
-                        //SQLiteDatabase.openDatabase(
-                    //GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
 
