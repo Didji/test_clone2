@@ -51,7 +51,6 @@
         activate();
 
         function activate() {
-
             applyFilterOnMission();
 
             // On décalle la synchro car des CR seront pas pris en compte (ceux qui viennent tout juste d'être enregistré)
@@ -292,7 +291,7 @@
                                 assetsCache[mission.id]._byId = {};
                             }
 
-                            for (var i = 0; i < assets.length; i++) {
+                            for (var i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                                 if (!assetsCache[mission.id]._byId[1 * assets[i].guid]) {
                                     assetsCache[mission.id].push( assets[i] );
                                     assetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
@@ -316,8 +315,8 @@
                             if (!vm.doneAssetsCache[mission.id]._byId) {
                                 vm.doneAssetsCache[mission.id]._byId = {};
                             }
-
-                            for (var i = 0; i < assets.length; i++) {
+                            
+                            for (var i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                                 if (!vm.doneAssetsCache[mission.id]._byId[1 * assets[i].guid]) {
                                     vm.doneAssetsCache[mission.id].push( assets[i] );
                                     vm.doneAssetsCache[mission.id]._byId[1 * assets[i].guid] = assets[i];
@@ -403,16 +402,16 @@
                         $rootScope.missions[mission.id] = mission;
                         return;
                     }
-                    var i;
+                    var i, assetsLength;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
                     if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
-                        for (i = 0; i < assets.length; i++) {
+                        for (i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                             if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
                                 assetsCache[mission.id].push( assets[i] );
                             }
                         }
                         assetsCache[mission.id]._byId = {};
-                        for (i = 0; i < assetsCache[mission.id].length; i++) {
+                        for (i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
                             assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
                         }
                     } else {
@@ -486,7 +485,7 @@
          */
         function showReport(mission) {
             var selectedAssets = [];
-            for (var i = 0; i < assetsCache[mission.id].length; i++) {
+            for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
                 if (assetsCache[mission.id][i].selected) {
                     selectedAssets.push( assetsCache[mission.id][i].guid );
                 }
@@ -504,7 +503,7 @@
          * @desc
          */
         function launchNightTour(mission) {
-            $rootScope.$broadcast( 'START_NIGHT_TOUR', mission, assetsCache[mission.id] );
+            $rootScope.$broadcast('START_NIGHT_TOUR', mission);
         }
 
 
@@ -584,7 +583,7 @@
                     if (!vm.doneAssetsCache[mission.id] || !vm.doneAssetsCache[mission.id].length) {
                         vm.doneAssetsCache[mission.id] = assets;
                     } else {
-                        for (var i = 0; i < assets.length; i++) {
+                        for (var i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                             if (!vm.doneAssetsCache[mission.id]._byId[assets[i].id]) {
                                 vm.doneAssetsCache[mission.id].push( assets[i] );
                                 vm.doneAssetsCache[mission.id]._byId[assets[i].id] = assets[i];

@@ -163,7 +163,6 @@
          */
         function mapClickHandler(e) {
             if (!consultationIsEnabled && !$rootScope.nightTourInProgress) {
-                console.info( e.latlng.lat, e.latlng.lng );
                 return false;
             }
 
