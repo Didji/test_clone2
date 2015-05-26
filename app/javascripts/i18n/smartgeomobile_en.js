@@ -102,6 +102,7 @@ window.smartgeo_i18n_lang.en = {
     _SYNC_UPDATE_CONFIRM_MESSAGE_: "Do you want to update %s?",
     _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Do you want to uninstall %s?",
     _SYNC_UPDATE_HAS_BEEN_DELETED: "Object not found",
+    _SYNC_CONFIRM_DELETE_ASSET_: "Are you sure to delete this asset ? This action is irreversible. The asset can not be recovered.",
     _INTENT_ZERO_SITE_SELECTED: "No site found",
     _INTENT_OBJECT_NOT_FOUND: "Object not found in database",
     _INTENT_AUTH_FAILED: "%s",

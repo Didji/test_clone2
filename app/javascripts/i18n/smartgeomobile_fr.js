@@ -102,6 +102,7 @@ window.smartgeo_i18n_lang.fr = {
     _SYNC_UNINSTALL_CONFIRM_MESSAGE_: "Voulez vous désinstaller %s&nbsp?",
     _SYNC_UPDATE_CONFIRM_MESSAGE_: "Voulez vous mettre à jour %s&nbsp?",
     _SYNC_UPDATE_HAS_BEEN_DELETED: "L'objet à mettre à jour n'a pas été trouvé.",
+    _SYNC_CONFIRM_DELETE_ASSET_: "Êtes vous sûr de vouloir supprimer cet objet ? Cette action est définitive. L'objet ne pourra être récupéré.",
     _INTENT_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _INTENT_OBJECT_NOT_FOUND: "L'objet n'a pas été trouvé dans la base de données du terminal",
     _INTENT_AUTH_FAILED: "L'authentification a échoué (%s)",
