@@ -11,6 +11,7 @@
         .filter( 'reportFieldsFilter', reportFieldsFilter )
         .filter( 'activityListFilter', activityListFilter )
         .filter( 'isLink', isLink )
+        .filter( 'updatableAssetsFilter', updatableAssetsFilter )
         .filter( 'guirlandeFilter', guirlandeFilter );
 
     function prettifyField() {
@@ -167,6 +168,24 @@
             return ((s + '') || '').search( /(https?:\/\/.*)$/ );
         }
         return _isLink;
+    }
+
+
+    function updatableAssetsFilter() {
+        /**
+         * @name _updatableAssetsFilter
+         * @desc Retourne les assets modifiables parmi ceux passés en paramètre
+         */
+        function _updatableAssetsFilter(assets) {
+            var out = [];
+            for ( var i = 0 ; i < assets.length ; i++ ) {
+                if ( assets[i].attributes._rights === 'U' ) {
+                    out.push(assets[i]);
+                }
+            }
+            return out;
+        }
+        return _updatableAssetsFilter;
     }
 
 
