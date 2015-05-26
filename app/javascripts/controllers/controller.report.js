@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils","i18n"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils,i18n) {
 
         var vm = this;
 
@@ -121,7 +121,13 @@
          * @desc Annule le compte rendu
          */
         function cancel() {
-            $location.path( 'map/' + Site.current.id );
+            alertify.confirm(i18n.get( '_CANCEL_REPORT_CREATION', Site.current.label ),function(yes){
+                if(yes)
+                {
+                    $location.path( 'map/' + Site.current.id );
+                }
+            })
+
         }
 
         /**
@@ -253,6 +259,9 @@
                         def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
                         fields[field.id] = new Date( def );
                         vm.report.fields[field.id] = new Date( def );
+                    } else if (field.type === 'T' && def === '#NOW#') {
+                        var d = new Date();
+                        fields[field.id] = d;
                     } else {
                         fields[field.id] = def;
                         vm.report.fields[field.id] = def;
@@ -375,6 +384,7 @@
             }
             return false;
         }
+
     }
 
 })();

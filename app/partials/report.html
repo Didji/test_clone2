@@ -1,10 +1,10 @@
-<form name="reportForm" class="reportForm">
+<form name="reportForm" class="reportForm" >
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
-    <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
+    <button type="button" class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i class="fa fa-times"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
+    <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
         <i18n>_REPORT_SAVE</i18n>
