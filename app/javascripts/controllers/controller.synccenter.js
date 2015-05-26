@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'SyncCenterController', SyncCenterController );
 
-    SyncCenterController.$inject = ["$scope", "$rootScope", "Synchronizator"];
+    SyncCenterController.$inject = ["$scope", "$rootScope", "Synchronizator", "i18n"];
 
     /**
      * @class SyncCenterController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function SyncCenterController($scope, $rootScope, Synchronizator) {
+    function SyncCenterController($scope, $rootScope, Synchronizator, i18n) {
 
         var vm = this;
 
@@ -81,7 +81,12 @@
          * @desc Supprime un item en particulier
          */
         function deleteItem(item) {
-            Synchronizator.deleteItem( item );
+            alertify.confirm( i18n.get( '_SYNC_CONFIRM_DELETE_ASSET_' ) , function(yes) {
+                if (!yes) {
+                    return;
+                }
+                Synchronizator.deleteItem( item );
+            });
         }
 
     }

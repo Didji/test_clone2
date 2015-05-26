@@ -40,8 +40,6 @@
          */
         function activate() {
 
-            Storage.remove( 'lastLeafletMapExtent' );
-
             $rootScope.currentPage = "Authentification";
 
             vm.user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {

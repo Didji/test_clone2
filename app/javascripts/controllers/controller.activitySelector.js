@@ -44,6 +44,7 @@
             vm.site = $routeParams.site;
 
             if (vm.assets) {
+                Asset.emptyCache([vm.assets]);
                 var asset = new Asset( vm.assets.split('!')[0], function(newAsset) {
                     vm.activities = $filter( 'activityListFilter' )( newAsset );
                     $scope.$digest();

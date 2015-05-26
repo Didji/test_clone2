@@ -40,7 +40,13 @@
             <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
         </p>
 
-        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='!mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'>
+            <span class="fa fa-search fa-3x"></span>
+            <br/>
+            <i18n>_PLANNING_LOCATE_</i18n>
+        </button>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)' 
+            disabled="disabled">
             <span class="fa fa-search fa-3x"></span>
             <br/>
             <i18n>_PLANNING_LOCATE_</i18n>
@@ -55,11 +61,18 @@
         </button>
 
         <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
-          ng-show='planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+          ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
             <span class="fa fa-lightbulb-o fa-3x"></span>
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
+          ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+            <span class="fa fa-spin fa-refresh fa-3x"></span>
+            <br>
+            <i18n>_PLANNING_START_</i18n>
+        </button>
+
         <p ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length'>
             <table ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length' class="table table-condensed" style="margin-bottom: -15px;">
                 <thead>
@@ -77,7 +90,7 @@
                     <tr ng-repeat="asset in mission.postAddedAssets.assets">
                         <td>
                             <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="planningController.locateAsset(mission, asset)">
-                                <span class="fa fa-map-marker"></span>{{getAssetLabel(mission, asset)}}</button>
+                                <span class="fa fa-map-marker"></span>{{planningController.getAssetLabel(mission, asset)}}</button>
                         </td>
                         <td>
                             <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="planningController.removeAssetFromMission(asset, mission)">

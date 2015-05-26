@@ -74,6 +74,16 @@
         };
 
         /**
+         * @name JSONify
+         * @desc
+         */
+        SyncItem.prototype.JSONify = function() {
+            delete this.relatedAssets;
+            delete this.consultationMarker;
+            return JSON.stringify( this );
+        };
+
+        /**
          * @name list
          * @desc
          */
@@ -190,7 +200,7 @@
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
             syncItem.save( function() {
-                Synchronizator.log( object );
+                Synchronizator.log( syncItem );
                 $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
         };
@@ -311,11 +321,13 @@
                         }
                     }
                     Asset.delete( complexasset.uuids, function() {
-                        Asset.save( assets, function() {
-                            Relationship.save( data.relationship, function() {
-                                complexasset.syncInProgress = false;
-                                Synchronizator.needRefresh = true;
-                                complexasset.save( callback );
+                        Relationship.delete( complexasset.uuids, function() {
+                            Asset.save( assets, function() {
+                                Relationship.save( data.relationship, function() {
+                                    complexasset.syncInProgress = false;
+                                    Synchronizator.needRefresh = true;
+                                    complexasset.save( callback );
+                                } );
                             } );
                         } );
                     } );
@@ -475,7 +487,7 @@
                 delete item.ged;
             }
             if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
-                SmartgeoChromium.writeJSON( JSON.stringify( item ), 'report/' + item.uuid || item.id + '.json' );
+                SmartgeoChromium.writeJSON( item.JSONify(), 'report/' + item.uuid || item.id + '.json' );
             }
             return this;
         };

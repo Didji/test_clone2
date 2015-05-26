@@ -9,6 +9,27 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
      *       Si ce n'est pas le cas, il redirige l'utilisateur sur la page d'enregistrement
      */
     var LicenseManager = function() {
+
+        return $rootScope.rights = {
+            census: true,
+            consultation: true,
+            search: true,
+            logout: true,
+            report: true,
+            parameters: true,
+            planning: true,
+            history: true,
+            photo: true,
+            project: true,
+            media: true,
+            myposition: true,
+            activelayers: true,
+            goto: true,
+            synccenter: true,
+            siteselection: true,
+            _DONT_REALLY_RESET: false
+        };
+
         if (!this.__isDeviceRegistered()) {
             this.__rights = {};
             this.__dispatchRights();

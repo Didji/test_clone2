@@ -101,7 +101,7 @@
                         theAsset.root = complex;
                         theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
-                        fixListTypeField( theAsset );
+                        fixTypeField( theAsset );
                         startCensus( theAsset );
                     } else {
                         Relationship.findRoot( data.id, function(r) {
@@ -112,7 +112,7 @@
                                 theAsset.root = complex;
                                 theAsset.isProject = isProjectAsset;
                                 theAsset.relatedAssets = {};
-                                fixListTypeField( theAsset );
+                                fixTypeField( theAsset );
                                 startCensus( theAsset );
                             } );
                         } );
@@ -123,7 +123,7 @@
                     complex = new ComplexAsset( null, null, '', theAsset );
                     theAsset.root = complex;
                     theAsset.isProject = isProjectAsset;
-                    fixListTypeField( theAsset );
+                    fixTypeField( theAsset );
                     startCensus( theAsset );
                 }
             } );
@@ -141,20 +141,21 @@
             object.fields = asset.attributes;
             object.children = [];
             object.root = asset.root;
-            object.father = father && father.id;
+            object.father = father && father.uuid;
             object.tree = asset.tree;
             object.relatedAssets = asset.relatedAssets;
             object.guid = asset.guid;
             object.geometry = asset.geometry;
             object.isProject = false;
+            object.angle = vm.metamodel[asset.okey].angle;
             return object;
         }
 
 
-        function fixListTypeField(complex) {
+        function fixTypeField(complex) {
             if (complex.children.length) {
                 for (var k = 0, kk = complex.children.length; k < kk; k++) {
-                    fixListTypeField( complex.children[k] );
+                    fixTypeField( complex.children[k] );
                 }
             }
 
@@ -165,10 +166,17 @@
                     field = tab.fields[j];
                     if (complex.fields[field.key] && field.type === "L") {
                         for (idValue in Site.current.lists[field.options]) {
-                            if (complex.fields[field.key] === Site.current.lists[field.options][idValue]) {
+                            if (complex.fields[field.key] == Site.current.lists[field.options][idValue]) {
                                 complex.fields[field.key] = idValue;
                             }
                         }
+                    }
+                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate(complex.fields[field.key])) {
+                        var pattern = /(\d{2})\/(\d{2})\/(\d{2})/;
+                        complex.fields[field.key] = new Date(complex.fields[field.key].replace(pattern,'20$3-$2-$1'));
+                    }
+                    if (complex.fields[field.key] && field.type === "N") {
+                        complex.fields[field.key] = +(""+complex.fields[field.key]).replace(",", ".");
                     }
                 }
             }

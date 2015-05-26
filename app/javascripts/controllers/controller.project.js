@@ -6,16 +6,18 @@
         .module( 'smartgeomobile' )
         .controller( 'ProjectController', ProjectController );
 
-    ProjectController.$inject = ["$scope", "$rootScope", "Project", "i18n"];
+    ProjectController.$inject = ["$scope", "$rootScope", "$interval", "Project", "i18n"];
 
     /**
      * @class ProjectController
      * @desc Controlleur de la page des projets.
      */
 
-    function ProjectController($scope, $rootScope, Project, i18n) {
+    function ProjectController($scope, $rootScope, $interval, Project, i18n) {
 
-        var vm = this;
+        var vm = this,
+            _CHECK_REMOTE_LOCKED_INTERVAL = 60000,
+            _CHECK_REMOTE_LOCKED_ID ;
 
         vm.getRemoteProjects = getRemoteProjects ;
         vm.loadProject = loadProject ;
@@ -43,9 +45,18 @@
                 }
                 $scope.$digest();
             } );
+
             $rootScope.$on( 'UPDATE_PROJECTS', function() {
                 getLocalProjects();
             } );
+
+            checkRemoteLockedAssets();
+            _CHECK_REMOTE_LOCKED_ID = $interval( checkRemoteLockedAssets, _CHECK_REMOTE_LOCKED_INTERVAL );
+
+            $scope.$on( "$destroy", function() {
+                $interval.cancel( _CHECK_REMOTE_LOCKED_ID );
+            } );
+
         }
 
         /**
@@ -96,6 +107,10 @@
             project.load( function() {
                 getLocalProjects();
             } );
+        }
+
+        function checkRemoteLockedAssets() {
+            Project.checkRemoteLockedAssets();
         }
 
 

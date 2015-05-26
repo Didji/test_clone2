@@ -69,7 +69,9 @@
             SQLite.exec( 'parameters', 'SELECT * FROM relationship WHERE daddy = ? ', ["" + id], function(rows) {
                 var response = [];
                 for (var i = 0; i < rows.length; i++) {
-                    response.push( rows.item( i ).child );
+                    if ( response.indexOf( rows.item( i ).child ) === -1) {
+                        response.push( rows.item( i ).child );
+                    }
                 }
                 callback( response );
             } );

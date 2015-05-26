@@ -1,6 +1,10 @@
 Intents
 -------
 
+### Debug d'android 
+
+`adb forward tcp:9222 localabstract:content_shell_devtools_remote`
+
 ### Test des Intents sur un terminal Android
 
 `adb shell 'am start -a android.intent.action.VIEW -c android.intent.category.DEFAULT -d "gimap://URL_INTENT"'

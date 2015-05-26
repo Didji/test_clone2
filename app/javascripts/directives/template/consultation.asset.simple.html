@@ -22,9 +22,12 @@
             </tbody>
         </table>
     </span>
-
     <div ng-if="!noButton" ng-init="reportActivity=(asset|activityListFilter);">
-        <div ng-if="reportActivity.length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
+        <div ng-if="asset.locked" class="alert alert-warning alert-project-locked" role="alert">
+            <i class="fa fa-warning"></i>
+            <i18n>_PROJECT_ASSET_IS_LOCKED_</i18n>
+        </div>
+        <div ng-if="!asset.locked && reportActivity.length != 0 && (!report_activity && !map_activity && rights.report)" class="btn-group dropup">
             <button type="button" class="dropdown-toggle consultation-btn" data-toggle="dropdown">
                 <i class="fa fa-pencil-square-o"></i>
             </button>

@@ -21,3 +21,5 @@ platforms/ios/platforms/ios/Smartgeo.xcodeproj/project.xcworkspace/xcuserdata/gu
 platforms/ios/platforms/ios/Smartgeo.xcodeproj/project.xcworkspace/xcuserdata/gulian.xcuserdatad/*
 platforms/ios/platforms/ios/Smartgeo.xcodeproj/project.xcworkspace/xcshareddata/
 npm-debug.log
+.idea
+out

@@ -60,16 +60,16 @@
     <div ng-if='!node.father' class="btn-toolbar" style="margin: 10px;" role="toolbar">
         <div class="btn-group">
             <button class='btn btn-default' ng-click="cancel()">
-                <span class="fa fa-remove"></span>Annuler
+                <span class="fa fa-remove"></span><i18n>_CANCEL</i18n>
             </button>
         </div>
 
         <div class="btn-group">
             <button ng-show = "!asset" class='btn btn-primary' ng-click="save()">
-                <span class="fa fa-save"></span>Enregistrer
+                <span class="fa fa-save"></span><i18n>_SAVE</i18n>
             </button>
-            <button ng-show = "asset" class='btn btn-primary' ng-click="updateAsset()">
-                <span class="fa fa-save"></span>Modifier
+            <button ng-show = "asset" class='btn btn-primary' ng-click="save(true)">
+                <span class="fa fa-save"></span><i18n>_UPDATE</i18n>
             </button>
         </div>
     </div>

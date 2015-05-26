@@ -10,7 +10,7 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", "$interval", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset, $interval) {
 
         'use strict';
 
@@ -66,7 +66,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
 
             $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset );
-            $rootScope.$on( "mapClickHandlerForNighttour", mapClickHandlerForNighttour );
+            var mapClickListener = $rootScope.$on( "mapClickHandlerForNighttour", mapClickHandlerForNighttour );
+            $scope.$on('$destroy', mapClickListener); //Sinon les tournées de nuit ne fonctionnent plus
 
             $scope.$watch( 'nightTourRecording', function(newval) {
                 $scope.isFollowingMe = newval;
@@ -91,7 +92,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             for (var i = 0, ii = assets.length; i < ii; i++) {
                 var asset = assets[i] ;
 
-                if ($scope.mission.assets.indexOf( +asset.guid ) === -1 || asset.geometry.type === "LineString" || asset.marker) {
+                if ($scope.mission.assets && $scope.mission.assets.indexOf( +asset.guid ) === -1 || asset.geometry.type === "LineString" || asset.marker) {
                     continue;
                 }
 
@@ -107,7 +108,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 G3ME.map.addLayer( asset.marker );
                 assetsCache.push( asset );
             }
-
         }
 
         /**
@@ -244,9 +244,9 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.stopNightTour = function(ok, ko) {
-
+            console.debug("[NIGHTTOUR] Stop mission " + $scope.mission.id);
             if (secureInterval) {
-                clearInterval( secureInterval );
+                $interval.cancel( secureInterval );
             }
 
             $rootScope.nightTourInProgress = false;
@@ -256,7 +256,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             ok = ok || [];
             ko = ko || [];
             var asset;
-
             if ((ko.length + ok.length) === 0) {
                 for (var i in assetsCache) {
                     asset = assetsCache[i];
@@ -268,6 +267,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             $scope.saving = true;
             $scope.sendKoReports( ko, function() {
                 $scope.sendOkReports( ok, function() {
+                    console.debug("[NIGHTTOUR] CRs saved, ok=" + ok + ", ko=" + ko);
                     $route.reload();
                     $scope.saving = false;
                 } );
@@ -381,12 +381,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.startNightTour = function(event, mission) {
-
+            console.debug("[NIGHTTOUR] Start mission " + mission.id);
             if (secureInterval) {
-                clearInterval( secureInterval );
+                $interval.cancel( secureInterval );
             }
 
-            setInterval( function() {
+            secureInterval = $interval( function() {
                 $scope.secureData();
             }, secureIntervalTime );
 
@@ -412,7 +412,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-
         };
 
         $scope.close = function() {
@@ -472,23 +471,27 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.secureData = function() {
-            var now = Date.now(),
-                payloadKO = [] ,
-                payloadOK = [] ;
-            for (var i = 0; i < assetsCache.length; i++) {
-                if (!assetsCache[i].alreadySent && (now - assetsCache[i].timestamp) > secureIntervalTime) {
-                    if (assetsCache[i].isWorking) {
-                        payloadOK.push( assetsCache[i].guid );
-                    } else {
-                        payloadKO.push( assetsCache[i].guid );
+            if (assetsCache) {
+                var now = Date.now(),
+                    payloadKO = [] ,
+                    payloadOK = [] ;
+                for (var i = 0, assetsCacheLength = assetsCache.length; i < assetsCacheLength; i++) {
+                    if (!assetsCache[i].alreadySent && (now - assetsCache[i].timestamp) > secureIntervalTime) {
+                        if (assetsCache[i].isWorking) {
+                            payloadOK.push( assetsCache[i].guid );
+                        } else {
+                            payloadKO.push( assetsCache[i].guid );
+                        }
+                        assetsCache[i].alreadySent = true ;
                     }
-                    assetsCache[i].alreadySent = true ;
                 }
-            }
-            $scope.sendKoReports( payloadKO, function() {
-                $scope.sendOkReports( payloadOK, function() {} );
-            } );
-        };
 
+                $scope.sendKoReports( payloadKO, function() {
+                    $scope.sendOkReports( payloadOK, function() {
+                        console.debug("[NIGHTTOUR] CRs secured, ok=" + payloadOK + ", ko=" + payloadKO);
+                    });
+                });
+            }
+        };
     }
 ] );

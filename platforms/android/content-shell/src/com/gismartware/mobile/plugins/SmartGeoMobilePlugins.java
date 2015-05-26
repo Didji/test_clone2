@@ -246,14 +246,19 @@ public class SmartGeoMobilePlugins {
               	filePath.getParentFile().mkdirs();
 
 				boolean result = true;
+                FileOutputStream os = null;
 				try {
-				    FileOutputStream os = new FileOutputStream(filePath, false);
+				    os = new FileOutputStream(filePath, false);
 				    os.write(json.getBytes());
 				    os.flush();
-				    os.close();
 				} catch (IOException e) {
 				    Log.d(TAG, "Error when writing base64 data to " + path, e);
 				    result = false;
+                    try {
+                        if (os != null) {
+                            os.close();
+                        }
+                    } catch(IOException ioe) {}
 				}
 				view.evaluateJavaScript("window.ChromiumCallbacks[11](\"" + result + "\");");
     		}
@@ -339,13 +344,18 @@ public class SmartGeoMobilePlugins {
        if (!file.exists()) {
            file.getParentFile().mkdirs();
            String header = config.getString("logger.header");
+           FileOutputStream os = null;
            try {
-               FileOutputStream os = new FileOutputStream(path, true);
+               os = new FileOutputStream(path, true);
                os.write(header.getBytes());
                os.flush();
-               os.close();
            } catch (IOException e) {
                Log.e(TAG, "Error writing '" + header + "' to " + path, e);
+               try {
+                    if (os != null) {
+                        os.close();
+                    }
+               } catch(IOException ioe) {}
            }
        } else {
            Log.d(TAG, path + " exists");
@@ -360,7 +370,7 @@ public class SmartGeoMobilePlugins {
         return provider1.equals(provider2);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @JavascriptInterface
     public void getTileURLFromDB(String url, int z, int x, int y) {
         String xS = String.valueOf(x), yS = String.valueOf(y), zS = String.valueOf(z);
@@ -392,7 +402,7 @@ public class SmartGeoMobilePlugins {
                     + " on database n°" + databaseIndex);
 
 
-                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite, this.tileToken);
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite);
             } catch (Exception e){
                 Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
@@ -435,16 +445,7 @@ public class SmartGeoMobilePlugins {
                 final int statusCode = response.getStatusLine().getStatusCode();
                 final HttpEntity image = response.getEntity();
 
-                Log.d(TAG, "param 1 " + params[1]);
-                Log.d(TAG, "param 2 " + params[2]);
-                Log.d(TAG, "param 3 " + params[3]);
-                Log.d(TAG, "param 4 " + params[4]);
-                Log.d(TAG, "param 5 " + params[5]);
-                Log.d(TAG, "param 6 " + params[6]);
-                Log.d(TAG, "param 7 " + params[7]);
-                Log.d(TAG, "param 8 " + params[8]);
-
-                if (statusCode == 403 && url != null && !url.contains("getTuileTMS")) {
+                if (statusCode == 403 && !url.contains("getTuileTMS")) {
                     PHPSESSIONID = null ;
                     return request(params);
                 } else if (statusCode == 403) {
@@ -465,12 +466,11 @@ public class SmartGeoMobilePlugins {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
                 String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+                baos.close();
 
                 final int databaseIndex = Integer.parseInt(y) % 10 ;
                 databasesPointer[databaseIndex]++ ;
                 SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
-                        //SQLiteDatabase.openDatabase(
-                    //GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, null, SQLiteDatabase.CREATE_IF_NECESSARY);
 
                 tilesDatabase.execSQL("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", new String[]{z, x, y, imageEncoded});
 
@@ -505,29 +505,12 @@ public class SmartGeoMobilePlugins {
         this.tileUrl = url ;
         this.tileUser = user ;
         this.tilePassword = password;
-        this.tileToken = token;
         this.tileSite = site ;
-
-        Log.d(TAG, "tileUrl " + this.tileUrl );
-        Log.d(TAG, "tileUser " + this.tileUser );
-        Log.d(TAG, "tilePassword " + this.tilePassword );
-        Log.d(TAG, "tileToken " + this.tileToken );
-        Log.d(TAG, "tileSite " + this.tileSite );
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
-        StringBuffer bufUrl = new StringBuffer();
-
-        bufUrl.append(this.tileUrl);
-
-        if(token == null){
-            bufUrl.append("&login=").append(user);
-            bufUrl.append("&pwd=").append(password);
-        } else {
-            bufUrl.append("&token=").append(token);
-        }
-        bufUrl.append("&forcegimaplogin=true");
-        bufUrl.append("&mobility=true");
+        StringBuffer bufUrl = new StringBuffer(url);
+        bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
 
         HttpPost req = new HttpPost(bufUrl.toString());
         try {
@@ -538,7 +521,7 @@ public class SmartGeoMobilePlugins {
 
                 //nouvelle requete  effectuer : slection du site
                 bufUrl = new StringBuffer(url);
-                bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true").append("&mobility=true").append("&forcegimaplogin=true");
+                bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
                 req = new HttpPost(bufUrl.toString());
                 response = client.execute(req);
                 if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -553,4 +536,5 @@ public class SmartGeoMobilePlugins {
             Log.d(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
         }
     }
+
 }

@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Asset', AssetFactory );
 
-    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "$rootScope", "$http", "Site", "GPS", "Relationship", "Right", "Utils"];
+    AssetFactory.$inject = ["G3ME", "Marker", "SQLite", "Storage", "$rootScope", "$http", "Site", "GPS", "Relationship", "Right", "Utils"];
 
 
-    function AssetFactory(G3ME, Marker, SQLite, $rootScope, $http, Site, GPS, Relationship, Right, Utils) {
+    function AssetFactory(G3ME, Marker, SQLite, Storage, $rootScope, $http, Site, GPS, Relationship, Right, Utils) {
 
         /**
          * @class AssetFactory
@@ -19,18 +19,21 @@
          * @property {L.Marker} consultationMarker Marker de consultation (Leaflet)
          */
         function Asset(asset, callback, getRelated) {
-            var self = this ;
-            if (typeof asset === 'string') {
+            var self = this,
+                locked_assets = Storage.get('locked_assets');
+
+            if (typeof asset === 'string' || typeof asset === 'number') {
                 Asset.findOne( asset, function(asset) {
                     angular.extend( self, new Asset( asset, callback, getRelated ) );
                 } );
                 return;
             }
+            asset.locked = locked_assets.indexOf(+asset.id) !== -1;
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
             } else {
-                (callback || function() {})(this);
+                (callback || function() {})( this );
             }
         }
 
@@ -46,7 +49,7 @@
         Asset.prototype.findRelated = function(callback) {
             var self = this ;
 
-            if (this.isComplex !== undefined) {
+            if (this.isComplex != undefined) {
                 return (callback || angular.noop)( self );
             }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
@@ -75,18 +78,22 @@
          * @name showOnMap
          * @desc Montre l'objet sur la carte avec un marqueur
          */
-        Asset.prototype.showOnMap = function() {
+        Asset.prototype.showOnMap = function(dontPlaceMarker) {
             if (this.relatedAssets && this.relatedAssets[this.id]) {
-                this.relatedAssets[this.id].showOnMap();
+                this.relatedAssets[this.id].showOnMap( true );
             }
+
             var self = this;
             this.onMap = true;
-            this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
-                self.zoomOn();
-            } );
-            if (G3ME.map) {
-                this.consultationMarker.addTo( G3ME.map );
+            if (!dontPlaceMarker) {
+                this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
+                    self.zoomOn();
+                } );
+                if (G3ME.map) {
+                    this.consultationMarker.addTo( G3ME.map );
+                }
             }
+
         };
 
         /**
@@ -110,8 +117,8 @@
          * @name toggleMapVisibility
          * @desc Change la visibilité de l'objet sur la carte
          */
-        Asset.prototype.toggleMapVisibility = function() {
-            this[this.onMap ? "hideFromMap" : "showOnMap"]();
+        Asset.prototype.toggleMapVisibility = function(dontPlaceMarker) {
+            this[this.onMap ? "hideFromMap" : "showOnMap"]( dontPlaceMarker );
         };
 
         /**
@@ -509,6 +516,13 @@
             if (guids instanceof Array && guids.length === 0) {
                 return (callback || function() {})();
             }
+            // Il se peut qu'on passe des guids nuls
+            // dans le cas d'un ajout d'objet enfant en modification
+            for (var i = 0, l = guids.length; i < l; i++) {
+                if (!guids[i]) {
+                    guids.splice( i, 1 );
+                }
+            }
 
             if ((guids instanceof Asset || guids instanceof Object) && !guids.length) {
                 guids = [guids.guid];
@@ -553,7 +567,7 @@
          * @param {Object} asset
          */
         Asset.convertRawRow = function(asset) {
-            var a = angular.copy( asset ), parsed ;
+            var a = angular.copy( asset ), parsed;
             try {
                 parsed = a.asset ? JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) ) : a ;
                 return angular.extend( a, {
@@ -723,10 +737,6 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
-
-            // if (!asset.length) {
-            //     return (callback || function() {})();
-            // }
             site = site || Site.current ;
             var zones = Asset.__distributeAssetsInZone( asset, site );
             var uuidcallback = window.uuid();
@@ -979,6 +989,10 @@
                 delete Asset.cache[ids[i]];
             }
         };
+
+        Asset.lock = function(guids, callback) {
+            Storage.set( 'locked_assets', guids, callback );
+        }
 
         return Asset;
     }

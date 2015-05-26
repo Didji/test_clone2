@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Right', RightFactory );
 
-    RightFactory.$inject = [];
+    RightFactory.$inject = ["$rootScope"];
 
 
-    function RightFactory() {
+    function RightFactory($rootScope) {
 
         /**
          * @class RightFactory
@@ -42,7 +42,7 @@
          * @param {String} right Nom du droit
          */
         Right.get = function(right) {
-            return Right.values[right];
+            return (Right.values || $rootScope.rights)[right];
         };
 
         /**

@@ -39,6 +39,7 @@
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
+        vm.rights = $rootScope.rights;
         vm.groups = null;
         vm.spinnerOptions = {};
         vm.multiselection = {};
@@ -126,7 +127,7 @@
                 Asset.findAssetsByGuids( ids, function(results) {
                     var assets = [];
                     for (var i = 0; i < results.length; i++) {
-                        assets.push( new Asset( Asset.convertRawRow( results[i] ) ) );
+                        assets.push( new Asset( Asset.convertRawRow( results[i] ), function() {}, true ) );
                     }
                     $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
                     $scope.$digest();
@@ -146,6 +147,9 @@
          */
         function updateAssetsList(assets) {
             if (assets.length) {
+                angular.forEach( vm.selectedAssets.inList, function(asset) {
+                    asset.hideFromMap();
+                } );
                 vm.groups = {};
                 vm.selectedAssets.inList = {};
             } else {

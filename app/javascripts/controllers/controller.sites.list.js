@@ -42,8 +42,6 @@
             vm.ready = false;
             vm.online = Storage.get( 'online' );
 
-            Storage.remove( 'lastLeafletMapExtent' );
-
             if (vm.online) {
                 getRemoteSites( prefetchedlocalsites || {} );
             } else {
