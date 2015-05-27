@@ -1021,8 +1021,26 @@
             }
         };
 
-        Asset.lock = function(guids, callback) {
-            Storage.set( 'locked_assets', guids, callback );
+        Asset.lock = function(guids) {
+            Storage.set( 'locked_assets', guids );
+        }
+
+        Asset.prototype.lock = function() {
+            var _this = this;
+
+            Relationship.findRelated( _this.guid, function(root, tree) {
+                var locked = Storage.get( 'locked_assets' ),
+                    guids = Object.keys( tree );
+
+                guids.map( function(guid) {
+                    guid = +guid;
+                    if ( locked.indexOf( guid ) === -1 ) {
+                        locked.push(guid);
+                    }
+                } );
+
+                Asset.lock( locked );
+            });
         }
 
         return Asset;

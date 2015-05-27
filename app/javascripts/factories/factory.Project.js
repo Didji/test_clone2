@@ -90,6 +90,7 @@
                 id: this.id
             } ) ).success( function() {
                 project.setProjectUnloaded( callback );
+                Project.checkRemoteLockedAssets();
             } ).error( Project.smartgeoReachError ).finally( function() {
                 project.unloading = false ;
             } );
@@ -280,9 +281,7 @@
             $http.get ( Utils.getServiceUrl('project.mobility.assets.locked') )
                  .success(
                     function(guids) {
-                        Asset.lock( guids, function() {
-                            // UPDATE CONSULT
-                        });
+                        Asset.lock( guids );
                     }
             );
         };
@@ -361,11 +360,14 @@
                         project.added.push( guids[i] );
                     }
                 }
+
                 project.save( callback );
                 if (updateConsultation) {
                     $rootScope.$broadcast( 'UPDATE_CONSULTATION_ASSETS_LIST', duplicates, false );
                 }
             }, project );
+
+            asset.lock();
         };
 
         /**
@@ -418,6 +420,7 @@
          */
         Project.prototype.removeAsset = function(asset, callback) {
             var project = this;
+
             Relationship.findSubtree( asset.id || asset.guid, function(root, tree) {
                 var guids = Object.keys( tree ),
                     toBeHardDeleted = [], guid;
