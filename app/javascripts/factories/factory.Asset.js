@@ -350,7 +350,7 @@
             SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(results) {
                 var assets = [];
                 for (var i = 0, numRows = results.length; i < numRows && assets.length < 10; i++) {
-                    var asset = new Asset( Asset.convertRawRow( results.item( i ) ) );
+                    var asset = new Asset( Asset.convertRawRow( results.item( i ) ), $.noop, true );
                     if (asset.intersectsWithCircle( center, 40 )) {
                         assets.push( asset );
                     }
