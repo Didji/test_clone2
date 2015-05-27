@@ -5,6 +5,7 @@
     angular
         .module( 'smartgeomobile' )
         .filter( 'prettifyField', prettifyField )
+        .filter( 'decodeBool', decodeBool)
         .filter( 'consultationTabsFilter', consultationTabsFilter )
         .filter( 'consultationFieldsFilter', consultationFieldsFilter )
         .filter( 'reportTabsFilter', reportTabsFilter )
@@ -26,6 +27,20 @@
             return ((s + '') || '').replace( /\\n/g, '\n' );
         }
         return _prettifyField;
+    }
+    decodeBool.$inject = ["i18n"];
+    function decodeBool(i18n) {
+        /**
+         * @name _decodeBool
+         * @desc
+         */
+        function _decodeBool(s) {
+            if (s === 'Y') {
+                return i18n.get('_BOOL_Y_');
+            }
+            return i18n.get('_BOOL_N_');
+        }
+        return _decodeBool;
     }
 
     function consultationTabsFilter() {

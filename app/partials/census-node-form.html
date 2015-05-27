@@ -8,7 +8,7 @@
                 <div ng-if="::(!field.readonly)" ng-switch on="field.type">
                     <label style="color:black; margin-top:10px;" for="">{{::field.label}} {{field.required ? " *" : "" }}</label>
                     <span ng-switch-when="O">
-                        <input ng-required='field.required' class="form-control" type="checkbox" ng-model='node.fields[field.key]'></input>
+                        <input ng-required='field.required' class="form-control" type="checkbox" ng-model='node.fields[field.key]' ng-true-value="'Y'" ng-false-value="'N'"></input>
                     </span>
                     <span ng-switch-when="L">
                         <select ng-required='field.required' ng-if="!field.dependancy" class="form-control" ng-model="node.fields[field.key]" ng-options="c.value as c.label for c in  ( (field.options | listObjectToArray) | orderBy:'label')">

@@ -167,5 +167,7 @@ window.smartgeo_i18n_lang.en = {
     _RETRY_: "Retry",
     _CANCEL: "Cancel",
     _SAVE: "Save",
-    _UPDATE: "Update"
+    _UPDATE: "Update",
+    _BOOL_Y_: "Yes",
+    _BOOL_N_: "No"
 };

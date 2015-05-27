@@ -169,6 +169,7 @@ window.smartgeo_i18n_lang.fr = {
     _RETRY_: "Réessayer",
     _CANCEL: "Annuler",
     _SAVE: "Enregistrer",
-    _UPDATE: "Modifer"
-
+    _UPDATE: "Modifer",
+    _BOOL_Y_: "Oui",
+    _BOOL_N_: "Non"
 };

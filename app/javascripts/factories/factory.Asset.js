@@ -65,6 +65,7 @@
                     for (var i = 0; i < assets_.length; i++) {
                         assets_byId[assets_[i].id] = new Asset( assets_[i] );
                     }
+                    Asset.sortTree(tree, assets_);
                     self.isComplex = true ;
                     self.tree = tree ;
                     self.root = root;
@@ -73,6 +74,36 @@
                 } );
             } );
         };
+
+        /**
+        * @name sortTree
+        * @desc Trie l'arbre des relations d'un objet selon leur label
+        */
+        Asset.sortTree = function(tree, assets) {
+            // On trie les assets en fonction de leur label et on récupère leurs ids triés
+            assets.sort(function(a,b) { return (a.label < b.label ? -1 : (a.label > b.label ? 1 : 0)); });
+            var tempChildren = [];
+            for (var i = 0; i < assets.length; i++) {
+                var id = assets[i].id;
+                tempChildren.push(id);
+            }
+
+            // Itère sur les objets selon le schéma {id parent : [id enfants]}
+            for (var key in tree) {
+                if (tree.hasOwnProperty(key)) {
+                    var children = tree[key];
+
+                    // Si pas d'enfants, on zappe
+                    if (children.length === 0) {
+                        continue;
+                    }
+
+                    // Les ids triés plus haut deviennent les nouveaux enfants,
+                    // mais on ne prend pas en compte les ids qui n'existaient pas dans les anciens enfants
+                    tree[key] = tempChildren.filter(function(obj) { return children.indexOf(obj) != -1; });
+                }
+            }
+        }
 
         /**
          * @name showOnMap
