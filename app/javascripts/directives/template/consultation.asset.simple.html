@@ -11,8 +11,11 @@
             <tbody>
                 <tr ng-repeat='field in tab.fields  | consultationFieldsFilter:asset'>
                     <td>{{::field.label}}</td>
-                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) == -1 ">
+                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) == -1 && field.type != 'O'">
                         {{::(asset.attributes[field.key] | prettifyField)}}
+                    </td>
+                    <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) == -1  && field.type == 'O'">
+                        {{::(asset.attributes[field.key] | decodeBool)}}
                     </td>
                     <td ng-if="site.lists[field.options][asset.attributes[field.key]] == undefined  && (asset.attributes[field.key] | isLink) != -1 ">
                         <a ng-click="openInApp(asset.attributes[field.key], $event)" href='#'>{{::asset.attributes[field.key]}}</a>
