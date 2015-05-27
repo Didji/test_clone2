@@ -152,7 +152,7 @@ window.smartgeo_i18n_lang.fr = {
     _PROJECTS_SAVE_PROJECT_: "Enregister",
     _PROJECTS_DISCARD_PROJECT_: "Annuler",
     _PROJECTS_CANNOT_REACH_SMARTGEO_: "Impossible de charger/decharger/enregistrer un projet, le serveur est injoignable.",
-    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronizing",
+    _PROJECTS_SYNCHRONIZING_PROJECT_: "Synchronisation en cours",
     _PROJECT_ASSETS_ADDED_: "Objet(s) ajouté(s) au projet %s",
     _PROJECT_CONFIRM_ASSETS_REMOVED_: "Souhaitez-vous retirer cet objet du projet %s ?",
     _PROJECT_ASSETS_REMOVED_: "Objet(s) retiré(s) du projet %s",
