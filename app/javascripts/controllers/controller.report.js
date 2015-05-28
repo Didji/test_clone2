@@ -315,7 +315,6 @@
             }
             Storage.remove( 'intent' );
             $location.path( 'map/' + Site.current.id );
-            $scope.$apply();
         }
 
         /**
