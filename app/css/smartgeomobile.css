@@ -163,6 +163,10 @@ img.leaflet-tile {
     transition: width 0.2s;
 }
 
+.consultation-btn ~ ul > li:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
 .panel-heading.consultation-panel-heading{
      border-top: 1px solid rgba(138, 138, 138, 0.54);
 }
