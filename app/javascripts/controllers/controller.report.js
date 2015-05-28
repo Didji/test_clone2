@@ -62,6 +62,8 @@
             }
 
             vm.report = new Report( $routeParams.assets, $routeParams.activity, $routeParams.mission );
+            $rootScope.opennedMission = $routeParams.mission;
+
             for (var i = 0; i < vm.report.assets.length; i++) {
                 vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
             }
@@ -125,6 +127,7 @@
                 if(yes)
                 {
                     $location.path( 'map/' + Site.current.id );
+                    $scope.$apply();
                 }
             })
 
@@ -311,8 +314,8 @@
                 }
             }
             Storage.remove( 'intent' );
-            $rootScope.opennedMission = $routeParams.mission;
             $location.path( 'map/' + Site.current.id );
+            $scope.$apply();
         }
 
         /**
