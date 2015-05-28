@@ -155,6 +155,10 @@
                             mission.assets = mission.assets.concat( mission.postAddedAssets.assets );
                         }
 
+                        if (i === 1*$rootScope.opennedMission) {
+                            open.push( i );
+                        }
+
                         newMissionCount += (((mission.assets.length || !mission.activity)) && previous.indexOf( i ) === -1) ? 1 : 0;
 
                         if (open.indexOf( i ) >= 0) {

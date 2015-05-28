@@ -311,6 +311,7 @@
                 }
             }
             Storage.remove( 'intent' );
+            $rootScope.opennedMission = $routeParams.mission;
             $location.path( 'map/' + Site.current.id );
         }
 
