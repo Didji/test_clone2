@@ -155,10 +155,6 @@
                             mission.assets = mission.assets.concat( mission.postAddedAssets.assets );
                         }
 
-                        if (i === 1*$rootScope.opennedMission) {
-                            open.push( i );
-                        }
-
                         newMissionCount += (((mission.assets.length || !mission.activity)) && previous.indexOf( i ) === -1) ? 1 : 0;
 
                         if (open.indexOf( i ) >= 0) {
@@ -404,6 +400,7 @@
                             $scope.$apply();
                         }
                         $rootScope.missions[mission.id] = mission;
+                        Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
                         return;
                     }
                     var i, assetsLength;
@@ -448,6 +445,7 @@
                         $scope.$apply();
                     }
                     $rootScope.missions[mission.id] = mission;
+                    Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
                 } );
 
             } else if (mission.openned && assetsCache[mission.id] && (mission.assets.length || !mission.activity)) {
@@ -467,6 +465,7 @@
             }
             mission.isLoading = false;
             $rootScope.missions[mission.id] = mission;
+            Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
         }
 
         /**
