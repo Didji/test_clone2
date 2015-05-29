@@ -59,7 +59,7 @@
                     removeObsoleteMission( reports );
                     vm.synchronize();
                 } );
-            }, 500 );
+            }, 1000 );
 
             $scope.$watch( 'lastUpdate', function() {
                 Storage.set( 'lastUpdate', vm.lastUpdate );
@@ -319,7 +319,7 @@
                             if (!vm.doneAssetsCache[mission.id]._byId) {
                                 vm.doneAssetsCache[mission.id]._byId = {};
                             }
-                            
+
                             for (var i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                                 if (!vm.doneAssetsCache[mission.id]._byId[1 * assets[i].guid]) {
                                     vm.doneAssetsCache[mission.id].push( assets[i] );
