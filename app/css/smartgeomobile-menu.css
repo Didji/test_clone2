@@ -213,6 +213,9 @@
     color: white;
     margin: 0 5%;
 }
+#left_panel_census {
+    padding-bottom: 20px;
+}
 /** Fin de Recensement **/
 
 /** Synchronisation **/
