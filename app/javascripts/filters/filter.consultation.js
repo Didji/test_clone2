@@ -293,18 +293,18 @@
                 return [];
             }
             var authAction = [],
-                isReportable = !!$filter( 'activityListFilter' )( asset ).length,
-                isUpdatable = Right.isUpdatable( asset ),
-                isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
-                hasAlreadyFetchHistory = !!(asset.reports && asset.reports.length),
-                isThereAProjectLoaded = !!Project.currentLoadedProject,
-                isProjectable = !!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey],
-                isProjectAsset = (isThereAProjectLoaded && Project.currentLoadedProject.hasAsset( asset )) || (asset.okey.search( 'PROJECT_' ) === 0),
-                hasBeenDuplicatedForProjet = Project.currentLoadedProject && Project.currentLoadedProject.hasDuplicatedAsset( asset ),
+                isProjectable = !!Project.currentLoadedProject && (!!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey]),
+                isInCurrentProject = (asset.okey.search( 'PROJECT_' ) === 0),
+                isNotMarkedAsRemoved = (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted"),
                 isLocked = asset.locked,
-                hasNotBeenMarkedAsRemoved = isThereAProjectLoaded && (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted") ;
+                isReportable = !!$filter( 'activityListFilter' )( asset ).length && !isLocked,
+                isUpdatable = Right.isUpdatable( asset ) && !isLocked,
+                isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
+                isAvailableToFetchHistory = Right.get('history') && isReportable && !(asset.reports && asset.reports.length)
+            ;
 
-            if (isReportable && !isLocked && Right.get( 'history' ) && !hasAlreadyFetchHistory) {
+
+            if (isAvailableToFetchHistory) {
                 authAction.push( actions.fetchhistory );
             }
 
@@ -319,27 +319,35 @@
 
 
             // OBJECT ACTIONS
-            if (isUpdatable && !isLocked && !isProjectAsset && !hasBeenDuplicatedForProjet) {
+            if (isUpdatable && !isInCurrentProject) {
                 authAction.push( actions.separator );
                 authAction.push( actions.edit );
                 authAction.push( actions.delete );
             }
 
             // MULTI SELECTION ACTIONS
-            if (isReportable && !isLocked) {
+            if (isReportable) {
                 authAction.push( asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection );
             }
 
             // PROJECT ACTIONS
-            if (isProjectable && isThereAProjectLoaded) {
+            if (isProjectable) {
+
                 authAction.push( actions.separator );
-                if (isProjectAsset && hasNotBeenMarkedAsRemoved) {
+
+                if (isInCurrentProject && isNotMarkedAsRemoved) {
                     authAction.push( actions.editobjectforproject );
                     authAction.push( actions.markobjectasdeleteforproject );
                 }
-                if (!hasBeenDuplicatedForProjet) {
-                    authAction.push( isProjectAsset ? actions.deleteobjectfromprojectandreleaseit : actions.addtocurrentproject );
+
+                if ( isInCurrentProject ) {
+                    authAction.push( actions.deleteobjectfromprojectandreleaseit );
                 }
+
+                if ( !isInCurrentProject && !isLocked ) {
+                    authAction.push( actions.addtocurrentproject );
+                }
+
             }
 
             return authAction;

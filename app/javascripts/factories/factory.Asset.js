@@ -191,7 +191,11 @@
             } ).error( function(error) {
                 self.reports = [];
                 console.error( error );
-            } );
+            } ).finally( function() {
+                if ( self.isComplex && self.relatedAssets[self.id] ) {
+                    self.relatedAssets[self.id].reports = self.reports;
+                }
+            });
         };
 
         /**
