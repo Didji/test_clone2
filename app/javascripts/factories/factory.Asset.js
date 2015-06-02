@@ -28,7 +28,7 @@
                 } );
                 return;
             }
-            asset.locked = locked_assets.indexOf(+asset.id) !== -1;
+            asset.locked = locked_assets ? locked_assets.indexOf(+asset.id) !== -1 : false;
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
