@@ -295,7 +295,7 @@
             var authAction = [],
                 isProjectable = !!Project.currentLoadedProject && (!!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey]),
                 isInCurrentProject = (asset.okey.search( 'PROJECT_' ) === 0),
-                isNotMarkedAsRemoved = (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted"),
+                isNotMarkedAsRemoved = (!Project.currentLoadedProject) || (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted"),
                 isLocked = asset.locked,
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length && !isLocked,
                 isUpdatable = Right.isUpdatable( asset ) && !isLocked,
