@@ -266,6 +266,7 @@
             this.unloading = false ;
             Asset.deleteAllProjectAsset();
             Synchronizator.deleteAllProjectItems();
+            $rootScope.$broadcast( 'OLD_PROJECT_UNLOADED' );
             Asset.delete( this.assets, function() {
                 Project.save( project, callback );
                 Project.currentLoadedProject = null ;

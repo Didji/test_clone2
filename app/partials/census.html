@@ -18,7 +18,7 @@
             <div class="panel-body"><i18n>_CENSUS_CHOOSE_OBJECT_</i18n></div>
         </div>
         <ul>
-            <li ng-repeat="(modelOkey, model) in ( censusController.metamodel | currentProjectCensusFilter )" ng-if="model.is_census">
+            <li ng-repeat="(modelOkey, model) in ( censusController.metamodel )" ng-if="model.is_census && (model.is_project===censusController.isProject)">
                 <a ng-click='censusController.startCensus(modelOkey)'>
                     <img ng-if= 'icon = (modelOkey | getIconFromModelOkeyForCensus) ' ng-src='{{icon}}' alt="" />
                     <label>{{model.label}}</label>
