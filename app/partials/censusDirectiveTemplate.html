@@ -3,7 +3,10 @@
     background-color:{{node.formVisible ? "#fd9122": "transparent" }};border-color:{{node.formVisible ? "#fd9122": "rgb(150, 150, 150)"}}'>
         <label ng-click="node.toggleForm()" style="width: 90%;">
             <span style="margin-right:8px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
-            <span>{{node.fields[metamodel[node.okey].ukey]}}</span>
+            <span>
+                {{metamodel[node.okey].label}}
+                {{node.fields[metamodel[node.okey].ukey]}}
+            </span>
             <span ng-if="metamodel[node.okey].is_graphical" style='background-color:{{node.geometry ? "#5cb85c": "#d9534f" }}' class="badge pull-right">
                 <span class="fa fa-map-marker"></span>
             </span>

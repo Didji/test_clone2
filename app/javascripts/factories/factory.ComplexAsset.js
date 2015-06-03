@@ -39,7 +39,6 @@
             this.tree = {};
             this.relatedAssets = asset.relatedAssets || {};
             if (this.okey) {
-                this.fields[Site.current.metamodel[this.okey].ukey] = Site.current.metamodel[this.okey].label;
                 this.angle = Site.current.metamodel[this.okey].angle;
             }
             this.guid = this.id || this.uuid;
@@ -231,8 +230,8 @@
                 asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
                 asset.maplabel = "";
                 var getZooms = SMARTGEO_CURRENT_SITE.symbology[asset.okey + asset.classindex];
-                asset.maxzoom = getZooms.maxzoom;
-                asset.minzoom = getZooms.minzoom;
+                asset.maxzoom = getZooms && getZooms.maxzoom || Infinity;
+                asset.minzoom = getZooms && getZooms.minzoom || 0;
                 delete asset.father;
                 delete asset.fields;
                 delete asset.formVisible;
