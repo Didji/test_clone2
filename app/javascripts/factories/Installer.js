@@ -242,6 +242,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
                         Site.save( Site.current, callback );
+                        Asset.cache = {};
                         (G3ME.canvasTile && G3ME.reloadLayers)();
                     }, true );
                 } );

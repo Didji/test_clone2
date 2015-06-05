@@ -46,6 +46,8 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             scope.root.isProject = true;
                         } else {
                             window.root = scope.root = scope.node = new ComplexAsset( okey );
+                            scope.defaultClassIndex = scope.classindex || "0";
+                            scope.root.isProject = false;
                         }
                     }
                 }, true );
