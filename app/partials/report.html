@@ -35,9 +35,11 @@
                             </span>
                         </label>
 
-                        <select ng-if='field.type=="L" && field.options.length > 15' chosen no-results-text="'Aucun résultat'" allow-single-deselect="true" disable-search-threshold="3" data-placeholder=" " ng-model="reportController.report.fields[field.id]" ng-options="value.value as value.label for value in reportController.report.activity._fields[field.id].options | orderBy:'label'" style="width:100%;">
-                            <option value=""></option>
-                        </select>
+                        <div ng-if='field.type=="L" && field.options.length > 15'>
+                            <select chosen no-results-text="'Aucun résultat'" allow-single-deselect="true" disable-search-threshold="3" data-placeholder=" " ng-model="reportController.report.fields[field.id]" ng-options="value.value as value.label for value in reportController.report.activity._fields[field.id].options | orderBy:'label'" style="width:100%;">
+                                <option value=""></option>
+                            </select>
+                        </div>
 
                         <select ng-required='field.required' class="form-control" name="f" ng-model="reportController.report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
                             <option value=""></option>
