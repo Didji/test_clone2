@@ -58,7 +58,7 @@
          */
         Storage.set_ = function(parameter, value, callback) {
             if (!value) {
-                return Storage.remove_( parameter, value, callback );
+                return Storage.remove_( parameter, callback );
             }
             var deferred = $q.defer();
             value = JSON.parse( JSON.stringify( value ) );
