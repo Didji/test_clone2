@@ -97,12 +97,6 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
                 return;
             }
 
-            for (var criteriaId in $scope.selectedCriteriaValues) {
-                if ($scope.criteria[$scope.selectedFamily.okey]._byKey[criteriaId].type === "L") {
-                    $scope.selectedCriteriaValues[criteriaId] = +$scope.selectedCriteriaValues[criteriaId];
-                }
-            }
-
             var advancedSearch;
 
             if ($scope.selectedFamily) {
