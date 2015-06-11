@@ -57,17 +57,37 @@
          */
         SQLite.get = function(parameter, callback) {
             SQLite.parameters().transaction( function(transaction) {
-                transaction.executeSql( 'SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
-                    if (results.rows.length === 1) {
-                        (callback || function() {})( JSON.parse( results.rows.item( 0 ).p_value ) );
-                    } else {
-                        (callback || function() {})( undefined );
-                    }
-                }, function(transaction, SqlError) {
-                        console.error( SqlError );
-                        (callback || function() {})( undefined );
-                    } );
-            } );
+                if (parameter === 'sites') {
+                    transaction.executeSql( 'SELECT * FROM SITES ', [], function(transaction, results) {
+                        var sites = undefined,
+                            nbSite = results.rows.length;
+
+                        if (nbSite > 0) {
+                            sites = {};
+                            for (var i = 0, site; i < nbSite; i++) {
+                                site = results.rows.item(i);
+                                sites[site.id] = JSON.parse(site.value);
+                            }
+                        }
+                        
+                        (callback || function() {})( sites );
+                    }, function(transaction, SqlError) {
+                            console.error( SqlError );
+                            (callback || function() {})( undefined );
+                        } );
+                } else {
+                    transaction.executeSql( 'SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
+                        if (results.rows.length === 1) {
+                            (callback || function() {})( JSON.parse( results.rows.item( 0 ).p_value ) );
+                        } else {
+                            (callback || function() {})( undefined );
+                        }
+                    }, function(transaction, SqlError) {
+                            console.error( SqlError );
+                            (callback || function() {})( undefined );
+                        } );
+                }
+            });    
         };
 
         /**
@@ -78,31 +98,73 @@
          * @param {Function} callback
          */
         SQLite.set = function(parameter, value, callback) {
-            SQLite.parameters().transaction( function(transaction) {
-                transaction.executeSql( 'INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', [parameter, JSON.stringify( value )], function() {
-                    (callback || function() {})();
-                }, function(transaction, SqlError) {
-                        console.error( SqlError );
-                        (callback || function() {})( undefined );
-                    } );
-            } );
+            if (parameter === 'sites') {
+                //on doit vider la table d'abord... Sinon on ne peut pas desinstaller de site
+                SQLite.parameters().transaction( function(transaction) {
+                    transaction.executeSql('DELETE FROM SITES', [], 
+                        function() {
+                            var site;
+                            for (var i in value) {
+                                site = value[i];
+                                transaction.executeSql('INSERT OR REPLACE INTO SITES(id, value) VALUES (?, ?)', 
+                                    [site.id, JSON.stringify(site)], 
+                                    function() {
+                                        //rien à faire, on passe au suivant
+                                    }, function(transaction, SqlError) {
+                                            console.error( SqlError );
+                                            (callback || function() {})( undefined );
+                                        } );
+                            }
+                            (callback || function() {})(); // tout est OK!
+                        }, 
+                        function(transaction, SqlError) {
+                            console.error( SqlError );
+                            (callback || function() {})();
+                        }
+                    );
+                });
+            } else {
+                 SQLite.parameters().transaction( function(transaction) {
+                    transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', 
+                        [parameter, JSON.stringify( value )], 
+                        function() {
+                            (callback || function() {})();
+                        }, 
+                        function(transaction, SqlError) {
+                                console.error( SqlError );
+                                (callback || function() {})( undefined );
+                        } 
+                    );
+                 });
+            }    
         };
 
         /**
          * @name unset
-         * @desc Supprime une valeur dans la base de données 'parameters'
+         * @desc Supprime une valeur dans la base de données 'parameters', ou 'sites' si le parametre vaut 'sites'
          * @param {String} parameter
          * @param {Function} callback
          */
         SQLite.unset = function(parameter, callback) {
             SQLite.parameters().transaction( function(transaction) {
-                transaction.executeSql( 'DELETE FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function() {
-                    (callback || function() {})();
-                }, function(transaction, SqlError) {
+                var req = 'DELETE FROM PARAMETERS WHERE p_parameter = ? ',
+                    params = [parameter];
+
+                if (parameter === 'sites') {
+                    req = 'DELETE FROM SITES ';
+                    params = [];
+                }
+
+                transaction.executeSql(req, params, 
+                    function() {
+                        (callback || function() {})();
+                    }, 
+                    function(transaction, SqlError) {
                         console.error( SqlError );
                         (callback || function() {})();
-                    } );
-            } );
+                    }
+                );
+            });
         };
 
         /**
@@ -153,16 +215,15 @@
             SQLite.parameters().transaction( function(transaction) {
                 transaction.executeSql( 'CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)' );
                 transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)' );
+                transaction.executeSql( 'CREATE TABLE IF NOT EXISTS SITES (id unique, value)' );
+                transaction.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_SITES ON SITES (id)' );
                 transaction.executeSql( 'CREATE TABLE IF NOT EXISTS relationship (daddy, child)' );
                 transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_REL_DADDY ON relationship (daddy)' );
                 transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_REL_CHILD ON relationship (child)' );
             } );
-
         };
 
         SQLite.initialize();
-
         return SQLite;
     }
-
 })();
