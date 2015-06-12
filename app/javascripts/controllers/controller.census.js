@@ -56,9 +56,6 @@
          * @param {String} okey Okey de l'objet à recenser
          */
         function startCensus(data) {
-
-            $rootScope.stopConsultation();
-
             if (data.okey) {
 
                 vm.okey = data.okey;
