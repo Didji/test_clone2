@@ -107,6 +107,7 @@
                         theAsset.root = complex;
                         theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
+                        theAsset.showFormId = data.id;
                         fixTypeField( theAsset );
                         startCensus( theAsset );
                     } else {
@@ -118,6 +119,7 @@
                                 theAsset.root = complex;
                                 theAsset.isProject = isProjectAsset;
                                 theAsset.relatedAssets = {};
+                                theAsset.showFormId = data.id;
                                 fixTypeField( theAsset );
                                 startCensus( theAsset );
                             } );

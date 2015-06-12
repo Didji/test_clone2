@@ -13,7 +13,7 @@
         </label>
     </label>
 
-    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father)' style='font-size: 80%;border-bottom: 1px solid rgb(150, 150, 150);border-left: 1px solid rgb(150, 150, 150);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);border-color:{{node.formVisible ? "#fd9122": "rgb(150, 150, 150)" }}'>
+    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father) || (node.id && node.id === asset.showFormId)' style='font-size: 80%;border-bottom: 1px solid rgb(150, 150, 150);border-left: 1px solid rgb(150, 150, 150);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);border-color:{{node.formVisible ? "#fd9122": "rgb(150, 150, 150)" }}'>
         <div style="padding-right:10px;margin: 5% 0 0 5%;">
             <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group">
