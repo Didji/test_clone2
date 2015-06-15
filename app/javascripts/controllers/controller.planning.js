@@ -453,13 +453,13 @@
                 if (mission.displayDone) {
                     vm.showDoneAssets( mission );
                 }
-                if (mission.activity && vm.activities._byId[mission.activity.id].type === "night_tour") {
+                if (mission.activity && vm.activities._byId[mission.activity.id] && vm.activities._byId[mission.activity.id].type === "night_tour") {
                     $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
                 }
             } else if (!mission.openned) {
                 $rootScope.$broadcast( 'UNHIGHLIGHT_ASSETS_FOR_MISSION', mission );
                 $rootScope.$broadcast( 'UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION', mission );
-                if (mission.activity && vm.activities._byId[mission.activity.id].type === "night_tour") {
+                if (mission.activity && vm.activities._byId[mission.activity.id] && vm.activities._byId[mission.activity.id].type === "night_tour") {
                     $rootScope.$broadcast( '__MAP_HIDE_TRACE__', mission );
                 }
             }
