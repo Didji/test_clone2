@@ -275,6 +275,7 @@
                     $rootScope.$apply();
                 }
                 G3ME.reloadLayers();
+                $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
             } );
         };
 
