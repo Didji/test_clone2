@@ -118,6 +118,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 };
 
                 scope.draw = function(node) {
+                    $rootScope.stopConsultation();
                     if (Site.current.metamodel[node.okey].geometry_type === "LineString") {
                         scope.drawLine( node );
                     } else {
