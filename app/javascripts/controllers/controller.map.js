@@ -147,11 +147,14 @@
                 return false;
             }
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
-            popupContent += '<button class="btn btn-primary openLocateReportButton">Compte rendu sur cette position</button>';
-            $(document).on('click', '.openLocateReportButton', function () {
-                //TODO(@gulian): utiliser un ng-click si possible
-                $rootScope.openLocatedReport(coords.lat, coords.lng);
-            });
+            if (Site.current.activities.length) {
+                popupContent += '<button class="btn btn-primary openLocateReportButton">'
+                    + i18n.get('_CONSULTATION_REPORT_ON_POSITION') + '</button>';
+                $(document).on('click', '.openLocateReportButton', function () {
+                    //TODO(@gulian): utiliser un ng-click si possible
+                    $rootScope.openLocatedReport(coords.lat, coords.lng);
+                });
+            }
             L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
             return false;
         }
