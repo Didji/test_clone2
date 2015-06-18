@@ -176,7 +176,11 @@
             function exec(method) {
                 method = method.split( '.' );
                 if (method[0] === "asset") {
-                    this.asset[method[1]]();
+                    if (scope.asset.id !== this.asset.id) {
+                        this.asset[method[1]]();
+                    } else {
+                        scope.asset[method[1]]();
+                    }
                 } else {
                     eval( method[1] + '(scope.asset);' );
                 }
