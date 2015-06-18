@@ -16,7 +16,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
             templateUrl: 'partials/censusDirectiveTemplate.html',
 
             link: function(scope) {
-                scope.mapLayers = [];
                 scope.metamodel = Site.current.metamodel;
                 scope.lists = Site.current.lists;
                 scope.dependancies = Site.current.dependancies;
@@ -70,13 +69,18 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 };
 
                 scope.removeLayers = function() {
-                    for (var i = 0; i < scope.mapLayers.length; i++) {
-                        if (scope.mapLayers[i].isOriented) {
-                            scope.root.angle = scope.mapLayers[i].options.angle *-1;
+                    var removeLayersChildren = function (obj) {
+                        if (obj.layer) {
+                            if (obj.layer.isOriented) {
+                                obj.angle = obj.layer.options.angle *-1;
+                            }
+                            G3ME.map.removeLayer( obj.layer );
                         }
-                        G3ME.map.removeLayer( scope.mapLayers[i] );
+                        for (var i in obj.children) {
+                            removeLayersChildren(obj.children[i]);
+                        }
                     }
-                    scope.mapLayers = [];
+                    removeLayersChildren(scope.root);
                 };
 
                 scope.save = function(update) {
@@ -111,7 +115,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                                 iconAnchor: [16, 16]
                             } )
                         } ).addTo( G3ME.map );
-                        scope.mapLayers.push( node.layer );
                         scope.$apply();
                     } );
 
@@ -163,7 +166,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                                 weight: style.width,
                                 opacity: 1
                             } ).addTo( G3ME.map );
-                            scope.mapLayers.push( node.layer );
                         } else {
                             node.layer.addLatLng( clickLatLng );
                         }
@@ -205,7 +207,6 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         } else {
                             node.layer = L.marker( e.latlng, options ).addTo( G3ME.map );
                         }
-                        scope.mapLayers.push( node.layer );
                     }
 
                     function resetCensusMapHandler() {
