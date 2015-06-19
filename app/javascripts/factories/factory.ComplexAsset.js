@@ -577,7 +577,7 @@
          * @desc
          */
         ComplexAsset.prototype.isGeometryOk = function() {
-            if (Site.current.metamodel[this.okey].is_graphical && !this.geometry) {
+            if (Site.current.metamodel[this.okey].is_graphical === true && !this.geometry) {
                 return false;
             } else if (!this.children.length) {
                 return true;
