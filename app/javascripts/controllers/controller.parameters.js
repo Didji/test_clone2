@@ -58,7 +58,9 @@
             Installer.update( Site.current, function() {
                 vm.updating = false;
                 vm.lastUpdate = Site.current.timestamp * 1000;
-                $scope.$digest();
+                if(!$scope.$$phase) {
+                    $scope.$digest();
+                }
             } );
         }
 
