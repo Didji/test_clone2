@@ -86,7 +86,6 @@
                 Authenticator._LOGIN_MUTEX = false;
                 if (Site.current) {
                     Authenticator.selectSiteRemotely( Site.current.id, success, error );
-                    (success || angular.noop)();
                 } else {
                     (success || angular.noop)();
                 }
@@ -119,10 +118,3 @@
     }
 
 })();
-
-
-
-
-
-
-

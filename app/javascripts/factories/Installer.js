@@ -129,13 +129,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             $http.get( url )
                 .success( callback )
                 .error( function(response, code) {
-                    if (code === 403) {
-                        Authenticator.silentLogin( function() {
-                            $route.reload();
-                        } );
-                    } else {
-                        (callback || function() {})();
-                    }
+                    (callback || function() {})();
                 } );
         },
 
@@ -231,6 +225,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             Installer.getUpdateJSON( site, function(site) {
                 if (!site) {
                     (callback || function() {})();
+                    return;
                 }
                 var formatedSite = Installer.formatSiteMetadata( site, true );
                 Site.current.oldTimestamp = Site.current.timestamp;

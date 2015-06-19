@@ -130,8 +130,37 @@ function config($routeProvider, $httpProvider, $provide) {
                 if (rejection.status === 403 && $location.path() !== "/"
                     && rejection.config.url.indexOf( 'global.auth' ) === -1
                     && rejection.config.url.indexOf( 'gi.maintenance.mobility.site.json' ) === -1) {
-                    Authenticator.silentLogin();
-                    return $http( rejection.config );
+
+                    // Attention, le code ci-dessous est sensible.
+                    // Merci de lire attentivement ce commentaire avant
+                    // de le modifier.
+                    //
+                    // On est ici car on a fait une requête à GIMAP qui a été
+                    // refusée car la session a expiré. On va tenter une
+                    // authentification silencieuse, avant de rejouer la
+                    // requête originale.
+                    //
+                    // Pour cela, il faut qu'on renvoie une promise : angular
+                    // attendra la résolution de cette promise avant d'appeler
+                    // le callback de la requête originale.
+                    //
+                    // Problème : le login silencieux n'est pas implémenté sous
+                    // forme de promise. On crée donc une promise qui encapsule
+                    // le login silencieux : c'est authPromise.
+                    var authPromise = $q(function(resolve, reject) {
+                        Authenticator.silentLogin(function() {
+                            resolve();
+                        });
+                        // On utilise ensuite le chaînage de promises pour que, à la
+                        // suite du login silencieux, on rejoue la requête originale :
+                        // c'est ce que fait la fonction anonyme du then() ci-dessous.
+                    }).then(function() {
+                        return $http(rejection.config);
+                    })
+
+                    //
+                    // Au final, on renvoie les promises chaînées.
+                    return authPromise;
                 }
                 return $q.reject( rejection );
             }
