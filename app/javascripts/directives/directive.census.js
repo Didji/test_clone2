@@ -79,7 +79,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                         for (var i in obj.children) {
                             removeLayersChildren(obj.children[i]);
                         }
-                    }
+                    };
                     removeLayersChildren(scope.root);
                 };
 

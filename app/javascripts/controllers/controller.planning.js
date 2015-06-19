@@ -405,7 +405,7 @@
                     }
                     var i, assetsLength;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
-                    if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] && 
+                    if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] &&
                             window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
                         for (i = 0, assetsLength = assets.length; i < assetsLength; i++) {
                             if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
@@ -517,7 +517,7 @@
          * @desc
          */
         function highlightMission(mission) {
-            if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] && 
+            if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] &&
                 window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
                 $rootScope.$broadcast( 'HIGHLIGHT_ASSETS_FOR_MISSION', mission, assetsCache[mission.id], null, markerClickHandler );
             }
@@ -532,7 +532,7 @@
         function markerClickHandler(missionId, assetId) {
             var mission = vm.missions[missionId],
                 asset = assetsCache[missionId][assetId],
-                method = (mission.activity && vm.activities._byId[mission.activity.id] && 
+                method = (mission.activity && vm.activities._byId[mission.activity.id] &&
                     vm.activities._byId[mission.activity.id].type === "night_tour") ? "NightTour" : "Mission";
             vm["toggleAssetsMarkerFor" + method]( mission, asset );
         }
