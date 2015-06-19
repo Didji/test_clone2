@@ -45,7 +45,7 @@
         SyncItem.prototype.save = function(callback) {
             SQLite.exec( SyncItem.database, 'INSERT OR REPLACE INTO ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ) + ') VALUES (' + SyncItem.prepareStatement + ')', this.serializeForSQL(), function() {
                 $rootScope.$broadcast( 'synchronizator_update' );
-                G3ME.map._resetView(G3ME.map.getCenter(), G3ME.map.getZoom());
+                G3ME.reloadLayers();
                 (callback || function() {})();
             } );
         };
