@@ -1,2 +1,2 @@
 window.smargeomobileversion = "1.2";
-window.smargeomobilebuild = "rc17";
+window.smargeomobilebuild = "rc18";
