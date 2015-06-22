@@ -303,10 +303,10 @@
                     latmax = -Infinity;
                 for (var i = 0, ii = complex.geometry.coordinates.length; i < ii; i++) {
                     coord = complex.geometry.coordinates[i];
-                    lngmin = coord[1] < lngmin ? coord[1] : lngmin ;
-                    latmin = coord[0] < latmin ? coord[0] : latmin ;
-                    lngmax = coord[1] > lngmax ? coord[1] : lngmax ;
-                    latmax = coord[0] > latmax ? coord[0] : latmax ;
+                    lngmin = coord[0] < lngmin ? coord[0] : lngmin ;
+                    latmin = coord[1] < latmin ? coord[1] : latmin ;
+                    lngmax = coord[0] > lngmax ? coord[0] : lngmax ;
+                    latmax = coord[1] > latmax ? coord[1] : latmax ;
                 }
                 return {
                     sw: {
