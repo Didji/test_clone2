@@ -365,6 +365,7 @@
 
                 project.save( callback );
                 if (updateConsultation) {
+                    G3ME.reloadLayers();
                     $rootScope.$broadcast( 'UPDATE_CONSULTATION_ASSETS_LIST', duplicates, false );
                 }
             }, project );
@@ -457,7 +458,7 @@
                         _this.deleted.push( guids[i] );
                     }
                 }
-                asset.symbolId = asset.okey + (_this.expressions[asset.okey.replace( "PROJECT_", "" )] && _this.expressions[asset.okey.replace( "PROJECT_", "" )].deleted) || 0 ;
+                asset.symbolId = asset.okey + _this.getClassIndex(asset.okey, 'deleted');
                 Asset.update( asset, function() {
                     G3ME.reloadLayers();
                 } );
@@ -613,7 +614,13 @@
          * @desc Renvoie le class index d'un asset pour un status donné
          */
         Project.prototype.getClassIndex = function(okey, status) {
-            return this.expressions[okey.replace( 'PROJECT_', '' )] && this.expressions[okey.replace( 'PROJECT_', '' )][status] || 0;
+            okey = okey.replace( "PROJECT_", "" );
+            for (var i in this.expressions[okey]) {
+                if (i.match(new RegExp(status+"$"))) {
+                    return this.expressions[okey][i];
+                }
+            }
+            return 0;
         };
 
         /**

@@ -137,7 +137,6 @@
             } );
 
             $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
-
         }
 
         /**
@@ -271,7 +270,9 @@
             }
 
             $location.path( path );
-            $scope.$apply();
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
         }
 
         function toggleConsultationPanelButtonMousedownHandler($event) {

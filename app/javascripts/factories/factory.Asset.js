@@ -462,11 +462,7 @@
 
                         if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;
-                            if (project.expressions[assets[i].okey] && project.expressions[assets[i].okey].unchanged) {
-                                newAsset.symbolId = "PROJECT_" + assets[i].okey + project.expressions[assets[i].okey].unchanged;
-                            } else {
-                                newAsset.symbolId = assets[i].symbolId;
-                            }
+                            newAsset.symbolId = "PROJECT_" + assets[i].okey + project.getClassIndexForUnchangedAsset(assets[i].okey);
                         }
 
                         newAsset.bounds = {
