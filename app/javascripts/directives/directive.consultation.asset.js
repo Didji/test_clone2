@@ -164,7 +164,9 @@
                     asset.hideFromMap();
                     asset.timestamp = Date.now();
 
-                    Synchronizator.addDeleted( asset );
+                    Asset.delete(asset, function() {
+                        Synchronizator.addDeleted( asset );
+                    });
                 } );
             }
 
