@@ -497,7 +497,7 @@
             // chaîne de caractère.
             guidRegExp = new RegExp("^"+asset.guid+"(\||$)");
             for (i = 0, lim = myObjects.length; i < lim; i++) {
-                if (myObjects[i].match(guidRegExp)) {
+                if ((''+myObjects[i]).match(guidRegExp)) {
                     return true;
                 }
             }
