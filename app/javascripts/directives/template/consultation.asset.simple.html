@@ -26,7 +26,7 @@
         </table>
     </span>
     <div ng-if="!noButton" ng-init="reportActivity=(asset|activityListFilter);">
-        <div ng-if="asset.locked" class="alert alert-warning alert-project-locked" role="alert">
+        <div ng-if="asset.locked || (Project.currentLoadedProject && Project.currentLoadedProject.hasAsset( asset ))" class="alert alert-warning alert-project-locked" role="alert">
             <i class="fa fa-warning"></i>
             <i18n>_PROJECT_ASSET_IS_LOCKED_</i18n>
         </div>
