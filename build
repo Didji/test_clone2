@@ -104,8 +104,6 @@ then
 
         echo "Alignement APK Veolia $veoliaversion"
         zipalign -f 4 "build/outputs/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.apk" "$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION-$veoliaversion.apk" >> /dev/null
-
-        pwd
     done
     exit
 else
