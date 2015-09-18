@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -6,14 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils"];
+    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils", "i18n"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils) {
-
+    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils, i18n) {
         var intent = {};
 
         activate();
@@ -23,7 +22,13 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-            intent = Storage.set( 'intent', $routeParams );
+            intent = $routeParams;
+            //correction bug angular : si l'intent est "intent/oauth?..."" le controller vaut 'oaut' sans le 'h'...
+            if (intent.controller === 'oaut') {
+                intent.controller = 'oauth';
+            }
+            Storage.set( 'intent', intent );
+
             if (!intent.controller) {
                 alertify.alert( "Intent non valide : veuillez spécifier une action." );
             } else if (intent.controller === "oauth" || (!Site.current && !selectFirstSite() && intent.controller !== "oauth")) {
@@ -40,14 +45,57 @@
          * @name redirect
          * @desc Fonction de redirection
          */
-        function redirect() {
-            var redirection;
-            if (!Site.current || intent.controller === 'oauth') {
-                redirection = 'sites/';
+        function redirect(data) {
+            if (intent.controller === 'oauth') {
+                var localSites = [],
+                    tmp = prefetchedlocalsites,
+                    remoteSites = [];
+
+                for (var site in tmp) {
+                    localSites.push( tmp[site] );
+                }
+
+                if (data && data.sites) {
+                    for (var site in data.sites) {
+                        if (!data.sites[site].isAdmin && !data.sites[site].isAdminCarto) {
+                            remoteSites.push( data.sites[site] );
+                        }
+                    }
+                }
+
+                if (remoteSites.length) {
+                    Storage.set( 'availableRemoteSites', remoteSites.length );
+                    Storage.set( 'online', true );
+                } else {
+                    Storage.set( 'online', false );
+                }
+                Storage.set( 'availableLocalSites', localSites.length );
+
+                if (remoteSites.length === 0 && localSites.length === 1 && !!localSites[0].installed) {
+                    // Offline avec un site installé
+                    $location.path( '/map/' + localSites[0].id );
+                } else if (remoteSites.length === 1 && localSites.length === 1 && !!localSites[0].installed && localSites[0].id === remoteSites[0].id) {
+                    // Online avec un site installé : Authentification nécessaire
+                    Authenticator.selectSiteRemotely( localSites[0].id, function() {
+                        $location.path( '/map/' + localSites[0].id );
+                    }, function() {
+                        alertify.alert( i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ) );
+                    } );
+                } else if (remoteSites.length === 1 && localSites.length <= 1) {
+                    // Online avec un site non installé : On l'installe directement
+                    $location.path( '/sites/install/' + remoteSites[0].id );
+                } else if ((remoteSites.length + localSites.length) > 0) {
+                    $location.path( 'sites' );
+                } else {
+                    alertify.alert( i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ) );
+                }
             } else {
-                redirection = 'map/' + Site.current.id;
+                if (!Site.current) {
+                    $location.path( 'sites/' );
+                } else {
+                    $location.path( 'map/' + Site.current.id );
+                }
             }
-            $location.path( redirection );
         }
 
         /**
@@ -111,4 +159,4 @@
 
     }
 
-})();
+} )();
