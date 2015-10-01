@@ -34,7 +34,7 @@
     <feature name="Vibration">
         <param name="ios-package" value="CDVVibration" />
     </feature>
-    <author email="glorini@gismartware.com" href="http://www.gismartware.com">
+    <author email="dev@gismartware.com" href="http://www.gismartware.com">
         GiSmartware Team
     </author>
     <content src="index.html" />
