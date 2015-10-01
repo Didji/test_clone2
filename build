@@ -18,6 +18,7 @@ EOF
 # VAR INITIALIZATION
 SCRIPT_BASE_DIR=$PWD
 SMARTGEOMOBILE_VERSION=
+DEPLOY=false
 SMARTGEOMOBILE_MODE="debug"
 SMARTGEOMOBILE_INSTALL_FLAG=false
 SMARTGEOMOBILE_UPLOAD_FLAG=false
@@ -44,6 +45,7 @@ do
              ;;
          i)
              SMARTGEOMOBILE_GRADLEW_COMMAND=$SMARTGEOMOBILE_GRADLEW_COMMAND" installDebug"
+             DEPLOY=true
              ;;
          ?)
              usage
@@ -84,14 +86,18 @@ zipalign -f 4 "build/outputs/apk/content-shell-$SMARTGEOMOBILE_MODE-unaligned.ap
 # [IOS] COPY FILE TO CORDOVA PROJECT
 echo "Copie des fichiers pour iOS"
 cd $SCRIPT_BASE_DIR
-cp -R ./app/* platforms/ios/platforms/ios/www/  >> /dev/null
+cp -R ./app/* ./platforms/ios/www/  >> /dev/null
 cd platforms/ios/platforms/ios/  >> /dev/null
 
 # [IOS] BUILD SMARTGEO.APP
 echo "Création de Smartgeo.app"
 xcodebuild -xcconfig "$SCRIPT_BASE_DIR/platforms/ios/platforms/ios/cordova/build.xcconfig" -project "Smartgeo.xcodeproj" ARCHS="armv7 armv7s arm64" -target "Smartgeo" -configuration Release -sdk iphoneos build VALID_ARCHS="armv7 armv7s arm64" CONFIGURATION_BUILD_DIR="$SCRIPT_BASE_DIR/platforms/ios/platforms/ios/CordovaLib/build/Release-iphoneos/include/"  >> /dev/null
 
-# ios-deploy -b $SCRIPT_BASE_DIR/platforms/ios/platforms/ios/CordovaLib/build/Release-iphoneos/include/Smartgeo.app
+if $DEPLOY
+then
+    echo "Déploiement..."
+    ios-deploy -b $SCRIPT_BASE_DIR/platforms/ios/platforms/ios/CordovaLib/build/Release-iphoneos/include/Smartgeo.app
+fi
 
 # [IOS] ARCHIVE AND SIGN SMARTGEO.APP TO *.IPA FILE
 echo "Archivage et signature de l'*.ipa"
@@ -139,12 +145,12 @@ then
     fi
 
     # [IOS] UPLOAD IPA
-    echo "Upload de l'IPA"
-    curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa"  >> /dev/null
+    #echo "Upload de l'IPA"
+    #curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.ipa"  >> /dev/null
 
     # [ANDROID] UPLOAD APK
-    # echo "Upload de l'APK"
-    # curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
+    # cho "Upload de l'APK"
+    #curl -H "Authorization: token $SMARTGEOMOBILE_GITHUB_TOKEN" -i -X POST -H "Content-Type: application/vnd.android.package-archive"  --data-binary @$OUTPUT_DIRECTORY/smartgeomobile-$SMARTGEOMOBILE_VERSION.apk  "https://uploads.github.com/repos/gismartwaredev/smartgeomobile/releases/$SMARTGEOMOBILE_RELEASE_ID/assets?name=smartgeomobile-$SMARTGEOMOBILE_VERSION.apk"  >> /dev/null
 
 fi
 
