@@ -1,0 +1,15 @@
+<label for="">
+    {{metamodel[node.okey].label}}:{{node.uuid}}
+    <button                     class='btn btn-link' ng-click="root.addNode(node.uuid)"       >+ </button>
+    <button ng-if='node.father' class='btn btn-link' ng-click="root.duplicateNode(node.uuid)" >cp</button>
+    <button ng-if='node.father' class='btn btn-link' ng-click="root.deleteNode(node.uuid)"    >- </button>
+    <button                     class='btn btn-link' ng-click="node.showForm = !node.showForm">switch form </button>
+</label>
+<div ng-show='node.showForm'>
+    <div ng-include="'partials/census-node-form.html'"></div>
+</div>
+<span style="margin-left:15px" ng-repeat="node in node.children">
+    <div ng-include="'partials/census-node.html'"></div>
+</span>
+
+<button ng-if='!node.father' class='btn btn-link' ng-click="root.post()" >enregistrer</button>
