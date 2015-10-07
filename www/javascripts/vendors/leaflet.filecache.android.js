@@ -10,7 +10,7 @@ if (navigator.userAgent.match(/Android/i)) {
                 y = tilePoint.y,
                 callback_id = "15|" + z + "|" + x + "|" + y ;
 
-            tile.onerror = function(event) {
+            /*tile.onerror = function(event) {
                 this_._tileOnError.call(this);
                 delete ChromiumCallbacks[callback_id];
                 tile.onerror = tile.onload = null;
@@ -28,8 +28,7 @@ if (navigator.userAgent.match(/Android/i)) {
                     return console.error(path);
                 }
                 tile.src = path;
-            };
-            }
+            };*/
         }
     });
 }

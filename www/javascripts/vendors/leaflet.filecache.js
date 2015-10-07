@@ -640,13 +640,33 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
     },
 
+    writeTileToDB: function(tileObject, dataUrl, callback) {
+        var db_name = "tiles-" + ( tileObject.y % 10 );
+        if (navigator.userAgent.match(/Android/i)) {
+            var db = sqlitePlugin.openDatabase({name: db_name});
+        }
+        else {
+            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
+        }
+
+        console.log("db: " + db);
+        console.log("db_name: " + db_name);
+
+        db.transaction(function(tx) {
+            tx.executeSql("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
+            tx.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
+            tx.executeSql("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", [tileObject.z, tileObject.x, tileObject.y, dataUrl]);
+        });
+    },
 
     writeTileToCache: function(tileObject, dataUrl, callback) {
         var this_ = this;
         var path = this.getTilePath( tileObject );
         var data = this.convertDataURIToBinary( dataUrl );
 
-        this.createDirectory( path, function() {
+        this.writeTileToDB(tileObject, dataUrl);
+
+        /*this.createDirectory( path, function() {
             this_.filesystem.root.getFile( path + '/' + tileObject.x + '_' + tileObject.y + '.png', {
                 create: true
             }, function(fileEntry) {
@@ -690,7 +710,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
                     }, this_.log_fs_error );
                 }, this_.log_fs_error );
-        } );
+        } );*/
     },
 
     getDataURL: function(img) {
@@ -701,6 +721,30 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         var ctx = canvas.getContext( "2d" );
         ctx.drawImage( img, 0, 0 );
         return canvas.toDataURL();
+    },
+
+    fetchTileFromDB: function(image, z, x, y) {
+        console.log("fetchTileFromDB");
+        var tileObject = {
+            image: image,
+            provider: this.id,
+            x: x,
+            y: y,
+            z: z,
+            src: null,
+            tiles: this
+        };
+
+        console.log("tileobj:" + tileObject);
+
+        var db_name = "tiles-" + ( y % 10 );
+        var db = sqlitePlugin.openDatabase({name: db_name});
+
+        db.transaction(function(tx) {
+            tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], [], function(tx, result) {
+                console.log("result:" + result);
+            });
+        });
     },
 
     fetchTileFromCache: function(image, z, x, y) {
