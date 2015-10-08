@@ -651,8 +651,9 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         }
 
         db.transaction(function(tx) {
-            tx.executeSql("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
+            tx.executeSql("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);");
             tx.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
+            tx.executeSql("PRAGMA journal_mode = PERSIST;");
 
             if (navigator.userAgent.match(/Android/i)) {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');");
@@ -664,7 +665,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             }
 
             tx.executeSql("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", [tileObject.z, tileObject.x, tileObject.y, dataUrl]);
-            
+
             // Journalisation de la db, actuellement la journalisation s'effectue mais elle s'auto delete après transaction.
             //tx.executeSql("pragma table_info (tiles);", [], function(res) {
             //    console.log("PRAGMA res: " + JSON.stringify(res));
@@ -679,68 +680,12 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         canvas.height = img.height;
         var ctx = canvas.getContext( "2d" );
         ctx.drawImage( img, 0, 0 );
-        return canvas.toDataURL();
+        return canvas.toDataURL("image/png");
     },
 
-    /*generateImageToBlob: function(image, dataUrl, callback) {
-        var data = event.target.result,
-                            datatype = "image/png",
-                            blob, bb;
-
-        try {
-            blob = new Blob( [data], {
-                type: datatype
-            } );
-        } catch ( e ) {
-            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
-            if (e.name == 'TypeError' && window.BlobBuilder) {
-                bb = new BlobBuilder();
-                bb.append( data );
-                blob = bb.getBlob( datatype );
-            } else if (e.name == "InvalidStateError") {
-                blob = new Blob( [data], {
-                    type: datatype
-                } );
-            } else {
-                console.error( "Error when building blob" );
-            }
-        }
-        window.URL = window.URL || window.webkitURL;
-        image.src = URL.createObjectURL( blob );
-        image.onerror = this_._tileOnError;
-        image.onload = function() {
-            this_._tileOnLoad.call( this );
-            this_.doINeedToReCacheThisTile( tileObject, file, function(yes) {
-                if (yes) {
-                    var oldTile = image.src;
-                    image.src = this_.getTileUrl( {
-                        x: x,
-                        y: y
-                    }, z );
-                    image.onerror = function() {
-                        image.src = oldTile;
-                        this_._tileOnError.call( this );
-                    };
-                    image.onload = function() {
-                        this_._tileOnLoad.call( this );
-                        this_.writeTileToDB( tileObject, this_.getDataURL( image ), function() {
-                            this_.getRemoteETag( tileObject, function(remoteETag) {
-                                if (remoteETag !== null) {
-                                    this_.writeMetadataTileFile( tileObject, {
-                                        etag: remoteETag
-                                    } );
-                                }
-                            } );
-                        } );
-                        image.onerror = image.onload = null;
-                    };
-                }
-            } );
-        };
-        return blob;
-    },*/
-
     fetchTileFromDB: function(image, z, x, y) {
+        var this_ = this;
+
         var tileObject = {
             image: image,
             provider: this.id,
@@ -750,106 +695,15 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             src: null,
             tiles: this
         };
-
-        console.log("tileobj:" + tileObject);
 
         var db_name = "g3tiles-" + ( y % 10 );
         var db = sqlitePlugin.openDatabase({name: db_name});
 
-        //var blob = this.generateImageToBlob( image );
+        var oldTile = image.src;
 
         db.transaction(function(tx) {
-            tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], [], function(tx, result) {
-                console.log("result:" + result);
-            });
-        });
-    },
-
-    fetchTileFromCache: function(image, z, x, y) {
-        var this_ = this;
-
-        if (!this.filesystem) {
-            return setTimeout( function() {
-                this_.fetchTileFromCache( image, z, x, y );
-            }, 400 );
-        }
-
-        var tileObject = {
-            image: image,
-            provider: this.id,
-            x: x,
-            y: y,
-            z: z,
-            src: null,
-            tiles: this
-        };
-
-
-        /*if (this.filesystem !== true) {
-            this.filesystem.root.getFile( this.getTilePath( tileObject ) + '/' + tileObject.x + '_' + tileObject.y + '.png', {}, function(fileEntry) {
-                fileEntry.file( function(file) {
-                    var reader = new FileReader();
-                    reader.readAsArrayBuffer( file );
-                    reader.onloadend = function(event) {
-                        var data = event.target.result,
-                            datatype = "image/png",
-                            blob, bb;
-                        try {
-                            blob = new Blob( [data], {
-                                type: datatype
-                            } );
-                        } catch ( e ) {
-                            window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
-                            if (e.name == 'TypeError' && window.BlobBuilder) {
-                                bb = new BlobBuilder();
-                                bb.append( data );
-                                blob = bb.getBlob( datatype );
-                            } else if (e.name == "InvalidStateError") {
-                                blob = new Blob( [data], {
-                                    type: datatype
-                                } );
-                            } else {
-                                console.error( "Error when building blob" );
-                            }
-                        }
-                        // image.style.border  = 'solid 1px blue';
-                        window.URL = window.URL || window.webkitURL;
-                        image.src = URL.createObjectURL( blob );
-                        image.onerror = this_._tileOnError;
-                        image.onload = function() {
-                            this_._tileOnLoad.call( this );
-                            this_.doINeedToReCacheThisTile( tileObject, file, function(yes) {
-                                if (yes) {
-                                    var oldTile = image.src;
-                                    image.src = this_.getTileUrl( {
-                                        x: x,
-                                        y: y
-                                    }, z );
-                                    image.onerror = function() {
-                                        image.src = oldTile;
-                                        this_._tileOnError.call( this );
-                                    };
-                                    image.onload = function() {
-                                        this_._tileOnLoad.call( this );
-                                        this_.writeTileToDB( tileObject, this_.getDataURL( image ), function() {
-                                            this_.getRemoteETag( tileObject, function(remoteETag) {
-                                                if (remoteETag !== null) {
-                                                    this_.writeMetadataTileFile( tileObject, {
-                                                        etag: remoteETag
-                                                    } );
-                                                }
-                                            } );
-                                        } );
-                                        image.onerror = image.onload = null;
-                                    };
-                                }
-                            } );
-                        };
-                    };
-                } );
-
-            }, function(fileError) {
-                    var oldTile = image.src;
+            tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
+                if(result.rows.item.length == 0) {
                     image.src = this_.getTileUrl( {
                         x: x,
                         y: y
@@ -858,36 +712,49 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                         this_._tileOnError.call( this );
                         image.src = oldTile;
                         image.onerror = image.onload = null;
-                        if (!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL) {
-                            //     for (var i in this_._map._layers) {
-                            //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                            //     }
-                            // });
-                        }
                     };
                     image.onload = function() {
                         this_._tileOnLoad.call( this );
-                        this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
+                        this_.writeTileToDB( tileObject, this_.getDataURL(image));
                         image.onerror = image.onload = null;
                     };
-                });
-        } else {*/
-            image.src = this_.getTileUrl( {
-                x: x,
-                y: y
-            }, z );
-            image.onerror = function(event) {
-                this_._tileOnError.call( this );
-                image.onerror = image.onload = null;
-                if (!window.SMARTGEO_CURRENT_SITE.EXTERNAL_TILEURL) {
-                    //     for (var i in this_._map._layers) {
-                    //         this_._map._layers[i].redraw && this_._map._layers[i].redraw();
-                    //     }
-                    // });
                 }
-            };
-            image.onload = this_._tileOnLoad;
-        //}
+                else {
+                    image.src = result.rows.item(0).tile_data;
+
+                    image.onerror = function(event) {
+                        this_._tileOnError.call( this );
+                        image.src = oldTile;
+                        image.onerror = image.onload = null;
+                    };
+                    image.onload = function() {
+                        this_._tileOnLoad.call( this );
+                        image.onerror = image.onload = null;
+                    }
+                }
+                success(image.src);
+            }, function(tx, err){
+                image.src = this_.getTileUrl( {
+                    x: x,
+                    y: y
+                }, z );
+                image.onerror = function(event) {
+                    this_._tileOnError.call( this );
+                    image.src = oldTile;
+                    image.onerror = image.onload = null;
+                };
+                image.onload = function() {
+                    this_._tileOnLoad.call( this );
+                    this_.writeTileToDB( tileObject, this_.getDataURL(image));
+                    image.onerror = image.onload = null;
+                };
+                error(image.src);
+            });
+        });
+
+        //window.URL = window.URL || window.webkitURL;
+        //image.onload = this_._tileOnLoad;
+        //image.src = URL.createObjectURL(this.convertDataURIToBinary(this.getDataURL( image )), "image/png");
     },
 
     readMetadataTileFile: function(tileObject, callback) {
@@ -991,8 +858,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         for (i = 0; i < rawLength; i++) {
             array[i] = raw.charCodeAt( i );
         }
-        return array;
+        return new Blob(array, {type: 'image/png'});
     }
-
 
 } );
