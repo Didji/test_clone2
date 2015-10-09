@@ -516,9 +516,6 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         tile.onerror = this._tileOnError;
 
         this._adjustTilePoint( tilePoint );
-        // tile.src     = this.getTileUrl(tilePoint);
-        // this._getTile(tile, tilePoint,zoom);
-        //this.fetchTileFromCache( tile, tilePoint.z, tilePoint.x, tilePoint.y );
         this.fetchTileFromDB( tile, tilePoint.z, tilePoint.x, tilePoint.y );
     },
 
@@ -656,20 +653,14 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             tx.executeSql("PRAGMA journal_mode = PERSIST;");
 
             if (navigator.userAgent.match(/Android/i)) {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');");
-                //tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", []);
+                tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT);");
+                tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
             }
             else {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
-                //tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", []);
+                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT);");
+                tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
             }
-
             tx.executeSql("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", [tileObject.z, tileObject.x, tileObject.y, dataUrl]);
-
-            // Journalisation de la db, actuellement la journalisation s'effectue mais elle s'auto delete après transaction.
-            //tx.executeSql("pragma table_info (tiles);", [], function(res) {
-            //    console.log("PRAGMA res: " + JSON.stringify(res));
-            //});
         });
     },
 
@@ -751,10 +742,6 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                 error(image.src);
             });
         });
-
-        //window.URL = window.URL || window.webkitURL;
-        //image.onload = this_._tileOnLoad;
-        //image.src = URL.createObjectURL(this.convertDataURIToBinary(this.getDataURL( image )), "image/png");
     },
 
     readMetadataTileFile: function(tileObject, callback) {
@@ -781,6 +768,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
     writeMetadataTileFile: function(tileObject, metadata, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );
+
         if (navigator.userAgent.match(/Android/i)) {
             var db = sqlitePlugin.openDatabase({name: db_name});
         }
@@ -788,15 +776,14 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
         }
 
-        console.log("metadata");
-
         db.transaction(function(tx) {
             if (navigator.userAgent.match(/Android/i)) {
-                tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", []);
+                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
+                tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
             }
             else {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
-                tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", []);
+                tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
             }
         });
 
