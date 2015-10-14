@@ -347,7 +347,13 @@
             if (!zone || (G3ME.active_layers && !G3ME.active_layers.length)) {
                 return callback( [] );
             } else if (G3ME.active_layers) {
-                request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
+                //Actually using like option until the regexp one is available on android
+                if (navigator.userAgent.match(/Android/i)) {
+                    request += ' and (symbolId LIKE "' + G3ME.active_layers.join( '%" OR symbolId LIKE "' ) + '%")';
+                }
+                else {
+                    request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
+                }
             }
             request += " order by priority LIMIT 0,100 ";
             SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(results) {
@@ -954,19 +960,28 @@
             }
 
             if (!request) {
-
-                request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
+                if (navigator.userAgent.match(/Android/i)) {
+                    request = 'SELECT * FROM assets WHERE symbolid LIKE \'' + search.okey + '%\' ';
+                }
+                else {
+                    request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
+                }
 
                 var regex;
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (typeof search.criteria[criter] === "number") {
-                            regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
-                        } else {
-                            regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                        if (navigator.userAgent.match(/Android/i)) {
+                            request += " AND LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\' ";
                         }
-                        request += " AND LOWER(asset) REGEXP(" + regex + ") ";
+                        else {
+                            if (typeof search.criteria[criter] === "number") {
+                                regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
+                            } else {
+                                regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                            }
+                            request += " AND LOWER(asset) REGEXP(" + regex + ") ";
+                        }
                     }
                 }
                 request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
