@@ -516,6 +516,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         tile.onerror = this._tileOnError;
 
         this._adjustTilePoint( tilePoint );
+        // remplace fetchTileFromCache
         this.fetchTileFromDB( tile, tilePoint.z, tilePoint.x, tilePoint.y );
     },
 
@@ -644,8 +645,16 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             var db = sqlitePlugin.openDatabase({name: db_name});
         }
         else {
+            // version pour ios seulement, le reste n'est pas dépendant d'ios
+            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
+            //            1 Library - backed up by iCloud, NOT visible to iTunes
+            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
             var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
         }
+
+        // Création de la db, avec les bonnes tables et activation de la persistence journal
+        // Insertion de la tuile dans la bonne db.
+        // Il manque l'écriture des metadata et le lien avec les tuiles existantes.
 
         db.transaction(function(tx) {
             tx.executeSql("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);");
@@ -674,6 +683,11 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         return canvas.toDataURL("image/png");
     },
 
+    // Reprise de fetchTileFromCache pour utiliser les db sqlite
+    // Il faudrait ajouter un script de déplacement des anciennes db vers
+    // le dossier ou se trouve les nouvelles db, à ajouter au script d'installation
+    // ou lors de la connexion.
+
     fetchTileFromDB: function(image, z, x, y) {
         var this_ = this;
 
@@ -688,13 +702,27 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         };
 
         var db_name = "g3tiles-" + ( y % 10 );
-        var db = sqlitePlugin.openDatabase({name: db_name});
+        
+        if (navigator.userAgent.match(/Android/i)) {
+            var db = sqlitePlugin.openDatabase({name: db_name});
+        }
+        else {
+            // version pour ios seulement, le reste n'est pas dépendant d'ios
+            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
+            //            1 Library - backed up by iCloud, NOT visible to iTunes
+            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
+            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
+        }
 
         var oldTile = image.src;
 
         db.transaction(function(tx) {
             tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
+                // Si la requete a fonctionnée
                 if(result.rows.item.length == 0) {
+                    // Mais qu'il n'y a pas cette tuile dans la db
+                    // récupération de la tuile
+                    // écriture en db
                     image.src = this_.getTileUrl( {
                         x: x,
                         y: y
@@ -711,6 +739,9 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     };
                 }
                 else {
+                    // Et que la tuile existe dans la db
+                    // pas d'écriture en db
+                    // pas d'appel distant
                     image.src = result.rows.item(0).tile_data;
 
                     image.onerror = function(event) {
@@ -725,6 +756,9 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                 }
                 success(image.src);
             }, function(tx, err){
+                // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
+                // récupération de la tuile
+                // écriture en db
                 image.src = this_.getTileUrl( {
                     x: x,
                     y: y
@@ -765,6 +799,10 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                 } );
             } );
     },
+
+
+    // La fonction écrit dans la db, mais comme je n'ai pas encore fait le lien
+    // entre la db des tuiles et les metadata, ce n'est pas encore fonctionnel.
 
     writeMetadataTileFile: function(tileObject, metadata, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );

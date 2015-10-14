@@ -364,6 +364,21 @@
                         assets.push( asset );
                     }
                 }
+                // Bug de tri arrangé, voir si cela est suffisant ou pas
+                if (assets[0] && (!isNaN(parseFloat(assets[0].label)) && isFinite(assets[0].label))) {
+                    assets.sort( function(a, b) {
+                        return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
+                    });
+                }
+                else {
+                    assets.sort(function(a, b){
+                        if (a.label.toLowerCase() < b.label.toLowerCase())
+                            return -1;
+                        if (a.label.toLowerCase() > b.label.toLowerCase())
+                            return 1;
+                        return 0;
+                    });
+                }
                 return callback( assets );
             } );
         };
@@ -942,6 +957,7 @@
             }
             if (!zones.length || partial_response.length >= Asset.__maxResultPerSearch) {
                 console.timeEnd( 'Recherche' );
+                // Bug de tri arrangé, voir si cela est suffisant ou pas
                 if (partial_response[0] && (!isNaN(parseFloat(partial_response[0].label)) && isFinite(partial_response[0].label))) {
                     partial_response.sort( function(a, b) {
                         return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
@@ -960,6 +976,7 @@
             }
 
             if (!request) {
+                //Actually using like option until the regexp one is available on android
                 if (navigator.userAgent.match(/Android/i)) {
                     request = 'SELECT * FROM assets WHERE symbolid LIKE \'' + search.okey + '%\' ';
                 }
