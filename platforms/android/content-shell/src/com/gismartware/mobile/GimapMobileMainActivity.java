@@ -560,10 +560,11 @@ public class GimapMobileMainActivity extends Activity {
 						if (composite) {
 							url.append(matcher.group(2));
 						}
-						url.append("=");
-						if (param.length > 1) {
-							url.append(param[1]);
-						}
+                        if(param.length <= 1){
+                            url.append("=").append("");
+                        }else {
+                            url.append("=").append(param[1]);
+                        }
 
 						//ajout du "&" si plusieurs paramètres cible pour le paramètre source courant
 						if (j < (destParams.length - 1)) {
