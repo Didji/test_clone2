@@ -177,6 +177,7 @@
                 }
             }
             report.activity = report.activity.id;
+            report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
             return report;
         }
 
