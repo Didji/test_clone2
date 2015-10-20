@@ -425,13 +425,17 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                     previousY = coord_y;
                 }
                 if (geometry.type !== "Polygon" && zoomUpper16 && asset.maplabel) {
+                    if (asset.maplabel.match(/Vauban/i)) {
+                    //    debugger;
+                    }
+
                     var middle = G3ME.getLineStringMiddle( geometry );
 
                     _middlex = (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[1] + 0.5) - initialTopLeftPointX) | 0;
                     _middley = (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[0] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
 
-                    dx = _middlex - (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[2][0] + 0.5) + initialTopLeftPointX) | 0;
-                    dy = _middley - (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[2][1] * H_DEG2RAD) ) ) + 0.5) + initialTopLeftPointY) | 0;
+                    dx = _middlex - (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[2][0] + 0.5) - initialTopLeftPointX) | 0;
+                    dy = _middley - (0.5 + scale * (M_INV_2PI * log( tan( PI_4 + (middle[2][1] * H_DEG2RAD) ) ) + 0.5) - initialTopLeftPointY) | 0;
 
                     if (dy < 0) {
                         dx = -dx;

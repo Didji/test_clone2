@@ -304,9 +304,9 @@
                 for (var i = 0, ii = complex.geometry.coordinates.length; i < ii; i++) {
                     coord = complex.geometry.coordinates[i];
                     lngmin = coord[0] < lngmin ? coord[0] : lngmin ;
-                    latmin = coord[1] < latmin ? coord[0] : latmin ;
+                    latmin = coord[1] < latmin ? coord[1] : latmin ;
                     lngmax = coord[0] > lngmax ? coord[0] : lngmax ;
-                    latmax = coord[1] > latmax ? coord[0] : latmax ;
+                    latmax = coord[1] > latmax ? coord[1] : latmax ;
                 }
                 return {
                     sw: {

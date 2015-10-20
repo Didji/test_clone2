@@ -485,7 +485,23 @@
          * @return {Boolean}
          */
         Project.prototype.hasAsset = function(asset) {
-            return (this.assets.concat( this.added ).indexOf( +asset.guid ) !== -1);
+            var myObjects = this.assets.concat( this.added ),
+                i,
+                lim,
+                guidRegExp;
+            // Voie rapide pour les guid numériques.
+            if (myObjects.indexOf( +asset.guid ) !== -1) {
+                return true
+            }
+            // Pour les objets pas encore synchronisés, guid sous forme de
+            // chaîne de caractère.
+            guidRegExp = new RegExp("^"+asset.guid+"(\||$)");
+            for (i = 0, lim = myObjects.length; i < lim; i++) {
+                if ((''+myObjects[i]).match(guidRegExp)) {
+                    return true;
+                }
+            }
+            return false;
         };
 
         /**

@@ -96,7 +96,9 @@
                 if (!assets) {
                     return _close();
                 }
-                $scope.$digest();
+                if (!$scope.$$phase) {
+                    $scope.$digest();
+                }
             } );
 
             $rootScope.$on( "UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
@@ -130,7 +132,9 @@
                         assets.push( new Asset( Asset.convertRawRow( results[i] ), function() {}, true ) );
                     }
                     $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
-                    $scope.$digest();
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 } );
 
 
