@@ -507,7 +507,7 @@
          * @desc
          */
         function launchNightTour(mission) {
-            $rootScope.$broadcast('START_NIGHT_TOUR', mission);
+            $rootScope.$broadcast('START_NIGHT_TOUR', mission, assetsCache[mission.id]);
         }
 
 

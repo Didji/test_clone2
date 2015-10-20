@@ -183,8 +183,6 @@
             Asset.findInBounds(coords, circle.getBounds(), function (assets) {
                 if (!assets.length) {
                     noConsultableAssets(coords);
-                } else if ($rootScope.nightTourInProgress) {
-                    $rootScope.$broadcast("mapClickHandlerForNighttour", assets);
                 } else {
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 }

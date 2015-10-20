@@ -46,6 +46,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             $rootScope.nightTourInProgress = false;
             $scope.state = 'closed';
             $scope.$on( "START_NIGHT_TOUR", $scope.startNightTour );
+
             $scope.$watch( 'nightTourInProgress', function(newval, oldval) {
                 if (!!newval) {
                     $scope.startFollowingPosition();
@@ -66,8 +67,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
 
             $scope.$on( "TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset );
-            var mapClickListener = $rootScope.$on( "mapClickHandlerForNighttour", mapClickHandlerForNighttour );
-            $scope.$on('$destroy', mapClickListener); //Sinon les tournées de nuit ne fonctionnent plus
 
             $scope.$watch( 'nightTourRecording', function(newval) {
                 $scope.isFollowingMe = newval;
@@ -88,27 +87,59 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             $scope.saving = false;
         };
 
-        function mapClickHandlerForNighttour(e, assets) {
-            for (var i = 0, ii = assets.length; i < ii; i++) {
-                var asset = assets[i] ;
+        //on initialise les tableau de cache
+        $scope.payloadKO = {status: 'PayloadKO' , guids: []} ;
+        $scope.payloadOK = {status: 'PayloadOK' , guids: []} ;
+        $scope.ok = {status : 'OK' , guids : []};
+        $scope.ko = {status : 'KO' , guids : []};
 
-                if ($scope.mission.assets && $scope.mission.assets.indexOf( +asset.guid ) === -1 || asset.geometry.type === "LineString" || asset.marker) {
-                    continue;
-                }
+        /*
+        //Abonnements aux evenements
+        //ici on recupere l'evenement envoyé lorsqu'un rapport est envoyé depuis le synchronisateur
+        */
 
-                asset.marker = L.marker( [asset.geometry.coordinates[1], asset.geometry.coordinates[0]] );
-                asset.marker.setIcon( $scope._KO_ASSET_ICON );
-                asset.isWorking = false;
-                asset.timestamp = Date.now();
-                (function(asset) {
-                    asset.marker.on( 'click', function(e) {
-                        $scope.toggleAsset( e, $scope.mission, asset );
-                    } );
-                })( asset );
-                G3ME.map.addLayer( asset.marker );
-                assetsCache.push( asset );
-            }
-        }
+        //quand retour promesse rapport ko,; envoyé rapport ok; et vider tableau des objet ok en cache;
+        var clearPromiseKO = $rootScope.$on("returnNewReportSynchronizatorPromiseKO",function(){
+            $scope.sendReports($scope.ok);
+            console.log("[NIGHTTOUR] CRs saved, ko=" + $scope.ko.guids);
+            $scope.ko.guids = [];
+        });
+
+        //quand retour promesse rapport ok; vider tableau des objet ko en cache; recharger page et vider les variables d'abonnement.
+        var clearPromiseOK = $rootScope.$on("returnNewReportSynchronizatorPromiseOK",function(){
+            console.log("[NIGHTTOUR] CRs saved, ok=" + $scope.ok.guids);
+            $scope.ok.guids = [];
+            $scope.saving = false;
+            $route.reload();
+            $scope.clearAllSubscribeEvent();
+        });
+
+        //quand retour promesse rapport payloadko;envoyé rapport payload ok; vider tableau des objet payloadKo en cache;
+       var clearPromisePayloadKO = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadKO",function(){
+            console.log("[NIGHTTOUR] CRs secured, payloadko=" + $scope.payloadKO.guids);
+            $scope.sendReports($scope.payloadOK);
+            $scope.payloadKO.guids = [];
+        });
+
+        //quand retour promesse rapport payloadok; vider tableau des objet payloadKo en cache;
+        var clearPromisePayloadOK = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadOK",function(){
+            console.log("[NIGHTTOUR] CRs secured, payloadok=" + $scope.payloadOK.guids);
+            $scope.payloadOK.guids = [];
+        });
+
+        /**
+         * @memberOf nightTourController
+         * @description supprime tout les abonnements sur les événements .
+         */
+
+        $scope.clearAllSubscribeEvent = function(){
+            $scope.$on('$destroy', function() {
+                clearPromisePayloadKO();
+                clearPromisePayloadOK();
+                clearPromiseKO();
+                clearPromiseOK();
+            });
+        };
 
         /**
          * @memberOf nightTourController
@@ -223,9 +254,13 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 var ok = [],
                     ko = [],
                     asset;
-                for (var i in assetsCache) {
-                    asset = assetsCache[i];
-                    (!!asset.isWorking || asset.isWorking === undefined ? ok : ko).push( asset.guid );
+
+                for (var i = 0; i < $scope.assetsCache.length; i++) {
+                    asset = $scope.assetsCache[i];
+                    if (asset.alreadySent) {
+                        continue;
+                    }
+                    (asset.isWorking === true || asset.isWorking === undefined ? ok : ko).push(asset.guid);
                 }
 
                 for (var j = 0, jj = $scope.mission.assets.length; j < jj; j++) {
@@ -239,90 +274,78 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             } );
         };
 
+
         /**
          * @memberOf nightTourController
          * @desc
          */
-        $scope.stopNightTour = function(ok, ko) {
+        $scope.stopNightTour = function() {
             console.debug("[NIGHTTOUR] Stop mission " + $scope.mission.id);
             if (secureInterval) {
                 $interval.cancel( secureInterval );
             }
-
             $rootScope.nightTourInProgress = false;
             $rootScope.nightTourRecording = false;
             $scope.stopFollowingPosition();
             $rootScope.$broadcast( '__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission );
-            ok = ok || [];
-            ko = ko || [];
             var asset;
-            if ((ko.length + ok.length) === 0) {
-                for (var i in assetsCache) {
-                    asset = assetsCache[i];
+            if (($scope.ko.guids.length + $scope.ok.guids.length) === 0) {
+                for (var i in $scope.assetsCache) {
+                    asset = $scope.assetsCache[i];
+                    if (asset.alreadySent) {
+                        continue;
+                    }
                     if (asset.isWorking !== undefined) {
-                        (!!asset.isWorking ? ok : ko).push( asset.guid );
+                        (!!asset.isWorking ? $scope.ok.guids : $scope.ko.guids).push( asset.guid );
                     }
                 }
             }
             $scope.saving = true;
-            $scope.sendKoReports( ko, function() {
-                $scope.sendOkReports( ok, function() {
-                    console.debug("[NIGHTTOUR] CRs saved, ok=" + ok + ", ko=" + ko);
-                    $route.reload();
+            console.debug("debut de la sauvegarde arret tournée de nuit");
+            if($scope.ko.guids.length){
+                console.debug("save data KO");
+                $scope.sendReports($scope.ko);
+            }else if($scope.ok.guids.length){
+                console.debug("save data OK");
+                $scope.sendReports($scope.ok);
+            }else{
+                $scope.saving = false;
+                $scope.clearAllSubscribeEvent();
+                $route.reload();
+            }
+        };
+
+        /**
+         * @memberOf nightTourController
+         * @desc
+         */
+        $scope.sendReports = function(obj){
+
+            if(!obj.guids.length){
+                if(obj.status === "OK"){
                     $scope.saving = false;
+                    $scope.clearAllSubscribeEvent();
+                    $route.reload();
+                    return;
+                }else{
+                    return;
+                }
+            }
+            if($scope.mission){
+                var report = angular.extend( new Report( obj.guids, $scope.mission.activity.id, $scope.mission.id ), {
+                    assets: obj.guids,
+                    fields: {},
+                    uuid: window.uuid(),
+                    status: obj.status,
                 } );
-            } );
-        };
-
-        /**
-         * @memberOf nightTourController
-         * @desc
-         */
-        $scope.sendOkReports = function(ok, callback) {
-            callback = callback || function() {};
-
-            if (!ok.length) {
-                return callback();
+                applyDefaultValues( report, $scope.activity );
+                var tmp = angular.copy( report );
+                obj.status = obj.status.replace('payload','');
+                tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour[obj.status + "_value"];
+                tmp.activity = tmp.activity.id;
+                Synchronizator.addNew( tmp );
             }
 
-            var report = angular.extend( new Report( ok, $scope.mission.activity.id, $scope.mission.id ), {
-                assets: ok,
-                fields: {},
-                uuid: window.uuid()
-            } );
-
-            applyDefaultValues( report, $scope.activity );
-            var tmp = angular.copy( report );
-            tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ok_value;
-            tmp.activity = tmp.activity.id;
-            Synchronizator.addNew( tmp );
-            callback();
-        };
-
-
-
-        /**
-         * @memberOf nightTourController
-         * @desc
-         */
-        $scope.sendKoReports = function(ko, callback) {
-            callback = callback || function() {};
-            if (!ko.length) {
-                return callback();
-            }
-
-            var report = angular.extend( new Report( ko, $scope.mission.activity.id, $scope.mission.id ), {
-                assets: ko,
-                fields: {},
-                uuid: window.uuid()
-            } );
-
-            applyDefaultValues( report, $scope.activity );
-            var tmp = angular.copy( report );
-            tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour.ko_value;
-            tmp.activity = tmp.activity.id;
-            Synchronizator.addNew( tmp );
-            callback();
         };
 
         function applyDefaultValues(report, act) {
@@ -380,7 +403,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @param {array}  assetsCache  Array of mission's assets, fetched from database
          * @desc
          */
-        $scope.startNightTour = function(event, mission) {
+        $scope.startNightTour = function(event, mission, assetsCache) {
             console.debug("[NIGHTTOUR] Start mission " + mission.id);
             if (secureInterval) {
                 $interval.cancel( secureInterval );
@@ -399,14 +422,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             }
 
             $scope.activity = Site.current.activities._byId[mission.activity.id];
-
+            $scope.assetsCache = assetsCache;
             $scope.mission = mission;
             $scope.isFollowingMe = true;
-
             $rootScope.$broadcast( '_MENU_CLOSE_' );
             $rootScope.nightTourInProgress = true;
             $rootScope.nightTourRecording = true;
-
             $scope.open();
 
             if (!$scope.$$phase) {
@@ -418,6 +439,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if ($scope.state === 'closed') {
                 return;
             }
+
             G3ME.fullscreen();
             $scope.state = 'closed';
             $( $( ".consultation-panel" )[1] ).removeClass( 'open' ).css( 'width', 0 );
@@ -448,7 +470,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.locateMission = function() {
-            $rootScope.$broadcast( '__MAP_SETVIEW__', $scope.mission.extent );
+            $rootScope.$broadcast('__MAP_SETVIEW__', $scope.mission.extent);
         };
 
         /**
@@ -462,36 +484,53 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             if (!$rootScope.nightTourRecording) {
                 return;
             }
-            asset.isWorking = !asset.isWorking ;
+            asset.isWorking = (asset.isWorking === undefined ? false : !asset.isWorking);
             asset.marker.setIcon( asset.isWorking ? $scope._OK_ASSET_ICON : $scope._KO_ASSET_ICON );
+            asset.timestamp = Date.now();
         };
 
         /**
          * @memberOf nightTourController
-         * @desc
+         * @desc on alimente les tableau payloadok et payloadko en cache; puis on les envoient sous forme de rapports.
          */
         $scope.secureData = function() {
-            if (assetsCache) {
-                var now = Date.now(),
-                    payloadKO = [] ,
-                    payloadOK = [] ;
-                for (var i = 0, assetsCacheLength = assetsCache.length; i < assetsCacheLength; i++) {
-                    if (!assetsCache[i].alreadySent && (now - assetsCache[i].timestamp) > secureIntervalTime) {
-                        if (assetsCache[i].isWorking) {
-                            payloadOK.push( assetsCache[i].guid );
+            if ($scope.assetsCache) {
+                var now = Date.now();
+                   // payloadKO = {status: 'PayloadKO' , guids: []} ,
+                   // payloadOK = {status: 'PayloadOK' , guids: []}  ;
+                for (var i = 0; i < $scope.assetsCache.length; i++) {
+                    if (!$scope.assetsCache[i].alreadySent && (now - $scope.assetsCache[i].timestamp) > secureIntervalTime) {
+                        if ($scope.assetsCache[i].isWorking) {
+                            //payloadOK.guids.push($scope.assetsCache[i].guid);
+                            $scope.payloadOK.guids.push($scope.assetsCache[i].guid);
                         } else {
-                            payloadKO.push( assetsCache[i].guid );
+                            //payloadKO.guids.push($scope.assetsCache[i].guid);
+                            $scope.payloadKO.guids.push($scope.assetsCache[i].guid);
                         }
-                        assetsCache[i].alreadySent = true ;
+                        $scope.assetsCache[i].alreadySent = true ;
                     }
                 }
 
-                $scope.sendKoReports( payloadKO, function() {
-                    $scope.sendOkReports( payloadOK, function() {
-                        console.debug("[NIGHTTOUR] CRs secured, ok=" + payloadOK + ", ko=" + payloadKO);
-                    });
-                });
+                console.log("début secure data");
+
+                if($scope.payloadKO.guids.length){
+                    console.log("secure data payload KO");
+                    $scope.sendReports($scope.payloadKO);
+                }else if($scope.payloadOK.guids.length){
+                    console.log("secure data payload OK");
+                    $scope.sendReports($scope.payloadOK);
+                }else{
+                    return;
+                }
+
             }
         };
+
+
+
+
+
+
+
     }
 ] );
