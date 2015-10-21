@@ -31,6 +31,9 @@
         <p ng-show='mission.address'>
             <i class="fa fa-crosshairs"></i> {{mission.address}}
         </p>
+        <p ng-show='mission.comment'>
+            <i class="fa fa-comment-o"></i> {{mission.comment}}
+        </p>
         <p ng-click='planningController.toggleDoneAssetsVisibility(mission)' ng-show='mission.done.length > 0 && !mission.objectNotFound'>
             <i class="fa" ng-class=" mission.displayDone ? 'fa-check-circle-o' : 'fa-circle-o' "></i>
             <i18n>_PLANNING_DISPLAY_DONE_ASSETS_</i18n>
