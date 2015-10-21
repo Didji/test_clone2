@@ -1,7 +1,7 @@
 <div ng-if="complex.tree" class="panel-heading consultation-panel-heading  {{asset.onMap ? 'consultationDirectiveOpen' : ''}}" ng-class="{'consultationDirectiveOpen' : asset.onMap}"  ng-click="toggleMapVisibility(asset);">
     <h4 class="panel-title">
         <span class="pull-right fa fa-caret-{{asset.onMap ? 'up' : 'down'}}"></span>
-        <a class="accordion-toggle"><img style="margin: -15px 0 -15px -10px;" ng-if="site.metamodel[asset.okey].is_graphical" ng-src='{{::site.symbology[asset.symbolId].style.symbol.icon}}' alt=''/> {{site.metamodel[asset.okey].label}} <span style="float:right">{{asset.label}}</span></a>
+        <a class="accordion-toggle"><img style="margin: -7px 6px 0 -10px;float:left;" ng-if="site.metamodel[asset.okey].is_graphical" ng-src='{{::site.symbology[asset.symbolId].style.symbol.icon}}' alt=''/> {{site.metamodel[asset.okey].label}} <span>{{asset.label}}</span></a>
     </h4>
 </div>
 <div ng-show="asset.onMap">
