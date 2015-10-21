@@ -941,25 +941,24 @@
             }
 
             if (!request) {
-
                 request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
-
                 var regex;
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (typeof search.criteria[criter] === "number") {
+                        request += " AND (";
+                        if (parseInt(search.criteria[criter]) != 'NaN') {
                             regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
-                        } else {
-                            regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                            request += "LOWER(asset) REGEXP(" + regex + ") OR ";
                         }
-                        request += " AND LOWER(asset) REGEXP(" + regex + ") ";
+                        regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                        request += "LOWER(asset) REGEXP(" + regex + ")) ";
                     }
                 }
                 request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
             }
 
-            SQLite.exec( zones[0].database_name, request, [], function(rows) {
+            SQLite.exec(zones[0].database_name, request, [], function(rows) {
                 for (var i = 0; i < rows.length; i++) {
                     var asset = rows.item( i );
                     try {
