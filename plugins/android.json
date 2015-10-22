@@ -9,10 +9,6 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.liteglue.SQLitePlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
                             "count": 1
                         },
@@ -34,6 +30,10 @@
                         },
                         {
                             "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.liteglue.SQLitePlugin\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -76,29 +76,29 @@
         }
     },
     "installed_plugins": {
-        "cordova-sqlite-storage": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
-        },
         "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-dialogs": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-inappbrowser": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-vibration": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.gismartware.smartgeo.mobile"
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         }
     },
     "dependent_plugins": {}
