@@ -99,6 +99,9 @@
         },
         "cordova-sqlite-storage": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "cordova-plugin-transport-security": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         }
     },
     "dependent_plugins": {}
