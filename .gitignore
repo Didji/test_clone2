@@ -5,3 +5,4 @@ platforms
 node_modules
 test
 .DS_Store
+hooks
