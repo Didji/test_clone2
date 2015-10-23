@@ -54,16 +54,16 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
                 frequency = Math.PI * 2 / steps.length,
                 red, green, blue;
             for (var i = 0, lim = steps.length; i < lim; ++i) {
-                red = Math.round( Math.sin( frequency * i + 2 + phase ) * width + center );
-                green = Math.round( Math.sin( frequency * i + 0 + phase ) * width + center );
-                blue = Math.round( Math.sin( frequency * i + 4 + phase ) * width + center );
+                red = Math.round(Math.sin(frequency * i + 2 + phase) * width + center);
+                green = Math.round(Math.sin(frequency * i + 0 + phase) * width + center);
+                blue = Math.round(Math.sin(frequency * i + 4 + phase) * width + center);
                 steps[i].color = 'rgb(' + [red, green, blue] + ')';
             }
         }
 
-        var url = Utils.getServiceUrl( 'gi.maintenance.mobility.site.json' );
+        var url = Utils.getServiceUrl('gi.maintenance.mobility.site.json');
 
-        $http.get( url ).success( function(sites) {
+        $http.get(url).success(function(sites) {
             for (var i in sites) {
                 if (!$scope.sites[sites[i].id]) {
                     $scope.sites[sites[i].id] = sites[i];
@@ -74,32 +74,27 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
             }
             $scope.site = $scope.site || sites[0];
             $scope.steps[0].progress = 50;
-            Authenticator.selectSiteRemotely( $routeParams.site, function() {
-                Installer.getInstallJSON( $scope.site, function(site) {
+            Authenticator.selectSiteRemotely($routeParams.site, function() {
+                Installer.getInstallJSON($scope.site, function(site) {
                     $scope.steps[0].progress = 100;
-                    var formatedSite = Installer.formatSiteMetadata( site );
-                    buildSteps( formatedSite );
-                    angular.extend( $scope.site, formatedSite );
-                    Installer.createZones( $scope.site, function() {
-                        Installer.install( $scope.site, $scope.site.stats, function() {
+                    var formatedSite = Installer.formatSiteMetadata(site);
+                    buildSteps(formatedSite);
+                    angular.extend($scope.site, formatedSite);
+                    Installer.createZones($scope.site, function() {
+                        Installer.install($scope.site, $scope.site.stats, function() {
                             $scope.site.installed = true;
                             Site.current = $scope.site;
-                            Installer.saveSite( $scope.site, function() {
-                                $location.path( '/map/' + $routeParams.site );
+                            Installer.saveSite($scope.site, function() {
+                                $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {
                                     $scope.$apply();
                                 }
-                            }, function() {
-                                    $location.path( '/map/' + $routeParams.site );
-                                    if (!$scope.$$phase) {
-                                        $scope.$apply();
-                                    }
-                                }, sites );
-                        } );
-                    } );
-                } );
-            } );
-        } );
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
         $scope.$on( "_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action) {
             $scope.currentInstalledOkey = action.okey;
@@ -107,8 +102,6 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
-        } );
-
-
+        });
     }
 ] );
