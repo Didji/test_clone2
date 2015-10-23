@@ -6,9 +6,12 @@
         GiSmartware Team
     </author>
     <content src="index.html" />
+    
     <access origin="*" />
 
-    <plugin name="cordova-plugin-whitelist" version="1" />
+    <allow-intent href="geo:*" />
+	<allow-intent href="http://*/*" />
+	<allow-intent href="https://*/*" />
 
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="BackupWebStorage" value="cloud" />
