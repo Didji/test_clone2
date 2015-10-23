@@ -24,6 +24,9 @@
     <preference name="PaginationMode" value="unpaginated" />
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="false" />
+
+    <icon src="resources/icon.png" />
+    <splash src="resources/splash.png" />
     <preference name="SplashScreen" value="screen"/>
   	<preference name="SplashScreenDelay" value="2000"/>
 
@@ -53,6 +56,8 @@
 	    <splash src="resources/android/splash/drawable-port-xhdpi-screen.png" density="port-xhdpi"/>
 	    <splash src="resources/android/splash/drawable-port-xxhdpi-screen.png" density="port-xxhdpi"/>
 	    <splash src="resources/android/splash/drawable-port-xxxhdpi-screen.png" density="port-xxxhdpi"/>
+
+	    <preference name="AndroidPersistentFileLocation" value="Internal" />
     </platform>
 
     <platform name="ios">
@@ -83,7 +88,8 @@
 	    <splash src="resources/ios/splash/Default-Portrait~ipad.png" width="768" height="1024"/>
 	    <splash src="resources/ios/splash/Default@2x~iphone.png" width="640" height="960"/>
 	    <splash src="resources/ios/splash/Default~iphone.png" width="320" height="480"/>
-    </platform>
 
-    <icon src="resources/icon.png" />
+	    <preference name="BackupWebStorage" value="none" />
+		<preference name="iosPersistentFileLocation" value="Library" />
+    </platform>
 </widget>
