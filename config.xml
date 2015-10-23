@@ -25,8 +25,8 @@
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="false" />
 
-    <icon src="resources/icon.png" />
-    <splash src="resources/splash.png" />
+    <icon src="resources/common/icon.png" />
+    <splash src="resources/common/splash.png" />
     <preference name="SplashScreen" value="screen"/>
   	<preference name="SplashScreenDelay" value="2000"/>
 
