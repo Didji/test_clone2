@@ -63,6 +63,12 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
 
         var url = Utils.getServiceUrl('gi.maintenance.mobility.site.json');
 
+        //on prend garde à ne pas éteindre l'écran pendant l'install, cela stoppe les requêtes
+        document.addEventListener("deviceready", function () {
+            // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+            window.powermanagement.acquire(); 
+        }, false);
+
         $http.get(url).success(function(sites) {
             for (var i in sites) {
                 if (!$scope.sites[sites[i].id]) {
@@ -84,11 +90,16 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
                         Installer.install($scope.site, $scope.site.stats, function() {
                             $scope.site.installed = true;
                             Site.current = $scope.site;
+
                             Installer.saveSite($scope.site, function() {
                                 $location.path('/map/' + $routeParams.site);
                                 if (!$scope.$$phase) {
                                     $scope.$apply();
                                 }
+                                document.addEventListener("deviceready", function () {
+                                    // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                                    window.powermanagement.release();
+                                }, false);
                             });
                         });
                     });

@@ -95,5 +95,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-powermanagement": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-powermanagement"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

@@ -55,13 +55,24 @@
         function update() {
             vm.updating = true;
             // LicenseManager.update( true );
-            Installer.update( Site.current, function() {
+
+            //on prend garde à ne pas éteindre l'écran pendant la mise à jour, cela stoppe les requêtes
+            document.addEventListener("deviceready", function () {
+                // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                window.powermanagement.acquire(); 
+            }, false);
+
+            Installer.update(Site.current, function() {
                 vm.updating = false;
                 vm.lastUpdate = Site.current.timestamp * 1000;
                 if(!$scope.$$phase) {
                     $scope.$digest();
                 }
-            } );
+                document.addEventListener("deviceready", function () {
+                    // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                    window.powermanagement.release();
+                }, false);
+            });
         }
 
         /**
