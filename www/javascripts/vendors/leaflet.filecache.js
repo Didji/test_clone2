@@ -719,7 +719,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         db.transaction(function(tx) {
             tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
                 // Si la requete a fonctionnée
-                if(result.rows.item.length == 0) {
+                if(result.rows.length == 0) {
                     // Mais qu'il n'y a pas cette tuile dans la db
                     // récupération de la tuile
                     // écriture en db
@@ -754,7 +754,6 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                         image.onerror = image.onload = null;
                     }
                 }
-                success(image.src);
             }, function(tx, err){
                 // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
                 // récupération de la tuile
@@ -773,7 +772,6 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     this_.writeTileToDB( tileObject, this_.getDataURL(image));
                     image.onerror = image.onload = null;
                 };
-                error(image.src);
             });
         });
     },
@@ -816,7 +814,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         db.transaction(function(tx) {
             if (navigator.userAgent.match(/Android/i)) {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
+                tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');");
                 tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
             }
             else {
