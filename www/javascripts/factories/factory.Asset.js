@@ -344,7 +344,7 @@
                 return callback( [] );
             } else if (G3ME.active_layers) {
                 //Actually using like option until the regexp one is available on android
-                if (navigator.userAgent.match(/Android/i)) {
+                if (device.platform == "Android" && parseInt(device.version) < 5) {
                     request += ' and (symbolId LIKE "' + G3ME.active_layers.join( '%" OR symbolId LIKE "' ) + '%")';
                 }
                 else {
@@ -972,8 +972,8 @@
             }
 
             if (!request) {
-                //Actually using like option until the regexp one is available on android
-                if (navigator.userAgent.match(/Android/i)) {
+                // Regexp not available on android < 5 for now
+                if (device.platform == "Android" && parseInt(device.version) < 5) {
                     request = 'SELECT * FROM assets WHERE symbolid LIKE \'' + search.okey + '%\' ';
                 }
                 else {
@@ -984,7 +984,7 @@
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (navigator.userAgent.match(/Android/i)) {
+                        if (device.platform == "Android" && parseInt(device.version) < 5) {
                             request += " AND LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\' ";
                         }
                         else {

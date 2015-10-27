@@ -221,8 +221,9 @@ public class SQLitePlugin extends CordovaPlugin {
             }
 
             Log.v("info", "Open sqlite db: " + dbfile.getAbsolutePath());
-
-            SQLiteAndroidDatabase mydb = old_impl ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
+            
+            SQLiteAndroidDatabase mydb = (android.os.Build.VERSION.SDK_INT >= 21) ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
+            //SQLiteAndroidDatabase mydb = old_impl ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
             mydb.open(dbfile);
 
             if (cbc != null) // XXX Android locking/closing BUG workaround

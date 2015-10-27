@@ -641,15 +641,15 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     writeTileToDB: function(tileObject, dataUrl, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );
 
-        if (navigator.userAgent.match(/Android/i)) {
-            var db = sqlitePlugin.openDatabase({name: db_name});
-        }
-        else {
+        if (device.platform == "iOS") {
             // version pour ios seulement, le reste n'est pas dépendant d'ios
             //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
             //            1 Library - backed up by iCloud, NOT visible to iTunes
             //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
             var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
+        }
+        else {
+            var db = sqlitePlugin.openDatabase({name: db_name});
         }
 
         // Création de la db, avec les bonnes tables et activation de la persistence journal
@@ -661,11 +661,11 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             tx.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
             tx.executeSql("PRAGMA journal_mode = PERSIST;");
 
-            if (navigator.userAgent.match(/Android/i)) {
+            if (device.platform == "Android") {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT);");
                 tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
             }
-            else {
+            else if (device.platform == "iOS") {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT);");
                 tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
             }
@@ -703,15 +703,15 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var db_name = "g3tiles-" + ( y % 10 );
         
-        if (navigator.userAgent.match(/Android/i)) {
-            var db = sqlitePlugin.openDatabase({name: db_name});
-        }
-        else {
+        if (device.platform == "iOS") {
             // version pour ios seulement, le reste n'est pas dépendant d'ios
             //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
             //            1 Library - backed up by iCloud, NOT visible to iTunes
             //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
             var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
+        }
+        else {
+            var db = sqlitePlugin.openDatabase({name: db_name});
         }
 
         var oldTile = image.src;
@@ -805,19 +805,23 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     writeMetadataTileFile: function(tileObject, metadata, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );
 
-        if (navigator.userAgent.match(/Android/i)) {
-            var db = sqlitePlugin.openDatabase({name: db_name});
+        if (device.platform == "iOS") {
+            // version pour ios seulement, le reste n'est pas dépendant d'ios
+            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
+            //            1 Library - backed up by iCloud, NOT visible to iTunes
+            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
+            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
         }
         else {
-            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
+            var db = sqlitePlugin.openDatabase({name: db_name});
         }
 
         db.transaction(function(tx) {
-            if (navigator.userAgent.match(/Android/i)) {
+            if (device.platform == "Android") {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');");
                 tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
             }
-            else {
+            else if (device.platform == "iOS") {
                 tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
                 tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
             }
