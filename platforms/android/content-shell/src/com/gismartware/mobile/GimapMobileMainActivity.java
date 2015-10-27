@@ -55,6 +55,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import com.gismartware.mobile.util.FileUtils;
 
@@ -177,6 +178,7 @@ public class GimapMobileMainActivity extends Activity {
         }
 
         setContentView(R.layout.content_shell_activity);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mShellManager = (ShellManager) findViewById(R.id.shell_container);
         mWindowAndroid = new WindowAndroid(this);
         mWindowAndroid.restoreInstanceState(savedInstanceState);
