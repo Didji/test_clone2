@@ -47,10 +47,6 @@
                         {
                             "xml": "<feature name=\"LaunchNavigator\"><param name=\"android-package\" value=\"uk.co.workingedge.phonegap.plugin.LaunchNavigator\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
-                            "count": 1
                         }
                     ]
                 }
@@ -126,9 +122,6 @@
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "uk.co.workingedge.phonegap.plugin.LaunchNavigator": {
-            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
-        },
-        "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         }
     },
