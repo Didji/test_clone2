@@ -204,11 +204,7 @@
          */
         Asset.prototype.goTo = function() {
             var center = this.getCenter();
-            GPS.getCurrentLocation( function(lng, lat) {
-                if (window.cordova) {
-                    cordova.exec( null, angular.noop, "gotoPlugin", "goto", [lat, lng, center[1], center[0]] );
-                }
-            } );
+            launchnavigator.navigate([center[0], center[1]]);
         };
 
         /**
