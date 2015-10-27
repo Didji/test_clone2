@@ -58,7 +58,7 @@ public class LaunchNavigator extends CordovaPlugin {
 			callbackContext.error(msg);
 			result = false;
 		}
-		
+
 		if(result == true){
 			callbackContext.success();
 		}

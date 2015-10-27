@@ -10,11 +10,44 @@ License for iOS version: MIT only
 |-----------------------|----------------------|
 |[![Circle CI](https://circleci.com/gh/litehelpers/Cordova-sqlite-storage.svg?style=svg)](https://circleci.com/gh/litehelpers/Cordova-sqlite-storage)|[![Build Status](https://travis-ci.org/litehelpers/Cordova-sqlite-storage.svg?branch=master-rc)](https://travis-ci.org/litehelpers/Cordova-sqlite-storage)|
 
-## Available for work
+## NOTICE: iCloud backup of SQLite database is NOT allowed
 
-The primary author and maintainer [@brodybits (Chris Brody)](https://github.com/brodybits) is available for contracting assignments. Part-time contracting assignments would help keep this project alive. [@brodybits (Chris Brody)](https://github.com/brodybits) can be contacted at: <brodybits@litehelpers.net>
+As documented in the "**A User’s iCloud Storage Is Limited**" section of [iCloudFundamentals in Mac Developer Library iCloud Design Guide](https://developer.apple.com/library/mac/documentation/General/Conceptual/iCloudDesignGuide/Chapters/iCloudFundametals.html) (near the beginning):
+
+<blockquote>
+<ul>
+<li><b>DO</b> store the following in iCloud:
+  <ul>
+   <li>[<i>other items omitted</i>]</li>
+   <li>Change log files for a SQLite database (a SQLite database’s store file must never be stored in iCloud)</li>
+  </ul>
+</li>
+<li><b>DO NOT</b> store the following in iCloud:
+  <ul>
+   <li>[<i>items omitted</i>]</li>
+  </ul>
+</li>
+</ul>
+- <cite><a href="https://developer.apple.com/library/mac/documentation/General/Conceptual/iCloudDesignGuide/Chapters/iCloudFundametals.html">iCloudFundamentals in Mac Developer Library iCloud Design Guide</a>
+</blockquote>
+
+### More information about iCloud backup
+
+There are two ways iCloud backup is configured:
+- For each app, iCloud backup is configured in `config.xml` **and is enabled by default** (which I think is wrong) as documented at: https://cordova.apache.org/docs/en/5.1.1/guide/platforms/ios/config.html
+- In this plugin, the database is stored in the `Documents` subdirectory by default, which is backed up to iCloud. You can use the `location` option in `sqlitePlugin.openDatabase()` to store the database in a subdirectory that is *NOT* backed up to iCloud.
+
+Unless you want your app to use iCloud backup for some reason, it is recommended to turn it off as documented in: https://cordova.apache.org/docs/en/5.1.1/guide/platforms/ios/config.html
+
+I raised [Cordova bug CB-9830](https://issues.apache.org/jira/browse/CB-9830) to disable iCloud backup by default in `config.xml`.
+
+## Available for hire
+
+The primary author and maintainer [@brodybits (Chris Brody)](https://github.com/brodybits) is available for contracting assignments. Part-time contracting assignments would really help keep this project alive. [@brodybits (Chris Brody)](https://github.com/brodybits) can be contacted at: <brodybits@litehelpers.net>
 
 LinkedIn: https://www.linkedin.com/in/chrisbrody
+
+PhoneGap developer page: http://people.phonegap.com/developer/chris-brody
 
 Other projects:
 - [brodybits / node-uvhttp](https://github.com/brodybits/node-uvhttp) - HTTP server library that serves static content from native code - *under development and currently extremely limited*
@@ -46,8 +79,8 @@ Commercial support is available by contacting: <info@litehelpers.net>
 
 ## Announcements
 
+- PhoneGap Build is now supported through the npm package: http://phonegap.com/blog/2015/05/26/npm-plugins-available/
 - [MetaMemoryT / websql-promise](https://github.com/MetaMemoryT/websql-promise) now provides a Promises-based interface to both Web SQL and this plugin
-- [Cordova sqlite storage (0.7.10) published](https://build.phonegap.com/plugins/4067) in PhoneGap Build
 - Android version is now using the lightweight [Android-sqlite-connector](https://github.com/liteglue/Android-sqlite-connector) by default configuration (may be changed as described below)
 - Windows "Universal" version now supports both Windows 8.1 and Windows Phone 8.1
 - iOS version is now fixed to override the correct pluginInitialize method and should work with recent versions of iOS
@@ -88,7 +121,11 @@ Commercial support is available by contacting: <info@litehelpers.net>
 - Memory issue observed when adding a very large number of records (due to JSON implementation) on Android, Amazon Fire-OS (ref: [#18](https://github.com/litehelpers/Cordova-sqlite-storage/issues/18)), and iOS (ref: [#299](https://github.com/litehelpers/Cordova-sqlite-storage/issues/299) and [#308](https://github.com/litehelpers/Cordova-sqlite-storage/issues/308))
 - A stability issue was reported on the iOS version when in use together with [SockJS](http://sockjs.org/) client such as [pusher-js](https://github.com/pusher/pusher-js) at the same time (see [#196](https://github.com/litehelpers/Cordova-sqlite-storage/issues/196)). The workaround is to call sqlite functions and [SockJS](http://sockjs.org/) client functions in separate ticks (using setTimeout with 0 timeout).
 - If a sql statement fails for which there is no error handler or the error handler does not return `false` to signal transaction recovery, the plugin fires the remaining sql callbacks before aborting the transaction.
+- In case of an error, the error `code` member is bogus on Android, Windows, and WP(7/8).
+- Possible crash on Android when using Unicode emoji characters due to [Android bug 81341](https://code.google.com/p/android/issues/detail?id=81341), which _should_ be fixed in Android 6.x
+- REGEXP is only supported in iOS.
 - DROP table does not actually delete it in WP(7/8) version, due to limitations of CSharp-SQLite.
+- On WP(7/8), very large integer values will be stored as negative numbers.
 
 ## Other limitations
 
@@ -102,27 +139,30 @@ Commercial support is available by contacting: <info@litehelpers.net>
 - Case-insensitive matching and other string manipulations on Unicode characters, which is provided by optional ICU integration in the sqlite source and working with recent versions of Android, is not supported for any target platforms.
 - iOS version uses a thread pool but with only one thread working at a time due to "synchronized" database access
 - Large query result can be slow, also due to JSON implementation
-- FTS3/FTS4 and R-Tree are not supported for iOS or Windows "Universal" (8.1).
 - ATTACH another database file is not supported (due to path specifications, which work differently depending on the target platform)
 - User-defined savepoints are not supported and not expected to be compatible with the transaction locking mechanism used by this plugin. In addition, the use of BEGIN/COMMIT/ROLLBACK statements is not supported.
 
 ## Limited support (testing needed)
 
+- Use within a pop-up or child window such as an iframe or InAppBrowser (problem with iframe reported on Android)
+- In-memory database `db=window.sqlitePlugin.openDatabase({name: ":memory:"})`
 - UNICODE paragraph separator (`\u2029`)
-- FTS3/FTS4 is not tested supported for Amazon Fire-OS or WP(7/8)
+- FTS3/FTS4 is not tested or supported for Amazon Fire-OS or WP(7/8)
 - R-Tree is not tested for Android (in case [Android-sqlite-connector](https://github.com/liteglue/Android-sqlite-connector) is disabled), Amazon Fire-OS or WP(7/8)
 - Database triggers as described above - known to be broken for Android (in case [Android-sqlite-connector](https://github.com/liteglue/Android-sqlite-connector) is disabled) and Amazon Fire-OS
 - UNICODE characters not fully tested in the Windows "Universal" (8.1) version
 - JOIN needs to be tested more.
 
-## Other versions
+## Alternatives
+
+### Other versions
 
 - [litehelpers / Cordova-sqlite-enterprise-free](https://github.com/litehelpers/Cordova-sqlite-enterprise-free) - internal memory improvements to support larger transactions (with a different licensing scheme)
 - [litehelpers / Cordova-sqlcipher-adapter](https://github.com/litehelpers/Cordova-sqlcipher-adapter) - supports [SQLCipher](https://www.zetetic.net/sqlcipher/) for Android, iOS, and Windows (8.1)
 - Original version for iOS (with a slightly different transaction API): [davibe / Phonegap-SQLitePlugin](https://github.com/davibe/Phonegap-SQLitePlugin)
 - Simpler sqlite plugin with a simpler API: [samikrc / CordovaSQLite](https://github.com/samikrc/CordovaSQLite)
 
-## Other SQLite adapter projects
+### Other SQLite adapter projects
 
 - [an-rahulpandey / cordova-plugin-dbcopy](https://github.com/an-rahulpandey/cordova-plugin-dbcopy) - Alternative way copy pre-populated database
 - [EionRobb / phonegap-win8-sqlite](https://github.com/EionRobb/phonegap-win8-sqlite) - WebSQL add-on for Win8/Metro apps (perhaps with a different API), using an old version of the C++ library from [SQLite3-WinRT Component](https://github.com/doo/SQLite3-WinRT) (as referenced by [01org / cordova-win8](https://github.com/01org/cordova-win8))
@@ -130,6 +170,12 @@ Commercial support is available by contacting: <info@litehelpers.net>
 - [01org / cordova-win8](https://github.com/01org/cordova-win8) - old, unofficial version of Cordova API support for Windows 8 Metro that includes an old version of the C++ [SQLite3-WinRT Component](https://github.com/doo/SQLite3-WinRT)
 - [MSOpenTech / cordova-plugin-websql](https://github.com/MSOpenTech/cordova-plugin-websql) - Windows 8(+) and Windows Phone 8(+) WebSQL plugin versions in C#
 - [MetaMemoryT / websql-client](https://github.com/MetaMemoryT/websql-client) - provides the same API and connects to [websql-server](https://github.com/MetaMemoryT/websql-server) through WebSockets.
+
+### Alternative solutions
+
+- Use NativeScript with its web view and https://github.com/NathanaelA/nativescript-sqlite
+- Standard Local Storage Web API
+- realm.io
 
 # Usage
 
