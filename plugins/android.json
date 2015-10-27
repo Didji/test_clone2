@@ -21,10 +21,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"PowerManagement\"><param name=\"android-package\" value=\"com.simplec.phonegap.plugins.powermanagement.PowerManagement\" /></feature>",
                             "count": 1
                         },
@@ -42,6 +38,18 @@
                         },
                         {
                             "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.liteglue.SQLitePlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LaunchNavigator\"><param name=\"android-package\" value=\"uk.co.workingedge.phonegap.plugin.LaunchNavigator\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -96,9 +104,6 @@
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
-        "cordova-plugin-inappbrowser": {
-            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
-        },
         "cordova-plugin-powermanagement": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
@@ -115,6 +120,15 @@
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "uk.co.workingedge.phonegap.plugin.LaunchNavigator": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         }
     },
