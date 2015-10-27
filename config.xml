@@ -15,7 +15,6 @@
 	<allow-intent href="https://*/*" />
 
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />
@@ -32,7 +31,7 @@
     <icon src="resources/common/icon.png" />
     <splash src="resources/common/splash.png" />
     <preference name="SplashScreen" value="screen"/>
-  	<preference name="SplashScreenDelay" value="2000"/>
+  	<preference name="SplashScreenDelay" value="2500"/>
 
     <platform name="android">
         <allow-intent href="gimap:*" />
@@ -40,6 +39,8 @@
         <preference name="AndroidLaunchMode" value="singleInstance" />
         <preference name="android-minSdkVersion" value="19" />
         <preference name="android-targetSdkVersion" value="22"/>
+
+        <preference name="KeepRunning" value="true"/>
 
         <icon src="resources/android/icon/drawable-ldpi-icon.png" density="ldpi"/>
 	    <icon src="resources/android/icon/drawable-mdpi-icon.png" density="mdpi"/>
