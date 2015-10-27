@@ -238,18 +238,17 @@
         function applyDefaultValues() {
             var fields = vm.report.fields,
                 def, i, field, date;
-
             for (i in vm.report.activity._fields) {
                 field = vm.report.activity._fields[i];
                 def = field['default'];
 
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
                 // fixées dans le scope par les intents.
-                if (vm['report_fields[' + field.label + ']']) {
-                    def = vm['report_fields[' + field.label + ']'];
+                if (intent['report_fields[' + field.label + ']']) {
+                    def = intent['report_fields[' + field.label + ']'];
                 }
-                if (vm['report_fields[$' + field.id + ']']) {
-                    def = vm['report_fields[$' + field.id + ']'];
+                if (intent['report_fields[$' + field.id + ']']) {
+                    def = intent['report_fields[$' + field.id + ']'];
                 }
 
                 if (field.type === 'T' && !def) {
