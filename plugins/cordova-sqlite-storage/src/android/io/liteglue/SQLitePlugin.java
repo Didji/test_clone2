@@ -502,9 +502,9 @@ public class SQLitePlugin extends CordovaPlugin {
                     myStatement.bindNull(i + 1);
                 } else {
                     Object p = paramsAsJson.get(i);
-                    if (p instanceof Float || p instanceof Double)
+                    if (p instanceof Float || p instanceof Double) 
                         myStatement.bindDouble(i + 1, paramsAsJson.getDouble(i));
-                    else if (p instanceof Number)
+                    else if (p instanceof Number) 
                         myStatement.bindLong(i + 1, paramsAsJson.getLong(i));
                     else
                         myStatement.bindTextNativeString(i + 1, paramsAsJson.getString(i));

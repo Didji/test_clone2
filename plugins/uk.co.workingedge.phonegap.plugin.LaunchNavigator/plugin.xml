@@ -45,7 +45,7 @@
         <param name="ios-package" value="LaunchNavigator"/>
       </feature>
     </config-file>
-
+    
     <header-file src="src/ios/LaunchNavigator.h" />
     <source-file src="src/ios/LaunchNavigator.m" />
 
@@ -63,14 +63,14 @@
   <platform name="windows">
     <js-module src="www/windows/launchnavigator.js" name="LaunchNavigator">
       <clobbers target="launchnavigator" />
-    </js-module>
+    </js-module>     
   </platform>
 
   <!-- wp8 -->
   <platform name="wp8">
     <js-module src="www/wp8/launchnavigator.js" name="LaunchNavigator">
       <clobbers target="launchnavigator" />
-    </js-module>
+    </js-module>     
   </platform>
 
 </plugin>

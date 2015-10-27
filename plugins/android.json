@@ -37,15 +37,15 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.liteglue.SQLitePlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
                         },
                         {
                             "xml": "<feature name=\"LaunchNavigator\"><param name=\"android-package\" value=\"uk.co.workingedge.phonegap.plugin.LaunchNavigator\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.liteglue.SQLitePlugin\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -115,13 +115,13 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
-        "cordova-sqlite-storage": {
-            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
-        },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         },
         "uk.co.workingedge.phonegap.plugin.LaunchNavigator": {
+            "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
+        },
+        "cordova-sqlite-storage": {
             "PACKAGE_NAME": "com.gismartware.mobile.smartgeo"
         }
     },
