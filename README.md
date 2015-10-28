@@ -21,6 +21,10 @@ Installer les sdk android et les dépendances pour pouvoir Build:
 
 https://developer.android.com/sdk/installing/index.html
 
+Il semblerait que lorsqu'on add la platform Android cela provoque une erreur et nous dit que le module ncp n'est pas présent, à installer en local car ne fonctionne pas en global (pour une raison inconnue encore):
+
+npm install ncp
+
 Build sur android ou sur émulateur:
 
 cordova platform add android
