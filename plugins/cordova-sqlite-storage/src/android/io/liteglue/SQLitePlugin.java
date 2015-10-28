@@ -211,8 +211,15 @@ public class SQLitePlugin extends CordovaPlugin {
         try {
             // ASSUMPTION: no db (connection/handle) is already stored in the map
             // [should be true according to the code in DBRunner.run()]
-
-            File dbfile = this.cordova.getActivity().getDatabasePath(dbname);
+            Pattern pattern = Pattern.compile("g3tiles-");
+            Matcher matcher = pattern.matcher(dbname);
+            File dbfile;
+            if (matcher.find()){
+                dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
+            }
+            else {
+                dbfile = this.cordova.getActivity().getDatabasePath(dbname);
+            }
 
             if (!dbfile.exists() && createFromAssets) this.createFromAssets(dbname, dbfile);
 

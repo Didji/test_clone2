@@ -680,7 +680,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         canvas.height = img.height;
         var ctx = canvas.getContext( "2d" );
         ctx.drawImage( img, 0, 0 );
-        return canvas.toDataURL("image/png");
+        return canvas.toDataURL("image/png").substr(22);
     },
 
     // Reprise de fetchTileFromCache pour utiliser les db sqlite
@@ -742,7 +742,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     // Et que la tuile existe dans la db
                     // pas d'écriture en db
                     // pas d'appel distant
-                    image.src = result.rows.item(0).tile_data;
+                    image.src = "data:image/png;base64," + result.rows.item(0).tile_data;
 
                     image.onerror = function(event) {
                         this_._tileOnError.call( this );
