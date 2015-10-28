@@ -215,7 +215,13 @@ public class SQLitePlugin extends CordovaPlugin {
             Matcher matcher = pattern.matcher(dbname);
             File dbfile;
             if (matcher.find()){
-                dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
+                String state = android.os.Environment.getExternalStorageState();
+                if (android.os.Environment.MEDIA_MOUNTED.equals(state)) {
+                    dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
+                }
+                else {
+                    dbfile = this.cordova.getActivity().getDatabasePath(dbname);
+                }
             }
             else {
                 dbfile = this.cordova.getActivity().getDatabasePath(dbname);
