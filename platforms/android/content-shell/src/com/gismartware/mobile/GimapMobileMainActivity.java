@@ -424,7 +424,9 @@ public class GimapMobileMainActivity extends Activity {
                         cursor.close();
                     }
                     // On retourne la photo si jamais elle n'est pas dans le bon sens.
-                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath);//, options);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 2;
+                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath, options);
                     ExifInterface exif = new ExifInterface(lastPicturePath);
                     String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
                     int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;

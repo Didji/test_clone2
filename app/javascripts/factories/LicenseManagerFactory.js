@@ -16,7 +16,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             search: true,
             logout: false,
             report: false,
-            parameters: false,
+            parameters: true,
             planning: false,
             history: false,
             photo: true,
