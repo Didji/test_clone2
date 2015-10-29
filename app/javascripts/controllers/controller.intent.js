@@ -134,7 +134,7 @@
 
             if ( (match = intent.map_target.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 assetid = match[1];
-                intent.latlng = [match[2], match[3]];
+                intent.latlng = intent.map_center = [match[2], match[3]];
             } else if ( (match = intent.map_target.match( /^(\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 intent.map_center = intent.latlng = [match[1], match[2]];
             } else if ( (match = intent.map_target.match( /^(\d+)$/ )) ) {
