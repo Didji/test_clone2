@@ -21,7 +21,7 @@ Installer les sdk android et les dépendances pour pouvoir Build:
 
 https://developer.android.com/sdk/installing/index.html
 
-Il semblerait que lorsqu'on add la platform Android cela provoque une erreur et nous dit que le module ncp n'est pas présent, à installer en local car ne fonctionne pas en global (pour une raison inconnue encore):
+Il faut ncp pour la copie des assets pour ensuite pouvoir build (en local):
 
 npm install ncp
 

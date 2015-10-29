@@ -180,6 +180,7 @@
                 request = [request];
                 args = [args];
             }
+            console.log("request: " + request + " /// database: " + database);
             callback = callback || function() {};
             var calledCallback = function() {};
             SQLite.openDatabase( {

@@ -641,16 +641,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     writeTileToDB: function(tileObject, dataUrl, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );
 
-        if (device.platform == "iOS") {
-            // version pour ios seulement, le reste n'est pas dépendant d'ios
-            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
-            //            1 Library - backed up by iCloud, NOT visible to iTunes
-            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
-            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
-        }
-        else {
-            var db = sqlitePlugin.openDatabase({name: db_name});
-        }
+        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
 
         // Création de la db, avec les bonnes tables et activation de la persistence journal
         // Insertion de la tuile dans la bonne db.
@@ -703,16 +694,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var db_name = "g3tiles-" + ( y % 10 );
         
-        if (device.platform == "iOS") {
-            // version pour ios seulement, le reste n'est pas dépendant d'ios
-            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
-            //            1 Library - backed up by iCloud, NOT visible to iTunes
-            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
-            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
-        }
-        else {
-            var db = sqlitePlugin.openDatabase({name: db_name});
-        }
+        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
 
         var oldTile = image.src;
 
@@ -805,16 +787,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     writeMetadataTileFile: function(tileObject, metadata, callback) {
         var db_name = "g3tiles-" + ( tileObject.y % 10 );
 
-        if (device.platform == "iOS") {
-            // version pour ios seulement, le reste n'est pas dépendant d'ios
-            //  location: 0 (default): Documents - visible to iTunes and backed up by iCloud
-            //            1 Library - backed up by iCloud, NOT visible to iTunes
-            //            2 Library/LocalDatabase - NOT visible to iTunes and NOT backed up by iCloud
-            var db = sqlitePlugin.openDatabase({name: db_name, location: 2});
-        }
-        else {
-            var db = sqlitePlugin.openDatabase({name: db_name});
-        }
+        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
 
         db.transaction(function(tx) {
             if (device.platform == "Android") {

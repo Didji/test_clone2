@@ -322,10 +322,14 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
         },
 
         prevAnonFunction: function(currentRequestPool, currentDb, req, args) {
-            SQLite.openDatabase( {
-                name: currentDb,
-                bgType: 1
-            } ).transaction( function(tx) {
+            var db;
+            if (device.platform == "Android" && parseInt(device.version) >= 5) {
+                db = SQLite.openDatabase({name: currentDb, bgType: 1, androidOldDatabaseImplementation: 2});
+            }
+            else {
+                db = SQLite.openDatabase({name: currentDb, bgType: 1});
+            }
+            db.transaction( function(tx) {
                 tx.executeSql( req, args, function(tx, results) {
                     for (var uuid in currentRequestPool) {
                         currentRequestPool[uuid].callback( results );

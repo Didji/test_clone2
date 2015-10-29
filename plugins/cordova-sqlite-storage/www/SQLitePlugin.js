@@ -542,6 +542,12 @@
       if (!!openargs.androidLockWorkaround && openargs.androidLockWorkaround === 1) {
         openargs.androidBugWorkaround = 1;
       }
+      if (!!openargs.externalStorage && openargs.externalStorage === 1) {
+        openargs.externalStorage = 1;
+      }
+      if (!!openargs.externalStorage && openargs.externalStorage === 2) {
+        openargs.externalStorage = 2;
+      }
       return new SQLitePlugin(openargs, okcb, errorcb);
     }),
     deleteDb: function(first, success, error) {

@@ -207,21 +207,17 @@ public class SQLitePlugin extends CordovaPlugin {
      *
      * @param dbName   The name of the database file
      */
-    private SQLiteAndroidDatabase openDatabase(String dbname, boolean createFromAssets, CallbackContext cbc, boolean old_impl) throws Exception {
+    private SQLiteAndroidDatabase openDatabase(String dbname, boolean createFromAssets, Integer external, CallbackContext cbc, boolean old_impl) throws Exception {
         try {
             // ASSUMPTION: no db (connection/handle) is already stored in the map
             // [should be true according to the code in DBRunner.run()]
-            Pattern pattern = Pattern.compile("g3tiles-");
-            Matcher matcher = pattern.matcher(dbname);
             File dbfile;
-            if (matcher.find()){
-                String state = android.os.Environment.getExternalStorageState();
-                if (android.os.Environment.MEDIA_MOUNTED.equals(state)) {
-                    dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
-                }
-                else {
-                    dbfile = this.cordova.getActivity().getDatabasePath(dbname);
-                }
+            String state = android.os.Environment.getExternalStorageState();
+            if (android.os.Environment.MEDIA_MOUNTED.equals(state) && external == 1) {
+                dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
+            }
+            else if (android.os.Environment.MEDIA_MOUNTED.equals(state) && external == 2){
+                dbfile = new File(this.cordova.getActivity().getExternalFilesDir(null), dbname);
             }
             else {
                 dbfile = this.cordova.getActivity().getDatabasePath(dbname);
@@ -235,8 +231,7 @@ public class SQLitePlugin extends CordovaPlugin {
 
             Log.v("info", "Open sqlite db: " + dbfile.getAbsolutePath());
             
-            SQLiteAndroidDatabase mydb = (android.os.Build.VERSION.SDK_INT >= 21) ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
-            //SQLiteAndroidDatabase mydb = old_impl ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
+            SQLiteAndroidDatabase mydb = old_impl ? new SQLiteAndroidDatabase() : new SQLiteDatabaseNDK();
             mydb.open(dbfile);
 
             if (cbc != null) // XXX Android locking/closing BUG workaround
@@ -593,6 +588,7 @@ public class SQLitePlugin extends CordovaPlugin {
     private class DBRunner implements Runnable {
         final String dbname;
         private boolean createFromAssets;
+        private Integer external;
         private boolean oldImpl;
         private boolean bugWorkaround;
 
@@ -604,6 +600,7 @@ public class SQLitePlugin extends CordovaPlugin {
         DBRunner(final String dbname, JSONObject options, CallbackContext cbc) {
             this.dbname = dbname;
             this.createFromAssets = options.has("createFromResource");
+            this.external = options.optInt("externalStorage");
             this.oldImpl = options.has("androidOldDatabaseImplementation");
             Log.v(SQLitePlugin.class.getSimpleName(), "Android db implementation: " + (oldImpl ? "OLD" : "sqlite4java (NDK)"));
             this.bugWorkaround = this.oldImpl && options.has("androidBugWorkaround");
@@ -616,7 +613,7 @@ public class SQLitePlugin extends CordovaPlugin {
 
         public void run() {
             try {
-                this.mydb = openDatabase(dbname, this.createFromAssets, this.openCbc, this.oldImpl);
+                this.mydb = openDatabase(dbname, this.createFromAssets, this.external, this.openCbc, this.oldImpl);
             } catch (Exception e) {
                 Log.e(SQLitePlugin.class.getSimpleName(), "unexpected error, stopping db thread", e);
                 dbrmap.remove(dbname);
