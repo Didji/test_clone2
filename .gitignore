@@ -6,3 +6,5 @@ node_modules
 test
 .DS_Store
 hooks
+plugins/android.json
+plugins/ios.json
