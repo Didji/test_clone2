@@ -16,8 +16,7 @@
         var SQLite = {
             DATABASE_SIZE: 1024 * 1024 * 4,
             DATABASE_VERSION: '0.0.1-angular',
-            DATABASES: {},
-            DEBUG: 1
+            DATABASES: {}
         };
 
         /**
@@ -74,7 +73,7 @@
                     }, function(transaction, SqlError) {
                             console.error( SqlError );
                             (callback || function() {})( undefined );
-                        } );
+                        });
                 } else {
                     transaction.executeSql( 'SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
                         if (results.rows.length === 1) {
@@ -85,7 +84,7 @@
                     }, function(transaction, SqlError) {
                             console.error( SqlError );
                             (callback || function() {})( undefined );
-                        } );
+                    });
                 }
             });    
         };
@@ -111,9 +110,9 @@
                                     function() {
                                         //rien à faire, on passe au suivant
                                     }, function(transaction, SqlError) {
-                                            console.error( SqlError );
-                                            (callback || function() {})( undefined );
-                                        } );
+                                         console.error( SqlError );
+                                        (callback || function() {})( undefined );
+                                    });
                             }
                             (callback || function() {})(); // tout est OK!
                         }, 
@@ -130,9 +129,9 @@
                         function() {
                             (callback || function() {})();
                         }, 
-                        function(transaction, SqlError) {
-                                console.error( SqlError );
-                                (callback || function() {})( undefined );
+                        function(transaction, sqlError) {
+                            console.error(sqlError);
+                            (callback || function() {})( undefined );
                         } 
                     );
                  });
@@ -159,8 +158,8 @@
                     function() {
                         (callback || function() {})();
                     }, 
-                    function(transaction, SqlError) {
-                        console.error( SqlError );
+                    function(transaction, sqlError) {
+                        console.error(sqlError);
                         (callback || function() {})();
                     }
                 );
@@ -190,15 +189,14 @@
                         calledCallback = callback ;
                     }
                     t.executeSql( request[i], args[i] || [], function(t, r) {
-                        console.sqlite( "SQLITE_REQUEST", request[0], args[0], r.rows );
                         calledCallback( r.rows );
                     }, function(tx, sqlerror) {
-                            console.sqliteerror( request, args, sqlerror.message );
-                        } );
+                        console.error(sqlerror);
+                    });
                 }
             }, function(tx, sqlerror) {
-                    console.sqliteerror( request, args, sqlerror.message );
-                } );
+                    console.error(sqlerror);
+            });
         };
 
         /**
@@ -206,12 +204,6 @@
          * @desc Crée la base de données 'parameters' et ses index
          */
         SQLite.initialize = function() {
-
-            console.sqlite = SQLite.DEBUG >= 2 ? console.info : angular.noop ;
-            console.sqliteerror = SQLite.DEBUG >= 1 ? function(request, args, err) {
-                console.error( request, args, err );
-            } : angular.noop ;
-
             SQLite.parameters().transaction( function(transaction) {
                 transaction.executeSql( 'CREATE TABLE IF NOT EXISTS PARAMETERS (p_parameter unique, p_value)' );
                 transaction.executeSql( 'CREATE INDEX IF NOT EXISTS INDEX_PARAMETER ON PARAMETERS (p_parameter)' );
