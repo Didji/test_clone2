@@ -11,23 +11,23 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
     var LicenseManager = function() {
 
         return $rootScope.rights = {
-            census: true,
+            census: false,
             consultation: true,
             search: true,
-            logout: true,
-            report: true,
+            logout: false,
+            report: false,
             parameters: true,
-            planning: true,
-            history: true,
+            planning: false,
+            history: false,
             photo: true,
-            project: true,
+            project: false,
             media: true,
             myposition: true,
             activelayers: true,
-            goto: true,
+            goto: false,
             synccenter: true,
-            siteselection: true,
-            _DONT_REALLY_RESET: false
+            siteselection: false,
+            _DONT_REALLY_RESET: true
         };
 
         if (!this.__isDeviceRegistered()) {
@@ -171,7 +171,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
                     alertify.log( i18n.get( "_REGISTER_MUST_CHECK_" ) );
                     $location.path( 'licenseRevoked' );
                 } else if (license.offline_verification >= this.__offline_verification_warn_threshold) {
-                    alertify.log( i18n.get( "_REGISTER_CAREFUL_", (this.__offline_verification_block_threshold - license.offline_verification )) );
+                    alertify.log( i18n.get( "_REGISTER_CAREFUL_", (this.__offline_verification_block_threshold - license.offline_verification) ) );
                 }
                 this.__setLicense( license );
                 break;
@@ -219,16 +219,16 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             this_.__setLicense( license );
             success();
         }, function(response) {
-                if (+response.status === 401) {
-                    localStorage.clear();
-                    Utils.reset();
-                    $location.path( '/' );
-                    document.location.reload();
-                    return;
-                }
-                this_.__updateErrorCallback( response );
-                error( response );
-            } );
+            if (+response.status === 401) {
+                localStorage.clear();
+                Utils.reset();
+                $location.path( '/' );
+                document.location.reload();
+                return;
+            }
+            this_.__updateErrorCallback( response );
+            error( response );
+        } );
         return this;
     };
 
@@ -258,19 +258,19 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
                 this_.__setLicense( license );
                 success( license );
             }, function(response) {
-                    if (response.status === 409) {
-                        license.registered = true;
-                        license.lastcheck = now;
-                        this_.__setLicense( license );
-                        this_.update( true, function() {
-                            success( license );
-                        }, function() {
-                                (error || function() {})( response );
-                            } );
-                    } else {
-                        (error || function() {})( response );
-                    }
-                } );
+                if (response.status === 409) {
+                    license.registered = true;
+                    license.lastcheck = now;
+                    this_.__setLicense( license );
+                    this_.update( true, function() {
+                        success( license );
+                    }, function() {
+                        (error || function() {}) ( response );
+                    } );
+                } else {
+                    (error || function() {}) ( response );
+                }
+            } );
         } );
 
 
@@ -292,8 +292,8 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             cordova.exec( function(args) {
                 callback( args[0], args[1] );
             }, function(error) {
-                    window.alert( error );
-                }, "gotoPlugin", "getDeviceId", [] );
+                window.alert( error );
+            }, "gotoPlugin", "getDeviceId", [] );
         } else {
             callback( 'name', 'xxxx' + Math.random() );
         }

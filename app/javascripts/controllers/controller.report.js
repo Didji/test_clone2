@@ -62,7 +62,10 @@
             }
 
             vm.report = new Report( $routeParams.assets, $routeParams.activity, $routeParams.mission );
-
+            applyDefaultValues();
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
             for (var i = 0; i < vm.report.assets.length; i++) {
                 vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
             }
@@ -174,6 +177,7 @@
                 }
             }
             report.activity = report.activity.id;
+            report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
             return report;
         }
 
@@ -234,18 +238,17 @@
         function applyDefaultValues() {
             var fields = vm.report.fields,
                 def, i, field, date;
-
             for (i in vm.report.activity._fields) {
                 field = vm.report.activity._fields[i];
                 def = field['default'];
 
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
                 // fixées dans le scope par les intents.
-                if (vm['report_fields[' + field.label + ']']) {
-                    def = vm['report_fields[' + field.label + ']'];
+                if (intent['report_fields[' + field.label + ']']) {
+                    def = intent['report_fields[' + field.label + ']'];
                 }
-                if (vm['report_fields[$' + field.id + ']']) {
-                    def = vm['report_fields[$' + field.id + ']'];
+                if (intent['report_fields[$' + field.id + ']']) {
+                    def = intent['report_fields[$' + field.id + ']'];
                 }
 
                 if (field.type === 'T' && !def) {

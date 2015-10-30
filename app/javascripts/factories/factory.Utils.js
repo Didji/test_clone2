@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Utils', UtilsFactory );
 
-    UtilsFactory.$inject = ["$http", "Storage", "$window", "SQLite"];
+    UtilsFactory.$inject = ["$http", "Storage", "$window", "SQLite", "$rootScope"];
 
-    function UtilsFactory($http, Storage, $window, SQLite) {
+    function UtilsFactory($http, Storage, $window, SQLite, $rootScope) {
 
         /**
          * @class UtilsFactory
@@ -43,24 +43,6 @@
          */
         Utils.pad = function(number) {
             return (number < 10) ? ('0' + number) : number;
-        };
-
-        /**
-         * @name lol
-         * @param {string} string
-         * @desc Rajoute un LOL au string passé en paramètre
-         */
-        Utils.lol = function(string) {
-            return console.log( string + ", LOL" );
-        };
-
-        /**
-         * @name yo
-         * @param {string} string
-         * @desc Rajoute un 'yo' au string passé en paramètre
-         */
-        Utils.yo = function(string) {
-            return console.log( string + ", yo" );
         };
 
         /**
@@ -154,6 +136,10 @@
          * @desc Clear localStorage
          */
         Utils.reset = function() {
+            if ($rootScope.rights._DONT_REALLY_RESET) {
+                return;
+            }
+
             Utils.clearPersistence();
             for (var val in localStorage) {
                 if (val.indexOf( "LicenseManager" ) !== 0) {
@@ -196,4 +182,4 @@
         return Utils;
     }
 
-})();
+} )();

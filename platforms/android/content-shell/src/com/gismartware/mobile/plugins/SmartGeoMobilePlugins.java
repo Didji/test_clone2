@@ -402,7 +402,7 @@ public class SmartGeoMobilePlugins {
                     + " on database n°" + databaseIndex);
 
 
-                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite);
+                new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite, this.tileToken);
             } catch (Exception e){
                 Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
             }
@@ -501,16 +501,20 @@ public class SmartGeoMobilePlugins {
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site, String token) {
-
         this.tileUrl = url ;
         this.tileUser = user ;
         this.tilePassword = password;
         this.tileSite = site ;
+        this.tileToken = token;
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
         StringBuffer bufUrl = new StringBuffer(url);
-        bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
+        if (token != null && !token.equals("")) {
+            bufUrl.append("&token=").append(token).append("&mobility=true");
+        } else {
+            bufUrl.append("&login=").append(user).append("&pwd=").append(password).append("&forcegimaplogin=true");
+        }
 
         HttpPost req = new HttpPost(bufUrl.toString());
         try {
@@ -536,5 +540,4 @@ public class SmartGeoMobilePlugins {
             Log.d(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
         }
     }
-
 }
