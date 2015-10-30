@@ -17,7 +17,6 @@ module.exports = function(ctx) {
 			if (err) {
 				return console.error('Error while copying resources for signing release artefact...', err);
 			}
-			console.log(ctx);
 		}
 	);
 };
