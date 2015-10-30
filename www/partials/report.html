@@ -23,7 +23,7 @@
                         <b class="ro-label">{{::field.label}}</b>
                         <span class="ro-value">{{::reportController.report.roFields[field.id]}}</span>
                     </p>
-                    <p ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" ng-class="{'isconsequence': field.visible}">
+                    <div class="form-group" ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" ng-class="{'isconsequence': field.visible}">
                         <label class="control-label" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && reportController.report.fields[field.id] === 'Y') }">
                             <span>{{::field.label}}</span>
                             <span class="required-marker fa fa-asterisk" ng-show="field.required"></span>
@@ -69,7 +69,7 @@
 
                         <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required" class="form-control" ng-model='reportController.report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
 
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>

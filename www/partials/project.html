@@ -35,7 +35,7 @@
         </div>
     </div>
     <p ng-if="!projectController.loading && projectController.projects.length === 0" class="no-projects"><i18n>_NO_PROJECTS_</i18n></p>
-    <button class="btn btn-block btn-load-project" ng-disabled="projectController.loading" ng-click="projectController.getRemoteProjects()">
+    <button class="btn btn-primary btn-block btn-load-project" ng-disabled="projectController.loading" ng-click="projectController.getRemoteProjects()">
     	<i ng-if="projectController.loading" class="fa fa-refresh fa-spin"></i>
         <i18n ng-if="projectController.projects.length === 0">_PROJECTS_GET_PROJECT_</i18n>
         <i18n ng-if="projectController.projects.length !== 0">_PROJECTS_REFRESH_PROJECT_</i18n>

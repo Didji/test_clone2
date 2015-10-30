@@ -45,7 +45,7 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             scope.root.isProject = true;
                         } else {
                             window.root = scope.root = scope.node = new ComplexAsset( okey );
-                            scope.defaultClassIndex = scope.classindex || "0";
+                            scope.defaultClassIndex = "0";
                             scope.root.isProject = false;
                         }
                     }
@@ -132,11 +132,12 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 scope.drawLine = function(node) {
 
                     function mouseClickHandler(e) {
-                        var clickLatLng = [e.latlng.lat, e.latlng.lng];
+                        var clickLatLng = [e.latlng.lat, e.latlng.lng],
+                            clickLngLat = [e.latlng.lng, e.latlng.lat];
                         if (!node.tmpGeometry) {
-                            node.tmpGeometry = [clickLatLng];
+                            node.tmpGeometry = [clickLngLat];
                         } else {
-                            node.tmpGeometry.push( clickLatLng );
+                            node.tmpGeometry.push( clickLngLat );
                         }
                         if (!scope.lastPointLayer) {
 

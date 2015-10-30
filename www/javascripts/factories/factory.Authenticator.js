@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -34,7 +34,6 @@
          * @desc
          */
         Authenticator.selectSiteRemotely = function(site, success, error) {
-
             if (window.SmartgeoChromium && !Storage.get( 'intent' )) {
                 var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || Storage.get( 'user' );
                 ChromiumCallbacks[16] = function() {};
@@ -82,18 +81,17 @@
             }
             $http.post( url, {}, {
                 timeout: 10000
-            } ).success( function() {
+            } ).success( function(data) {
                 Authenticator._LOGIN_MUTEX = false;
                 if (Site.current) {
                     Authenticator.selectSiteRemotely( Site.current.id, success, error );
                 } else {
-                    (success || angular.noop)();
+                    (success || angular.noop) (data );
                 }
             } ).error( function(response, status) {
                 Authenticator._LOGIN_MUTEX = false;
-                (error || angular.noop)( response, status );
+                (error || angular.noop) ( response, status );
             } );
-
         };
 
         /**
@@ -117,4 +115,4 @@
         return Authenticator;
     }
 
-})();
+} )();

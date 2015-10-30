@@ -992,16 +992,17 @@
 
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
+                        request += " AND (";
+
                         if (device.platform == "Android" && parseInt(device.version) < 5) {
-                            request += " AND LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\' ";
-                        }
-                        else {
-                            if (typeof search.criteria[criter] === "number") {
+                            request += " LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\')";
+                        } else {
+                            if (parseInt(search.criteria[criter]) != 'NaN') {
                                 regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
-                            } else {
-                                regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                                request += "LOWER(asset) REGEXP(" + regex + ") OR ";
                             }
-                            request += " AND LOWER(asset) REGEXP(" + regex + ") ";
+                            regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                            request += "LOWER(asset) REGEXP(" + regex + ")) ";
                         }
                     }
                 }
