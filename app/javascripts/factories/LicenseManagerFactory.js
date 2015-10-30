@@ -11,22 +11,22 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
     var LicenseManager = function() {
 
         return $rootScope.rights = {
-            census: false,
+            census: true,
             consultation: true,
             search: true,
-            logout: false,
-            report: false,
+            logout: true,
+            report: true,
             parameters: true,
-            planning: false,
-            history: false,
+            planning: true,
+            history: true,
             photo: true,
-            project: false,
+            project: true,
             media: true,
             myposition: true,
             activelayers: true,
-            goto: false,
+            goto: true,
             synccenter: true,
-            siteselection: false,
+            siteselection: true,
             _DONT_REALLY_RESET: true
         };
 
