@@ -548,6 +548,9 @@
       if (!!openargs.externalStorage && openargs.externalStorage === 2) {
         openargs.externalStorage = 2;
       }
+      if (!!openargs.customPath && (typeof(openargs.customPath) == "String" || openargs.customPath instanceof String) && openargs.customPath != "" && openargs.customPath != null) {
+        openargs.customPath = openargs.customPath;
+      }
       return new SQLitePlugin(openargs, okcb, errorcb);
     }),
     deleteDb: function(first, success, error) {
@@ -566,6 +569,23 @@
       }
       delete SQLitePlugin.prototype.openDBs[args.path];
       return cordova.exec(success, error, "SQLitePlugin", "delete", [args]);
+    },
+    closedb: function(first, success, error) {
+      var args, dblocation;
+      args = {};
+      if (first.constructor === String) {
+        args.path = first;
+        args.dblocation = dblocations[0];
+      } else {
+        if (!(first && first['name'])) {
+          throw new Error("Please specify db name");
+        }
+        args.path = first.name;
+        dblocation = !!first.location ? dblocations[first.location] : null;
+        args.dblocation = dblocation || dblocations[0];
+      }
+      delete SQLitePlugin.prototype.openDBs[args.path];
+      return cordova.exec(success, error, "SQLitePlugin", "close", [args]);
     }
   };
 
@@ -574,6 +594,7 @@
       isSQLitePlugin: true
     },
     openDatabase: SQLiteFactory.opendb,
+    closeDatabase: SQLiteFactory.closedb,
     deleteDatabase: SQLiteFactory.deleteDb
   };
 
