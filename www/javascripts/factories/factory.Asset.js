@@ -1010,7 +1010,7 @@
                 request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
             }
             if (device.platform == "Android" && parseInt(device.version) >= 5) {
-                sqlitePlugin.closeDatabase({name: zone.database_name});
+                sqlitePlugin.closeDatabase({name: zones[0].database_name});
                 var db = sqlitePlugin.openDatabase({name: zones[0].database_name, androidOldDatabaseImplementation: 2});
             }
             else {
