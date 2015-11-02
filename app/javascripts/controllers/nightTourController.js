@@ -10,7 +10,9 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", "$interval", function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset, $interval) {
+angular.module( 'smartgeomobile' ).controller( 'nightTourController', 
+    ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", "$interval", 
+    function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset, $interval) {
 
         'use strict';
 
@@ -176,7 +178,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.addPositionToTrace = function( /*lat, lng, force*/ ) {
             if (!$scope.mission) {
-                return alertify.error( "Erreur : aucune tournée en cours" );
+                return alertify.error(i18n.get("_NIGHTTOUR_NO_RUNNING_TOUR_"));
             }
             if (!$scope.nightTourRecording) {
                 return;
@@ -208,7 +210,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.addPositionToTrace = function(lat, lng) {
             if (!$scope.mission) {
-                return alertify.error( "Erreur : aucune tournée en cours" );
+                return alertify.error(i18n.get("_NIGHTTOUR_NO_RUNNING_TOUR_"));
             }
             if (!$scope.nightTourRecording) {
                 return;
@@ -247,7 +249,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          * @desc
          */
         $scope.closeNightTour = function() {
-            alertify.confirm( 'Clôturer la tournée de nuit ?', function(yes) {
+            alertify.confirm(i18n.get("_NIGHTTOUR_CLOSE_CONFIRM_"), function(yes) {
                 if (!yes) {
                     return;
                 }
@@ -301,14 +303,11 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
                 }
             }
             $scope.saving = true;
-            console.debug("debut de la sauvegarde arret tournée de nuit");
-            if($scope.ko.guids.length){
-                console.debug("save data KO");
+            if ($scope.ko.guids.length) {
                 $scope.sendReports($scope.ko);
-            }else if($scope.ok.guids.length){
-                console.debug("save data OK");
+            } else if ($scope.ok.guids.length) {
                 $scope.sendReports($scope.ok);
-            }else{
+            } else {
                 $scope.saving = false;
                 $scope.clearAllSubscribeEvent();
                 $route.reload();
@@ -321,17 +320,17 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
          */
         $scope.sendReports = function(obj){
 
-            if(!obj.guids.length){
-                if(obj.status === "OK"){
+            if (!obj.guids.length) {
+                if (obj.status === "OK") {
                     $scope.saving = false;
                     $scope.clearAllSubscribeEvent();
                     $route.reload();
                     return;
-                }else{
+                } else {
                     return;
                 }
             }
-            if($scope.mission){
+            if ($scope.mission) {
                 var report = angular.extend( new Report( obj.guids, $scope.mission.activity.id, $scope.mission.id ), {
                     assets: obj.guids,
                     fields: {},
@@ -394,8 +393,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             }
         }
 
-
-
         /**
          * @memberOf nightTourController
          * @param {object} event        This method is called by event, so first argument is this event
@@ -416,9 +413,9 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
             $rootScope.stopConsultation();
 
             if ($rootScope.nightTourInProgress) {
-                return alertify.error( "Erreur : Une tournée est déjà en cours, impossible de démarrer cette tournée." );
+                return alertify.error(i18n.get("_NIGHTTOUR_ALREADY_RUNNING_TOUR_"));
             } else if (Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
-                return alertify.error( "Erreur : L'activité de cette mission n'est pas une tournée de nuit." );
+                return alertify.error(i18n.get("_NIGHTTOUR_NOT_A_NIGHT_TOUR"));
             }
 
             $scope.activity = Site.current.activities._byId[mission.activity.id];
@@ -496,41 +493,25 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController', ["$scope",
         $scope.secureData = function() {
             if ($scope.assetsCache) {
                 var now = Date.now();
-                   // payloadKO = {status: 'PayloadKO' , guids: []} ,
-                   // payloadOK = {status: 'PayloadOK' , guids: []}  ;
                 for (var i = 0; i < $scope.assetsCache.length; i++) {
                     if (!$scope.assetsCache[i].alreadySent && (now - $scope.assetsCache[i].timestamp) > secureIntervalTime) {
                         if ($scope.assetsCache[i].isWorking) {
-                            //payloadOK.guids.push($scope.assetsCache[i].guid);
                             $scope.payloadOK.guids.push($scope.assetsCache[i].guid);
                         } else {
-                            //payloadKO.guids.push($scope.assetsCache[i].guid);
                             $scope.payloadKO.guids.push($scope.assetsCache[i].guid);
                         }
                         $scope.assetsCache[i].alreadySent = true ;
                     }
                 }
 
-                console.log("début secure data");
-
                 if($scope.payloadKO.guids.length){
-                    console.log("secure data payload KO");
                     $scope.sendReports($scope.payloadKO);
                 }else if($scope.payloadOK.guids.length){
-                    console.log("secure data payload OK");
                     $scope.sendReports($scope.payloadOK);
                 }else{
                     return;
                 }
-
             }
         };
-
-
-
-
-
-
-
     }
 ] );
