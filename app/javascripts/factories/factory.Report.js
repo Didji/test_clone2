@@ -57,9 +57,9 @@
             this.version = window.Smartgeo._SMARTGEO_MOBILE_VERSION ;
             this.uuid = window.uuid();
             this.timestamp = new Date().getTime();
-       /*    if (reportLatLng) {
+            if (reportLatLng) {
                 this.latlng = reportLatLng;
-            }*/
+            }
         }
 
         Report.prototype.getLabel = function() {
