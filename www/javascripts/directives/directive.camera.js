@@ -101,7 +101,7 @@
                                 ctrl.$setValidity( "error", false );
                             }, {
                                 quality: 100,
-                                sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.PHOTOLIBRARY : navigator.camera.PictureSourceType.CAMERA,
+                                sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.SAVEDPHOTOALBUM : navigator.camera.PictureSourceType.CAMERA,
                                 mediaType: navigator.camera.MediaType.PICTURE,
                                 destinationType: navigator.camera.DestinationType.FILE_URI,
                                 correctOrientation: false,

@@ -40,11 +40,12 @@ angular
     window.Smartgeo = Smartgeo ;
 } );
 
-config.$inject = ["$routeProvider", "$httpProvider", "$provide"];
+config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
 
-function config($routeProvider, $httpProvider, $provide) {
+function config($routeProvider, $httpProvider, $provide,$compileProvider) {
 
     "use strict" ;
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|file|blob|cdvfile|content):|data:image\//);
 
     var prefetchPromise = {
         prefetchedlocalsites: ['Site', '$route', function(Site, $route) {
