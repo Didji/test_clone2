@@ -90,8 +90,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         };
 
         //on initialise les tableau de cache
-        $scope.payloadKO = {status: 'PayloadKO' , guids: []} ;
-        $scope.payloadOK = {status: 'PayloadOK' , guids: []} ;
+        $scope.payloadKO = {status: 'PayloadKO' , guids: []};
+        $scope.payloadOK = {status: 'PayloadOK' , guids: []};
         $scope.ok = {status : 'OK' , guids : []};
         $scope.ko = {status : 'KO' , guids : []};
 
@@ -101,14 +101,14 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         */
 
         //quand retour promesse rapport ko,; envoyé rapport ok; et vider tableau des objet ok en cache;
-        var clearPromiseKO = $rootScope.$on("returnNewReportSynchronizatorPromiseKO",function(){
+        var clearPromiseKO = $rootScope.$on("returnNewReportSynchronizatorPromiseKO", function() {
             $scope.sendReports($scope.ok);
             console.log("[NIGHTTOUR] CRs saved, ko=" + $scope.ko.guids);
             $scope.ko.guids = [];
         });
 
         //quand retour promesse rapport ok; vider tableau des objet ko en cache; recharger page et vider les variables d'abonnement.
-        var clearPromiseOK = $rootScope.$on("returnNewReportSynchronizatorPromiseOK",function(){
+        var clearPromiseOK = $rootScope.$on("returnNewReportSynchronizatorPromiseOK", function() {
             console.log("[NIGHTTOUR] CRs saved, ok=" + $scope.ok.guids);
             $scope.ok.guids = [];
             $scope.saving = false;
@@ -117,14 +117,14 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         });
 
         //quand retour promesse rapport payloadko;envoyé rapport payload ok; vider tableau des objet payloadKo en cache;
-       var clearPromisePayloadKO = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadKO",function(){
+       var clearPromisePayloadKO = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadKO", function() {
             console.log("[NIGHTTOUR] CRs secured, payloadko=" + $scope.payloadKO.guids);
             $scope.sendReports($scope.payloadOK);
             $scope.payloadKO.guids = [];
         });
 
         //quand retour promesse rapport payloadok; vider tableau des objet payloadKo en cache;
-        var clearPromisePayloadOK = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadOK",function(){
+        var clearPromisePayloadOK = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadOK", function() {
             console.log("[NIGHTTOUR] CRs secured, payloadok=" + $scope.payloadOK.guids);
             $scope.payloadOK.guids = [];
         });
@@ -134,7 +134,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @description supprime tout les abonnements sur les événements .
          */
 
-        $scope.clearAllSubscribeEvent = function(){
+        $scope.clearAllSubscribeEvent = function() {
             $scope.$on('$destroy', function() {
                 clearPromisePayloadKO();
                 clearPromisePayloadOK();
@@ -149,7 +149,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          */
         $scope.startFollowingPosition = function() {
             $scope.stopFollowingPosition();
-            GPS.startWatchingPosition( $scope.whereIAm );
+            GPS.startWatchingPosition($scope.whereIAm);
         };
 
         /**
@@ -157,8 +157,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @desc
          */
         $scope.stopFollowingPosition = function() {
-            $rootScope.$broadcast( '__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission );
-            GPS.stopWatchingPosition( $scope.whereIAm );
+            $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
+            GPS.stopWatchingPosition($scope.whereIAm);
         };
 
         /**
@@ -166,8 +166,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @desc
          */
         $scope.whereIAm = function(lng, lat) {
-            $rootScope.$broadcast( '__MAP_HIGHTLIGHT_MY_POSITION', lat, lng );
-            $scope.addPositionToTrace( lat, lng );
+            $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
+            $scope.addPositionToTrace(lat, lng);
         };
 
         /**
