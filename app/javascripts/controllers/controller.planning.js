@@ -405,23 +405,22 @@
                     }
                     var i, assetsLength;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
-                    if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] &&
-                            window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
-                        for (i = 0, assetsLength = assets.length; i < assetsLength; i++) {
-                            if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
-                                assetsCache[mission.id].push( assets[i] );
-                            }
+
+                    for (i = 0, assetsLength = assets.length; i < assetsLength; i++) {
+                        if (!assetsCache[mission.id]._byId || !assetsCache[mission.id]._byId[assets[i].guid]) {
+                            assetsCache[mission.id].push( assets[i] );
                         }
-                        assetsCache[mission.id]._byId = {};
-                        for (i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
-                            assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
-                        }
-                    } else {
-                        mission.activity.isNightTour = true;
-                        var traces = Storage.get( 'traces' ) || [];
-                        mission.trace = traces[mission.id];
-                        $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
                     }
+                    assetsCache[mission.id]._byId = {};
+                    for (i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
+                        assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
+                    }
+
+                    mission.activity.isNightTour = true;
+                    var traces = Storage.get( 'traces' ) || [];
+                    mission.trace = traces[mission.id];
+                    $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
+
                     angular.extend( mission, {
                         selectedAssets: 0,
                         extent: G3ME.getExtentsFromAssetsList( assets ),
@@ -507,7 +506,7 @@
          * @desc
          */
         function launchNightTour(mission) {
-            $rootScope.$broadcast('START_NIGHT_TOUR', mission);
+            $rootScope.$broadcast('START_NIGHT_TOUR', mission, assetsCache[mission.id]);
         }
 
 
@@ -517,10 +516,7 @@
          * @desc
          */
         function highlightMission(mission) {
-            if (!(mission.activity && window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id] &&
-                window.SMARTGEO_CURRENT_SITE.activities._byId[mission.activity.id].type === "night_tour")) {
-                $rootScope.$broadcast( 'HIGHLIGHT_ASSETS_FOR_MISSION', mission, assetsCache[mission.id], null, markerClickHandler );
-            }
+            $rootScope.$broadcast( 'HIGHLIGHT_ASSETS_FOR_MISSION', mission, assetsCache[mission.id], null, markerClickHandler );
         }
 
         /**

@@ -390,22 +390,29 @@
          * @desc
          */
         Synchronizator.newReportSynchronizator = function(report, callback) {
-            report.syncInProgress = true;
-            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
-                timeout: 3e6
-            } ).success( function(data) {
-                if (data.cri && data.cri.length) {
-                    report.synced = true;
-                    report.error = undefined;
-                } else {
-                    report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
-                }
-            } ).error( function(data) {
-                report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
-            } ).finally( function() {
-                report.syncInProgress = false;
-                report.save( callback );
-            } );
+
+
+                report.syncInProgress = true;
+                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
+                    timeout: 3e6
+                } ).success( function(data) {
+                    if (data.cri && data.cri.length) {
+                        report.synced = true;
+                        report.error = undefined;
+                    } else {
+                        report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
+                    }
+
+                } ).error( function(data) {
+                    report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
+                } ).finally( function(data) {
+                    report.syncInProgress = false;
+                    report.save( callback );
+                    if(report.status){
+                        $rootScope.$broadcast("returnNewReportSynchronizatorPromise" + report.status, data);
+                    }
+                } );
+
         };
 
         /**
