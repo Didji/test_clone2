@@ -29,55 +29,55 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
 
             $scope._DRAG_THRESHOLD = 50;
 
-            $scope._OK_ASSET_ICON = L.icon( {
+            $scope._OK_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-ok.png',
                 iconSize: [65, 89],
                 iconAnchor: [32, 89]
-            } );
-            $scope._KO_ASSET_ICON = L.icon( {
+            });
+            $scope._KO_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-ko.png',
                 iconSize: [65, 89],
                 iconAnchor: [32, 89]
-            } );
-            $scope._DONE_ASSET_ICON = L.icon( {
+            });
+            $scope._DONE_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-done.png',
                 iconSize: [30, 42],
                 iconAnchor: [15, 42]
-            } );
+            });
 
             $rootScope.nightTourInProgress = false;
             $scope.state = 'closed';
-            $scope.$on( "START_NIGHT_TOUR", $scope.startNightTour );
+            $scope.$on("START_NIGHT_TOUR", $scope.startNightTour);
 
-            $scope.$watch( 'nightTourInProgress', function(newval, oldval) {
+            $scope.$watch('nightTourInProgress', function(newval, oldval) {
                 if (!!newval) {
                     $scope.startFollowingPosition();
                     $scope.open();
                 } else {
                     $scope.stopFollowingPosition();
                     if (oldval === true) {
-                        $rootScope.$broadcast( '_MENU_CLOSE_' );
+                        $rootScope.$broadcast('_MENU_CLOSE_');
                     }
                 }
             } );
 
-            angular.element( $window ).bind( "resize", function() {
+            angular.element($window).bind("resize", function() {
                 if ($rootScope.nightTourInProgress && $scope.state === 'open') {
                     $scope.close();
                     $scope.open();
                 }
-            } );
+            });
 
             $scope.$on("TOGGLE_ASSET_MARKER_FOR_NIGHT_TOUR", $scope.toggleAsset);
 
             $scope.$watch('nightTourRecording', function(newval) {
                 $scope.isFollowingMe = newval;
-            } );
+            });
             $scope.$watch('isFollowingMe', function(newval) {
                 $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
-            } );
+            });
 
-            G3ME.map.on( 'dragend', function(event) {
+            G3ME.map.on('dragend', function(event) {
                 if (event.distance > $scope._DRAG_THRESHOLD) {
                     $scope.isFollowingMe = false;
                     if (!$scope.$$phase) {
@@ -90,10 +90,10 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         };
 
         //on initialise les tableau de cache
-        $scope.payloadKO = {status: 'PayloadKO' , guids: []};
-        $scope.payloadOK = {status: 'PayloadOK' , guids: []};
-        $scope.ok = {status : 'OK' , guids : []};
-        $scope.ko = {status : 'KO' , guids : []};
+        $scope.payloadKO = {status: 'PayloadKO', guids: []};
+        $scope.payloadOK = {status: 'PayloadOK', guids: []};
+        $scope.ok = {status: 'OK', guids: []};
+        $scope.ko = {status: 'KO', guids: []};
 
         /*
         //Abonnements aux evenements
