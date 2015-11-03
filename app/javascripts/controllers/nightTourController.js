@@ -394,7 +394,13 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @desc
          */
         $scope.startNightTour = function(event, mission, assetsCache) {
+            if ($rootScope.nightTourInProgress) {
+                return alertify.error(i18n.get("_NIGHTTOUR_ALREADY_RUNNING_TOUR_"));
+            } else if (Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
+                return alertify.error(i18n.get("_NIGHTTOUR_NOT_A_NIGHT_TOUR"));
+            }
             console.debug("[NIGHTTOUR] Start mission " + mission.id);
+            
             if (secureInterval) {
                 $interval.cancel(secureInterval);
             }
@@ -404,12 +410,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
             }, secureIntervalTime);
 
             $rootScope.stopConsultation();
-
-            if ($rootScope.nightTourInProgress) {
-                return alertify.error(i18n.get("_NIGHTTOUR_ALREADY_RUNNING_TOUR_"));
-            } else if (Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
-                return alertify.error(i18n.get("_NIGHTTOUR_NOT_A_NIGHT_TOUR"));
-            }
 
             $scope.activity = Site.current.activities._byId[mission.activity.id];
             $scope.assetsCache = assetsCache;
