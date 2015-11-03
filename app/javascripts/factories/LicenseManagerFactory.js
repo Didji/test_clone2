@@ -27,7 +27,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             goto: true,
             synccenter: true,
             siteselection: true,
-            _DONT_REALLY_RESET: true
+            _DONT_REALLY_RESET: false
         };
 
         if (!this.__isDeviceRegistered()) {
