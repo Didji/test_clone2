@@ -405,7 +405,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 $interval.cancel(secureInterval);
             }
 
-            secureInterval = $interval( function() {
+            secureInterval = $interval(function() {
                 $scope.secureData();
             }, secureIntervalTime);
 
