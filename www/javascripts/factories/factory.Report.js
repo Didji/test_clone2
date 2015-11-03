@@ -29,23 +29,25 @@
         function Report(assets, activity, mission) {
             var reportTargets = [],
                 reportLatLng, match;
-            if ( (match = ("" + assets).match( /^(\d+);(-?\d+.\d+),(-?\d+.\d+)$/ )) ) {
+            if ((match = ("" + assets).match(/^(\d+);(-?\d+.\d+),(-?\d+.\d+)$/))) {
                 reportTargets = match[0];
-            } else if ( (match = ("" + assets).match( /^([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
-                reportLatLng = match[0];
-            } else if ( "string" === typeof assets ) {
-                reportTargets = assets.split( '!' );
+            } else if ("string" === typeof assets) {
+                if (match = assets.match(/^\s*([-+]?\d+[.]?\d+)\s*,\s*([-+]?\d+[.]?\d+)\s*$/)) {
+                    reportLatLng = match[0];
+                } else {
+                    reportTargets = assets.split('!');
+                }
             } else {
                 reportTargets = assets ;
             }
-            if (mission && ("" + mission).indexOf( 'call-' ) !== -1) {
+            if (mission && ("" + mission).indexOf('call-') !== -1) {
                 this.isCall = true;
                 mission = mission.substr( 5 );
             }
 
             this.assets = reportTargets;
 
-            this.activity = Activity.findOne( activity );
+            this.activity = Activity.findOne(activity);
             this.activity.tabs[0].show = true;
 
             if (mission) {
@@ -84,5 +86,4 @@
 
         return Report;
     }
-
 })();
