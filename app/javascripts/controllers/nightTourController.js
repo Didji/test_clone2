@@ -312,7 +312,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @memberOf nightTourController
          * @desc
          */
-        $scope.sendReports = function(obj){
+        $scope.sendReports = function(obj) {
 
             if (!obj.guids.length) {
                 if (obj.status === "OK") {
@@ -333,12 +333,11 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 });
                 applyDefaultValues(report, $scope.activity);
                 var tmp = angular.copy(report);
-                obj.status = obj.status.replace('payload','');
+                obj.status = obj.status.replace('payload', '');
                 tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour[obj.status + "_value"];
                 tmp.activity = tmp.activity.id;
                 Synchronizator.addNew(tmp);
             }
-
         };
 
         function applyDefaultValues(report, act) {
