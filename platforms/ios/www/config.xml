@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.gismartware.smartgeo.mobile" version="0.13.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.gismartware.smartgeo.mobile" version="1.2.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Smartgeo</name>
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="BackupWebStorage" value="cloud" />
@@ -34,7 +34,7 @@
     <feature name="Vibration">
         <param name="ios-package" value="CDVVibration" />
     </feature>
-    <author email="glorini@gismartware.com" href="http://www.gismartware.com">
+    <author email="dev@gismartware.com" href="http://www.gismartware.com">
         GiSmartware Team
     </author>
     <content src="index.html" />

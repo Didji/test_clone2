@@ -55,6 +55,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import com.gismartware.mobile.util.FileUtils;
 
@@ -177,6 +178,7 @@ public class GimapMobileMainActivity extends Activity {
         }
 
         setContentView(R.layout.content_shell_activity);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mShellManager = (ShellManager) findViewById(R.id.shell_container);
         mWindowAndroid = new WindowAndroid(this);
         mWindowAndroid.restoreInstanceState(savedInstanceState);
@@ -422,7 +424,9 @@ public class GimapMobileMainActivity extends Activity {
                         cursor.close();
                     }
                     // On retourne la photo si jamais elle n'est pas dans le bon sens.
-                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath);//, options);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 2;
+                    Bitmap bm = BitmapFactory.decodeFile(lastPicturePath, options);
                     ExifInterface exif = new ExifInterface(lastPicturePath);
                     String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
                     int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
@@ -558,10 +562,11 @@ public class GimapMobileMainActivity extends Activity {
 						if (composite) {
 							url.append(matcher.group(2));
 						}
-						url.append("=");
-						if (param.length > 1) {
-							url.append(param[1]);
-						}
+                        if(param.length <= 1){
+                            url.append("=").append("");
+                        }else {
+                            url.append("=").append(param[1]);
+                        }
 
 						//ajout du "&" si plusieurs paramètres cible pour le paramètre source courant
 						if (j < (destParams.length - 1)) {
