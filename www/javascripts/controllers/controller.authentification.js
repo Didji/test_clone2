@@ -32,6 +32,7 @@
         vm.errorMessage = "";
         vm.loginInProgress = false;
 
+
         activate();
 
         /**
@@ -39,6 +40,8 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
+
+            Utils.clearPersistence();
 
             $rootScope.currentPage = "Authentification";
 
