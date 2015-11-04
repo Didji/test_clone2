@@ -1,7 +1,7 @@
 <form name="reportForm" class="reportForm" >
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
     <button type="button" class="btn btn-default needPadding" ng-click="reportController.cancel()">
-        <i class="fa fa-times"></i>
+        <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
@@ -114,7 +114,7 @@
         <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true'></asset-consultation>
     </div>
     <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
-        <i class="fa fa-times"></i>
+        <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
