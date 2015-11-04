@@ -165,7 +165,7 @@
          * @param {Event} e
          */
         function mapClickHandler(e) {
-            if (!consultationIsEnabled && !$rootScope.nightTourInProgress) {
+            if (!consultationIsEnabled) {
                 return false;
             }
 
@@ -176,15 +176,11 @@
                     weight: 1
                 }).addTo(G3ME.map);
 
-            if (!$rootScope.nightTourInProgress) {
-                $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
-            }
+            $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
 
             Asset.findInBounds(coords, circle.getBounds(), function (assets) {
                 if (!assets.length) {
                     noConsultableAssets(coords);
-                } else if ($rootScope.nightTourInProgress) {
-                    $rootScope.$broadcast("mapClickHandlerForNighttour", assets);
                 } else {
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 }

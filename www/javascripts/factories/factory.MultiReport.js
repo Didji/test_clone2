@@ -79,6 +79,9 @@
                 }
             }
             for (reportValue in intent.multi_report_reports) {
+                if (angular.isObject(intent.multi_report_reports[reportValue].activity)) {
+                    intent.multi_report_reports[reportValue].activity = intent.multi_report_reports[reportValue].activity.id;
+                }
                 Synchronizator.addNew( intent.multi_report_reports[reportValue] );
             }
             if (intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
