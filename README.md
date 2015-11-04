@@ -30,3 +30,13 @@ Build sur android ou sur émulateur:
 cordova platform add android
 
 cordova run android (ou cordova build android)
+
+Si le build marche mais que l'installation ne marche pas, désinstaller l'application du téléphone et faite:
+
+cordova run android --nobuild
+
+Les forks du plugin sqlite:
+
+Le plugin normal: https://github.com/Diliz/Cordova-sqlite-storage
+
+La version entreprise: https://github.com/Diliz/Cordova-sqlite-enterprise-free

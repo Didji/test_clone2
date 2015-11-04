@@ -344,21 +344,21 @@
                 return callback( [] );
             } else if (G3ME.active_layers) {
                 //Actually using like option until the regexp one is available on android
-                if (device.platform == "Android" && parseInt(device.version) < 5) {
+                // if (device.platform == "Android" && parseInt(device.version) < 5) {
                     request += ' and (symbolId LIKE "' + G3ME.active_layers.join( '%" OR symbolId LIKE "' ) + '%")';
-                }
-                else {
-                    request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
-                }
+                // }
+                // else {
+                //     request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
+                // }
             }
             request += " order by priority LIMIT 0,100 ";
-            if (device.platform == "Android" && parseInt(device.version) >= 5) {
-                sqlitePlugin.closeDatabase({name: zone.database_name});
-                var db = sqlitePlugin.openDatabase({name: zone.database_name, androidOldDatabaseImplementation: 2});
-            }
-            else {
+            // if (device.platform == "Android" && parseInt(device.version) >= 5) {
+            //     sqlitePlugin.closeDatabase({name: zone.database_name});
+            //     var db = sqlitePlugin.openDatabase({name: zone.database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
+            // }
+            // else {
                 var db = sqlitePlugin.openDatabase({name: zone.database_name});
-            }
+            // }
             db.transaction(function(tx) {
                 tx.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom], function(tx, results) {
                     var assets = [];
@@ -982,12 +982,12 @@
 
             if (!request) {
                 // Regexp not available on android < 5 for now
-                if (device.platform == "Android" && parseInt(device.version) < 5) {
+                // if (device.platform == "Android" && parseInt(device.version) < 5) {
                     request = 'SELECT * FROM assets WHERE symbolid LIKE \'' + search.okey + '%\' ';
-                }
-                else {
-                    request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
-                }
+                // }
+                // else {
+                //     request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
+                // }
 
                 var regex;
 
@@ -995,27 +995,30 @@
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
                         request += " AND (";
 
-                        if (device.platform == "Android" && parseInt(device.version) < 5) {
-                            request += " LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\')";
-                        } else {
+                        // if (device.platform == "Android" && parseInt(device.version) < 5) {
                             if (parseInt(search.criteria[criter]) != 'NaN') {
-                                regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\}].*'";
-                                request += "LOWER(asset) REGEXP(" + regex + ") OR ";
+                                request += " LOWER(asset) GLOB \'*\"" + criter.toLowerCase() + "\":[" + search.criteria[criter] + "][,\\}]*\' OR ";
                             }
-                            regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
-                            request += "LOWER(asset) REGEXP(" + regex + ")) ";
-                        }
+                            request += " LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\')";
+                        // } else {
+                        //     if (parseInt(search.criteria[criter]) != 'NaN') {
+                        //         regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\\\}].*'";
+                        //         request += "LOWER(asset) REGEXP(" + regex + ") OR ";
+                        //     }
+                        //     regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
+                        //     request += "LOWER(asset) REGEXP(" + regex + ")) ";
+                        // }
                     }
                 }
                 request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
             }
-            if (device.platform == "Android" && parseInt(device.version) >= 5) {
-                sqlitePlugin.closeDatabase({name: zones[0].database_name});
-                var db = sqlitePlugin.openDatabase({name: zones[0].database_name, androidOldDatabaseImplementation: 2});
-            }
-            else {
+            // if (device.platform == "Android" && parseInt(device.version) >= 5) {
+            //     sqlitePlugin.closeDatabase({name: zones[0].database_name});
+            //     var db = sqlitePlugin.openDatabase({name: zones[0].database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
+            // }
+            // else {
                 var db = sqlitePlugin.openDatabase({name: zones[0].database_name});
-            }
+            // }
             db.transaction(function(tx) {
                 tx.executeSql(request, [], function(tx, results) {
                     for (var i = 0; i < results.rows.length; i++) {
