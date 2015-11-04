@@ -37,5 +37,5 @@ cordova run android --nobuild
 
 Les forks du plugin sqlite:
 
-https://github.com/Diliz/Cordova-sqlite-storage
-https://github.com/Diliz/Cordova-sqlite-enterprise-free
+Le plugin normal: https://github.com/Diliz/Cordova-sqlite-storage
+La version entreprise: https://github.com/Diliz/Cordova-sqlite-enterprise-free
