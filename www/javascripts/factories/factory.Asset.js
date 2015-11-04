@@ -357,34 +357,32 @@
             //     var db = sqlitePlugin.openDatabase({name: zone.database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
             // }
             // else {
-                var db = sqlitePlugin.openDatabase({name: zone.database_name});
+                // var db = sqlitePlugin.openDatabase({name: zone.database_name});
             // }
-            db.transaction(function(tx) {
-                tx.executeSql(request, [xmin, xmax, ymin, ymax, zoom, zoom], function(tx, results) {
-                    var assets = [];
-                    for (var i = 0, numRows = results.rows.length; i < numRows && assets.length < 10; i++) {
-                        var asset = new Asset( Asset.convertRawRow( results.rows.item( i ) ), $.noop, true );
-                        if (asset.intersectsWithCircle( center, 40 )) {
-                            assets.push( asset );
-                        }
+            SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(rows){
+                var assets = [];
+                for (var i = 0, numRows = rows.length; i < numRows && assets.length < 10; i++) {
+                    var asset = new Asset( Asset.convertRawRow( rows.item( i ) ), $.noop, true );
+                    if (asset.intersectsWithCircle( center, 40 )) {
+                        assets.push( asset );
                     }
-                    // Bug de tri arrangé, voir si cela est suffisant ou pas
-                    if (assets[0] && (!isNaN(parseFloat(assets[0].label)) && isFinite(assets[0].label))) {
-                        assets.sort( function(a, b) {
-                            return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
-                        });
-                    }
-                    else {
-                        assets.sort(function(a, b){
-                            if (a.label.toLowerCase() < b.label.toLowerCase())
-                                return -1;
-                            if (a.label.toLowerCase() > b.label.toLowerCase())
-                                return 1;
-                            return 0;
-                        });
-                    }
-                    return callback( assets );
-                });
+                }
+                // Bug de tri arrangé, voir si cela est suffisant ou pas
+                if (assets[0] && (!isNaN(parseFloat(assets[0].label)) && isFinite(assets[0].label))) {
+                    assets.sort( function(a, b) {
+                        return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
+                    });
+                }
+                else {
+                    assets.sort(function(a, b){
+                        if (a.label.toLowerCase() < b.label.toLowerCase())
+                            return -1;
+                        if (a.label.toLowerCase() > b.label.toLowerCase())
+                            return 1;
+                        return 0;
+                    });
+                }
+                return callback( assets );
             });
         };
 
@@ -1017,19 +1015,17 @@
             //     var db = sqlitePlugin.openDatabase({name: zones[0].database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
             // }
             // else {
-                var db = sqlitePlugin.openDatabase({name: zones[0].database_name});
+                // var db = sqlitePlugin.openDatabase({name: zones[0].database_name});
             // }
-            db.transaction(function(tx) {
-                tx.executeSql(request, [], function(tx, results) {
-                    for (var i = 0; i < results.rows.length; i++) {
-                        var asset = results.rows.item( i );
+            SQLite.exec( zones[0].database_name, request, [], function(rows){
+                for (var i = 0; i < rows.length; i++) {
+                        var asset = rows.item( i );
                         try {
                             asset.okey = Asset.sanitizeAsset( asset.asset ).okey;
                         } catch ( e ) {}
                         partial_response.push( asset );
                     }
                     Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
-                });
             });
         };
 

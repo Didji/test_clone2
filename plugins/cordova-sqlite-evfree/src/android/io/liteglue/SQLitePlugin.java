@@ -197,21 +197,30 @@ public class SQLitePlugin extends CordovaPlugin {
             // [should be true according to the code in DBRunner.run()]
 
             File dbfile;
+            File[] extDirs;
+            String pathDir;
             String state = android.os.Environment.getExternalStorageState();
             if (!cpath.isEmpty() && cpath != null) {
                 dbfile = new File(cpath, dbname);
             }
             else {
-                if (android.os.Environment.MEDIA_MOUNTED.equals(state) && external == 1) {
-                    dbfile = new File(this.cordova.getActivity().getExternalCacheDir(), dbname);
-                }
-                else if (android.os.Environment.MEDIA_MOUNTED.equals(state) && external == 2){
-                    dbfile = new File(this.cordova.getActivity().getExternalFilesDir(null), dbname);
-                }
-                else {
+                if (android.os.Environment.MEDIA_MOUNTED.equals(state) && external > 0) {
+                    if (external == 1) {
+                        extDirs = this.cordova.getActivity().getExternalCacheDirs();
+                    } else {
+                        extDirs = this.cordova.getActivity().getExternalFilesDirs(null);
+                    }
+                    if (extDirs.length > 1) {
+                        pathDir = extDirs[1].getAbsolutePath();
+                    } else {
+                        pathDir = extDirs[0].getAbsolutePath();
+                    }
+                    dbfile = new File(pathDir, dbname);
+                } else {
                     dbfile = this.cordova.getActivity().getDatabasePath(dbname);
                 }
             }
+
 
             if (!dbfile.exists()) {
                 dbfile.getParentFile().mkdirs();
