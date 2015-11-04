@@ -29,6 +29,9 @@
          */
         function activate() {
 
+
+
+
             $rootScope.currentPage = "Cartographie";
 
             if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
@@ -42,6 +45,7 @@
                 .on('click', mapClickHandler)
                 .on('dragend', dragEndHandler)
                 .addControl(Utils.makeControl(i18n.get('_MAP_REFERENCE_VIEW_CONTROL'), "fa-arrows-alt", setReferenceView));
+            setReferenceView();
 
             Authenticator.silentLogin(G3ME.BackgroundTile.redraw);
 
