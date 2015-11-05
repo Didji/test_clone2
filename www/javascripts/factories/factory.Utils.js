@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Utils', UtilsFactory );
 
-    UtilsFactory.$inject = ["$http", "Storage", "$window", "SQLite", "$rootScope", "G3ME"];
+    UtilsFactory.$inject = ["$http", "Storage", "$window", "SQLite", "$rootScope"];
 
-    function UtilsFactory($http, Storage, $window, SQLite, $rootScope, G3ME) {
+    function UtilsFactory($http, Storage, $window, SQLite, $rootScope) {
 
         /**
          * @class UtilsFactory
@@ -34,8 +34,6 @@
             if (missions) {
                 Storage.set( 'missions_' + (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )].username, missions );
             }
-            //reset the extent map when change site
-            G3ME.map = null;
         };
 
         /**
