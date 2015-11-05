@@ -9,3 +9,5 @@ hooks
 plugins/android.json
 plugins/ios.json
 build
+.idea
+*.iml

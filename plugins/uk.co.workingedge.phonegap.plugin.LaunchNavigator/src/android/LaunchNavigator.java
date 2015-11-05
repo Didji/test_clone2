@@ -144,9 +144,6 @@ public class LaunchNavigator extends CordovaPlugin {
 			Log.d(LOG_TAG, logMsg);
 
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-			if(!turnByTurnMode){
-				intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-			}
 			this.cordova.getActivity().startActivity(intent);
 			result = true;
 		}catch( JSONException e ) {
