@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'AuthController', AuthController );
 
-    AuthController.$inject = ["$rootScope", "$location", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites", "Utils", "Authenticator"];
+    AuthController.$inject = ["$rootScope", "$location", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites", "Utils", "Authenticator","G3ME"];
 
     /**
      * @class AuthController
@@ -19,7 +19,7 @@
      * @property {Boolean}  loginInProgress Authentification en cours ?
      */
 
-    function AuthController($rootScope, $location, Storage, i18n, $route, $http, prefetchedlocalsites, Utils, Authenticator) {
+    function AuthController($rootScope, $location, Storage, i18n, $route, $http, prefetchedlocalsites, Utils, Authenticator, G3ME) {
 
         var vm = this;
 
@@ -42,6 +42,8 @@
         function activate() {
 
             Utils.clearPersistence();
+            //reset the extent map when change site
+            G3ME.map = null;
 
             $rootScope.currentPage = "Authentification";
 

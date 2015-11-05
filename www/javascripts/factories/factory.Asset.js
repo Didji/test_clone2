@@ -327,7 +327,6 @@
             request += " FROM ASSETS WHERE NOT ( xmax < ? OR xmin > ? OR ymax < ? OR ymin > ?) ";
             request += " AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
 
-            console.log("info selection");
             for (var i = 0, length_ = Site.current.zones.length; i < length_; i++) {
                 if (G3ME.extents_match( Site.current.zones[i].extent, {
                         xmin: xmin,
@@ -872,7 +871,7 @@
             if (guids.length === 0) {
                 return callback( partial_response );
             } else {
-                Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ), function(assets) {
+                Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ),function(assets) {
                     Asset.findGeometryByGuids_big( guids.slice( Asset.__maxIdPerRequest ), callback, partial_response.concat( assets ) );
                 } );
             }

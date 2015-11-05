@@ -45,9 +45,11 @@
 
             if (vm.assets) {
                 Asset.emptyCache([vm.assets]);
-                var asset = new Asset( vm.assets.split('!')[0], function(newAsset) {
+                var asset = new Asset(vm.assets.split('!')[0], function(newAsset) {
                     vm.activities = $filter('activityListFilter')(newAsset);
-                    $scope.$digest();
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 });
             } else if (vm.latlng) {
                 vm.activities = Activity.getAll();
