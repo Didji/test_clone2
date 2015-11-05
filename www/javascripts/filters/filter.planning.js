@@ -150,7 +150,8 @@
                     continue;
                 }
                 var isCompatible = Site.current.activities._byId[+in_[i].activity.id].okeys[0] === asset.okey;
-                if (isCompatible && in_[i].openned) {
+                var nightTour = Site.current.activities._byId[+in_[i].activity.id].type !== "night_tour";
+                if (isCompatible && in_[i].openned && nightTour) {
                     out.push( in_[i] );
                 }
             }
