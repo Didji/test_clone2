@@ -71,6 +71,13 @@
                     for (var id in tmpsites) {
                         vm.sites.push( tmpsites[id] );
                     }
+                    vm.sites.sort(function(a, b){
+                        if (a.label.toLowerCase() < b.label.toLowerCase())
+                            return -1;
+                        if (a.label.toLowerCase() > b.label.toLowerCase())
+                            return 1;
+                        return 0;
+                    });
                     vm.ready = true;
                 } ).error( function() {
                 // Pour que les filtres fonctionnent, il nous faut un simple tableau.
@@ -78,6 +85,13 @@
                 for (var id in knownSites) {
                     vm.sites.push( knownSites[id] );
                 }
+                vm.sites.sort(function(a, b){
+                    if (a.label.toLowerCase() < b.label.toLowerCase())
+                        return -1;
+                    if (a.label.toLowerCase() > b.label.toLowerCase())
+                        return 1;
+                    return 0;
+                });
                 vm.ready = true;
             } );
         }
@@ -95,6 +109,13 @@
             for (var id in knownSites) {
                 vm.sites.push( knownSites[id] );
             }
+            vm.sites.sort(function(a, b){
+                if (a.label.toLowerCase() < b.label.toLowerCase())
+                    return -1;
+                if (a.label.toLowerCase() > b.label.toLowerCase())
+                    return 1;
+                return 0;
+            });
             vm.ready = true;
             Storage.set( 'online', true );
         }

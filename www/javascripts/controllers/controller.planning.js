@@ -402,6 +402,10 @@
                         $rootScope.missions[mission.id] = mission;
                         Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
                         return;
+                    } else {
+                        if(typeof mission.objectNotFound != "undefined") {
+                            delete mission.objectNotFound;
+                        }
                     }
                     var i, assetsLength;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
@@ -700,7 +704,7 @@
          */
         function locateAsset(mission, assetid) {
             Asset.findAssetsByGuids( assetid, function(assets) {
-                G3ME.zoomOnAsset( assets[0] );
+                G3ME.map.setView( assets[0].getCenter(), 18 );
             } );
         }
 
