@@ -402,6 +402,10 @@
                         $rootScope.missions[mission.id] = mission;
                         Storage.set('missions_' + Storage.get('lastUser'), $rootScope.missions || {});
                         return;
+                    } else {
+                        if(typeof mission.objectNotFound != "undefined") {
+                            delete mission.objectNotFound;
+                        }
                     }
                     var i, assetsLength;
                     assetsCache[mission.id] = assetsCache[mission.id] || [];
