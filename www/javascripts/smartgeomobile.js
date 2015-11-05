@@ -3,18 +3,12 @@ angular
     .config( config ).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
 
     "use strict";
+    
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
             window.addEventListener( 'online', Smartgeo._onlineTask, false );
             window.addEventListener( 'offline', Smartgeo._offlineTask, false );
-
-            if (!window.ChromiumCallbacks) {
-                window.ChromiumCallbacks = {};
-            }
-
-            window.ChromiumCallbacks[20] = Smartgeo._onlineTask;
-            window.ChromiumCallbacks[21] = Smartgeo._offlineTask;
         },
 
         _onlineTask: function() {
