@@ -50,8 +50,7 @@
                 </div>
             </div>
         </div>
-
-        <div style="margin-top: 25px;" ng-if="consultationController.rights.report && consultationController.coordinates && consultationController.coordinates.lat && consultationController.coordinates.lng">
+        <div style="margin-top: 25px;" ng-if="consultationController.hasActivities && consultationController.rights.report && consultationController.coordinates && consultationController.coordinates.lat && consultationController.coordinates.lng">
             <button class="btn btn-primary btn-block" ng-click="openLocatedReport(consultationController.coordinates.lat, consultationController.coordinates.lng)">
                 <i18n>_CONSULTATION_REPORT_ON_POSITION</i18n>
             </button>

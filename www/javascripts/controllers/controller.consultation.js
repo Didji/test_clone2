@@ -34,6 +34,7 @@
         vm.deleteAssets = deleteAssets;
 
         vm.metamodel = Site.current.metamodel;
+        vm.hasActivities = Site.current.activities.length > 0;
         vm.siteid = Site.current.id;
         vm.currentLoadedProject = Project.currentLoadedProject ;
         vm.isOpen = false;
