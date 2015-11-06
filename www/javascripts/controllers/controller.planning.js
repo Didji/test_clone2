@@ -137,6 +137,7 @@
                     }
 
                     vm.missions = data.results;
+                    $rootScope.missions = vm.missions;
                     Storage.set( 'missions_' + Storage.get( 'lastUser' ), vm.missions || {} );
                     vm.maxBeginDate = 0;
                     for (i in vm.missions) {
