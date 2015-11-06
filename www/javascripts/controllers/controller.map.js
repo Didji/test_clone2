@@ -28,10 +28,6 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
-
-
-
             $rootScope.currentPage = "Cartographie";
 
             if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
@@ -64,6 +60,10 @@
             $rootScope.stopPosition = stopPosition;
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
+            if ($rootScope.noGps == true) {
+                $rootScope.noGps = false;
+                stopPosition();
+            };
 
             intent = Storage.get('intent');
 
