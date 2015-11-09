@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils","i18n"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils,i18n) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n) {
 
         var vm = this;
 
@@ -178,7 +178,44 @@
             }
             report.activity = report.activity.id;
             report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
+            writeReportToSd(report);
             return report;
+        }
+
+        /**
+         * @name writeReportToSd
+         * @desc écrit le compte rendu dans le dossier reports du cache de l'application
+         * @param {Report} report Le compte rendu a stocker
+         * @returns {Boolean}
+         */
+        function writeReportToSd(report) {
+            window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
+                dir.getDirectory('reports', {create:true}, function(reportDir) {
+                    console.log(reportDir.isDirectory);
+                    reportDir.getFile(report.uuid + ".json", {create:true}, function(file) {
+                        if(!file) return;
+                        file.createWriter(function(fileWriter) {
+                            fileWriter.seek(fileWriter.length);
+                            fileWriter.write(JSON.stringify(report));
+                        }, function(error){});
+                    });
+                });
+            }, function(err){
+                window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
+                    dir.getDirectory('reports', {create:true}, function(reportDir) {
+                        console.log(reportDir.isDirectory);
+                        reportDir.getFile(report.uuid + ".json", {create:true}, function(file) {
+                            if(!file) return;
+                            file.createWriter(function(fileWriter) {
+                                fileWriter.seek(fileWriter.length);
+                                fileWriter.write(JSON.stringify(report));
+                            }, function(error){});
+                        });
+                    });
+                }, function(error){
+                    console.log('testReport: ', error);
+                });
+            });
         }
 
         /**
