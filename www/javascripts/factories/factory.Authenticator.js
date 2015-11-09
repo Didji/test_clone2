@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Authenticator', AuthenticatorFactory );
 
-    AuthenticatorFactory.$inject = ["$http", "Storage", "Site", "Utils", "$rootScope"];
+    AuthenticatorFactory.$inject = ["$http", "Storage", "Site", "Utils"];
 
-    function AuthenticatorFactory($http, Storage, Site, Utils, $rootScope) {
+    function AuthenticatorFactory($http, Storage, Site, Utils) {
 
         /**
          * @class AuthenticatorFactory
@@ -59,7 +59,7 @@
             if (Authenticator._LOGIN_MUTEX) {
                 return (error || angular.noop)();
             }
-            $rootScope.noGps = true;
+
             Authenticator._LOGIN_MUTEX = true;
             var token, url;
             if (typeof password === 'function' || !password) {
