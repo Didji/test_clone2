@@ -33,6 +33,7 @@
         var globalinterval = 1000 * 60;
         var syncAllInterval;
         var checkSyncReportInterval;
+        updateList();
 
         /**
          * @name activate
@@ -65,9 +66,15 @@
             }
             vm.synchronizing = true;
             updateList( function() {
-                Synchronizator.syncItems( vm.syncItems, function() {
-                    vm.synchronizing = false ;
-                } );
+                vm.synchronizing = false ;
+                if(Storage.get("online")===true){
+                    Synchronizator.syncItems( vm.syncItems, function() {
+                            $rootScope.$broadcast("endSynchroniseAll");
+                    });
+                }else{
+                    console.log("Synchronisation en attente de connexion");
+                        $rootScope.$broadcast( 'syncOffline' );
+                }
             } );
         }
 

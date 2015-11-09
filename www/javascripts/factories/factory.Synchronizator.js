@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Synchronizator', SynchronizatorFactory );
 
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "Utils"];
+    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "Utils", "Storage"];
 
 
-    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, Utils) {
+    function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, Utils, Storage) {
 
         /**
          * @class SyncItemFactory
@@ -202,7 +202,11 @@
             var syncItem = new SyncItem( object, action );
             syncItem.save( function() {
                 Synchronizator.log( syncItem );
-                $rootScope.$broadcast( 'synchronizator_new_item' );
+                if(action === "update"){
+                    $rootScope.$broadcast("syncUpdateList");
+                }else{
+                    $rootScope.$broadcast( 'synchronizator_new_item' );
+                }
             } );
         };
 
@@ -259,33 +263,32 @@
          * @desc
          */
         Synchronizator.syncItems = function(items, callback, force) {
-            if (Synchronizator.globalSyncInProgress && !force) {
-                return;
-            }
-
-            Synchronizator.globalSyncInProgress = true ;
-
-            if (items.length === undefined) {
-                items = [items];
-            }
-
-            if (!items.length) {
-                if (Synchronizator.needRefresh) {
-                    G3ME.reloadLayers();
-                    delete Synchronizator.needRefresh;
+                if (Synchronizator.globalSyncInProgress && !force) {
+                    return;
                 }
-                Synchronizator.globalSyncInProgress = false ;
-                return (callback || function() {})();
-            }
-            if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
-                console.info( items[0].action + items[0].type + "Synchronizator", "not found" );
-                return Synchronizator.syncItems( items.slice( 1 ), callback, true );
-            }
 
-            Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
-                Synchronizator.syncItems( items.slice( 1 ), callback, true );
-            } );
+                Synchronizator.globalSyncInProgress = true ;
 
+                if (items.length === undefined) {
+                    items = [items];
+                }
+
+                if (!items.length) {
+                    if (Synchronizator.needRefresh) {
+                        G3ME.reloadLayers();
+                        delete Synchronizator.needRefresh;
+                    }
+                    Synchronizator.globalSyncInProgress = false ;
+                    return (callback || function() {})();
+                }
+                if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
+                    console.info( items[0].action + items[0].type + "Synchronizator", "not found" );
+                    return Synchronizator.syncItems( items.slice( 1 ), callback, true );
+                }
+
+                Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
+                    Synchronizator.syncItems( items.slice( 1 ), callback, true );
+                } );
         };
 
         /**
@@ -402,18 +405,28 @@
                     } else {
                         report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
                     }
-
+                    if(report.status){
+                        console.log("rapport : " + report.status + "synchronisé avec succès");
+                    }
                 } ).error( function(data) {
                     report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
+                        console.log("rapport : " + report.status + " synchronisation non reussie");
                 } ).finally( function(data) {
                     report.syncInProgress = false;
                     report.save( callback );
-                    if(report.status){
-                        $rootScope.$broadcast("returnNewReportSynchronizatorPromise" + report.status, data);
-                    }
+
                 } );
 
         };
+
+        /**
+         * @name updateReportSynchronizator
+         * @desc
+         */
+         Synchronizator.updateReportSynchronizator = function(report, callback) {
+            Synchronizator.newReportSynchronizator( report, callback );
+        };
+
 
         /**
          * @name deleteAll
