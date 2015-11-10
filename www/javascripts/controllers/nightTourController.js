@@ -79,39 +79,32 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
 
             /* synchronisation en ligne en attente des retour d'evenement */
             //il faut d'abord mettre a jour la list puis synchroniser tout les rapport pour etre sur de ne pas manquer un rapport
-            $scope.$on("syncUpdateList", function(){
+            $scope.$on("syncUpdateList", function() {
                 $scope.receivePromise++;
-                if($scope.needNBPromise === $scope.receivePromise){
-                    $rootScope.$broadcast( 'synchronizator_new_item' );
-
-                }else{
+                if ($scope.needNBPromise === $scope.receivePromise) {
+                    $rootScope.$broadcast('synchronizator_new_item');
+                } else {
                     return;
                 }
             });
 
-            $scope.$on("endSynchroniseAll",function(){
-                if($scope.saving === true){
+            $scope.$on("endSynchroniseAll", function() {
+                if ($scope.saving === true) {
                     $scope.saving = false;
                     $route.reload();
-                }else{
-                    console.log("rapport synchronisé");
                 }
             })
 
             /*Synchronisation hors ligne*/
             //il faut mettre a jour la liste des objets a synchroniser
-            $scope.$on("syncOffline", function(){
-
-                if($scope.saving === true){
-                            $scope.saving = false;
-                            $scope.receivePromise = 0;
-                            $scope.needNBPromise = null;
-                            $route.reload();
+            $scope.$on("syncOffline", function() {
+                if ($scope.saving === true) {
+                    $scope.saving = false;
+                    $scope.receivePromise = 0;
+                    $scope.needNBPromise = null;
+                    $route.reload();
                 }
             });
-
-
-
 
             G3ME.map.on('dragend', function(event) {
                 if (event.distance > $scope._DRAG_THRESHOLD) {
@@ -121,7 +114,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                     }
                 }
 
-            } );
+            });
             $scope.saving = false;
         };
 
@@ -290,7 +283,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                         (!!asset.isWorking ? $scope.ok.guids : $scope.ko.guids).push(asset.guid);
                     }
                 }
-            }else{
+            } else {
                 $scope.saving = false;
                 $route.reload();
             }
@@ -299,17 +292,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 $scope.needNBPromise++;
                 $scope.sendReports($scope.ko);
 
-            }else{
-                console.log("aucun élément ko a synchroniser");
             }
 
             if ($scope.ok.guids.length) {
                 $scope.needNBPromise++;
                 $scope.sendReports($scope.ok);
-            }else{
-                console.log("aucun élément ok a synchroniser");
             }
-
         };
 
         /**
@@ -317,7 +305,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @desc
          */
         $scope.sendReports = function(obj) {
-
             if (!obj.guids.length) {
                     return;
                 }

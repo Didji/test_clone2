@@ -263,32 +263,31 @@
          * @desc
          */
         Synchronizator.syncItems = function(items, callback, force) {
-                if (Synchronizator.globalSyncInProgress && !force) {
-                    return;
-                }
+            if (Synchronizator.globalSyncInProgress && !force) {
+                return;
+            }
 
-                Synchronizator.globalSyncInProgress = true ;
+            Synchronizator.globalSyncInProgress = true ;
 
-                if (items.length === undefined) {
-                    items = [items];
-                }
+            if (items.length === undefined) {
+                items = [items];
+            }
 
-                if (!items.length) {
-                    if (Synchronizator.needRefresh) {
-                        G3ME.reloadLayers();
-                        delete Synchronizator.needRefresh;
-                    }
-                    Synchronizator.globalSyncInProgress = false ;
-                    return (callback || function() {})();
+            if (!items.length) {
+                if (Synchronizator.needRefresh) {
+                    G3ME.reloadLayers();
+                    delete Synchronizator.needRefresh;
                 }
-                if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
-                    console.info( items[0].action + items[0].type + "Synchronizator", "not found" );
-                    return Synchronizator.syncItems( items.slice( 1 ), callback, true );
-                }
+                Synchronizator.globalSyncInProgress = false ;
+                return (callback || function() {})();
+            }
+            if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
+                return Synchronizator.syncItems( items.slice( 1 ), callback, true );
+            }
 
-                Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
-                    Synchronizator.syncItems( items.slice( 1 ), callback, true );
-                } );
+            Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
+                Synchronizator.syncItems( items.slice( 1 ), callback, true );
+            } );
         };
 
         /**
@@ -393,30 +392,22 @@
          * @desc
          */
         Synchronizator.newReportSynchronizator = function(report, callback) {
-
-
-                report.syncInProgress = true;
-                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
-                    timeout: 3e6
-                } ).success( function(data) {
-                    if (data.cri && data.cri.length) {
-                        report.synced = true;
-                        report.error = undefined;
-                    } else {
-                        report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
-                    }
-                    if(report.status){
-                        console.log("rapport : " + report.status + "synchronisé avec succès");
-                    }
-                } ).error( function(data) {
-                    report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
-                        console.log("rapport : " + report.status + " synchronisation non reussie");
-                } ).finally( function(data) {
-                    report.syncInProgress = false;
-                    report.save( callback );
-
-                } );
-
+            report.syncInProgress = true;
+            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
+                timeout: 3e6
+            }).success(function(data) {
+                if (data.cri && data.cri.length) {
+                    report.synced = true;
+                    report.error = undefined;
+                } else {
+                    report.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
+                }
+            }).error(function(data) {
+                report.error = (data && data.error && data.error.text) || "Erreur inconnue lors de la synchronisation du compte rendu.";
+            }).finally(function(data) {
+                report.syncInProgress = false;
+                report.save(callback);
+            });
         };
 
         /**

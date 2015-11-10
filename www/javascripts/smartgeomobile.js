@@ -1,27 +1,27 @@
 angular
-    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'] )
-    .config( config ).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
+    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'])
+    .config(config).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
 
     "use strict";
     
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
-            document.addEventListener( 'online', Smartgeo._onlineTask, false );
-            document.addEventListener( 'offline', Smartgeo._offlineTask, false );
+            document.addEventListener('online', Smartgeo._onlineTask, false);
+            document.addEventListener('offline', Smartgeo._offlineTask, false);
         },
 
         _onlineTask: function() {
-                Storage.set( 'online', true );
-                $rootScope.$broadcast( "DEVICE_IS_ONLINE" );
-                console.info(( "_SMARTGEO_ONLINE" ));
-                Authenticator.silentLogin();
+            Storage.set('online', true);
+            $rootScope.$broadcast("DEVICE_IS_ONLINE");
+            console.info("_SMARTGEO_ONLINE");
+            Authenticator.silentLogin();
         },
 
         _offlineTask: function() {
-                Storage.set( 'online', false );
-                $rootScope.$broadcast( "DEVICE_IS_OFFLINE" );
-                console.info(( "_SMARTGEO_OFFLINE" ));
+            Storage.set('online', false);
+            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
+            console.info("_SMARTGEO_OFFLINE");
         }
 
     };
@@ -44,13 +44,12 @@ function config($routeProvider, $httpProvider, $provide,$compileProvider) {
 
     var prefetchPromise = {
         prefetchedlocalsites: ['Site', '$route', function(Site, $route) {
-                if ($route.current.params.site) {
-                    return Site.get( $route.current.params.site, true );
-                } else {
-                    return Site.all();
-                }
+            if ($route.current.params.site) {
+                return Site.get( $route.current.params.site, true );
+            } else {
+                return Site.all();
             }
-        ]
+        }]
     };
 
     $routeProvider.
