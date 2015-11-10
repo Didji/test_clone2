@@ -110,7 +110,7 @@
             </div>
         </div>
     </div>
-    <div class="panel consultation-group">
+    <div class="panel consultation-group" ng-if="reportController.assets.length > 0">
         <asset-consultation asset='::asset' ng-repeat='asset in reportController.assets' no-button='true' class="reportFormObject"></asset-consultation>
     </div>
     <button class="btn btn-default needPadding" ng-click="reportController.cancel()">
