@@ -543,6 +543,10 @@ fieldset[disabled] .btn-primary.active {
     min-width: 300px;
 }
 
+.reportFormObject:first-of-type .consultation-panel-heading {
+    border-top: none;
+}
+
 label.fullwidth {
     display: inline-block;
     width: 100%;
