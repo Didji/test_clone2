@@ -210,7 +210,7 @@ public class SQLitePlugin extends CordovaPlugin {
                     } else {
                         extDirs = this.cordova.getActivity().getExternalFilesDirs(null);
                     }
-                    if (extDirs.length > 1) {
+                    if (extDirs[1] != null) {
                         pathDir = extDirs[1].getAbsolutePath();
                     } else {
                         pathDir = extDirs[0].getAbsolutePath();
