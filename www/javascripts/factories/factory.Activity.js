@@ -3,11 +3,10 @@
     'use strict';
 
     angular
-        .module( 'smartgeomobile' )
-        .factory( 'Activity', ActivityFactory );
+        .module('smartgeomobile')
+        .factory('Activity', ActivityFactory);
 
     ActivityFactory.$inject = ["Site"];
-
 
     function ActivityFactory(Site) {
 
@@ -45,7 +44,7 @@
                     }
                 }
             }
-            return angular.copy( activity );
+            return angular.copy(activity);
         };
 
         /**
@@ -53,10 +52,17 @@
          * @desc Retourne l'intégralité des activités du site courrant
          */
         Activity.getAll = function() {
-            return Site.current.activities;
+            //#781: on ne garde que les activités qui en sont vraiment
+            //cela évite d'avoir un "undefined" dans la liste, car il y avait une méthode _byId dans la dernière case du tableau des activités du site courant
+            var activitiesOut = [];
+            for (var i = 0; i < Site.current.activities.length; i++) {
+                if (Site.current.activities[i].id) {
+                    activitiesOut.push(Site.current.activities[i]);
+                }
+            }
+            return activitiesOut;
         };
 
         return Activity;
     }
-
 })();
