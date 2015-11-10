@@ -1,6 +1,6 @@
 <div id="left_panel_synchronization" ng-controller="SyncCenterController as syncCenterController">
 
-    <button ng-if="syncCenterController.syncItems.length != 0"
+    <button ng-if="(syncCenterController.syncItems.length != 0) && (syncOnline === true)"
             ng-click='syncCenterController.synchronizeAll()'
             ng-class="{active: syncCenterController.synchronizing}"
             class="btn btn-primary has-spinner btn-block"
@@ -8,6 +8,13 @@
                 <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
                 <i18n ng-if=" syncCenterController.synchronizing">_SYNC_SYNC_IN_PROGRESS</i18n>
                 <i18n ng-if="!syncCenterController.synchronizing">_SYNC_SYNC_EVERYTHING </i18n>
+    </button>
+
+    <button ng-show="syncOnline !== true"
+            ng-class="{active: syncCenterController.synchronizing}"
+            class="btn btn-primary has-spinner btn-block"
+            ng-disabled="syncOnline !== true">
+                En attente de la connexion internet
     </button>
 
     <div class="list-group" ng-if="syncCenterController.syncItems.length != 0">

@@ -26,9 +26,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          */
         $scope.initialize = function() {
 
-
             $scope._DRAG_THRESHOLD = 50;
-
             $scope._OK_ASSET_ICON = L.icon({
                 iconUrl: 'javascripts/vendors/images/night-tour-ok.png',
                 iconSize: [65, 89],
@@ -73,9 +71,47 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
             $scope.$watch('nightTourRecording', function(newval) {
                 $scope.isFollowingMe = newval;
             });
+
             $scope.$watch('isFollowingMe', function(newval) {
                 $scope[(newval === true ? 'start' : 'stop') + 'FollowingPosition']();
             });
+
+
+            /* synchronisation en ligne en attente des retour d'evenement */
+            //il faut d'abord mettre a jour la list puis synchroniser tout les rapport pour etre sur de ne pas manquer un rapport
+            $scope.$on("syncUpdateList", function(){
+                $scope.receivePromise++;
+                if($scope.needNBPromise === $scope.receivePromise){
+                    $rootScope.$broadcast( 'synchronizator_new_item' );
+
+                }else{
+                    return;
+                }
+            });
+
+            $scope.$on("endSynchroniseAll",function(){
+                if($scope.saving === true){
+                    $scope.saving = false;
+                    $route.reload();
+                }else{
+                    console.log("rapport synchronisé");
+                }
+            })
+
+            /*Synchronisation hors ligne*/
+            //il faut mettre a jour la liste des objets a synchroniser
+            $scope.$on("syncOffline", function(){
+
+                if($scope.saving === true){
+                            $scope.saving = false;
+                            $scope.receivePromise = 0;
+                            $scope.needNBPromise = null;
+                            $route.reload();
+                }
+            });
+
+
+
 
             G3ME.map.on('dragend', function(event) {
                 if (event.distance > $scope._DRAG_THRESHOLD) {
@@ -94,54 +130,12 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         $scope.payloadOK = {status: 'PayloadOK', guids: []};
         $scope.ok = {status: 'OK', guids: []};
         $scope.ko = {status: 'KO', guids: []};
-
-        /*
-        //Abonnements aux evenements
-        //ici on recupere l'evenement envoyé lorsqu'un rapport est envoyé depuis le synchronisateur
-        */
-
-        //quand retour promesse rapport ko,; envoyé rapport ok; et vider tableau des objet ok en cache;
-        var clearPromiseKO = $rootScope.$on("returnNewReportSynchronizatorPromiseKO", function() {
-            $scope.sendReports($scope.ok);
-            console.log("[NIGHTTOUR] CRs saved, ko=" + $scope.ko.guids);
-            $scope.ko.guids = [];
-        });
-
-        //quand retour promesse rapport ok; vider tableau des objet ko en cache; recharger page et vider les variables d'abonnement.
-        var clearPromiseOK = $rootScope.$on("returnNewReportSynchronizatorPromiseOK", function() {
-            console.log("[NIGHTTOUR] CRs saved, ok=" + $scope.ok.guids);
-            $scope.ok.guids = [];
-            $scope.saving = false;
-            $route.reload();
-            $scope.clearAllSubscribeEvent();
-        });
-
-        //quand retour promesse rapport payloadko;envoyé rapport payload ok; vider tableau des objet payloadKo en cache;
-       var clearPromisePayloadKO = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadKO", function() {
-            console.log("[NIGHTTOUR] CRs secured, payloadko=" + $scope.payloadKO.guids);
-            $scope.sendReports($scope.payloadOK);
-            $scope.payloadKO.guids = [];
-        });
-
-        //quand retour promesse rapport payloadok; vider tableau des objet payloadKo en cache;
-        var clearPromisePayloadOK = $rootScope.$on("returnNewReportSynchronizatorPromisePayloadOK", function() {
-            console.log("[NIGHTTOUR] CRs secured, payloadok=" + $scope.payloadOK.guids);
-            $scope.payloadOK.guids = [];
-        });
-
-        /**
-         * @memberOf nightTourController
-         * @description supprime tout les abonnements sur les événements .
-         */
-
-        $scope.clearAllSubscribeEvent = function() {
-            $scope.$on('$destroy', function() {
-                clearPromisePayloadKO();
-                clearPromisePayloadOK();
-                clearPromiseKO();
-                clearPromiseOK();
-            });
-        };
+        $scope.clearPromiseKO;
+        $scope.clearPromiseOK;
+        $scope.callbackPromise = 0;
+        $scope.callbackPromisePayload = 0;
+        $scope.needNBPromise = null;
+        $scope.receivePromise = 0;
 
         /**
          * @memberOf nightTourController
@@ -276,6 +270,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @desc
          */
         $scope.stopNightTour = function() {
+            $scope.saving = true;
             console.debug("[NIGHTTOUR] Stop mission " + $scope.mission.id);
             if (secureInterval) {
                 $interval.cancel( secureInterval );
@@ -295,17 +290,26 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                         (!!asset.isWorking ? $scope.ok.guids : $scope.ko.guids).push(asset.guid);
                     }
                 }
-            }
-            $scope.saving = true;
-            if ($scope.ko.guids.length) {
-                $scope.sendReports($scope.ko);
-            } else if ($scope.ok.guids.length) {
-                $scope.sendReports($scope.ok);
-            } else {
+            }else{
                 $scope.saving = false;
-                $scope.clearAllSubscribeEvent();
                 $route.reload();
             }
+
+            if ($scope.ko.guids.length) {
+                $scope.needNBPromise++;
+                $scope.sendReports($scope.ko);
+
+            }else{
+                console.log("aucun élément ko a synchroniser");
+            }
+
+            if ($scope.ok.guids.length) {
+                $scope.needNBPromise++;
+                $scope.sendReports($scope.ok);
+            }else{
+                console.log("aucun élément ok a synchroniser");
+            }
+
         };
 
         /**
@@ -315,15 +319,9 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         $scope.sendReports = function(obj) {
 
             if (!obj.guids.length) {
-                if (obj.status === "OK") {
-                    $scope.saving = false;
-                    $scope.clearAllSubscribeEvent();
-                    $route.reload();
-                    return;
-                } else {
                     return;
                 }
-            }
+
             if ($scope.mission) {
                 var report = angular.extend(new Report(obj.guids, $scope.mission.activity.id, $scope.mission.id), {
                     assets: obj.guids,
@@ -336,7 +334,14 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 obj.status = obj.status.replace('payload', '');
                 tmp.fields[$scope.activity.night_tour.switch_field] = $scope.activity.night_tour[obj.status + "_value"];
                 tmp.activity = tmp.activity.id;
-                Synchronizator.addNew(tmp);
+
+                // Si on syop la topurnée de nuit il faut etre sur que les rapports on biens étés ajouté a lsite de synchronisation avant de refraichir la page.
+                if($scope.saving){
+                    Synchronizator.addUpdated(tmp);
+                }else{
+                    Synchronizator.addNew(tmp);
+                }
+
             }
         };
 
@@ -499,11 +504,18 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
 
                 if ($scope.payloadKO.guids.length) {
                     $scope.sendReports($scope.payloadKO);
-                } else if ($scope.payloadOK.guids.length) {
-                    $scope.sendReports($scope.payloadOK);
-                } else {
-                    return;
+                    $scope.payloadKO = {status: 'PayloadKO', guids: []};
+                }else{
+                console.log("aucun élement ko a securisé");
                 }
+                if ($scope.payloadOK.guids.length) {
+                    $scope.sendReports($scope.payloadOK);
+                    $scope.payloadOK = {status: 'PayloadOK', guids: []};
+                }else{
+                console.log("aucun élement ok a securisé");
+                }
+            }else{
+                return;
             }
         };
     }

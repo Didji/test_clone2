@@ -7,30 +7,31 @@ angular
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
-            window.addEventListener( 'online', Smartgeo._onlineTask, false );
-            window.addEventListener( 'offline', Smartgeo._offlineTask, false );
+            document.addEventListener( 'online', Smartgeo._onlineTask, false );
+            document.addEventListener( 'offline', Smartgeo._offlineTask, false );
         },
 
         _onlineTask: function() {
-            setTimeout( function() {
                 Storage.set( 'online', true );
                 $rootScope.$broadcast( "DEVICE_IS_ONLINE" );
                 console.info(( "_SMARTGEO_ONLINE" ));
                 Authenticator.silentLogin();
-            }, 1000 );
         },
 
         _offlineTask: function() {
-            Storage.set( 'online', false );
-            $rootScope.$broadcast( "DEVICE_IS_OFFLINE" );
-            console.info(( "_SMARTGEO_OFFLINE" ));
+                Storage.set( 'online', false );
+                $rootScope.$broadcast( "DEVICE_IS_OFFLINE" );
+                console.info(( "_SMARTGEO_OFFLINE" ));
         }
 
     };
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
-    Smartgeo._initializeGlobalEvents();
+    document.addEventListener("deviceready", function () {
+        Smartgeo._initializeGlobalEvents();
+    });
+
     window.Smartgeo = Smartgeo ;
 } );
 
