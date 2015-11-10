@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.gismartware.mobile" version="2.0-rc0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.gismartware.mobile" version="2.0rc1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Smartgeo</name>
     <description>Smartgeo Mobile Application</description>
     <author email="dev@gismartware.com" href="http://www.gismartware.com">
