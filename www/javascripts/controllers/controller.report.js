@@ -189,10 +189,14 @@
          * @returns {Boolean}
          */
         function writeReportToSd(report) {
+            if (report.ged) {
+                delete report.ged;
+            }
+            var fileName = report.uuid || report.id + '.json';
             window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
                 dir.getDirectory('reports', {create:true}, function(reportDir) {
                     console.log(reportDir.isDirectory);
-                    reportDir.getFile(report.uuid + ".json", {create:true}, function(file) {
+                    reportDir.getFile(fileName, {create:true}, function(file) {
                         if(!file) return;
                         file.createWriter(function(fileWriter) {
                             fileWriter.seek(fileWriter.length);
@@ -204,7 +208,7 @@
                 window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
                     dir.getDirectory('reports', {create:true}, function(reportDir) {
                         console.log(reportDir.isDirectory);
-                        reportDir.getFile(report.uuid + ".json", {create:true}, function(file) {
+                        reportDir.getFile(fileName, {create:true}, function(file) {
                             if(!file) return;
                             file.createWriter(function(fileWriter) {
                                 fileWriter.seek(fileWriter.length);
@@ -213,7 +217,7 @@
                         });
                     });
                 }, function(error){
-                    console.log('testReport: ', error);
+                    console.log('error: ', JSON.stringify(error));
                 });
             });
         }

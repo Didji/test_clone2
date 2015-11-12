@@ -201,10 +201,9 @@
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
             syncItem.save( function() {
-                Synchronizator.log( syncItem );
                 if(action === "update"){
                     $rootScope.$broadcast("syncUpdateList");
-                }else{
+                } else{
                     $rootScope.$broadcast( 'synchronizator_new_item' );
                 }
             } );
@@ -488,20 +487,6 @@
                 }
                 (callback || function() {})( typedItems );
             } );
-        };
-
-        /**
-         * @name log
-         * @desc
-         */
-        Synchronizator.log = function(item) {
-            if (item.ged) {
-                delete item.ged;
-            }
-            if (window.SmartgeoChromium && window.SmartgeoChromium.writeJSON) {
-                SmartgeoChromium.writeJSON( item.JSONify(), 'report/' + item.uuid || item.id + '.json' );
-            }
-            return this;
         };
 
         /**
