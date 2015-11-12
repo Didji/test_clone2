@@ -28,9 +28,16 @@ angular
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
-    document.addEventListener("deviceready", function () {
-        Smartgeo._initializeGlobalEvents();
-    });
+    if (window.cordova) {
+        document.addEventListener("deviceready", function () {
+            Smartgeo._initializeGlobalEvents();
+        });
+    } else {
+        //FOR TESTING PURPOSE ONLY!!!
+        //rend les événements online et offline du navigateur
+        window.addEventListener('online', Smartgeo._onlineTask, false);
+        window.addEventListener('offline', Smartgeo._offlineTask, false);
+    }
 
     window.Smartgeo = Smartgeo ;
 } );
