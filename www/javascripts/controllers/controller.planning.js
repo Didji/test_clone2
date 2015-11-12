@@ -61,10 +61,6 @@
                 } );
             }, 1000 );
 
-            $scope.$watch( 'lastUpdate', function() {
-                Storage.set( 'lastUpdate', vm.lastUpdate );
-            } );
-
             $scope.$on( 'SYNC_MISSION', function() {
                 vm.synchronize();
             } );
@@ -184,7 +180,7 @@
                     removeDeprecatedMarkers();
 
                     vm.lastUpdate = (new Date()).getTime();
-
+                    Storage.set( 'lastUpdate', vm.lastUpdate );
 
                     var tmp = {};
 
