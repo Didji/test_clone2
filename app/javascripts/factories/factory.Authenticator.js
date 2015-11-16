@@ -34,7 +34,7 @@
          * @desc
          */
         Authenticator.selectSiteRemotely = function(site, success, error) {
-            if (window.SmartgeoChromium && !Storage.get( 'intent' )) {
+            if (window.SmartgeoChromium) {
                 var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || Storage.get( 'user' );
                 ChromiumCallbacks[16] = function() {};
                 if (user) {
@@ -47,7 +47,6 @@
                 'site': site,
                 'auto_load_map': true
             } );
-
             $http.post( url ).then( success || angular.noop, error || angular.noop );
         };
 
