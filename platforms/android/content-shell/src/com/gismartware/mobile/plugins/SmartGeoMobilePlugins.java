@@ -1,31 +1,5 @@
 package com.gismartware.mobile.plugins;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.ResourceBundle;
-import java.math.BigInteger;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpEntity;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.chromium.content.browser.ContentView;
-import org.chromium.content.browser.JavascriptInterface;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -54,6 +28,29 @@ import com.gismartware.mobile.ActivityCode;
 import com.gismartware.mobile.G3dbDatabaseHelper;
 import com.gismartware.mobile.GimapMobileApplication;
 import com.gismartware.mobile.GimapMobileMainActivity;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.chromium.content.browser.ContentView;
+import org.chromium.content.browser.JavascriptInterface;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ResourceBundle;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class SmartGeoMobilePlugins {
 
@@ -85,6 +82,8 @@ public class SmartGeoMobilePlugins {
     private String tileSite;
 
     private static String PHPSESSIONID = null;
+    private final Object lock = new Object();
+    private boolean authInProgress = false;
 
     @SuppressLint("SimpleDateFormat")
     public SmartGeoMobilePlugins(Context mContext, ContentView mView) {
@@ -277,7 +276,7 @@ public class SmartGeoMobilePlugins {
             name = mBluetoothAdapter.getName();
         }
         view.evaluateJavaScript("window.ChromiumCallbacks[666]('" + name + "', '" +
-        		Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
+                Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -357,8 +356,6 @@ public class SmartGeoMobilePlugins {
                     }
                } catch(IOException ioe) {}
            }
-       } else {
-           Log.d(TAG, path + " exists");
        }
    }
 
@@ -368,6 +365,20 @@ public class SmartGeoMobilePlugins {
             return provider2 == null;
         }
         return provider1.equals(provider2);
+    }
+
+    @JavascriptInterface
+    public void setSession(String session) {
+        PHPSESSIONID = session;
+    }
+
+    @JavascriptInterface
+    public void setUserInfo(String url, String user, String password, String site, String token) {
+        this.tileUrl = url ;
+        this.tileUser = user ;
+        this.tilePassword = password;
+        this.tileSite = site ;
+        this.tileToken = token;
     }
 
    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -382,8 +393,6 @@ public class SmartGeoMobilePlugins {
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
         tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
 
-        Log.d(TAG, "[G3DB] requesting zoom_level = " + z + " AND tile_column = " + x + " AND tile_row = " + y + " on database n°" + databaseIndex);
-
         Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", new String[]{zS, xS, yS});
 
         if (cursor.getCount() > 0) {
@@ -396,15 +405,9 @@ public class SmartGeoMobilePlugins {
             view.evaluateJavaScript(resultJavascript);
         } else {
             try {
-                Log.d(TAG, "[G3DB] NOT FOUND (local) zoom_level = " + z
-                    + " AND tile_column = " + x
-                    + " AND tile_row = " + y
-                    + " on database n°" + databaseIndex);
-
-
                 new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite, this.tileToken);
             } catch (Exception e){
-                Log.e(TAG, "[G3DB] Error while downloading (" + z + ":" + x + ":" + y + ")");
+                Log.e(TAG, "[G3DB] Error downloading tile (" + z + ":" + x + ":" + y + ")");
             }
         }
         cursor.close();
@@ -446,17 +449,29 @@ public class SmartGeoMobilePlugins {
                 final HttpEntity image = response.getEntity();
 
                 if (statusCode == 403 && !url.contains("getTuileTMS")) {
-                    PHPSESSIONID = null ;
+                    PHPSESSIONID = null;
                     return request(params);
                 } else if (statusCode == 403) {
-                    authenticate(params[4], params[5], params[6], params[7], params[8]);
+                    if (authInProgress) {
+                        synchronized (lock) {
+                            while (authInProgress) {
+                                lock.wait();
+                            }
+                        }
+                    } else {
+                        synchronized (lock) {
+                            authInProgress = true;
+                            authenticate(params[4], params[5], params[6], params[7], params[8]);
+                            authInProgress = false;
+                            lock.notifyAll();
+                        }
+                    }
                     return request(params);
                 } else if (statusCode >= 300 ) {
                     Log.e(TAG, "[G3DB] Erreur HTTP " + statusCode);
                     Log.e(TAG, "[G3DB] When calling " + url);
                     return String.valueOf(statusCode);
                 } else if (image == null) {
-                    Log.i(TAG, "[G3DB] Tuile non trouvée sur le serveur (" + z + ":" + x + ":" + y + ")");
                     return null;
                 }
 
@@ -481,12 +496,11 @@ public class SmartGeoMobilePlugins {
                 }
 
                 return "window.ChromiumCallbacks['15"
-                    +"|" + z
-                    +"|" + x
+                    + "|" + z
+                        +"|" + x
                     +"|" + y
                     +"'](\"data:image/png;base64," + imageEncoded + "\");";
             } catch(Exception e) {
-                Log.e(TAG, "Error while downloading " + params[0], e);
                 request.abort();
                 return null;
             }
@@ -501,11 +515,7 @@ public class SmartGeoMobilePlugins {
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site, String token) {
-        this.tileUrl = url ;
-        this.tileUser = user ;
-        this.tilePassword = password;
-        this.tileSite = site ;
-        this.tileToken = token;
+        setUserInfo(url, user, password, site, token);
 
         final DefaultHttpClient client = new DefaultHttpClient();
 
@@ -523,21 +533,19 @@ public class SmartGeoMobilePlugins {
                 //auth OK, on recupere l'identifiant de session
                 PHPSESSIONID = response.getFirstHeader("Set-Cookie").getValue();
 
-                //nouvelle requete  effectuer : slection du site
+                //nouvelle requete à effectuer : sélection du site
                 bufUrl = new StringBuffer(url);
                 bufUrl.append("&app=mapcite").append("&site=").append(site).append("&auto_load_map=true");
                 req = new HttpPost(bufUrl.toString());
                 response = client.execute(req);
-                if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    Log.d(TAG, "User " + user + " authenticated on " + url);
-                } else {
-                    Log.d(TAG, "Site " + site + " unavailable for user " + user);
+                if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    Log.w(TAG, "Site " + site + " unavailable for user " + user);
                 }
             } else {
-                Log.d(TAG, "Bad supplied credentials!");
+                Log.w(TAG, "Bad supplied credentials!");
             }
         } catch (Exception e) {
-            Log.d(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
+            Log.e(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
         }
     }
 }
