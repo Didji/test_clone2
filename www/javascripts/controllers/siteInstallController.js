@@ -3,6 +3,7 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
         'use strict';
 
         $rootScope.currentPage = "Installation";
+        G3ME.resetMap();
 
         $scope.steps = [{
             color: '#fd9122',

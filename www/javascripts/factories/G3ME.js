@@ -121,6 +121,11 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
             return this.map;
         },
 
+        //reset the extent map when change site, particulary use for siteInstall,changesit, and authentication.
+        resetMap: function(){
+            G3ME.map = null;
+        },
+
         getActiveLayersForRequest: function() {
             if (!this.active_layers) {
                 this.active_layers = [];

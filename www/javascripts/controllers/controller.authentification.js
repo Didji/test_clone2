@@ -42,10 +42,7 @@
         function activate() {
 
             Utils.clearPersistence();
-            //reset the extent map when change site
-            G3ME.map = null;
-
-            $rootScope.currentPage = "Authentification";
+            G3ME.resetMap();
 
             vm.user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {
                 "rememberme": true
