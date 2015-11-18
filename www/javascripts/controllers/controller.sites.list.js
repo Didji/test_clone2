@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'SiteListController', SiteListController );
 
-    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "i18n", "Storage", "prefetchedlocalsites", "Site", "Utils", "Authenticator"];
+    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "i18n", "Storage", "prefetchedlocalsites", "Site", "Utils", "Authenticator", "G3ME"];
 
     /**
      * @class SiteListController
@@ -17,7 +17,7 @@
      * @property {Array} sites Sites chargés
      */
 
-    function SiteListController($scope, $rootScope, $http, $location, i18n, Storage, prefetchedlocalsites, Site, Utils, Authenticator) {
+    function SiteListController($scope, $rootScope, $http, $location, i18n, Storage, prefetchedlocalsites, Site, Utils, Authenticator, G3ME) {
 
         var vm = this;
 
@@ -141,6 +141,8 @@
          * @param {Object} site Site à selectionner
          */
         function redirect(site) {
+            G3ME.resetMap();
+            Storage.remove( 'persistence.menu' );
             $location.path( '/map/' + site.id );
         }
 

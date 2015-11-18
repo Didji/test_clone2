@@ -276,6 +276,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 if (!yes) {
                     return;
                 }
+                $rootScope.noGps = true;
                 $location.path( '/' );
                 if (!$scope.$$phase) {
                     $scope.$apply();
@@ -293,6 +294,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                 if (!yes) {
                     return;
                 }
+                $rootScope.noGps = true;
                 $location.path( '/sites/' );
                 if (!$scope.$$phase) {
                     $scope.$apply();
