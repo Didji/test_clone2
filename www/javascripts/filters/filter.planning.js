@@ -145,16 +145,32 @@
          */
         function _opennedMissions(in_, asset) {
             var out = [];
+            var alreadyInMission = null;
             for (var i in in_) {
                 if (!in_[i].activity) {
                     continue;
                 }
                 var isCompatible = Site.current.activities._byId[+in_[i].activity.id].okeys[0] === asset.okey;
-                var nightTour = Site.current.activities._byId[+in_[i].activity.id].type !== "night_tour";
-                if (isCompatible && in_[i].openned && nightTour) {
-                    out.push( in_[i] );
+                var nightTour = Site.current.activities._byId[+in_[i].activity.id].type === "night_tour";
+                if (isCompatible && in_[i].openned && nightTour) {		+
+                    if (typeof in_[i].openned != "undefined" && in_[i].openned) {
+                        for (var j in in_[i].assets) {
+                            if (in_[i].assets[j] == asset.id) {
+                                alreadyInMission = true;
+                            }
+                        }
+                        if (!alreadyInMission && in_[i].done.length != 0) {
+                            for (var j in in_[i].done) {
+                               if (in_[i].done[j] == asset.id) {
+                                   alreadyInMission = true;
+                                }
+                            }
+                        }
+                    }
+                    if (isCompatible && in_[i].openned && !nightTour && !alreadyInMission) {
+                         out.push( in_[i] );
+                     }
                 }
-            }
             return out;
         }
         return _opennedMissions;
