@@ -4,6 +4,7 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
 
         $rootScope.currentPage = "Installation";
         G3ME.resetMap();
+        Storage.remove( 'persistence.menu' );
 
         $scope.steps = [{
             color: '#fd9122',
