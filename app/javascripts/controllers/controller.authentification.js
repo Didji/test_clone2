@@ -55,6 +55,10 @@
          * @desc Callback de succès de l'authentification
          */
         function loginSuccess(data) {
+            //on envoie la session côté java, pour qu'elle soit utilisée pour le téléchargement des tuiles
+            if (data.session && window.SmartgeoChromium) {
+                window.SmartgeoChromium.setSession(data.session);
+            }
 
             var localSites = [],
                 tmp = prefetchedlocalsites,

@@ -38,7 +38,7 @@
                 var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || Storage.get( 'user' );
                 ChromiumCallbacks[16] = function() {};
                 if (user) {
-                    SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site, user.token );
+                    SmartgeoChromium.setUserInfo( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site, user.token );
                 }
             }
 
@@ -82,6 +82,11 @@
                 timeout: 10000
             } ).success( function(data) {
                 Authenticator._LOGIN_MUTEX = false;
+                
+                if (data.session && window.SmartgeoChromium) {
+                    window.SmartgeoChromium.setSession(data.session);
+                }
+
                 if (Site.current) {
                     Authenticator.selectSiteRemotely( Site.current.id, success, error );
                 } else {

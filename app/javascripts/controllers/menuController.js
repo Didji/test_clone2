@@ -277,6 +277,9 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                     return;
                 }
                 $location.path( '/' );
+                if (window.SmartgeoChromium) {
+                    window.SmartgeoChromium.setSession(null);
+                }
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
