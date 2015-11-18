@@ -452,6 +452,9 @@ public class SmartGeoMobilePlugins {
                     PHPSESSIONID = null;
                     return request(params);
                 } else if (statusCode == 403) {
+                    //erreur 403, tous les threads en cours doivent être bloqués sur le premier
+                    //qui réalise l'authentification. Ceci permet de ne pas créer une session par
+                    //thread sur le serveur...
                     if (authInProgress) {
                         synchronized (lock) {
                             while (authInProgress) {
@@ -460,9 +463,11 @@ public class SmartGeoMobilePlugins {
                         }
                     } else {
                         synchronized (lock) {
+                            //thread réalisant l'authentification
                             authInProgress = true;
                             authenticate(params[4], params[5], params[6], params[7], params[8]);
                             authInProgress = false;
+                            //lon libère les autres threads, en attente de l'authentification
                             lock.notifyAll();
                         }
                     }
