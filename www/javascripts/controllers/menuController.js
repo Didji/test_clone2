@@ -339,7 +339,5 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
         $rootScope.hideLeftMenu = vm.hideMenu = function() {
             vm.display = false;
         };
-
     }
-
-] );
+]);

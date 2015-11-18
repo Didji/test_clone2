@@ -57,7 +57,6 @@
          * @desc Callback de succès de l'authentification
          */
         function loginSuccess(data) {
-
             var localSites = [],
                 tmp = prefetchedlocalsites,
                 remoteSites = [];

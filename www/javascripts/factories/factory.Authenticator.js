@@ -34,20 +34,11 @@
          * @desc
          */
         Authenticator.selectSiteRemotely = function(site, success, error) {
-            if (window.SmartgeoChromium && !Storage.get( 'intent' )) {
-                var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || Storage.get( 'user' );
-                ChromiumCallbacks[16] = function() {};
-                if (user) {
-                    SmartgeoChromium.authenticate( Utils.getServiceUrl( 'global.auth.json' ), user.username, user.password, site, user.token );
-                }
-            }
-
             var url = Utils.getServiceUrl( 'global.auth.json', {
                 'app': 'mapcite',
                 'site': site,
                 'auto_load_map': true
             } );
-
             $http.post( url ).then( success || angular.noop, error || angular.noop );
         };
 
@@ -83,6 +74,7 @@
                 timeout: 10000
             } ).success( function(data) {
                 Authenticator._LOGIN_MUTEX = false;
+
                 if (Site.current) {
                     Authenticator.selectSiteRemotely( Site.current.id, success, error );
                 } else {
