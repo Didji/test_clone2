@@ -288,15 +288,23 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 $route.reload();
             }
 
-            if ($scope.ko.guids.length) {
-                $scope.needNBPromise++;
-                $scope.sendReports($scope.ko);
+            if (($scope.ko.guids.length + $scope.ok.guids.length) === 0){
+                $scope.saving = false;
+                $route.reload();
+            }else{
 
-            }
+                if ($scope.ko.guids.length) {
+                    $scope.needNBPromise++;
+                    $scope.sendReports($scope.ko);
 
-            if ($scope.ok.guids.length) {
-                $scope.needNBPromise++;
-                $scope.sendReports($scope.ok);
+                }
+
+                if ($scope.ok.guids.length) {
+                    $scope.needNBPromise++;
+                    $scope.sendReports($scope.ok);
+                }
+
+
             }
         };
 
