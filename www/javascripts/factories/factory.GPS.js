@@ -27,7 +27,7 @@
                 GPS.locationWatchIdentifier = navigator.geolocation.watchPosition( function(position) {
                         GPS.__positionListernersDispatchor( position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy );
                     }, function() {}, {
-                            enableHighAccuracy: false,
+                            enableHighAccuracy: true,
                             maximumAge: 0
                         } );
             } else if (GPS.positionListerners.indexOf( listener ) !== -1) {
