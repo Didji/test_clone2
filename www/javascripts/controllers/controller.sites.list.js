@@ -142,7 +142,7 @@
          */
         function redirect(site) {
             G3ME.resetMap();
-            Storage.remove( 'persistence.menu' );
+            Utils.clearPersistence();
             $location.path( '/map/' + site.id );
         }
 
