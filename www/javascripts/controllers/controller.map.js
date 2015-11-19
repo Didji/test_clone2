@@ -148,11 +148,9 @@
          */
         function noConsultableAssets(coords) {
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            if (!$rootScope.rights.report) {
-                return false;
-            }
+            
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
-            if (Site.current.activities.length) {
+            if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get('_CONSULTATION_REPORT_ON_POSITION') + '</button>';
                 $(document).on('click', '.openLocateReportButton', function () {
