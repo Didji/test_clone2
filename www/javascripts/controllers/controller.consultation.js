@@ -63,7 +63,7 @@
         function activate() {
 
             angular.element( $window ).bind( "resize", function() {
-                $timeout( vm[!vm.isOpen ? 'close' : 'open'], 100 );
+                vm[!vm.isOpen ? 'close' : 'open'];
             } );
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
