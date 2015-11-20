@@ -117,7 +117,6 @@
                 return 0;
             });
             vm.ready = true;
-            Storage.set( 'online', true );
         }
 
         /**
