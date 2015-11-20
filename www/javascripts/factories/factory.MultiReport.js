@@ -112,7 +112,8 @@
                 L.marker( Asset.getCenter( asset ), {
                     icon: intent.multi_report_icons[asset.currentState]
                 } ).on( 'click', function() {
-                    this.setIcon( intent.multi_report_icons[++asset.currentState % intent.multi_report_field.options.length] );
+                    asset.currentState = ++asset.currentState % intent.multi_report_field.options.length;
+                    this.setIcon( intent.multi_report_icons[asset.currentState] );
                 } ).addTo( G3ME.map );
             } );
         };
