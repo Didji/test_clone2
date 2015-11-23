@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'MultiReport', MultiReportFactory );
 
-    MultiReportFactory.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage"];
+    MultiReportFactory.$inject = ["$compile", "$rootScope", "G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage"];
 
 
-    function MultiReportFactory(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage) {
+    function MultiReportFactory($compile, $rootScope, G3ME, Asset, Report, Synchronizator, Activity, Site, Storage) {
 
         /**
          * @class MultiReportFactory
@@ -17,6 +17,7 @@
          */
 
         var intent;
+        var LONG_TAP_TIMER = null;
 
         function MultiReport(intent_) {
             intent = intent_;
@@ -112,10 +113,18 @@
                 L.marker( Asset.getCenter( asset ), {
                     icon: intent.multi_report_icons[asset.currentState]
                 } ).on( 'click', function() {
-                    asset.currentState = ++asset.currentState % intent.multi_report_field.options.length;
-                    this.setIcon( intent.multi_report_icons[asset.currentState] );
+                    this.setIcon( intent.multi_report_icons[++asset.currentState % intent.multi_report_field.options.length] );
+                } ).on( 'contextmenu', function() {
+                    var e = $compile(angular.element('<div ng-include="partials/veolia.html"></div>'))($rootScope.$new());
+                    this.bindPopup(e[0]);
+                    console.log(intent.multi_report_activity.tabs[0].label);
+                    console.log(intent.multi_report_activity.tabs);
                 } ).addTo( G3ME.map );
             } );
+        };
+
+        MultiReport.handleLongTap = function() {
+            //alert('long tap');
         };
 
         return MultiReport;

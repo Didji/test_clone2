@@ -14,7 +14,8 @@
      */
     function MapController($scope, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
 
-        var LAST_USERS_LOCATION = [],
+        var vm = this,
+            LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
             consultationIsEnabled = false,
             POSITION_ACTIVATE = false,
@@ -55,6 +56,10 @@
                 activatePosition();
             });
 
+            $scope.$on("LONG_TAP_MARKER", function(marker) {
+
+            });
+
             $scope.$on("$destroy", controllerDestroyHandler);
 
             $rootScope.activatePosition = activatePosition;
@@ -84,7 +89,8 @@
                 }).addTo(G3ME.map);
             }
             if (intent.multi_report_target) {
-                new MultiReport(intent);
+                vm.multireport = intent;
+                //new MultiReport(intent);
             }
         }
 

@@ -13,7 +13,6 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "*",
-    "yeoman": "*",
     "jshint-stylish" : "*",
     "gulp-jshint" : "*",
     "gulp-uglify" : "*",

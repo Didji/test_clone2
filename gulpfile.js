@@ -64,7 +64,7 @@ gulp.task('package-android', function() {
         .pipe(zip('gimap-mobile.zip'))
         .pipe(gulp.dest('platforms/android/content-shell/assets/'));
 
-    gulp.src('./platforms/android/content-shell').pipe(exec('pwd')); //.pipe(exec('../gradlew --continue --no-rebuild --parallel --quiet --stacktrace build'));
+    //gulp.src('./platforms/android/content-shell').pipe(exec('pwd')); //.pipe(exec('../gradlew --continue --no-rebuild --parallel --quiet --stacktrace build'));
 });
 
 gulp.task('package-ios', function() {
