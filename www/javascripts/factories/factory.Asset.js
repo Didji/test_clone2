@@ -342,22 +342,9 @@
             if (!zone || (G3ME.active_layers && !G3ME.active_layers.length)) {
                 return callback( [] );
             } else if (G3ME.active_layers) {
-                //Actually using like option until the regexp one is available on android
-                // if (device.platform == "Android" && parseInt(device.version) < 5) {
-                    request += ' and (symbolId LIKE "' + G3ME.active_layers.join( '%" OR symbolId LIKE "' ) + '%")';
-                // }
-                // else {
-                //     request += ' and (symbolId REGEXP "^(' + G3ME.active_layers.join( '|' ) + ')[0-9]+" )';
-                // }
+                request += " and ( symbolId REGEXP '" + G3ME.active_layers.join( "[0-9]+' OR symbolId REGEXP '" ) + "[0-9]+' )";
             }
             request += " order by priority LIMIT 0,100 ";
-            // if (device.platform == "Android" && parseInt(device.version) >= 5) {
-            //     sqlitePlugin.closeDatabase({name: zone.database_name});
-            //     var db = sqlitePlugin.openDatabase({name: zone.database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
-            // }
-            // else {
-                // var db = sqlitePlugin.openDatabase({name: zone.database_name});
-            // }
             SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(rows){
                 var assets = [];
                 for (var i = 0, numRows = rows.length; i < numRows && assets.length < 10; i++) {
@@ -978,53 +965,30 @@
             }
 
             if (!request) {
-                // Regexp not available on android < 5 for now
-                // if (device.platform == "Android" && parseInt(device.version) < 5) {
-                    request = 'SELECT * FROM assets WHERE symbolid LIKE \'' + search.okey + '%\' ';
-                // }
-                // else {
-                //     request = 'SELECT * FROM assets WHERE symbolid REGEXP(\'' + search.okey + '.*\') ';
-                // }
-
+                request = "SELECT * FROM assets WHERE symbolId REGEXP('" + search.okey + "[0-9]+') ";
                 var regex;
-
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        request += " AND (";
-
-                        // if (device.platform == "Android" && parseInt(device.version) < 5) {
-                            if (parseInt(search.criteria[criter]) != 'NaN') {
-                                request += " LOWER(asset) GLOB \'*\"" + criter.toLowerCase() + "\":[" + search.criteria[criter] + "][,\\}]*\' OR ";
-                            }
-                            request += " LOWER(asset) LIKE \'%\"" + criter.toLowerCase() + "\":\"" + search.criteria[criter].toLowerCase() + "\"%\')";
-                        // } else {
-                        //     if (parseInt(search.criteria[criter]) != 'NaN') {
-                        //         regex = "'.*\"" + criter.toLowerCase() + "\":" + search.criteria[criter] + "?[,\\\\}].*'";
-                        //         request += "LOWER(asset) REGEXP(" + regex + ") OR ";
-                        //     }
-                        //     regex = "'.*\"" + criter.toLowerCase() + "\":\"[^\"]*" + search.criteria[criter].toLowerCase() + ".*'";
-                        //     request += "LOWER(asset) REGEXP(" + regex + ")) ";
-                        // }
+                        if (!isNaN(search.criteria[criter])) {
+                          regex = '.*\"' + criter.toString().toLowerCase() + '\":' + search.criteria[criter].toString().toLowerCase() + '[(,)|(\\)|(\})].*';
+                          request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                        } else {
+                          regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace('(', '\\\(').replace(')', '\\\)') + '\".*';
+                          request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                        }
                     }
                 }
-                request += ' LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
+                request += 'LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
             }
-            // if (device.platform == "Android" && parseInt(device.version) >= 5) {
-            //     sqlitePlugin.closeDatabase({name: zones[0].database_name});
-            //     var db = sqlitePlugin.openDatabase({name: zones[0].database_name, androidOldDatabaseImplementation: 2, androidLockWorkaround: 1});
-            // }
-            // else {
-                // var db = sqlitePlugin.openDatabase({name: zones[0].database_name});
-            // }
-            SQLite.exec( zones[0].database_name, request, [], function(rows){
+            SQLite.exec(zones[0].database_name, request, [], function(rows){
                 for (var i = 0; i < rows.length; i++) {
-                        var asset = rows.item( i );
-                        try {
-                            asset.okey = Asset.sanitizeAsset( asset.asset ).okey;
-                        } catch ( e ) {}
-                        partial_response.push( asset );
-                    }
-                    Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
+                    var asset = rows.item( i );
+                    try {
+                        asset.okey = Asset.sanitizeAsset( asset.asset ).okey;
+                    } catch ( e ) {}
+                    partial_response.push( asset );
+                }
+                Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
             });
         };
 
