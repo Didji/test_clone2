@@ -110,7 +110,6 @@ window.smartgeo_i18n_lang.fr = {
     _MAP_ZERO_SITE_SELECTED: "Aucun site trouvé",
     _MAP_ZERO_OBJECT_FOUND: "Aucun patrimoine dans cette zone",
     _MAP_MY_POSITION_CONTROL: "Ma position",
-    _MAP_GPS_FAIL: "Erreur lors de la récupération des coordonnées GPS",
     _MAP_CONSULTATION_CONTROL: "Consultation",
     _MAP_REFERENCE_VIEW_CONTROL: "Vue de référence",
     _NOT_ALLOWED_TO_DELETE_ASSETS_: "Les objets %s ne seront pas supprimés car votre profil ne le permet pas.",
