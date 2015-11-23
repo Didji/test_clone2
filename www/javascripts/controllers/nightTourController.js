@@ -163,39 +163,6 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
          * @param {float} lng Point's longitude
          * @desc
          */
-        $scope.addPositionToTrace = function() {
-            if (!$scope.mission) {
-                return alertify.error(i18n.get("_NIGHTTOUR_NO_RUNNING_TOUR_"));
-            }
-            if (!$scope.nightTourRecording) {
-                return;
-            }
-        };
-
-        /**
-         * @memberOf nightTourController
-         * @desc
-         */
-        $scope.stopFollowingPosition = function() {
-            $rootScope.$broadcast('__MAP_UNHIGHTLIGHT_MY_POSITION', $scope.mission);
-            GPS.stopWatchingPosition($scope.whereIAm);
-        };
-
-        /**
-         * @memberOf nightTourController
-         * @desc
-         */
-        $scope.whereIAm = function(lng, lat) {
-            $rootScope.$broadcast('__MAP_HIGHTLIGHT_MY_POSITION', lat, lng);
-            $scope.addPositionToTrace(lat, lng);
-        };
-
-        /**
-         * @memberOf nightTourController
-         * @param {float} lat Point's latitude
-         * @param {float} lng Point's longitude
-         * @desc
-         */
         $scope.addPositionToTrace = function(lat, lng) {
             if (!$scope.mission) {
                 return alertify.error(i18n.get("_NIGHTTOUR_NO_RUNNING_TOUR_"));
