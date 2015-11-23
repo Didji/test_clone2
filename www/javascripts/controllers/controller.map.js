@@ -317,8 +317,12 @@
             });
             if (!FIRST_POSITION) {
                 POSITION_ZOOM = G3ME.map.getZoom();
+                G3ME.map.panTo([lat, lng], {
+                    animate: false
+                });
+            }else{
+                G3ME.map.setView(LAST_USERS_LOCATION, 18);
             }
-            G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             FIRST_POSITION = false;
         }
 
