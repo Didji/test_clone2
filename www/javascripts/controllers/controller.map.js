@@ -66,11 +66,6 @@
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
 
-            if ($rootScope.noGps == true) {
-                $rootScope.noGps = false;
-                stopPosition();
-            };
-
             intent = Storage.get('intent');
 
             if (intent) {

@@ -50,7 +50,7 @@
             if (Authenticator._LOGIN_MUTEX) {
                 return (error || angular.noop)();
             }
-            $rootScope.noGps = true;
+            $rootScope.$broadcast( "DESACTIVATE_POSITION" );
             Authenticator._LOGIN_MUTEX = true;
             var token, url;
             if (typeof password === 'function' || !password) {
