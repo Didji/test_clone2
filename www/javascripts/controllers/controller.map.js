@@ -55,6 +55,10 @@
                 activatePosition();
             });
 
+            $scope.$on("DESACTIVATE_POSITION", function () {
+                stopPosition();
+            });
+
             $scope.$on("$destroy", controllerDestroyHandler);
 
             $rootScope.activatePosition = activatePosition;
@@ -148,7 +152,7 @@
          */
         function noConsultableAssets(coords) {
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            
+
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
