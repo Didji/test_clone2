@@ -321,7 +321,7 @@
                     animate: false
                 });
             }else{
-                G3ME.map.setView(LAST_USERS_LOCATION, 18);
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             }
             FIRST_POSITION = false;
         }
