@@ -121,8 +121,8 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         //on initialise les tableau de cache
         $scope.payloadKO = {status: 'PayloadKO', guids: []};
         $scope.payloadOK = {status: 'PayloadOK', guids: []};
-        $scope.ok = {status: 'OK', guids: []};
-        $scope.ko = {status: 'KO', guids: []};
+        $scope.ok = {status: 'ok', guids: []};
+        $scope.ko = {status: 'ko', guids: []};
         $scope.clearPromiseKO;
         $scope.clearPromiseOK;
         $scope.callbackPromise = 0;
