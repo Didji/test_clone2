@@ -1,7 +1,6 @@
 package com.gismartware.mobile.plugins;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -15,7 +14,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -180,7 +178,6 @@ public class SmartGeoMobilePlugins {
         this.lastLocation = null;
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
     @JavascriptInterface
     public void launchCamera(int callbackId) throws IOException {
         Log.d(TAG, "Request camera");
@@ -265,7 +262,6 @@ public class SmartGeoMobilePlugins {
         new Thread(runnable).start();
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     @JavascriptInterface
     public void getDeviceId() {
         String name = "Aucun nom trouvé";
@@ -279,7 +275,6 @@ public class SmartGeoMobilePlugins {
                 Secure.getString(this.context.getContentResolver(), Secure.ANDROID_ID) + "');");
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @JavascriptInterface
     public void vibrate(long ms) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -381,7 +376,6 @@ public class SmartGeoMobilePlugins {
         this.tileToken = token;
     }
 
-   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @JavascriptInterface
     public void getTileURLFromDB(String url, int z, int x, int y) {
         String xS = String.valueOf(x), yS = String.valueOf(y), zS = String.valueOf(z);
@@ -389,36 +383,33 @@ public class SmartGeoMobilePlugins {
         databasesPointer[databaseIndex]++ ;
 
         SQLiteDatabase tilesDatabase = G3dbDatabaseHelper.getInstance(context, GimapMobileApplication.EXT_APP_DIR + "/g3tiles-" + databaseIndex, databaseIndex).getWritableDatabase();
-
         tilesDatabase.execSQL("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data text);");
         tilesDatabase.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
 
         Cursor cursor = tilesDatabase.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", new String[]{zS, xS, yS});
-
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             String resultJavascript = "window.ChromiumCallbacks['15"
-                    +"|" + z
-                    +"|" + x
-                    +"|" + y
-                    +"'](\"data:image/png;base64," + cursor.getString(0) + "\");";
+                    + "|" + z
+                    + "|" + x
+                    + "|" + y
+                    + "'](\"data:image/png;base64," + cursor.getString(0) + "\");";
             view.evaluateJavaScript(resultJavascript);
         } else {
             try {
                 new GetTileFromURLAndSetItToDatabase().executeOnExecutor(this.threadPool, url, xS, yS, zS, this.tileUrl, this.tileUser, this.tilePassword, this.tileSite, this.tileToken);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, "[G3DB] Error downloading tile (" + z + ":" + x + ":" + y + ")");
             }
         }
         cursor.close();
-        databasesPointer[databaseIndex]-- ;
-        if(databasesPointer[databaseIndex] <= 0){
-            databasesPointer[databaseIndex] = 0 ;
+        databasesPointer[databaseIndex]--;
+        if (databasesPointer[databaseIndex] <= 0) {
+            databasesPointer[databaseIndex] = 0;
             tilesDatabase.close();
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     private class GetTileFromURLAndSetItToDatabase extends AsyncTask<String, Void, String> {
 
         @Override
@@ -426,7 +417,6 @@ public class SmartGeoMobilePlugins {
             return request(params);
         }
 
-        @TargetApi(Build.VERSION_CODES.FROYO)
         protected String request(String... params) {
             String url = params[0], x = params[1], y = params[2], z = params[3];
 
@@ -517,7 +507,6 @@ public class SmartGeoMobilePlugins {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @JavascriptInterface
     public void authenticate(String url, String user, String password, String site, String token) {
         setUserInfo(url, user, password, site, token);
