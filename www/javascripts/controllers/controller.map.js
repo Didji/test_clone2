@@ -120,8 +120,9 @@
          */
         function controllerDestroyHandler() {
             GPS.emptyPositionListerners();
-            Storage.set('user_position_activated', POSITION_ACTIVATE);
+            var realPosActivate = POSITION_ACTIVATE;
             stopPosition();
+            Storage.set('user_position_activated', realPosActivate);
             G3ME.map.remove();
             document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
             clearTimeout(lastViewTimeout);
@@ -276,6 +277,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
             POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
+            Storage.set('user_position_activated', false);
             if (e) {
                 return false;
             }
