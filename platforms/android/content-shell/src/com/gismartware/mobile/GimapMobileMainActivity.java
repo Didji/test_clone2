@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.chromium.base.ChromiumActivity;
 import org.chromium.base.MemoryPressureListener;
 import org.chromium.content.app.LibraryLoader;
 import org.chromium.content.browser.ActivityContentVideoViewClient;
@@ -35,7 +36,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -63,7 +63,7 @@ import com.gismartware.mobile.util.FileUtils;
 /**
  * Activity for managing the Content Shell.
  */
-public class GimapMobileMainActivity extends Activity {
+public class GimapMobileMainActivity extends ChromiumActivity {
 
 	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("com.gismartware.mobile.config");
 	private static final String INSTALL_ZIP_FILE = MESSAGES.getString("install.zip.file");
@@ -83,7 +83,7 @@ public class GimapMobileMainActivity extends Activity {
 
     public static final String COMMAND_LINE_FILE = "/data/local/tmp/content-shell-command-line";
     private static final String[] CMD_OPTIONS = new String[] {
-        "--allow-file-access-from-files", "--disable-web-security", "--no-sandbox"};
+        "--allow-file-access-from-files", "--disable-web-security", "--unlimited-storage", "--enable-accelerated-2d-canvas"};
 
     private static final String TAG = "GimapMobile";
 
@@ -128,6 +128,10 @@ public class GimapMobileMainActivity extends Activity {
     	} else {
     		Log.w(TAG, "Impossible to uninstall Smartgeo.");
     	}
+
+        if (getActiveShell() != null) {
+            getActiveShell().loadUrl("about:blank");
+        }
 	}
 
     private void installIfNeeded() {
