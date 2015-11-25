@@ -228,6 +228,7 @@
             //Zoom 18 = 30m, plus le chiffre augmente et plus le zoom est grand
 
             POSITION_ACTIVATE = FIRST_POSITION = true;
+            Storage.set('user_position_activated', true);
             //On vient de lancer le positionnement GPS et on est au-delà de 30m, on s'approche donc ...'
             if (POSITION_ZOOM == null && G3ME.map.getZoom() < 18) {
                 POSITION_ZOOM = 18
