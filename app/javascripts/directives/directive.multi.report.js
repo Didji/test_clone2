@@ -127,19 +127,6 @@
                     field = scope.report.activity._fields[i];
                     def = field['default'];
 
-
-
-                    // DEMO
-                    if (field.id === 56551696) { //DIAM
-                        def.pkey = 'PKEY_A_TRON_L_DIAM';
-                    }
-                    if (field.id === 56551697) { //MATERIAU
-                        def.pkey = 'PKEY_A_TRON_L_LIB_MATERIAU';
-                    }
-                    // END DEMO
-
-
-
                     // Par priorité sur les valeurs par défaut, on applique les valeurs
                     // fixées dans le scope par les intents.
                     if (scope.intent['report_fields[' + field.label + ']']) {
@@ -188,7 +175,7 @@
              * @desc Olalalala ... A remplacer par un ng-blur ?
              */
             function bidouille() {
-                angular.element( document.getElementsByClassName( 'reportForm' )[0] ).on( 'click', "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
+                angular.element( document.getElementsByClassName( 'js-report-form' )[0] ).on( 'click', "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
                     var elt;
                     if (angular.element( this ).prop( 'tagName' ) !== "label") {
                         elt = angular.element( this );
@@ -200,7 +187,7 @@
                     if (!elt.offset().top) {
                         return;
                     }
-                    angular.element( 'html, body' ).animate( {
+                    angular.element( '.modal' ).animate( {
                         scrollTop: elt.offset().top - 10
                     }, 250 );
                     elt = null;
@@ -257,30 +244,27 @@
             function exitClickHandler(e) {
                 e.preventDefault();
 
-                scope.intent.multi_report_reports = {};
                 scope.intent.multi_report_assets_id = [];
 
-                var asset, assetid, reportValue, redirect;
+                var asset, assetid, redirect;
 
                 for (assetid in scope.intent.multi_report_target) {
                     asset = scope.intent.multi_report_target[assetid];
                     if (asset.currentState === 0) {
                         continue;
                     }
+
+                    if ( !reports[+asset.id] ) {
+                        reports[+asset.id] = new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    }
+
+                    reports[+asset.id].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
+
                     scope.intent.multi_report_assets_id.push( asset.id );
-                    if (!scope.intent.multi_report_reports[scope.intent.multi_report_field.options[asset.currentState].value]) {
-                        scope.intent.multi_report_reports[scope.intent.multi_report_field.options[asset.currentState].value] = new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
-                        scope.intent.multi_report_reports[scope.intent.multi_report_field.options[asset.currentState].value].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
-                    } else {
-                        scope.intent.multi_report_reports[scope.intent.multi_report_field.options[asset.currentState].value].assets.push( asset.id );
-                    }
+
+                    Synchronizator.addNew( prepareReport( reports[+asset.id] ) );
                 }
-                for (reportValue in scope.intent.multi_report_reports) {
-                    if (angular.isObject(scope.intent.multi_report_reports[reportValue].activity)) {
-                        scope.intent.multi_report_reports[reportValue].activity = scope.intent.multi_report_reports[reportValue].activity.id;
-                    }
-                    Synchronizator.addNew( scope.intent.multi_report_reports[reportValue] );
-                }
+
                 if (scope.intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
                     redirect = scope.intent.multi_report_redirect.replace( "[DONE_ASSETS]", scope.intent.multi_report_assets_id.join( ',' ) );
                     SmartgeoChromium.redirect( decodeURI( redirect ) );
@@ -288,6 +272,41 @@
                 Storage.remove( 'intent' );
                 return false;
             };
+
+            /**
+             * @name prepareReport
+             * @desc Prepare le compte rendu avant de l'envoyer
+             * @param {Report} reportin Le compte rendu a préparer
+             * @returns {Object}
+             */
+            function prepareReport(reportin) {
+                var report = angular.copy( reportin ),
+                    i;
+                for (i in report.fields) {
+                    if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
+                        report.fields[i] = Utils.pad( report.fields[i].getHours() ) + ":" + Utils.pad( report.fields[i].getMinutes() );
+                    }
+                    if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
+                        report.fields[i] = report.fields[i].getFullYear() + "-" + Utils.pad( report.fields[i].getMonth() + 1 ) + "-" + Utils.pad( report.fields[i].getDate() );
+                    }
+                    if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+                        report.fields[i] = report.fields[i].id;
+                    }
+                }
+                for (i = 0; i < report.ged.length; i++) {
+                    report.ged[i] = {
+                        'content': Utils.getBase64Image( report.ged[i].content )
+                    };
+                }
+                for (i in report.overrides) {
+                    if (report.overrides[i]) {
+                        report.fields[i] = report.overrides[i];
+                    }
+                }
+                report.activity = report.activity.id;
+                report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
+                return report;
+            }
 
             /**
              * @name createMarkers
@@ -309,8 +328,8 @@
                     L.marker( Asset.getCenter( asset ), {
                         icon: scope.intent.multi_report_icons[asset.currentState]
                     } ).on( 'click', function() {
-                        asset.currentState = ++asset.currentState % intent.multi_report_field.options.length;
-                        this.setIcon( intent.multi_report_icons[asset.currentState] );
+                        asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
+                        this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                     } ).on( 'contextmenu', function() {
                         var field;
                         scope.report = reports[ asset.id ] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );

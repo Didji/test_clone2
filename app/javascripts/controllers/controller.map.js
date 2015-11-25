@@ -29,7 +29,6 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             $rootScope.currentPage = "Cartographie";
 
             if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
@@ -54,10 +53,6 @@
 
             $scope.$on("ACTIVATE_POSITION", function () {
                 activatePosition();
-            });
-
-            $scope.$on("LONG_TAP_MARKER", function(marker) {
-
             });
 
             $scope.$on("$destroy", controllerDestroyHandler);
@@ -90,7 +85,9 @@
             }
             if (intent.multi_report_target) {
                 vm.multireport = intent;
-                //new MultiReport(intent);
+            }
+            if (!$scope.$$phase) {
+                $scope.$digest();
             }
         }
 
@@ -149,7 +146,7 @@
          */
         function noConsultableAssets(coords) {
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            
+
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'

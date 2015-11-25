@@ -6,7 +6,7 @@
         <h4 class="modal-title">Compte rendu {{report.activity.label}}</h4>
       </div>
       <div class="modal-body">
-      	<form name="reportForm">
+      	<form name="reportForm" class="js-report-form">
 	      	<div ng-repeat='tab in report.activity.tabs' class="panel panel-default report">
 	              <div class="panel-heading report-heading">
 	                  <span class="pull-right icon {{tab.show ? 'icon-caret-up' : 'icon-caret-down'}}">
