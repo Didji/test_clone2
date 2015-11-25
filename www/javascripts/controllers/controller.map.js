@@ -120,8 +120,9 @@
          */
         function controllerDestroyHandler() {
             GPS.emptyPositionListerners();
-            Storage.set('user_position_activated', POSITION_ACTIVATE);
+            var realPosActivate = POSITION_ACTIVATE;
             stopPosition();
+            Storage.set('user_position_activated', realPosActivate);
             G3ME.map.remove();
             document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
             clearTimeout(lastViewTimeout);
@@ -227,6 +228,7 @@
             //Zoom 18 = 30m, plus le chiffre augmente et plus le zoom est grand
 
             POSITION_ACTIVATE = FIRST_POSITION = true;
+            Storage.set('user_position_activated', true);
             //On vient de lancer le positionnement GPS et on est au-delà de 30m, on s'approche donc ...'
             if (POSITION_ZOOM == null && G3ME.map.getZoom() < 18) {
                 POSITION_ZOOM = 18
@@ -276,6 +278,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
             POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
+            Storage.set('user_position_activated', false);
             if (e) {
                 return false;
             }
