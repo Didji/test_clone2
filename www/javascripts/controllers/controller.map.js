@@ -55,17 +55,16 @@
                 activatePosition();
             });
 
+            $scope.$on("DESACTIVATE_POSITION", function () {
+                stopPosition();
+            });
+
             $scope.$on("$destroy", controllerDestroyHandler);
 
             $rootScope.activatePosition = activatePosition;
             $rootScope.stopPosition = stopPosition;
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
-
-            if ($rootScope.noGps == true) {
-                $rootScope.noGps = false;
-                stopPosition();
-            };
 
             intent = Storage.get('intent');
 
@@ -148,7 +147,7 @@
          */
         function noConsultableAssets(coords) {
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            
+
             var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
@@ -321,7 +320,7 @@
                     animate: false
                 });
             }else{
-                G3ME.map.setView(LAST_USERS_LOCATION, 18);
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             }
             FIRST_POSITION = false;
         }

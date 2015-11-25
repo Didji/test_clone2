@@ -119,10 +119,10 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
         };
 
         //on initialise les tableau de cache
-        $scope.payloadKO = {status: 'PayloadKO', guids: []};
-        $scope.payloadOK = {status: 'PayloadOK', guids: []};
-        $scope.ok = {status: 'OK', guids: []};
-        $scope.ko = {status: 'KO', guids: []};
+        $scope.payloadKO = {status: 'payloadko', guids: []};
+        $scope.payloadOK = {status: 'payloadok', guids: []};
+        $scope.ok = {status: 'ok', guids: []};
+        $scope.ko = {status: 'ko', guids: []};
         $scope.clearPromiseKO;
         $scope.clearPromiseOK;
         $scope.callbackPromise = 0;
@@ -466,13 +466,13 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
 
                 if ($scope.payloadKO.guids.length) {
                     $scope.sendReports($scope.payloadKO);
-                    $scope.payloadKO = {status: 'PayloadKO', guids: []};
+                    $scope.payloadKO = {status: 'payloadko', guids: []};
                 }else{
                 console.log("aucun élement ko a securisé");
                 }
                 if ($scope.payloadOK.guids.length) {
                     $scope.sendReports($scope.payloadOK);
-                    $scope.payloadOK = {status: 'PayloadOK', guids: []};
+                    $scope.payloadOK = {status: 'payloadok', guids: []};
                 }else{
                 console.log("aucun élement ok a securisé");
                 }

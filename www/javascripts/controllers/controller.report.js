@@ -189,9 +189,6 @@
          * @returns {Boolean}
          */
         function writeReportToSd(report) {
-            if (report.ged) {
-                delete report.ged;
-            }
             var fileName = report.uuid || report.id + '.json';
             window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
                 dir.getDirectory('reports', {create:true}, function(reportDir) {
