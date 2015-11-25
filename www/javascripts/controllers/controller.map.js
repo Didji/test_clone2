@@ -440,7 +440,17 @@
             }
         });
         $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache) {
-            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup(MarkerClusterGroupOptions);
+            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
+                iconCreateFunction: function (cluster) {
+                  return new L.DivIcon({
+                       html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                        className: 'marker-cluster-done',
+                        iconSize: new L.Point(40, 40)
+                    });
+                },
+                disableClusteringAtZoom: 21,
+                maxClusterRadius: 75
+            });
             for (var i = 0; assetsCache && i < assetsCache.length; i++) {
                 assetsCache[i].marker = assetsCache[i].marker || L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
                 var icon = !mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get('DONE_MISSION') : Icon.get('DONE_NIGHTTOUR');
