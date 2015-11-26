@@ -200,7 +200,9 @@
          */
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
+
             syncItem.save( function() {
+                Synchronizator.log( syncItem );
                 if(action === "update"){
                     $rootScope.$broadcast("syncUpdateList");
                 } else{
@@ -487,6 +489,46 @@
                 }
                 (callback || function() {})( typedItems );
             } );
+        };
+
+        /**
+        * @name log
+        * @desc
+        */
+        Synchronizator.log = function(report) {
+            if (report.ged) {
+                delete report.ged;
+            }
+            var fileName = report.uuid || report.id + '.json';
+            window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
+                dir.getDirectory('reports', {create:true}, function(reportDir) {
+                    console.log(reportDir.isDirectory);
+                    reportDir.getFile(fileName, {create:true}, function(file) {
+                        if(!file) return;
+                        file.createWriter(function(fileWriter) {
+                            fileWriter.seek(fileWriter.length);
+                            fileWriter.write(JSON.stringify(report));
+                        }, function(error){
+                                console.log('error: ', JSON.stringify(error));
+                    });
+                });
+            }, function(err){
+                window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
+                    dir.getDirectory('reports', {create:true}, function(reportDir) {
+                        console.log(reportDir.isDirectory);
+                        reportDir.getFile(fileName, {create:true}, function(file) {
+                            if(!file) return;
+                            file.createWriter(function(fileWriter) {
+                                fileWriter.seek(fileWriter.length);
+                                fileWriter.write(JSON.stringify(report));
+                            }, function(error){});
+                        });
+                    });
+                }, function(error){
+                    console.log('error: ', JSON.stringify(error));
+                });
+            });
+            return this;
         };
 
         /**

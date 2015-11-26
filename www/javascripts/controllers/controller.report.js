@@ -178,45 +178,7 @@
             }
             report.activity = report.activity.id;
             report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
-            writeReportToSd(report);
             return report;
-        }
-
-        /**
-         * @name writeReportToSd
-         * @desc écrit le compte rendu dans le dossier reports du cache de l'application
-         * @param {Report} report Le compte rendu a stocker
-         * @returns {Boolean}
-         */
-        function writeReportToSd(report) {
-            var fileName = report.uuid || report.id + '.json';
-            window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
-                dir.getDirectory('reports', {create:true}, function(reportDir) {
-                    console.log(reportDir.isDirectory);
-                    reportDir.getFile(fileName, {create:true}, function(file) {
-                        if(!file) return;
-                        file.createWriter(function(fileWriter) {
-                            fileWriter.seek(fileWriter.length);
-                            fileWriter.write(JSON.stringify(report));
-                        }, function(error){});
-                    });
-                });
-            }, function(err){
-                window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
-                    dir.getDirectory('reports', {create:true}, function(reportDir) {
-                        console.log(reportDir.isDirectory);
-                        reportDir.getFile(fileName, {create:true}, function(file) {
-                            if(!file) return;
-                            file.createWriter(function(fileWriter) {
-                                fileWriter.seek(fileWriter.length);
-                                fileWriter.write(JSON.stringify(report));
-                            }, function(error){});
-                        });
-                    });
-                }, function(error){
-                    console.log('error: ', JSON.stringify(error));
-                });
-            });
         }
 
         /**
