@@ -1,55 +1,42 @@
-![GI](http://gismartware.com/images/logo.png) smartgeomobile
-======================
+# smartgeomobile
 
-## Test & développement
+Android Cordova Webview Upgrade
 
-##### Windows
+Cloner la branche:
 
-* Téléchargement des sources générales : `git clone https://github.com/gismartwaredev/smartgeomobile`
-* Téléchargez le dépôt windows : `git clone https://github.com/gismartwaredev/smartgeomobile-windows`
-* Copiez les sources générales (`smartgeomobile/app/`) dans le répértoire `app/` du dépôt windows : `cp -R smartgeomobile/app smargeomobile-windows/` (`index.html` doit se trouver dans le répértoire `smartgeomobile-windows/app/`)
-* Executer `smartgeomobile.exe` ou `smartgeomobile.bat`
+git clone -b android-cordova-webview https://github.com/gismartwaredev/smartgeomobile.git
 
-##### Unix
 
-* Téléchargement des sources générales : `git clone https://github.com/gismartwaredev/smartgeomobile`
-* Installer Chrome
-* Dans le terminal :
-```
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome      --disable-web-security \
-                                                                    --unlimited-storage \
-                                                                    --allow-file-access \
-                                                                    --allow-file-access-from-files \
-                                                                    --app="$PWD/smartgeomobile/app/index.html"  \
-                                                                    --user-data-dir="$PWD/smartgeomobile/data"
-```
+Il faut les dépendances suivantes:
 
-## Livraison  :shipit:
+Node.js et npm: 
 
-##### Android
+https://nodejs.org (le package installera npm avec)
 
-```
-usage: ./android-build options
+Cordova:
 
-OPTIONS:
-   -h      display help
-   -t      git tag              [default: current commit]
-   -i      install on terminal  [default: false]
-   -m      release or debug     [default: debug]
-   -u      upload to github     [default: false]
-```
+npm install -g cordova
 
-**_Notes_** :
-  * Le script n'est disponible que sur Unix pour l'instant. `nodejs` et `curl` doivent être installés.
-  * Pour utiliser l'option `-u`, la release doit être créée sur github et ne doit pas avoir d'APK uploadé avec ce script
-  * Les APK `release` seront signés
-  * Les APK `release` et `debug` seront alignés
-  * Si un tag est fourni via l'option `-t`, un `git checkout` sera effectué, assurez vous donc de travailler sur un dépôt clean.
+Installer les sdk android et les dépendances pour pouvoir Build:
 
-##### iOS
+https://developer.android.com/sdk/installing/index.html
 
-> TODO
+Il faut ncp pour la copie des assets pour ensuite pouvoir build (en local):
 
-##### Windows
+npm install ncp
 
-> Voir https://github.com/gismartwaredev/smartgeomobile-windows/blob/master/README.md
+Build sur android ou sur émulateur:
+
+cordova platform add android
+
+cordova run android (ou cordova build android)
+
+Si le build marche mais que l'installation ne marche pas, désinstaller l'application du téléphone et faite:
+
+cordova run android --nobuild
+
+Les forks du plugin sqlite:
+
+Le plugin normal: https://github.com/Diliz/Cordova-sqlite-storage
+
+La version entreprise: https://github.com/Diliz/Cordova-sqlite-enterprise-free

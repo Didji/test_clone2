@@ -1,0 +1,42 @@
+{
+  "name": "cordova-sqlite-extras",
+  "version": "0.8.0-extra-regexp-pre",
+  "description": "Native interface to SQLite for PhoneGap/Cordova",
+  "cordova": {
+    "id": "cordova-sqlite-extra-regexp",
+    "platforms": [
+      "android",
+      "ios",
+      "windows",
+      "wp8",
+      "wp7",
+      "amazon-fireos"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brodybits/cordova-sqlite-extras.git"
+  },
+  "keywords": [
+    "sqlite",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-windows",
+    "cordova-wp8",
+    "cordova-wp7",
+    "cordova-amazon-fireos"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.3.0"
+    }
+  ],
+  "author": "various",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brodybits/cordova-sqlite-extras/issues"
+  },
+  "homepage": "https://github.com/brodybits/cordova-sqlite-extras"
+}

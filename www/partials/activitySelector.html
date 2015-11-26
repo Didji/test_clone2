@@ -1,0 +1,14 @@
+<div class="reportForm">
+    <h3><i18n>_REPORT_SELECT_ACTIVITY</i18n></h3>
+    <select  class="form-control" ng-model="activitySelectorController.selected" ng-options="activity.id as activity.label for activity in activitySelectorController.activities"></select>
+    
+    <button type="button" class="btn btn-default needPadding" ng-click="activitySelectorController.cancel()">
+        <i class="fa fa-ban"></i>
+        <i18n>_CANCEL</i18n>
+    </button>
+
+    <a ng-disabled="!activitySelectorController.selected" href="#/report/{{activitySelectorController.site}}/{{activitySelectorController.selected}}/{{activitySelectorController.assets || activitySelectorController.latlng}}/{{activitySelectorController.latlng? '' : 'call-'}}{{activitySelectorController.mission}}/" class="btn btn-primary needPadding">
+    	<i18n>_NEXT</i18n>
+    	<i class="fa fa-chevron-right"></i>
+    </a>
+</div>
