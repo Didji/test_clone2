@@ -21,10 +21,10 @@
                 <i ng-if="item.action == 'delete' " class="fa fa-trash"></i>
                 <i ng-if="item.action == 'new' " class="fa fa-plus"></i>
                 <i ng-if="item.action == 'update' " class="fa fa-pencil-square-o"></i>
-                {{item.label}}
+                {{::item.label}}
                 </small>
             </p>
-            <p>{{item.description}} <small>{{::(item.timestamp | date:'dd/MM à HH:mm')}}</small></p>
+            <p>{{::item.description}} <small>{{::(item.timestamp | date:'dd/MM à HH:mm')}}</small></p>
             <small ng-if=item.error ng-class='{"text-muted":item.syncInProgress, "text-danger":!item.syncInProgress}'>
                 {{item.error}} <a ng-if="!item.syncInProgress && !syncCenterController.synchronizing" ng-click='syncCenterController.synchronizeAll()'><i18n>_RETRY_</i18n> ?</a>
             </small>
