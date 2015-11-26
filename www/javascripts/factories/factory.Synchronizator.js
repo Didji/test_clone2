@@ -510,6 +510,7 @@
                             fileWriter.write(JSON.stringify(report));
                         }, function(error){
                                 console.log('error: ', JSON.stringify(error));
+                        });
                     });
                 });
             }, function(err){
@@ -521,7 +522,9 @@
                             file.createWriter(function(fileWriter) {
                                 fileWriter.seek(fileWriter.length);
                                 fileWriter.write(JSON.stringify(report));
-                            }, function(error){});
+                            }, function(error){
+                                    console.log('error: ', JSON.stringify(error));
+                            });
                         });
                     });
                 }, function(error){
