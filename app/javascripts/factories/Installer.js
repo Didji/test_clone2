@@ -10,6 +10,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         _INSTALL_MAX_ASSETS_PER_INSERT_REQUEST: 500,
         _INSTALL_MAX_ASSETS_PER_DELETE_REQUEST: 999,
         _INSTALL_MAX_ZONES_MATRIX_LENGTH: 4,
+        _DB_ERR: false,
 
         deleteAssets: function(site, obsoletes, callback) {
             var assets = [];
@@ -52,7 +53,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
 
             for (okey in metamodel) {
                 if (metamodel[okey].is_project) {
-                    site.metamodel['PROJECT_' + okey] = metamodel[okey] ;
+                    site.metamodel['PROJECT_' + okey] = metamodel[okey];
                     site.metamodel['PROJECT_' + okey].okey = 'PROJECT_' + okey;
                     site.metamodel['PROJECT_' + okey].group = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].group;
                     site.metamodel['PROJECT_' + okey].label = i18n.get( "_PROJECTS_PROJECT_" ) + " - " + site.metamodel['PROJECT_' + okey].label;
@@ -150,14 +151,12 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 delete site.stats;
                 sites[site.id] = site;
                 Storage.set_( 'sites', sites, function() {
-                    (callback || angular.noop)( sites );
+                    (callback || angular.noop) ( sites );
                 } );
             } );
-
         },
 
         createZones: function(site, callback) {
-
             var zones_matrix_length = Math.ceil( Math.sqrt( Math.pow( 2, Math.ceil( Math.log( site.number.total / Installer._INSTALL_MAX_ASSETS_PER_ZONE ) / Math.LN2 ) ) ) );
             zones_matrix_length = Math.min( zones_matrix_length, Installer._INSTALL_MAX_ZONES_MATRIX_LENGTH );
             var zones_matrix_width = (site.extent.xmax - site.extent.xmin) / zones_matrix_length,
@@ -209,7 +208,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         install: function(site, stats, callback, update) {
-
             if (!stats.length) {
                 return callback();
             }
@@ -217,7 +215,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             Installer.installOkey( site, stats[0], function() {
                 Installer.install( site, stats.slice( 1 ), callback, update );
             }, update );
-
         },
 
         update: function(site, callback, onlySite) {
@@ -245,7 +242,6 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         installOkey: function(site, objectType, callback, update) {
-
             $rootScope.$broadcast( "_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                 okey: objectType.okey,
                 progress: 0
@@ -348,9 +344,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         save_zones_to_database: function(site, callback) {
-
             for (var i = 0; i < site.zones.length; i++) {
-                (function(i) {
+                ( function(i) {
                     var temp_zone, sub_zone,
                         zone = site.zones[i];
                     if (zone.assets) {
@@ -366,30 +361,44 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                     Installer.execute_requests_for_zone( site, zone, function() {
                         Installer.checkpoint( "saved_zones", site.zones.length, callback );
                     } );
-                })( i );
+                } ) ( i );
             }
         },
 
         execute_requests_for_zone: function(site, zone, callback) {
-
             if (zone.insert_requests.length === 0) {
                 return Installer.checkpoint( "rqst" + zone.table_name, zone.insert_requests.length, callback );
             }
 
             for (var i = 0; i < zone.insert_requests.length; i++) {
-                (function(zone, request) {
+                ( function(zone, request) {
                     SQLite.openDatabase( {
                         name: zone.database_name
                     } ).transaction( function(transaction) {
                         transaction.executeSql( request.request, request.args, function() {
                             Installer.checkpoint( "rqst" + zone.table_name, zone.insert_requests.length, callback );
                             return;
-                        }, function(tx, sqlerror) {
-                                console.error( sqlerror.message );
-                                Installer.checkpoint( "rqst" + zone.table_name, zone.insert_requests.length, callback );
+                        }, function(tx, err) {
+                            console.error( err.message );
+                            Installer.checkpoint( "rqst" + zone.table_name, zone.insert_requests.length, callback );
+                        } );
+                    }, function(err) {
+                        //callback d'erreur de transaction, cf http://www.w3.org/TR/webdatabase/#sqlerror
+                        console.error( "TX error " + err.code + " on DB " + zone.database_name + " : " + err.message );
+                        if (!Installer._DB_ERR) {
+                            Installer._DB_ERR = true;
+                            var msg = i18n.get( '_INSTALL_ERR', err.code );
+                            if (err.code == err.QUOTA_ERR) {
+                                msg = i18n.get( '_INSTALL_QUOTA_ERR' );
+                            }
+                            alertify.alert( msg, function() {
+                                if (window.SmartgeoChromium) {
+                                    SmartgeoChromium.stop();
+                                }
                             } );
+                        }
                     } );
-                })( zone, zone.insert_requests[i] );
+                } ) ( zone, zone.insert_requests[i] );
             }
         },
 
@@ -407,5 +416,4 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
     };
 
     return Installer;
-
 } );

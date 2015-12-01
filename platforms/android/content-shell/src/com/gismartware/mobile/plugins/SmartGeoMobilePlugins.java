@@ -542,4 +542,9 @@ public class SmartGeoMobilePlugins {
             Log.e(TAG, "Unable to authenticate user " + user + " on url " + url + " and site " + site, e);
         }
     }
+
+    @JavascriptInterface
+    public void stop() {
+        ((Activity)context).finish();
+    }
 }
