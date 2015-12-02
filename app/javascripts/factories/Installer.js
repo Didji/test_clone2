@@ -12,6 +12,14 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         _INSTALL_MAX_ZONES_MATRIX_LENGTH: 4,
         _DB_ERR: false,
 
+        //constantes pour l'affichage du message d'information affiché au lancement de
+        //l'install si on détecte de potentiels pbs de places (bcp d'objets, moins de XX Mo dispo sur le terminal...)
+        //cf ckeckInstall
+        _INSTALL_MAX_OBJECTS_THRESHOLD: 750000, //on affiche un warning au dela de cer nb d'objets
+        _INSTALL_MIN_AVAILABLE_SPACE: 1000, //espace restant sur le terminal en Mo
+        _INSTALL_MAX_DENSITY: 50000, //densité indiquant un nombre d'objet par zones
+
+
         deleteAssets: function(site, obsoletes, callback) {
             var assets = [];
             for (var okey in obsoletes) {
@@ -411,6 +419,26 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                         Installer.checkpoint( "destroy_zones_databases", site.zones.length, callback );
                     } );
                 } );
+            }
+        },
+
+        checkInstall: function(site, callback) {
+            callback = callback || function() {};
+            if (window.SmartgeoChromium) {
+                ChromiumCallbacks[1000] = function(bytesAvailable) {
+                    if (site.number.total > Installer._INSTALL_MAX_OBJECTS_THRESHOLD ||
+                        (site.number.total / site.zones.length) > Installer._INSTALL_MAX_DENSITY ||
+                        ((bytesAvailable / 1024) / 1024) < Installer._INSTALL_MIN_AVAILABLE_SPACE) {
+                        alertify.alert( i18n.get( '_INSTALL_SPACE_WARNING' ), function() {
+                            callback();
+                        } );
+                    } else {
+                        callback();
+                    }
+                };
+                SmartgeoChromium.getAvailableSpace();
+            } else {
+                callback();
             }
         }
     };

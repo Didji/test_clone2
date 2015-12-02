@@ -45,6 +45,7 @@ window.smartgeo_i18n_lang.fr = {
     _CONSULTATION_ADD_TO_: "Ajouter à ",
     _CONSULTATION_WRITE_FOR_: "Saisir pour ",
     _CONSULTATION_ADD_TO_SELECTION: "Ajouter à la selection",
+    _INSTALL_SPACE_WARNING: "Votre installation semble volumineuse ou votre espace disque restant n'est pas suffisant.\nIl est possible que celle-ci ne puisse pas se terminer.",
     _INSTALL_INSTALLING: "Installation de ",
     _INSTALL_IN_PROGRESS: "en cours",
     _INSTALL_ERR: "Une erreur empêchant l'installation a été détectée (code %s).\nL'application va s'arrêter, merci de contacter votre support.",

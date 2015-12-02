@@ -547,4 +547,11 @@ public class SmartGeoMobilePlugins {
     public void stop() {
         ((Activity)context).finish();
     }
+
+    @JavascriptInterface
+    public void getAvailableSpace() {
+        File path = context.getFilesDir().getAbsoluteFile().getAbsoluteFile().getParentFile();
+
+        view.evaluateJavaScript("window.ChromiumCallbacks[1000](" + path.getFreeSpace() + ");");
+    }
 }
