@@ -254,6 +254,19 @@
         };
 
         /**
+         * @name addToMission
+         * @desc Ajoute l'objet à une mission
+         * @param {Object} mission
+         */
+        Asset.prototype.addToTour = function(tour, e) {
+            if (e) {
+                e.preventDefault();
+            }
+            $rootScope.addAssetToTour( this );
+            //$rootScope.$broadcast( '_ADD_ASSET_TO_TOUR_', this );
+        };
+
+        /**
          * @name getLineStringMiddle
          * @desc Retourne le milieu d'un LineString
          * @param {Array[]} coordinates Géometrie de l'objet

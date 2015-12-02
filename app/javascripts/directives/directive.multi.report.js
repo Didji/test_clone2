@@ -1,3 +1,8 @@
+/**
+ *
+ *  A refactoriser avec le controller.report
+ *
+ */
 (function() {
 
     'use strict';
@@ -6,15 +11,9 @@
         .module( 'smartgeomobile' )
         .directive( 'multiReport', multiReportDirective );
 
-    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils"];
+    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "$rootScope"];
 
-    /**
-     * @desc Directive pour l'internationalisation
-     * @example <multiReport>_AUTH_REMEMBER_PASSWORD_</multiReport>
-     * @TODO: Factoriser dans une seule directive report et multireport
-     */
-
-    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils) {
+    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, $rootScope) {
         return {
             restrict: 'E',
             scope: {
@@ -24,7 +23,7 @@
             link: link
         };
 
-        var reports;
+        var reports, initialTargets = [];
 
         function link(scope, element, attrs, controller) {
             if (!scope.intent) {
@@ -32,6 +31,8 @@
             }
 
             reports = {};
+
+            scope.intent.assets_by_id = {};
 
             scope.cancel = cancel;
             scope.save = save;
@@ -43,7 +44,7 @@
             scope.isIOS = navigator.userAgent.match( /iP(od|hone|ad)/i );
             scope.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
 
-            scope.intent.multi_report_activity = Activity.findOne( scope.intent.multi_report_activity );
+            scope.intent.multi_report_activity = Activity.findOne( +scope.intent.multi_report_activity );
             if (!scope.intent.multi_report_activity) {
                 return alertify.alert( "L'activité n'existe pas." );
             } else if (scope.intent.multi_report_activity.type !== "multi_assets_tour" || !scope.intent.multi_report_activity.multi_assets_tour) {
@@ -53,8 +54,16 @@
             }
             scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
             scope.intent.multi_report_target = scope.intent.multi_report_target.split( ',' );
+            initialTargets = angular.copy( scope.intent.multi_report_target );
             Asset.findAssetsByGuids( scope.intent.multi_report_target, createMarkers );
             createExitControl();
+
+            $rootScope.addAssetToTour = function addAsset(asset) {
+                scope.intent.multi_report_target.push( asset );
+                scope.intent.assets_by_id[ asset.id ] = asset;
+                createMarker( asset );
+            };
+
 
             /**
              * @name createExitControl
@@ -247,7 +256,6 @@
                 scope.intent.multi_report_assets_id = [];
 
                 var asset, assetid, redirect;
-
                 for (assetid in scope.intent.multi_report_target) {
                     asset = scope.intent.multi_report_target[assetid];
                     if (asset.currentState === 0) {
@@ -260,7 +268,9 @@
 
                     reports[+asset.id].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
 
-                    scope.intent.multi_report_assets_id.push( asset.id );
+                    if ( initialTargets.indexOf( ""+asset.id ) > -1 ) {
+                        scope.intent.multi_report_assets_id.push( asset.id );
+                    }
 
                     Synchronizator.addNew( prepareReport( reports[+asset.id] ) );
                 }
@@ -323,32 +333,35 @@
                         iconAnchor: [icon.width / 2, icon.height / 2]
                     } );
                 }
-                scope.intent.multi_report_target.forEach( function(asset) {
-                    asset.currentState = 0;
-                    L.marker( Asset.getCenter( asset ), {
-                        icon: scope.intent.multi_report_icons[asset.currentState]
-                    } ).on( 'click', function() {
-                        asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
-                        this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
-                    } ).on( 'contextmenu', function() {
-                        var field;
-                        scope.report = reports[ asset.id ] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
-                        for ( var i in scope.report.activity._fields ) {
-                            field = scope.report.activity._fields[ i ];
-                            scope.report.fields[ field.id ] = scope.report.fields[ field.id ] || '';
-                        }
-                        if (!scope.$$phase) {
-                            scope.$apply();
-                        }
-                        for (var i = 0; i < scope.report.assets.length; i++) {
-                            scope.assets.push( new Asset( scope.report.assets[i], applyDefaultValues ) );
-                        }
-                        applyDefaultValues();
-                        bidouille();
+                scope.intent.multi_report_target.forEach( createMarker );
+            };
 
-                        $('#multireport').modal( 'toggle' );
-                    } ).addTo( G3ME.map );
-                } );
+            function createMarker(asset) {
+                scope.intent.assets_by_id[ asset.id ] = asset;
+                asset.currentState = 0;
+                L.marker( Asset.getCenter( asset ), {
+                    icon: scope.intent.multi_report_icons[asset.currentState]
+                } ).on( 'click', function() {
+                    asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
+                    this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
+                } ).on( 'contextmenu', function() {
+                    var field;
+                    scope.report = reports[ asset.id ] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    for ( var i in scope.report.activity._fields ) {
+                        field = scope.report.activity._fields[ i ];
+                        scope.report.fields[ field.id ] = scope.report.fields[ field.id ] || '';
+                    }
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                    for (var i = 0; i < scope.report.assets.length; i++) {
+                        scope.assets.push( new Asset( scope.report.assets[i], applyDefaultValues ) );
+                    }
+                    applyDefaultValues();
+                    bidouille();
+
+                    $('#multireport').modal( 'toggle' );
+                } ).addTo( G3ME.map );
             };
 
             /**

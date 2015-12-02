@@ -1,3 +1,8 @@
+/**
+ *
+ *  Devrait disparaitre avec le refactoring des reports et des multi-reports
+ *
+ */
 (function() {
 
     'use strict';

@@ -84,7 +84,7 @@
                 }).addTo(G3ME.map);
             }
             if (intent.multi_report_target) {
-                vm.multireport = intent;
+                $rootScope.multireport = vm.multireport = intent;
             }
             if (!$scope.$$phase) {
                 $scope.$digest();
