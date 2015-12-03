@@ -192,7 +192,7 @@
                 in_ = [in_];
             }
             for (var i in in_) {
-                if ( !in_[i].multi_report_activity || in_[i].assets_by_id[ asset.id ] ) {
+                if ( !in_[i] || !in_[i].multi_report_activity || in_[i].assets_by_id[ asset.id ] ) {
                     continue;
                 }
                 if (Site.current.activities._byId[+in_[i].multi_report_activity.id].okeys[0] === asset.okey) {
