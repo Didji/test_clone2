@@ -33,6 +33,7 @@
             reports = {};
 
             scope.intent.assets_by_id = {};
+            scope.intent.positions = {};
 
             scope.cancel = cancel;
             scope.save = save;
@@ -58,12 +59,14 @@
             Asset.findAssetsByGuids( scope.intent.multi_report_target, createMarkers );
             createExitControl();
 
-            $rootScope.addAssetToTour = function addAsset(asset) {
+            $rootScope.addAssetToTour = function addAssetToTour(asset) {
                 scope.intent.multi_report_target.push( asset );
-                scope.intent.assets_by_id[ asset.id ] = asset;
                 createMarker( asset );
             };
 
+            $rootScope.addLocationToTour = function addLocationToTour(lat, lng) {
+                createMarkerForPosition( lat, lng );
+            };
 
             /**
              * @name createExitControl
@@ -255,8 +258,9 @@
 
                 scope.intent.multi_report_assets_id = [];
 
-                var asset, assetid, redirect;
-                for (assetid in scope.intent.multi_report_target) {
+                var asset, assetid, latlng, redirect;
+
+                for ( assetid in scope.intent.multi_report_target ) {
                     asset = scope.intent.multi_report_target[assetid];
                     if (asset.currentState === 0) {
                         continue;
@@ -273,6 +277,21 @@
                     }
 
                     Synchronizator.addNew( prepareReport( reports[+asset.id] ) );
+                }
+
+                for ( latlng in scope.intent.positions ) {
+                    asset = scope.intent.positions[ latlng ];
+
+                    if (asset.currentState === 0) {
+                        continue;
+                    }
+
+                    if ( !reports[ latlng ] ) {
+                        reports[ latlng ] = new Report( latlng.split(','), scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    }
+
+                    reports[ latlng ].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
+                    Synchronizator.addNew( prepareReport( reports[ latlng ] ) );
                 }
 
                 if (scope.intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
@@ -336,6 +355,34 @@
                 scope.intent.multi_report_target.forEach( createMarker );
             };
 
+            function createMarkerForPosition(lat, lng) {
+                var asset = {};
+                var latlng = lat + ',' + lng;
+                scope.intent.positions[ latlng ] = asset;
+                asset.currentState = 0;
+                L.marker( [lat, lng], {
+                    icon: scope.intent.multi_report_icons[asset.currentState]
+                } ).on( 'click', function() {
+                    asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
+                    this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
+                } ).on( 'contextmenu', function() {
+                    var field;
+                    scope.report = reports[ latlng ] || new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    for ( var i in scope.report.activity._fields ) {
+                        field = scope.report.activity._fields[ i ];
+                        scope.report.fields[ field.id ] = scope.report.fields[ field.id ] || '';
+                    }
+                    if (!scope.$$phase) {
+                        scope.$apply();
+                    }
+                    applyDefaultValues();
+                    bidouille();
+
+                    $('#multireport').modal( 'toggle' );
+                } ).addTo( G3ME.map );
+
+            }
+
             function createMarker(asset) {
                 scope.intent.assets_by_id[ asset.id ] = asset;
                 asset.currentState = 0;
@@ -369,7 +416,7 @@
              * @return Sauvegarde le rapport courant en attendant la synchro
              */
             function save() {
-                reports[ scope.report.assets[0] ] = scope.report;
+                reports[ scope.report.assets[0] || scope.report.latlng ] = scope.report;
                 close();
             }
 

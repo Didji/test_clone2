@@ -44,6 +44,7 @@ window.smartgeo_i18n_lang.fr = {
     _CONSULTATION_LOCATE: "Localiser",
     _CONSULTATION_GOTO: "S'y rendre",
     _CONSULTATION_REPORT_ON_POSITION: "Compte rendu sur cette position",
+    _CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR: "Ajouter cette position à la tournée",
     _CONSULTATION_GPS_FAIL: "Erreur lors de la récupération des coordonnées GPS",
     _CONSULTATION_ADD_TO_: "Ajouter à ",
     _CONSULTATION_WRITE_FOR_: "Saisir pour ",

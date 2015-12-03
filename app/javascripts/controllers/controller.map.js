@@ -145,9 +145,9 @@
          * @param {L.LatLng} coords Coordonées du click de consultation
          */
         function noConsultableAssets(coords) {
+            var popup, popupContent;
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-
-            var popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+            popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get('_CONSULTATION_REPORT_ON_POSITION') + '</button>';
@@ -156,7 +156,20 @@
                     $rootScope.openLocatedReport(coords.lat, coords.lng);
                 });
             }
-            L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
+            if ( $rootScope.multireport ) {
+                popupContent += '<button class="btn btn-primary addLocationToTour">'
+                    + i18n.get('_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR') + '</button>';
+                $(document).on('click', '.addLocationToTour', function () {
+                    //TODO(@gulian): utiliser un ng-click si possible
+                    if (popup) {
+                        G3ME.map.closePopup( popup );
+                        G3ME.map.panTo( coords );
+                        popup = null;
+                    }
+                    $rootScope.addLocationToTour(coords.lat, coords.lng);
+                });
+            }
+            popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
             return false;
         }
 
