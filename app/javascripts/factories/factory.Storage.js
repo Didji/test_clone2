@@ -61,7 +61,12 @@
                 return Storage.remove_( parameter, callback );
             }
             var deferred = $q.defer();
+
+            // Nettoyage "magique" des références cycliques.
+            // @fabriceds: Ce qui est magique cassera un jour où le charme rompra.
+            // @gulian: Perso j'y crois pas.
             value = JSON.parse( JSON.stringify( value ) );
+            
             SQLite.set( parameter, value, function(value) {
                 deferred.resolve( value );
                 (callback || angular.noop)( value );
