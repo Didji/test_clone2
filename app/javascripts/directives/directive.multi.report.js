@@ -171,7 +171,11 @@
                         }
                     } else {
                         def = getValueFromAssets( def.pkey, scope.report.activity.okeys[0] );
-                        scope.report.roFields[field.id] = formatFieldEntry( def );
+                        var output = formatFieldEntry( def );
+                        if (field.type === 'N') {
+                            output = +output;
+                        }
+                        scope.report.roFields[field.id] = output;
                         scope.report.overrides[field.id] = '';
                         fields[field.id] = def;
                     }
@@ -215,10 +219,10 @@
              */
             function getValueFromAssets(pkey, okey) {
                 var rv = {},
-                    val;
+                    val,
+                    list = Site.getList( pkey, okey );
                 for (var i = 0, lim = scope.assets.length; i < lim; i++) {
                     var a = scope.assets[i].attributes,
-                        list = Site.getList( pkey, okey );
                     if (!a) {
                         break;
                     }
