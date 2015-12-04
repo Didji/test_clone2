@@ -59,7 +59,7 @@
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
                     if (assets_.length <= 1 || assets_[0].guid === assets_[1].guid) {
                         self.isComplex = false ;
-                        return;
+                        return (callback || angular.noop)( self );
                     }
                     var assets_byId = {} ;
                     for (var i = 0; i < assets_.length; i++) {

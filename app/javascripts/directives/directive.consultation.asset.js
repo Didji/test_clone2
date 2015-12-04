@@ -23,10 +23,6 @@
 
         function link(scope) {
 
-            scope.asset.findRelated( function() {
-                scope.$digest();
-            } );
-
             /* Scope Attributes */
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
