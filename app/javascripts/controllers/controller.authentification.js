@@ -39,7 +39,6 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             $rootScope.currentPage = "Authentification";
 
             vm.user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {
@@ -47,7 +46,6 @@
             };
             vm.gimapServer = (Storage.get( 'url' ) || "");
             vm.firstAuth = vm.gimapServer.length ? Utils.ping() && false : true;
-
         }
 
         /**
@@ -111,7 +109,6 @@
                 console.error( 'remoteSites : ', remoteSites, 'localSites : ', localSites );
                 vm.loginInProgress = false;
             }
-
         }
 
         /**
@@ -132,7 +129,6 @@
                     sites: []
                 }, 0 );
             }
-            console.warn( response );
             vm.loginInProgress = false;
         }
 
@@ -152,12 +148,9 @@
                 'forcegimaplogin': true
             } );
 
-            $http.post( url, {}, {
+            $http.post(url, {}, {
                 timeout: 10000
-            } )
-                .success( loginSuccess )
-                .error( loginError );
-
+            }).success(loginSuccess).error(loginError);
         }
 
         /**
@@ -168,7 +161,5 @@
             Utils.reset();
             $route.reload();
         }
-
     }
-
 })();
