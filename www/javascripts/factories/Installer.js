@@ -126,11 +126,12 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 'timestamp': site.timestamp
             } );
 
-            $http.get( url )
-                .success( callback )
-                .error( function(response, code) {
+            $http.get(url)
+                .success(callback)
+                .error(function(response, code) {
                     (callback || function() {})();
-                } );
+                }
+            );
         },
 
         saveSite: function(site, callback) {
@@ -139,9 +140,18 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {
                         name: site.zones[i].database_name
-                    } ).transaction( function(transaction) {
-                        transaction.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)' );
-                        transaction.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)' );
+                    } ).transaction( function(tx) {
+                        tx.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_ASSETS_ID ON ASSETS (id)', [], function(tx, result) {
+                            tx.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function(tx, result) {
+                                //OK
+                            }, function(tx, err) {
+                                console.error("SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
+                            } );
+                        }, function(tx, err) {
+                            console.error("SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
+                        } );
+                    }, function(err) {
+                        console.error("TX ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
                     } );
                 }
                 sites = sites || {};

@@ -54,10 +54,10 @@
          * @param {String} parameter
          * @param {Function} callback
          */
-        SQLite.get = function(parameter, callback) {
-            SQLite.parameters().transaction( function(transaction) {
+        SQLite.get = function(parameter, callback) {    
+            SQLite.parameters().readTransaction(function(tx) {
                 if (parameter === 'sites') {
-                    transaction.executeSql( 'SELECT * FROM SITES ', [], function(transaction, results) {
+                    tx.executeSql( 'SELECT * FROM SITES ', [], function(tx, results) {
                         var sites = undefined,
                             nbSite = results.rows.length;
 
@@ -70,22 +70,24 @@
                         }
                         
                         (callback || function() {})( sites );
-                    }, function(transaction, SqlError) {
-                            console.error( SqlError );
-                            (callback || function() {})( undefined );
-                        });
+                    }, function(tx, err) {
+                        console.error("SQL ERROR " + err.code + " on " + parameter + " : " + err.message);
+                        (callback || function() {})( undefined );
+                    });
                 } else {
-                    transaction.executeSql( 'SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(transaction, results) {
+                    tx.executeSql( 'SELECT p_value FROM PARAMETERS WHERE p_parameter = ? ', [parameter], function(tx, results) {
                         if (results.rows.length === 1) {
                             (callback || function() {})( JSON.parse( results.rows.item( 0 ).p_value ) );
                         } else {
                             (callback || function() {})( undefined );
                         }
-                    }, function(transaction, SqlError) {
-                            console.error( SqlError );
+                    }, function(tx, err) {
+                            console.error("SQL ERROR " + err.code + " on " + parameter + " : " + err.message);
                             (callback || function() {})( undefined );
                     });
                 }
+            }, function(err) {
+                console.error("TX ERROR " + err.code + " on " + parameter + " : " + err.message);
             });    
         };
 
@@ -99,41 +101,45 @@
         SQLite.set = function(parameter, value, callback) {
             if (parameter === 'sites') {
                 //on doit vider la table d'abord... Sinon on ne peut pas desinstaller de site
-                SQLite.parameters().transaction( function(transaction) {
-                    transaction.executeSql('DELETE FROM SITES', [], 
-                        function() {
+                SQLite.parameters().transaction( function(tx) {
+                    tx.executeSql('DELETE FROM SITES', [], 
+                        function(tx, result) {
                             var site;
                             for (var i in value) {
                                 site = value[i];
-                                transaction.executeSql('INSERT OR REPLACE INTO SITES(id, value) VALUES (?, ?)', 
+                                tx.executeSql('INSERT OR REPLACE INTO SITES(id, value) VALUES (?, ?)', 
                                     [site.id, JSON.stringify(site)], 
-                                    function() {
+                                    function(tx, result) {
                                         //rien à faire, on passe au suivant
-                                    }, function(transaction, SqlError) {
-                                         console.error( SqlError );
+                                    }, function(tx, err) {
+                                        console.error("SQL ERROR " + err.code + " on " + parameter + " : " + err.message);
                                         (callback || function() {})( undefined );
                                     });
                             }
                             (callback || function() {})(); // tout est OK!
                         }, 
-                        function(transaction, SqlError) {
-                            console.error( SqlError );
+                        function(tx, err) {
+                            console.error("SQL ERROR " + err.code + " on " + parameter + " : " + err.message);
                             (callback || function() {})();
                         }
                     );
+                }, function(err) {
+                    console.error("TX ERROR " + err.code + " on " + parameter + " : " + err.message);
                 });
             } else {
-                 SQLite.parameters().transaction( function(transaction) {
-                    transaction.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', 
+                 SQLite.parameters().transaction( function(tx) {
+                    tx.executeSql('INSERT OR REPLACE INTO PARAMETERS(p_parameter, p_value) VALUES (?, ?)', 
                         [parameter, JSON.stringify( value )], 
-                        function() {
+                        function(tx, result) {
                             (callback || function() {})();
                         }, 
-                        function(transaction, sqlError) {
-                            console.error(sqlError);
+                        function(tx, err) {
+                            console.error("SQL ERROR " + err.code + " on " + parameter + " : " + err.message);
                             (callback || function() {})( undefined );
                         } 
                     );
+                 }, function(err) {
+                    console.error("TX ERROR " + err.code + " on " + parameter + " : " + err.message);
                  });
             }    
         };
@@ -183,19 +189,19 @@
             var calledCallback = function() {};
             SQLite.openDatabase( {
                 name: database
-            } ).transaction( function(t) {
+            } ).transaction( function(tx) {
                 for (var i = 0; i < request.length; i++) {
                     if (i === request.length - 1) {
                         calledCallback = callback ;
                     }
-                    t.executeSql( request[i], args[i] || [], function(t, r) {
+                    tx.executeSql( request[i], args[i] || [], function(tx, r) {
                         calledCallback( r.rows );
-                    }, function(tx, sqlerror) {
-                        console.error(sqlerror);
+                    }, function(tx, err) {
+                        console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
                     });
                 }
-            }, function(tx, sqlerror) {
-                    console.error(sqlerror);
+            }, function(err) {
+                console.error("TX ERROR " + err.code + " ON " + database + " : " + err.message);
             });
         };
 
