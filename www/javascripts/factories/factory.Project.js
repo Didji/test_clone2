@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Project', ProjectFactory );
 
-    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "ComplexAsset", "Utils", "Synchronizator"];
+    ProjectFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "ComplexAsset", "Utils", "Synchronizator", "Marker"];
 
 
-    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, ComplexAsset, Utils, Synchronizator) {
+    function ProjectFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, ComplexAsset, Utils, Synchronizator, Marker) {
 
         /**
          * @class ProjectFactory
@@ -41,6 +41,7 @@
         Project.prototype.unloading = false;
         Project.prototype.synchronizing = false;
         Project.prototype.is_open = false;
+        Project.prototype.listAssetShow = [];
 
         Project.database = "parameters" ;
         Project.table = "PROJECTS" ;
@@ -66,6 +67,14 @@
             $http.get( Utils.getServiceUrl( 'project.mobility.load.json', {
                 id: this.id
             } ) ).success( function(data) {
+                if (data.assets != 0) {
+                    if (data.relations.length != 0) {
+                        project.setMarkersProject(data.assets, data.relations);
+                    } else {
+                        project.setMarkersProject(data.assets);
+                    }
+                }
+
                 project.setAssets( data.assets, data.relations, function() {
                     project.setProjectLoaded( callback );
                 } );
@@ -89,6 +98,7 @@
             $http.get( Utils.getServiceUrl( 'project.mobility.unload.json', {
                 id: this.id
             } ) ).success( function() {
+                project.unSetMarkersProject();
                 project.setProjectUnloaded( callback );
                 Project.checkRemoteLockedAssets();
             } ).error( Project.smartgeoReachError ).finally( function() {
@@ -604,6 +614,39 @@
          */
         Project.list = function() {
             return $http.get( Utils.getServiceUrl( 'project.mobility.list.json' ) );
+        };
+
+        /**
+         * @name setMarkersProject
+         * @param  {assets} Liste d'assets
+         * @param  {relations} Liste des relations entre assets (peu être null)
+         * @desc Ajoute un markeur sur chaque asset au chargement d'un projet.
+         */
+        Project.prototype.setMarkersProject = function(assets, relations) {
+            var listCoordinates = [];
+            $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
+            for (var i = 0; i < assets.length; i++) {
+                var asset = new Asset(assets[i]);
+                if (relations == undefined || relations.hasOwnProperty(asset.guid)) {
+                    asset.showOnMap();
+                    this.listAssetShow.push(asset);
+                    listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
+                }
+            }
+
+            Asset.focusCoordinates(listCoordinates);
+        };
+
+        /**
+         * @name unSetMarkersProject
+         * @desc Cache tous les markeurs d'un projet.
+         */
+        Project.prototype.unSetMarkersProject = function() {
+            if (this.listAssetShow.length != 0) {
+                for (var i = 0; i < this.listAssetShow.length; i++) {
+                    this.listAssetShow[i].hideFromMap();
+                }
+            }
         };
 
 

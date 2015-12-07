@@ -145,6 +145,18 @@
         };
 
         /**
+         * @name focusCoordinates
+         * @param  {listCoordinates} Tableau contenant plusieurs coordonnées
+         * @desc Zoom sur les coordonnées passées en paramètre
+         */
+        Asset.focusCoordinates = function(listCoordinates) {
+            var bounds = new L.LatLngBounds(listCoordinates); 
+            G3ME.map.fitBounds(bounds, {
+                padding: [25, 25]
+            });
+        };
+
+        /**
          * @name toggleMapVisibility
          * @desc Change la visibilité de l'objet sur la carte
          */
