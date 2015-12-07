@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
+    MapController.$inject = ["$scope", "$compile", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
+    function MapController($scope, $compile, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
 
         var vm = this,
             LAST_USERS_LOCATION = [],
@@ -147,7 +147,8 @@
         function noConsultableAssets(coords) {
             var popup, popupContent;
             $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            popupContent = '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+            popupContent = '<div><p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get('_CONSULTATION_REPORT_ON_POSITION') + '</button>';
@@ -156,20 +157,17 @@
                     $rootScope.openLocatedReport(coords.lat, coords.lng);
                 });
             }
+
             if ( $rootScope.multireport ) {
-                popupContent += '<button class="btn btn-primary addLocationToTour">'
+                popupContent += '<button ng-click="$root.addLocationToTour('+coords.lat+', '+coords.lng+')" class="btn btn-primary addLocationToTour">'
                     + i18n.get('_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR') + '</button>';
-                $(document).on('click', '.addLocationToTour', function () {
-                    //TODO(@gulian): utiliser un ng-click si possible
-                    if (popup) {
-                        G3ME.map.closePopup( popup );
-                        G3ME.map.panTo( coords );
-                        popup = null;
-                    }
-                    $rootScope.addLocationToTour(coords.lat, coords.lng);
-                });
             }
-            popup = L.popup().setLatLng(coords).setContent(popupContent).openOn(G3ME.map);
+
+            popupContent += '</div>';
+
+            popupContent = $compile(popupContent)($scope);
+
+            L.popup().setLatLng(coords).setContent( popupContent[0] ).openOn(G3ME.map);
             return false;
         }
 

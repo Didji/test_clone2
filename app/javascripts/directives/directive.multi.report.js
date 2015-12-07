@@ -222,7 +222,7 @@
                     val,
                     list = Site.getList( pkey, okey );
                 for (var i = 0, lim = scope.assets.length; i < lim; i++) {
-                    var a = scope.assets[i].attributes,
+                    var a = scope.assets[i].attributes;
                     if (!a) {
                         break;
                     }
