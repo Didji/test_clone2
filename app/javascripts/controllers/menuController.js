@@ -21,8 +21,9 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          */
         vm.initialize = function() {
             var persistence = Storage.get( "persistence.menu" );
+            var intent = Storage.get( "intent" );
 
-            vm.display = (null === persistence) ? true : persistence.display;
+            vm.display = !!intent ? false : (null === persistence) ? true : persistence.display;
 
             vm.homeIsDisplayed = true;
 
