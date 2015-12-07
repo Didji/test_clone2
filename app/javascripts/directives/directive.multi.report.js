@@ -65,6 +65,7 @@
             };
 
             $rootScope.addLocationToTour = function addLocationToTour(lat, lng) {
+                G3ME.map.closePopup();
                 createMarkerForPosition( lat, lng );
             };
 
