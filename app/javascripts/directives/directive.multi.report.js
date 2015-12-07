@@ -402,7 +402,7 @@
                         scope.$apply();
                     }
                     for (var i = 0; i < scope.report.assets.length; i++) {
-                        scope.assets.push( new Asset( scope.report.assets[i], applyDefaultValues ) );
+                        scope.assets.push( new Asset( scope.report.assets[i] ) );
                     }
                     applyDefaultValues();
                     bidouille();
