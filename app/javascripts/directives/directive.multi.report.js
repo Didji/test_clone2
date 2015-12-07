@@ -267,8 +267,13 @@
 
                 for ( assetid in scope.intent.multi_report_target ) {
                     asset = scope.intent.multi_report_target[assetid];
+
                     if (asset.currentState === 0) {
-                        continue;
+                        if ( !reports[+asset.id] ) {
+                           continue;
+                        } else {
+                            asset.currentState++;
+                        }
                     }
 
                     if ( !reports[+asset.id] ) {
@@ -288,7 +293,11 @@
                     asset = scope.intent.positions[ latlng ];
 
                     if (asset.currentState === 0) {
-                        continue;
+                        if ( !reports[ latlng ] ) {
+                           continue;
+                        } else {
+                            asset.currentState++;
+                        }
                     }
 
                     if ( !reports[ latlng ] ) {
