@@ -51,29 +51,28 @@
         function activate() {
             $rootScope.currentPage = "Saisie de compte-rendu";
 
-            if (!checkInputParameters( $routeParams )) {
+            if (!checkInputParameters($routeParams)) {
                 return;
             }
 
             bidouille();
 
-            if (!isNaN( +$routeParams.assets )) {
+            if (!isNaN(+$routeParams.assets)) {
                 $routeParams.assets = [+$routeParams.assets];
             }
 
-            vm.report = new Report( $routeParams.assets, $routeParams.activity, $routeParams.mission );
-            applyDefaultValues();
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
+            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
+
             for (var i = 0; i < vm.report.assets.length; i++) {
-                vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
+                vm.assets.push(new Asset(vm.report.assets[i]));
             }
-            setTimeout( function() {
+            applyDefaultValues();
+            
+            setTimeout(function() {
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
-            }, 1000 );
+            }, 1000);
         }
 
         /**
@@ -215,10 +214,10 @@
          */
         function getValueFromAssets(pkey, okey) {
             var rv = {},
-                val;
+                val,
+                list = Site.getList(pkey, okey);
             for (var i = 0, lim = vm.assets.length; i < lim; i++) {
-                var a = vm.assets[i].attributes,
-                    list = Site.getList( pkey, okey );
+                var a = vm.assets[i].attributes;
                 if (!a) {
                     break;
                 }
@@ -274,8 +273,12 @@
                     }
                 } else {
                     def = getValueFromAssets( def.pkey, vm.report.activity.okeys[0] );
-                    vm.report.roFields[field.id] = formatFieldEntry( def );
-                    vm.report.overrides[field.id] = '';
+                    var output = formatFieldEntry(def);
+                    if (field.type === 'N') {
+                        output = +output;
+                    }
+                    vm.report.roFields[field.id] = output;
+                    vm.report.overrides[field.id] = output;
                     fields[field.id] = def;
                 }
             }

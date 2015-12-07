@@ -62,13 +62,12 @@
                         <timepicker ng-required='field.required' ng-if="::(field.type=='T' && (!field.default || !field.default.pkey))" show-meridian="false" ng-model="reportController.report.fields[field.id]"></timepicker>
 
                         <input ng-required='field.required' ng-if="::(field.type=='N' && field.default && field.default.pkey)" type="number" class="form-control" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.overrides[field.id]'>
-                        <input ng-required='field.required' ng-if="::(field.type=='N' && (!field.default || !field.default.pkey))" type="number" class="form-control" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.fields[field.id]'>
+                        <input ng-required='field.required' ng-if="::(field.type=='N' && (!field.default || !field.default.pkey))" type="number" class="form-control" ng-required="field.required"
+                        ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.fields[field.id]'>
                         <small ng-if="::(field.type=='N')" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
 
-                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && field.default && field.default.pkey)" ng-required="field.required" class="form-control" ng-model='reportController.report.overrides[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
-
-                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required" class="form-control" ng-model='reportController.report.fields[field.id]' placeholder="{{(field['default'] && field['default'].pkey) ? reportController.report.roFields[field.id] : ''}}">
-
+                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && field.default && field.default.pkey)" ng-required="field.required" class="form-control" ng-model='reportController.report.overrides[field.id]'>
+                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required" class="form-control" ng-model='reportController.report.fields[field.id]'>
                     </div>
                 </div>
             </div>
