@@ -277,6 +277,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                     return;
                 }
                 $rootScope.$broadcast( "DESACTIVATE_POSITION" );
+                $rootScope.$broadcast( "DESACTIVATE_CONSULTATION" );
                 $location.path( '/' );
                 if (!$scope.$$phase) {
                     $scope.$apply();
@@ -295,6 +296,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                     return;
                 }
                 $rootScope.$broadcast( "DESACTIVATE_POSITION" );
+                $rootScope.$broadcast( "DESACTIVATE_CONSULTATION" );
                 $location.path( '/sites/' );
                 if (!$scope.$$phase) {
                     $scope.$apply();

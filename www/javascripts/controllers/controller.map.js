@@ -45,10 +45,15 @@
 
             Authenticator.silentLogin(G3ME.BackgroundTile.redraw);
 
-            (Storage.get('user_position_activated') ? activatePosition : angular.noop)();
+            ($rootScope.positionActive === true ? activatePosition : angular.noop)();
+            ($rootScope.consultationActive === true ? activateConsultation : angular.noop)();
 
             $scope.$on("ACTIVATE_CONSULTATION", function () {
                 activateConsultation();
+            });
+
+            $scope.$on("DESACTIVATE_CONSULTATION", function () {
+                stopConsultation();
             });
 
             $scope.$on("ACTIVATE_POSITION", function () {
@@ -119,10 +124,10 @@
          *       et enregister l'état de la fonction "Ma position" pour la réactiver.
          */
         function controllerDestroyHandler() {
+            $rootScope.positionActive = !!GPS.positionListerners.length;
             GPS.emptyPositionListerners();
             var realPosActivate = POSITION_ACTIVATE;
             stopPosition();
-            Storage.set('user_position_activated', realPosActivate);
             G3ME.map.remove();
             document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
             clearTimeout(lastViewTimeout);
@@ -200,6 +205,7 @@
          */
         function activateConsultation() {
             stopConsultation();
+            $rootScope.consultationActive = true;
             consultationIsEnabled = true;
             CONSULTATION_CONTROL = CONSULTATION_CONTROL || Utils.makeControl(i18n.get('_MAP_CONSULTATION_CONTROL'), "fa-info-circle", stopConsultation);
             G3ME.map.addControl(CONSULTATION_CONTROL);
@@ -214,6 +220,7 @@
             if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
                 G3ME.map.removeControl(CONSULTATION_CONTROL);
             }
+            $rootScope.consultationActive = false;
             if (e) {
                 return false;
             }
@@ -224,11 +231,9 @@
          * @desc Active la fonction "Ma position"
          */
         function activatePosition() {
-
+            //$rootScope.positionActive = true;
             //Zoom 18 = 30m, plus le chiffre augmente et plus le zoom est grand
-
             POSITION_ACTIVATE = FIRST_POSITION = true;
-            Storage.set('user_position_activated', true);
             //On vient de lancer le positionnement GPS et on est au-delà de 30m, on s'approche donc ...'
             if (POSITION_ZOOM == null && G3ME.map.getZoom() < 18) {
                 POSITION_ZOOM = 18
@@ -278,7 +283,7 @@
                 G3ME.map.removeLayer(POSITION_MARKER);
             }
             POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
-            Storage.set('user_position_activated', false);
+            //$rootScope.positionActive = false;
             if (e) {
                 return false;
             }
