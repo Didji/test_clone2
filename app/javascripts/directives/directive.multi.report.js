@@ -3,7 +3,7 @@
  *  A refactoriser avec le controller.report
  *
  */
-(function() {
+( function() {
 
     'use strict';
 
@@ -23,7 +23,8 @@
             link: link
         };
 
-        var reports, initialTargets = [];
+        var reports,
+            initialTargets = [];
 
         function link(scope, element, attrs, controller) {
             if (!scope.intent) {
@@ -84,7 +85,7 @@
                     }
                 } );
                 G3ME.map.addControl( new control() );
-            };
+            }
 
             /**
              * @name applyConsequences
@@ -156,7 +157,7 @@
                         fields[field.id] = d;
                     } else if (!def) {
                         continue;
-                    } else if ('string' === typeof def) {
+                    } else if ('string' === typeof def) { //valeur par défaut de type constante
                         if (field.type === 'D' && def === '#TODAY#') {
                             date = new Date();
                             def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
@@ -165,6 +166,11 @@
                         } else if (field.type === 'T' && def === '#NOW#') {
                             var d = new Date();
                             fields[field.id] = d;
+                        } else if (field.type === 'N') {
+                            def = +def;
+                            fields[field.id] = def;
+                            scope.report.fields[field.id] = def;
+                            scope.report.roFields[field.id] = def;
                         } else {
                             fields[field.id] = def;
                             scope.report.fields[field.id] = def;
@@ -177,7 +183,7 @@
                             output = +output;
                         }
                         scope.report.roFields[field.id] = output;
-                        scope.report.overrides[field.id] = '';
+                        scope.report.overrides[field.id] = output;
                         fields[field.id] = def;
                     }
                 }
@@ -209,7 +215,6 @@
                     }, 250 );
                     elt = null;
                 } );
-
             }
 
             /**
@@ -256,7 +261,8 @@
 
             /**
              * @name exitClickHandler
-             * @desc Handler de fin du mode          * @param {Event} e
+             * @desc Handler de fin du mode
+             * @param {Event} e
              */
             function exitClickHandler(e) {
                 e.preventDefault();
@@ -265,47 +271,47 @@
 
                 var asset, assetid, latlng, redirect;
 
-                for ( assetid in scope.intent.multi_report_target ) {
+                for (assetid in scope.intent.multi_report_target) {
                     asset = scope.intent.multi_report_target[assetid];
 
                     if (asset.currentState === 0) {
-                        if ( !reports[+asset.id] ) {
-                           continue;
+                        if (!reports[+asset.id]) {
+                            continue;
                         } else {
                             asset.currentState++;
                         }
                     }
 
-                    if ( !reports[+asset.id] ) {
+                    if (!reports[+asset.id]) {
                         reports[+asset.id] = new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     }
 
                     reports[+asset.id].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
 
-                    if ( initialTargets.indexOf( ""+asset.id ) > -1 ) {
+                    if (initialTargets.indexOf( "" + asset.id ) > -1) {
                         scope.intent.multi_report_assets_id.push( asset.id );
                     }
 
                     Synchronizator.addNew( prepareReport( reports[+asset.id] ) );
                 }
 
-                for ( latlng in scope.intent.positions ) {
-                    asset = scope.intent.positions[ latlng ];
+                for (latlng in scope.intent.positions) {
+                    asset = scope.intent.positions[latlng];
 
                     if (asset.currentState === 0) {
-                        if ( !reports[ latlng ] ) {
-                           continue;
+                        if (!reports[latlng]) {
+                            continue;
                         } else {
                             asset.currentState++;
                         }
                     }
 
-                    if ( !reports[ latlng ] ) {
-                        reports[ latlng ] = new Report( latlng.split(','), scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    if (!reports[latlng]) {
+                        reports[latlng] = new Report( latlng.split( ',' ), scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     }
 
-                    reports[ latlng ].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
-                    Synchronizator.addNew( prepareReport( reports[ latlng ] ) );
+                    reports[latlng].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
+                    Synchronizator.addNew( prepareReport( reports[latlng] ) );
                 }
 
                 if (scope.intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
@@ -314,7 +320,7 @@
                 }
                 Storage.remove( 'intent' );
                 return false;
-            };
+            }
 
             /**
              * @name prepareReport
@@ -367,12 +373,12 @@
                     } );
                 }
                 scope.intent.multi_report_target.forEach( createMarker );
-            };
+            }
 
             function createMarkerForPosition(lat, lng) {
                 var asset = {};
                 var latlng = lat + ',' + lng;
-                scope.intent.positions[ latlng ] = asset;
+                scope.intent.positions[latlng] = asset;
                 asset.currentState = 0;
                 L.marker( [lat, lng], {
                     icon: scope.intent.multi_report_icons[asset.currentState]
@@ -381,10 +387,10 @@
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
                     var field;
-                    scope.report = reports[ latlng ] || new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
-                    for ( var i in scope.report.activity._fields ) {
-                        field = scope.report.activity._fields[ i ];
-                        scope.report.fields[ field.id ] = scope.report.fields[ field.id ] || '';
+                    scope.report = reports[latlng] || new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    for (var i in scope.report.activity._fields) {
+                        field = scope.report.activity._fields[i];
+                        scope.report.fields[field.id] = scope.report.fields[field.id] || '';
                     }
                     if (!scope.$$phase) {
                         scope.$apply();
@@ -392,13 +398,12 @@
                     applyDefaultValues();
                     bidouille();
 
-                    $('#multireport').modal( 'toggle' );
+                    $( '#multireport' ).modal( 'toggle' );
                 } ).addTo( G3ME.map );
-
             }
 
             function createMarker(asset) {
-                scope.intent.assets_by_id[ asset.id ] = asset;
+                scope.intent.assets_by_id[asset.id] = asset;
                 asset.currentState = 0;
                 L.marker( Asset.getCenter( asset ), {
                     icon: scope.intent.multi_report_icons[asset.currentState]
@@ -407,10 +412,10 @@
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
                     var field;
-                    scope.report = reports[ asset.id ] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
-                    for ( var i in scope.report.activity._fields ) {
-                        field = scope.report.activity._fields[ i ];
-                        scope.report.fields[ field.id ] = scope.report.fields[ field.id ] || '';
+                    scope.report = reports[asset.id] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    for (var i in scope.report.activity._fields) {
+                        field = scope.report.activity._fields[i];
+                        scope.report.fields[field.id] = scope.report.fields[field.id] || '';
                     }
                     if (!scope.$$phase) {
                         scope.$apply();
@@ -421,16 +426,16 @@
                     applyDefaultValues();
                     bidouille();
 
-                    $('#multireport').modal( 'toggle' );
+                    $( '#multireport' ).modal( 'toggle' );
                 } ).addTo( G3ME.map );
-            };
+            }
 
             /**
              * @name save
              * @return Sauvegarde le rapport courant en attendant la synchro
              */
             function save() {
-                reports[ scope.report.assets[0] || scope.report.latlng ] = scope.report;
+                reports[scope.report.assets[0] || scope.report.latlng] = scope.report;
                 close();
             }
 
@@ -439,9 +444,9 @@
              * @return Annule la saisie en cours
              */
             function cancel() {
-                if ( !scope.reportForm.$pristine ) {
-                    alertify.confirm( i18n.get( '_CANCEL_REPORT_CREATION' ), function( yes ) {
-                        if ( yes ) {
+                if (!scope.reportForm.$pristine) {
+                    alertify.confirm( i18n.get( '_CANCEL_REPORT_CREATION' ), function(yes) {
+                        if (yes) {
                             return close();
                         }
                     } );
@@ -461,7 +466,5 @@
                 $( '#multireport' ).modal( 'toggle' );
             }
         }
-
     }
-
-})();
+} )();
