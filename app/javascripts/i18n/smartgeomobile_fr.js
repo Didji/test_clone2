@@ -31,6 +31,7 @@ window.smartgeo_i18n_lang.fr = {
     _REGISTER_UPDATE_LICENSE_: "Vérifier la licence",
     _REGISTER_RECORD_ID_: "Votre licence est valide. Veuillez noter l'identifiant suivant qui vous sera demandé en cas de perte ou vol de ce terminal : ",
     _CANCEL_REPORT_CREATION: "Souhaitez-vous vraiment annuler la création de ce compte rendu ?",
+    _CANCEL_REPORT_EDITION: "Souhaitez-vous vraiment annuler l'édition de ce compte rendu ?",
     _CONFIRM_CHANGE_SITE_: "Voulez-vous vraiment changer de site&nbsp?",
     _CONFIRM_DISCONNECT_: "Voulez-vous vraiment quitter l'application&nbsp?",
     _CONFIRM_DELETE_ASSET_: "Souhaitez-vous vraiment supprimer cet objet ?",

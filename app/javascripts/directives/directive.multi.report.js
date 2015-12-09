@@ -24,6 +24,7 @@
         };
 
         var reports,
+            unwatch_report_ged = null,
             initialTargets = [];
 
         function link(scope, element, attrs, controller) {
@@ -412,7 +413,7 @@
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
                     var field;
-                    scope.report = reports[asset.id] || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                    scope.report = angular.copy( reports[asset.id] ) || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     for (var i in scope.report.activity._fields) {
                         field = scope.report.activity._fields[i];
                         scope.report.fields[field.id] = scope.report.fields[field.id] || '';
@@ -425,6 +426,10 @@
                     }
                     applyDefaultValues();
                     bidouille();
+
+                    unwatch_report_ged = scope.$watch( 'report.ged', function(n, o) {
+                        scope.reportForm.$setDirty();
+                    });
 
                     $( '#multireport' ).modal( 'toggle' );
                 } ).addTo( G3ME.map );
@@ -445,11 +450,23 @@
              */
             function cancel() {
                 if (!scope.reportForm.$pristine) {
-                    alertify.confirm( i18n.get( '_CANCEL_REPORT_CREATION' ), function(yes) {
-                        if (yes) {
-                            return close();
+
+                    alertify.set({
+                        labels: {
+                            ok: 'OK',
+                            cancel : 'Retour'
                         }
-                    } );
+                    });
+
+                    alertify.confirm(
+                        i18n.get( '_CANCEL_REPORT_EDITION' ),
+                        function( yes ) {
+                            if (yes) {
+                                return close();
+                            }
+                        }
+                    );
+
                 } else {
                     return close();
                 }
@@ -460,6 +477,7 @@
              * @return Ferme la fenêtre
              */
             function close() {
+                unwatch_report_ged();
                 scope.report = null;
                 scope.assets = [];
                 scope.reportForm.$setPristine();
