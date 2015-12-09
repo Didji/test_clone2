@@ -31,6 +31,7 @@ window.smartgeo_i18n_lang.en = {
     _REGISTER_UPDATE_LICENSE_: "Check the license",
     _REGISTER_RECORD_ID_: "Your license has been accepted. Please, record the following ID in case of loss or theft: ",
     _CANCEL_REPORT_CREATION: "Do you really want to cancel this report's creation?",
+    _CANCEL_REPORT_EDITION: "Do you really want to cancel this report's editing?",
     _CONFIRM_CHANGE_SITE_: "Do you really want to change site?",
     _CONFIRM_DISCONNECT_: "Do you really want to exit?",
     _CONFIRM_DELETE_ASSET_: "Do you really want to delete this asset ?",
