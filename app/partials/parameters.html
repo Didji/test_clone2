@@ -1,12 +1,12 @@
 <div id="left_panel_parameters" ng-controller="ParametersController as parametersController">
-    <button ng-disabled="parametersController.updating" class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmUpdate()">
-        <i class="fa fa-refresh" ng-class="{'fa-spin':parametersController.updating}"></i>
-         <i18n ng-if="!parametersController.updating">_SYNC_UPDATE</i18n>
-         <i18n ng-if=" parametersController.updating">_SITE_UPDATE</i18n> {{::parametersController.site}}
+    <button ng-disabled="$root.dailyUpdate" class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmUpdate()">
+        <i class="fa fa-refresh" ng-class="{'fa-spin':$root.dailyUpdate}"></i>
+         <i18n ng-if="!$root.dailyUpdate">_SYNC_UPDATE</i18n>
+         <i18n ng-if="$root.dailyUpdate">_SITE_UPDATE</i18n> {{::parametersController.site}}
     </button>
 
     <button class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmRemove()">
         <span class="icon-refresh"></span> <i18n>_SYNC_UNINSTALL</i18n> {{::parametersController.site}}
     </button>
-    <p class="lastUpdate"><i18n ng-if="parametersController.lastUpdate">_SITE_LAST_UPDATE</i18n> {{parametersController.lastUpdate | date:'dd/MM/yyyy à HH:mm:ss'}}</p>
+    <p class="lastUpdate"><i18n ng-if="parametersController.lastUpdate">_SITE_LAST_UPDATE</i18n> {{parametersController.lastUpdate() | date:'dd/MM/yyyy à HH:mm:ss'}}</p>
 </div>
