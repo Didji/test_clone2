@@ -140,6 +140,12 @@
                     def, i, field, date;
                 for (i in scope.report.activity._fields) {
                     field = scope.report.activity._fields[i];
+
+                    if (fields[field.id]) {
+                        //champ déjà enregistré, on applique pas les valeurs par défaut
+                        continue;
+                    }
+
                     def = field['default'];
 
                     // Par priorité sur les valeurs par défaut, on applique les valeurs
@@ -429,7 +435,7 @@
 
                     unwatch_report_ged = scope.$watch( 'report.ged', function(n, o) {
                         scope.reportForm.$setDirty();
-                    });
+                    } );
 
                     $( '#multireport' ).modal( 'toggle' );
                 } ).addTo( G3ME.map );
@@ -451,16 +457,15 @@
             function cancel() {
                 if (!scope.reportForm.$pristine) {
 
-                    alertify.set({
+                    alertify.set( {
                         labels: {
                             ok: 'OK',
-                            cancel : 'Retour'
+                            cancel: 'Retour'
                         }
-                    });
+                    } );
 
                     alertify.confirm(
-                        i18n.get( '_CANCEL_REPORT_EDITION' ),
-                        function( yes ) {
+                        i18n.get( '_CANCEL_REPORT_EDITION' ), function(yes) {
                             if (yes) {
                                 return close();
                             }
