@@ -260,16 +260,13 @@
                     continue;
                 } else if ('string' === typeof def) {
                     if (field.type === 'D' && def === '#TODAY#') {
-                        date = new Date();
-                        def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
-                        fields[field.id] = new Date( def );
-                        vm.report.fields[field.id] = new Date( def );
+                        def= new Date();
+                        fields[field.id] = def;
                     } else if (field.type === 'T' && def === '#NOW#') {
                         var d = new Date();
                         fields[field.id] = d;
                     } else {
                         fields[field.id] = def;
-                        vm.report.fields[field.id] = def;
                         vm.report.roFields[field.id] = def;
                     }
                 } else {
