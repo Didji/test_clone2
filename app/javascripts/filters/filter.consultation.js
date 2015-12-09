@@ -1,11 +1,11 @@
-(function() {
+( function() {
 
     'use strict';
 
     angular
         .module( 'smartgeomobile' )
         .filter( 'prettifyField', prettifyField )
-        .filter( 'decodeBool', decodeBool)
+        .filter( 'decodeBool', decodeBool )
         .filter( 'consultationTabsFilter', consultationTabsFilter )
         .filter( 'consultationFieldsFilter', consultationFieldsFilter )
         .filter( 'reportTabsFilter', reportTabsFilter )
@@ -36,9 +36,9 @@
          */
         function _decodeBool(s) {
             if (s === 'Y') {
-                return i18n.get('_BOOL_Y_');
+                return i18n.get( '_BOOL_Y_' );
             }
-            return i18n.get('_BOOL_N_');
+            return i18n.get( '_BOOL_N_' );
         }
         return _decodeBool;
     }
@@ -85,8 +85,7 @@
                     Site.current.lists &&
                     asset.attributes[fieldsIn[i].key] &&
                     Site.current.lists[fieldsIn[i].options] &&
-                    Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]]
-                )
+                    Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]])
                 ) {
                     fieldsOut.push( fieldsIn[i] );
                 }
@@ -193,9 +192,9 @@
          */
         function _updatableAssetsFilter(assets) {
             var out = [];
-            for ( var i = 0 ; i < assets.length ; i++ ) {
-                if ( assets[i].attributes._rights === 'U' ) {
-                    out.push(assets[i]);
+            for (var i = 0; i < assets.length; i++) {
+                if (assets[i].attributes._rights === 'U') {
+                    out.push( assets[i] );
                 }
             }
             return out;
@@ -299,9 +298,8 @@
                 isLocked = asset.locked || (Project.currentLoadedProject && Project.currentLoadedProject.hasAsset( asset )),
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length && !isLocked,
                 isUpdatable = Right.isUpdatable( asset ) && !isLocked,
-                isGraphical = Site.current.metamodel[asset.okey].is_graphical ,
-                isAvailableToFetchHistory = Right.get('history') && isReportable && !(asset.reports && asset.reports.length)
-            ;
+                isGraphical = Site.current.metamodel[asset.okey].is_graphical,
+                isAvailableToFetchHistory = Right.get( 'history' ) && isReportable && !(asset.reports && asset.reports.length);
 
 
             if (isAvailableToFetchHistory) {
@@ -326,7 +324,7 @@
             }
 
             // MULTI SELECTION ACTIONS
-            if (isReportable) {
+            if (isReportable && Right.get( 'multiselection' )) {
                 authAction.push( asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection );
             }
 
@@ -340,11 +338,11 @@
                     authAction.push( actions.markobjectasdeleteforproject );
                 }
 
-                if ( isInCurrentProject ) {
+                if (isInCurrentProject) {
                     authAction.push( actions.deleteobjectfromprojectandreleaseit );
                 }
 
-                if ( !isInCurrentProject && !isLocked ) {
+                if (!isInCurrentProject && !isLocked) {
                     authAction.push( actions.addtocurrentproject );
                 }
 
@@ -355,4 +353,4 @@
         return _guirlandeFilter;
     }
 
-})();
+} )();

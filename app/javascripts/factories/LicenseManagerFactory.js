@@ -30,7 +30,9 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             _DONT_REALLY_RESET: false,
             //lors de la mise à jour quotidienne, cela concerne-t-il le site ou le site ET les données?
             //par défaut, et si le droit n'est pas spécifié, tout est mis à jour
-            onlyUpdateSiteDaily: false
+            onlyUpdateSiteDaily: false,
+            //sélection globale:
+            multiselection: false
         };
 
         if (!this.__isDeviceRegistered()) {
