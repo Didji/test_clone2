@@ -6,13 +6,13 @@
         .module('smartgeomobile')
         .controller('MapController', MapController);
 
-    MapController.$inject = ["$scope", "$compile", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
+    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $compile, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
+    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
 
         var vm = this,
             LAST_USERS_LOCATION = [],
@@ -140,14 +140,19 @@
         }
 
         /**
-         * @name noConsultableAssets
-         * @desc Callback de la consultation dans le cas ou aucun objet n'est trouvé.
+         * @name openPopupIfNeeded
+         * @desc Ouvre une popup si nécessaire après un click consultation.
          * @param {L.LatLng} coords Coordonées du click de consultation
+         * @param {Array} assets
          */
-        function noConsultableAssets(coords) {
-            var popup, popupContent;
-            $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
-            popupContent = '<div><p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+        function openPopupIfNeeded(coords, assets) {
+            var popup, okey;
+            var popupContent = '';
+
+            if ( !assets.length ) {
+                $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
+                popupContent += '<p>' + i18n.get('_MAP_ZERO_OBJECT_FOUND') + '</p>';
+            }
 
             if (Site.current.activities.length && $rootScope.rights.report) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
@@ -158,17 +163,17 @@
                 });
             }
 
-            if ( $rootScope.multireport ) {
+            okey = $rootScope.multireport && $rootScope.multireport.multi_report_activity.okeys[0];
+
+            if ( $rootScope.multireport && !( $filter('filter')(assets, {okey: okey}, true) ).length ) {
                 popupContent += '<button ng-click="$root.addLocationToTour('+coords.lat+', '+coords.lng+')" class="btn btn-primary addLocationToTour">'
-                    + i18n.get('_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR') + '</button>';
+                  + i18n.get('_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR') + '</button>';
             }
 
-            popupContent += '</div>';
-
-            popupContent = $compile(popupContent)($scope);
-
-            L.popup().setLatLng(coords).setContent( popupContent[0] ).openOn(G3ME.map);
-            return false;
+            if ( popupContent.length ) {
+                popupContent = $compile( '<div>' + popupContent + '</div>' )($scope);
+                L.popup().setLatLng(coords).setContent( popupContent[0] ).openOn(G3ME.map);
+            }
         }
 
         /**
@@ -191,9 +196,8 @@
             $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
 
             Asset.findInBounds(coords, circle.getBounds(), function (assets) {
-                if (!assets.length) {
-                    noConsultableAssets(coords);
-                } else {
+                openPopupIfNeeded( coords, assets );
+                if (assets.length) {
                     $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                 }
             });
