@@ -240,14 +240,24 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 if (onlySite) {
                     Site.save( Site.current, function() {
                         $rootScope.dailyUpdate = false;
+                        if (!$rootScope.$$phase) {
+                            $rootScope.$digest();
+                        }
+                        alertify.log(i18n.get('_UPDATE_SITE_END'));
                         callback();
                     } );
                     return;
                 }
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
-                        $rootScope.dailyUpdate = false;
-                        Site.save( Site.current, callback);
+                        Site.save( Site.current, function() {
+                            $rootScope.dailyUpdate = false;
+                            if (!$rootScope.$$phase) {
+                                $rootScope.$digest();
+                            }
+                            alertify.log(i18n.get('_UPDATE_ALL_END'));
+                            callback();
+                        });
                         Asset.cache = {};
                         (G3ME.canvasTile && G3ME.reloadLayers)();
                     }, true );
