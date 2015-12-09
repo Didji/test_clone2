@@ -257,7 +257,7 @@
                     fields[field.id] = d;
                 } else if (!def) {
                     continue;
-                } else if ('string' === typeof def) {
+                } else if ('string' === typeof def) { //valeur par défaut de type constante
                     if (field.type === 'D' && def === '#TODAY#') {
                         date = new Date();
                         def = date.getUTCFullYear() + '-' + Utils.pad( date.getUTCMonth() + 1 ) + '-' + Utils.pad( date.getUTCDate() );
@@ -266,6 +266,11 @@
                     } else if (field.type === 'T' && def === '#NOW#') {
                         var d = new Date();
                         fields[field.id] = d;
+                    } else if (field.type === 'N') {
+                        def = +def;
+                        fields[field.id] = def;
+                        vm.report.fields[field.id] = def;
+                        vm.report.roFields[field.id] = def;
                     } else {
                         fields[field.id] = def;
                         vm.report.fields[field.id] = def;
