@@ -15,13 +15,15 @@
     function ParametersController($scope, i18n, $location, Site, Installer, LicenseManager) {
 
         var vm = this;
-
         vm.confirmUpdate = confirmUpdate;
         vm.confirmRemove = confirmRemove;
-
         vm.site = Site.current.label;
-        vm.lastUpdate = Site.current.timestamp * 1000;
-        vm.updating = false;
+        vm.lastUpdate = lastUpdate;
+
+
+        function lastUpdate() {
+            return Site.current.timestamp * 1000;
+        }
 
         /**
          * @name confirmUpdate
@@ -30,7 +32,7 @@
         function confirmUpdate() {
             alertify.confirm( i18n.get( '_SYNC_UPDATE_CONFIRM_MESSAGE_', Site.current.label ), function(yes) {
                 if (yes) {
-                    update();
+                    update(false);
                     $scope.$digest();
                 }
             } );
@@ -53,15 +55,12 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function update() {
-            vm.updating = true;
             // LicenseManager.update( true );
             Installer.update( Site.current, function() {
-                vm.updating = false;
-                vm.lastUpdate = Site.current.timestamp * 1000;
                 if(!$scope.$$phase) {
                     $scope.$digest();
                 }
-            } );
+            });
         }
 
         /**
@@ -74,5 +73,4 @@
             } );
         }
     }
-
 })();

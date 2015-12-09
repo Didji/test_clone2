@@ -226,22 +226,28 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         update: function(site, callback, onlySite) {
+            $rootScope.dailyUpdate = true;
             callback = callback || function() {};
             Installer.getUpdateJSON( site, function(site) {
                 if (!site) {
-                    (callback || function() {})();
+                    $rootScope.dailyUpdate = false;
+                    callback();
                     return;
                 }
                 var formatedSite = Installer.formatSiteMetadata( site, true );
                 Site.current.oldTimestamp = Site.current.timestamp;
                 angular.extend( Site.current, formatedSite );
                 if (onlySite) {
-                    Site.save( Site.current, callback );
+                    Site.save( Site.current, function() {
+                        $rootScope.dailyUpdate = false;
+                        callback();
+                    } );
                     return;
                 }
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
-                        Site.save( Site.current, callback );
+                        $rootScope.dailyUpdate = false;
+                        Site.save( Site.current, callback);
                         Asset.cache = {};
                         (G3ME.canvasTile && G3ME.reloadLayers)();
                     }, true );
