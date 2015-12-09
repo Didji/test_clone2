@@ -32,7 +32,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
             //par défaut, et si le droit n'est pas spécifié, tout est mis à jour
             onlyUpdateSiteDaily: false,
             //sélection globale:
-            multiselection: false
+            multiselection: true
         };
 
         if (!this.__isDeviceRegistered()) {
