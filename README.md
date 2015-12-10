@@ -40,3 +40,5 @@ Les forks du plugin sqlite:
 Le plugin normal: https://github.com/Diliz/Cordova-sqlite-storage
 
 La version entreprise: https://github.com/Diliz/Cordova-sqlite-enterprise-free
+
+La version regexp: https://github.com/Diliz/cordova-sqlite-extra-regexp
