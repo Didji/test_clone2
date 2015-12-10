@@ -11,6 +11,7 @@
         .filter( 'reportTabsFilter', reportTabsFilter )
         .filter( 'reportFieldsFilter', reportFieldsFilter )
         .filter( 'activityListFilter', activityListFilter )
+        .filter( 'reportableAssetsForIntentFilter', reportableAssetsForIntentFilter )
         .filter( 'isLink', isLink )
         .filter( 'updatableAssetsFilter', updatableAssetsFilter )
         .filter( 'guirlandeFilter', guirlandeFilter );
@@ -173,6 +174,37 @@
         return _activityListFilter;
     }
 
+    reportableAssetsForIntentFilter.$inject = ["Site", "Storage"];
+
+    function reportableAssetsForIntentFilter(Site, Storage) {
+        /**
+         * @name _reportableAssetsForIntentFilter
+         * @desc
+         */
+        function _reportableAssetsForIntentFilter(assets) {
+            if ( assets && !( assets instanceof Array ) ) {
+                assets = [assets];
+            } else if ( !assets ) {
+                return [];
+            }
+
+            var out = [];
+            var intent = Storage.get( 'intent' );
+
+            if ( !( intent && intent.map_target ) ) {
+                return [];
+            }
+
+            for (var i = 0; i < assets.length; i++) {
+                if ( Site.current.activities._byId[ intent.map_activity ].okeys[0] === assets[ i ].okey ) {
+                    out.push( assets[ i ] );
+                }
+            }
+            return out;
+        }
+        return _reportableAssetsForIntentFilter;
+    }
+
     function isLink() {
         /**
          * @name _isLink
@@ -307,8 +339,7 @@
                 isUpdatable = Right.isUpdatable( asset ) && !isLocked,
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical,
                 isAvailableToFetchHistory = Right.get( 'history' ) && isReportable && !(asset.reports && asset.reports.length),
-                intent = Storage.get( 'intent' ),
-                isReportableForIntent = intent && intent.map_target && (Site.current.activities._byId[ intent.map_activity ].okeys[0] === asset.okey);
+                isReportableForIntent = !!$filter( 'reportableAssetsForIntentFilter' )( asset ).length;
 
             if (isAvailableToFetchHistory) {
                 authAction.push( actions.fetchhistory );

@@ -156,7 +156,7 @@
 
             //On peut faire un CR sur XY si on a le droit report OU
             //si on vient d'un intent qui ne soit pas un intent d'auth ('oauth')(spécifique Veolia)
-            if (Site.current.activities.length && ($rootScope.rights.report || (intent && intent.controller != 'oauth'))) {
+            if ( Site.current.activities.length && ($rootScope.rights.report || !$filter( 'reportableAssetsForIntentFilter' )( assets ).length) ) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get( '_CONSULTATION_REPORT_ON_POSITION' ) + '</button>';
                 $( document ).on( 'click', '.openLocateReportButton', function() {
