@@ -159,7 +159,7 @@
             //
             // TODO: FAIRE MIEUX
             var intent = Storage.get( 'intent' );
-            intent = intent && ( intent.controller === 'map' || intent.controller === 'ma' );
+            intent = intent && intent.controller === 'map';
             if ( Site.current.activities.length && ($rootScope.rights.report || intent && !$filter( 'reportableAssetsForIntentFilter' )( assets ).length) ) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get( '_CONSULTATION_REPORT_ON_POSITION' ) + '</button>';

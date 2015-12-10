@@ -191,7 +191,7 @@
             var out = [];
             var intent = Storage.get( 'intent' );
 
-            if ( intent && !( intent.controller === 'map' || intent.controller === 'ma' ) ) {
+            if ( intent && intent.controller !== 'map' ) {
                 return [];
             }
 

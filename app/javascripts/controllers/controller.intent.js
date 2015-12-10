@@ -27,6 +27,13 @@
             if (intent.controller === 'oaut') {
                 intent.controller = 'oauth';
             }
+            if (intent.controller === 'ma') {
+                intent.controller = 'map';
+            }
+            if (intent.controller === 'repor') {
+                intent.controller = 'report';
+            }
+            
             Storage.set( 'intent', intent );
 
             if (!intent.controller) {
