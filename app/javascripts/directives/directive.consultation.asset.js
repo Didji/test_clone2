@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .directive( 'assetConsultation', assetConsultation );
 
-    assetConsultation.$inject = ["$rootScope", "Asset", "Site", "Project", "i18n", "Synchronizator", "Storage"];
+    assetConsultation.$inject = ["$rootScope", "$location", "Asset", "Site", "Project", "i18n", "Synchronizator", "Storage"];
 
-    function assetConsultation($rootScope, Asset, Site, Project, i18n, Synchronizator, Storage) {
+    function assetConsultation($rootScope, $location, Asset, Site, Project, i18n, Synchronizator, Storage) {
 
         var directive = {
             link: link,
@@ -38,7 +38,8 @@
             scope.deleteAsset = deleteAsset;
             scope.markObjectAsDeletedForCurrentProject = markObjectAsDeletedForCurrentProject;
             scope.exec = exec;
-            scope.removeFromProject = removeFromProject ;
+            scope.removeFromProject = removeFromProject;
+            scope.addToReportForIntent = addToReportForIntent;
 
             scope.$on( '$destroy', destroy );
 
@@ -182,6 +183,11 @@
                 } else {
                     eval( method[1] + '(scope.asset);' );
                 }
+            }
+
+            function addToReportForIntent(asset) {
+                var intent = Storage.get( 'intent' );
+                $location.path('/report/' + Site.current.id + "/" + intent.report_activity + "/" + asset.id);
             }
         }
     }

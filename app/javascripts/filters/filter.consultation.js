@@ -203,9 +203,9 @@
     }
 
 
-    guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right"];
+    guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right", "Storage"];
 
-    function guirlandeFilter(Site, Project, $filter, Right) {
+    function guirlandeFilter(Site, Project, $filter, Right, Storage) {
         /**
          * @name _guirlandeFilter
          * @desc Définie la liste des boutons dans un bloc de consultation en fonction d'un Asset
@@ -256,6 +256,13 @@
                 method: "asset.fetchHistory"
             },
 
+            // INTENT ACTIONS
+            "addtoreportforintent": {
+                id: "addtoreportforintent",
+                icon: "pencil-square-o",
+                method: "scope.addToReportForIntent"
+            },
+
             // PROJECT ACTIONS
             "markobjectasdeleteforproject": {
                 id: "markobjectasdeleteforproject",
@@ -299,8 +306,9 @@
                 isReportable = !!$filter( 'activityListFilter' )( asset ).length && !isLocked,
                 isUpdatable = Right.isUpdatable( asset ) && !isLocked,
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical,
-                isAvailableToFetchHistory = Right.get( 'history' ) && isReportable && !(asset.reports && asset.reports.length);
-
+                isAvailableToFetchHistory = Right.get( 'history' ) && isReportable && !(asset.reports && asset.reports.length),
+                intent = Storage.get( 'intent' ),
+                isReportableForIntent = intent && intent.map_target && (Site.current.activities._byId[ intent.map_activity ].okeys[0] === asset.okey);
 
             if (isAvailableToFetchHistory) {
                 authAction.push( actions.fetchhistory );
@@ -315,6 +323,10 @@
                 authAction.push( actions.goto );
             }
 
+            // INTENT ACTIONS
+            if ( isReportableForIntent ) {
+                authAction.push( actions.addtoreportforintent );
+            }
 
             // OBJECT ACTIONS
             if (isUpdatable && !isInCurrentProject) {
