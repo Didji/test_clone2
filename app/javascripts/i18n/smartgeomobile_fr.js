@@ -54,6 +54,8 @@ window.smartgeo_i18n_lang.fr = {
     _INSTALL_QUOTA_ERR: "L'application ne peut installer plus de données car votre quota a été atteint.\nL'installation va s'arrêter, merci de contacter votre support.",
     _UNINSTALL_UNINSTALLING: "Désinstallation de ",
     _UPDATE_UPDATING: "Mise à jour de ",
+    _UPDATE_SITE_END: "Votre référentiel d'activité a été mis à jour",
+    _UPDATE_ALL_END: "Votre référentiel d'activité et votre patrimoine ont été mis à jour",
     _MENU_CONSULTATION: "Consultation",
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Recherche",

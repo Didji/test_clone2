@@ -54,6 +54,8 @@ window.smartgeo_i18n_lang.en = {
     _INSTALL_QUOTA_ERR: "Your quota has been reached, no more data can be installed.\nApplication will stop. Please, contact your support.",
     _UNINSTALL_UNINSTALLING: "Uninstalling ",
     _UPDATE_UPDATING: "Updating ",
+    _UPDATE_SITE_END: "Your activities' repository has been updated",
+    _UPDATE_ALL_END: "Your activities' repository and your assets have been updated",
     _MENU_CONSULTATION: "Consultation",
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Search",
