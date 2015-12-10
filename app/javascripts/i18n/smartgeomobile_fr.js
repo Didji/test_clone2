@@ -55,7 +55,7 @@ window.smartgeo_i18n_lang.fr = {
     _UNINSTALL_UNINSTALLING: "Désinstallation de ",
     _UPDATE_UPDATING: "Mise à jour de ",
     _UPDATE_SITE_END: "Vos données référentielles ont été mises à jour",
-    _UPDATE_ALL_END: "Votre données référentielles et patrimoniales ont été mises à jour",
+    _UPDATE_ALL_END: "Vos données référentielles et patrimoniales ont été mises à jour",
     _MENU_CONSULTATION: "Consultation",
     _MENU_PLANNING: "Planning",
     _MENU_SEARCH: "Recherche",
