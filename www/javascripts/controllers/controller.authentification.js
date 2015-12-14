@@ -40,7 +40,6 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             Utils.clearPersistence();
             G3ME.resetMap();
 
@@ -49,7 +48,6 @@
             };
             vm.gimapServer = (Storage.get( 'url' ) || "");
             vm.firstAuth = vm.gimapServer.length ? Utils.ping() && false : true;
-
         }
 
         /**
@@ -108,7 +106,6 @@
                 console.error( 'remoteSites : ', remoteSites, 'localSites : ', localSites );
                 vm.loginInProgress = false;
             }
-
         }
 
         /**
@@ -129,7 +126,6 @@
                     sites: []
                 }, 0 );
             }
-            console.warn( response );
             vm.loginInProgress = false;
         }
 
@@ -149,12 +145,9 @@
                 'forcegimaplogin': true
             } );
 
-            $http.post( url, {}, {
+            $http.post(url, {}, {
                 timeout: 10000
-            } )
-                .success( loginSuccess )
-                .error( loginError );
-
+            }).success(loginSuccess).error(loginError);
         }
 
         /**
@@ -165,7 +158,5 @@
             Utils.reset();
             $route.reload();
         }
-
     }
-
 })();

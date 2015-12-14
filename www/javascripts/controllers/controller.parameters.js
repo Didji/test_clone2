@@ -15,13 +15,14 @@
     function ParametersController($scope, i18n, $location, Site, Installer, LicenseManager) {
 
         var vm = this;
-
         vm.confirmUpdate = confirmUpdate;
         vm.confirmRemove = confirmRemove;
-
         vm.site = Site.current.label;
-        vm.lastUpdate = Site.current.timestamp * 1000;
-        vm.updating = false;
+
+
+        function lastUpdate() {
+            return Site.current.timestamp * 1000;
+        }
 
         /**
          * @name confirmUpdate
@@ -30,7 +31,7 @@
         function confirmUpdate() {
             alertify.confirm( i18n.get( '_SYNC_UPDATE_CONFIRM_MESSAGE_', Site.current.label ), function(yes) {
                 if (yes) {
-                    update();
+                    update(false);
                     $scope.$digest();
                 }
             } );
@@ -53,23 +54,22 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function update() {
-            vm.updating = true;
             // LicenseManager.update( true );
 
             //on prend garde à ne pas éteindre l'écran pendant la mise à jour, cela stoppe les requêtes
             document.addEventListener("deviceready", function () {
                 // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                //et si on ne le mets pas explicitement ca ne fonctionne pas
                 window.powermanagement.acquire(); 
             }, false);
 
             Installer.update(Site.current, function() {
-                vm.updating = false;
-                vm.lastUpdate = Site.current.timestamp * 1000;
-                if(!$scope.$$phase) {
+                if (!$scope.$$phase) {
                     $scope.$digest();
                 }
                 document.addEventListener("deviceready", function () {
                     // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                    //et si on ne le mets pas explicitement ca ne fonctionne pas
                     window.powermanagement.release();
                 }, false);
             });
@@ -85,5 +85,4 @@
             } );
         }
     }
-
 })();
