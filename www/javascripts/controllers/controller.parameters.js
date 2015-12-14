@@ -18,6 +18,7 @@
         vm.confirmUpdate = confirmUpdate;
         vm.confirmRemove = confirmRemove;
         vm.site = Site.current.label;
+        vm.lastUpdate = lastUpdate;
 
 
         function lastUpdate() {

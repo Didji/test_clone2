@@ -8,5 +8,5 @@
     <button class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmRemove()">
         <span class="icon-refresh"></span> <i18n>_SYNC_UNINSTALL</i18n> {{::parametersController.site}}
     </button>
-    <p class="lastUpdate"><i18n ng-if="parametersController.lastUpdate">_SITE_LAST_UPDATE</i18n> {{parametersController.lastUpdate() | date:'dd/MM/yyyy à HH:mm:ss'}}</p>
+    <p class="lastUpdate"><i18n ng-if="parametersController.lastUpdate()">_SITE_LAST_UPDATE</i18n> {{parametersController.lastUpdate() | date:'dd/MM/yyyy à HH:mm:ss'}}</p>
 </div>
