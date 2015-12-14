@@ -90,8 +90,10 @@
                 }
                 Synchronizator.addNew( intent.multi_report_reports[reportValue] );
             }
-            if (intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
+            if (intent.multi_report_redirect) {
                 redirect = intent.multi_report_redirect.replace( "[DONE_ASSETS]", intent.multi_report_assets_id.join( ',' ) );
+
+                //TODO: pour ce dev spé Veolia, gérer le passage en 2.0/full web view en remplacant l'appel suivant à Chromium:
                 SmartgeoChromium.redirect( decodeURI( redirect ) );
             }
             Storage.remove( 'intent' );

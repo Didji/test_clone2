@@ -425,11 +425,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                             if (err.code == err.QUOTA_ERR) {
                                 msg = i18n.get( '_INSTALL_QUOTA_ERR' );
                             }
-                            alertify.alert( msg, function() {
-                                if (window.SmartgeoChromium) {
-                                    SmartgeoChromium.stop();
-                                }
-                            } );
+                            alertify.alert( msg );//TODO: en 2.0/full web view, quitter l'application sur le callback de confirmation
+                            //du message pour être ISO à la 1.2.4 (dev spé Veolia) ou trouver une autre solution
                         }
                     } );
                 } ) ( zone, zone.insert_requests[i] );
@@ -450,6 +447,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
 
         checkInstall: function(site, callback) {
             callback = callback || function() {};
+            //TODO: en 2.0/full web view, implémenter l'algo ci-dessous, demandé par Veolia en 1.2.4
+            //SI TOUJOURS D'ACTUALITE (peut être plus de pb de place car la 2.0 affiche un message pour agumenter les quotas si besoin par ex...)
             if (window.SmartgeoChromium) {
                 ChromiumCallbacks[1000] = function(bytesAvailable) {
                     if (site.number.total > Installer._INSTALL_MAX_OBJECTS_THRESHOLD ||
