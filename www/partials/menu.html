@@ -11,7 +11,7 @@
                 <li ng-if="item.displayMenuItem" ng-click='execute(item)'>
                         <span ng-class="item.icon"></span> {{item.label}}
                         <!-- TODO(@gulian): trouver mieux -->
-                        <span class="badge" ng-if="item.badge == 'toBeSync' && toBeSyncLength() > 0">{{toBeSyncLength()}}</span>
+                        <span class="badge" ng-if="item.badge == 'toBeSync' && ($root.syncBadgeItems.length >0) ">{{$root.syncBadgeItems.length}}</span>
                 </li>
                 <div ng-if="item.forceLoadDOM" ng-show="item.displayItemContent" ng-include="item.template"></div>
                 <div ng-if="item.displayItemContent && !item.forceLoadDOM" ng-include="item.template"></div>
