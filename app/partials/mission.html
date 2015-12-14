@@ -1,0 +1,118 @@
+<div class="panel panel-default" style='width: 90%;margin: 10px auto;'>
+    <div ng-click='planningController.toggleMission(mission)' class="panel-heading" ng-class="mission.emergency && !mission.done.length ? 'emergency' : ''">
+        <h3 class="panel-title">
+            <i ng-show="mission.isLoading" class="fa fa-refresh fa-spin pull-right"></i>
+            <span class="mission-label">
+                <span ng-if=" mission.activity">{{mission.activity.label}} n°{{mission.number}}</span>
+                <span ng-if="!mission.activity">Appel n°{{mission.number}} : {{mission.reason}} {{mission.cause?'('+mission.cause+')':''}}</span>
+            </span>
+            <span ng-show="!mission.isLoading && !(mission.assets.length == 0 && !mission.activity)" class="badge pull-right mission-assets-count-badge">
+                <span ng-if="mission.assets.length == 0 &&  mission.activity">
+                    <i18n>_PLANNING_FINISH_</i18n>
+                </span>
+                <span ng-if="mission.assets.length > 0 && !(!mission.isLoading && !mission.activity && mission.done.length > 0)">{{mission.done.length}} / {{mission.done.length + mission.assets.length}}</span>
+            </span>
+            <span ng-show="!mission.isLoading && !mission.activity && mission.done.length > 0" class="badge pull-right mission-assets-count-badge">
+                {{mission.done.length}} CR saisi{{mission.done.length>1?'s':''}} sur {{mission.done.length + mission.assets.length}}
+            </span>
+        </h3>
+        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> {{ mission.end | sanitizeDate | timeago}} de retard</p>
+    </div>
+    <div ng-show='mission.assets.length' class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
+    <div class="panel-body" ng-show='mission.openned || false'>
+
+        <p>
+            <i class="fa fa-clock-o"></i>
+            <i18n>_PLANNING_BEFORE_</i18n> {{::(mission.end | sanitizeDate | date:"HH'h'mm le dd/MM/yy") }}
+        </p>
+        <p ng-show='mission.city'>
+            <i class="fa fa-map-marker"></i> {{mission.city}}
+        </p>
+        <p ng-show='mission.address'>
+            <i class="fa fa-crosshairs"></i> {{mission.address}}
+        </p>
+        <p ng-show='mission.comment'>
+            <i class="fa fa-comment-o"></i> {{mission.comment}}
+        </p>
+        <p ng-click='planningController.toggleDoneAssetsVisibility(mission)' ng-show='mission.done.length > 0 && !mission.objectNotFound'>
+            <i class="fa" ng-class=" mission.displayDone ? 'fa-check-circle-o' : 'fa-circle-o' "></i>
+            <i18n>_PLANNING_DISPLAY_DONE_ASSETS_</i18n>
+        </p>
+        <p class="text-danger" ng-show='mission.objectNotFound && mission.assets.length > 0 && mission.activity'>
+            <i class="fa fa-exclamation-triangle"></i>
+            <i18n>_PLANNING_OBJECT_NOT_FOUND_</i18n>
+        </p>
+
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='!mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'>
+            <span class="fa fa-search fa-3x"></span>
+            <br/>
+            <i18n>_PLANNING_LOCATE_</i18n>
+        </button>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)' 
+            disabled="disabled">
+            <span class="fa fa-search fa-3x"></span>
+            <br/>
+            <i18n>_PLANNING_LOCATE_</i18n>
+        </button>
+
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.showReport(mission)" ng-disabled="!mission.selectedAssets"
+          ng-show='mission.assets.length > 0 && planningController.activities._byId[mission.activity.id].type != "night_tour" && (!mission.objectNotFound || !mission.activity)'>
+            <span class="fa fa-file-text fa-3x"></span>
+            <span ng-show='mission.selectedAssets > 0' style="float: right;margin-left: -30px;" class="badge badge-primary">{{mission.selectedAssets}}</span>
+            <br/>
+            <i18n>_PLANNING_WRITE_</i18n>
+        </button>
+
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
+          ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+            <span class="fa fa-lightbulb-o fa-3x"></span>
+            <br>
+            <i18n>_PLANNING_START_</i18n>
+        </button>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
+          ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+            <span class="fa fa-spin fa-refresh fa-3x"></span>
+            <br>
+            <i18n>_PLANNING_START_</i18n>
+        </button>
+
+        <p ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length'>
+            <table ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length' class="table table-condensed" style="margin-bottom: -15px;">
+                <thead>
+                    <tr>
+                        <th>
+                            <span ng-switch on="mission.postAddedAssets.assets.length">
+                                <span style="color: #d58512;" ng-switch-when="1">Objet ajouté</span>
+                                <span style="color: #d58512;" ng-switch-default>Objets ajoutés</span>
+                            </span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="asset in mission.postAddedAssets.assets">
+                        <td>
+                            <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="planningController.locateAsset(mission, asset)">
+                                <span class="fa fa-map-marker"></span>{{planningController.getAssetLabel(mission, asset)}}</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="planningController.removeAssetFromMission(asset, mission)">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="asset in mission.postAddedAssets.done">
+                        <td>
+                            <button class="btn btn-link" style="padding:0;color:rgb(93, 93, 93)" ng-click="planningController.locateAsset(mission, asset)">
+                                <span class="fa fa-map-marker"></span>{{planningController.doneAssetsCache[mission.id]._byId[asset].label}}</button>
+                        </td>
+                        <td>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+
+    </div>
+</div>

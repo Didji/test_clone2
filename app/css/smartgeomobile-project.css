@@ -1,0 +1,35 @@
+.project-controller{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.project-block{
+    padding: 5px 10px;
+    margin: -20px 0px;
+}
+.btn-load-project{
+    margin: 5%;
+    padding: 5%;
+    width: 90%;
+}
+.project-desc-title{
+    font-weight: 900;
+    color: gray;
+    font-style: italic;
+}
+.project-loaded{
+    font-weight: bold;
+}
+.no-projects{
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+.alert-project-locked {
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    margin-right: 10px;
+}
+.alert-project-locked i {
+    padding-right: 15px;
+}

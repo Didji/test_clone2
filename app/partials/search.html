@@ -1,0 +1,74 @@
+<div id="left_panel_search" ng-controller="searchController">
+    <input style="margin-bottom: 10px;" class="form-control"
+        type="text" ng-model="searchTerms" placeholder="Code metier" ng-show="!advancedSearchDisplay"></input>
+    <div class="checkbox">
+        <label><input type="checkbox" ng-model="advancedSearchDisplay"> <span class="fa fa-search"></span>
+            <i18n>_SEARCH_ADVANCED_SEARCH</i18n></label>
+    </div>
+    <div id="left_panel_search_advanced" ng-show="advancedSearchDisplay">
+        <label><i18n>_SEARCH_TYPE</i18n></label>
+        <select
+            class="form-control" ng-model="selectedFamily"
+            ng-options=" family.label for (okey, family) in metamodel">
+        </select>
+        <label><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
+        <select
+            style="margin-bottom: 10px;width:100%;"
+            ng-model="selectedCriteria"
+            ng-change="selectedCriteriaChangeHandler()" multiple>
+            <option
+                ng-repeat="(value, criter) in criteria[selectedFamily.okey]"
+                value="{{criter.key}}">{{criter.label}}</option>
+        </select>
+        <div class="form-group" ng-repeat='fieldKey in selectedCriteria'>
+            <label for="adSearchField-{{fieldKey}}">{{criteria[selectedFamily.okey]._byKey[fieldKey].label}}</label>
+            <div class="animate-switch-container" ng-switch
+                on="criteria[selectedFamily.okey]._byKey[fieldKey].type">
+                <div ng-switch-when="D">
+                    <input type="date"
+                        ng-model="selectedCriteriaValues[fieldKey]"
+                        class="form-control"
+                        id="adSearchField-{{fieldKey}}">
+                </div>
+                <div ng-switch-when="T">
+                    <input class="form-control" type="time"
+                        ng-model="selectedCriteriaValues[fieldKey]"></input>
+                </div>
+                <div ng-switch-when="L">
+                    <select
+                        style="margin-bottom: 10px;width:100%;"
+                        ng-model="selectedCriteriaValues[fieldKey]">
+                        <option value=""></option>
+                            <option ng-repeat="(o, label) in (lists[criteria[selectedFamily.okey]._byKey[fieldKey].options])"
+                            value="{{label}}">{{label}}</option>
+                    </select>
+                </div>
+                <div ng-switch-when="O">
+                    <input class="form-control"
+                        ng-model="selectedCriteriaValues[fieldKey]"
+                        id="adSearchField-{{fieldKey}}" type="checkbox"
+                        ng-true-value="'Y'" ng-false-value="'N'"></input>
+                </div>
+                <div ng-switch-when="N">
+                    <input class="form-control"
+                        ng-model="selectedCriteriaValues[fieldKey]"
+                        id="adSearchField-{{fieldKey}}" type="number"
+                        step="any"></input>
+                </div>
+                <div ng-switch-default>
+                    <input class="form-control"
+                        ng-model="selectedCriteriaValues[fieldKey]"
+                        id="adSearchField-{{fieldKey}}" type="text"></input>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
+    </div>
+    <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="sendCriteria($event)">
+        <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+        <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
+        <i ng-show='searchIsPerforming' class="fa fa-refresh fa-spin"></i> <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
+    </button>
+    <label ng-show="!advancedSearchDisplay">{{searchMessage | i18n}}</label>
+    <label ng-show="advancedSearchDisplay">{{advancedSearchMessage | i18n}}</label>
+</div>

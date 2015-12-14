@@ -1,0 +1,304 @@
+/** Menu général **/
+
+#left_panel {
+    height: 100%;
+    position: absolute;
+    z-index:1000;
+}
+
+#left_panel_content {
+    background: #525252;
+    width: 280px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    height: inherit;
+    float: left;
+}
+
+#left_panel_content #left_panel_header {
+    width: inherit;
+    background: #3C3C3C;
+    margin: 0;
+    padding:10px;
+    border-bottom: 1px solid #FD9122;
+    position: fixed;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
+}
+
+#left_panel_content #smartgeo-version {
+    left: 75%;
+    position: absolute;
+    font-size: 30%;
+    top: 35px;
+    display: block;
+    color: white;
+}
+
+#left_panel_toggle_bar {
+    width: 10px;
+    position: relative;
+    height: 100%;
+    float: left;
+}
+
+#left_panel_toggle_shadow {
+    height: inherit;
+    background: linear-gradient( to left, rgba(255, 255, 255, 0), rgba(46, 46, 46, 0.35))
+}
+
+#left_panel_toggle_button{
+    display: block;
+    width: 30px;
+    height: 55px;
+    border: 1px solid #858585;
+    border-radius: 0 8px 8px 0;
+    text-decoration: none;
+    font-size: 30px;
+    color: white;
+    background: #3F3F3F;
+    box-shadow: 1px 0 5px 1px rgba(0,0,0,0.10);
+    position: absolute;
+    bottom: 10px;
+    line-height: 55px;
+    padding-left: 10px;
+    border: none;
+}
+
+#left_panel_content #left_panel_header.onHome > .left_panel_back_menu{
+    display : none;
+}
+
+#left_panel_content #left_panel_header.notOnHome > .left_panel_back_menu{
+    /*font-size: 22px;*/
+}
+
+#left_panel_content #left_panel_header.notOnHome > img{
+    /*width:35%;*/
+}
+
+#left_panel_content #left_panel_header.notOnHome > #smartgeo-version{
+    /*display : none;*/
+}
+
+#left_panel_content #left_panel_header img {
+    width: 50%;
+    margin: 3px auto;
+    display: block;
+}
+
+#left_panel_bottom_fixed{
+    bottom: 0;
+    background: #3C3C3C;
+    position: fixed;
+    width: inherit;
+    height: initial;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.57);
+}
+
+#left_panel_menu_items, #left_panel_content #left_panel_bottom_fixed, #left_panel_census ul, #left_panel_synchronization ul {
+    padding: 0;
+    margin: 0;
+    list-style:none;
+}
+
+#left_panel_menu_items  {
+    top: 55px;
+    overflow: auto;
+    height: calc(100% - 90px);
+    position: relative;
+}
+#left_panel_menu_items > div > li, #left_panel_census ul > li, #left_panel_synchronization ul li {
+    padding: 12px;
+    font-size: 1.4em;
+    border-bottom: 1px solid rgba(0,0,0,0.2) ;
+}
+
+#left_panel_menu_items > div > li {
+    color :white ;
+}
+
+#left_panel_menu_items > div > li > .fa {
+    color: #FD9122;
+    float: left;
+    margin: 3px;
+    width: 25px;
+}
+
+#left_panel_content #left_panel_bottom_fixed {
+    text-align:center;
+}
+
+#left_panel_bottom_fixed > li{
+    float: left ;
+    width: 25%;
+    background: #3C3C3C;
+    padding: 5px;
+    font-size: 30px;
+}
+
+#left_panel_bottom_fixed > li > span{
+    text-decoration:none;
+    color: #FD9122;
+}
+#left_panel_bottom_fixed > li:hover{
+    text-decoration:none;
+    background:#FD9122;
+}
+#left_panel_bottom_fixed > li:hover > span {
+    color:#3C3C3C;
+}
+
+#left_panel_bottom_fixed > li > span.redicon{
+    color: red;
+}
+
+.left_panel_back_menu > span {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 1em;
+}
+
+.left_panel_back_menu {
+    float: left;
+    height: 20px;
+    margin-right: -1000px;
+    margin-left: 20px;
+}
+
+.left_panel_back_menu {
+     background-color:#3C3C3C;
+ }
+ .left_panel_back_menu i{
+         color: #FD9122;
+ }
+
+/** Fin de Menu général **/
+
+/** Recherche **/
+#left_panel_search {
+    margin: 10px 5% 0;
+}
+
+#left_panel_search label {
+    color: white;
+}
+
+#left_panel_search_advanced {
+    margin-bottom: 10px
+}
+
+/** Fin de Recherche **/
+
+/** Couches actives **/
+#left_panel_layers {
+    margin: 0 5%;
+    list-style:none;
+}
+#left_panel_layers label {
+    padding: 0;
+    margin: 0;
+}
+#left_panel_layers h4 {
+    font-size:1em;
+}
+#left_panel_layers label img{
+    width: 16px;
+}
+/** Fin de Couches actives **/
+
+/** Recensement **/
+#left_panel_census label {
+    color: white;
+    margin: 0 5%;
+}
+#left_panel_census {
+    padding-bottom: 20px;
+}
+/** Fin de Recensement **/
+
+/** Synchronisation **/
+#left_panel_synchronization {
+    margin: 7px 10px 35px 10px;
+}
+#left_panel_synchronization .list-group {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#left_panel_synchronization .nothing-to-sync {
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+/** Fin de Synchronisation **/
+
+/** Parametres **/
+#left_panel_parameters {
+    margin: 2px 10px ;
+}
+
+#left_panel_parameters button {
+    margin-top: 15px;
+    padding: 10px;
+    white-space: normal;
+}
+
+/** Fin de Parametres **/
+
+/** Planning **/
+#left_panel_planning h5.planning_section_header {
+    color: white;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    font-size: 1.35em;
+}
+
+#left_panel_planning h5.planning_section_header:after {
+    content: " ";
+    display: block;
+    margin-top: -6px;
+    width: 90%;
+    border-bottom: 1px solid white;
+}
+
+#left_panel_planning h5.planning_section_header small{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+#left_panel_planning h5.planning_section_header span, #left_panel_planning h5.planning_section_header small{
+    background: #525252;
+    padding: 0px 5px;
+}
+
+#left_panel_planning .mission_group{
+    margin-bottom:20px;
+}
+
+#left_panel_planning .doneMission.mission_group h5{
+    color : gray;
+    font-size :1em;
+}
+#left_panel_planning .doneMission.mission_group h5.planning_section_header:after{
+    border-bottom: 1px solid gray;
+}
+
+#refreshPlanning{
+    color: rgb(138, 138, 138);
+    font-size: 15px;
+    margin-left: 15px;
+    margin-top: 6px;
+    width: 265px;
+}
+
+.doneTable {
+    background: white;
+    margin: 0 auto;
+    width: 90%;
+    font-size: 11px;
+}
+
+/** Fin de Planning **/
