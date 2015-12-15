@@ -182,6 +182,11 @@
          * @desc
          */
         function _reportableAssetsForIntentFilter(assets) {
+            var intent = Storage.get( 'intent' );
+            if (!intent) {
+                return [];
+            }
+
             if ( assets && !( assets instanceof Array ) ) {
                 assets = [assets];
             } else if ( !assets ) {
@@ -189,8 +194,7 @@
             }
 
             var out = [];
-            var intent = Storage.get( 'intent' );
-
+            
             if ( intent && intent.controller !== 'map' ) {
                 return [];
             }
