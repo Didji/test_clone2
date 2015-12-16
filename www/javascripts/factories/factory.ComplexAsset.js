@@ -53,6 +53,19 @@
                 this.add();
             }
 
+            var _this = this;
+            angular.forEach( Site.current.metamodel[this.okey].tabs, function( tab ) {
+                angular.forEach( tab.fields, function( field ) {
+                    if ( !_this.fields[ field.key ] && field.default !== null ) {
+                        if ( field.type === 'D' ) {
+                            _this.fields[ field.key ] = new Date( field.default );
+                        } else {
+                            _this.fields[ field.key ] = field.default;
+                        }
+                    }
+                });
+            });
+
             return this;
         }
 
