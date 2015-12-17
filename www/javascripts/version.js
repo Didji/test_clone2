@@ -1,2 +1,2 @@
-window.smargeomobileversion = "2.0";
-//window.smargeomobilebuild = "rc4";
+window.smargeomobileversion = "2.1.0";
+window.smargeomobilebuild = "SNAPSHOT";

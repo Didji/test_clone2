@@ -84,7 +84,7 @@
          */
         function updateList(callback) {
             Synchronizator.listItemsNotInProject( function(syncItems) {
-                vm.syncItems = syncItems;
+                $rootScope.syncBadgeItems= vm.syncItems = syncItems;
                 $scope.$digest();
                 (typeof callback === "function" ? callback : function() {})();
             } );

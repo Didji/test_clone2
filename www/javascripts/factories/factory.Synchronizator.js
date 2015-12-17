@@ -499,22 +499,9 @@
             if (report.ged) {
                 delete report.ged;
             }
-            var fileName = report.uuid || report.id + '.json';
-            window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
-                dir.getDirectory('reports', {create:true}, function(reportDir) {
-                    console.log(reportDir.isDirectory);
-                    reportDir.getFile(fileName, {create:true}, function(file) {
-                        if(!file) return;
-                        file.createWriter(function(fileWriter) {
-                            fileWriter.seek(fileWriter.length);
-                            fileWriter.write(JSON.stringify(report));
-                        }, function(error){
-                                console.log('error: ', JSON.stringify(error));
-                        });
-                    });
-                });
-            }, function(err){
-                window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
+            if(window.cordova){
+                var fileName = report.uuid || report.id + '.json';
+                window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
                     dir.getDirectory('reports', {create:true}, function(reportDir) {
                         console.log(reportDir.isDirectory);
                         reportDir.getFile(fileName, {create:true}, function(file) {
@@ -527,11 +514,28 @@
                             });
                         });
                     });
-                }, function(error){
-                    console.log('error: ', JSON.stringify(error));
+                }, function(err){
+                    window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
+                        dir.getDirectory('reports', {create:true}, function(reportDir) {
+                            console.log(reportDir.isDirectory);
+                            reportDir.getFile(fileName, {create:true}, function(file) {
+                                if(!file) return;
+                                file.createWriter(function(fileWriter) {
+                                    fileWriter.seek(fileWriter.length);
+                                    fileWriter.write(JSON.stringify(report));
+                                }, function(error){
+                                        console.log('error: ', JSON.stringify(error));
+                                });
+                            });
+                        });
+                    }, function(error){
+                        console.log('error: ', JSON.stringify(error));
+                    });
                 });
-            });
-            return this;
+                return this;
+            }else{
+                return;
+            }
         };
 
         /**

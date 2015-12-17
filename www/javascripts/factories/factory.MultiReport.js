@@ -1,3 +1,8 @@
+/**
+ *
+ *  Devrait disparaitre avec le refactoring des reports et des multi-reports
+ *
+ */
 (function() {
 
     'use strict';
@@ -6,10 +11,10 @@
         .module( 'smartgeomobile' )
         .factory( 'MultiReport', MultiReportFactory );
 
-    MultiReportFactory.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage"];
+    MultiReportFactory.$inject = ["$compile", "$rootScope", "G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage"];
 
 
-    function MultiReportFactory(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage) {
+    function MultiReportFactory($compile, $rootScope, G3ME, Asset, Report, Synchronizator, Activity, Site, Storage) {
 
         /**
          * @class MultiReportFactory
@@ -17,6 +22,7 @@
          */
 
         var intent;
+        var LONG_TAP_TIMER = null;
 
         function MultiReport(intent_) {
             intent = intent_;
@@ -84,8 +90,10 @@
                 }
                 Synchronizator.addNew( intent.multi_report_reports[reportValue] );
             }
-            if (intent.multi_report_redirect && window.SmartgeoChromium && SmartgeoChromium.redirect) {
+            if (intent.multi_report_redirect) {
                 redirect = intent.multi_report_redirect.replace( "[DONE_ASSETS]", intent.multi_report_assets_id.join( ',' ) );
+
+                //TODO: pour ce dev spé Veolia, gérer le passage en 2.0/full web view en remplacant l'appel suivant à Chromium:
                 SmartgeoChromium.redirect( decodeURI( redirect ) );
             }
             Storage.remove( 'intent' );
@@ -112,10 +120,18 @@
                 L.marker( Asset.getCenter( asset ), {
                     icon: intent.multi_report_icons[asset.currentState]
                 } ).on( 'click', function() {
-                    asset.currentState = ++asset.currentState % intent.multi_report_field.options.length;
-                    this.setIcon( intent.multi_report_icons[asset.currentState] );
+                    this.setIcon( intent.multi_report_icons[++asset.currentState % intent.multi_report_field.options.length] );
+                } ).on( 'contextmenu', function() {
+                    var e = $compile(angular.element('<div ng-include="partials/veolia.html"></div>'))($rootScope.$new());
+                    this.bindPopup(e[0]);
+                    console.log(intent.multi_report_activity.tabs[0].label);
+                    console.log(intent.multi_report_activity.tabs);
                 } ).addTo( G3ME.map );
             } );
+        };
+
+        MultiReport.handleLongTap = function() {
+            //alert('long tap');
         };
 
         return MultiReport;

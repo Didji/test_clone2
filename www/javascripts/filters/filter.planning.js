@@ -10,6 +10,7 @@
         .filter( 'doneMissions', doneMissions )
         .filter( 'sanitizeDate', sanitizeDate )
         .filter( 'opennedMissions', opennedMissions )
+        .filter( 'opennedTours', opennedTours )
         .filter( 'opennedCalls', opennedCalls );
 
     todayMissions.$inject = ["$filter"];
@@ -194,5 +195,31 @@
         }
         return _opennedCalls;
     }
+
+    opennedTours.$inject = ['Site'];
+
+    function opennedTours(Site) {
+        /**
+         * @name _opennedCalls
+         * @desc
+         */
+        function _opennedTours(in_, asset) {
+            var out = [];
+            if (!(in_ instanceof Array)) {
+                in_ = [in_];
+            }
+            for (var i in in_) {
+                if ( !in_[i] || !in_[i].multi_report_activity || in_[i].assets_by_id[ asset.id ] ) {
+                    continue;
+                }
+                if (Site.current.activities._byId[+in_[i].multi_report_activity.id].okeys[0] === asset.okey) {
+                    out.push( in_[i] );
+                }
+            }
+            return out;
+        }
+        return _opennedTours;
+    }
+
 
 })();

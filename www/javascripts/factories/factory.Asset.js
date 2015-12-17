@@ -59,7 +59,7 @@
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
                     if (assets_.length <= 1 || assets_[0].guid === assets_[1].guid) {
                         self.isComplex = false ;
-                        return;
+                        return (callback || angular.noop)( self );
                     }
                     var assets_byId = {} ;
                     for (var i = 0; i < assets_.length; i++) {
@@ -257,6 +257,19 @@
                 e.preventDefault();
             }
             $rootScope.addAssetToMission( this, mission );
+        };
+
+        /**
+         * @name addToMission
+         * @desc Ajoute l'objet à une mission
+         * @param {Object} mission
+         */
+        Asset.prototype.addToTour = function(tour, e) {
+            if (e) {
+                e.preventDefault();
+            }
+            $rootScope.addAssetToTour( this );
+            //$rootScope.$broadcast( '_ADD_ASSET_TO_TOUR_', this );
         };
 
         /**

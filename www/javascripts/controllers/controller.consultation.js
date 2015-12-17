@@ -166,9 +166,18 @@
                 vm.groups[assets[i].priority][assets[i].okey] = vm.groups[assets[i].priority][assets[i].okey] || [];
                 vm.groups[assets[i].priority][assets[i].okey].push( assets[i] );
                 vm.selectedAssets.inList[assets[i].guid] = assets[i];
+
+                assets[i].findRelated( function( asset ) {
+                    if ( assets.length === 1 ) {
+                        asset.toggleMapVisibility( false );
+                    }
+                    $scope.$digest();
+                } );
             }
+
             vm.open();
             vm.loading = false;
+
         }
 
         /**

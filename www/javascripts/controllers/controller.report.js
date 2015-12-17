@@ -51,29 +51,28 @@
         function activate() {
             $rootScope.currentPage = "Saisie de compte-rendu";
 
-            if (!checkInputParameters( $routeParams )) {
+            if (!checkInputParameters($routeParams)) {
                 return;
             }
 
             bidouille();
 
-            if (!isNaN( +$routeParams.assets )) {
+            if (!isNaN(+$routeParams.assets)) {
                 $routeParams.assets = [+$routeParams.assets];
             }
 
-            vm.report = new Report( $routeParams.assets, $routeParams.activity, $routeParams.mission );
-            applyDefaultValues();
-            if (!$scope.$$phase) {
-                $scope.$apply();
-            }
+            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
+
             for (var i = 0; i < vm.report.assets.length; i++) {
-                vm.assets.push( new Asset( vm.report.assets[i], applyDefaultValues ) );
+                vm.assets.push(new Asset(vm.report.assets[i]));
             }
-            setTimeout( function() {
+            applyDefaultValues();
+            
+            setTimeout(function() {
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
-            }, 1000 );
+            }, 1000);
         }
 
         /**
@@ -215,10 +214,10 @@
          */
         function getValueFromAssets(pkey, okey) {
             var rv = {},
-                val;
+                val,
+                list = Site.getList(pkey, okey);
             for (var i = 0, lim = vm.assets.length; i < lim; i++) {
-                var a = vm.assets[i].attributes,
-                    list = Site.getList( pkey, okey );
+                var a = vm.assets[i].attributes;
                 if (!a) {
                     break;
                 }
@@ -258,21 +257,30 @@
                     fields[field.id] = d;
                 } else if (!def) {
                     continue;
-                } else if ('string' === typeof def) {
+                } else if ('string' === typeof def) { //valeur par défaut de type constante
                     if (field.type === 'D' && def === '#TODAY#') {
                         def= new Date();
                         fields[field.id] = def;
                     } else if (field.type === 'T' && def === '#NOW#') {
                         var d = new Date();
                         fields[field.id] = d;
+                    } else if (field.type === 'N') {
+                        def = +def;
+                        fields[field.id] = def;
+                        vm.report.fields[field.id] = def;
+                        vm.report.roFields[field.id] = def;
                     } else {
                         fields[field.id] = def;
                         vm.report.roFields[field.id] = def;
                     }
                 } else {
                     def = getValueFromAssets( def.pkey, vm.report.activity.okeys[0] );
-                    vm.report.roFields[field.id] = formatFieldEntry( def );
-                    vm.report.overrides[field.id] = '';
+                    var output = formatFieldEntry(def);
+                    if (field.type === 'N') {
+                        output = +output;
+                    }
+                    vm.report.roFields[field.id] = output;
+                    vm.report.overrides[field.id] = output;
                     fields[field.id] = def;
                 }
             }
