@@ -190,20 +190,26 @@
             SQLite.openDatabase( {
                 name: database
             } ).transaction( function(tx) {
-                for (var i = 0; i < request.length; i++) {
-                    if (i === request.length - 1) {
-                        calledCallback = callback ;
-                    }
-                    tx.executeSql( request[i], args[i] || [], function(tx, r) {
-                        calledCallback( r.rows );
-                    }, function(tx, err) {
-                        console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
-                    });
-                }
+                requestQueueExecutor(tx, request, args, callback, database);
             }, function(err) {
                 console.error("TX ERROR " + err.code + " ON " + database + " : " + err.message);
             });
         };
+
+        function requestQueueExecutor(tx, requests, args, callback, database) {
+            var request = requests.pop(),
+                arg = args.pop(),
+                nextCallback = requests.length ?
+                    function() {
+                        requestQueueExecutor(tx, requests, args, callback, database);
+                    } : callback;
+            tx.executeSql( request, arg || [], function(tx, r) {
+                nextCallback( r.rows );
+            }, function(tx, err) {
+                console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
+            });
+
+        }
 
         /**
          * @name initialize
