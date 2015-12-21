@@ -9,8 +9,10 @@ angular
         _initializeGlobalEvents: function() {
             document.addEventListener('online', Smartgeo._onlineTask, false);
             document.addEventListener('offline', Smartgeo._offlineTask, false);
+            document.addEventListener("backbutton", Smartgeo._onBackKeyDown, false);
         },
 
+        //listen online mode
         _onlineTask: function() {
             Storage.set('online', true);
             $rootScope.$broadcast("DEVICE_IS_ONLINE");
@@ -18,10 +20,16 @@ angular
             Authenticator.silentLogin();
         },
 
+        //listen offline mde
         _offlineTask: function() {
             Storage.set('online', false);
             $rootScope.$broadcast("DEVICE_IS_OFFLINE");
             console.info("_SMARTGEO_OFFLINE");
+        },
+
+        // Handle the back button
+        _onBackKeyDown: function(){
+
         }
 
     };
