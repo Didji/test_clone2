@@ -1,61 +1,59 @@
 angular
-    .module("smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize'])
-    .config(config).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
+    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
+    .config( config ).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
 
     "use strict";
-    
+
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
-            document.addEventListener('online', Smartgeo._onlineTask, false);
-            document.addEventListener('offline', Smartgeo._offlineTask, false);
-            document.addEventListener("backbutton", Smartgeo._onBackKeyDown, false);
+            document.addEventListener( 'online', Smartgeo._onlineTask, false );
+            document.addEventListener( 'offline', Smartgeo._offlineTask, false );
+            document.addEventListener( "backbutton", Smartgeo._onBackKeyDown, false );
         },
 
         //listen online mode
         _onlineTask: function() {
-            Storage.set('online', true);
-            $rootScope.$broadcast("DEVICE_IS_ONLINE");
-            console.info("_SMARTGEO_ONLINE");
+            Storage.set( 'online', true );
+            $rootScope.$broadcast( "DEVICE_IS_ONLINE" );
+            console.info( "_SMARTGEO_ONLINE" );
             Authenticator.silentLogin();
         },
 
         //listen offline mde
         _offlineTask: function() {
-            Storage.set('online', false);
-            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-            console.info("_SMARTGEO_OFFLINE");
+            Storage.set( 'online', false );
+            $rootScope.$broadcast( "DEVICE_IS_OFFLINE" );
+            console.info( "_SMARTGEO_OFFLINE" );
         },
 
         // Handle the back button
-        _onBackKeyDown: function(){
-
-        }
+        _onBackKeyDown: function() {}
 
     };
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
     if (window.cordova) {
-        document.addEventListener("deviceready", function () {
+        document.addEventListener( "deviceready", function() {
             Smartgeo._initializeGlobalEvents();
-        });
+        } );
     } else {
         //FOR TESTING PURPOSE ONLY!!!
         //rend les événements online et offline du navigateur
-        window.addEventListener('online', Smartgeo._onlineTask, false);
-        window.addEventListener('offline', Smartgeo._offlineTask, false);
+        window.addEventListener( 'online', Smartgeo._onlineTask, false );
+        window.addEventListener( 'offline', Smartgeo._offlineTask, false );
     }
 
-    window.Smartgeo = Smartgeo ;
+    window.Smartgeo = Smartgeo;
 } );
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
 
-function config($routeProvider, $httpProvider, $provide,$compileProvider) {
+function config($routeProvider, $httpProvider, $provide, $compileProvider) {
 
-    "use strict" ;
-    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|file|blob|cdvfile|content):|data:image\//);
+    "use strict";
+    $compileProvider.imgSrcSanitizationWhitelist( /^\s*(https?|file|blob|cdvfile|content):|data:image\// );
 
     var prefetchPromise = {
         prefetchedlocalsites: ['Site', '$route', function(Site, $route) {
@@ -67,58 +65,48 @@ function config($routeProvider, $httpProvider, $provide,$compileProvider) {
         }]
     };
 
-    $routeProvider.
-        when( "/", {
-            templateUrl: "partials/authentification.html",
-            controllerAs: 'authController',
-            controller: 'AuthController',
-            resolve: prefetchPromise
-        } ).
-        when( "/sites/", {
-            templateUrl: "partials/sites.html",
-            controllerAs: 'siteListController',
-            controller: 'SiteListController',
-            resolve: prefetchPromise
-        } ).
-        when( "/report/:site//:assets/:mission?", {
-            templateUrl: "partials/activitySelector.html",
-            controllerAs: 'activitySelectorController',
-            controller: 'ActivitySelectorController',
-            resolve: prefetchPromise
-        } ).
-        when( "/report/:site/:activity/:assets/:mission?", {
-            templateUrl: "partials/report.html",
-            controllerAs: 'reportController',
-            controller: 'ReportController',
-            resolve: prefetchPromise
-        } ).
-        when( "/register", {
-            templateUrl: "partials/register.html"
-        } ).
-        when( "/licenseRevoked", {
-            templateUrl: "partials/licenseRevoked.html"
-        } ).
-        when( "/sites/install/:site", {
-            templateUrl: "partials/installation.html"
-        } ).
-        when( "/sites/uninstall/:site", {
-            templateUrl: "partials/uninstall.html",
-            controllerAs: 'siteRemoveController',
-            controller: 'SiteRemoveController',
-            resolve: prefetchPromise
-        } ).
-        when( "/map/:site", {
-            templateUrl: "partials/main.html",
-            controllerAs: 'mapController',
-            controller: 'MapController',
-            resolve: prefetchPromise
-        } ).
-        when( "/intent/:controller/?:args", {
-            template: "<div class='intent'><i class='fa fa-refresh fa-spin'></i></div>",
-            controllerAs: 'intentController',
-            controller: 'IntentController',
-            resolve: prefetchPromise
-        } );
+    $routeProvider.when( "/", {
+        templateUrl: "partials/authentification.html",
+        controllerAs: 'authController',
+        controller: 'AuthController',
+        resolve: prefetchPromise
+    } ).when( "/sites/", {
+        templateUrl: "partials/sites.html",
+        controllerAs: 'siteListController',
+        controller: 'SiteListController',
+        resolve: prefetchPromise
+    } ).when( "/report/:site//:assets/:mission?", {
+        templateUrl: "partials/activitySelector.html",
+        controllerAs: 'activitySelectorController',
+        controller: 'ActivitySelectorController',
+        resolve: prefetchPromise
+    } ).when( "/report/:site/:activity/:assets/:mission?", {
+        templateUrl: "partials/report.html",
+        controllerAs: 'reportController',
+        controller: 'ReportController',
+        resolve: prefetchPromise
+    } ).when( "/register", {
+        templateUrl: "partials/register.html"
+    } ).when( "/licenseRevoked", {
+        templateUrl: "partials/licenseRevoked.html"
+    } ).when( "/sites/install/:site", {
+        templateUrl: "partials/installation.html"
+    } ).when( "/sites/uninstall/:site", {
+        templateUrl: "partials/uninstall.html",
+        controllerAs: 'siteRemoveController',
+        controller: 'SiteRemoveController',
+        resolve: prefetchPromise
+    } ).when( "/map/:site", {
+        templateUrl: "partials/main.html",
+        controllerAs: 'mapController',
+        controller: 'MapController',
+        resolve: prefetchPromise
+    } ).when( "/intent/:controller/?:args", {
+        template: "<div class='intent'><i class='fa fa-refresh fa-spin'></i></div>",
+        controllerAs: 'intentController',
+        controller: 'IntentController',
+        resolve: prefetchPromise
+    } );
 
     $provide.factory( 'myHttpInterceptor', function($q, $injector) {
         return {
@@ -146,16 +134,16 @@ function config($routeProvider, $httpProvider, $provide,$compileProvider) {
                     // Problème : le login silencieux n'est pas implémenté sous
                     // forme de promise. On crée donc une promise qui encapsule
                     // le login silencieux : c'est authPromise.
-                    var authPromise = $q(function(resolve, reject) {
-                        Authenticator.silentLogin(function() {
+                    var authPromise = $q( function(resolve, reject) {
+                        Authenticator.silentLogin( function() {
                             resolve();
-                        });
-                        // On utilise ensuite le chaînage de promises pour que, à la
-                        // suite du login silencieux, on rejoue la requête originale :
-                        // c'est ce que fait la fonction anonyme du then() ci-dessous.
-                    }).then(function() {
-                        return $http(rejection.config);
-                    })
+                        } );
+                    // On utilise ensuite le chaînage de promises pour que, à la
+                    // suite du login silencieux, on rejoue la requête originale :
+                    // c'est ce que fait la fonction anonyme du then() ci-dessous.
+                    } ).then( function() {
+                        return $http( rejection.config );
+                    } );
 
                     //
                     // Au final, on renvoie les promises chaînées.
