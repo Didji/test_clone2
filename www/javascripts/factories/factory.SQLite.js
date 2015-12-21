@@ -207,6 +207,7 @@
                 nextCallback( r.rows );
             }, function(tx, err) {
                 console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
+                return false;
             });
 
         }
