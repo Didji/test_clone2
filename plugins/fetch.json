@@ -106,7 +106,7 @@
     "cordova-sqlite-evfree": {
         "source": {
             "type": "git",
-            "url": "https://github.com/Diliz/Cordova-sqlite-enterprise-free",
+            "url": "https://github.com/litehelpers/Cordova-sqlite-enterprise-free.git",
             "subdir": "."
         },
         "is_top_level": true,

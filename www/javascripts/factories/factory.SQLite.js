@@ -183,19 +183,19 @@
             var calledCallback = function() {};
             SQLite.openDatabase( {
                 name: database
-            } ).transaction( function(t) {
+            } ).transaction( function(tx) {
                 for (var i = 0; i < request.length; i++) {
                     if (i === request.length - 1) {
                         calledCallback = callback ;
                     }
-                    t.executeSql( request[i], args[i] || [], function(t, r) {
+                    tx.executeSql( request[i], args[i] || [], function(tx, r) {
                         calledCallback( r.rows );
-                    }, function(tx, sqlerror) {
-                        console.error(sqlerror);
+                    }, function(tx, err) {
+                        console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
                     });
                 }
-            }, function(tx, sqlerror) {
-                    console.error(sqlerror);
+            }, function(err) {
+                console.error("TX ERROR " + err.code + " ON " + database + " : " + err.message);
             });
         };
 
