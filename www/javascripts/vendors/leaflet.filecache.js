@@ -572,7 +572,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         this.requestQuota( function() {
             if (window.requestFileSystem || window.webkitRequestFileSystem) {
-                (window.requestFileSystem || window.webkitRequestFileSystem)( window.PERSISTENT, grantedBytes, function(fs) {
+                (window.requestFileSystem || window.webkitRequestFileSystem) (window.PERSISTENT, grantedBytes, function(fs) {
                     this_.filesystem = fs;
                 }, this_.log_fs_error );
             } else {
@@ -625,43 +625,46 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     createDirectory: function(path, callback, step) {
         step = step || 1;
 
-        if (step > path.length)
+        if (step > path.length) {
             return callback();
+        }
 
         var this_ = this;
 
         this.filesystem.root.getDirectory( path.split( '/' ).slice( 0, step ).join( '/' ), {
             create: true
         }, function(dirEntry) {
-                this_.createDirectory( path, callback, ++step );
-            }, this_.log_fs_error );
+            this_.createDirectory( path, callback, ++step );
+        }, this_.log_fs_error );
 
     },
 
     writeTileToDB: function(tileObject, dataUrl, callback) {
-        var db_name = "g3tiles-" + ( tileObject.y % 10 );
+        var db_name = "g3tiles-" + (tileObject.y % 10);
 
-        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
+        var db = sqlitePlugin.openDatabase( {
+            name: db_name,
+            externalStorage: 1
+        } );
 
         // Création de la db, avec les bonnes tables et activation de la persistence journal
         // Insertion de la tuile dans la bonne db.
         // Il manque l'écriture des metadata et le lien avec les tuiles existantes.
 
-        db.transaction(function(tx) {
-            tx.executeSql("CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);");
-            tx.executeSql("CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);");
-            tx.executeSql("PRAGMA journal_mode = PERSIST;");
+        db.transaction( function(tx) {
+            tx.executeSql( "CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);" );
+            tx.executeSql( "CREATE UNIQUE INDEX IF NOT EXISTS trinom ON tiles(zoom_level, tile_column, tile_row);" );
+            tx.executeSql( "PRAGMA journal_mode = PERSIST;" );
 
             if (device.platform == "Android") {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT);");
-                tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
+                tx.executeSql( "CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT);" );
+                tx.executeSql( "INSERT xOR IGNORE INTO android_metadata VALUES (?);", ['fr_FR'] );
+            } else if (device.platform == "iOS") {
+                tx.executeSql( "CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT);" );
+                tx.executeSql( "INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR'] );
             }
-            else if (device.platform == "iOS") {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT);");
-                tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
-            }
-            tx.executeSql("INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", [tileObject.z, tileObject.x, tileObject.y, dataUrl]);
-        });
+            tx.executeSql( "INSERT OR IGNORE INTO tiles VALUES (?, ?, ?, ?);", [tileObject.z, tileObject.x, tileObject.y, dataUrl] );
+        } );
     },
 
     getDataURL: function(img) {
@@ -671,7 +674,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         canvas.height = img.height;
         var ctx = canvas.getContext( "2d" );
         ctx.drawImage( img, 0, 0 );
-        return canvas.toDataURL("image/png").substr(22);
+        return canvas.toDataURL( "image/png" ).substr( 22 );
     },
 
     // Reprise de fetchTileFromCache pour utiliser les db sqlite
@@ -692,16 +695,19 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
             tiles: this
         };
 
-        var db_name = "g3tiles-" + ( y % 10 );
-        
-        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
+        var db_name = "g3tiles-" + (y % 10);
+
+        var db = sqlitePlugin.openDatabase( {
+            name: db_name,
+            externalStorage: 1
+        } );
 
         var oldTile = image.src;
 
-        db.transaction(function(tx) {
-            tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
+        db.transaction( function(tx) {
+            tx.executeSql( "SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
                 // Si la requete a fonctionnée
-                if(result.rows.length == 0) {
+                if (result.rows.length == 0) {
                     // Mais qu'il n'y a pas cette tuile dans la db
                     // récupération de la tuile
                     // écriture en db
@@ -716,15 +722,14 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     };
                     image.onload = function() {
                         this_._tileOnLoad.call( this );
-                        this_.writeTileToDB( tileObject, this_.getDataURL(image));
+                        this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
                         image.onerror = image.onload = null;
                     };
-                }
-                else {
+                } else {
                     // Et que la tuile existe dans la db
                     // pas d'écriture en db
                     // pas d'appel distant
-                    image.src = "data:image/png;base64," + result.rows.item(0).tile_data;
+                    image.src = "data:image/png;base64," + result.rows.item( 0 ).tile_data;
 
                     image.onerror = function(event) {
                         this_._tileOnError.call( this );
@@ -734,9 +739,9 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     image.onload = function() {
                         this_._tileOnLoad.call( this );
                         image.onerror = image.onload = null;
-                    }
+                    };
                 }
-            }, function(tx, err){
+            }, function(tx, err) {
                 // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
                 // récupération de la tuile
                 // écriture en db
@@ -751,33 +756,33 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                 };
                 image.onload = function() {
                     this_._tileOnLoad.call( this );
-                    this_.writeTileToDB( tileObject, this_.getDataURL(image));
+                    this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
                     image.onerror = image.onload = null;
                 };
-            });
-        });
+            } );
+        } );
     },
 
     readMetadataTileFile: function(tileObject, callback) {
         this.filesystem.root.getFile( this.getTilePath( tileObject ) + '/' + tileObject.x + '_' + tileObject.y + '.png.metadata', {
             create: true
         }, function(fileEntry) {
-                fileEntry.file( function(file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function() {
-                        var metadata;
-                        try {
-                            metadata = JSON.parse( reader.result || '{}' );
-                            callback( metadata );
-                        } catch ( e ) {
-                            callback( {
-                                etag: undefined
-                            } );
-                        }
-                    };
-                    reader.readAsText( file );
-                } );
+            fileEntry.file( function(file) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    var metadata;
+                    try {
+                        metadata = JSON.parse( reader.result || '{}' );
+                        callback( metadata );
+                    } catch ( e ) {
+                        callback( {
+                            etag: undefined
+                        } );
+                    }
+                };
+                reader.readAsText( file );
             } );
+        } );
     },
 
 
@@ -785,20 +790,22 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
     // entre la db des tuiles et les metadata, ce n'est pas encore fonctionnel.
 
     writeMetadataTileFile: function(tileObject, metadata, callback) {
-        var db_name = "g3tiles-" + ( tileObject.y % 10 );
+        var db_name = "g3tiles-" + (tileObject.y % 10);
 
-        var db = sqlitePlugin.openDatabase({name: db_name, location: 2, externalStorage: 1});
+        var db = sqlitePlugin.openDatabase( {
+            name: db_name,
+            externalStorage: 1
+        } );
 
-        db.transaction(function(tx) {
+        db.transaction( function(tx) {
             if (device.platform == "Android") {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');");
-                tx.executeSql("INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR']);
+                tx.executeSql( "CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT 'fr_FR');" );
+                tx.executeSql( "INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR'] );
+            } else if (device.platform == "iOS") {
+                tx.executeSql( "CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');" );
+                tx.executeSql( "INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR'] );
             }
-            else if (device.platform == "iOS") {
-                tx.executeSql("CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT DEFAULT 'fr_FR');");
-                tx.executeSql("INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR']);
-            }
-        });
+        } );
 
     },
 
@@ -815,7 +822,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     callback( false );
                 }
             } );
-            // }
+        // }
         } );
     },
 
@@ -858,7 +865,9 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         for (i = 0; i < rawLength; i++) {
             array[i] = raw.charCodeAt( i );
         }
-        return new Blob(array, {type: 'image/png'});
+        return new Blob( array, {
+            type: 'image/png'
+        } );
     }
 
 } );
