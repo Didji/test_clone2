@@ -732,15 +732,6 @@ Contact for commercial license: info@litehelpers.net
       }
       dblocation = !!openargs.location ? dblocations[openargs.location] : null;
       openargs.dblocation = dblocation || dblocations[0];
-      if (!!openargs.createFromLocation && openargs.createFromLocation === 1) {
-        openargs.createFromResource = "1";
-      }
-      if (!!openargs.androidDatabaseImplementation && openargs.androidDatabaseImplementation === 2) {
-        openargs.androidOldDatabaseImplementation = 1;
-      }
-      if (!!openargs.androidLockWorkaround && openargs.androidLockWorkaround === 1) {
-        openargs.androidBugWorkaround = 1;
-      }
       if (!!openargs.externalStorage && openargs.externalStorage === 1) {
         openargs.externalStorage = 1;
       }
@@ -750,12 +741,6 @@ Contact for commercial license: info@litehelpers.net
       if (!!openargs.customPath && (typeof(openargs.customPath) == "String" || openargs.customPath instanceof String) && openargs.customPath != "" && openargs.customPath != null) {
         openargs.customPath = openargs.customPath;
       }
-      if (!!openargs.importDbPath && (typeof(openargs.importDbPath) == "String" || openargs.importDbPath instanceof String) && openargs.importDbPath != "" && openargs.importDbPath != null) {
-        openargs.importDbPath = openargs.importDbPath;
-      }
-      if (!openargs.importDbPath || openargs.importDbPath == null || openargs.importDbPath == "") {
-        openargs.importDbPath = "www/";
-      };
       return new SQLitePlugin(openargs, okcb, errorcb);
     }),
     deleteDb: function(first, success, error) {
