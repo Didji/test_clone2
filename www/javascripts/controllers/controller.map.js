@@ -192,6 +192,9 @@
                 popupContent = $compile( '<div>' + popupContent + '</div>' )( $scope );
                 L.popup().setLatLng( coords ).setContent( popupContent[0] ).openOn( G3ME.map );
             }
+
+            $( '.leaflet-popup' ).delay(10000).fadeOut(500);
+
         }
 
         /**
