@@ -205,22 +205,6 @@
             });
         };
 
-        function requestQueueExecutor(tx, requests, args, callback, database) {
-            var request = requests.pop(),
-                arg = args.pop(),
-                nextCallback = requests.length ?
-                    function() {
-                        requestQueueExecutor(tx, requests, args, callback, database);
-                    } : callback;
-            tx.executeSql( request, arg || [], function(tx, r) {
-                nextCallback( r.rows );
-            }, function(tx, err) {
-                console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
-                return false;
-            });
-
-        }
-
         /**
          * @name initialize
          * @desc Crée la base de données 'parameters' et ses index
