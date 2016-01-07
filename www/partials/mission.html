@@ -63,14 +63,15 @@
             <i18n>_PLANNING_WRITE_</i18n>
         </button>
 
-        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
-          ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)" 
+            ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
             <span class="fa fa-lightbulb-o fa-3x"></span>
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
-        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)"
-          ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+        <button style='min-width: 100px' class="btn btn-warning" 
+            ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'
+            disabled="disabled">
             <span class="fa fa-spin fa-refresh fa-3x"></span>
             <br>
             <i18n>_PLANNING_START_</i18n>

@@ -190,7 +190,16 @@
             SQLite.openDatabase( {
                 name: database
             } ).transaction( function(tx) {
-                requestQueueExecutor(tx, request, args, callback, database);
+                for (var i = 0; i < request.length; i++) {
+                    if (i === request.length - 1) {
+                        calledCallback = callback ;
+                    }
+                    tx.executeSql( request[i], args[i] || [], function(tx, r) {
+                        calledCallback( r.rows );
+                    }, function(tx, err) {
+                        console.error("SQL ERROR " + err.code + " ON " + database + " : " + err.message);
+                    });
+                }
             }, function(err) {
                 console.error("TX ERROR " + err.code + " ON " + database + " : " + err.message);
             });

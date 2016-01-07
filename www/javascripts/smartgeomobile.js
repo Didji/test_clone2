@@ -7,30 +7,31 @@ angular
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
-            document.addEventListener( 'online', Smartgeo._onlineTask, false );
-            document.addEventListener( 'offline', Smartgeo._offlineTask, false );
-            document.addEventListener( "backbutton", Smartgeo._onBackKeyDown, false );
+            document.addEventListener('online', Smartgeo._onlineTask, false);
+            document.addEventListener('offline', Smartgeo._offlineTask, false);
+            document.addEventListener('backbutton', Smartgeo._onBackKeyDown, false);
         },
 
         //listen online mode
         _onlineTask: function() {
-            Storage.set( 'online', true );
-            $rootScope.$broadcast( "DEVICE_IS_ONLINE" );
-            console.info( "_SMARTGEO_ONLINE" );
+            Storage.set('online', true);
+            $rootScope.$broadcast("DEVICE_IS_ONLINE");
+            console.info("_SMARTGEO_ONLINE");
             Authenticator.silentLogin();
         },
 
         //listen offline mde
         _offlineTask: function() {
-            Storage.set( 'online', false );
-            $rootScope.$broadcast( "DEVICE_IS_OFFLINE" );
-            console.info( "_SMARTGEO_OFFLINE" );
+            Storage.set('online', false);
+            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
+            console.info("_SMARTGEO_OFFLINE");
         },
 
         // Handle the back button
-        _onBackKeyDown: function() {}
-
+        _onBackKeyDown: function() {
+        }
     };
+
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
@@ -46,7 +47,7 @@ angular
     }
 
     window.Smartgeo = Smartgeo;
-} );
+});
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
 
