@@ -286,10 +286,16 @@ img.leaflet-tile {
     border: none;
     border-color: #fd9122;
     border-radius: 40px;
-    font-size: 1em;
+    font-size: 2em;
     line-height: 35px;
     color: #FFF;
     background-color: #fd9122;
+}
+
+@supports (-webkit-text-size-adjust:none) and (not (-ms-accelerator:true)) {
+    .consultation-btn {
+        font-size: 1em;
+    }
 }
 
 .btn-group {
