@@ -205,9 +205,8 @@
                 Synchronizator.log( syncItem );
                 if(action === "update"){
                     $rootScope.$broadcast("syncUpdateList");
-                } else{
-                    $rootScope.$broadcast( 'synchronizator_new_item' );
                 }
+                $rootScope.$broadcast( 'synchronizator_new_item' );
             } );
         };
 
