@@ -50,16 +50,30 @@
          * @param {String} src
          */
         Utils.getBase64Image = function(src) {
-            var img = document.createElement( "img" );
+            var img = document.createElement("img");
             img.src = src;
-            var canvas = document.createElement( "canvas" );
+            var canvas = document.createElement("canvas");
             canvas.width = img.width;
             canvas.height = img.height;
-            var ctx = canvas.getContext( "2d" );
-            ctx.drawImage( img, 0, 0 );
-            var dataURL = canvas.toDataURL( "image/jpeg", 50 );
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            var dataURL = canvas.toDataURL("image/jpeg", 0.75);
             return dataURL;
         };
+
+        Utils.getBase64ImageAsync = function(src, callback) {
+            callback = callback || angular.noop;
+            var img = document.createElement("img");
+            img.src = src;
+            img.onload = function() {
+                var canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext("2d").drawImage(img, 0, 0);
+                var data = canvas.toDataURL("image/jpeg", 0.75);
+                callback(data);
+            };
+         };
 
         /**
          * @name makeControl
