@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -28,7 +28,7 @@
 
         $rootScope.$on( 'NEW_PROJECT_LOADED', function() {
             vm.isProject = true;
-        });
+        } );
         $rootScope.$on( 'OLD_PROJECT_UNLOADED', function() {
             vm.isProject = false;
         } );
@@ -179,12 +179,12 @@
                             }
                         }
                     }
-                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate(complex.fields[field.key])) {
+                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate( complex.fields[field.key] )) {
                         var pattern = /(\d{2})\/(\d{2})\/(\d{2})/;
-                        complex.fields[field.key] = new Date(complex.fields[field.key].replace(pattern,'20$3-$2-$1'));
+                        complex.fields[field.key] = new Date( complex.fields[field.key].replace( pattern, '20$3-$2-$1' ) );
                     }
                     if (complex.fields[field.key] && field.type === "N") {
-                        complex.fields[field.key] = +(""+complex.fields[field.key]).replace(",", ".");
+                        complex.fields[field.key] = +("" + complex.fields[field.key]).replace( ",", "." );
                     }
                 }
             }
@@ -216,4 +216,4 @@
         }
     }
 
-})();
+} )();
