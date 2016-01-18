@@ -22,6 +22,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
 
         deleteAssets: function(site, obsoletes, callback) {
             var assets = [];
+            if (!obsoletes && site.obsoletes) {
+                obsoletes = site.obsoletes;
+            }
             for (var okey in obsoletes) {
                 if (obsoletes.hasOwnProperty( okey )) {
                     assets = assets.concat( obsoletes[okey] );
@@ -30,7 +33,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             if (assets.length <= 0) {
                 callback();
             } else {
-                var request = ' DELETE FROM ASSETS WHERE id in ( "' + assets.join( '","' ) + '" ) ';
+                var request = ' DELETE FROM ASSETS WHERE id = ' + assets.join( ' OR id = ' ) + ' ';
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {
                         name: site.zones[i].database_name
@@ -135,9 +138,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 'timestamp': site.timestamp
             } );
 
-            $http.get(url)
-                .success(callback)
-                .error(function(response, code) {
+            $http.get( url )
+                .success( callback )
+                .error( function(response, code) {
                     (callback || function() {})();
                 }
             );
@@ -154,13 +157,13 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                             tx.executeSql( 'CREATE INDEX IF NOT EXISTS IDX_ASSETS ON ASSETS (xmin , xmax , ymin , ymax, symbolId , minzoom , maxzoom)', [], function(tx, result) {
                                 //OK
                             }, function(tx, err) {
-                                console.error("SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
+                                console.error( "SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message );
                             } );
                         }, function(tx, err) {
-                            console.error("SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
+                            console.error( "SQL ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message );
                         } );
                     }, function(err) {
-                        console.error("TX ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message);
+                        console.error( "TX ERROR " + err.code + " on " + site.zones[i].database_name + " : " + err.message );
                     } );
                 }
                 sites = sites || {};
@@ -253,7 +256,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                         if (!$rootScope.$$phase) {
                             $rootScope.$digest();
                         }
-                        alertify.log(i18n.get('_UPDATE_SITE_END'));
+                        alertify.log( i18n.get( '_UPDATE_SITE_END' ) );
                         callback();
                     } );
                     return;
@@ -265,9 +268,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                             if (!$rootScope.$$phase) {
                                 $rootScope.$digest();
                             }
-                            alertify.log(i18n.get('_UPDATE_ALL_END'));
+                            alertify.log( i18n.get( '_UPDATE_ALL_END' ) );
                             callback();
-                        });
+                        } );
                         Asset.cache = {};
                         (G3ME.canvasTile && G3ME.reloadLayers)();
                     }, true );
@@ -425,8 +428,8 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                             if (err.code == err.QUOTA_ERR) {
                                 msg = i18n.get( '_INSTALL_QUOTA_ERR' );
                             }
-                            alertify.alert( msg );//TODO: en 2.0/full web view, quitter l'application sur le callback de confirmation
-                            //du message pour être ISO à la 1.2.4 (dev spé Veolia) ou trouver une autre solution
+                            alertify.alert( msg ); //TODO: en 2.0/full web view, quitter l'application sur le callback de confirmation
+                        //du message pour être ISO à la 1.2.4 (dev spé Veolia) ou trouver une autre solution
                         }
                     } );
                 } ) ( zone, zone.insert_requests[i] );

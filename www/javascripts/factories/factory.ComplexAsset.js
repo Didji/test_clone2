@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -16,14 +16,14 @@
          */
         function ComplexAsset(okey, father, root, asset) {
             asset = asset || {
-                id: null,
-                okey: null,
-                guid: null,
-                children: [],
-                relatedAssets: {},
-                geometry: null,
-                angle: false,
-                fields: {}
+                    id: null,
+                    okey: null,
+                    guid: null,
+                    children: [],
+                    relatedAssets: {},
+                    geometry: null,
+                    angle: false,
+                    fields: {}
 
             };
             if (asset.id !== null) {
@@ -43,6 +43,7 @@
             }
             this.guid = this.id || this.uuid;
             this.geometry = asset.geometry || null;
+            this.angle = asset.angle;
 
             if (!this.okey) {
                 console.error( 'You must provide a root okey.' );
@@ -54,17 +55,17 @@
             }
 
             var _this = this;
-            angular.forEach( Site.current.metamodel[this.okey].tabs, function( tab ) {
-                angular.forEach( tab.fields, function( field ) {
-                    if ( !_this.fields[ field.key ] && field.default !== null ) {
-                        if ( field.type === 'D' ) {
-                            _this.fields[ field.key ] = new Date( field.default );
+            angular.forEach( Site.current.metamodel[this.okey].tabs, function(tab) {
+                angular.forEach( tab.fields, function(field) {
+                    if (!_this.fields[field.key] && field.default !== null) {
+                        if (field.type === 'D') {
+                            _this.fields[field.key] = new Date( field.default );
                         } else {
-                            _this.fields[ field.key ] = field.default;
+                            _this.fields[field.key] = field.default;
                         }
                     }
-                });
-            });
+                } );
+            } );
 
             return this;
         }
@@ -228,13 +229,13 @@
          * @desc
          */
         ComplexAsset.formatComplexToSimple = function(complex, Project, update) {
-            var assets = complex.gimmeYourLinearSubtree(), asset , i  ;
-            var masterGeom = null ;
-            var masterBounds = null ;
+            var assets = complex.gimmeYourLinearSubtree(), asset , i;
+            var masterGeom = null;
+            var masterBounds = null;
             for (i = 0; i < assets.length; i++) {
-                asset = assets[i] ;
-                asset.guid = update ? asset.guid : asset.uuid ;
-                asset.attributes = asset.fields ;
+                asset = assets[i];
+                asset.guid = update ? asset.guid : asset.uuid;
+                asset.attributes = asset.fields;
                 if (Project && Project.currentLoadedProject) {
                     asset.classindex = Project.currentLoadedProject.getClassIndexForAddedAsset( asset.okey );
                 }
@@ -257,9 +258,9 @@
             }
             for (i = 0; i < assets.length; i++) {
                 if (!assets[i].geometry) {
-                    assets[i].geometry = masterGeom ;
-                    assets[i].bounds = masterBounds ;
-                    assets[i].classindex = 0 ;
+                    assets[i].geometry = masterGeom;
+                    assets[i].bounds = masterBounds;
+                    assets[i].classindex = 0;
                 }
             }
             return assets;
@@ -270,7 +271,7 @@
          * @desc
          */
         ComplexAsset.getGeometryFromCensusAsset = function(complex) {
-            var type ;
+            var type;
             if (complex.geometry.coordinates) {
                 if (complex.geometry.coordinates.length === 2 && typeof complex.geometry.coordinates[0] === "number") {
                     type = "Point";
@@ -316,10 +317,10 @@
                     latmax = -Infinity;
                 for (var i = 0, ii = complex.geometry.coordinates.length; i < ii; i++) {
                     coord = complex.geometry.coordinates[i];
-                    lngmin = coord[0] < lngmin ? coord[0] : lngmin ;
-                    latmin = coord[1] < latmin ? coord[1] : latmin ;
-                    lngmax = coord[0] > lngmax ? coord[0] : lngmax ;
-                    latmax = coord[1] > latmax ? coord[1] : latmax ;
+                    lngmin = coord[0] < lngmin ? coord[0] : lngmin;
+                    latmin = coord[1] < latmin ? coord[1] : latmin;
+                    lngmax = coord[0] > lngmax ? coord[0] : lngmax;
+                    latmax = coord[1] > latmax ? coord[1] : latmax;
                 }
                 return {
                     sw: {
@@ -388,7 +389,7 @@
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
             var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
                 assets = ComplexAsset.formatComplexToSimple( this, Project, update ),
-                method = update ? "update" : "save" ;
+                method = update ? "update" : "save";
 
             Asset[method]( assets, function() {
                 Relationship.save( relationships, G3ME.reloadLayers );
@@ -559,7 +560,7 @@
         ComplexAsset.prototype.__updateGuid = function(guid) {
             this.id = this.guid = this.uuid;
             for (var i = 0; i < this.children.length; i++) {
-                this.children[i].__updateGuid(guid);
+                this.children[i].__updateGuid( guid );
             }
         };
 
@@ -574,9 +575,9 @@
                 }
             }
             for (var j = 0, jj = Site.current.metamodel[this.okey].tabs.length; j < jj; j++) {
-                var tab = Site.current.metamodel[this.okey].tabs[j] ;
+                var tab = Site.current.metamodel[this.okey].tabs[j];
                 for (var k = 0, kk = tab.fields.length; k < kk; k++) {
-                    var field = tab.fields[k] ;
+                    var field = tab.fields[k];
                     if (field.required && !field.readonly && !this.fields[field.key]) {
                         return false;
                     }
@@ -619,7 +620,7 @@
 
                     complexes.push( complex );
                 }
-                (callback || function() {})( complexes );
+                (callback || function() {}) ( complexes );
             } );
         };
 
@@ -635,4 +636,4 @@
 
     }
 
-})();
+} )();

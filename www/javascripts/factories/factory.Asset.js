@@ -355,7 +355,7 @@
                 ymin = se.lat,
                 ymax = nw.lat,
                 zoom = G3ME.map.getZoom(),
-                request = " SELECT id, asset, label, geometry,";
+                request = " SELECT *,";
             request += " CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2 END AS priority ";
             request += " FROM ASSETS WHERE NOT ( xmax < ? OR xmin > ? OR ymax < ? OR ymin > ?) ";
             request += " AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
@@ -869,7 +869,7 @@
                 return callback( [] );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
                 var asset;
                 for (var i = 0; i < rows.length; i++) {
                     asset = rows.item( i );
