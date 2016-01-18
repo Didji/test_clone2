@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -20,7 +20,7 @@
          */
         function Asset(asset, callback, getRelated) {
             var self = this,
-                locked_assets = Storage.get('locked_assets');
+                locked_assets = Storage.get( 'locked_assets' );
 
             if (typeof asset === 'string' || typeof asset === 'number') {
                 Asset.findOne( asset, function(asset) {
@@ -28,49 +28,49 @@
                 } );
                 return;
             }
-            asset.locked = locked_assets ? locked_assets.indexOf(+asset.id) !== -1 : false;
+            asset.locked = locked_assets ? locked_assets.indexOf( +asset.id ) !== -1 : false;
             angular.extend( this, asset );
             if (getRelated) {
                 this.findRelated( callback );
             } else {
-                (callback || function() {})( this );
+                (callback || function() {}) (this );
             }
         }
 
-        Asset.cache = { } ;
+        Asset.cache = { };
 
-        Asset.__maxIdPerRequest = 999 ;
-        Asset.__maxResultPerSearch = 10 ;
+        Asset.__maxIdPerRequest = 999;
+        Asset.__maxResultPerSearch = 10;
 
         Asset.prototype.onMap = false;
 
         Asset.prototype.consultationMarker = false;
 
         Asset.prototype.findRelated = function(callback) {
-            var self = this ;
+            var self = this;
 
             if (this.isComplex != undefined) {
-                return (callback || angular.noop)( self );
+                return (callback || angular.noop) ( self );
             }
             Relationship.findRelated( this.id || this.guid, function(root, tree) {
                 if (!root) {
-                    return (callback || angular.noop)( self );
+                    return (callback || angular.noop) ( self );
                 }
                 Asset.findAssetsByGuids( Object.keys( tree ), function(assets_) {
                     if (assets_.length <= 1 || assets_[0].guid === assets_[1].guid) {
-                        self.isComplex = false ;
-                        return (callback || angular.noop)( self );
+                        self.isComplex = false;
+                        return (callback || angular.noop) ( self );
                     }
-                    var assets_byId = {} ;
+                    var assets_byId = {};
                     for (var i = 0; i < assets_.length; i++) {
                         assets_byId[assets_[i].id] = new Asset( assets_[i] );
                     }
-                    Asset.sortTree(tree, assets_);
-                    self.isComplex = true ;
-                    self.tree = tree ;
+                    Asset.sortTree( tree, assets_ );
+                    self.isComplex = true;
+                    self.tree = tree;
                     self.root = root;
-                    self.relatedAssets = assets_byId ;
-                    (callback || angular.noop)( self );
+                    self.relatedAssets = assets_byId;
+                    (callback || angular.noop) ( self );
                 } );
             } );
         };
@@ -81,16 +81,18 @@
         */
         Asset.sortTree = function(tree, assets) {
             // On trie les assets en fonction de leur label et on récupère leurs ids triés
-            assets.sort(function(a,b) { return (a.label < b.label ? -1 : (a.label > b.label ? 1 : 0)); });
+            assets.sort( function(a, b) {
+                return (a.label < b.label ? -1 : (a.label > b.label ? 1 : 0));
+            } );
             var tempChildren = [];
             for (var i = 0; i < assets.length; i++) {
                 var id = assets[i].id;
-                tempChildren.push(id);
+                tempChildren.push( id );
             }
 
             // Itère sur les objets selon le schéma {id parent : [id enfants]}
             for (var key in tree) {
-                if (tree.hasOwnProperty(key)) {
+                if (tree.hasOwnProperty( key )) {
                     var children = tree[key];
 
                     // Si pas d'enfants, on zappe
@@ -100,10 +102,12 @@
 
                     // Les ids triés plus haut deviennent les nouveaux enfants,
                     // mais on ne prend pas en compte les ids qui n'existaient pas dans les anciens enfants
-                    tree[key] = tempChildren.filter(function(obj) { return children.indexOf(obj) != -1; });
+                    tree[key] = tempChildren.filter( function(obj) {
+                        return children.indexOf( obj ) != -1;
+                    } );
                 }
             }
-        }
+        };
 
         /**
          * @name showOnMap
@@ -118,8 +122,8 @@
             this.onMap = true;
             if (!dontPlaceMarker) {
                 this.consultationMarker = this.consultationMarker || Marker.getMarkerFromAsset( this, function() {
-                    self.zoomOn();
-                } );
+                        self.zoomOn();
+                    } );
                 if (G3ME.map) {
                     this.consultationMarker.addTo( G3ME.map );
                 }
@@ -150,10 +154,10 @@
          * @desc Zoom sur les coordonnées passées en paramètre
          */
         Asset.focusCoordinates = function(listCoordinates) {
-            var bounds = new L.LatLngBounds(listCoordinates); 
-            G3ME.map.fitBounds(bounds, {
+            var bounds = new L.LatLngBounds( listCoordinates );
+            G3ME.map.fitBounds( bounds, {
                 padding: [25, 25]
-            });
+            } );
         };
 
         /**
@@ -169,7 +173,11 @@
          * @desc Zoom sur l'objet
          */
         Asset.prototype.zoomOn = function() {
-            G3ME.map.setView( this.getCenter(), 18 );
+            if (this.consultationMarker._map._zoom <= 18) {
+                G3ME.map.setView( this.getCenter(), 18 );
+            } else {
+                G3ME.map.setView( this.getCenter(), this.consultationMarker._map._zoom );
+            }
             $rootScope.$broadcast( "DESACTIVATE_POSITION" );
         };
 
@@ -204,10 +212,10 @@
                 self.reports = [];
                 console.error( error );
             } ).finally( function() {
-                if ( self.isComplex && self.relatedAssets[self.id] ) {
+                if (self.isComplex && self.relatedAssets[self.id]) {
                     self.relatedAssets[self.id].reports = self.reports;
                 }
-            });
+            } );
         };
 
         /**
@@ -216,7 +224,7 @@
          */
         Asset.prototype.goTo = function() {
             var center = this.getCenter();
-            launchnavigator.navigate([center[0], center[1]]);
+            launchnavigator.navigate( [center[0], center[1]] );
         };
 
         /**
@@ -269,7 +277,7 @@
                 e.preventDefault();
             }
             $rootScope.addAssetToTour( this );
-            //$rootScope.$broadcast( '_ADD_ASSET_TO_TOUR_', this );
+        //$rootScope.$broadcast( '_ADD_ASSET_TO_TOUR_', this );
         };
 
         /**
@@ -307,7 +315,7 @@
          */
         Asset.findOne = function(id, callback, zones) {
 
-            var tmp = +id ;
+            var tmp = +id;
             if (!isNaN( tmp )) {
                 id = +id;
             }
@@ -347,7 +355,7 @@
                 ymin = se.lat,
                 ymax = nw.lat,
                 zoom = G3ME.map.getZoom(),
-                request = " SELECT id, asset, label, geometry,";
+                request = " SELECT *,";
             request += " CASE WHEN geometry LIKE '%Point%' THEN 1 WHEN geometry LIKE '%LineString%' THEN 2 END AS priority ";
             request += " FROM ASSETS WHERE NOT ( xmax < ? OR xmin > ? OR ymax < ? OR ymin > ?) ";
             request += " AND ( (minzoom <= 1*? OR minzoom = 'null') AND ( maxzoom >= 1*? OR maxzoom = 'null') )";
@@ -370,7 +378,7 @@
                 request += " and ( symbolId REGEXP '" + G3ME.active_layers.join( "[0-9]+' OR symbolId REGEXP '" ) + "[0-9]+' )";
             }
             request += " order by priority LIMIT 0,100 ";
-            SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(rows){
+            SQLite.exec( zone.database_name, request, [xmin, xmax, ymin, ymax, zoom, zoom], function(rows) {
                 var assets = [];
                 for (var i = 0, numRows = rows.length; i < numRows && assets.length < 10; i++) {
                     var asset = new Asset( Asset.convertRawRow( rows.item( i ) ), $.noop, true );
@@ -379,22 +387,23 @@
                     }
                 }
                 // Bug de tri arrangé, voir si cela est suffisant ou pas
-                if (assets[0] && (!isNaN(parseFloat(assets[0].label)) && isFinite(assets[0].label))) {
+                if (assets[0] && (!isNaN( parseFloat( assets[0].label ) ) && isFinite( assets[0].label ))) {
                     assets.sort( function(a, b) {
-                        return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
-                    });
-                }
-                else {
-                    assets.sort(function(a, b){
-                        if (a.label.toLowerCase() < b.label.toLowerCase())
+                        return (parseFloat( a.label ) < parseFloat( b.label )) ? -1 : 1;
+                    } );
+                } else {
+                    assets.sort( function(a, b) {
+                        if (a.label.toLowerCase() < b.label.toLowerCase()) {
                             return -1;
-                        if (a.label.toLowerCase() > b.label.toLowerCase())
+                        }
+                        if (a.label.toLowerCase() > b.label.toLowerCase()) {
                             return 1;
+                        }
                         return 0;
-                    });
+                    } );
                 }
                 return callback( assets );
-            });
+            } );
         };
 
         Asset.prototype.intersectsWithCircle = function(center, radius) {
@@ -420,7 +429,7 @@
         };
 
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
-            var guidsbis = [], i, response, tmp ;
+            var guidsbis = [], i, response, tmp;
 
             if (!zones) {
                 zones = Site.current.zones;
@@ -479,14 +488,14 @@
             Relationship.findRelated( asset.guid, function(root, tree) {
                 var guids = Object.keys( tree );
                 Asset.findAssetsByGuids( guids, function(assets) {
-                    var trad = {} ,
-                        duplicates = [] ;
+                    var trad = {},
+                        duplicates = [];
 
                     for (var i = 0; i < assets.length; i++) {
                         var newAsset = new Asset( angular.copy( assets[i] ) ),
                             _uuid = newAsset.id + '|' + window.uuid();
 
-                        trad[newAsset.guid] = _uuid ;
+                        trad[newAsset.guid] = _uuid;
 
                         newAsset.guid = _uuid;
                         newAsset.id = _uuid;
@@ -496,7 +505,7 @@
 
                         if (project) {
                             newAsset.okey = "PROJECT_" + assets[i].okey;
-                            newAsset.symbolId = "PROJECT_" + assets[i].okey + project.getClassIndexForUnchangedAsset(assets[i].okey);
+                            newAsset.symbolId = "PROJECT_" + assets[i].okey + project.getClassIndexForUnchangedAsset( assets[i].okey );
                         }
 
                         newAsset.bounds = {
@@ -594,7 +603,7 @@
             } else if (guids.length && (guids[0] instanceof Asset || guids[0] instanceof Object)) {
                 var guidsbis = [];
                 for (var i = 0, ii = guids.length; i < ii; i++) {
-                    var id = guids[i].id || guids[i].uuid ;
+                    var id = guids[i].id || guids[i].uuid;
                     if (id) {
                         guidsbis.push( id );
                     }
@@ -634,7 +643,7 @@
         Asset.convertRawRow = function(asset) {
             var a = angular.copy( asset ), parsed;
             try {
-                parsed = a.asset ? JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) ) : a ;
+                parsed = a.asset ? JSON.parse( a.asset.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ) ) : a;
                 return angular.extend( a, {
                     okey: parsed.okey,
                     attributes: parsed.attributes,
@@ -688,7 +697,7 @@
 
             var assets = asset_s.length ? asset_s : [asset_s];
 
-            site = site || Site.current ;
+            site = site || Site.current;
 
             var request = '',
                 asset, asset_, guid,
@@ -774,7 +783,7 @@
                 if (!asset) {
                     continue;
                 }
-                bounds = asset.bounds ;
+                bounds = asset.bounds;
                 if (bounds) {
                     asset_extent = {
                         xmin: bounds.sw.lng,
@@ -802,7 +811,7 @@
          * @memberOf Asset
          */
         Asset.save = function(asset, callback, site) {
-            site = site || Site.current ;
+            site = site || Site.current;
             var zones = Asset.__distributeAssetsInZone( asset, site );
             var uuidcallback = window.uuid();
             Asset.checkpointCallbackRegister( uuidcallback, zones.length, callback );
@@ -816,19 +825,19 @@
                 SQLite.exec( zone.database_name, request.request, request.args, function() {
                     Asset.checkpointCallback( uuidcallback );
                 }, function(tx, sqlerror) {
-                        console.error( sqlerror.message );
-                    } );
+                    console.error( sqlerror.message );
+                } );
             }
         };
 
-        Asset.checkpointCallbackId = {} ;
+        Asset.checkpointCallbackId = {};
 
         Asset.checkpointCallback = function(uuid) {
             if (Asset.checkpointCallbackId[uuid].count <= 1) {
                 (Asset.checkpointCallbackId[uuid].callback || function() {})();
                 delete Asset.checkpointCallbackId[uuid];
             } else {
-                Asset.checkpointCallbackId[uuid].count-- ;
+                Asset.checkpointCallbackId[uuid].count--;
             }
         };
 
@@ -860,7 +869,7 @@
                 return callback( [] );
             }
 
-            SQLite.exec( zones[0].database_name, 'SELECT id, label, geometry, xmin, xmax, ymin, ymax FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
+            SQLite.exec( zones[0].database_name, 'SELECT * FROM ASSETS WHERE id in ( ' + guids.join( ',' ).replace( /[a-z0-9|-]+/gi, '?' ) + ')', guids.map( String ), function(rows) {
                 var asset;
                 for (var i = 0; i < rows.length; i++) {
                     asset = rows.item( i );
@@ -883,7 +892,7 @@
             if (guids.length === 0) {
                 return callback( partial_response );
             } else {
-                Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ),function(assets) {
+                Asset.findGeometryByGuids( guids.slice( 0, Asset.__maxIdPerRequest ), function(assets) {
                     Asset.findGeometryByGuids_big( guids.slice( Asset.__maxIdPerRequest ), callback, partial_response.concat( assets ) );
                 } );
             }
@@ -972,19 +981,20 @@
             if (!zones.length || partial_response.length >= Asset.__maxResultPerSearch) {
                 console.timeEnd( 'Recherche' );
                 // Bug de tri arrangé, voir si cela est suffisant ou pas
-                if (partial_response[0] && (!isNaN(parseFloat(partial_response[0].label)) && isFinite(partial_response[0].label))) {
+                if (partial_response[0] && (!isNaN( parseFloat( partial_response[0].label ) ) && isFinite( partial_response[0].label ))) {
                     partial_response.sort( function(a, b) {
-                        return (parseFloat(a.label) < parseFloat(b.label)) ? -1 : 1;
-                    });
-                }
-                else {
-                    partial_response.sort(function(a, b){
-                        if (a.label.toLowerCase() < b.label.toLowerCase())
+                        return (parseFloat( a.label ) < parseFloat( b.label )) ? -1 : 1;
+                    } );
+                } else {
+                    partial_response.sort( function(a, b) {
+                        if (a.label.toLowerCase() < b.label.toLowerCase()) {
                             return -1;
-                        if (a.label.toLowerCase() > b.label.toLowerCase())
+                        }
+                        if (a.label.toLowerCase() > b.label.toLowerCase()) {
                             return 1;
+                        }
                         return 0;
-                    });
+                    } );
                 }
                 return callback( partial_response );
             }
@@ -994,18 +1004,18 @@
                 var regex;
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (!isNaN(search.criteria[criter])) {
-                          regex = '.*\"' + criter.toString().toLowerCase() + '\":' + search.criteria[criter].toString().toLowerCase() + '[(,)|(\\)|(\})].*';
-                          request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                        if (!isNaN( search.criteria[criter] )) {
+                            regex = '.*\"' + criter.toString().toLowerCase() + '\":' + search.criteria[criter].toString().toLowerCase() + '[(,)|(\\)|(\})].*';
+                            request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
                         } else {
-                          regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace('(', '\\\(').replace(')', '\\\)') + '\".*';
-                          request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                            regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace( '(', '\\\(' ).replace( ')', '\\\)' ) + '\".*';
+                            request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
                         }
                     }
                 }
                 request += 'LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
             }
-            SQLite.exec(zones[0].database_name, request, [], function(rows){
+            SQLite.exec( zones[0].database_name, request, [], function(rows) {
                 for (var i = 0; i < rows.length; i++) {
                     var asset = rows.item( i );
                     try {
@@ -1014,7 +1024,7 @@
                     partial_response.push( asset );
                 }
                 Asset.findAssetsByCriteria( search, callback, zones.slice( 1 ), partial_response, request );
-            });
+            } );
         };
 
         /**
@@ -1032,9 +1042,9 @@
          * @desc
          */
         Asset.getIds = function(complex, ids) {
-            ids = ids || [] ;
+            ids = ids || [];
 
-            complex.children = complex.children || [] ;
+            complex.children = complex.children || [];
 
             ids.push( complex.id );
 
@@ -1069,7 +1079,7 @@
 
         Asset.lock = function(guids) {
             Storage.set( 'locked_assets', guids );
-        }
+        };
 
         Asset.prototype.lock = function() {
             var _this = this;
@@ -1080,16 +1090,16 @@
 
                 guids.map( function(guid) {
                     guid = +guid;
-                    if ( locked.indexOf( guid ) === -1 ) {
-                        locked.push(guid);
+                    if (locked.indexOf( guid ) === -1) {
+                        locked.push( guid );
                     }
                 } );
 
                 Asset.lock( locked );
-            });
-        }
+            } );
+        };
 
         return Asset;
     }
 
-})();
+} )();
