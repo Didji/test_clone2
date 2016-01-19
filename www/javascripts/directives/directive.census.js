@@ -124,10 +124,19 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
 
                 scope.draw = function(node) {
                     $rootScope.stopConsultation();
-                    if (Site.current.metamodel[node.okey].geometry_type === "LineString") {
-                        scope.drawLine( node );
-                    } else {
-                        scope.drawPoint( node );
+                    switch (Site.current.metamodel[node.okey].geometry_type) {
+                        case "LineString":
+                            scope.drawLine( node );
+                            break;
+                        case "Point":
+                            scope.drawPoint( node );
+                            break;
+                        case "Polygon":
+                            scope.drawPolygon( node );
+                            break;
+                        default:
+                            console.log("Type de géométrie non géré : "+Site.current.metamodel[node.okey].geometry_type);
+                            break;
                     }
                 };
 
@@ -173,7 +182,57 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             node.layer.addLatLng( clickLatLng );
                         }
                     }
+                };
 
+                scope.drawPolygon = function(node) {
+                    delete scope.firstPointLayer;
+                    function mouseClickHandler(e) {
+                        var clickLatLng = [e.latlng.lat, e.latlng.lng],
+                            clickLngLat = [e.latlng.lng, e.latlng.lat];
+                        if (!node.tmpGeometry) {
+                            node.tmpGeometry = [clickLngLat];
+                        } else {
+                            node.tmpGeometry.push( clickLngLat );
+                        }
+                        if (!scope.firstPointLayer) {
+
+                            scope.firstPointLayer = new L.Circle( clickLatLng, 15 * 40075017 * Math.cos( L.LatLng.DEG_TO_RAD * clickLatLng[0] ) / Math.pow( 2, (G3ME.map.getZoom() + 8 )), {
+                                color: "#fc9e49",
+                                weight: 1,
+                                fillOpacity: 1
+                            } ).addTo( G3ME.map );
+                            scope.firstPointLayer.on( 'click', function() {
+                                node.tmpGeometry.push(node.tmpGeometry[0]);
+                                if (node.tmpGeometry.length > 3) {
+                                    node.geometry = angular.copy( node.tmpGeometry );
+                                } else if (node.layer) {
+                                    G3ME.map.removeLayer( node.layer );
+                                    node.layer = undefined;
+                                }
+                                delete node.tmpGeometry;
+                                G3ME.map.off( 'click', mouseClickHandler );
+                                G3ME.map.removeLayer( scope.firstPointLayer );
+                                delete scope.firstPointLayer;
+                                scope.$apply();
+                            } );
+                        }
+
+                        if (!node.layer) {
+                            var style = Site.current.symbology['' + node.okey + scope.defaultClassIndex].style;
+                            node.layer = L.polygon( [clickLatLng], {
+                                color: style.strokecolor,
+                                smoothFactor: 0,
+                                weight: style.width,
+                                opacity: 1
+                            } );
+                            // Attention, si on fait le addTo dans la foulée de l'initialisation, 
+                            // la variable node.layer n'est pas initialisée.
+                            node.layer.addTo( G3ME.map );
+                        } else {
+                            node.layer.addLatLng( clickLatLng );
+                        }
+                    }
+                    
                     node.geometry = undefined;
                     node.tmpGeometry = undefined;
                     if (node.layer) {

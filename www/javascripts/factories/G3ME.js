@@ -429,10 +429,6 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                     previousY = coord_y;
                 }
                 if (geometry.type !== "Polygon" && zoomUpper16 && asset.maplabel) {
-                    if (asset.maplabel.match( /Vauban/i )) {
-                        //    debugger;
-                    }
-
                     var middle = G3ME.getLineStringMiddle( geometry );
 
                     _middlex = (0.5 + scale * (INV_2PI_T_DEG2RAD * middle[1] + 0.5) - initialTopLeftPointX) | 0;
