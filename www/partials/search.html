@@ -9,7 +9,7 @@
         <label><i18n>_SEARCH_TYPE</i18n></label>
         <select
             class="form-control" ng-model="selectedFamily"
-            ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true">
+            ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
         <label><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
         <select
