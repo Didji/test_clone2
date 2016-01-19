@@ -133,7 +133,6 @@ window.smartgeo_i18n_lang.en = {
     _PLANNING_DISPLAY_FINISHED_: "Display finished mission",
     _PLANNING_NEW_MISSION_: " new mission",
     _PLANNING_NEW_MISSIONS_: " new missions",
-    _CENSUS_INFORMATION_: " Census",
     _CENSUS_CHOOSE_OBJECT_: "Please select the asset",
     _NIGHTTOUR_STOP_: "Stop",
     _NIGHTTOUR_CLOSE_: "Close",
