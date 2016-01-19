@@ -619,7 +619,6 @@
          * @desc Ajoute un markeur sur chaque asset au chargement d'un projet.
          */
         Project.prototype.setMarkersProject = function(assets, relations) {
-            console.log(assets, relations);
             var listCoordinates = [];
             $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
             for (var i = 0; i < assets.length; i++) {
