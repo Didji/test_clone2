@@ -68,11 +68,7 @@
                 id: this.id
             } ) ).success( function(data) {
                 if (data.assets != 0) {
-                    if (data.relations) {
-                        project.setMarkersProject(data.assets, data.relations);
-                    } else {
-                        project.setMarkersProject(data.assets);
-                    }
+                    project.setMarkersProject(data.assets, data.relations);
                 }
 
                 project.setAssets( data.assets, data.relations, function() {
@@ -623,15 +619,15 @@
          * @desc Ajoute un markeur sur chaque asset au chargement d'un projet.
          */
         Project.prototype.setMarkersProject = function(assets, relations) {
+            console.log(assets, relations);
             var listCoordinates = [];
             $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
             for (var i = 0; i < assets.length; i++) {
                 var asset = new Asset(assets[i]);
-                if (relations == undefined || relations.hasOwnProperty(asset.guid)) {
-                    asset.showOnMap();
-                    this.listAssetShow.push(asset);
-                    listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
-                }
+                //TODO/FIXME: gérer les relations pour ne mettre un marqueur que sur les elements parents
+                asset.showOnMap();
+                this.listAssetShow.push(asset);//FIXME: ne pas utiliser une variable, on a deja les assets du projet en base!
+                listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
             }
 
             Asset.focusCoordinates(listCoordinates);
@@ -642,6 +638,8 @@
          * @desc Cache tous les markeurs d'un projet.
          */
         Project.prototype.unSetMarkersProject = function() {
+            //FIXME: utiliser les assets projet stockés en base plutot que la variable this.listAssetShow qui ne sert à rien
+            //Cf setMarkersProject
             if (this.listAssetShow.length != 0) {
                 for (var i = 0; i < this.listAssetShow.length; i++) {
                     this.listAssetShow[i].hideFromMap();
