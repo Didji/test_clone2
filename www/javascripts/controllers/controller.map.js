@@ -6,14 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right"];
+    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right) {
-
+    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route) {
         var vm = this,
             LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -23,6 +22,11 @@
             intent;
 
         activate();
+
+        if ($rootScope.hasOwnProperty( 'justLaunched' ) && $rootScope.justLaunched == false) {
+            $rootScope.justLaunched = true;
+            $route.reload();
+        }
 
         /**
          * @name activate
@@ -52,19 +56,19 @@
                 activateConsultation();
             } );
 
-            $scope.$on("DESACTIVATE_CONSULTATION", function () {
+            $scope.$on( "DESACTIVATE_CONSULTATION", function() {
                 stopConsultation();
-            });
+            } );
 
-            $scope.$on("ACTIVATE_POSITION", function () {
+            $scope.$on( "ACTIVATE_POSITION", function() {
                 activatePosition();
             } );
 
-            $scope.$on("DESACTIVATE_POSITION", function () {
+            $scope.$on( "DESACTIVATE_POSITION", function() {
                 stopPosition();
-            });
+            } );
 
-            $scope.$on("$destroy", controllerDestroyHandler);
+            $scope.$on( "$destroy", controllerDestroyHandler );
 
             $rootScope.activatePosition = activatePosition;
             $rootScope.stopPosition = stopPosition;
@@ -170,7 +174,7 @@
             // TODO: FAIRE MIEUX
             var intent = Storage.get( 'intent' );
             intent = intent && intent.controller === 'map';
-            if ( Site.current.activities.length && ($rootScope.rights.report || intent && !$filter( 'reportableAssetsForIntentFilter' )( assets ).length) ) {
+            if (Site.current.activities.length && ($rootScope.rights.report || intent && !$filter( 'reportableAssetsForIntentFilter' )( assets ).length)) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get( '_CONSULTATION_REPORT_ON_POSITION' ) + '</button>';
                 $( document ).on( 'click', '.openLocateReportButton', function() {
@@ -193,7 +197,7 @@
                 L.popup().setLatLng( coords ).setContent( popupContent[0] ).openOn( G3ME.map );
             }
 
-            $( '.leaflet-popup' ).delay(10000).fadeOut(500);
+            $( '.leaflet-popup' ).delay( 10000 ).fadeOut( 500 );
 
         }
 
@@ -348,11 +352,11 @@
             } );
             if (!FIRST_POSITION) {
                 POSITION_ZOOM = G3ME.map.getZoom();
-                G3ME.map.panTo([lat, lng], {
+                G3ME.map.panTo( [lat, lng], {
                     animate: false
-                });
-            }else{
-                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
+                } );
+            } else {
+                G3ME.map.setView( LAST_USERS_LOCATION, POSITION_ZOOM );
             }
             FIRST_POSITION = false;
         }
@@ -470,19 +474,19 @@
                     }
                 }
             }
-        });
-        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function (event, mission, assetsCache) {
-            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup({
-                iconCreateFunction: function (cluster) {
-                  return new L.DivIcon({
-                       html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-                        className: 'marker-cluster-done',
-                        iconSize: new L.Point(40, 40)
-                    });
-                },
-                disableClusteringAtZoom: 21,
-                maxClusterRadius: 75
-            });
+        } );
+        $scope.$on( "HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache) {
+            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup( {
+                    iconCreateFunction: function(cluster) {
+                        return new L.DivIcon( {
+                            html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                            className: 'marker-cluster-done',
+                            iconSize: new L.Point( 40, 40 )
+                        } );
+                    },
+                    disableClusteringAtZoom: 21,
+                    maxClusterRadius: 75
+                } );
             for (var i = 0; assetsCache && i < assetsCache.length; i++) {
                 assetsCache[i].marker = assetsCache[i].marker || L.marker( [assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]] );
                 var icon = !mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get( 'DONE_MISSION' ) : Icon.get( 'DONE_NIGHTTOUR' );
