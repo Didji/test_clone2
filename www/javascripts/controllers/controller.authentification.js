@@ -1,4 +1,4 @@
-(function() {
+( function() {
 
     'use strict';
 
@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'AuthController', AuthController );
 
-    AuthController.$inject = ["$rootScope", "$location", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites", "Utils", "Authenticator","G3ME"];
+    AuthController.$inject = ["$rootScope", "$location", "Storage", "i18n", "$route", "$http", "prefetchedlocalsites", "Utils", "Authenticator", "G3ME"];
 
     /**
      * @class AuthController
@@ -31,7 +31,9 @@
         vm.firstAuth = false;
         vm.errorMessage = "";
         vm.loginInProgress = false;
-
+        if (!$rootScope.hasOwnProperty( 'justLaunched' )) {
+            $rootScope.justLaunched = false;
+        }
 
         activate();
 
@@ -44,7 +46,7 @@
             G3ME.resetMap();
 
             vm.user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {
-                "rememberme": true
+                    "rememberme": true
             };
             vm.gimapServer = (Storage.get( 'url' ) || "");
             vm.firstAuth = vm.gimapServer.length ? Utils.ping() && false : true;
@@ -94,8 +96,8 @@
                 Authenticator.selectSiteRemotely( localSites[0].id, function() {
                     $location.path( '/map/' + localSites[0].id );
                 }, function() {
-                        vm.errorMessage = (i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ));
-                    } );
+                    vm.errorMessage = (i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ));
+                } );
             } else if (remoteSites.length === 1 && localSites.length <= 1) {
                 // Online avec un site non installé : On l'installe directement
                 $location.path( '/sites/install/' + remoteSites[0].id );
@@ -144,10 +146,9 @@
                 'pwd': encodeURIComponent( vm.user.password ),
                 'forcegimaplogin': true
             } );
-
-            $http.post(url, {}, {
+            $http.post( url, {}, {
                 timeout: 10000
-            }).success(loginSuccess).error(loginError);
+            } ).success( loginSuccess ).error( loginError );
         }
 
         /**
@@ -159,4 +160,4 @@
             $route.reload();
         }
     }
-})();
+} )();
