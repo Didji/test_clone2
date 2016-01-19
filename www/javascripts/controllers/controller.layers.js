@@ -53,7 +53,7 @@
                         status: !visibilities || visibilities[currentMetamodel.okey],
                         label: currentMetamodel.label,
                         okey: currentMetamodel.okey,
-                        src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].currentSrc
+                        src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].src
                     };
                     vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer ;
                 }
@@ -62,7 +62,6 @@
             for (var label in vm.groups) {
                 checkGroup( vm.groups[label] );
             }
-
         }
 
         /**
