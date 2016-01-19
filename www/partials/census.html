@@ -18,7 +18,7 @@
         </div>
         <ul>
             <li ng-repeat="(modelOkey, model) in (censusController.metamodel) | orderObjectBy:'label'" ng-if="model.is_census && (model.is_project===censusController.isProject)">
-                <a ng-click='censusController.startCensus(modelOkey)'>
+                <a ng-click='censusController.startCensus(model.okey)'>
                     <img ng-if='icon = (model.okey | getIconFromModelOkeyForCensus)' ng-src='{{icon}}' alt="" />
                     <label>{{model.label}}</label>
                 </a>
