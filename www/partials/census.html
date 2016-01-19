@@ -13,14 +13,13 @@
     <div ng-if='!censusController.okey'>
         <div style="margin:10px" class="panel panel-warning">
             <div class="panel-heading">
-                <i class="fa fa-info-circle"> </i><i18n>_CENSUS_INFORMATION_</i18n>
+                <i class="fa fa-info-circle"> </i><i18n>_CENSUS_CHOOSE_OBJECT_</i18n>
             </div>
-            <div class="panel-body"><i18n>_CENSUS_CHOOSE_OBJECT_</i18n></div>
         </div>
         <ul>
-            <li ng-repeat="(modelOkey, model) in ( censusController.metamodel )" ng-if="model.is_census && (model.is_project===censusController.isProject)">
-                <a ng-click='censusController.startCensus(modelOkey)'>
-                    <img ng-if= 'icon = (modelOkey | getIconFromModelOkeyForCensus) ' ng-src='{{icon}}' alt="" />
+            <li ng-repeat="(modelOkey, model) in (censusController.metamodel) | orderObjectBy:'label'" ng-if="model.is_census && (model.is_project===censusController.isProject)">
+                <a ng-click='censusController.startCensus(model.okey)'>
+                    <img ng-if='icon = (model.okey | getIconFromModelOkeyForCensus)' ng-src='{{icon}}' alt="" />
                     <label>{{model.label}}</label>
                 </a>
             </li>

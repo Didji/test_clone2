@@ -133,7 +133,6 @@ window.smartgeo_i18n_lang.fr = {
     _PLANNING_DISPLAY_FINISHED_: "Afficher les OT terminés",
     _PLANNING_NEW_MISSION_: " nouvelle mission",
     _PLANNING_NEW_MISSIONS_: " nouvelles missions",
-    _CENSUS_INFORMATION_: " Recensement",
     _CENSUS_CHOOSE_OBJECT_: "Veuillez sélectionner l'objet à recenser",
     _NIGHTTOUR_STOP_: "Arrêter",
     _NIGHTTOUR_CLOSE_: "Clôturer",
