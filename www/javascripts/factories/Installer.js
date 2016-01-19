@@ -33,7 +33,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             if (assets.length <= 0) {
                 callback();
             } else {
-                var request = ' DELETE FROM ASSETS WHERE id = ' + assets.join( ' OR id = ' ) + ' ';
+                var request = ' DELETE FROM ASSETS WHERE id in ( "' + assets.join( '","' ) + '" ) ';
                 for (var i = 0; i < site.zones.length; i++) {
                     SQLite.openDatabase( {
                         name: site.zones[i].database_name
