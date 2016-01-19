@@ -182,6 +182,16 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                             node.layer.addLatLng( clickLatLng );
                         }
                     }
+
+                    node.geometry = undefined;
+                    node.tmpGeometry = undefined;
+                    if (node.layer) {
+                        G3ME.map.removeLayer( node.layer );
+                        delete node.layer;
+                    }
+
+                    G3ME.map.off( 'click', mouseClickHandler ).on( 'click', mouseClickHandler );
+
                 };
 
                 scope.drawPolygon = function(node) {
@@ -225,14 +235,14 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                                 weight: style.width,
                                 opacity: 1
                             } );
-                            // Attention, si on fait le addTo dans la foulée de l'initialisation, 
+                            // Attention, si on fait le addTo dans la foulée de l'initialisation,
                             // la variable node.layer n'est pas initialisée.
                             node.layer.addTo( G3ME.map );
                         } else {
                             node.layer.addLatLng( clickLatLng );
                         }
                     }
-                    
+
                     node.geometry = undefined;
                     node.tmpGeometry = undefined;
                     if (node.layer) {
