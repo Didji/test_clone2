@@ -68,7 +68,7 @@
                 id: this.id
             } ) ).success( function(data) {
                 if (data.assets != 0) {
-                    if (data.relations.length != 0) {
+                    if (data.relations) {
                         project.setMarkersProject(data.assets, data.relations);
                     } else {
                         project.setMarkersProject(data.assets);
@@ -323,7 +323,7 @@
                 return (callback || function() {})();
             }
             var project = this ;
-            if (relations && relations.length) {
+            if (relations) {
                 Relationship.save( relations );
             }
             project.assets = [];
