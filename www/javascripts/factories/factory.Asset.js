@@ -234,10 +234,13 @@
         Asset.prototype.getCenter = function() {
             var coordinates = this.geometry.coordinates;
 
-            if (this.geometry.type === "Point") {
-                return [coordinates[1], coordinates[0]];
-            } else {
-                return Asset.getLineStringMiddle( coordinates );
+            switch (this.geometry.type) {
+                case "Point":
+                    return [coordinates[1], coordinates[0]];
+                case "LineString":
+                    return Asset.getLineStringMiddle( coordinates );
+                case "Polygon":
+                    return Asset.getCentroid( coordinates[0] );
             }
         };
 
@@ -246,13 +249,7 @@
          * @desc Retourne le centre d'un objet
          */
         Asset.getCenter = function(asset) {
-            var coordinates = asset.geometry.coordinates;
-
-            if (asset.geometry.type === "Point") {
-                return [coordinates[1], coordinates[0]];
-            } else {
-                return Asset.getLineStringMiddle( coordinates );
-            }
+            return asset.getCenter();
         };
 
         /**
@@ -280,6 +277,19 @@
         //$rootScope.$broadcast( '_ADD_ASSET_TO_TOUR_', this );
         };
 
+        /**
+         * @name getCentroid
+         * @desc Retourne le centroid d'un polygone.
+         * @param {Array[]} coordinates Géometrie de l'objet
+         */
+        Asset.getCentroid = function (coordinates) {
+            var sumX = 0, sumY = 0, len = coordinates.length, i;
+            for (i = 0; i < len; i++) {
+                sumX += coordinates[i][0];
+                sumY += coordinates[i][1];
+            }
+            return [sumY / len, sumX / len];
+        }
         /**
          * @name getLineStringMiddle
          * @desc Retourne le milieu d'un LineString
