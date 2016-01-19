@@ -627,13 +627,12 @@
             $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
             for (var i = 0; i < assets.length; i++) {
                 var asset = new Asset(assets[i]);
-                if (relations == undefined || relations.hasOwnProperty(asset.guid)) {
+                if (relations === undefined || relations.length === 0 || relations.hasOwnProperty(asset.guid)) {
                     asset.showOnMap();
                     this.listAssetShow.push(asset);
                     listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
                 }
             }
-
             Asset.focusCoordinates(listCoordinates);
         };
 
