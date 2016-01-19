@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", function($compile, ComplexAsset, Icon, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project) {
+angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAsset", "Icon", "i18n", "$rootScope", "Storage", "G3ME", "Camera", "GPS", "Site", "Project", "Utils", function($compile, ComplexAsset, Icon, i18n, $rootScope, Storage, G3ME, Camera, GPS, Site, Project, Utils) {
 
         "use strict";
 
@@ -98,9 +98,11 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                 }
 
                 scope.snap = function(node) {
-                    Camera.snap( function(picture) {
-                        node.photo = picture;
-                        scope.$apply();
+                    Camera.snap( function(pictureURI) {
+                        Utils.getBase64ImageAsync(pictureURI, function(data) {
+                            node.photo = data;
+                            scope.$apply();
+                        });
                     } );
                 };
 

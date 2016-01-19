@@ -74,13 +74,13 @@
                 navigator.camera.getPicture( function(imageURI) {
                     callback( imageURI );
                 }, function() {}, {
-                        quality: 100,
-                        sourceType: navigator.camera.PictureSourceType.CAMERA,
-                        mediaType: navigator.camera.MediaType.PICTURE,
-                        destinationType: navigator.camera.DestinationType.FILE_URI,
-                        correctOrientation: false,
-                        saveToPhotoAlbum: true
-                    } );
+                    quality: 100,
+                    sourceType: navigator.camera.PictureSourceType.CAMERA,
+                    mediaType: navigator.camera.MediaType.PICTURE,
+                    destinationType: navigator.camera.DestinationType.FILE_URI,
+                    correctOrientation: false,
+                    saveToPhotoAlbum: true
+                } );
             } else {
                 var img = document.createElement( "img" );
                 img.src = "http://placehold.it/350x150";
