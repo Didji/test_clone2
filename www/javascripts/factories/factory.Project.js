@@ -623,12 +623,10 @@
             $rootScope.$broadcast( 'REFRESH_CONSULTATION' );
             for (var i = 0; i < assets.length; i++) {
                 var asset = new Asset(assets[i]);
-                if (relations === undefined || relations.length === 0 || relations.hasOwnProperty(asset.guid)) {
-                    //TODO/FIXME: gérer les relations pour ne mettre un marqueur que sur les elements parents
-                    asset.showOnMap();
-                    this.listAssetShow.push(asset);//FIXME: ne pas utiliser une variable, on a deja les assets du projet en base!
-                    listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
-                }
+                //TODO/FIXME: gérer les relations pour ne mettre un marqueur que sur les elements parents
+                asset.showOnMap();
+                this.listAssetShow.push(asset);//FIXME: ne pas utiliser une variable, on a deja les assets du projet en base!
+                listCoordinates.push((Marker.getMarkerFromAsset(asset))._latlng);
             }
             Asset.focusCoordinates(listCoordinates);
         };
