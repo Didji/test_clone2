@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Authenticator', AuthenticatorFactory );
 
-    AuthenticatorFactory.$inject = ["$http", "Storage", "Site", "Utils", "$rootScope"];
+    AuthenticatorFactory.$inject = ["$http", "Storage", "Site", "Utils", "$rootScope", "Project"];
 
-    function AuthenticatorFactory($http, Storage, Site, Utils, $rootScope) {
+    function AuthenticatorFactory($http, Storage, Site, Utils, $rootScope, Project) {
 
         /**
          * @class AuthenticatorFactory
@@ -70,20 +70,29 @@
                     'forcegimaplogin': true
                 } );
             }
-            $http.post( url, {}, {
-                timeout: 10000
-            } ).success( function(data) {
-                Authenticator._LOGIN_MUTEX = false;
 
-                if (Site.current) {
-                    Authenticator.selectSiteRemotely( Site.current.id, success, error );
-                } else {
-                    (success || angular.noop) (data );
-                }
-            } ).error( function(response, status) {
-                Authenticator._LOGIN_MUTEX = false;
-                (error || angular.noop) ( response, status );
-            } );
+            Project.getLoadedProject ( function(project) {
+
+                project = ( project && project.id ) || '';
+                url += '&project=' + project;
+                console.log(url);
+                $http.post( url, {}, {
+                    timeout: 10000
+                } ).success( function(data) {
+                    Authenticator._LOGIN_MUTEX = false;
+
+                    if (Site.current) {
+                        Authenticator.selectSiteRemotely( Site.current.id, success, error );
+                    } else {
+                        (success || angular.noop) (data );
+                    }
+                } ).error( function(response, status) {
+                    Authenticator._LOGIN_MUTEX = false;
+                    (error || angular.noop) ( response, status );
+                } );
+
+            });
+
         };
 
         /**
