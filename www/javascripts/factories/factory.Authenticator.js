@@ -75,7 +75,6 @@
 
                 project = ( project && project.id ) || '';
                 url += '&project=' + project;
-                console.log(url);
                 $http.post( url, {}, {
                     timeout: 10000
                 } ).success( function(data) {
