@@ -644,7 +644,8 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
-            externalStorage: 1
+            externalStorage: 1,
+            location: 2
         } );
 
         // Création de la db, avec les bonnes tables et activation de la persistence journal
@@ -658,7 +659,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
             if (device.platform == "Android") {
                 tx.executeSql( "CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT);" );
-                tx.executeSql( "INSERT xOR IGNORE INTO android_metadata VALUES (?);", ['fr_FR'] );
+                tx.executeSql( "INSERT OR IGNORE INTO android_metadata VALUES (?);", ['fr_FR'] );
             } else if (device.platform == "iOS") {
                 tx.executeSql( "CREATE TABLE IF NOT EXISTS ios_metadata (locale TEXT);" );
                 tx.executeSql( "INSERT OR IGNORE INTO ios_metadata VALUES (?);", ['fr_FR'] );
@@ -699,32 +700,47 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
-            externalStorage: 1
+            externalStorage: 1,
+            location: 2
         } );
 
         var oldTile = image.src;
 
         db.transaction( function(tx) {
-            tx.executeSql( "SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function(tx, result) {
+            tx.executeSql( 'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?', [z, x, y], function(tx, result) {
                 // Si la requete a fonctionnée
                 if (result.rows.length == 0) {
-                    // Mais qu'il n'y a pas cette tuile dans la db
-                    // récupération de la tuile
-                    // écriture en db
-                    image.src = this_.getTileUrl( {
-                        x: x,
-                        y: y
-                    }, z );
-                    image.onerror = function(event) {
-                        this_._tileOnError.call( this );
-                        image.src = oldTile;
-                        image.onerror = image.onload = null;
-                    };
-                    image.onload = function() {
-                        this_._tileOnLoad.call( this );
-                        this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
-                        image.onerror = image.onload = null;
-                    };
+                    if (localStorage.getItem( 'online' ) == "true") {
+                        // Mais qu'il n'y a pas cette tuile dans la db
+                        // récupération de la tuile
+                        // écriture en db
+                        image.src = this_.getTileUrl( {
+                            x: x,
+                            y: y
+                        }, z );
+                        image.onerror = function(event) {
+                            this_._tileOnError.call( this );
+                            image.src = oldTile;
+                            image.onerror = image.onload = null;
+                        };
+                        image.onload = function() {
+                            this_._tileOnLoad.call( this );
+                            this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
+                            image.onerror = image.onload = null;
+                        };
+                    } else {
+                        image.src = '';
+
+                        image.onerror = function(event) {
+                            this_._tileOnError.call( this );
+                            image.src = oldTile;
+                            image.onerror = image.onload = null;
+                        };
+                        image.onload = function() {
+                            this_._tileOnLoad.call( this );
+                            image.onerror = image.onload = null;
+                        };
+                    }
                 } else {
                     // Et que la tuile existe dans la db
                     // pas d'écriture en db
@@ -742,23 +758,37 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     };
                 }
             }, function(tx, err) {
-                // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
-                // récupération de la tuile
-                // écriture en db
-                image.src = this_.getTileUrl( {
-                    x: x,
-                    y: y
-                }, z );
-                image.onerror = function(event) {
-                    this_._tileOnError.call( this );
-                    image.src = oldTile;
-                    image.onerror = image.onload = null;
-                };
-                image.onload = function() {
-                    this_._tileOnLoad.call( this );
-                    this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
-                    image.onerror = image.onload = null;
-                };
+                if (localStorage.getItem( 'online' ) == "true") {
+                    // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
+                    // récupération de la tuile
+                    // écriture en db
+                    image.src = this_.getTileUrl( {
+                        x: x,
+                        y: y
+                    }, z );
+                    image.onerror = function(event) {
+                        this_._tileOnError.call( this );
+                        image.src = oldTile;
+                        image.onerror = image.onload = null;
+                    };
+                    image.onload = function() {
+                        this_._tileOnLoad.call( this );
+                        this_.writeTileToDB( tileObject, this_.getDataURL( image ) );
+                        image.onerror = image.onload = null;
+                    };
+                } else {
+                    image.src = '';
+
+                    image.onerror = function(event) {
+                        this_._tileOnError.call( this );
+                        image.src = oldTile;
+                        image.onerror = image.onload = null;
+                    };
+                    image.onload = function() {
+                        this_._tileOnLoad.call( this );
+                        image.onerror = image.onload = null;
+                    };
+                }
             } );
         } );
     },
@@ -794,7 +824,8 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
-            externalStorage: 1
+            externalStorage: 1,
+            location: 2
         } );
 
         db.transaction( function(tx) {
