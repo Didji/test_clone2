@@ -645,7 +645,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
             externalStorage: 1,
-            location: 2
+            location: 0
         } );
 
         // Création de la db, avec les bonnes tables et activation de la persistence journal
@@ -701,7 +701,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
             externalStorage: 1,
-            location: 2
+            location: 0
         } );
 
         var oldTile = image.src;
@@ -825,7 +825,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         var db = sqlitePlugin.openDatabase( {
             name: db_name,
             externalStorage: 1,
-            location: 2
+            location: 0
         } );
 
         db.transaction( function(tx) {
