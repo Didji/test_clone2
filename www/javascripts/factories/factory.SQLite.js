@@ -29,8 +29,7 @@
                 if (window.sqlitePlugin) {
                     SQLite.DATABASES[args.name] = window.sqlitePlugin.openDatabase( {
                         name: args.name,
-                        bgType: 1,
-                        location: 2
+                        bgType: 1
                     } );
                 } else {
                     SQLite.DATABASES[args.name] = openDatabase( args.name, this.DATABASE_VERSION, args.name, this.DATABASE_SIZE );
