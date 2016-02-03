@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.gismartware.google" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+	<name>GoogleGi</name>
+	<description>Plugin de gestion de la connexion aux services de google sur smartgeo</description>
+	<author>Jimmy Toubert</author>
+	<js-module name="GoogleGi" src="www/GoogleGi.js">
+		<clobbers target="cordova.plugins.GoogleGi" />
+	</js-module>
+	<platform name="android">
+		<config-file parent="/*" target="res/xml/config.xml">
+			<feature name="GoogleGi">
+				<param name="android-package" value="com.gismartware.google.GoogleGi" />
+        		<param name="onload" value="true" />
+        		<access origin="https://accounts.google.com/*" />
+			</feature>
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+			<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+			<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+	    </config-file>
+		<source-file src="src/android/GoogleGi.java" target-dir="src/com/gismartware/google/GoogleGi" />
+	</platform>
+	<platform name="ios">
+		<config-file parent="/*" target="config.xml">
+			<feature name="GoogleGi">
+				<param name="ios-package" value="GoogleGi" />
+        		<param name="onload" value="true" />
+			</feature>
+      		<access origin="https://accounts.google.com/*" />
+		</config-file>
+		<source-file src="src/ios/CDVGoogleGi.m" />
+	</platform>
+</plugin>
