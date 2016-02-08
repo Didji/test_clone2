@@ -21,11 +21,17 @@
             CONSULTATION_CONTROL, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, POSITION_ZOOM, FIRST_POSITION,
             intent;
 
-        activate();
-
-        if ($rootScope.hasOwnProperty( 'justLaunched' ) && $rootScope.justLaunched == false) {
+        // Sur iOS, les assets sont mal chargés à l'intialisation de la map, pour pallier à ça on la charge deux fois au premier lancement
+        // TODO: Faire mieux
+        if (
+            navigator.userAgent.match( /iP(od|hone|ad)/i )
+            && $rootScope.hasOwnProperty( 'justLaunched' )
+            && $rootScope.justLaunched == false
+        ) {
             $rootScope.justLaunched = true;
             $route.reload();
+        } else {
+            activate();
         }
 
         /**
@@ -35,9 +41,7 @@
         function activate() {
             $rootScope.currentPage = "Cartographie";
 
-            if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-                Installer.update( Site.current, undefined, Right.get( 'onlyUpdateSiteDaily' ) );
-            }
+            Installer.checkIfDailyUpdateNeeded();
 
             G3ME.initialize( [
                 [Site.current.extent.ymin, Site.current.extent.xmin],

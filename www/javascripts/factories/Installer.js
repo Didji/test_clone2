@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, Asset, i18n, Relationship, Utils, Authenticator) {
+angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, $http, $rootScope, $timeout, $route, Storage, Site, Asset, i18n, Relationship, Utils, Authenticator, Right) {
 
     'use strict';
 
@@ -467,6 +467,12 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                 SmartgeoChromium.getAvailableSpace();
             } else {
                 callback();
+            }
+        },
+
+        checkIfDailyUpdateNeeded: function() {
+            if ( !$rootScope.dailyUpdate && ( (Date.now() - (Site.current.timestamp * 1000)) > 1 ) ) { //86400000
+                Installer.update( Site.current, undefined, Right.get( 'onlyUpdateSiteDaily' ) );
             }
         }
     };
