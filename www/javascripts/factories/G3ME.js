@@ -71,7 +71,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
             var BackgroundTile;
-            if (navigator.userAgent.match( /Android/i )) {
+            if (navigator.userAgent.match( /Android|iPhone|iPad|iPod/i )) {
                 BackgroundTile = L.TileLayer.FileCache;
             } else {
                 BackgroundTile = L.TileLayer;
@@ -117,7 +117,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
         },
 
         //reset the extent map when change site, particulary use for siteInstall,changesit, and authentication.
-        resetMap: function(){
+        resetMap: function() {
             G3ME.map = null;
         },
 
@@ -322,13 +322,10 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
         },
 
         prevAnonFunction: function(currentRequestPool, currentDb, req, args) {
-            var db;
-            if (typeof device != 'undefined' && device.platform == "Android" && parseInt(device.version) >= 5) {
-                db = SQLite.openDatabase({name: currentDb, bgType: 1, androidOldDatabaseImplementation: 2});
-            }
-            else {
-                db = SQLite.openDatabase({name: currentDb, bgType: 1});
-            }
+            var db = SQLite.openDatabase( {
+                name: currentDb,
+                bgType: 1
+            } );
             db.transaction( function(tx) {
                 tx.executeSql( req, args, function(tx, results) {
                     for (var uuid in currentRequestPool) {
