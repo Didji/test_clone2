@@ -471,7 +471,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         checkIfDailyUpdateNeeded: function() {
-            if ( !$rootScope.dailyUpdate && ( (Date.now() - (Site.current.timestamp * 1000)) > 1 ) ) { //86400000
+            if ( !$rootScope.dailyUpdate && ( (Date.now() - (Site.current.timestamp * 1000)) > 86400000 ) ) {
                 Installer.update( Site.current, undefined, Right.get( 'onlyUpdateSiteDaily' ) );
             }
         }
