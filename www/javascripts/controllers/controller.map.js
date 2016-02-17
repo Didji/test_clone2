@@ -510,43 +510,37 @@
                 myLastPositionMarker = null;
             }
         } );
+
         $scope.$on( "__MAP_DISPLAY_TRACE__", function(event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
+
             traces = traces || {};
-            var geoJSON = {
-                "type": "LineString",
-                "coordinates": mission.trace,
-                "color": "orange"
-            };
-            if (traces[mission.id]) {
-                G3ME.map.removeLayer( traces[mission.id] );
+            var lastPosition = mission.trace[ mission.trace.length - 1 ];
+
+            if ( !traces[mission.id] ) {
+                traces[mission.id] = new L.Polyline(mission.trace,{
+                    color: 'orange',
+                    opacity: 0.9,
+                    weight: 7
+                }).addTo(G3ME.map);
+            } else {
+                traces[mission.id].addLatLng( lastPosition );
             }
-            traces[mission.id] = L.geoJson( geoJSON, {
-                style: function(feature) {
-                    return {
-                        color: feature.geometry.color,
-                        opacity: 0.9,
-                        weight: 7
-                    };
-                }
-            } );
-            traces[mission.id].addTo( G3ME.map );
-            if (mission.trace.length) {
-                var lastPosition = mission.trace[mission.trace.length - 1];
-                if (!myLastPositionMarker) {
-                    myLastPositionMarker = L.marker( [lastPosition[1], lastPosition[0]], {
-                        zIndexOffset: 1000
-                    } ).setIcon( Icon.get( 'GRAY_TARGET' ) ).addTo( G3ME.map );
-                } else {
-                    myLastPositionMarker.setLatLng( [lastPosition[1], lastPosition[0]] );
-                }
-                if (setView) {
-                    G3ME.map.panTo( [lastPosition[1], lastPosition[0]], {
-                        animate: false
-                    } );
-                }
+
+            if (!myLastPositionMarker) {
+                myLastPositionMarker = L.marker( lastPosition, {
+                    zIndexOffset: 1000
+                } ).setIcon( Icon.get( 'GRAY_TARGET' ) ).addTo( G3ME.map );
+            } else {
+                myLastPositionMarker.setLatLng( lastPosition );
+            }
+
+            if (setView) {
+                G3ME.map.panTo( lastPosition, {
+                    animate: false
+                } );
             }
         } );
     }
