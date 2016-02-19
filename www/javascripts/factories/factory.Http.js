@@ -29,7 +29,10 @@
                 if ( !Storage.get('online') ) {
                     return reject('Device is offline.', 400);
                 } else {
-                    return $http( config ).then(resolve, reject);
+                    return $http( config ).then(
+                        function(res) { resolve( res.data ); },
+                        reject
+                    );
                 }
             });
         };
