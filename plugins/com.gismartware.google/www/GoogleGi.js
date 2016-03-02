@@ -1,7 +1,7 @@
 function GoogleGi() {};
 
-GoogleGi.prototype.pickAccounts = function (callback) {
-  cordova.exec(callback, null, "GoogleGi", "pick", []);
+GoogleGi.prototype.pickAccounts = function (title, success, error) {
+  cordova.exec(success, error, "GoogleGi", "pick", [title]);
 };
 
 GoogleGi.install = function () {

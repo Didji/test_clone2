@@ -10,11 +10,15 @@ import android.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,10 +27,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.view.KeyEvent;
+import android.view.View;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class GoogleGi extends CordovaPlugin {
 
@@ -34,54 +45,122 @@ public class GoogleGi extends CordovaPlugin {
     public static final int CHOOSE_ACCOUNT = 103;
     public String user;
     public String mToken;
+    private String serverUrl;
 
-    public static final String DEFAULT_URL = "file:///android_asset/www/index.html";
-    private static final String INTENT_DEST_URL_PREFIX = DEFAULT_URL + "#/intent/";
     private static final String STATE_DIALOG = "state_dialog";
     private static final String STATE_INVALIDATE = "state_invalidate";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
-    private static final String SERVER = "canopee.m-ve.com";
+
+    private static final String OAUTH_CANCELED_ERROR = "OAUTH_CANCELED_ERROR";
+    private static final String OAUTH_LOGIN_ERROR = "OAUTH_LOGIN_ERROR";
+    private static final String OAUTH_NETWORK_ERROR = "OAUTH_NETWORK_ERROR";
+    private static final String OAUTH_NO_SERVER_ERROR = "OAUTH_NO_SERVER_ERROR";
+    private static final String OAUTH_NO_ACCOUNT_ERROR = "OAUTH_NO_ACCOUNT_ERROR";
+    private static final String OAUTH_UNKNOWN_ERROR = "OAUTH_UNKNOWN_ERROR";
 
     private String TAG = this.getClass().getSimpleName();
     private AccountManager mAccountManager;
     private AlertDialog mAlertDialog;
     private boolean mInvalidate;
+    private CallbackContext mainCallback;
 
-    @Override public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    @Override public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 cordova.getActivity().setContentView(R.layout.activity_list_item);
-                mAccountManager = AccountManager.get(cordova.getActivity());
-                showAccountPicker(GOOGLE_ACCOUNT_TYPE, false);
-                callbackContext.success();
+                mainCallback = callbackContext;
+                getServerUrlFromConfig();
+                if (serverUrl.length() > 1) {
+                    mAccountManager = AccountManager.get(cordova.getActivity());
+                    try {
+                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                            handleError(OAUTH_UNKNOWN_ERROR);
+                    }
+                }
             }
         });
         return true;
     }
 
+    private void getServerUrlFromConfig() {
+        try {
+            Properties properties = new Properties();
+            String state = Environment.getExternalStorageState();
+            File[] externalFilesDirs = cordova.getActivity().getExternalFilesDirs(null);
+            File externalFilesDir;
+            File configFile;
+            String configFileName = "app.properties";
+            String url;
+            BufferedInputStream stream;
+
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                if (externalFilesDirs.length > 1 && externalFilesDirs[1] != null) {
+                    externalFilesDir = externalFilesDirs[1];
+                } else {
+                    externalFilesDir = externalFilesDirs[0];
+                }
+                configFile = new File(externalFilesDir, configFileName);
+            } else {
+                throw new Exception();
+            }
+
+            if (configFile.exists()) {
+                stream = new BufferedInputStream(new FileInputStream(configFile));
+                properties.load(stream);
+                stream.close();
+                serverUrl = properties.getProperty("server_url").trim();
+                if ( serverUrl.length() < 1 ) {
+                    throw new Exception();
+                }
+            } else {
+                throw new Exception();
+            }
+        } catch( Exception e ) {
+            e.printStackTrace();
+            serverUrl = "";
+            handleError(OAUTH_NO_SERVER_ERROR);
+        }
+    }
+
+
     /**
      * Show all the accounts registered on the account manager. Request an auth token upon user select.
      * @param authTokenType
      */
-    private void showAccountPicker(final String authTokenType, final boolean invalidate) {
+    private void showAccountPicker(final String authTokenType, final boolean invalidate, final String title) {
+
         mInvalidate = invalidate;
         final Account availableAccounts[] = mAccountManager.getAccountsByType(authTokenType);
 
         if (availableAccounts.length == 0) {
-            Toast.makeText(cordova.getActivity(), "No accounts", Toast.LENGTH_SHORT).show();
+            handleError(OAUTH_NO_ACCOUNT_ERROR);
+        } else if (availableAccounts.length == 1) {
+            getExistingAccountAuthToken(availableAccounts[0], authTokenType);
         } else {
             String name[] = new String[availableAccounts.length];
             for (int i = 0; i < availableAccounts.length; i++) {
                 name[i] = availableAccounts[i].name;
             }
-
-            // Account picker
-            mAlertDialog = new AlertDialog.Builder(cordova.getActivity()).setTitle("Pick Account").setAdapter(new ArrayAdapter<String>(cordova.getActivity().getBaseContext(), android.R.layout.simple_list_item_1, name), new DialogInterface.OnClickListener() {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(cordova.getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_DARK);
+            ArrayAdapter adapter = new ArrayAdapter<String>(cordova.getActivity().getBaseContext(), android.R.layout.simple_list_item_1, name);
+            DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     getExistingAccountAuthToken(availableAccounts[which], authTokenType);
                 }
-            }).create();
+            };
+            DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog)  {
+                    handleError(OAUTH_CANCELED_ERROR);
+                }
+            };
+            alertDialogBuilder.setTitle(title);
+            alertDialogBuilder.setAdapter(adapter, clickListener);
+            alertDialogBuilder.setOnCancelListener(cancelListener);
+            mAlertDialog = alertDialogBuilder.create();
             mAlertDialog.show();
         }
     }
@@ -97,40 +176,69 @@ public class GoogleGi extends CordovaPlugin {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String error = "";
                 try {
                     Bundle bnd = future.getResult();
-
                     Intent launch = (Intent) bnd.get(AccountManager.KEY_INTENT);
                     String name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
                     final String token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
                     mToken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
-
-                    showMessage((token != null) ? "SUCCESS!\ntoken: " + token : "FAIL");
-                    Log.d("GoogleGi", "GetToken Bundle is " + bnd);
                     finishActivityInit();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
-                    showMessage(e.getMessage());
+                    error = OAUTH_NETWORK_ERROR; // Authentification impossible
+                } catch (AuthenticatorException e) {
+                    e.printStackTrace();
+                    error = OAUTH_LOGIN_ERROR; // Authentification incorrecte
+                } catch (OperationCanceledException e) {
+                    e.printStackTrace();
+                    error = OAUTH_CANCELED_ERROR; // Authentification annulée
+                } finally {
+                    if ( error.length() > 0 ) {
+                        handleError( error );
+                    }
                 }
             }
         }).start();
     }
 
     private void finishActivityInit() {
-        StringBuffer url = new StringBuffer(INTENT_DEST_URL_PREFIX);
-        Log.d("GoogleGi", "url: " + url);
-        url.append("oauth?token=").append(mToken).append("&url=").append(SERVER);
-        final String redirect = url.toString();
-        Log.d("GoogleGi", "url avec token: " + url);
+        final JSONObject result = new JSONObject();
+        try {
+            result.put("token", mToken);
+            result.put("url", serverUrl);
+            handleSuccess(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            handleError(OAUTH_UNKNOWN_ERROR);
+        }
+    }
+
+    private void handleSuccess(final JSONObject result) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                // webView.loadUrl(getView());
-                showMessage(redirect);
-                webView.loadUrl(DEFAULT_URL);
+                mainCallback.success(result);
+                cordova.getActivity().setContentView(getView());
             }
         });
     }
 
+    private void handleError(final String msg) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                mainCallback.error( msg );
+                cordova.getActivity().setContentView(getView());
+            }
+        });
+    }
+
+    private View getView() {
+        try {
+            return (View)webView.getClass().getMethod("getView").invoke(webView);
+        } catch (Exception e) {
+            return (View)webView;
+        }
+    }
 
     private void showMessage(final String msg) {
         if (TextUtils.isEmpty(msg))

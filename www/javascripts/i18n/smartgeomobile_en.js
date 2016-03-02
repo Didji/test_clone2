@@ -46,7 +46,7 @@ window.smartgeo_i18n_lang.en = {
     _CONSULTATION_GPS_FAIL: "Error while retrieving GPS coordinates",
     _CONSULTATION_ADD_TO_: "Add to",
     _CONSULTATION_WRITE_FOR_: "Write for ",
-    _CONSULTATION_ADD_TO_SELECTION: "Add to current selection",  
+    _CONSULTATION_ADD_TO_SELECTION: "Add to current selection",
     _INSTALL_SPACE_WARNING: "Your data seem too large or there's not enough remaining space on your device.\nSetup may not finish.",
     _INSTALL_INSTALLING: "Installing ",
     _INSTALL_IN_PROGRESS: " in progress",
@@ -179,5 +179,15 @@ window.smartgeo_i18n_lang.en = {
     _SAVE: "Save",
     _UPDATE: "Update",
     _BOOL_Y_: "Yes",
-    _BOOL_N_: "No"
+    _BOOL_N_: "No",
+    OAUTH_IN_PROGRESS: 'Authentication in progress...',
+    OAUTH_EXIT: 'Exit',
+    OAUTH_PICK_ACCOUNTS: 'Pick account',
+    OAUTH_NETWORK_ERROR: 'Unable to reach authentication server.',
+    OAUTH_LOGIN_ERROR: 'Authentication failed.',
+    OAUTH_CANCELED_ERROR: 'Authentification canceled.',
+    OAUTH_NO_SERVER_ERROR: 'No serveur found.',
+    OAUTH_NO_ACCOUNT_ERROR: 'No account found.',
+    OAUTH_UNKNOWN_ERROR: 'Authentication error.'
+
 };

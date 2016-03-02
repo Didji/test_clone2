@@ -10,7 +10,7 @@ window.smartgeo_i18n_lang.fr = {
     _AUTH_CHANGE_GIMAP_URL_: "Changer de serveur",
     _AUTH_REMEMBER_PASSWORD_: "Se souvenir du mot de passe",
     _AUTH_INIT_WITHOUT_NETWORK_ERROR_: "Le mode déconnecté n'est pas disponible pour %s car il ne s'est jamais authentifié en mode connecté.",
-    _AUTH_SERVER_UNREACHABLE: "Serveur injoignable",
+    _AUTH_SERVER_UNREACHABLE: "Serveur injoignable.",
     _AUTH_PLEASE_WAIT: "Veuillez patienter ...",
     _AUTH_REQUIRED_FIELD_EMPTY: "Veuillez renseigner les champs utilisateur et mot de passe.",
     _AUTH_SERVER_ERROR: "Une erreur est survenue (%s)",
@@ -179,5 +179,14 @@ window.smartgeo_i18n_lang.fr = {
     _SAVE: "Enregistrer",
     _UPDATE: "Modifier",
     _BOOL_Y_: "Oui",
-    _BOOL_N_: "Non"
+    _BOOL_N_: "Non",
+    OAUTH_IN_PROGRESS: 'Authentification en cours...',
+    OAUTH_EXIT: 'Quitter',
+    OAUTH_PICK_ACCOUNTS: 'Sélectionner un compte',
+    OAUTH_NETWORK_ERROR: 'Impossible de se connecter au serveur d\'authentification.',
+    OAUTH_LOGIN_ERROR: 'Authentification incorrecte.',
+    OAUTH_CANCELED_ERROR: 'Authentification annulée.',
+    OAUTH_NO_SERVER_ERROR: 'Aucun serveur n\'est configuré.',
+    OAUTH_NO_ACCOUNT_ERROR: 'Aucun compte n\'est configuré.',
+    OAUTH_UNKNOWN_ERROR: 'Authentification impossible.'
 };

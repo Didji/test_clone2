@@ -1,6 +1,7 @@
 angular
     .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
-    .config( config ).run( function(LicenseManager, Storage, $rootScope, Authenticator, $window) {
+    .config( config )
+    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location) {
 
     "use strict";
 
@@ -32,11 +33,16 @@ angular
         }
     };
 
+
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
     if (window.cordova) {
         document.addEventListener( "deviceready", function() {
+            if ( LicenseManager.oauth ) {
+                $location.url('/oauth');
+                $rootScope.$apply();
+            }
             Smartgeo._initializeGlobalEvents();
         } );
     } else {
@@ -106,6 +112,11 @@ function config($routeProvider, $httpProvider, $provide, $compileProvider) {
         template: "<div class='intent'><i class='fa fa-refresh fa-spin'></i></div>",
         controllerAs: 'intentController',
         controller: 'IntentController',
+        resolve: prefetchPromise
+    } ).when( "/oauth", {
+        templateUrl: "partials/oauth.html",
+        controllerAs: 'oauthController',
+        controller: 'OauthController',
         resolve: prefetchPromise
     } );
 

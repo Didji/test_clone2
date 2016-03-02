@@ -2,7 +2,7 @@
 <plugin id="com.gismartware.google" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 	<name>GoogleGi</name>
 	<description>Plugin de gestion de la connexion aux services de google sur smartgeo</description>
-	<author>Jimmy Toubert</author>
+	<author>Gismartware Dev</author>
 	<js-module name="GoogleGi" src="www/GoogleGi.js">
 		<clobbers target="cordova.plugins.GoogleGi" />
 	</js-module>

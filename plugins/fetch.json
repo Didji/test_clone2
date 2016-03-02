@@ -127,5 +127,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "com.gismartware.google": {
+        "source": {
+            "type": "local",
+            "id": "com.gismartware.google"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

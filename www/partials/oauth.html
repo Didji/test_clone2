@@ -1,0 +1,19 @@
+<form class="panel floating-form loginForm">
+    <h2>
+        <img src="./images/logo-smartgeo.png" alt="Smartgeo mobile">
+        <small>{{::version}}</small>
+    </h2>
+    <hr>
+    <div ng-if='oauthController.errorMessage' class="alert alert-danger login-errorMessage">{{oauthController.errorMessage}}</div>
+    <button ng-click="oauthController.pickAccounts()" class="btn btn-lg btn-primary btn-block" ng-disabled="oauthController.loginInProgress">
+        <i ng-if="oauthController.loginInProgress" class="fa fa-refresh fa-spin"></i>
+        <i18n ng-if="oauthController.loginInProgress">OAUTH_IN_PROGRESS</i18n>
+        <i18n ng-if="!oauthController.loginInProgress">_RETRY_</i18n>
+    </button>
+    <button ng-click="oauthController.close()"
+            ng-if="!oauthController.loginInProgress && oauthController.errorMessage"
+            class="btn btn-lg btn-default btn-block"
+    >
+        <i18n>OAUTH_EXIT</i18n>
+    </button>
+</form>

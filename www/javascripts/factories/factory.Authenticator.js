@@ -23,7 +23,7 @@
         Authenticator.silentLogin = function(callback) {
             var user = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )];
             if (user && user.token) {
-                Authenticator.login( user.token, callback );
+                Authenticator.login( user.token, null, callback );
             } else if (user && user.username && user.password) {
                 Authenticator.login( user.username, user.password, callback );
             }
@@ -53,10 +53,8 @@
             $rootScope.$broadcast( "DESACTIVATE_POSITION" );
             Authenticator._LOGIN_MUTEX = true;
             var token, url;
-            if (typeof password === 'function' || !password) {
+            if (!password) {
                 token = login;
-                error = success;
-                success = password;
             }
             if (token) {
                 url = Utils.getServiceUrl( 'global.auth.json', {
@@ -75,11 +73,14 @@
 
                 project = ( project && project.id ) || '';
                 url += '&project=' + project;
-                console.log(url);
                 $http.post( url, {}, {
                     timeout: 10000
                 } ).success( function(data) {
                     Authenticator._LOGIN_MUTEX = false;
+
+                    if (data && data.error) {
+                        error(data);
+                    }
 
                     if (Site.current) {
                         Authenticator.selectSiteRemotely( Site.current.id, success, error );
@@ -99,18 +100,18 @@
          * @name
          * @desc
          */
-        Authenticator.tokenAuth = function(token, callback, callback2) {
+        Authenticator.tokenAuth = function(token, callback, error) {
             var currentUser = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {};
             currentUser.token = token;
             Storage.set( 'user', currentUser );
 
-            Authenticator.login( token, callback, function(response) {
+            Authenticator.login( token, null, callback, function(response) {
                 if ((response && response.status === 200) || !response) {
                     callback();
                 } else {
-                    callback2();
+                    error();
                 }
-            }, callback2 );
+            });
         };
 
         return Authenticator;
