@@ -103,7 +103,7 @@
          */
         function synchronize() {
             Mission.query()
-                .success( function(data) {
+                .then( function(data) {
                     if (!data || !data.results) {
                         return synchronizeErrorCallback( "", 0 );
                     }
@@ -198,8 +198,8 @@
                     vm.nextMissions = tmp;
                     applyFilterOnMission();
                     fillAssetsCache();
-                } )
-                .error( function(message, code) {
+                },
+                function(message, code) {
                     synchronizeErrorCallback( message, code );
                 } );
         }

@@ -10,8 +10,8 @@
  * @property {string} state Status du panneau latéral ('open' ou 'closed')
  */
 
-angular.module( 'smartgeomobile' ).controller( 'nightTourController', 
-    ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", "$interval", 
+angular.module( 'smartgeomobile' ).controller( 'nightTourController',
+    ["$scope", "$rootScope", "$window", "$location", "G3ME", "i18n", "$http", "$route", "Storage", "Synchronizator", "GPS", "Site", "Utils", "Report", "Asset", "$interval",
     function($scope, $rootScope, $window, $location, G3ME, i18n, $http, $route, Storage, Synchronizator, GPS, Site, Utils, Report, Asset, $interval) {
 
         'use strict';
@@ -174,8 +174,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 currentTrace = traces[$scope.mission.id] || [];
 
             $scope.lastPositionWasSetByBatmanOn = new Date().getTime();
-
-            currentTrace.push([lng, lat]);
+            currentTrace.push( new L.latLng(lat, lng) );
             traces[$scope.mission.id] = currentTrace;
             Storage.set('traces', traces);
             $scope.mission.trace = currentTrace;
@@ -367,7 +366,7 @@ angular.module( 'smartgeomobile' ).controller( 'nightTourController',
                 return alertify.error(i18n.get("_NIGHTTOUR_NOT_A_NIGHT_TOUR"));
             }
             console.debug("[NIGHTTOUR] Start mission " + mission.id);
-            
+
             if (secureInterval) {
                 $interval.cancel(secureInterval);
             }

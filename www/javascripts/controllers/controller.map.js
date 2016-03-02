@@ -21,11 +21,17 @@
             CONSULTATION_CONTROL, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, POSITION_ZOOM, FIRST_POSITION,
             intent;
 
-        activate();
-
-        if ($rootScope.hasOwnProperty( 'justLaunched' ) && $rootScope.justLaunched == false) {
+        // Sur iOS, les assets sont mal chargés à l'intialisation de la map, pour pallier à ça on la charge deux fois au premier lancement
+        // TODO: Faire mieux
+        if (
+            navigator.userAgent.match( /iP(od|hone|ad)/i )
+            && $rootScope.hasOwnProperty( 'justLaunched' )
+            && $rootScope.justLaunched == false
+        ) {
             $rootScope.justLaunched = true;
             $route.reload();
+        } else {
+            activate();
         }
 
         /**
@@ -35,9 +41,7 @@
         function activate() {
             $rootScope.currentPage = "Cartographie";
 
-            if ((Date.now() - (Site.current.timestamp * 1000)) > 86400000) {
-                Installer.update( Site.current, undefined, Right.get( 'onlyUpdateSiteDaily' ) );
-            }
+            Installer.checkIfDailyUpdateNeeded();
 
             G3ME.initialize( [
                 [Site.current.extent.ymin, Site.current.extent.xmin],
@@ -506,43 +510,37 @@
                 myLastPositionMarker = null;
             }
         } );
+
         $scope.$on( "__MAP_DISPLAY_TRACE__", function(event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
+
             traces = traces || {};
-            var geoJSON = {
-                "type": "LineString",
-                "coordinates": mission.trace,
-                "color": "orange"
-            };
-            if (traces[mission.id]) {
-                G3ME.map.removeLayer( traces[mission.id] );
+            var lastPosition = mission.trace[ mission.trace.length - 1 ];
+
+            if ( !traces[mission.id] ) {
+                traces[mission.id] = new L.Polyline(mission.trace,{
+                    color: 'orange',
+                    opacity: 0.9,
+                    weight: 7
+                }).addTo(G3ME.map);
+            } else {
+                traces[mission.id].addLatLng( lastPosition );
             }
-            traces[mission.id] = L.geoJson( geoJSON, {
-                style: function(feature) {
-                    return {
-                        color: feature.geometry.color,
-                        opacity: 0.9,
-                        weight: 7
-                    };
-                }
-            } );
-            traces[mission.id].addTo( G3ME.map );
-            if (mission.trace.length) {
-                var lastPosition = mission.trace[mission.trace.length - 1];
-                if (!myLastPositionMarker) {
-                    myLastPositionMarker = L.marker( [lastPosition[1], lastPosition[0]], {
-                        zIndexOffset: 1000
-                    } ).setIcon( Icon.get( 'GRAY_TARGET' ) ).addTo( G3ME.map );
-                } else {
-                    myLastPositionMarker.setLatLng( [lastPosition[1], lastPosition[0]] );
-                }
-                if (setView) {
-                    G3ME.map.panTo( [lastPosition[1], lastPosition[0]], {
-                        animate: false
-                    } );
-                }
+
+            if (!myLastPositionMarker) {
+                myLastPositionMarker = L.marker( lastPosition, {
+                    zIndexOffset: 1000
+                } ).setIcon( Icon.get( 'GRAY_TARGET' ) ).addTo( G3ME.map );
+            } else {
+                myLastPositionMarker.setLatLng( lastPosition );
+            }
+
+            if (setView) {
+                G3ME.map.panTo( lastPosition, {
+                    animate: false
+                } );
             }
         } );
     }
