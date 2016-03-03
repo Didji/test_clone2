@@ -11,29 +11,29 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
     var LicenseManager = function() {
 
         return $rootScope.rights = {
-            census: false,
-            consultation: false,
+            census: true,
+            consultation: true,
             search: true,
-            logout: false,
-            report: false,
+            logout: true,
+            report: true,
             parameters: true,
-            planning: false,
-            history: false,
+            planning: true,
+            history: true,
             photo: true,
-            project: false,
+            project: true,
             media: true,
             myposition: true,
             activelayers: true,
-            goto: false,
+            goto: true,
             synccenter: true,
-            siteselection: false,
-            _DONT_REALLY_RESET: true,
+            siteselection: true,
+            _DONT_REALLY_RESET: false,
             //lors de la mise à jour quotidienne, cela concerne-t-il le site ou le site ET les données?
             //par défaut, et si le droit n'est pas spécifié, tout est mis à jour
-            onlyUpdateSiteDaily: true,
+            onlyUpdateSiteDaily: false,
             //sélection globale:
-            multiselection: false,
-            oauth: true
+            multiselection: true,
+            oauth: false
         };
 
         if (!this.__isDeviceRegistered()) {
