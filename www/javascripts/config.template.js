@@ -19,6 +19,7 @@ angular
 		"project": true,
 		"report": true,
 		"search": true,
+		"serverUrl": "http://canope-rec.projets-gi.com/",
 		"siteselection": true,
 		"synccenter": true,
 

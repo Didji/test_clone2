@@ -70,14 +70,12 @@ public class GoogleGi extends CordovaPlugin {
                 cordova.getActivity().setContentView(R.layout.activity_list_item);
                 mainCallback = callbackContext;
                 getServerUrlFromConfig();
-                if (serverUrl.length() > 1) {
-                    mAccountManager = AccountManager.get(cordova.getActivity());
-                    try {
-                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                            handleError(OAUTH_UNKNOWN_ERROR);
-                    }
+                mAccountManager = AccountManager.get(cordova.getActivity());
+                try {
+                    showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    handleError(OAUTH_UNKNOWN_ERROR);
                 }
             }
         });
@@ -120,7 +118,6 @@ public class GoogleGi extends CordovaPlugin {
         } catch( Exception e ) {
             e.printStackTrace();
             serverUrl = "";
-            handleError(OAUTH_NO_SERVER_ERROR);
         }
     }
 

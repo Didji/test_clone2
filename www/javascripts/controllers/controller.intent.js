@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils", "i18n"];
+    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils", "i18n", "LicenseManager"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils, i18n) {
+    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils, i18n, LicenseManager) {
         var intent = {};
 
         activate();
@@ -23,27 +23,17 @@
          */
         function activate() {
             intent = $routeParams;
-            //correction bug angular : si l'intent est "intent/oauth?..."" le controller vaut 'oaut' sans le 'h'...
-            if (intent.controller === 'oaut') {
-                intent.controller = 'oauth';
-            }
-            if (intent.controller === 'ma') {
-                intent.controller = 'map';
-            }
-            if (intent.controller === 'repor') {
-                intent.controller = 'report';
-            }
-            
+
             Storage.set( 'intent', intent );
 
             if (!intent.controller) {
                 alertify.alert( "Intent non valide : veuillez spécifier une action." );
-            } else if (intent.controller === "oauth" || (!Site.current && !selectFirstSite() && intent.controller !== "oauth")) {
+            } else if (!Site.current && !selectFirstSite() && intent.controller !== "oauth") {
                 firstLaunch();
             } else {
                 preprocessIntentTarget( function() {
                     Storage.set( 'intent', intent );
-                    Authenticator.tokenAuth( intent.token, redirect, redirect );
+                    redirect();
                 } );
             }
         }
@@ -52,56 +42,11 @@
          * @name redirect
          * @desc Fonction de redirection
          */
-        function redirect(data) {
-            if (intent.controller === 'oauth') {
-                var localSites = [],
-                    tmp = prefetchedlocalsites,
-                    remoteSites = [];
-
-                for (var site in tmp) {
-                    localSites.push( tmp[site] );
-                }
-
-                if (data && data.sites) {
-                    for (var site in data.sites) {
-                        if (!data.sites[site].isAdmin && !data.sites[site].isAdminCarto) {
-                            remoteSites.push( data.sites[site] );
-                        }
-                    }
-                }
-
-                if (remoteSites.length) {
-                    Storage.set( 'availableRemoteSites', remoteSites.length );
-                    Storage.set( 'online', true );
-                } else {
-                    Storage.set( 'online', false );
-                }
-                Storage.set( 'availableLocalSites', localSites.length );
-
-                if (remoteSites.length === 0 && localSites.length === 1 && !!localSites[0].installed) {
-                    // Offline avec un site installé
-                    $location.path( '/map/' + localSites[0].id );
-                } else if (remoteSites.length === 1 && localSites.length === 1 && !!localSites[0].installed && localSites[0].id === remoteSites[0].id) {
-                    // Online avec un site installé : Authentification nécessaire
-                    Authenticator.selectSiteRemotely( localSites[0].id, function() {
-                        $location.path( '/map/' + localSites[0].id );
-                    }, function() {
-                        alertify.alert( i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ) );
-                    } );
-                } else if (remoteSites.length === 1 && localSites.length <= 1) {
-                    // Online avec un site non installé : On l'installe directement
-                    $location.path( '/sites/install/' + remoteSites[0].id );
-                } else if ((remoteSites.length + localSites.length) > 0) {
-                    $location.path( 'sites' );
-                } else {
-                    alertify.alert( i18n.get( '_AUTH_UNKNOWN_ERROR_OCCURED_' ) );
-                }
+        function redirect() {
+            if (!Site.current) {
+                $location.path( 'sites/' );
             } else {
-                if (!Site.current) {
-                    $location.path( 'sites/' );
-                } else {
-                    $location.path( 'map/' + Site.current.id );
-                }
+                $location.path( 'map/' + Site.current.id );
             }
         }
 
@@ -121,10 +66,12 @@
          * @desc Fonction appelé à la première utilisation. Elle enregistre l'url du serveur et lance d'installation d'un site.
          */
         function firstLaunch() {
-            if (!Storage.get( "url" ) || Storage.get( "url" ).indexOf( intent.url ) === -1) {
-                Utils.setGimapUrl( intent.url );
+            if ( LicenseManager.oauth ) {
+                $location.url('/oauth');
+                $rootScope.$apply();
+            } else {
+                alertify.log( "Vous devez d'abord vous connecter et faire une installation de patrimoine avant de pouvoir consulter celle-ci" );
             }
-            Authenticator.tokenAuth( intent.token, redirect, redirect );
         }
 
         /**

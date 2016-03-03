@@ -1,7 +1,7 @@
 angular
     .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
     .config( config )
-    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location) {
+    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location, Intents) {
 
     "use strict";
 
@@ -30,6 +30,12 @@ angular
 
         // Handle the back button
         _onBackKeyDown: function() {
+        },
+
+        // Handle Intents
+        _onIntent: function(url) {
+            $location.url(Intents.parse(url));
+            $rootScope.$digest();
         }
     };
 

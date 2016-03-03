@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'OauthController', OauthController );
 
-    OauthController.$inject = [ "$scope", "$location", "prefetchedlocalsites", "Authenticator", "Storage", "Utils", "i18n" ];
+    OauthController.$inject = [ "$scope", "$location", "prefetchedlocalsites", "Authenticator", "Storage", "Utils", "i18n", "LicenseManager" ];
 
     /**
      * @class OauthController
      * @desc Controlleur du menu de gestion de Oauth
      */
-    function OauthController($scope, $location, prefetchedlocalsites, Authenticator, Storage, Utils, i18n) {
+    function OauthController($scope, $location, prefetchedlocalsites, Authenticator, Storage, Utils, i18n, LicenseManager) {
 
         var vm = this;
 
@@ -39,6 +39,9 @@
         }
 
         function handleSuccess(data) {
+            if (data.url.length === 0) {
+                data.url = LicenseManager.serverUrl;
+            }
             if (!Storage.get( "url" ) || Storage.get( "url" ).indexOf( data.url ) === -1) {
                 Utils.setGimapUrl( data.url );
             }
