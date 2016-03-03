@@ -1,4 +1,4 @@
-angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, G3lic, i18n, Right, Utils) {
+angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location, $rootScope, $http, G3lic, i18n, Right, Utils, RIGHTS) {
 
     'use strict';
 
@@ -10,31 +10,7 @@ angular.module( 'smartgeomobile' ).factory( 'LicenseManager', function($location
      */
     var LicenseManager = function() {
 
-        return $rootScope.rights = {
-            census: true,
-            consultation: true,
-            search: true,
-            logout: true,
-            report: true,
-            parameters: true,
-            planning: true,
-            history: true,
-            photo: true,
-            project: true,
-            media: true,
-            myposition: true,
-            activelayers: true,
-            goto: true,
-            synccenter: true,
-            siteselection: true,
-            _DONT_REALLY_RESET: false,
-            //lors de la mise à jour quotidienne, cela concerne-t-il le site ou le site ET les données?
-            //par défaut, et si le droit n'est pas spécifié, tout est mis à jour
-            onlyUpdateSiteDaily: false,
-            //sélection globale:
-            multiselection: true,
-            oauth: false
-        };
+        return $rootScope.rights = RIGHTS;
 
         if (!this.__isDeviceRegistered()) {
             this.__rights = {};

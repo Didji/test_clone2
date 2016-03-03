@@ -1,5 +1,5 @@
 angular
-    .module( "smartgeomobile", ["ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
+    .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
     .config( config )
     .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location) {
 
