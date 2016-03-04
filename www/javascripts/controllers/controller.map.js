@@ -96,8 +96,12 @@
             }
             if (intent.map_marker) {
                 Marker.get( intent.map_center, 'CONSULTATION', function() {
-                    $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
-                    $scope.$apply();
+                    if (Site.current.activities._byId[intent.report_activity]) {
+                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
+                        $scope.$apply();
+                    } else {
+                        alertify.error( "Objet non trouvée" );
+                    }
                 } ).addTo( G3ME.map );
             }
             if (intent.multi_report_target) {

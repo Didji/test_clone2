@@ -45,7 +45,6 @@
             if (!Storage.get( "url" ) || Storage.get( "url" ).indexOf( data.url ) === -1) {
                 Utils.setGimapUrl( data.url );
             }
-            console.log(data);
             Authenticator.tokenAuth( data.token, redirect, handleError );
         }
 

@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "Authenticator", "Utils", "i18n", "LicenseManager"];
+    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, Authenticator, Utils, i18n, LicenseManager) {
+    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, LicenseManager) {
         var intent = {};
 
         activate();
@@ -68,9 +68,8 @@
         function firstLaunch() {
             if ( LicenseManager.oauth ) {
                 $location.url('/oauth');
-                $rootScope.$apply();
             } else {
-                alertify.log( "Vous devez d'abord vous connecter et faire une installation de patrimoine avant de pouvoir consulter celle-ci" );
+                $location.url('/');
             }
         }
 
