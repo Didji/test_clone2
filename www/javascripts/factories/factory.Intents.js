@@ -21,7 +21,7 @@
          * @desc
          */
         Intents.parse = function(intent) {
-            var data = decodeURIComponent(intent).replace('gimap:/', '/intent').split('?');
+            var data = intent.replace('gimap:/', '/intent').split('?');
             var params = data[1].split("&");
             var appendedParams = false;
             var allParams = {
@@ -72,14 +72,6 @@
                         url += "&";
                     }
                 }
-                // if (myToken != null) {
-                //     if (appendedParams) {
-                //         url += "&token=";
-                //     } else {
-                //         url += "?token=";
-                //     }
-                //     url += myToken;
-                // }
             }
             return url;
         };

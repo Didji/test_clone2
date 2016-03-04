@@ -60,14 +60,13 @@
             if (!isNaN(+$routeParams.assets)) {
                 $routeParams.assets = [+$routeParams.assets];
             }
-
             vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
             for (var i = 0; i < vm.report.assets.length; i++) {
                 vm.assets.push(new Asset(vm.report.assets[i]));
             }
             applyDefaultValues();
-            
+
             setTimeout(function() {
                 if (!$scope.$$phase) {
                     $scope.$digest();
@@ -128,6 +127,7 @@
                 if(yes)
                 {
                     $location.path( 'map/' + Site.current.id );
+                    Storage.remove('intent');
                     $scope.$apply();
                 }
             })

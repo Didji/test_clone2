@@ -95,14 +95,32 @@
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
             if (intent.map_marker) {
-                Marker.get( intent.map_center, 'CONSULTATION', function() {
-                    if (Site.current.activities._byId[intent.report_activity]) {
-                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
-                        $scope.$apply();
-                    } else {
-                        alertify.error( "Objet non trouvée" );
+                if (Site.current.activities._byId[intent.report_activity]) {
+                    Marker.get( intent.map_center, 'CONSULTATION', function() {
+                        if ( intent.controller == 'report' ) {
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
+                            $scope.$apply();
+                        }
+                    } ).addTo( G3ME.map );
+                } else {
+                    alertify.alert( "L'activité n'existe pas." );
+                    return Storage.remove('intent');
+                }
+            } else {
+                if ( intent.controller == 'report' ) {
+                    if ( intent.args == "new" ) {
+                        if (Site.current.activities._byId[intent.report_activity]) {
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
+                            $scope.$apply();
+                        } else {
+                            alertify.alert( "L'activité n'existe pas." );
+                            return Storage.remove('intent');
+                        }
                     }
-                } ).addTo( G3ME.map );
+                } else {
+                    alertify.alert( 'L\'intent utilisé n\'est pas disponible.' );
+                    return Storage.remove('intent');
+                }
             }
             if (intent.multi_report_target) {
                 $rootScope.multireport = vm.multireport = intent;

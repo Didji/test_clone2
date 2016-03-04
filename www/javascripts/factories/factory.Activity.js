@@ -31,7 +31,7 @@
                 }
             }
             var activity = Site.current.activities._byId[id];
-            if (!activity._fields) {
+            if (activity && !activity._fields) {
                 activity._fields = {};
                 for (i = 0, numTabs = activity.tabs.length, tab; i < numTabs; i++) {
                     tab = activity.tabs[i];
