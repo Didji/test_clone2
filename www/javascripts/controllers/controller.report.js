@@ -314,7 +314,12 @@
         function endOfReport() {
             if (intent.report_url_redirect) {
                 intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                window.open( intent.report_url_redirect, "_blank" );
+                window.plugins.launchmyapp.startActivity({
+                    action: 'android.intent.action.VIEW',
+                    url: intent.report_url_redirect,
+                    function() {},
+                    function() {}
+                });
             }
             Storage.remove( 'intent' );
             $location.path( 'map/' + Site.current.id );

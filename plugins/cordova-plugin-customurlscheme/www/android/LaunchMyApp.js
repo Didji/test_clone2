@@ -42,6 +42,13 @@
         "LaunchMyApp",
         "getLastIntent",
         []);
+    },
+    startActivity: function(params, success, fail) {
+        return cordova.exec(function(args) {
+            success(args);
+        }, function(args) {
+            fail(args);
+        }, 'LaunchMyApp', 'startActivity', [params]);
     }
   }
 
