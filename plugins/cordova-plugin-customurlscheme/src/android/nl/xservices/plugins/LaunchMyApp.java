@@ -1,5 +1,6 @@
 package nl.xservices.plugins;
 
+import android.app.Activity;
 import android.content.Intent;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
@@ -14,7 +15,9 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 import android.text.Html;
+import android.util.Log;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,31 +28,32 @@ import java.util.Locale;
 
 public class LaunchMyApp extends CordovaPlugin {
 
-  private static final String ACTION_CHECKINTENT = "checkIntent";
-  private static final String ACTION_CLEARINTENT = "clearIntent";
-  private static final String ACTION_GETLASTINTENT = "getLastIntent";
-  private static final String ACTION_STARTACTIVITY = "startActivity";
+    private static final String ACTION_CHECKINTENT = "checkIntent";
+    private static final String ACTION_CLEARINTENT = "clearIntent";
+    private static final String ACTION_GETLASTINTENT = "getLastIntent";
+    private static final String ACTION_STARTACTIVITY = "startActivity";
+    private static final String ACTION_FINISHACTIVITY = "finishActivity";
 
-  private String lastIntentString = null;
+    private String lastIntentString = null;
 
-  /**
-   * We don't want to interfere with other plugins requiring the intent data,
-   * but in case of a multi-page app your app may receive the same intent data
-   * multiple times, that's why you'll get an option to reset it (null it).
-   *
-   * Add this to config.xml to enable that behaviour (default false):
-   *   <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true"/>
-   */
-  private boolean resetIntent;
+    /**
+    * We don't want to interfere with other plugins requiring the intent data,
+    * but in case of a multi-page app your app may receive the same intent data
+    * multiple times, that's why you'll get an option to reset it (null it).
+    *
+    * Add this to config.xml to enable that behaviour (default false):
+    *   <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true"/>
+    */
+    private boolean resetIntent;
 
-  @Override
-  public void initialize(final CordovaInterface cordova, CordovaWebView webView){
+    @Override
+    public void initialize(final CordovaInterface cordova, CordovaWebView webView){
     this.resetIntent = preferences.getBoolean("resetIntent", false) ||
         preferences.getBoolean("CustomURLSchemePluginClearsAndroidIntent", false);
-  }
+    }
 
-  @Override
-  public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     if (ACTION_CLEARINTENT.equalsIgnoreCase(action)) {
       final Intent intent = ((CordovaActivity) this.webView.getContext()).getIntent();
       if (resetIntent){
@@ -99,17 +103,20 @@ public class LaunchMyApp extends CordovaPlugin {
       }
 
       startActivity(obj.getString("action"), uri, type, extrasMap);
-      //return new PluginResult(PluginResult.Status.OK);
       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
       return true;
-    } else {
+    } else if (ACTION_FINISHACTIVITY.equalsIgnoreCase(action)) {
+      JSONObject obj = args.getJSONObject(0);
+      finishActivity(obj);
+    }else {
       callbackContext.error("This plugin only responds to the " + ACTION_CHECKINTENT + " action.");
       return false;
     }
-  }
+    return true;
+    }
 
-  @Override
-  public void onNewIntent(Intent intent) {
+    @Override
+    public void onNewIntent(Intent intent) {
     final String intentString = intent.getDataString();
     if (intentString != null && intent.getScheme() != null) {
       if (resetIntent){
@@ -126,10 +133,10 @@ public class LaunchMyApp extends CordovaPlugin {
       } catch (IOException ignore) {
       }
     }
-  }
+    }
 
-  // Taken from commons StringEscapeUtils
-  private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
+    // Taken from commons StringEscapeUtils
+    private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
                                             boolean escapeForwardSlash) throws IOException {
     if (out == null) {
       throw new IllegalArgumentException("The Writer must not be null");
@@ -207,13 +214,13 @@ public class LaunchMyApp extends CordovaPlugin {
         }
       }
     }
-  }
+    }
 
-  private static String hex(char ch) {
+    private static String hex(char ch) {
     return Integer.toHexString(ch).toUpperCase(Locale.ENGLISH);
-  }
+    }
 
-  void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
+    void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
         Intent i = (uri != null ? new Intent(action, uri) : new Intent(action));
 
         if (type != null && uri != null) {
@@ -242,5 +249,19 @@ public class LaunchMyApp extends CordovaPlugin {
             }
         }
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
+    }
+
+    void finishActivity(JSONObject result) throws JSONException {
+        result = result.getJSONObject("result");
+        if (result.has("url")) {
+            Uri url = Uri.parse(result.getString("url"));
+            Intent Iurl = new Intent("android.intent.action.VIEW", url);
+            ((CordovaActivity)this.cordova.getActivity()).startActivity(Iurl);
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra("result", result.toString());
+            ((CordovaActivity)this.cordova.getActivity()).setResult(200,intent);
+        }
+        ((CordovaActivity)this.cordova.getActivity()).finish();
     }
 }

@@ -45,7 +45,7 @@
                     var param = params[i].split('=');
                     var paramName = param[0];
                     //Est ce un champ composé? (exemple : fields[###564654###]=250
-                    var matcher = paramName.match(/^(.+)(\\[.+\\])$/g);
+                    var matcher = paramName.match(/^(.+)(\[.+\])$/);
                     if (matcher != null && matcher.length > 1) {
                         composite = true;
                         paramName = matcher[1];
