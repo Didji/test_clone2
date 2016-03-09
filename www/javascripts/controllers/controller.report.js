@@ -317,8 +317,8 @@
                 window.plugins.launchmyapp.startActivity({
                     action: 'android.intent.action.VIEW',
                     url: intent.report_url_redirect,
-                    function() {},
-                    function() {}
+                    angular.noop,
+                    angular.noop
                 });
             }
             Storage.remove( 'intent' );

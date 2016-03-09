@@ -52,6 +52,9 @@
             // Comme on passe par un plugin java le scope mis à jour en dehors
             // de la phase de digest : il faut donc avoir recours au $apply
             $scope.$apply( function() {
+                if ( error === 'OAUTH_NETWORK_ERROR' ) {
+                    redirect( null, i18n.get( error ) );
+                }
                 handleError( i18n.get( error ) );
             });
         }
@@ -61,7 +64,7 @@
             vm.errorMessage = error ? error : i18n.get( 'OAUTH_UNKNOWN_ERROR');
         }
 
-        function redirect(data) {
+        function redirect(data, error) {
             var localSites = [],
                 tmp = prefetchedlocalsites,
                 remoteSites = [];
@@ -94,7 +97,7 @@
                 Authenticator.selectSiteRemotely( localSites[0].id, function() {
                     $location.path( '/map/' + localSites[0].id );
                 }, function() {
-                    handleError();
+                    handleError(error);
                 } );
             } else if (remoteSites.length === 1 && localSites.length <= 1) {
                 // Online avec un site non installé : On l'installe directement
@@ -102,7 +105,7 @@
             } else if ((remoteSites.length + localSites.length) > 0) {
                 $location.path( 'sites' );
             } else {
-                handleError();
+                handleError(error);
             }
         }
 
