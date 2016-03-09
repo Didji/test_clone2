@@ -1018,7 +1018,7 @@
                             regex = '.*\"' + criter.toString().toLowerCase() + '\":' + search.criteria[criter].toString().toLowerCase() + '[(,)|(\\)|(\})].*';
                             request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
                         } else {
-                            regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace( '(', '\\\(' ).replace( ')', '\\\)' ) + '\".*';
+                            regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace( '(', '\\\(' ).replace( ')', '\\\)' ) + '.*';
                             request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
                         }
                     }
