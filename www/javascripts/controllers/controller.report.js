@@ -41,6 +41,7 @@
 
 
         var intent = Storage.get( 'intent' ) || {};
+        Storage.remove('intent');
 
         activate();
 
