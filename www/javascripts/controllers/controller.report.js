@@ -128,6 +128,20 @@
                 {
                     $location.path( 'map/' + Site.current.id );
                     Storage.remove('intent');
+                    if (intent != null) {
+                        var result = {
+                            report: vm.report
+                        }
+                        if (intent.report_url_redirect) {
+                            intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
+                            result.url = intent.report_url_redirect;
+                        }
+                        window.plugins.launchmyapp.finishActivity({
+                            result,
+                            function() {},
+                            function() {}
+                        });
+                    }
                     $scope.$apply();
                 }
             })
@@ -312,11 +326,16 @@
          * @desc Procédure de fin de compte rendu
          */
         function endOfReport() {
-            if (intent.report_url_redirect) {
-                intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                window.plugins.launchmyapp.startActivity({
-                    action: 'android.intent.action.VIEW',
-                    url: intent.report_url_redirect,
+            if (intent != null) {
+                var result = {
+                    report: vm.report
+                }
+                if (intent.report_url_redirect) {
+                    intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
+                    result.url = intent.report_url_redirect;
+                }
+                window.plugins.launchmyapp.finishActivity({
+                    result,
                     angular.noop,
                     angular.noop
                 });

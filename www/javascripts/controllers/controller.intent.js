@@ -29,7 +29,10 @@
             if (!intent.controller) {
                 alertify.alert( "Intent non valide : veuillez spécifier une action." );
             } else if (!Site.current && !selectFirstSite() && intent.controller !== "oauth") {
-                firstLaunch();
+                preprocessIntentTarget( function() {
+                    Storage.set( 'intent', intent );
+                    firstLaunch();
+                } );
             } else {
                 preprocessIntentTarget( function() {
                     Storage.set( 'intent', intent );
