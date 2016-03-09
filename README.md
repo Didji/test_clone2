@@ -32,6 +32,7 @@
 Exemple: server_url=http://smartgeo.domain.com
 
 Note: Si l'appareil est doté d'une carte sd, le répertoire cible du fichier app.properties se trouvera dans celle ci.
+Note 2: Lors de la suppression des données depuis le gestionnaire d'applications d'Android, ce fichier sera également supprimé et il faudra le recréer manuellement.
 
 ----------
 
