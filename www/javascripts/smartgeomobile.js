@@ -36,6 +36,17 @@ angular
         _onIntent: function(url) {
             $location.url(Intents.parse(url));
             $rootScope.$digest();
+        },
+
+        // Handle Connection
+        _isConnected: function(value) {
+            GoogleGi.isConnected(value,
+            function(result) {
+                window.connected = result;
+            }, function(error) {
+                window.connected = false;
+            });
+            return window.connected;
         }
     };
 

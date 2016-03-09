@@ -58,28 +58,45 @@ public class GoogleGi extends CordovaPlugin {
     private static final String OAUTH_NO_ACCOUNT_ERROR = "OAUTH_NO_ACCOUNT_ERROR";
     private static final String OAUTH_UNKNOWN_ERROR = "OAUTH_UNKNOWN_ERROR";
 
+    private static final String ACTION_PICK = "pick";
+    private static final String ACTION_CONNECTED = "isConnected";
+
     private String TAG = this.getClass().getSimpleName();
     private AccountManager mAccountManager;
     private AlertDialog mAlertDialog;
     private boolean mInvalidate;
     private CallbackContext mainCallback;
+    public static Boolean isConnected;
 
     @Override public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                cordova.getActivity().setContentView(R.layout.activity_list_item);
-                mainCallback = callbackContext;
-                getServerUrlFromConfig();
-                mAccountManager = AccountManager.get(cordova.getActivity());
-                try {
-                    showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    handleError(OAUTH_UNKNOWN_ERROR);
+        if (ACTION_PICK.equalsIgnoreCase(action)) {
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    cordova.getActivity().setContentView(R.layout.activity_list_item);
+                    mainCallback = callbackContext;
+                    getServerUrlFromConfig();
+                    mAccountManager = AccountManager.get(cordova.getActivity());
+                    try {
+                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        handleError(OAUTH_UNKNOWN_ERROR);
+                    }
                 }
+            });
+        } else if (ACTION_CONNECTED.equalsIgnoreCase(action)) {
+            if (args.getString(0) == "true") {
+                getSetConnected(true);
+            } else if (args.getString(0) != "true" && isConnected != true) {
+                getSetConnected(false);
             }
-        });
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, isConnected));
+        }
         return true;
+    }
+
+    public synchronized void getSetConnected(Boolean Value){
+        isConnected = Value;
     }
 
     private void getServerUrlFromConfig() {

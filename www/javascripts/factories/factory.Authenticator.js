@@ -101,6 +101,7 @@
          * @desc
          */
         Authenticator.tokenAuth = function(token, callback, error) {
+            Smartgeo._isConnected(true);
             var currentUser = (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )] || {};
             currentUser.token = token;
             Storage.set( 'user', currentUser );
