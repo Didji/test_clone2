@@ -136,11 +136,11 @@
                             intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
                             result.url = intent.report_url_redirect;
                         }
-                        window.plugins.launchmyapp.finishActivity({
+                        window.plugins.launchmyapp.finishActivity(
                             result,
-                            function() {},
-                            function() {}
-                        });
+                            angular.noop,
+                            angular.noop
+                        );
                     }
                     $scope.$apply();
                 }
@@ -334,11 +334,11 @@
                     intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
                     result.url = intent.report_url_redirect;
                 }
-                window.plugins.launchmyapp.finishActivity({
+                window.plugins.launchmyapp.finishActivity(
                     result,
                     angular.noop,
                     angular.noop
-                });
+                );
             }
             Storage.remove( 'intent' );
             $location.path( 'map/' + Site.current.id );
