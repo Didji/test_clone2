@@ -131,7 +131,7 @@
     "com.gismartware.google": {
         "source": {
             "type": "local",
-            "id": "com.gismartware.google"
+            "id": "cordova-plugin-gismarware"
         },
         "is_top_level": true,
         "variables": {}
@@ -145,5 +145,13 @@
         "variables": {
             "URL_SCHEME": "gimap"
         }
+    },
+    "cordova-plugin-gismartware": {
+        "source": {
+            "type": "local",
+            "path": "..\\cordova-plugin-gismartware"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }
