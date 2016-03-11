@@ -1,10 +1,10 @@
 <div id="left_panel_search" ng-controller="searchController">
-    <input style="margin-bottom: 10px;" class="form-control"
-        type="text" ng-model="searchTerms" placeholder="Code metier" ng-show="!advancedSearchDisplay"></input>
     <div class="checkbox">
         <label><input type="checkbox" ng-model="advancedSearchDisplay"> <span class="fa fa-search"></span>
             <i18n>_SEARCH_ADVANCED_SEARCH</i18n></label>
     </div>
+    <input style="margin-bottom: 10px;" class="form-control"
+        type="text" ng-model="searchTerms" placeholder="Code metier" ng-show="!advancedSearchDisplay"></input>
     <div id="left_panel_search_advanced" ng-show="advancedSearchDisplay">
         <label><i18n>_SEARCH_TYPE</i18n></label>
         <select

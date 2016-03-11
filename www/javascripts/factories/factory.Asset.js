@@ -1011,16 +1011,26 @@
 
             if (!request) {
                 request = "SELECT * FROM assets WHERE symbolId REGEXP('" + search.okey + "[0-9]+') ";
-                var regex;
+                var lowerCriteria;
                 for (var criter in search.criteria) {
                     if (search.criteria.hasOwnProperty( criter ) && search.criteria[criter]) {
-                        if (!isNaN( search.criteria[criter] )) {
-                            regex = '.*\"' + criter.toString().toLowerCase() + '\":' + search.criteria[criter].toString().toLowerCase() + '[(,)|(\\)|(\})].*';
-                            request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                        if (search.criteria[criter] instanceof Date) {
+                            var day, month, year;
+                            day = (search.criteria[criter].getDate().toString().length > 1) ?
+                                            search.criteria[criter].getDate().toString()
+                                            : '0' + search.criteria[criter].getDate().toString();
+                            month = ((search.criteria[criter].getMonth() + 1).toString().length > 1) ?
+                                            (search.criteria[criter].getMonth() + 1).toString()
+                                            : '0' + (search.criteria[criter].getMonth() + 1).toString();
+                            year = search.criteria[criter].getUTCFullYear().toString();
+                            lowerCriteria = '(' + day + '\\/' + month + '\\/' + year + '|' + day + '\\/' + month + '\\/' + year.substr(2) + ')';
+                        } else if (!isNaN( search.criteria[criter] )) {
+                            lowerCriteria = search.criteria[criter].toString().toLowerCase();
                         } else {
-                            regex = '.*\"' + criter.toString().toLowerCase() + '\":\"' + search.criteria[criter].toString().toLowerCase().replace( '(', '\\\(' ).replace( ')', '\\\)' ) + '.*';
-                            request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
+                            lowerCriteria = search.criteria[criter].toString().toLowerCase().replace( '(', '\\\(' ).replace( ')', '\\\)' );
                         }
+                        var regex = '.*\"' + criter.toString().toLowerCase() + '\":[(\"a-zA-Z\\s0-9^,)||(a-zA-Z\\s0-9^,)]*' + lowerCriteria + '[a-zA-Z\\s0-9^,]*';
+                        request += "AND (LOWER(asset) REGEXP('" + regex + "')) ";
                     }
                 }
                 request += 'LIMIT ' + (Asset.__maxResultPerSearch - partial_response.length);
