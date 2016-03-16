@@ -4,7 +4,7 @@ angular
     .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location, Intents) {
 
     "use strict";
-
+    L.Browser.webkit3d = false;
     var Smartgeo = {
 
         _initializeGlobalEvents: function() {
@@ -30,7 +30,7 @@ angular
 
         // Handle the back button
         _onBackKeyDown: function(e) {
-            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null) && $rootScope.fromIntent == true ) {
+            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null || $location.$$path.match(/oauth/) != null) && $rootScope.fromIntent == true ) {
                 Storage.remove('intent');
                 $rootScope.fromIntent = false;
                 window.plugins.launchmyapp.finishActivity(
