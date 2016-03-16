@@ -22,6 +22,7 @@ angular
 		"serverUrl": "http://canope-rec.projets-gi.com/",
 		"siteselection": false,
 		"synccenter": true,
+		"intent": 200,
 
 		"_DONT_REALLY_RESET": true,
 

@@ -33,6 +33,9 @@ public class LaunchMyApp extends CordovaPlugin {
     private static final String ACTION_GETLASTINTENT = "getLastIntent";
     private static final String ACTION_STARTACTIVITY = "startActivity";
     private static final String ACTION_FINISHACTIVITY = "finishActivity";
+    private static final String ACTION_SETACTIVITY = "setActivity";
+
+    private int GI_ACTIVITY;
 
     private String lastIntentString = null;
 
@@ -70,6 +73,8 @@ public class LaunchMyApp extends CordovaPlugin {
         callbackContext.error("App was not started via the launchmyapp URL scheme. Ignoring this errorcallback is the best approach.");
       }
       return true;
+    } else if (ACTION_SETACTIVITY.equalsIgnoreCase(action)) {
+        GI_ACTIVITY = args.getInt(0);
     } else if (ACTION_GETLASTINTENT.equalsIgnoreCase(action)) {
       if(lastIntentString != null) {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, lastIntentString));
@@ -106,8 +111,8 @@ public class LaunchMyApp extends CordovaPlugin {
       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
       return true;
     } else if (ACTION_FINISHACTIVITY.equalsIgnoreCase(action)) {
-      JSONObject obj = args.getJSONObject(0);
-      finishActivity(obj);
+      String result = args.getString(0);
+      finishActivity(result);
     }else {
       callbackContext.error("This plugin only responds to the " + ACTION_CHECKINTENT + " action.");
       return false;
@@ -117,103 +122,103 @@ public class LaunchMyApp extends CordovaPlugin {
 
     @Override
     public void onNewIntent(Intent intent) {
-    final String intentString = intent.getDataString();
-    if (intentString != null && intent.getScheme() != null) {
-      if (resetIntent){
-        intent.setData(null);
-      }
-      try {
-        StringWriter writer = new StringWriter(intentString.length() * 2);
-        escapeJavaStyleString(writer, intentString, true, false);
-        webView.loadUrl("javascript:"
-                        + "window.handleOpenUrl = function(url){"
-                        +     "Smartgeo._onIntent(url);"
-                        + "};"
-                        + "window.handleOpenUrl('" + writer.toString() + "');");
-      } catch (IOException ignore) {
-      }
-    }
-    }
-
-    // Taken from commons StringEscapeUtils
-    private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
-                                            boolean escapeForwardSlash) throws IOException {
-    if (out == null) {
-      throw new IllegalArgumentException("The Writer must not be null");
-    }
-    if (str == null) {
-      return;
-    }
-    int sz;
-    sz = str.length();
-    for (int i = 0; i < sz; i++) {
-      char ch = str.charAt(i);
-
-      // handle unicode
-      if (ch > 0xfff) {
-        out.write("\\u" + hex(ch));
-      } else if (ch > 0xff) {
-        out.write("\\u0" + hex(ch));
-      } else if (ch > 0x7f) {
-        out.write("\\u00" + hex(ch));
-      } else if (ch < 32) {
-        switch (ch) {
-          case '\b':
-            out.write('\\');
-            out.write('b');
-            break;
-          case '\n':
-            out.write('\\');
-            out.write('n');
-            break;
-          case '\t':
-            out.write('\\');
-            out.write('t');
-            break;
-          case '\f':
-            out.write('\\');
-            out.write('f');
-            break;
-          case '\r':
-            out.write('\\');
-            out.write('r');
-            break;
-          default:
-            if (ch > 0xf) {
-              out.write("\\u00" + hex(ch));
-            } else {
-              out.write("\\u000" + hex(ch));
-            }
-            break;
+        final String intentString = intent.getDataString();
+        if (intentString != null && intent.getScheme() != null) {
+          if (resetIntent){
+            intent.setData(null);
+          }
+          try {
+            StringWriter writer = new StringWriter(intentString.length() * 2);
+            escapeJavaStyleString(writer, intentString, true, false);
+            webView.loadUrl("javascript:"
+                            + "window.handleOpenUrl = function(url){"
+                            +     "Smartgeo._onIntent(url);"
+                            + "};"
+                            + "window.handleOpenUrl('" + writer.toString() + "');");
+          } catch (IOException ignore) {
+          }
         }
-      } else {
-        switch (ch) {
-          case '\'':
-            if (escapeSingleQuote) {
-              out.write('\\');
-            }
-            out.write('\'');
-            break;
-          case '"':
-            out.write('\\');
-            out.write('"');
-            break;
-          case '\\':
-            out.write('\\');
-            out.write('\\');
-            break;
-          case '/':
-            if (escapeForwardSlash) {
-              out.write('\\');
-            }
-            out.write('/');
-            break;
-          default:
-            out.write(ch);
-            break;
         }
-      }
-    }
+
+        // Taken from commons StringEscapeUtils
+        private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
+                                                boolean escapeForwardSlash) throws IOException {
+        if (out == null) {
+          throw new IllegalArgumentException("The Writer must not be null");
+        }
+        if (str == null) {
+          return;
+        }
+        int sz;
+        sz = str.length();
+        for (int i = 0; i < sz; i++) {
+          char ch = str.charAt(i);
+
+          // handle unicode
+          if (ch > 0xfff) {
+            out.write("\\u" + hex(ch));
+          } else if (ch > 0xff) {
+            out.write("\\u0" + hex(ch));
+          } else if (ch > 0x7f) {
+            out.write("\\u00" + hex(ch));
+          } else if (ch < 32) {
+            switch (ch) {
+              case '\b':
+                out.write('\\');
+                out.write('b');
+                break;
+              case '\n':
+                out.write('\\');
+                out.write('n');
+                break;
+              case '\t':
+                out.write('\\');
+                out.write('t');
+                break;
+              case '\f':
+                out.write('\\');
+                out.write('f');
+                break;
+              case '\r':
+                out.write('\\');
+                out.write('r');
+                break;
+              default:
+                if (ch > 0xf) {
+                  out.write("\\u00" + hex(ch));
+                } else {
+                  out.write("\\u000" + hex(ch));
+                }
+                break;
+            }
+          } else {
+            switch (ch) {
+              case '\'':
+                if (escapeSingleQuote) {
+                  out.write('\\');
+                }
+                out.write('\'');
+                break;
+              case '"':
+                out.write('\\');
+                out.write('"');
+                break;
+              case '\\':
+                out.write('\\');
+                out.write('\\');
+                break;
+              case '/':
+                if (escapeForwardSlash) {
+                  out.write('\\');
+                }
+                out.write('/');
+                break;
+              default:
+                out.write(ch);
+                break;
+            }
+          }
+        }
     }
 
     private static String hex(char ch) {
@@ -251,17 +256,10 @@ public class LaunchMyApp extends CordovaPlugin {
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
     }
 
-    void finishActivity(JSONObject result) throws JSONException {
-        result = result.getJSONObject("result");
-        if (result.has("url")) {
-            Uri url = Uri.parse(result.getString("url"));
-            Intent Iurl = new Intent("android.intent.action.VIEW", url);
-            ((CordovaActivity)this.cordova.getActivity()).startActivity(Iurl);
-        } else {
-            Intent intent = new Intent();
-            intent.putExtra("result", result.toString());
-            ((CordovaActivity)this.cordova.getActivity()).setResult(200,intent);
-        }
+    void finishActivity(String result) {
+        Intent intent = new Intent();
+        intent.putExtra("report", result);
+        ((CordovaActivity)this.cordova.getActivity()).setResult( GI_ACTIVITY, intent );
         ((CordovaActivity)this.cordova.getActivity()).finish();
     }
 }

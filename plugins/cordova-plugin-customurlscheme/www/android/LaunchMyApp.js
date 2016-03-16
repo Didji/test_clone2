@@ -56,6 +56,13 @@
         }, function(args) {
             fail(args);
         }, 'LaunchMyApp', 'finishActivity', [params]);
+    },
+    setActivity: function(params, success, fail) {
+        return cordova.exec(function(args) {
+            success(args);
+        }, function(args) {
+            fail(args);
+        }, 'LaunchMyApp', 'setActivity', [params]);
     }
   }
 

@@ -130,23 +130,27 @@
                     $location.path( 'map/' + Site.current.id );
                     Storage.remove('intent');
                     if (intent != null) {
-                        var result = {
-                            report: vm.report
-                        }
+                        $rootScope.fromIntent = false;
+                        var report = parsedReport(vm.report);
                         if (intent.report_url_redirect) {
                             intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                            result.url = intent.report_url_redirect;
+                            window.plugins.launchmyapp.startActivity({
+                                action: "android.intent.action.VIEW",
+                                url: intent.report_url_redirect},
+                                angular.noop,
+                                angular.noop
+                            );
+                        } else {
+                            window.plugins.launchmyapp.finishActivity(
+                                report,
+                                angular.noop,
+                                angular.noop
+                            );
                         }
-                        window.plugins.launchmyapp.finishActivity(
-                            result,
-                            angular.noop,
-                            angular.noop
-                        );
                     }
                     $scope.$apply();
                 }
             })
-
         }
 
         /**
@@ -328,18 +332,23 @@
          */
         function endOfReport() {
             if (intent != null) {
-                var result = {
-                    report: vm.report
-                }
+                $rootScope.fromIntent = false;
+                var report = parsedReport(vm.report);
                 if (intent.report_url_redirect) {
                     intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                    result.url = intent.report_url_redirect;
+                    window.plugins.launchmyapp.startActivity({
+                        action: "android.intent.action.VIEW",
+                        url: intent.report_url_redirect},
+                        angular.noop,
+                        angular.noop
+                    );
+                } else {
+                    window.plugins.launchmyapp.finishActivity(
+                        report,
+                        angular.noop,
+                        angular.noop
+                    );
                 }
-                window.plugins.launchmyapp.finishActivity(
-                    result,
-                    angular.noop,
-                    angular.noop
-                );
             }
             Storage.remove( 'intent' );
             $location.path( 'map/' + Site.current.id );
@@ -416,6 +425,13 @@
             return false;
         }
 
+        function parsedReport() {
+            var report = {};
+            for (var i in vm.report.fields) {
+               report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
+            }
+            return report;
+        }
     }
 
 })();

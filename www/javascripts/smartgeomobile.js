@@ -29,11 +29,22 @@ angular
         },
 
         // Handle the back button
-        _onBackKeyDown: function() {
+        _onBackKeyDown: function(e) {
+            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null) && $rootScope.fromIntent == true ) {
+                Storage.remove('intent');
+                $rootScope.fromIntent = false;
+                window.plugins.launchmyapp.finishActivity(
+                    {},
+                    angular.noop,
+                    angular.noop
+                );
+            }
         },
 
         // Handle Intents
         _onIntent: function(url) {
+            Smartgeo._isConnected();
+            $rootScope.fromIntent = true;
             $location.url(Intents.parse(url));
             $rootScope.$digest();
         },
@@ -54,13 +65,15 @@ angular
     Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
     Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
 
+    window.Smartgeo = Smartgeo;
+
     if (window.cordova) {
         document.addEventListener( "deviceready", function() {
+            Smartgeo._initializeGlobalEvents();
             if ( LicenseManager.oauth ) {
                 $location.url('/oauth');
                 $rootScope.$apply();
             }
-            Smartgeo._initializeGlobalEvents();
         } );
     } else {
         //FOR TESTING PURPOSE ONLY!!!
@@ -68,8 +81,6 @@ angular
         window.addEventListener( 'online', Smartgeo._onlineTask, false );
         window.addEventListener( 'offline', Smartgeo._offlineTask, false );
     }
-
-    window.Smartgeo = Smartgeo;
 });
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
