@@ -23,7 +23,7 @@
 
         <!-- Bug dans cordova, l'attribut androidLaunchMode n'est pas pris en compte -->
         <!-- Traité dans un hook after_prepare -->
-        <preference name="androidLaunchMode" value="singleInstance" />
+        <preference name="androidLaunchMode" value="singleTop" />
         <preference name="android-minSdkVersion" value="19" />
         <preference name="android-targetSdkVersion" value="22"/>
 
