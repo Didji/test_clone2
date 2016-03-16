@@ -428,7 +428,7 @@
         function parsedReport() {
             var report = {};
             for (var i in vm.report.fields) {
-               report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
+               report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && vm.report.fields[i].toString().match(/object/) != null && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
             }
             return report;
         }
