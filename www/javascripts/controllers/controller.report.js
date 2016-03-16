@@ -41,7 +41,6 @@
 
 
         var intent = Storage.get( 'intent' ) || {};
-        Storage.remove('intent');
 
         activate();
 
@@ -131,7 +130,6 @@
                     Storage.remove('intent');
                     if (intent != null) {
                         $rootScope.fromIntent = false;
-                        var report = parsedReport(vm.report);
                         if (intent.report_url_redirect) {
                             intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
                             window.plugins.launchmyapp.startActivity({
@@ -142,7 +140,7 @@
                             );
                         } else {
                             window.plugins.launchmyapp.finishActivity(
-                                report,
+                                {},
                                 angular.noop,
                                 angular.noop
                             );
@@ -332,6 +330,7 @@
          */
         function endOfReport() {
             if (intent != null) {
+                Storage.remove( 'intent' );
                 $rootScope.fromIntent = false;
                 var report = parsedReport(vm.report);
                 if (intent.report_url_redirect) {
@@ -350,7 +349,6 @@
                     );
                 }
             }
-            Storage.remove( 'intent' );
             $location.path( 'map/' + Site.current.id );
         }
 

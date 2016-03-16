@@ -81,7 +81,7 @@
 
             intent = Storage.get( 'intent' );
 
-            if (intent) {
+            if (intent && $rootScope.fromIntent == true) {
                 setTimeout( intentHandler, 0 );
             }
         }

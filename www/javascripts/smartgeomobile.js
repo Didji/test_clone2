@@ -31,13 +31,26 @@ angular
         // Handle the back button
         _onBackKeyDown: function(e) {
             if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null || $location.$$path.match(/oauth/) != null) && $rootScope.fromIntent == true ) {
+                var intent = Storage.get('intent');
                 Storage.remove('intent');
                 $rootScope.fromIntent = false;
-                window.plugins.launchmyapp.finishActivity(
-                    {},
-                    angular.noop,
-                    angular.noop
-                );
+                if (intent != null) {
+                    Storage.remove( 'intent' );
+                    if (intent.report_url_redirect) {
+                        window.plugins.launchmyapp.startActivity({
+                            action: "android.intent.action.VIEW",
+                            url: intent.report_url_redirect},
+                            angular.noop,
+                            angular.noop
+                        );
+                    } else {
+                        window.plugins.launchmyapp.finishActivity(
+                            {},
+                            angular.noop,
+                            angular.noop
+                        );
+                    }
+                }
             }
         },
 
