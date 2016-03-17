@@ -27,7 +27,6 @@
 	<platform name="ios">
 		<config-file parent="/*" target="config.xml">
 			<feature name="GoogleGi">
-				<param name="ios-package" value="GoogleGi" />
         		<param name="onload" value="true" />
 			</feature>
       		<access origin="https://accounts.google.com/*" />
