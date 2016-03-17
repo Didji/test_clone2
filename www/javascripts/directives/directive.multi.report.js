@@ -28,6 +28,7 @@
             initialTargets = [];
 
         function link(scope, element, attrs, controller) {
+
             if (!scope.intent) {
                 return false;
             }
@@ -323,9 +324,20 @@
 
                 if (scope.intent.multi_report_redirect) {
                     redirect = scope.intent.multi_report_redirect.replace( "[DONE_ASSETS]", scope.intent.multi_report_assets_id.join( ',' ) );
-                    
-                    //TODO: pour ce dev spé Veolia, gérer le passage en 2.0/full web view en remplacant l'appel suivant à Chromium:
-                    SmartgeoChromium.redirect( decodeURI( redirect ) );
+                    window.plugins.launchmyapp.startActivity({
+                        action: "android.intent.action.VIEW",
+                        url: redirect},
+                        angular.noop,
+                        angular.noop
+                    );
+                } else {
+                    window.plugins.launchmyapp.finishActivity(
+                        {
+                            done: scope.intent.multi_report_assets_id
+                        },
+                        angular.noop,
+                        angular.noop
+                    );
                 }
                 Storage.remove( 'intent' );
                 return false;

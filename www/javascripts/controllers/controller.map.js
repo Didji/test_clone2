@@ -107,7 +107,7 @@
                     return Storage.remove('intent');
                 }
             } else {
-                if ( intent.controller == 'report' ) {
+                if ( intent.controller == 'report') {
                     if ( intent.args == "new" ) {
                         if (Site.current.activities._byId[intent.report_activity]) {
                             $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
@@ -116,15 +116,16 @@
                             alertify.alert( "L'activité n'existe pas." );
                             return Storage.remove('intent');
                         }
+                    } else if ( intent.args == "simple" ) {
+                        $rootScope.multireport = vm.multireport = intent;
                     }
                 } else {
                     alertify.alert( 'L\'intent utilisé n\'est pas disponible.' );
                     return Storage.remove('intent');
                 }
             }
-            if (intent.multi_report_target) {
-                $rootScope.multireport = vm.multireport = intent;
-            }
+            /*if (intent.multi_report_target) {
+            }*/
             if (!$scope.$$phase) {
                 $scope.$digest();
             }

@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager"];
+    IntentController.$inject = ["$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, Storage, Site, prefetchedlocalsites, Asset, LicenseManager) {
+    function IntentController($routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo) {
         var intent = {};
 
         activate();
@@ -37,6 +37,37 @@
                     Storage.set( 'intent', intent );
                     redirect();
                 } );
+            }
+
+            Smartgeo._addEventListener('backbutton', onBackButton);
+        }
+
+        /**
+         * @name onBackButton
+         * @desc Fonction appelé sur appui du bouton retour
+         */
+        function onBackButton() {
+            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null || $location.$$path.match(/oauth/) != null) && $rootScope.fromIntent == true ) {
+                $rootScope.fromIntent = false;
+                if (intent !== null) {
+                    Storage.remove( 'intent' );
+                    if (intent.report_url_redirect) {
+                        window.plugins.launchmyapp.startActivity(
+                            {
+                                action: "android.intent.action.VIEW",
+                                url: intent.report_url_redirect
+                            },
+                            angular.noop,
+                            angular.noop
+                        );
+                    } else {
+                        window.plugins.launchmyapp.finishActivity(
+                            null,
+                            angular.noop,
+                            angular.noop
+                        );
+                    }
+                }
             }
         }
 

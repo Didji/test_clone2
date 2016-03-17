@@ -1,100 +1,11 @@
 angular
     .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
     .config( config )
-    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location, Intents) {
+    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location, Intents, Smartgeo) {
 
     "use strict";
     L.Browser.webkit3d = false;
-    var Smartgeo = {
-
-        _initializeGlobalEvents: function() {
-            document.addEventListener('online', Smartgeo._onlineTask, false);
-            document.addEventListener('offline', Smartgeo._offlineTask, false);
-            document.addEventListener('backbutton', Smartgeo._onBackKeyDown, false);
-        },
-
-        //listen online mode
-        _onlineTask: function() {
-            Storage.set('online', true);
-            $rootScope.$broadcast("DEVICE_IS_ONLINE");
-            console.info("_SMARTGEO_ONLINE");
-            Authenticator.silentLogin();
-        },
-
-        //listen offline mde
-        _offlineTask: function() {
-            Storage.set('online', false);
-            $rootScope.$broadcast("DEVICE_IS_OFFLINE");
-            console.info("_SMARTGEO_OFFLINE");
-        },
-
-        // Handle the back button
-        _onBackKeyDown: function(e) {
-            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null || $location.$$path.match(/oauth/) != null) && $rootScope.fromIntent == true ) {
-                var intent = Storage.get('intent');
-                Storage.remove('intent');
-                $rootScope.fromIntent = false;
-                if (intent != null) {
-                    Storage.remove( 'intent' );
-                    if (intent.report_url_redirect) {
-                        window.plugins.launchmyapp.startActivity({
-                            action: "android.intent.action.VIEW",
-                            url: intent.report_url_redirect},
-                            angular.noop,
-                            angular.noop
-                        );
-                    } else {
-                        window.plugins.launchmyapp.finishActivity(
-                            {},
-                            angular.noop,
-                            angular.noop
-                        );
-                    }
-                }
-            }
-        },
-
-        // Handle Intents
-        _onIntent: function(url) {
-            Smartgeo._isConnected();
-            $rootScope.fromIntent = true;
-             window.plugins.launchmyapp.setActivity(LicenseManager.intent);
-            $location.url(Intents.parse(url));
-            $rootScope.$digest();
-        },
-
-        // Handle Connection
-        _isConnected: function(value) {
-            GoogleGi.isConnected(value,
-            function(result) {
-                window.connected = result;
-            }, function(error) {
-                window.connected = false;
-            });
-            return window.connected;
-        }
-    };
-
-
-    Smartgeo._SMARTGEO_MOBILE_VERSION = $rootScope.version = window.smargeomobileversion + (window.smargeomobilebuild && window.smargeomobilebuild.length ? "-" + window.smargeomobilebuild : '');
-    Smartgeo._SIDE_MENU_WIDTH = ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8;
-
-    window.Smartgeo = Smartgeo;
-
-    if (window.cordova) {
-        document.addEventListener( "deviceready", function() {
-            Smartgeo._initializeGlobalEvents();
-            if ( LicenseManager.oauth ) {
-                $location.url('/oauth');
-                $rootScope.$apply();
-            }
-        } );
-    } else {
-        //FOR TESTING PURPOSE ONLY!!!
-        //rend les événements online et offline du navigateur
-        window.addEventListener( 'online', Smartgeo._onlineTask, false );
-        window.addEventListener( 'offline', Smartgeo._offlineTask, false );
-    }
+    Smartgeo._initialize();
 });
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
