@@ -6,9 +6,9 @@
         .module('smartgeomobile')
         .factory('Smartgeo', SmartgeoFactory);
 
-    SmartgeoFactory.$inject = [ "$rootScope", "$location", "$window", "Storage", "Intents", "LicenseManager" ];
+    SmartgeoFactory.$inject = [ "$rootScope", "$location", "$window", "Storage", "Intents", "LicenseManager", "Authenticator" ];
 
-    function SmartgeoFactory($rootScope, $location, $window, Storage, Intents, LicenseManager) {
+    function SmartgeoFactory($rootScope, $location, $window, Storage, Intents, LicenseManager, Authenticator) {
 
         /**
          * @class SmartgeoFactory

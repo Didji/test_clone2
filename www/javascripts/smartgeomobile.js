@@ -1,11 +1,10 @@
 angular
     .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", "ui.bootstrap", 'ngResource', 'localytics.directives', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch'] )
     .config( config )
-    .run( function(LicenseManager, Storage, $rootScope, Authenticator, $window, $location, Intents, Smartgeo) {
-
-    "use strict";
-    L.Browser.webkit3d = false;
-    Smartgeo._initialize();
+    .run( function(Smartgeo) {
+        "use strict";
+        L.Browser.webkit3d = false;
+        Smartgeo._initialize();
 });
 
 config.$inject = ["$routeProvider", "$httpProvider", "$provide", "$compileProvider"];
