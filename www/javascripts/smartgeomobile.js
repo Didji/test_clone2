@@ -58,6 +58,7 @@ angular
         _onIntent: function(url) {
             Smartgeo._isConnected();
             $rootScope.fromIntent = true;
+             window.plugins.launchmyapp.setActivity(LicenseManager.intent);
             $location.url(Intents.parse(url));
             $rootScope.$digest();
         },
