@@ -29,6 +29,8 @@
             // TODO: Vérifier si on en a vraiment besoin, et si oui comment s'en passer
             window.Smartgeo = Smartgeo;
 
+            Storage.set('online', window.navigator.onLine);
+
             if (window.cordova) {
                 document.addEventListener( "deviceready", function() {
                     Smartgeo._initializeGlobalEvents();

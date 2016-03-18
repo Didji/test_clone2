@@ -83,10 +83,8 @@
 
             if (remoteSites.length) {
                 Storage.set( 'availableRemoteSites', remoteSites.length );
-                Storage.set( 'online', true );
-            } else {
-                Storage.set( 'online', false );
             }
+            
             Storage.set( 'availableLocalSites', localSites.length );
 
             if (remoteSites.length === 0 && localSites.length === 1 && !!localSites[0].installed) {
