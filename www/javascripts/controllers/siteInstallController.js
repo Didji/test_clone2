@@ -1,7 +1,7 @@
 angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope", "$rootScope", "$routeParams", "$http", "$location", "G3ME", "Installer", "Storage", "Site", "Utils", "Authenticator", function($scope, $rootScope, $routeParams, $http, $location, G3ME, Installer, Storage, Site, Utils, Authenticator) {
 
     'use strict';
-    
+
     $rootScope.currentPage = "Installation";
     G3ME.resetMap();
     Storage.remove( 'persistence.menu' );
@@ -64,6 +64,11 @@ angular.module( 'smartgeomobile' ).controller( 'siteInstallController', ["$scope
     }
 
     var url = Utils.getServiceUrl( 'gi.maintenance.mobility.site.json' );
+
+    document.addEventListener("deviceready", function () {
+        // Empeche le verrouillage de l'appareil pendant l'installation
+        window.powermanagement.acquire();
+    }, false);
 
     $http.get( url ).success( function(sites) {
         for (var i in sites) {
