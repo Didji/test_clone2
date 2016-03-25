@@ -39,7 +39,7 @@
                 'site': site,
                 'auto_load_map': true
             } );
-            $http.post( url ).then( success || angular.noop, error || angular.noop );
+            $http.post( url ).success( success || angular.noop).error( error || angular.noop );
         };
 
         /**
@@ -79,7 +79,7 @@
                     Authenticator._LOGIN_MUTEX = false;
 
                     if (data && data.error) {
-                        error(data);
+                        return error(data);
                     }
 
                     if (Site.current) {
@@ -106,13 +106,7 @@
             currentUser.token = token;
             Storage.set( 'user', currentUser );
 
-            Authenticator.login( token, null, callback, function(response) {
-                if ((response && response.status === 200) || !response) {
-                    callback();
-                } else {
-                    error();
-                }
-            });
+            Authenticator.login( token, null, callback, error);
         };
 
         return Authenticator;
