@@ -169,7 +169,8 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          */
         vm.toggleDisplay = function() {
             vm.display = !vm.display;
-            if (vm.display && Utils.isRunningOnLittleScreen()) {
+            var little_screen = Utils.isRunningOnLittleScreen();
+            if (vm.display && little_screen) {
                 $rootScope.$broadcast( "CLOSE_CONSULTATION_PANEL" );
             }
         };
