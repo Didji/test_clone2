@@ -48,3 +48,9 @@ Le fork de la version entreprise du plugin sqlite:
 	- [Cordova Sqlite Entreprise](https://github.com/Diliz/Cordova-sqlite-enterprise-free)
 
 ----------
+
+### **Exécution locale / poste de développement :**
+
+Pour développer/debugger la partie Web dans Chrome, n'oubliez pas d'ajouter les flags : --disable-web-security --allow-file-access-from-files
+
+Tous les processus Chrome doivent être terminés pour que ces modifs soient prises en compte.
