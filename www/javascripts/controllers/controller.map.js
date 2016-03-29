@@ -91,41 +91,40 @@
          * @desc Handler d'intent
          */
         function intentHandler() {
-            if (intent.map_center) {
+            if ( intent.map_center ) {
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
-            if (intent.map_marker) {
-                if (Site.current.activities._byId[intent.report_activity]) {
+            if ( intent.map_marker ) {
+                if ( Site.current.activities._byId[intent.report_activity] ) {
                     Marker.get( intent.map_center, 'CONSULTATION', function() {
-                        if ( intent.controller == 'report' ) {
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
-                            $scope.$apply();
-                        }
+                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
+                        $scope.$apply();
                     } ).addTo( G3ME.map );
                 } else {
+                    // TODO: I18N
                     alertify.alert( "L'activité n'existe pas." );
                     return Storage.remove('intent');
                 }
             } else {
-                if ( intent.controller == 'report') {
-                    if ( intent.args == "new" ) {
+                if ( intent.controller === 'report') {
+                    if ( intent.args === "new" ) {
                         if (Site.current.activities._byId[intent.report_activity]) {
                             $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
                             $scope.$apply();
                         } else {
+                            // TODO: I18N, really
                             alertify.alert( "L'activité n'existe pas." );
                             return Storage.remove('intent');
                         }
-                    } else if ( intent.args == "simple" ) {
+                    } else if ( intent.args === "simple" ) {
                         $rootScope.multireport = vm.multireport = intent;
                     }
                 } else {
+                    // TODO: I18N, someone ?
                     alertify.alert( 'L\'intent utilisé n\'est pas disponible.' );
                     return Storage.remove('intent');
                 }
             }
-            /*if (intent.multi_report_target) {
-            }*/
             if (!$scope.$$phase) {
                 $scope.$digest();
             }

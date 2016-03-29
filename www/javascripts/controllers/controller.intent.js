@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo"];
+    IntentController.$inject = ["$scope", "$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo) {
+    function IntentController($scope, $routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo) {
         var intent = {};
 
         activate();
@@ -81,6 +81,9 @@
             } else {
                 $location.path( 'map/' + Site.current.id );
             }
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
         }
 
         /**
@@ -103,6 +106,9 @@
                 $location.url('/oauth');
             } else {
                 $location.url('/');
+            }
+            if (!$scope.$$phase) {
+                $scope.$apply();
             }
         }
 
