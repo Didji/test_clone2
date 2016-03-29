@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Utils', UtilsFactory );
 
-    UtilsFactory.$inject = ["$http", "Storage", "$window", "SQLite", "$rootScope"];
+    UtilsFactory.$inject = ["$http", "Storage", "SQLite", "$rootScope"];
 
-    function UtilsFactory($http, Storage, $window, SQLite, $rootScope) {
+    function UtilsFactory($http, Storage, SQLite, $rootScope) {
 
         /**
          * @class UtilsFactory
@@ -142,7 +142,15 @@
          * @returns {boolean} is smartgeo running on little screen
          */
         Utils.isRunningOnLittleScreen = function() {
-            return ($window.outerWidth < 2 * ($window.outerWidth || $window.screen.width) > 361 ? 300 : ($window.outerWidth || $window.screen.width) * 0.8);
+            var width = window.screen.width; 
+            var height = window.screen.height;
+
+            //Si la largeur est inférieur à la hauteur, cela veut dire que l'on est en mode portrait, on renvoie donc true pour "petit ecran"
+            if(width < height) {
+                return true;              
+            } else {
+                return false;
+            }
         };
 
         /**
