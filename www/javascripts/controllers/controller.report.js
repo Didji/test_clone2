@@ -128,7 +128,7 @@
                 {
                     $location.path( 'map/' + Site.current.id );
                     Storage.remove('intent');
-                    if (intent != null) {
+                    if (intent != null && $rootScope.fromIntent === true) {
                         $rootScope.fromIntent = false;
                         if (intent.report_url_redirect) {
                             intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
@@ -329,7 +329,7 @@
          * @desc Procédure de fin de compte rendu
          */
         function endOfReport() {
-            if (intent != null) {
+            if (intent != null && $rootScope.fromIntent === true) {
                 Storage.remove( 'intent' );
                 $rootScope.fromIntent = false;
                 var report = parsedReport(vm.report);

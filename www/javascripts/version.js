@@ -1,2 +1,2 @@
 window.smargeomobileversion = "2.2.0";
-window.smargeomobilebuild = "dev";
+window.smargeomobilebuild = "dev2";
