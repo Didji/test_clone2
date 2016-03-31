@@ -97,23 +97,22 @@
     		    Authenticator.selectSiteRemotely(
     		    	localSites[0].id,
     		    	function() {
-    		    		// Broadcast event ?
     		    		console.info('Successful authentication.');
     		    	},
     		    	function() {
-    					handleAuthError('Authentication error.');
+    					handleAuthError();
     				}
     		    );
     		} else if (remoteSites.length === 1 && !installed) {
     		    $location.path( '/sites/install/' + remoteSites[0].id );
     		} else {
-    			handleAuthError('Authentication error.');
+    			handleAuthError();
     		}
     	}
 
-    	function handleAuthError(error) {
+    	function handleAuthError() {
     		if ( installed ) {
-    			alertify.error('Authentication error.');
+    			alertify.error( i18n.get( 'OAUTH_UNKNOWN_ERROR' ) );
     		} else {
     			displayError();
     		}
@@ -121,7 +120,7 @@
 
     	function displayError(error) {
             vm.loginInProgress = false;
-            vm.errorMessage = error ? error : i18n.get( 'OAUTH_UNKNOWN_ERROR');
+            vm.errorMessage = error ? error : i18n.get( 'OAUTH_UNKNOWN_ERROR' );
         }
 
     }
