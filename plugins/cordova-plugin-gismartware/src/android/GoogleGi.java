@@ -77,7 +77,7 @@ public class GoogleGi extends CordovaPlugin {
                     getServerUrlFromConfig();
                     mAccountManager = AccountManager.get(cordova.getActivity());
                     try {
-                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
+                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0), args.getString(1));
                     } catch (JSONException e) {
                         e.printStackTrace();
                         handleError(OAUTH_UNKNOWN_ERROR);
@@ -143,26 +143,33 @@ public class GoogleGi extends CordovaPlugin {
      * Show all the accounts registered on the account manager. Request an auth token upon user select.
      * @param authTokenType
      */
-    private void showAccountPicker(final String authTokenType, final boolean invalidate, final String title) {
+    private void showAccountPicker(final String authTokenType, final boolean invalidate, final String title, final String domain) {
 
         mInvalidate = invalidate;
-        final Account availableAccounts[] = mAccountManager.getAccountsByType(authTokenType);
+        final Account allAccounts[] = mAccountManager.getAccountsByType(authTokenType);
+        final List<Account> availableAccounts = new ArrayList<Account>();
 
-        if (availableAccounts.length == 0) {
+        for(int i = 0; i < allAccounts.length; i++){
+            if(allAccounts[i].name.endsWith(domain)) {
+                availableAccounts.add(allAccounts[i]);
+            }
+        }
+
+        if (availableAccounts.isEmpty()) {
             handleError(OAUTH_NO_ACCOUNT_ERROR);
-        } else if (availableAccounts.length == 1) {
-            getExistingAccountAuthToken(availableAccounts[0], authTokenType);
+        } else if (availableAccounts.size() == 1) {
+            getExistingAccountAuthToken(availableAccounts.get(0), authTokenType);
         } else {
-            String name[] = new String[availableAccounts.length];
-            for (int i = 0; i < availableAccounts.length; i++) {
-                name[i] = availableAccounts[i].name;
+            String name[] = new String[availableAccounts.size()];
+            for (int i = 0; i < availableAccounts.size(); i++) {
+                name[i] = availableAccounts.get(i).name;
             }
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(cordova.getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_DARK);
             ArrayAdapter adapter = new ArrayAdapter<String>(cordova.getActivity().getBaseContext(), android.R.layout.simple_list_item_1, name);
             DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    getExistingAccountAuthToken(availableAccounts[which], authTokenType);
+                    getExistingAccountAuthToken(availableAccounts.get(which), authTokenType);
                 }
             };
             DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {

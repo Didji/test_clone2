@@ -43,7 +43,7 @@
     	function pickAccounts() {
     	    vm.loginInProgress = true;
     	    vm.errorMessage = null;
-    	    GoogleGi.pickAccounts(i18n.get('OAUTH_PICK_ACCOUNTS'), handlePickAccountsSuccess, handlePickAccountsError);
+    	    GoogleGi.pickAccounts(i18n.get('OAUTH_PICK_ACCOUNTS'), LicenseManager.serverDomain, handlePickAccountsSuccess, handlePickAccountsError);
     	}
 
     	function close() {
