@@ -11,14 +11,8 @@
             class="form-control" ng-model="selectedFamily"
             ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
-        <label><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
-        <select
-            style="margin-bottom: 10px;width:100%;"
-            ng-model="selectedCriteria"
-            ng-change="selectedCriteriaChangeHandler()" multiple>
-            <option
-                ng-repeat="(value, criter) in criteria[selectedFamily.okey]"
-                value="{{criter.key}}">{{criter.label}}</option>
+        <label ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
+        <select multiple ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" ng-show="criteria[selectedFamily.okey]" ng-options="criter.key as criter.label for criter in criteria[selectedFamily.okey]._byKey" style="margin-bottom: 10px;width:100%;">
         </select>
         <div class="form-group" ng-repeat='fieldKey in selectedCriteria'>
             <label for="adSearchField-{{fieldKey}}">{{criteria[selectedFamily.okey]._byKey[fieldKey].label}}</label>
@@ -62,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
+        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()" ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
     </div>
     <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="sendCriteria($event)">
         <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>

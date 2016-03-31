@@ -173,6 +173,11 @@
          * @desc Zoom sur l'objet
          */
         Asset.prototype.zoomOn = function() {
+            //On ferme le menu de consultation si on localise un objet et que l'on est en mode portrait sur un smartphone
+            if(!window.isTablet && window.screen.width < window.screen.height) {
+                $rootScope.$broadcast( "CLOSE_CONSULTATION_PANEL" );
+            }
+
             if (this.consultationMarker._map._zoom <= 18) {
                 G3ME.map.setView( this.getCenter(), 18 );
             } else {

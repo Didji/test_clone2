@@ -30,7 +30,7 @@
             var reportTargets = [],
                 reportLatLng, match;
             if ((match = ("" + assets).match(/^(\d+);(-?\d+.\d+),(-?\d+.\d+)$/))) {
-                reportTargets = match[0];
+                reportTargets = [match[1]];
             } else if ("string" === typeof assets) {
                 if (match = assets.match(/^\s*([-+]?\d+[.]?\d+)\s*,\s*([-+]?\d+[.]?\d+)\s*$/)) {
                     reportLatLng = match[0];

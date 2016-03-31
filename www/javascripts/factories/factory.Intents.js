@@ -32,7 +32,7 @@
                 'activity': 'report_activity,map_activity,multi_report_activity',
                 'mission': 'report_mission,multi_report_mission',
                 'fields': 'report_fields',
-                'assets': 'multi_report_target',
+                'assets': 'multi_report_target,report_assets',
                 'center': 'map_target,multi_report_center',
                 'outmsg': 'multi_report_outmsg'
             };
