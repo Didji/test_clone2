@@ -578,7 +578,8 @@ label.prettycheckbox,
 label.prettycheckbox {
     display: block;
     width: 100%;
-    height: 34px;
+    float: right;
+    height: auto;
     padding: 6px 12px;
     border: 1px solid #cccccc;
     border-radius: 4px;
@@ -588,6 +589,11 @@ label.prettycheckbox {
     color: #555555;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+}
+
+label.prettycheckbox > span:first-child {
+    float: right;
+    width: 90%;
 }
 
 label.prettycheckbox.checked {
