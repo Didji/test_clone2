@@ -98,6 +98,9 @@
                                 scope.isTakingPhoto = false;
                             } );
                         }, function() {
+                                scope.$apply( function() {
+                                    scope.isTakingPhoto = false;
+                                } );
                                 ctrl.$setValidity( "error", false );
                             }, {
                                 quality: 100,
