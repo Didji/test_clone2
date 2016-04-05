@@ -175,6 +175,11 @@ public class GoogleGi extends CordovaPlugin {
             DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog)  {
+                    cordova.getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            cordova.getActivity().setContentView(getView());
+                        }
+                    });
                     handleError(OAUTH_CANCELED_ERROR);
                 }
             };
@@ -193,7 +198,11 @@ public class GoogleGi extends CordovaPlugin {
      */
     private void getExistingAccountAuthToken(Account account, String authTokenType) {
         final AccountManagerFuture<Bundle> future = mAccountManager.getAuthToken(account, "oauth2:" + SCOPE, null, cordova.getActivity(), null, null);
-
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                cordova.getActivity().setContentView(getView());
+            }
+        });
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -239,7 +248,6 @@ public class GoogleGi extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mainCallback.success(result);
-                cordova.getActivity().setContentView(getView());
             }
         });
     }
@@ -248,7 +256,6 @@ public class GoogleGi extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mainCallback.error( msg );
-                cordova.getActivity().setContentView(getView());
             }
         });
     }
