@@ -71,14 +71,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-powermanagement": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-powermanagement"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-device": {
         "source": {
             "type": "registry",
@@ -146,6 +138,14 @@
             "URL_SCHEME": "gimap"
         }
     },
+    "uk.co.workingedge.phonegap.plugin.istablet": {
+        "source": {
+            "type": "registry",
+            "id": "uk.co.workingedge.phonegap.plugin.istablet"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
     "cordova-plugin-gismartware": {
         "source": {
             "type": "local",
@@ -154,10 +154,19 @@
         "is_top_level": true,
         "variables": {}
     },
-    "uk.co.workingedge.phonegap.plugin.istablet": {
+    "me.ktty1220.cordova.plugin.exdialogs": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ktty1220/cordova-plugin-exdialogs",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-powermanagement": {
         "source": {
             "type": "registry",
-            "id": "uk.co.workingedge.phonegap.plugin.istablet"
+            "id": "cordova-plugin-powermanagement"
         },
         "is_top_level": true,
         "variables": {}
