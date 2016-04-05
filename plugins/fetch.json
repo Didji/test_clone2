@@ -71,14 +71,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-powermanagement": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-powermanagement"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-device": {
         "source": {
             "type": "registry",
@@ -167,6 +159,14 @@
             "type": "git",
             "url": "https://github.com/ktty1220/cordova-plugin-exdialogs",
             "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-powermanagement": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-powermanagement"
         },
         "is_top_level": true,
         "variables": {}
