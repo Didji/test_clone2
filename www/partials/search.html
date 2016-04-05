@@ -12,9 +12,22 @@
             ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
         <label ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
-        <select multiple ng-model="selectedCriteria" ng-change="selectedCriteriaChangeHandler()" ng-show="criteria[selectedFamily.okey]" ng-options="criter.key as criter.label for criter in criteria[selectedFamily.okey]._byKey" style="margin-bottom: 10px;width:100%;">
-        </select>
-        <div class="form-group" ng-repeat='fieldKey in selectedCriteria'>
+        <ui-select
+            style="margin-bottom: 10px;width:100%;"
+            ng-model="selectedCriteria.labels"
+            multiple
+            on-remove="removeCriteria($item)"
+            ng-show="criteria[selectedFamily.okey]"
+            title="Select Criteria"
+            close-on-select="false"
+            ng-click="showCriteria($event)"
+            >
+            <ui-select-match to-select>{{$item}}</ui-select-match>
+            <ui-select-choices repeat="criter in criteria[selectedFamily.okey]" value="criter.key" style="display:none;">
+                {{criter.label}}
+            </ui-select-choices>
+        </ui-select>
+        <div class="form-group" ng-repeat='fieldKey in selectedCriteria.keys'>
             <label for="adSearchField-{{fieldKey}}">{{criteria[selectedFamily.okey]._byKey[fieldKey].label}}</label>
             <div class="animate-switch-container" ng-switch
                 on="criteria[selectedFamily.okey]._byKey[fieldKey].type">

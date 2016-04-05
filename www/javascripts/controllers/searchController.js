@@ -6,8 +6,12 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
         $scope.metamodel = Site.current.metamodel;
         $scope.lists = Site.current.lists;
 
+        $scope.selectedCriteria = {
+            labels: [],
+            keys: []
+        };
         $scope.selectedCriteriaValues = {};
-
+        $scope.allCriters = {};
         // On index les critères en fonction des okeys, en les sortant des "tabs", pour faire un joli ng-repeat/ng-options
         $scope.criteria = {};
         for (var i in Site.current.metamodel) {
@@ -65,23 +69,76 @@ angular.module( 'smartgeomobile' ).controller( 'searchController', ["$scope", "$
             } );
         };
 
-
         $scope.resetCriteria = function() {
             $scope.selectedFamily = null;
-            $scope.selectedCriteria = [];
-            $scope.selectedCriteriaChangeHandler();
+            $scope.selectedCriteria = {
+                labels:[],
+                keys:[]
+            };
+            $scope.allCriters = {};
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
         };
 
-        $scope.selectedCriteriaChangeHandler = function() {
+        $scope.selectedCriteriaChangeHandler = function(item) {
+            $scope.selectedCriteria = {
+                labels:[],
+                keys:[]
+            };
+            for (var i in item) {
+                $scope.allCriters.checked[i] = item[i];
+                if (item[i] === true) {
+                    $scope.selectedCriteria.labels.push($scope.allCriters.labels[i]);
+                    $scope.selectedCriteria.keys.push($scope.allCriters.keys[i]);
+                }
+            }
             var newSelectedCriteriaValues = {};
-            for (var i = 0; i < $scope.selectedCriteria.length; i++) {
-                if ($scope.selectedCriteriaValues[$scope.selectedCriteria[i]]) {
-                    newSelectedCriteriaValues[$scope.selectedCriteria[i]] = $scope.selectedCriteriaValues[$scope.selectedCriteria[i]];
+            for (var i = 0; i < $scope.selectedCriteria.keys.length; i++) {
+                if ($scope.selectedCriteriaValues[$scope.selectedCriteria.keys[i]]) {
+                    newSelectedCriteriaValues[$scope.selectedCriteria.keys[i]] = $scope.selectedCriteriaValues[$scope.selectedCriteria.keys[i]];
                 }
             }
             $scope.selectedCriteriaValues = newSelectedCriteriaValues;
             if (!$scope.$$phase) {
                 $scope.$apply();
+            }
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+        };
+
+        $scope.removeCriteria = function(item) {
+            var i = $scope.allCriters.labels.indexOf(item);
+            var key = $scope.allCriters.keys[i];
+            $scope.selectedCriteria.keys.splice($scope.selectedCriteria.keys.indexOf(key), 1);
+            $scope.allCriters.checked[i] = false;
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+        };
+
+        $scope.showCriteria = function(e) {
+            if (e.target.className.indexOf("ui-select-search") !== -1) {
+                if (!e.target.hasAttribute('readonly')) {
+                    e.target.setAttribute('readonly', 'readonly');
+                }
+                if (Object.keys($scope.allCriters).length === 0 || $scope.allCriters.selectedFamily != $scope.selectedFamily) {
+                    $scope.allCriters = {
+                        selectedFamily: $scope.selectedFamily,
+                        labels: [],
+                        keys: [],
+                        checked: []
+                    };
+                    for (var i in $scope.criteria[$scope.selectedFamily.okey]) {
+                        if (!isNaN(i)) {
+                            $scope.allCriters.labels.push($scope.criteria[$scope.selectedFamily.okey][i].label);
+                            $scope.allCriters.keys.push($scope.criteria[$scope.selectedFamily.okey][i].key);
+                            $scope.allCriters.checked.push(($scope.selectedCriteria.keys.indexOf($scope.allCriters.keys[i]) !== -1));
+                        }
+                    }
+                }
+                navigator.notification.ex.selectMulti($scope.selectedCriteriaChangeHandler, angular.noop, $scope.allCriters.labels, $scope.allCriters.checked, 'Sélection des critères');
             }
         };
 

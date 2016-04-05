@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  id="me.ktty1220.cordova.plugin.exdialogs"
+  version="0.1.0">
+
+  <engines>
+    <engine name="cordova" version=">=3.0.0" />
+  </engines>
+
+  <name>ExDialogs</name>
+  <description>Cordova App Exended Dialogs Plugin</description>
+  <author>ktty1220</author>
+  <license>MIT</license>
+  <keywords>phonegap,select,progress,loading,dialog</keywords>
+
+  <js-module src="www/exdialogs.js" name="ExDialogs">
+    <clobbers target="navigator.notification.ex" />
+  </js-module>
+
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="ExDialogs" >
+        <param name="android-package" value="me.ktty1220.cordova.plugin.exdialogs.ExDialogs"/>
+      </feature>
+    </config-file>
+    <source-file src="src/android/ExDialogs.java" target-dir="src/me/ktty1220/cordova/plugin/exdialogs" />
+  </platform>
+</plugin>
