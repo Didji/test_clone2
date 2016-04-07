@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'IntentController', IntentController );
 
-    IntentController.$inject = ["$scope", "$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo"];
+    IntentController.$inject = ["$scope", "$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo", "i18n"];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($scope, $routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo) {
+    function IntentController($scope, $routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo, i18n) {
         var intent = {};
 
         activate();
@@ -26,6 +26,7 @@
 
             Storage.set( 'intent', intent );
             if (!intent.controller) {
+                // I18N
                 alertify.alert( "Intent non valide : veuillez spécifier une action." );
             } else if ((!Site.current && !selectFirstSite() && intent.controller !== "oauth") || !window.connected) {
                 preprocessIntentTarget( function() {
@@ -51,22 +52,11 @@
                 $rootScope.fromIntent = false;
                 if (intent !== null) {
                     Storage.remove( 'intent' );
-                    if (intent.report_url_redirect) {
-                        window.plugins.launchmyapp.startActivity(
-                            {
-                                action: "android.intent.action.VIEW",
-                                url: intent.report_url_redirect
-                            },
-                            angular.noop,
-                            angular.noop
-                        );
-                    } else {
-                        window.plugins.launchmyapp.finishActivity(
-                            null,
-                            angular.noop,
-                            angular.noop
-                        );
-                    }
+                    window.plugins.launchmyapp.finishActivity(
+                        null,
+                        angular.noop,
+                        angular.noop
+                    );
                 }
             }
         }
@@ -136,7 +126,9 @@
             if (assetid) {
                 Asset.findOne( +assetid, function(asset) {
                     if (!asset) {
-                        alertify.log( "L'objet " + assetid + " n'existe pas. Veuillez mettre à jour vos données." );
+                        alertify.log(
+                            i18n.get( '_REPORT_ASSET_NOT_FOUND_S', assetid )
+                        );
                     } else {
                         intent.asset = new Asset( asset );
                         intent.map_center = intent.asset.getCenter();

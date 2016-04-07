@@ -82,6 +82,8 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_LOADING: "Chargement",
     _REPORT_SAVE: "Enregistrer",
     _REPORT_SELECT_ASSETS: "Sélectionner patrimoine",
+    _REPORT_ASSET_NOT_FOUND_S: "L'objet (%s) n'existe pas. Veuillez mettre à jour vos données.",
+    _REPORT_ASSET_NOT_FOUND_P: "Les objets (%s) n'existent pas. Veuillez mettre à jour vos données.",
     _SEARCH_SEARCH: "Recherche",
     _SEARCH_BACK: "Retour",
     _SEARCH_ADVANCED_SEARCH: "Recherche avancée",

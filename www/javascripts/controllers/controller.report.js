@@ -39,8 +39,8 @@
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
         vm._MAX_MEDIA_PER_REPORT = 3 ;
 
-
-        var intent = Storage.get( 'intent' ) || {};
+        var invalidIds = [],
+            intent = Storage.get( 'intent' ) || {};
 
         activate();
 
@@ -49,6 +49,7 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
+            var asset;
             $rootScope.currentPage = "Saisie de compte-rendu";
 
             if (!checkInputParameters($routeParams)) {
@@ -63,8 +64,23 @@
             vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
             for (var i = 0; i < vm.report.assets.length; i++) {
-                vm.assets.push(new Asset(vm.report.assets[i]));
+                asset = new Asset( vm.report.assets[i] );
+                if (!asset.id) {
+                    invalidIds.push( vm.report.assets[i] );
+                } else {
+                    vm.assets.push( asset );
+                }
             }
+
+            if ( invalidIds.length ) {
+                alertify.log(
+                    i18n.get(
+                        invalidIds.length > 1 ? '_REPORT_ASSET_NOT_FOUND_P' : '_REPORT_ASSET_NOT_FOUND_S',
+                        invalidIds.join(', ')
+                    )
+                );
+            }
+
             applyDefaultValues();
 
             setTimeout(function() {
@@ -130,15 +146,7 @@
                     Storage.remove('intent');
                     if (intent != null && $rootScope.fromIntent === true) {
                         $rootScope.fromIntent = false;
-                        if (intent.report_url_redirect) {
-                            intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                            window.plugins.launchmyapp.startActivity({
-                                action: "android.intent.action.VIEW",
-                                url: intent.report_url_redirect},
-                                angular.noop,
-                                angular.noop
-                            );
-                        } else {
+                        if (!intent.report_url_redirect) {
                             window.plugins.launchmyapp.finishActivity(
                                 {},
                                 angular.noop,
