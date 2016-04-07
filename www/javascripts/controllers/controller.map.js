@@ -96,7 +96,7 @@
             }
             if ( intent.map_marker ) {
                 if ( Site.current.activities._byId[intent.report_activity] ) {
-                    Marker.get( intent.map_center, 'CONSULTATION', function() {
+                    Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function() {
                         $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
                         $scope.$apply();
                     } ).addTo( G3ME.map );
