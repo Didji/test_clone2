@@ -109,7 +109,13 @@
                 if ( intent.controller === 'report') {
                     if ( intent.args === "new" ) {
                         if (Site.current.activities._byId[intent.report_activity]) {
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_assets );
+                            var mission_id;
+                            if(intent.report_mission){
+                                mission_id = "/"+intent.report_mission;
+                            } else {
+                                mission_id = "";
+                            }
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_assets + mission_id);
                             $scope.$apply();
                         } else {
                             // TODO: I18N, really
