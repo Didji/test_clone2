@@ -40,7 +40,6 @@
 				                                    <div ng-bind-html="option.label | highlight: $select.search"></div>
 				                                </ui-select-choices>
 				                            </ui-select>
-                            </ui-select>
 	                              </div>
 
 	                              <select ng-required='field.required' class="form-control" name="f" ng-model="report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
@@ -86,7 +85,7 @@
 	                      <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
 	                      <i ng-show='isTakingPhoto' class="fa fa-refresh fa-spin"></i>
 	                  </button>
-	                  <button ng-show="isIOS" ng-disabled="report.ged.length >= 3 || isTakingPhoto" camera="gallery" class='btn btn-default btn-block' ng-model='report.ged'>
+	                  <button ng-disabled="report.ged.length >= 3 || isTakingPhoto" camera="gallery" class='btn btn-default btn-block' ng-model='report.ged'>
 	                      <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES_FROM_GALLERY</i18n>
 	                      <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
 	                      <i ng-show='isTakingPhoto' class="fa fa-refresh fa-spin"></i>
@@ -94,7 +93,7 @@
 	                  <div id="images">
 	                      <ul class='ged-gallery'>
 	                          <li ng-repeat='image in report.ged'>
-	                              <img ng-src="{{image.content}}" alt=""></img>
+	                              <img ng-src="{{image.content}}" alt="" />
 	                              <button class="btn btn-default btn-danger btn-block" ng-click="">
 	                                  <span ng-click="report.removeGedItem($index)" class="fa fa-trash" style="text-align: center;display: block;font-size: 2em;"></span>
 	                              </button>
