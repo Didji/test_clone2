@@ -146,15 +146,7 @@
                     Storage.remove('intent');
                     if (intent != null && $rootScope.fromIntent === true) {
                         $rootScope.fromIntent = false;
-                        if (intent.report_url_redirect) {
-                            intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                            window.plugins.launchmyapp.startActivity({
-                                action: "android.intent.action.VIEW",
-                                url: intent.report_url_redirect},
-                                angular.noop,
-                                angular.noop
-                            );
-                        } else {
+                        if (!intent.report_url_redirect) {
                             window.plugins.launchmyapp.finishActivity(
                                 {},
                                 angular.noop,

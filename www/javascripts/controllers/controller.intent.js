@@ -52,22 +52,11 @@
                 $rootScope.fromIntent = false;
                 if (intent !== null) {
                     Storage.remove( 'intent' );
-                    if (intent.report_url_redirect) {
-                        window.plugins.launchmyapp.startActivity(
-                            {
-                                action: "android.intent.action.VIEW",
-                                url: intent.report_url_redirect
-                            },
-                            angular.noop,
-                            angular.noop
-                        );
-                    } else {
-                        window.plugins.launchmyapp.finishActivity(
-                            null,
-                            angular.noop,
-                            angular.noop
-                        );
-                    }
+                    window.plugins.launchmyapp.finishActivity(
+                        null,
+                        angular.noop,
+                        angular.noop
+                    );
                 }
             }
         }
