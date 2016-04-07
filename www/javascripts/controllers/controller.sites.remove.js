@@ -6,14 +6,14 @@
         .module( 'smartgeomobile' )
         .controller( 'SiteRemoveController', SiteRemoveController );
 
-    SiteRemoveController.$inject = ["$scope", "$location", "Installer", "Storage", "prefetchedlocalsites"];
+    SiteRemoveController.$inject = ["$scope", "$location", "Installer", "Storage", "prefetchedlocalsites", "LicenseManager"];
 
     /**
      * @class SiteRemoveController
      * @desc Controlleur de la page de suppression de site.
      */
 
-    function SiteRemoveController($scope, $location, Installer, Storage, prefetchedlocalsites) {
+    function SiteRemoveController($scope, $location, Installer, Storage, prefetchedlocalsites, LicenseManager) {
 
         var vm = this;
 
@@ -41,7 +41,7 @@
             Storage.get_( 'sites', function(sites) {
                 delete sites[prefetchedlocalsites.id];
                 Storage.set_( 'sites', sites );
-                $location.path( Object.keys( sites ).length === 0 ? '/' : '/sites' );
+                $location.path( Object.keys( sites ).length === 0 ? ((LicenseManager.oauth) ? '/oauth' : '/') : '/sites' );
                 $scope.$apply();
             } );
 
