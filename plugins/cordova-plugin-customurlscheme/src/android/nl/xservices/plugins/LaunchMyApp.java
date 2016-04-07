@@ -253,6 +253,7 @@ public class LaunchMyApp extends CordovaPlugin {
                 i.putExtra(key, value);
             }
         }
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
     }
 
