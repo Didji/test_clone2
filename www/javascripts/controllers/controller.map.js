@@ -102,8 +102,7 @@
                         $scope.$apply();
                     } ).addTo( G3ME.map );
                 } else {
-                    // TODO: I18N
-                    alertify.alert( "L'activité n'existe pas." );
+                    alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
                     return Storage.remove('intent');
                 }
             } else {
@@ -117,19 +116,17 @@
                             } else {
                                 mission_id = "";
                             }
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_assets + mission_id);
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
                             $scope.$apply();
                         } else {
-                            // TODO: I18N, really
-                            alertify.alert( "L'activité n'existe pas." );
+                            alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
                             return Storage.remove('intent');
                         }
                     } else if ( intent.args === "simple" ) {
                         $rootScope.multireport = vm.multireport = intent;
                     }
                 } else {
-                    // TODO: I18N, someone ?
-                    alertify.alert( 'L\'intent utilisé n\'est pas disponible.' );
+                    alertify.alert( i18n.get( '_INTENT_NOT_AVAILABLE_' ) );
                     return Storage.remove('intent');
                 }
             }
