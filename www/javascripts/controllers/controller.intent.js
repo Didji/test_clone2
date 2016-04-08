@@ -39,26 +39,6 @@
                     redirect();
                 } );
             }
-
-            Smartgeo._addEventListener('backbutton', onBackButton);
-        }
-
-        /**
-         * @name onBackButton
-         * @desc Fonction appelé sur appui du bouton retour
-         */
-        function onBackButton() {
-            if ( ($location.$$path.match(/map/) != null || $location.$$path.match(/report/) != null || $location.$$path.match(/oauth/) != null) && $rootScope.fromIntent == true ) {
-                $rootScope.fromIntent = false;
-                if (intent !== null) {
-                    Storage.remove( 'intent' );
-                    window.plugins.launchmyapp.finishActivity(
-                        null,
-                        angular.noop,
-                        angular.noop
-                    );
-                }
-            }
         }
 
         /**

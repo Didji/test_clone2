@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route"];
+    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route", "Smartgeo", "Intents"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route) {
+    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route, Smartgeo, Intents) {
         var vm = this,
             LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -95,6 +95,7 @@
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
             if ( intent.map_marker ) {
+                Smartgeo._addEventListener('backbutton', Intents.end);
                 if ( Site.current.activities._byId[intent.report_activity] ) {
                     Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function() {
                         $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
@@ -108,6 +109,7 @@
             } else {
                 if ( intent.controller === 'report') {
                     if ( intent.args === "new" ) {
+                        Smartgeo._addEventListener('backbutton', Intents.end);
                         if (Site.current.activities._byId[intent.report_activity]) {
                             var mission_id;
                             if(intent.report_mission){

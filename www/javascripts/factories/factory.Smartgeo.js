@@ -60,6 +60,13 @@
             listeners[eventName].push( listener );
         };
 
+        Smartgeo._removeEventListener = function(eventName, listener) {
+            if ( !listeners[eventName] ) {
+                return;
+            }
+            listeners[eventName].splice( listeners[eventName].indexOf(listener), 1 );
+        };
+
         //listen online mode
         Smartgeo._onlineTask = function() {
             Storage.set('online', true);

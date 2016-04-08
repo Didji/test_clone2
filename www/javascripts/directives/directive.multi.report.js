@@ -11,9 +11,9 @@
         .module( 'smartgeomobile' )
         .directive( 'multiReport', multiReportDirective );
 
-    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "$rootScope"];
+    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "Smartgeo", "Intents", "$rootScope"];
 
-    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, $rootScope) {
+    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, Smartgeo, Intents, $rootScope) {
         return {
             restrict: 'E',
             scope: {
@@ -28,6 +28,7 @@
             initialTargets = [];
 
         function link(scope, element, attrs, controller) {
+            Smartgeo._addEventListener('backbutton', Intents.end);
 
             if (!scope.intent) {
                 return false;
@@ -407,6 +408,8 @@
                     asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
+                    Smartgeo._removeEventListener('backbutton', Intents.end);
+                    Smartgeo._addEventListener('backbutton', cancel);
                     var field;
                     scope.report = reports[latlng] || new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     for (var i in scope.report.activity._fields) {
@@ -432,6 +435,8 @@
                     asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
+                    Smartgeo._removeEventListener('backbutton', Intents.end);
+                    Smartgeo._addEventListener('backbutton', cancel);
                     var field;
                     scope.report = angular.copy( reports[asset.id] ) || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     for (var i in scope.report.activity._fields) {
@@ -501,6 +506,8 @@
                 scope.assets = [];
                 scope.reportForm.$setPristine();
                 $( '#multireport' ).modal( 'toggle' );
+                Smartgeo._removeEventListener('backbutton', cancel);
+                Smartgeo._addEventListener('backbutton', Intents.end);
             }
         }
     }
