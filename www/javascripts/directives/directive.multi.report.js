@@ -50,11 +50,11 @@
 
             scope.intent.multi_report_activity = Activity.findOne( +scope.intent.multi_report_activity );
             if (!scope.intent.multi_report_activity) {
-                return alertify.alert( "L'activité n'existe pas." );
+                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_FOUND_') );
             } else if (scope.intent.multi_report_activity.type !== "multi_assets_tour" || !scope.intent.multi_report_activity.multi_assets_tour) {
-                return alertify.alert( "L'activité fournie n'est pas compatible. Le type est différent de 'multi_assets_tour'" );
+                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_COMPATIBLE_') );
             } else if (scope.intent.multi_report_activity.multi_assets_tour.switch_field === null || scope.intent.multi_report_activity.multi_assets_tour.switch_field === undefined) {
-                return alertify.alert( "L'activité fournie n'est pas compatible ou erroné." );
+                return alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
             }
             scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
             scope.intent.multi_report_target = scope.intent.multi_report_target.split( ',' );
