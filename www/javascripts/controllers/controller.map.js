@@ -115,7 +115,7 @@
                             } else {
                                 mission_id = "";
                             }
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_assets + mission_id);
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
                             $scope.$apply();
                         } else {
                             // TODO: I18N, really
