@@ -28,8 +28,12 @@
 
             // TODO: Vérifier si on en a vraiment besoin, et si oui comment s'en passer
             window.Smartgeo = Smartgeo;
-
-            Storage.set('online', window.navigator.onLine);
+            console.log('on initialize');
+            // si au lancement de l'application on est deja connecté
+            if(window.navigator.onLine){
+                console.log("on test le online true");
+                 Smartgeo._onlineTask();
+            }
 
             if (window.cordova) {
                 document.addEventListener( "deviceready", function() {
@@ -47,6 +51,7 @@
             }
         };
 
+        // surveille le changement d'etat de connection, et le click sur le bouton retour;
         Smartgeo._initializeGlobalEvents = function() {
             document.addEventListener('online', Smartgeo._onlineTask, false);
             document.addEventListener('offline', Smartgeo._offlineTask, false);

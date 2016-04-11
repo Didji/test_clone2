@@ -35,6 +35,13 @@
         var checkSyncReportInterval;
         updateList();
 
+        // au lancement de l'application l'instanciation du controlleur ce fait apres le smartgeo.initialise , et donc l'evenement $on de ce controlleur est instancier apres le $broadcast de la factory smartgeo; mais on peut toutefois s'appuyer sur la variable online dans le localstorage.
+        if(Storage.get("online")){
+            activate();
+        } else {
+            desactivate();
+        }
+
         /**
          * @name activate
          * @desc Fonction d'initialisation
