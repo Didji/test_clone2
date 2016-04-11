@@ -38,7 +38,7 @@
                         <div ng-if='field.type=="L" && field.options.length > 15'>
                             <ui-select skip-focusser="true" ng-required='field.required' ng-model="reportController.report.fields[field.id]" theme="bootstrap" ng-disabled="disabled">
                                 <ui-select-match allow-clear="true">{{$select.selected.label}}</ui-select-match>
-                                <ui-select-choices repeat="option.label as option in reportController.report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label' | limitTo: 15" style="display:{{($select.search.length > 1 && option.label !== null && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}" value="option.value" position="down">
+                                <ui-select-choices repeat="option.label as option in reportController.report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label' | limitTo: 75" style="display:{{($select.search.length > 1 && option.label !== null && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}" value="option.value" position="down">
                                     <div ng-bind-html="option.label | highlight: $select.search"></div>
                                 </ui-select-choices>
                             </ui-select>
