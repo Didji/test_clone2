@@ -6,9 +6,9 @@
         .module( 'smartgeomobile' )
         .factory( 'Intents', IntentsFactory );
 
-    IntentsFactory.$inject = [];
+    IntentsFactory.$inject = ['$rootScope', 'Storage'];
 
-    function IntentsFactory() {
+    function IntentsFactory($rootScope, Storage) {
 
         /**
          * @class IntentsFactory
@@ -74,6 +74,19 @@
                 }
             }
             return url;
+        };
+
+        Intents.end = function() {
+            $rootScope.fromIntent = false;
+            var intent = Storage.get('intent');
+            if (intent !== null) {
+                Storage.remove( 'intent' );
+                window.plugins.launchmyapp.finishActivity(
+                    null,
+                    angular.noop,
+                    angular.noop
+                );
+            }
         };
 
         return Intents;

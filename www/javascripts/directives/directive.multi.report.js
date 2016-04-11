@@ -11,9 +11,9 @@
         .module( 'smartgeomobile' )
         .directive( 'multiReport', multiReportDirective );
 
-    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "$rootScope"];
+    multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "Smartgeo", "Intents", "$rootScope"];
 
-    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, $rootScope) {
+    function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, Smartgeo, Intents, $rootScope) {
         return {
             restrict: 'E',
             scope: {
@@ -28,6 +28,7 @@
             initialTargets = [];
 
         function link(scope, element, attrs, controller) {
+            Smartgeo._addEventListener('backbutton', Intents.end);
 
             if (!scope.intent) {
                 return false;
@@ -50,11 +51,11 @@
 
             scope.intent.multi_report_activity = Activity.findOne( +scope.intent.multi_report_activity );
             if (!scope.intent.multi_report_activity) {
-                return alertify.alert( "L'activité n'existe pas." );
+                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_FOUND_') );
             } else if (scope.intent.multi_report_activity.type !== "multi_assets_tour" || !scope.intent.multi_report_activity.multi_assets_tour) {
-                return alertify.alert( "L'activité fournie n'est pas compatible. Le type est différent de 'multi_assets_tour'" );
+                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_COMPATIBLE_') );
             } else if (scope.intent.multi_report_activity.multi_assets_tour.switch_field === null || scope.intent.multi_report_activity.multi_assets_tour.switch_field === undefined) {
-                return alertify.alert( "L'activité fournie n'est pas compatible ou erroné." );
+                return alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
             }
             scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
             scope.intent.multi_report_target = scope.intent.multi_report_target.split( ',' );
@@ -407,6 +408,8 @@
                     asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
+                    Smartgeo._removeEventListener('backbutton', Intents.end);
+                    Smartgeo._addEventListener('backbutton', cancel);
                     var field;
                     scope.report = reports[latlng] || new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     for (var i in scope.report.activity._fields) {
@@ -432,6 +435,8 @@
                     asset.currentState = ++asset.currentState % scope.intent.multi_report_field.options.length;
                     this.setIcon( scope.intent.multi_report_icons[asset.currentState] );
                 } ).on( 'contextmenu', function() {
+                    Smartgeo._removeEventListener('backbutton', Intents.end);
+                    Smartgeo._addEventListener('backbutton', cancel);
                     var field;
                     scope.report = angular.copy( reports[asset.id] ) || new Report( asset.id, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     for (var i in scope.report.activity._fields) {
@@ -501,6 +506,8 @@
                 scope.assets = [];
                 scope.reportForm.$setPristine();
                 $( '#multireport' ).modal( 'toggle' );
+                Smartgeo._removeEventListener('backbutton', cancel);
+                Smartgeo._addEventListener('backbutton', Intents.end);
             }
         }
     }

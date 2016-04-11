@@ -6,13 +6,13 @@
         .module( 'smartgeomobile' )
         .controller( 'MapController', MapController );
 
-    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route"];
+    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route", "Smartgeo", "Intents"];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route) {
+    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route, Smartgeo, Intents) {
         var vm = this,
             LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
@@ -95,19 +95,20 @@
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
             if ( intent.map_marker ) {
+                Smartgeo._addEventListener('backbutton', Intents.end);
                 if ( Site.current.activities._byId[intent.report_activity] ) {
                     Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function() {
                         $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
                         $scope.$apply();
                     } ).addTo( G3ME.map );
                 } else {
-                    // TODO: I18N
-                    alertify.alert( "L'activité n'existe pas." );
+                    alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
                     return Storage.remove('intent');
                 }
             } else {
                 if ( intent.controller === 'report') {
                     if ( intent.args === "new" ) {
+                        Smartgeo._addEventListener('backbutton', Intents.end);
                         if (Site.current.activities._byId[intent.report_activity]) {
                             var mission_id;
                             if(intent.report_mission){
@@ -115,19 +116,17 @@
                             } else {
                                 mission_id = "";
                             }
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_assets + mission_id);
+                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
                             $scope.$apply();
                         } else {
-                            // TODO: I18N, really
-                            alertify.alert( "L'activité n'existe pas." );
+                            alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
                             return Storage.remove('intent');
                         }
                     } else if ( intent.args === "simple" ) {
                         $rootScope.multireport = vm.multireport = intent;
                     }
                 } else {
-                    // TODO: I18N, someone ?
-                    alertify.alert( 'L\'intent utilisé n\'est pas disponible.' );
+                    alertify.alert( i18n.get( '_INTENT_NOT_AVAILABLE_' ) );
                     return Storage.remove('intent');
                 }
             }
