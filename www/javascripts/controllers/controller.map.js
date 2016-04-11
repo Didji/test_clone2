@@ -91,6 +91,7 @@
          * @desc Handler d'intent
          */
         function intentHandler() {
+            var url;
             if ( intent.map_center ) {
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
@@ -98,7 +99,11 @@
                 Smartgeo._addEventListener('backbutton', Intents.end);
                 if ( Site.current.activities._byId[intent.report_activity] ) {
                     Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function() {
-                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target );
+                        url = '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target;
+                        if ( intent.report_mission ) {
+                            url += '/' + intent.report_mission;
+                        }
+                        $location.path( url );
                         $scope.$apply();
                     } ).addTo( G3ME.map );
                 } else {
