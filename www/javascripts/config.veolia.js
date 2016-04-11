@@ -19,7 +19,7 @@ angular
 		"project": false,
 		"report": false,
 		"search": true,
-		"serverUrl": "http://canope-rec.projets-gi.com/",
+		"serverUrl": "http://canopee.m-ve.com",
 		"serverDomain": "@m-ve.com",
 		"siteselection": false,
 		"synccenter": true,
