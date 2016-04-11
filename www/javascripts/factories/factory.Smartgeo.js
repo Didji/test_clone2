@@ -28,10 +28,8 @@
 
             // TODO: Vérifier si on en a vraiment besoin, et si oui comment s'en passer
             window.Smartgeo = Smartgeo;
-            console.log('on initialize');
             // si au lancement de l'application on est deja connecté
             if(window.navigator.onLine){
-                console.log("on test le online true");
                  Smartgeo._onlineTask();
             }
 
