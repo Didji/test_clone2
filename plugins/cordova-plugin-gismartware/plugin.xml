@@ -24,13 +24,4 @@
 	    </config-file>
 		<source-file src="src/android/GoogleGi.java" target-dir="src/com/gismartware/google" />
 	</platform>
-	<platform name="ios">
-		<config-file parent="/*" target="config.xml">
-			<feature name="GoogleGi">
-        		<param name="onload" value="true" />
-			</feature>
-      		<access origin="https://accounts.google.com/*" />
-		</config-file>
-		<source-file src="src/ios/CDVGoogleGi.m" />
-	</platform>
 </plugin>
