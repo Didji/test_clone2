@@ -16,9 +16,9 @@ for (( i = 1; i <= $number; i++ )); do
 	if [[ $i = 1 ]]; then
 		cordova build android > ./gen_apks/log
 		if [[ $debug = 'y' ]]; then
-			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version.apk
+			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version-debug.apk
 		else
-			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version.apk
+			mv ./platforms/android/build/outputs/apk/android-release.apk ./gen_apks/smartgeomobile-$version.apk
 		fi
 	else
 		if [[ $i = 2 ]]; then
@@ -33,7 +33,7 @@ for (( i = 1; i <= $number; i++ )); do
 
 		if [[ $debug = 'y' ]]; then
 			cordova build android 2>> ./gen_apks/log_errors >> ./gen_apks/log
-			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version-$i.apk
+			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version-debug-$i.apk
 		else
 			cordova build android --release 2>> ./gen_apks/log_errors >> ./gen_apks/log
 			mv ./platforms/android/build/outputs/apk/android-release.apk ./gen_apks/smartgeomobile-$version-$i.apk
