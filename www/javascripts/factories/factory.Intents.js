@@ -21,6 +21,7 @@
          * @desc
          */
         Intents.parse = function(intent) {
+            console.log("INTENT_URL = " + intent);
             var data = intent.replace('gimap:/', '/intent').split('?');
             var params = data[1].split("&");
             var appendedParams = false;
@@ -81,12 +82,12 @@
             var intent = Storage.get('intent');
             if (intent !== null) {
                 Storage.remove( 'intent' );
-                window.plugins.launchmyapp.finishActivity(
-                    null,
-                    angular.noop,
-                    angular.noop
-                );
             }
+            window.plugins.launchmyapp.finishActivity(
+                null,
+                angular.noop,
+                angular.noop
+            );
         };
 
         return Intents;
