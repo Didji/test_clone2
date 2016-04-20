@@ -74,20 +74,33 @@
                     }
                 }
             }
+            if (url.indexOf("redirect") !== -1) {
+                $rootScope.fromFDR = true;
+            };
             return url;
         };
 
         Intents.end = function() {
-            $rootScope.fromIntent = false;
-            var intent = Storage.get('intent');
-            if (intent !== null) {
-                Storage.remove( 'intent' );
-            }
-            window.plugins.launchmyapp.finishActivity(
-                null,
-                angular.noop,
-                angular.noop
-            );
+            if ($rootScope.fromIntent === true) {
+                $rootScope.fromIntent = false;
+                var intent = Storage.get('intent');
+                if (intent !== null) {
+                    Storage.remove( 'intent' );
+                }
+                if ($rootScope.fromFDR === true) {
+                    window.plugins.launchmyapp.returnToPreviousActitivy(
+                        null,
+                        angular.noop,
+                        angular.noop
+                    );
+                    return;
+                };
+                window.plugins.launchmyapp.finishActivity(
+                    null,
+                    angular.noop,
+                    angular.noop
+                );
+            };
         };
 
         return Intents;

@@ -50,6 +50,13 @@
             fail(args);
         }, 'LaunchMyApp', 'startActivity', [params]);
     },
+    returnToPreviousActitivy: function(params, success, fail) {
+        return cordova.exec(function(args) {
+            success(args);
+        }, function(args) {
+            fail(args);
+        }, 'LaunchMyApp', 'returnToPreviousActitivy', [params]);
+    },
     finishActivity: function(params, success, fail) {
         return cordova.exec(function(args) {
             success(args);

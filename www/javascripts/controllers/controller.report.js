@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n", "Intents"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n, Intents) {
 
         var vm = this;
 
@@ -143,17 +143,7 @@
                 if(yes)
                 {
                     $location.path( 'map/' + Site.current.id );
-                    Storage.remove('intent');
-                    if (intent != null && $rootScope.fromIntent === true) {
-                        $rootScope.fromIntent = false;
-                        if (!intent.report_url_redirect) {
-                            window.plugins.launchmyapp.finishActivity(
-                                {},
-                                angular.noop,
-                                angular.noop
-                            );
-                        }
-                    }
+                    Intents.end();
                     $scope.$apply();
                 }
             })

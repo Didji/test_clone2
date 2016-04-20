@@ -81,9 +81,13 @@
 
             intent = Storage.get( 'intent' );
 
-            if (intent && $rootScope.fromIntent == true) {
-                setTimeout( intentHandler, 0 );
-            }
+            if ($rootScope.fromIntent == true) {
+                if (intent) {
+                    setTimeout( intentHandler, 0 );
+                } else {
+                    Smartgeo._addEventListener('backbutton', Intents.end);
+                }
+            };
         }
 
         /**
