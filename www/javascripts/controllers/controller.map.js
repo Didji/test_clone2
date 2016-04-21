@@ -102,7 +102,8 @@
             if ( intent.map_marker ) {
                 Smartgeo._addEventListener('backbutton', Intents.end);
                 if ( Site.current.activities._byId[intent.report_activity] ) {
-                    Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function() {
+                    Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function(e) {
+                        e.target._icon.src = "file:///android_asset/www/images/CONSULTATION-LOADING.gif";
                         url = '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target;
                         if ( intent.report_mission ) {
                             url += '/' + intent.report_mission;

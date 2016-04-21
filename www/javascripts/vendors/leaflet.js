@@ -6607,6 +6607,10 @@
      */
 
     L.Draggable = L.Class.extend({
+        options: {
+            clickTolerance: 10
+        },
+
         includes: L.Mixin.Events,
 
         statics: {
@@ -6686,7 +6690,7 @@
                 offset = newPoint.subtract(this._startPoint);
 
             if (!offset.x && !offset.y) { return; }
-            if (L.Browser.touch && Math.abs(offset.x) + Math.abs(offset.y) < 3) { return; }
+            if (Math.abs(offset.x) + Math.abs(offset.y) < this.options.clickTolerance) { return; }
 
             L.DomEvent.preventDefault(e);
 
