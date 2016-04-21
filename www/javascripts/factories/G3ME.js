@@ -274,7 +274,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                     xmax: xmax
                 },
                 uuid = window.uuid(),
-                request = G3ME.baseRequest.replace( "##UUID##", uuid ) + ' and (symbolId like "' + G3ME.getActiveLayersForRequest() + '%" )';
+                request = G3ME.baseRequest.replace( "##UUID##", uuid ) + ' and (symbolId REGEXP("' + G3ME.getActiveLayersForRequest() + '") )';
 
             if (G3ME.map.getZoom() !== zoom) {
                 return G3ME.canvasTile.tileDrawn( canvas );
