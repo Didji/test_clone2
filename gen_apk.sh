@@ -1,6 +1,8 @@
 #!/bin/bash
 
 read -p 'Nombre de builds souhaitées : ' number
+read -p 'Version de Smartgeo (exemple: 2.2.0-dev2): ' version
+read -p 'En mode debug (y/n): ' debug
 
 rm -Rf ./gen_apks
 mkdir gen_apks
@@ -12,8 +14,13 @@ cordova platform add android 2>> ./gen_apks/log_errors >> ./gen_apks/log
 
 for (( i = 1; i <= $number; i++ )); do
 	if [[ $i = 1 ]]; then
-		cordova build android > ./gen_apks/log
-		mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/Smartgeo.apk
+		if [[ $debug = 'y' ]]; then
+			cordova build android > ./gen_apks/log
+			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version-debug.apk
+		else
+			cordova build android --release > ./gen_apks/log
+			mv ./platforms/android/build/outputs/apk/android-release.apk ./gen_apks/smartgeomobile-$version.apk
+		fi
 	else
 		if [[ $i = 2 ]]; then
 			sed -i 's/com.gismartware.mobile/com.gismartware.mobile_'"$i"'/' ./config.xml
@@ -24,8 +31,14 @@ for (( i = 1; i <= $number; i++ )); do
 		fi
 		cordova platform rm android 2>> ./gen_apks/log_errors >> ./gen_apks/log
 		cordova platform add android 2>> ./gen_apks/log_errors >> ./gen_apks/log
-		cordova build android 2>> ./gen_apks/log_errors >> ./gen_apks/log
-		mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/Smartgeo-$i.apk
+
+		if [[ $debug = 'y' ]]; then
+			cordova build android 2>> ./gen_apks/log_errors >> ./gen_apks/log
+			mv ./platforms/android/build/outputs/apk/android-debug.apk ./gen_apks/smartgeomobile-$version-debug-$i.apk
+		else
+			cordova build android --release 2>> ./gen_apks/log_errors >> ./gen_apks/log
+			mv ./platforms/android/build/outputs/apk/android-release.apk ./gen_apks/smartgeomobile-$version-$i.apk
+		fi
 	fi
 done
 

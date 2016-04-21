@@ -33,6 +33,7 @@ public class LaunchMyApp extends CordovaPlugin {
     private static final String ACTION_GETLASTINTENT = "getLastIntent";
     private static final String ACTION_STARTACTIVITY = "startActivity";
     private static final String ACTION_FINISHACTIVITY = "finishActivity";
+    private static final String ACTION_PREVACTIVITY = "returnToPreviousActitivy";
     private static final String ACTION_SETACTIVITY = "setActivity";
 
     private int GI_ACTIVITY;
@@ -75,6 +76,9 @@ public class LaunchMyApp extends CordovaPlugin {
       return true;
     } else if (ACTION_SETACTIVITY.equalsIgnoreCase(action)) {
         GI_ACTIVITY = args.getInt(0);
+    } else if (ACTION_PREVACTIVITY.equalsIgnoreCase(action)) {
+        returnToPreviousActitivy();
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     } else if (ACTION_GETLASTINTENT.equalsIgnoreCase(action)) {
       if(lastIntentString != null) {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, lastIntentString));
@@ -262,5 +266,9 @@ public class LaunchMyApp extends CordovaPlugin {
         intent.putExtra("report", result);
         ((CordovaActivity)this.cordova.getActivity()).setResult( GI_ACTIVITY, intent );
         ((CordovaActivity)this.cordova.getActivity()).finish();
+    }
+
+    void returnToPreviousActitivy() {
+        ((CordovaActivity)this.cordova.getActivity()).moveTaskToBack(true);
     }
 }

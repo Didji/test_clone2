@@ -903,3 +903,17 @@ margin-left: -30px;
     padding: 10px 0 0 5px;
     font-size: 13px;
 }
+
+/** select **/
+
+.ui-select-bootstrap .ui-select-toggle > .caret {
+    display: none;
+}
+
+.ui-select-bootstrap .ui-select-toggle > .caret + a {
+    margin: 0px !important;
+}
+
+.ui-select-container .ui-select-bootstrap .ui-select-match {
+    padding: 0px !important;
+}

@@ -34,12 +34,12 @@
 	                              </label>
 
 	                              <div ng-if='field.type=="L" && field.options.length > 15'>
-				                            <ui-select ng-required='field.required' ng-model="report.fields[field.id]" theme="bootstrap" ng-disabled="disabled" style="width:100%;">
-				                                <ui-select-match allow-clear="true">{{$select.selected.label}}</ui-select-match>
-				                                <ui-select-choices repeat="option.label as option in report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label'" style="display:{{(option.label !== null && $select.search.length > 0 && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}" value="option.value" class="form-control" position="down">
-				                                    <div ng-bind-html="option.label | highlight: $select.search"></div>
-				                                </ui-select-choices>
-				                            </ui-select>
+			                            <ui-select skip-focusser="true" ng-required='field.required' ng-model="report.fields[field.id]" theme="bootstrap" ng-disabled="disabled">
+			                                <ui-select-match allow-clear="true">{{$select.selected.label}}</ui-select-match>
+			                                <ui-select-choices repeat="option.label as option in report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label' | limitTo: 75" style="display:{{($select.search.length > 1 && option.label !== null && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}" value="option.value" position="down">
+			                                    <div ng-bind-html="option.label | highlight: $select.search"></div>
+			                                </ui-select-choices>
+			                            </ui-select>
 	                              </div>
 
 	                              <select ng-required='field.required' class="form-control" name="f" ng-model="report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'">
