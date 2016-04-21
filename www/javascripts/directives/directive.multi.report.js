@@ -316,7 +316,7 @@
                     }
 
                     if (!reports[latlng]) {
-                        reports[latlng] = new Report( latlng.split( ',' ), scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
+                        reports[latlng] = new Report( latlng, scope.intent.multi_report_activity.id, scope.intent.multi_report_mission );
                     }
 
                     reports[latlng].fields[scope.intent.multi_report_field.id] = scope.intent.multi_report_field.options[asset.currentState].value;
@@ -501,7 +501,9 @@
              * @return Ferme la fenêtre
              */
             function close() {
-                unwatch_report_ged();
+                if (unwatch_report_ged) {
+                    unwatch_report_ged();
+                }
                 scope.report = null;
                 scope.assets = [];
                 scope.reportForm.$setPristine();
