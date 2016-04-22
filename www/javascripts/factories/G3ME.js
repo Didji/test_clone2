@@ -121,7 +121,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
             G3ME.map = null;
         },
 
-        getActiveLayersForRequest: function() {
+        getActiveLayersForRequest: function(zoom) {
             if (!this.active_layers) {
                 this.active_layers = [];
                 for (var okey in Site.current.metamodel) {
@@ -136,7 +136,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                     }
                 }
             }
-            return this.active_layers.join( '%" or symbolId like "' );
+            return this.active_layers.join( '") or symbolId REGEXP("' );
         },
 
         reloadLayers: function() {
@@ -274,7 +274,7 @@ angular.module( 'smartgeomobile' ).factory( 'G3ME', function(SQLite, $rootScope,
                     xmax: xmax
                 },
                 uuid = window.uuid(),
-                request = G3ME.baseRequest.replace( "##UUID##", uuid ) + ' and (symbolId REGEXP("' + G3ME.getActiveLayersForRequest() + '") )';
+                request = G3ME.baseRequest.replace( "##UUID##", uuid ) + ' and (symbolId REGEXP("' + G3ME.getActiveLayersForRequest(zoom) + '") )';
 
             if (G3ME.map.getZoom() !== zoom) {
                 return G3ME.canvasTile.tileDrawn( canvas );
