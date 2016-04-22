@@ -12,12 +12,21 @@
             ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
         <label ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
+        <select
+            ng-show="isIOS"
+            style="margin-bottom: 10px;width:100%;"
+            ng-model="selectedCriteria.keys"
+            ng-change="selectedCriteriaChangeHandlerForIos()" multiple>
+            <option
+                ng-repeat="(value, criter) in criteria[selectedFamily.okey]"
+                value="{{criter.key}}">{{criter.label}}</option>
+        </select>
         <ui-select
             style="margin-bottom: 10px;width:100%;"
             ng-model="selectedCriteria.labels"
             multiple
             on-remove="removeCriteria($item)"
-            ng-show="criteria[selectedFamily.okey]"
+            ng-show="criteria[selectedFamily.okey] && !isIOS"
             title="Select Criteria"
             close-on-select="false"
             ng-click="showCriteria($event)"
