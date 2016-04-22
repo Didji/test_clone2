@@ -85,6 +85,7 @@
                 if (intent) {
                     setTimeout( intentHandler, 0 );
                 } else {
+                    alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
                     Smartgeo._addEventListener('backbutton', Intents.end);
                 }
             };
