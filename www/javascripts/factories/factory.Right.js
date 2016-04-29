@@ -24,7 +24,7 @@
          * @param {String} right Nom du droit
          */
         Right.isUpdatable = function(asset) {
-            return (asset.attributes._rights === "U");
+            return $rootScope.rights.census && (asset.attributes._rights === "U");
         };
 
         /**
