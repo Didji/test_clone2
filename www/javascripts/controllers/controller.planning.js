@@ -417,7 +417,6 @@
                         assetsCache[mission.id]._byId[assetsCache[mission.id][i].guid] = assetsCache[mission.id][i];
                     }
 
-                    mission.activity.isNightTour = true;
                     var traces = Storage.get( 'traces' ) || [];
                     mission.trace = traces[mission.id];
                     $rootScope.$broadcast( '__MAP_DISPLAY_TRACE__', mission );
