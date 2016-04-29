@@ -82,6 +82,12 @@ angular.module('smartgeomobile').controller('searchController', ["$scope", "$rou
         }
     };
 
+    $scope.selectedFamilyChangeHandler = function() {
+        $scope.selectedCriteria = {
+            labels: [],
+            keys: []
+        };
+    };
 
     $scope.selectedCriteriaChangeHandlerForIos = function(item) {
         var newSelectedCriteriaLabels = [];
