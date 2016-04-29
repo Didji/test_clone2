@@ -107,7 +107,8 @@
                                 sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.SAVEDPHOTOALBUM : navigator.camera.PictureSourceType.CAMERA,
                                 mediaType: navigator.camera.MediaType.PICTURE,
                                 destinationType: navigator.camera.DestinationType.FILE_URI,
-                                correctOrientation: false,
+                                targetWidth: 1024,
+                                correctOrientation: true,
                                 saveToPhotoAlbum: true
                             } );
                     } else {
