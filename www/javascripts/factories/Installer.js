@@ -239,6 +239,9 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         },
 
         update: function(site, callback, onlySite) {
+
+            // On garde une copie de l'ancienne symbo pour faire le diff par la suite
+            var oldSymbology = angular.copy( Site.current.symbology );
             $rootScope.dailyUpdate = true;
             callback = callback || function() {};
             Installer.getUpdateJSON( site, function(site) {
@@ -261,15 +264,35 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
                     } );
                     return;
                 }
+
                 Installer.deleteAssets( Site.current, site.obsoletes, function() {
                     Installer.install( Site.current, site.stats, function() {
                         Site.save( Site.current, function() {
-                            $rootScope.dailyUpdate = false;
-                            if (!$rootScope.$$phase) {
-                                $rootScope.$digest();
+
+                            var start = new Date().getTime();
+
+                            var newSymbology = [];
+                            for ( var symbolId in Site.current.symbology ) {
+                                if (
+                                    Site.current.symbology[symbolId].minzoom !== oldSymbology[symbolId].minzoom
+                                    || Site.current.symbology[symbolId].maxzoom !== oldSymbology[symbolId].maxzoom
+                                ) {
+                                    newSymbology.push( symbolId );
+                                }
                             }
-                            alertify.log( i18n.get( '_UPDATE_ALL_END' ) );
-                            callback();
+
+                            Asset.updateMinAndMaxZoom( function() {
+                                var end = new Date().getTime();
+                                var total = ( end - start ) / 1000;
+                                console.info('TOTAL UPDATE ZOOMS TIME: ' + total + 's.');
+
+                                $rootScope.dailyUpdate = false;
+                                if (!$rootScope.$$phase) {
+                                    $rootScope.$digest();
+                                }
+                                alertify.log( i18n.get( '_UPDATE_ALL_END' ) );
+                                callback();
+                            }, newSymbology);
                         } );
                         Asset.cache = {};
                         (G3ME.canvasTile && G3ME.reloadLayers)();

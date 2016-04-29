@@ -443,6 +443,43 @@
             return this.label || this.okey && Site.current.metamodel[this.okey] && this.attributes[Site.current.metamodel[this.okey].ukey] && this.attributes[Site.current.metamodel[this.okey].ukey].length ? this.attributes[Site.current.metamodel[this.okey].ukey] : (Site.current.metamodel[this.okey] && Site.current.metamodel[this.okey].label) || "";
         };
 
+        Asset.updateMinAndMaxZoom = function(callback, symbology, zones) {
+            if ( !zones ) {
+                zones = Site.current.zones;
+            }
+
+            if ( !zones || !zones.length || !symbology || !symbology.length ) {
+                return callback();
+            }
+
+            // La méthode SQLite.exec est censé géré ce cas (plusieurs requêtes par transaction) mais ne fonctionne pas correctement
+            // TODO: Modifier SQLite.exec pour gérer ce cas dans toute l'appli
+            SQLite
+                .openDatabase( {
+                    name: zones[0].database_name
+                })
+                .transaction( function(tx) {
+                    for ( var s in symbology ) {
+                        (function(s) {
+                            var symbolId = symbology[s];
+                            var args = [ Site.current.symbology[symbolId].minzoom, Site.current.symbology[symbolId].maxzoom, symbolId ];
+                            tx.executeSql( 'UPDATE ASSETS SET minzoom = ?, maxzoom = ? WHERE symbolId = ?', args, function() {
+                                if ( +s === symbology.length - 1 ) {
+                                    Asset.updateMinAndMaxZoom( callback, symbology, zones.slice( 1 ) );
+                                }
+                            }, function(tx, err) {
+                                console.error( "SQL ERROR " + err.code + " ON " + database + " : " + err.message );
+                                return false;
+                            } );
+                        })(s);
+                    }
+                }, function(err) {
+                    console.error( "TX ERROR " + err.code + " ON " + database + " : " + err.message );
+                    return false;
+            });
+
+        };
+
         Asset.findAssetsByGuids = function(guids, callback, zones, partial_response) {
             var guidsbis = [], i, response, tmp;
 
