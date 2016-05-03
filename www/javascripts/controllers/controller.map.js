@@ -210,13 +210,14 @@
                 popupContent += '<p>' + i18n.get( '_MAP_ZERO_OBJECT_FOUND' ) + '</p>';
             }
 
-            //On peut faire un CR sur XY si on a le droit report OU
-            //si on vient d'un intent qui ne soit pas un intent d'auth ('oauth')(spécifique Veolia)
+            //On affiche le bouton CR sur XY seulement si:
+            // - le droit de CR est présent et la recherche ne remonte pas d'objets
+            // - on vient d'un intent qui ne soit pas un intent d'auth ('oauth')(spécifique Veolia)
             //
             // TODO: FAIRE MIEUX
-            var intent = Storage.get( 'intent' );
-            intent = intent && intent.controller === 'map';
-            if (Site.current.activities.length && ($rootScope.rights.report || intent && !$filter( 'reportableAssetsForIntentFilter' )( assets ).length)) {
+            var intent = Storage.get( 'intent' ),
+                assetsForIntent = $filter( 'reportableAssetsForIntentFilter' )( assets );
+            if ( Site.current.activities.length && ($rootScope.rights.report && !assets.length || intent && intent.controller === 'map' && !assetsForIntent.length ) ) {
                 popupContent += '<button class="btn btn-primary openLocateReportButton">'
                     + i18n.get( '_CONSULTATION_REPORT_ON_POSITION' ) + '</button>';
                 $( document ).on( 'click', '.openLocateReportButton', function() {
@@ -264,9 +265,7 @@
 
             Asset.findInBounds( coords, circle.getBounds(), function(assets) {
                 openPopupIfNeeded( coords, assets );
-                if (assets.length) {
-                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
-                }
+                    $rootScope.$broadcast( "", assets );
             } );
 
             $( circle._path ).fadeOut( 1500, function() {

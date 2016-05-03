@@ -94,7 +94,7 @@
                 }
                 cancelPreopenTimer();
                 updateAssetsList( assets || [] );
-                if (!assets) {
+                if (!assets || !assets.length) {
                     return _close();
                 }
                 if (!$scope.$$phase) {
