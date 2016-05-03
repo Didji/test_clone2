@@ -8,7 +8,9 @@
     <div id="left_panel_search_advanced" ng-show="advancedSearchDisplay">
         <label><i18n>_SEARCH_TYPE</i18n></label>
         <select
-            class="form-control" ng-model="selectedFamily"
+            class="form-control"
+            ng-model="selectedFamily"
+            ng-change="selectedFamilyChangeHandler()"
             ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
         <label ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
