@@ -140,6 +140,8 @@ window.smartgeo_i18n_lang.en = {
     _PLANNING_NEW_MISSION_: " new mission",
     _PLANNING_NEW_MISSIONS_: " new missions",
     _CENSUS_CHOOSE_OBJECT_: "Please select the asset",
+    _CENSUS_ALERT_GEOM_: "Place assets on the map",
+    _CENSUS_ALERT_FIELDS_: "All compulsory fields should be filled",
     _NIGHTTOUR_STOP_: "Stop",
     _NIGHTTOUR_CLOSE_: "Close",
     _NIGHTTOUR_CLOSE_CONFIRM_: "Close this night tour?",

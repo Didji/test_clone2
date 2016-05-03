@@ -140,6 +140,8 @@ window.smartgeo_i18n_lang.fr = {
     _PLANNING_NEW_MISSION_: " nouvelle mission",
     _PLANNING_NEW_MISSIONS_: " nouvelles missions",
     _CENSUS_CHOOSE_OBJECT_: "Veuillez sélectionner l'objet à recenser",
+    _CENSUS_ALERT_GEOM_: "Veuillez positionner les objets sur la carte",
+    _CENSUS_ALERT_FIELDS_: "Veuillez remplir tous les champs obligatoires",
     _NIGHTTOUR_STOP_: "Arrêter",
     _NIGHTTOUR_CLOSE_: "Clôturer",
     _NIGHTTOUR_CLOSE_CONFIRM_: "Clôturer la tournée de nuit ?",
