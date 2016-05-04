@@ -1,5 +1,5 @@
 angular
-    .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", "ui.bootstrap", 'ngResource', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch', 'ui.select'] )
+    .module( "smartgeomobile", ["smartgeomobile.config", "ngRoute", 'ngResource', 'ngTouch', 'ngSanitize', 'ngIOS9UIWebViewPatch', 'ui.select'] )
     .config( config )
     .run( function(Smartgeo) {
         "use strict";

@@ -159,12 +159,7 @@
                         def = scope.intent['report_fields[$' + field.id + ']'];
                     }
 
-                    if (field.type === 'T' && !def) {
-                        var d = new Date();
-                        d.setHours( 0 );
-                        d.setMinutes( 0 );
-                        fields[field.id] = d;
-                    } else if (!def) {
+                    if (!def) {
                         continue;
                     } else if ('string' === typeof def) { //valeur par défaut de type constante
                         if (field.type === 'D' && def === '#TODAY#') {
