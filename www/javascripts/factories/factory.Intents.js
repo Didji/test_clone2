@@ -22,7 +22,12 @@
          */
         Intents.parse = function(intent) {
             console.log("INTENT_URL = " + intent);
-            var data = intent.replace('gimap:/', '/intent').split('?');
+            var data = intent.replace('gimap:/', '/intent').split('&redirect=');
+            var redirect = null;
+            if (data.length > 1) {
+                redirect = encodeURIComponent(data[1]);
+            };
+            data = data[0].split("?");
             var params = data[1].split("&");
             var appendedParams = false;
             var allParams = {
@@ -74,7 +79,8 @@
                     }
                 }
             }
-            if (url.indexOf("redirect") !== -1) {
+            if (redirect !== null) {
+                url += "&report_url_redirect=" + redirect + "&multi_report_redirect" + redirect;
                 $rootScope.fromFDR = true;
             };
             return url;
