@@ -265,7 +265,7 @@
 
             Asset.findInBounds( coords, circle.getBounds(), function(assets) {
                 openPopupIfNeeded( coords, assets );
-                    $rootScope.$broadcast( "", assets );
+                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
             } );
 
             $( circle._path ).fadeOut( 1500, function() {
