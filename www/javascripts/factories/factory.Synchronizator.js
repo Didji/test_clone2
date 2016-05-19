@@ -84,12 +84,11 @@
             return JSON.stringify( this );
         };
 
-
         /**
          * @name checkChildGeom
          * @desc
          */
-        SyncItem.prototype.checkChildGeom = function(object = false, geometry = false) {
+        SyncItem.prototype.checkChildGeom = function(object, geometry) {
             var allGeoms = [];
             if (!object) {
                 if (this.children.length > 0) {
@@ -118,6 +117,7 @@
             }
             return false;
         };
+
         /**
          * @name getBarycentre
          * @desc
