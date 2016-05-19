@@ -51,7 +51,7 @@
         };
 
         /**
-         * @name save
+         * @name delete
          * @desc
          */
         SyncItem.prototype.delete = function() {
@@ -84,6 +84,56 @@
             return JSON.stringify( this );
         };
 
+
+        /**
+         * @name checkChildGeom
+         * @desc
+         */
+        SyncItem.prototype.checkChildGeom = function(object = false, geometry = false) {
+            var allGeoms = [];
+            if (!object) {
+                if (this.children.length > 0) {
+                    for (var child in this.children) {
+                        allGeoms.push(this.checkChildGeom(this.children[child], this.geometry));
+                    }
+                    // on récupère le barycentre si l'objet racine n'a pas de geometrie
+                    (this.geometry == null) ? this.geometry = this.getBarycentre(allGeoms) : null;
+                }
+                return this.geometry;
+            } else {
+                // on vérifie que l'objet a une geometrie, si non et que le paramètre geometry
+                // n'est pas vide, on le set
+                (geometry && object.geometry == null) ? object.geometry = geometry : null;
+                if (object.children.length > 0) {
+                    // on récupère ou applique les geometries de ou à tous les enfants
+                    for (var child in object.children) {
+                        allGeoms.push(this.checkChildGeom(object.children[child], object.geometry));
+                    }
+                    // on récupère le barycentre si l'objet n'a toujours pas de geometrie
+                    (object.geometry == null) ? object.geometry = this.getBarycentre(allGeoms) : null;
+                }
+                // on retourne la géometrie pour que les parents qui n'avaient pas de geometrie
+                // puissent en avoir une aussi.
+                return object.geometry;
+            }
+            return false;
+        };
+        /**
+         * @name getBarycentre
+         * @desc
+         */
+        SyncItem.prototype.getBarycentre = function(object) {
+            var barycentre = [0,0];
+            var geom;
+            for(var i = 0; i < object.length; i++) {
+                geom = object[i];
+                barycentre[0] += geom[0];
+                barycentre[1] += geom[1];
+            }
+            barycentre[0] /= object.length;
+            barycentre[1] /= object.length;
+            return barycentre;
+        };
         /**
          * @name list
          * @desc
@@ -305,21 +355,18 @@
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
             var assets = [] ;
             complexasset.syncInProgress = true;
+            complexasset.checkChildGeom();
             $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
                 timeout: 1e5
             } ).success( function(data) {
                 if (data instanceof Object) {
-                    complexasset.synced = true ;
-                    var savedGeometry , i , savedbounds ;
+                    complexasset.synced = true;
+                    var i;
                     for (var okey in data) {
                         if (okey === "relationship") {
                             continue ;
                         }
                         for (i = 0; i < data[okey].length; i++) {
-                            if (data[okey][i].geometry) {
-                                savedGeometry = data[okey][i].geometry;
-                                savedbounds = data[okey][i].bounds;
-                            }
                             assets.push( data[okey][i] );
                         }
                     }
@@ -516,7 +563,7 @@
                     });
                 }, function(err){
                     window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
-                        dir.getDirectory('reports', {create:true}, function(reportDir) {                            
+                        dir.getDirectory('reports', {create:true}, function(reportDir) {
                             reportDir.getFile(fileName, {create:true}, function(file) {
                                 if (!file) {
                                     return;
