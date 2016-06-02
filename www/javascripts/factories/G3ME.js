@@ -136,7 +136,11 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
                     }
                 }
             }
-            return this.active_layers.join('") or symbolId REGEXP("');
+            if (navigator.userAgent.match(/iP(od|hone|ad)/i)) {
+                return this.active_layers.join('%" or symbolId LIKE "%');
+            } else {
+                return this.active_layers.join('") or symbolId REGEXP("');
+            }
         },
 
         reloadLayers: function() {
@@ -273,8 +277,12 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
                     xmin: xmin,
                     xmax: xmax
                 },
-                uuid = window.uuid(),
-                request = G3ME.baseRequest.replace("##UUID##", uuid) + ' and (symbolId REGEXP("' + G3ME.getActiveLayersForRequest(zoom) + '") )';
+                uuid = window.uuid();
+            if (navigator.userAgent.match(/iP(od|hone|ad)/i)) {
+                var request = G3ME.baseRequest.replace("##UUID##", uuid) + ' and (symbolId LIKE "%' + G3ME.getActiveLayersForRequest(zoom) + '%" )';
+            } else {
+                var request = G3ME.baseRequest.replace("##UUID##", uuid) + ' and (symbolId REGEXP("' + G3ME.getActiveLayersForRequest(zoom) + '") )';
+            }
 
             if (G3ME.map.getZoom() !== zoom) {
                 return G3ME.canvasTile.tileDrawn(canvas);
@@ -346,7 +354,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
             drawnLabels = [],
             zoomUpper16 = zoom > 16,
             previousX , previousY , coord, geometry , symbolId , _middlex, _middley, _middleangle,
-            coord_x, coord_y, dx, dy , asset, imageWidth, imageHeight, imageWidthHalf, imageHeightHalf,
+            coord_x, coord_y, dx, dy , asset, imageWidth,
             previousSymbolId, image, assetSymbology, uuidHasBeenSeen;
 
         if (!G3ME.extents_match({
@@ -391,9 +399,6 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
                 ctx.fillStyle = assetSymbology.style.fillcolor;
                 image = window.SMARTGEO_CURRENT_SITE_IMG[symbolId];
                 imageWidth = window.SMARTGEO_CURRENT_SITE_IMG_W[symbolId];
-                imageHeight = window.SMARTGEO_CURRENT_SITE_IMG_H[symbolId];
-                imageWidthHalf = window.SMARTGEO_CURRENT_SITE_IMG_W_HALF[symbolId];
-                imageHeightHalf = window.SMARTGEO_CURRENT_SITE_IMG_H_HALF[symbolId];
                 previousSymbolId = symbolId;
             }
 
@@ -472,7 +477,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
                         txt: asset.maplabel, //.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ), // FAUT FAIRE CA A L'INSTALL
                         x: coord_x,
                         y: coord_y,
-                        size: imageWidth,
+                        size: ((imageWidth != 0) ? imageWidth : image.width),
                         color: assetSymbology.label.color,
                         angle: null
                     });
