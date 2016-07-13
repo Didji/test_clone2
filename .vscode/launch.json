@@ -1,0 +1,32 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run android on device",
+            "type": "cordova",
+            "request": "launch",
+            "platform": "android",
+            "target": "device",
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "name": "Run android on emulator",
+            "type": "cordova",
+            "request": "launch",
+            "platform": "android",
+            "target": "emulator",
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/www\\javascripts\\smartgeomobile.js"
+        }
+    ]
+}
