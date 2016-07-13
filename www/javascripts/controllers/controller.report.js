@@ -291,7 +291,7 @@
                     }
                     vm.report.roFields[field.id] = output;
                     vm.report.overrides[field.id] = output;
-                    fields[field.id] = def;
+                    fields[field.id] = output;
                 }
             }
             if (!$scope.$$phase) {
