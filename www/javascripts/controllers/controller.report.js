@@ -291,7 +291,7 @@
                     }
                     vm.report.roFields[field.id] = output;
                     vm.report.overrides[field.id] = output;
-                    fields[field.id] = output;
+                    fields[field.id] = output.length != 0 ? output : def;
                 }
             }
             if (!$scope.$$phase) {
