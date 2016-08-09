@@ -409,7 +409,7 @@
         function containsUnfilledRequiredFields() {
             for (var i in vm.report.activity._fields) {
                 var field = vm.report.activity._fields[i];
-                if (field.required && !vm.report.fields[field.id]) {
+                if (field.required && !vm.report.fields[field.id] && vm.report.fields[field.id] !== 0) {
                     return true;
                 }
             }
