@@ -179,9 +179,6 @@
                 if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                     report.fields[i] = report.fields[i].id;
                 }
-                if (report.fields[i] === "") {
-                    delete report.fields[i];
-                }
             }
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
@@ -294,7 +291,7 @@
                     }
                     vm.report.roFields[field.id] = output;
                     vm.report.overrides[field.id] = output;
-                    fields[field.id] = output.length != 0 ? output : Object.keys(def).length != 0 ? def : output;
+                    fields[field.id] = output.length != 0 ? output : def;
                 }
             }
             if (!$scope.$$phase) {
@@ -422,9 +419,7 @@
         function parsedReport() {
             var report = {};
             for (var i in vm.report.fields) {
-                if (typeof vm.report.fields[i] !== "object" && vm.report.fields[i].toString().match(/object/) == null && vm.report.fields[i] != '') {
-                    report[vm.report.activity._fields[i].label] = vm.report.fields[i];
-                }
+               report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && vm.report.fields[i].toString().match(/object/) != null && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
             }
             return report;
         }

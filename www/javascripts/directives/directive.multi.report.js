@@ -188,7 +188,7 @@
                         }
                         scope.report.roFields[field.id] = output;
                         scope.report.overrides[field.id] = output;
-                        fields[field.id] = output.length != 0 ? output : Object.keys(def).length != 0 ? def : output;
+                        fields[field.id] = def;
                     }
                 }
                 if (!scope.$$phase) {
@@ -357,9 +357,6 @@
                     }
                     if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
                         report.fields[i] = report.fields[i].id;
-                    }
-                    if (report.fields[i] === "") {
-                        delete report.fields[i];
                     }
                 }
                 for (i = 0; i < report.ged.length; i++) {
