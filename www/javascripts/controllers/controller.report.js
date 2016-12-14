@@ -61,28 +61,34 @@
             if (!isNaN(+$routeParams.assets)) {
                 $routeParams.assets = [+$routeParams.assets];
             }
+
             vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
-            for (var i = 0; i < vm.report.assets.length; i++) {
-                asset = new Asset( vm.report.assets[i] );
-                if (!asset.id) {
-                    invalidIds.push( vm.report.assets[i] );
-                } else {
-                    vm.assets.push( asset );
+            Asset.findAssetsByGuids(vm.report.assets, function(assets) {
+
+                invalidIds = angular.copy( vm.report.assets );
+
+                for (var i = 0; i < assets.length; i++) {
+                    if (assets[i].id) {
+                        vm.assets.push( assets[i] );
+                        invalidIds.splice( invalidIds.indexOf(assets[i].id), 1 );
+                    }
                 }
-            }
 
-            if ( invalidIds.length ) {
-                alertify.log(
-                    i18n.get(
-                        invalidIds.length > 1 ? '_REPORT_ASSET_NOT_FOUND_P' : '_REPORT_ASSET_NOT_FOUND_S',
-                        invalidIds.join(', ')
-                    )
-                );
-            }
+                if (invalidIds.length > 0) {
+                    alertify.log(
+                        i18n.get(
+                            invalidIds.length > 1 ? '_REPORT_ASSET_NOT_FOUND_P' : '_REPORT_ASSET_NOT_FOUND_S',
+                            invalidIds.join(', ')
+                        )
+                    );                    
+                }
+                
+                applyDefaultValues();
 
-            applyDefaultValues();
+            });
 
+            // TODO: Pas sûr de l'utilité de ce timeout, à mettre dans le callback ci-dessus ?
             setTimeout(function() {
                 if (!$scope.$$phase) {
                     $scope.$digest();
