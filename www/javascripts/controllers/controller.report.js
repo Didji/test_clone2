@@ -6,7 +6,7 @@
         .module( 'smartgeomobile' )
         .controller( 'ReportController', ReportController );
 
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n", "Intents"];
+    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n", "Intents", "GPS"];
 
     /**
      * @class ReportController
@@ -22,7 +22,7 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n, Intents) {
+    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n, Intents, GPS) {
 
         var vm = this;
 
@@ -331,22 +331,25 @@
             if (intent != null && $rootScope.fromIntent === true) {
                 Storage.remove( 'intent' );
                 $rootScope.fromIntent = false;
-                var report = parsedReport(vm.report);
-                if (intent.report_url_redirect) {
-                    intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                    window.plugins.launchmyapp.startActivity({
-                        action: "android.intent.action.VIEW",
-                        url: intent.report_url_redirect},
-                        angular.noop,
-                        angular.noop
-                    );
-                } else {
-                    window.plugins.launchmyapp.finishActivity(
-                        report,
-                        angular.noop,
-                        angular.noop
-                    );
-                }
+                buildReport(function(report) {
+                    if (intent.report_url_redirect) {
+                        intent.report_url_redirect += '&__PATRIID=' + report.__PATRIID;
+                        intent.report_url_redirect += '&__LATLNG=' + report.__LATLNG;
+                        intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
+                        window.plugins.launchmyapp.startActivity({
+                            action: "android.intent.action.VIEW",
+                            url: intent.report_url_redirect},
+                            angular.noop,
+                            angular.noop
+                        );
+                    } else {
+                        window.plugins.launchmyapp.finishActivity(
+                            report,
+                            angular.noop,
+                            angular.noop
+                        );
+                    }
+                });
             }
             $location.path( 'map/' + Site.current.id );
         }
@@ -422,12 +425,41 @@
             return false;
         }
 
-        function parsedReport() {
+        /**
+         * @name buildReport
+         * @desc Construit le report pour le retour JSON (intents)
+         */
+        function buildReport(callback) {
             var report = {};
-            for (var i in vm.report.fields) {
+            var i, center;
+
+            for (i in vm.report.fields) {
                report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && vm.report.fields[i].toString().match(/object/) != null && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
             }
-            return report;
+            // On injecte les métadonnées
+            if (vm.assets.length > 0) {
+                report.__LATLNG = [];
+                report.__PATRIID = [];
+                for (i in vm.assets) {
+                    center = vm.assets[i].getCenter();
+                    report.__LATLNG.push( center[0] + ',' + center[1] );
+                    report.__PATRIID.push(vm.assets[i].id);
+                }
+                report.__LATLNG = report.__LATLNG.join(';');
+                report.__PATRIID = report.__PATRIID.join(';');
+                callback(report);
+            } else if (vm.report.latlng) {
+                report.__PATRIID = null;
+                report.__LATLNG = vm.report.latlng;
+                callback(report);
+            } else {
+                // On est jamais sensé passé par là mais c'est dans la spec...
+                GPS.getCurrentLocation( function(lng, lat) {
+                    report.__PATRIID = null;
+                    report.__LATLNG = lat + ',' + lng;
+                    callback(report);
+                });
+            }
         }
     }
 
