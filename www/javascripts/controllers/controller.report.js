@@ -81,9 +81,9 @@
                             invalidIds.length > 1 ? '_REPORT_ASSET_NOT_FOUND_P' : '_REPORT_ASSET_NOT_FOUND_S',
                             invalidIds.join(', ')
                         )
-                    );                    
+                    );
                 }
-                
+
                 applyDefaultValues();
 
             });
@@ -333,7 +333,8 @@
                 $rootScope.fromIntent = false;
                 buildReport(function(report) {
                     if (intent.report_url_redirect) {
-                        intent.report_url_redirect += '&__PATRIID=' + report.__PATRIID;
+                        intent.report_url_redirect += (intent.report_url_redirect.indexOf('?') === -1) ? '?' : '&';
+                        intent.report_url_redirect += '__PATRIID=' + report.__PATRIID;
                         intent.report_url_redirect += '&__LATLNG=' + report.__LATLNG;
                         intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
                         window.plugins.launchmyapp.startActivity({
