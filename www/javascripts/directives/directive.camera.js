@@ -97,11 +97,11 @@
                                 } );
                                 scope.isTakingPhoto = false;
                             } );
-                        }, function() {
+                        }, function(error) {
                                 scope.$apply( function() {
                                     scope.isTakingPhoto = false;
                                 } );
-                                ctrl.$setValidity( "error", false );
+                                console.error('Unable to take picture: "' + error + '"');
                             }, {
                                 quality: 100,
                                 sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.SAVEDPHOTOALBUM : navigator.camera.PictureSourceType.CAMERA,
