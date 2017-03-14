@@ -21,7 +21,6 @@ angular
 		"report": true,
 		"search": true,
 		"serverUrl": "http://canope-rec.projets-gi.com/",
-		"serverDomain": "@m-ve.com",
 		"siteselection": true,
 		"synccenter": true,
 		"intent": 200,

@@ -20,7 +20,6 @@ angular
 		"report": false,
 		"search": true,
 		"serverUrl": "http://canopee.m-ve.com",
-		"serverDomain": "@m-ve.com",
 		"siteselection": false,
 		"synccenter": true,
 		"intent": 200,

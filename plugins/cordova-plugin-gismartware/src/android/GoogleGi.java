@@ -150,9 +150,7 @@ public class GoogleGi extends CordovaPlugin {
         final List<Account> availableAccounts = new ArrayList<Account>();
 
         for(int i = 0; i < allAccounts.length; i++){
-            if(allAccounts[i].name.endsWith(domain)) {
-                availableAccounts.add(allAccounts[i]);
-            }
+            availableAccounts.add(allAccounts[i]);
         }
 
         if (availableAccounts.isEmpty()) {
