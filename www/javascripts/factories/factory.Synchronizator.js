@@ -251,8 +251,8 @@
         Synchronizator.add = function(action, object) {
             var syncItem = new SyncItem( object, action );
 
+            Synchronizator.log( syncItem );
             syncItem.save( function() {
-                Synchronizator.log( syncItem );
                 if(action === "update"){
                     $rootScope.$broadcast("syncUpdateList");
                 }
@@ -542,11 +542,14 @@
         * @desc
         */
         Synchronizator.log = function(report) {
-            if (report.ged) {
-                delete report.ged;
+
+            var reportbis = angular.copy(report);
+
+            if (reportbis.ged) {
+                delete reportbis.ged;
             }
             if(window.cordova){
-                var fileName = report.uuid || report.id + '.json';
+                var fileName = reportbis.uuid || reportbis.id + '.json';
                 window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
                     dir.getDirectory('reports', {create:true}, function(reportDir) {
                         reportDir.getFile(fileName, {create:true}, function(file) {
@@ -555,7 +558,7 @@
                             }
                             file.createWriter(function(fileWriter) {
                                 fileWriter.seek(fileWriter.length);
-                                fileWriter.write(JSON.stringify(report));
+                                fileWriter.write(JSON.stringify(reportbis));
                             }, function(error) {
                                     console.error(JSON.stringify(error));
                             });
@@ -570,7 +573,7 @@
                                 }
                                 file.createWriter(function(fileWriter) {
                                     fileWriter.seek(fileWriter.length);
-                                    fileWriter.write(JSON.stringify(report));
+                                    fileWriter.write(JSON.stringify(reportbis));
                                 }, function(error) {
                                     console.error(JSON.stringify(error));
                                 });
