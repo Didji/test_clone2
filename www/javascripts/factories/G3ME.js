@@ -102,18 +102,22 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
             window.SMARTGEO_CURRENT_SITE_IMG_H = window.SMARTGEO_CURRENT_SITE_IMG_H || {};
             window.SMARTGEO_CURRENT_SITE_IMG_W_HALF = window.SMARTGEO_CURRENT_SITE_IMG_W_HALF || {};
             window.SMARTGEO_CURRENT_SITE_IMG_H_HALF = window.SMARTGEO_CURRENT_SITE_IMG_H_HALF || {};
-
             for (var symbol in Site.current.symbology) {
                 if (!Site.current.symbology[symbol] || !Site.current.symbology[symbol].style) {
                     continue;
                 }
                 var image = new Image();
+                // on fait attention que l'image soit bien chargé avant d'affecter les propriétés.
+                image.onload = (function (nr){
+                    return function() {
+                        window.SMARTGEO_CURRENT_SITE_IMG[nr] = this;
+                        window.SMARTGEO_CURRENT_SITE_IMG_W[nr] = this.width;
+                        window.SMARTGEO_CURRENT_SITE_IMG_H[nr] = this.height;
+                        window.SMARTGEO_CURRENT_SITE_IMG_W_HALF[nr] = this.width * -0.5;
+                        window.SMARTGEO_CURRENT_SITE_IMG_H_HALF[nr] = this.height * -0.5;
+                    };
+                }(symbol));
                 image.src = Site.current.symbology[symbol].style.symbol.icon;
-                window.SMARTGEO_CURRENT_SITE_IMG[symbol] = image;
-                window.SMARTGEO_CURRENT_SITE_IMG_W[symbol] = image.width;
-                window.SMARTGEO_CURRENT_SITE_IMG_H[symbol] = image.height;
-                window.SMARTGEO_CURRENT_SITE_IMG_W_HALF[symbol] = image.width * -0.5;
-                window.SMARTGEO_CURRENT_SITE_IMG_H_HALF[symbol] = image.height * -0.5;
             }
 
             this.canvasTile.addTo(this.map);
