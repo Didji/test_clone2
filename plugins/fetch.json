@@ -147,18 +147,26 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-powermanagement": {
+    "cordova-plugin-compat": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-powermanagement"
+            "id": "cordova-plugin-compat"
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "phonegap-plugin-barcodescanner": {
+        "source": {
+            "type": "registry",
+            "id": "phonegap-plugin-barcodescanner"
         },
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-screen-orientation": {
+    "cordova-plugin-powermanagement": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-screen-orientation"
+            "id": "cordova-plugin-powermanagement"
         },
         "is_top_level": true,
         "variables": {}
@@ -174,10 +182,18 @@
             "PHOTOLIBRARY_USAGE_DESCRIPTION": " "
         }
     },
-    "cordova-plugin-compat": {
+    "cordova-plugin-screen-orientation": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-compat"
+            "id": "cordova-plugin-screen-orientation@https://github.com/apache/cordova-plugin-screen-orientation"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "es6-promise-plugin": {
+        "source": {
+            "type": "registry",
+            "id": "es6-promise-plugin"
         },
         "is_top_level": false,
         "variables": {}
