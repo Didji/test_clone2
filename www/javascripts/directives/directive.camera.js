@@ -108,6 +108,7 @@
                                 mediaType: navigator.camera.MediaType.PICTURE,
                                 destinationType: navigator.camera.DestinationType.FILE_URI,
                                 targetWidth: 1024,
+                                allowEdit: true,
                                 correctOrientation: true,
                                 saveToPhotoAlbum: true
                             } );
