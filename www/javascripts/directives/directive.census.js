@@ -24,6 +24,31 @@ angular.module( 'smartgeomobile' ).directive( "census", ['$compile', "ComplexAss
                     if (asset !== undefined) {
                         window.root = scope.root = scope.node = scope.asset;
                         scope.okey = scope.asset.okey;
+
+                        //Fix 1803 : Problème sur le recensement, le serveur envoie le nom de la rue, le code du départ etc au lieu d'envoyer l'ID associé. 
+                        //Ceci provoque un bug lorsque l'on souhaite éditer un objet sans éditer toutes ces valeurs.
+                        //Todo, renvoyer directement la bonne valeur depuis le serveur (à l'installation), ca évitera de faire toutes boucles pour formater la donnée (Chaine de caractère -> id_list).
+                        
+                        //On parcourt les différents champs
+                        for (var tab in scope.metamodel[scope.node.okey].tabs) {
+                            for (var fieldsList in scope.metamodel[scope.node.okey].tabs[tab].fields) {
+                                var field = scope.metamodel[scope.node.okey].tabs[tab].fields[fieldsList];
+                                //Si notre champ est de type L et que c'est une liste dépendante
+                                if (field != undefined && field.type == 'L' && field.dependancy) {
+                                    var listValue = scope.lists[field.options][scope.node.fields[field.dependancy]];
+                                    var fieldKey = field.key
+                                    var ngmodelValue = scope.node.fields[fieldKey];
+
+                                    //On parcourt la liste des valeurs possible, jusqu'à trouver la bonne clef.
+                                    for (var value in listValue) {
+                                        if (typeof ngmodelValue === 'string' && listValue[value] == ngmodelValue) {
+                                            //Une foie la clef trouvé, on met à jour le modèle de l'asset pour remplacer la chaine de caractère par son identifiant.
+                                            scope.node.fields[fieldKey] = value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }, true );
 
