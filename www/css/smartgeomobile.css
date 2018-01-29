@@ -125,6 +125,16 @@ body {
     text-align: left;
 }
 
+.loginForm .tiles-info {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+.loginForm .tiles-info p {
+    display: inline-block;
+}
+
 /** Vue principale */
 
 #mainview {
@@ -842,7 +852,7 @@ margin-bottom: 20px;
 }
 
 .loginForm hr {
-margin-top: 30px;
+margin-top: 15px;
 margin-bottom: 15px;
 }
 

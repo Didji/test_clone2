@@ -1,5 +1,6 @@
 L.TileLayer.FileCache = L.TileLayer.extend( {
-    initialize: function(url, options) {
+    initialize: function (url, options, downloadTiles) {
+        
         options = L.setOptions( this, options );
 
         // detecting retina displays, adjusting tileSize and zoom levels
@@ -19,6 +20,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         }
 
         this._url = url;
+        this._downloadTiles = downloadTiles;
 
         var subdomains = this.options.subdomains;
 
@@ -27,7 +29,6 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
         }
 
         this.initFS();
-
 
     },
 
@@ -706,11 +707,16 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
 
         var oldTile = image.src;
 
+        //Permet de savoir si on souhaite télécharger les tuiles ou non depuis le serveur.
+        //Fix pour les clients qui utilises les tuiles téléchargées en amont et stockées su la tablette.
+        //Il y avait un problème quand on mélangeait les deux manières.
+        var downloadTiles = this._downloadTiles;
+
         db.transaction( function(tx) {
             tx.executeSql( 'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?', [z, x, y], function(tx, result) {
                 // Si la requete a fonctionnée
                 if (result.rows.length == 0) {
-                    if (localStorage.getItem( 'online' ) == "true") {
+                    if (localStorage.getItem('online') == "true" && downloadTiles) {
                         // Mais qu'il n'y a pas cette tuile dans la db
                         // récupération de la tuile
                         // écriture en db
@@ -758,7 +764,7 @@ L.TileLayer.FileCache = L.TileLayer.extend( {
                     };
                 }
             }, function(tx, err) {
-                if (localStorage.getItem( 'online' ) == "true") {
+                if (localStorage.getItem('online') == "true" && downloadTiles) {
                     // Si la requête échoue, parce que la table tiles n'existe pas ou autre, etc...
                     // récupération de la tuile
                     // écriture en db

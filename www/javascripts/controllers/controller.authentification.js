@@ -34,6 +34,9 @@
         if (!$rootScope.hasOwnProperty( 'justLaunched' )) {
             $rootScope.justLaunched = false;
         }
+        
+        //Permet d'afficher sur la page de connexion si le téléchargement des tuiles est activé ou non.
+        vm.downloadTiles = $rootScope.rights.downloadTiles;
 
         activate();
 

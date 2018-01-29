@@ -71,6 +71,11 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
                 this.tileUrl += 'getTuileTMS.php?z={z}&x={x}&y={y}';
             }
             var BackgroundTile;
+
+            //Permet de savoir si on souhaite télécharger les tuiles ou non depuis le serveur.
+            //Fix pour les clients qui utilises les tuiles téléchargées en amont et stockées su la tablette.
+            //Il y avait un problème quand on mélangeait les deux manières.
+            var downloadTiles = $rootScope.rights.downloadTiles;
             if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
                 BackgroundTile = L.TileLayer.FileCache;
             } else {
@@ -79,7 +84,7 @@ angular.module('smartgeomobile').factory('G3ME', function(SQLite, $rootScope, i1
             this.BackgroundTile = new BackgroundTile(this.tileUrl, {
                 maxZoom: G3ME._MAX_ZOOM,
                 minZoom: G3ME._MIN_ZOOM
-            }).addTo(this.map);
+            }, downloadTiles).addTo(this.map);
 
             this.canvasTile = new L.TileLayer.Canvas({
                 maxZoom: G3ME._MAX_ZOOM,

@@ -9,6 +9,8 @@ window.smartgeo_i18n_lang.en = {
     _AUTH_SETTINGS_: "Settings",
     _AUTH_CHANGE_GIMAP_URL_: "Change remote server",
     _AUTH_REMEMBER_PASSWORD_: "Remember password",
+    _AUTH_TILES_DYNAMIC_: "Dynamic tiles",
+    _AUTH_TILES_LOCAL_: "Local tiles",
     _AUTH_INIT_WITHOUT_NETWORK_ERROR_: "Offline mode is not available for %s.",
     _AUTH_SERVER_UNREACHABLE: "Unreachable server",
     _AUTH_PLEASE_WAIT: "Please wait ...",

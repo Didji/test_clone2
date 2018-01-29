@@ -5,6 +5,7 @@ angular
 		"activelayers": true,
 		"census": true,
 		"consultation": true,
+		"downloadTiles": false,
 		"goto": true,
 		"history": true,
 		"logout": true,

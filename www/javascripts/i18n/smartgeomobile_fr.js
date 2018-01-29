@@ -9,6 +9,8 @@ window.smartgeo_i18n_lang.fr = {
     _AUTH_SETTINGS_: "Paramètres",
     _AUTH_CHANGE_GIMAP_URL_: "Changer de serveur",
     _AUTH_REMEMBER_PASSWORD_: "Se souvenir du mot de passe",
+    _AUTH_TILES_DYNAMIC_: "Tuiles dynamiques",
+    _AUTH_TILES_LOCAL_: "Tuiles locales",
     _AUTH_INIT_WITHOUT_NETWORK_ERROR_: "Le mode déconnecté n'est pas disponible pour %s car il ne s'est jamais authentifié en mode connecté.",
     _AUTH_SERVER_UNREACHABLE: "Serveur injoignable.",
     _AUTH_PLEASE_WAIT: "Veuillez patienter ...",
