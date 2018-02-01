@@ -16,7 +16,8 @@
         "$interval",
         "Site",
         "Asset",
-        "Synchronizator"
+        "Synchronizator",
+        "GPS"
     ];
 
     /**
@@ -36,7 +37,8 @@
         $interval,
         Site,
         Asset,
-        Synchronizator
+        Synchronizator,
+        GPS
     ) {
         var vm = this;
 
@@ -526,6 +528,17 @@
             $rootScope.$broadcast("__MAP_SETVIEW__", mission.extent);
             $rootScope.$broadcast("DESACTIVATE_POSITION");
         }
+        /**
+         * @name methodeGpsAdmin
+         * @param {Booléen} methode true pour la methode automatique et false pour la methode manuel
+         * @desc permet de savoir quelle méthode utiliser pour remplir les coordonnée CR XY dans le formulaire
+         */
+        function useGpsMethode(methode) {
+            if (methode) {
+                return "_METHODE_AUTO";
+            }
+            return "_METHODE_MANO";
+        }
 
         /**
          * @name showReport
@@ -534,11 +547,66 @@
          */
         function showReport(mission) {
             var selectedAssets = [];
+            //debugger;
+            var useMethode = useGpsMethode(true);
+
             for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
                 if (assetsCache[mission.id][i].selected) {
                     selectedAssets.push(assetsCache[mission.id][i].guid);
                 }
             }
+            switch (useMethode) {
+                case "_METHODE_AUTO":
+                    if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
+                        GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
+                            function(position) {
+                                var coordo = [position.coords.longitude, position.coords.latitude];
+                                goToReport(mission, selectedAssets, coordo);
+                            },
+                            function(OnError) {
+                                goToReport(mission, selectedAssets);
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                maximumAge: 0,
+                                timeout: 1000
+                            }
+                        );
+                    } else {
+                        goToReport(mission, selectedAssets);
+                    }
+
+                    break;
+
+                case "_METHODE_MANO":
+                default:
+                    if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
+                        $rootScope.$broadcast("GET_REPORT_POSITION", function(position) {
+                            goToReport(mission, selectedAssets, position);
+                        });
+                    } else {
+                        goToReport(mission, selectedAssets);
+                    }
+
+                    break;
+            }
+        }
+
+        /**
+         * Ouvre le formulaire de compte-rendu avec les paramètres nécessaires
+         *
+         */
+        function goToReport(mission, assets, position) {
+            if (assets.length === 1) {
+                assets = assets[0];
+            } else {
+                assets = assets.join("!");
+            }
+
+            if (position) {
+                assets += ";" + position.join(",");
+            }
+
             if (mission.activity) {
                 $location.path(
                     "report/" +
