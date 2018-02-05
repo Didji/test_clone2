@@ -547,8 +547,7 @@
          */
         function showReport(mission) {
             var selectedAssets = [];
-            //debugger;
-            var useMethode = useGpsMethode(true);
+            var useMethode = useGpsMethode(mission.gps_auto);
 
             for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
                 if (assetsCache[mission.id][i].selected) {
@@ -557,7 +556,11 @@
             }
             switch (useMethode) {
                 case "_METHODE_AUTO":
-                    if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
+                    if (
+                        selectedAssets.length === 1 &&
+                        (assetsCache[mission.id][0].geometry.type === "LineString" ||
+                            assetsCache[mission.id][0].geometry.type === "Point")
+                    ) {
                         GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
                             function(position) {
                                 var coordo = [position.coords.longitude, position.coords.latitude];
@@ -568,8 +571,8 @@
                             },
                             {
                                 enableHighAccuracy: true,
-                                maximumAge: 0,
-                                timeout: 1000
+                                maximumAge: 1000,
+                                timeout: 3000
                             }
                         );
                     } else {
