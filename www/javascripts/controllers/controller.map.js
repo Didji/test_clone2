@@ -573,23 +573,29 @@
                 if (assetsCache[i].geometry.type === "LineString") {
                     assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
                 }
+
                 assetsCache[i].marker = L.marker([
                     assetsCache[i].geometry.coordinates[1],
                     assetsCache[i].geometry.coordinates[0]
                 ]);
                 if (assetsCache[i].selected) {
+                    // Si le curseur est selectionné
                     assetsCache[i].marker.setIcon(Icon.get("SELECTED_MISSION"));
-                } else if (
-                    !mission.activity ||
-                    (mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour")
-                ) {
-                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
-                } else if (
-                    mission.activity &&
-                    Site.current.activities._byId[mission.activity.id].type === "night_tour"
-                ) {
-                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_NIGHTTOUR"));
+                } else {
+                    // si le curseur n'est pas selectionné
+                    try {
+                        if (Site.current.activities._byId[mission.activity.id]["type"] == "night_tour") {
+                            assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_NIGHTTOUR"));
+                        } else {
+                            assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
+                        }
+                    } catch (error) {
+                        // En cas de TypeError, c'est que le type d'activité n'est pas définit
+                        // il s'agit donc d'une activité standard.
+                        assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
+                    }
                 }
+
                 (function(i, marker) {
                     marker.on("click", function() {
                         clickHandler(mission.id, i);
