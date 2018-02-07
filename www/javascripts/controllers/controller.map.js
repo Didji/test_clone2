@@ -571,7 +571,10 @@
                     continue;
                 }
                 if (assetsCache[i].geometry.type === "LineString") {
-                    assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
+                    // On selectionne le centre de la lineString.
+                    // En cas de multi-lignes, il s'agit du centre surfacique
+                    // TODO : Prévoir la prise en compte de chemins de câbles plus complexe
+                    assetsCache[i].geometry.coordinates = [(assetsCache[i]['xmax'] + assetsCache[i]['xmin']) / 2, (assetsCache[i]['ymax'] + assetsCache[i]['ymin']) / 2]
                 }
 
                 assetsCache[i].marker = L.marker([
