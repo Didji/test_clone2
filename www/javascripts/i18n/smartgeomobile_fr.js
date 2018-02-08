@@ -91,6 +91,7 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_PREVIOUS: "Précedent",
     _REPORT_DELETE: "Supprimer",
     _REPORT_MEDIA: "Média",
+    _REPORT_MEDIA_REQUIRED: "Veuillez ajouter un media!",
     _REPORT_SELECT_ACTIVITY: "Sélection de l'activité",
     _REPORT_REQUIRED_FIELDS: "Certains champs obligatoires ne sont pas renseignés.",
     _REPORT_ADD_PICTURES_FROM_GALLERY: "Ajouter une photo depuis la galerie",

@@ -56,6 +56,7 @@
             this.site = Site.current.label;
             this.fields = {};
             this.ged = [];
+            this.gedIsRequired = this.activity.pj_obligatoire;
             this.version = window.Smartgeo._SMARTGEO_MOBILE_VERSION;
             this.uuid = window.uuid();
             this.timestamp = new Date().getTime();

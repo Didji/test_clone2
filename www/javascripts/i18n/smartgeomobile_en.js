@@ -87,6 +87,7 @@ window.smartgeo_i18n_lang.en = {
     _REPORT_PREVIOUS: "Previous",
     _REPORT_DELETE: "Delete",
     _REPORT_MEDIA: "Media",
+    _REPORT_MEDIA_REQUIRED: "Please, fill required media",
     _REPORT_SELECT_ACTIVITY: "Select activity",
     _REPORT_REQUIRED_FIELDS: "Please, fill required fields",
     _REPORT_ADD_PICTURES_FROM_GALLERY: "Add pictures from gallery",

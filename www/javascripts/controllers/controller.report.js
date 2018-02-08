@@ -66,6 +66,7 @@
 
         vm.getPictureFromGallery = getPictureFromGallery;
         vm.getPictureFromCamera = getPictureFromCamera;
+        vm.attachmentIsRequiredAndEmpty = attachmentIsRequiredAndEmpty;
 
         var invalidIds = [],
             intent = Storage.get("intent") || {};
@@ -810,6 +811,16 @@
                     callback(report);
                 });
             }
+        }
+        /**
+         * @name attachmentIsRequiredAndEmpty
+         * @desc indique si la pour un activité la pièce jointe est obligatoire et est renseignée
+         * @returns {Boolean} Retourne true si obligatoire et vide
+         */
+        function attachmentIsRequiredAndEmpty() {
+            var size = vm.report.ged.length;
+            var gedIsRequired = vm.report.gedIsRequired;
+            return gedIsRequired && !size ? true : false;
         }
     }
 })();
