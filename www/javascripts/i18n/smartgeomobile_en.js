@@ -158,6 +158,7 @@ window.smartgeo_i18n_lang.en = {
     _PLANNING_DISPLAY_DONE_ASSETS_: "Show finished objects",
     _PLANNING_LOCATE_: "Locate",
     _PLANNING_WRITE_: "Record",
+    _PLANNING_WRITE_NOT_FOUND_: "Insufficient access rights to open this record.\n\nPlease contact your NetGeo Administrator to check your company assignement to this activity : %s",
     _PLANNING_FINISH_: "finished",
     _PLANNING_REFRESHED_: "Refreshed",
     _PLANNING_DISPLAY_FINISHED_: "Display finished mission",

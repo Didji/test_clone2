@@ -17,7 +17,8 @@
         "Site",
         "Asset",
         "Synchronizator",
-        "GPS"
+        "GPS",
+        "Activity"
     ];
 
     /**
@@ -38,7 +39,8 @@
         Site,
         Asset,
         Synchronizator,
-        GPS
+        GPS,
+        Activity
     ) {
         var vm = this;
 
@@ -549,49 +551,59 @@
             var selectedAssets = [];
             var useMethode = useGpsMethode(mission.gps_auto);
 
-            for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
-                if (assetsCache[mission.id][i].selected) {
-                    selectedAssets.push(assetsCache[mission.id][i].guid);
-                }
+            var _OK = true; // Flag autorisant l'ouverture du formulaire CR
+            // Contrôle permettant de determiner si l'activité de l'OT est bien présente dans l'objet Activity
+            if (mission.activity) {
+                _OK = !!Activity.findOne(mission.activity.id);
             }
-            switch (useMethode) {
-                case "_METHODE_AUTO":
-                    if (
-                        selectedAssets.length === 1 &&
-                        (assetsCache[mission.id][0].geometry.type === "LineString" ||
-                            assetsCache[mission.id][0].geometry.type === "Point")
-                    ) {
-                        GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
-                            function(position) {
-                                var coordo = [position.coords.longitude, position.coords.latitude];
-                                goToReport(mission, selectedAssets, coordo);
-                            },
-                            function(OnError) {
-                                goToReport(mission, selectedAssets);
-                            },
-                            {
-                                enableHighAccuracy: true,
-                                maximumAge: 1000,
-                                timeout: 3000
-                            }
-                        );
-                    } else {
-                        goToReport(mission, selectedAssets);
+
+            if (!_OK) {
+                alertify.alert(i18n.get("_PLANNING_WRITE_NOT_FOUND_", mission.activity.label));
+            } else {
+                for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
+                    if (assetsCache[mission.id][i].selected) {
+                        selectedAssets.push(assetsCache[mission.id][i].guid);
                     }
+                }
+                switch (useMethode) {
+                    case "_METHODE_AUTO":
+                        if (
+                            selectedAssets.length === 1 &&
+                            (assetsCache[mission.id][0].geometry.type === "LineString" ||
+                                assetsCache[mission.id][0].geometry.type === "Point")
+                        ) {
+                            GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
+                                function(position) {
+                                    var coordo = [position.coords.longitude, position.coords.latitude];
+                                    goToReport(mission, selectedAssets, coordo);
+                                },
+                                function(OnError) {
+                                    goToReport(mission, selectedAssets);
+                                },
+                                {
+                                    enableHighAccuracy: true,
+                                    maximumAge: 1000,
+                                    timeout: 3000
+                                }
+                            );
+                        } else {
+                            goToReport(mission, selectedAssets);
+                        }
 
-                    break;
+                        break;
 
-                case "_METHODE_MANO":
-                default:
-                    if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
-                        $rootScope.$broadcast("GET_REPORT_POSITION", function(position) {
-                            goToReport(mission, selectedAssets, position);
-                        });
-                    } else {
-                        goToReport(mission, selectedAssets);
-                    }
+                    case "_METHODE_MANO":
+                    default:
+                        if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
+                            $rootScope.$broadcast("GET_REPORT_POSITION", function(position) {
+                                goToReport(mission, selectedAssets, position);
+                            });
+                        } else {
+                            goToReport(mission, selectedAssets);
+                        }
 
-                    break;
+                        break;
+                }
             }
         }
 

@@ -166,6 +166,7 @@ window.smartgeo_i18n_lang.fr = {
     _PLANNING_DISPLAY_DONE_ASSETS_: "Afficher objets terminés",
     _PLANNING_LOCATE_: "Localiser",
     _PLANNING_WRITE_: "CR",
+    _PLANNING_WRITE_NOT_FOUND_: "Vous ne possedez plus les droits nécessaires à l'ouverture de ce CR.\n\nVeuillez contacter votre Administrateur NetGeo et vérifier l'affectation de votre entreprise à l'activité : %s",
     _PLANNING_FINISH_: "terminé",
     _PLANNING_REFRESHED_: "Actualisé il y a ",
     _PLANNING_DISPLAY_FINISHED_: "Afficher les OT terminés",
