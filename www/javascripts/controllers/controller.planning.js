@@ -572,18 +572,24 @@
                             (assetsCache[mission.id][0].geometry.type === "LineString" ||
                                 assetsCache[mission.id][0].geometry.type === "Point")
                         ) {
-                            GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
-                                function(position) {
-                                    var coordo = [position.coords.longitude, position.coords.latitude];
-                                    goToReport(mission, selectedAssets, coordo);
+                            $rootScope.$broadcast(
+                                "SHOW_CR_FORM_SPINNER",
+                                true,
+                                "Récupération des coordonnées GPS en cours ..."
+                            );
+                            navigator.geolocation.getCurrentPosition(
+                                function(pos) {
+                                    goToReport(mission, selectedAssets, [pos.coords.longitude, pos.coords.latitude]);
+                                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
                                 },
-                                function(OnError) {
+                                function(err) {
                                     goToReport(mission, selectedAssets);
+                                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
                                 },
                                 {
-                                    enableHighAccuracy: true,
-                                    maximumAge: 1000,
-                                    timeout: 3000
+                                    enableHighAccuracy: false,
+                                    maximumAge: 10000,
+                                    timeout: 7000
                                 }
                             );
                         } else {
