@@ -45,6 +45,7 @@ window.smartgeo_i18n_lang.en = {
     _CONSULTATION_GOTO: "Go to",
     _CONSULTATION_REPORT_ON_POSITION: "Fill report on this position",
     _CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR: "Add to current tour",
+    _CONSULTATION_GPS_: "Retrieving GPS coordinates...",
     _CONSULTATION_GPS_FAIL: "Error while retrieving GPS coordinates",
     _CONSULTATION_ADD_TO_: "Add to",
     _CONSULTATION_WRITE_FOR_: "Write for ",

@@ -560,7 +560,11 @@
             if (!_OK) {
                 alertify.alert(i18n.get("_PLANNING_WRITE_NOT_FOUND_", mission.activity.label));
             } else {
-                for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
+                for (var i = 0; i < assetsCache[mission.id].length; i++) {
+                    //Si l'asset est undefined on l'ignore
+                    if (!assetsCache[mission.id][i]) {
+                        continue;
+                    }
                     if (assetsCache[mission.id][i].selected) {
                         selectedAssets.push(assetsCache[mission.id][i].guid);
                     }
@@ -572,11 +576,7 @@
                             (assetsCache[mission.id][0].geometry.type === "LineString" ||
                                 assetsCache[mission.id][0].geometry.type === "Point")
                         ) {
-                            $rootScope.$broadcast(
-                                "SHOW_CR_FORM_SPINNER",
-                                true,
-                                "Récupération des coordonnées GPS en cours ..."
-                            );
+                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", true, i18n.get("_CONSULTATION_GPS_"));
                             navigator.geolocation.getCurrentPosition(
                                 function(pos) {
                                     goToReport(mission, selectedAssets, [pos.coords.longitude, pos.coords.latitude]);
@@ -595,9 +595,7 @@
                         } else {
                             goToReport(mission, selectedAssets);
                         }
-
                         break;
-
                     case "_METHODE_MANO":
                     default:
                         if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
@@ -607,7 +605,6 @@
                         } else {
                             goToReport(mission, selectedAssets);
                         }
-
                         break;
                 }
             }
