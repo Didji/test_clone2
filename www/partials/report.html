@@ -11,6 +11,13 @@
         <i ng-if="reportController.sendingReport" class="fa fa-refresh fa-spin"></i>
         </span>
     </button>
+
+    <div class="alert alert-warning" ng-show="reportController.report.latlng">
+        <p>
+            <i18n>_REPORT_POSITION_RECORDED</i18n>
+        </p>
+    </div>
+
     <div bindonce ng-repeat='tab in reportController.report.activity.tabs' class="panel panel-default report">
         <div class="panel-heading report-heading">
             <span class="pull-right icon {{tab.show ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
@@ -72,7 +79,7 @@
         </div>
     </div>
 
-    <div ng-show="!reportForm.$valid" class="panel text-danger">
+    <div ng-show="!reportForm.$valid" class="alert alert-danger">
         <p ng-show="reportForm.$error.required">
             <span class="required-marker icon-asterisk"></span>
             <i18n>_REPORT_REQUIRED_FIELDS</i18n>
