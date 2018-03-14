@@ -1,11 +1,11 @@
-<form name="reportForm" class="reportForm">
+<form name="reportForm" class="reportForm col-sm-10 col-md-10 col-sm-offset-1 col-md-offset-1">
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
     <button type="button" class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.attachmentIsRequiredAndEmpty()"
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || (reportController.attachmentIsRequired && reportController.report.ged.length < 1)"
         ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
@@ -118,13 +118,16 @@
             <i18n>_REPORT_REQUIRED_FIELDS</i18n>
         </p>
     </div>
-    <div ng-show="rights.media" class="panel report" ng-class="reportController.attachmentIsRequiredAndEmpty() ? 'panel-danger' : 'panel-default'">
+    <div ng-show="reportController.attachementIsVisible" class="panel report" ng-class="(reportController.attachmentIsRequired && reportController.report.ged.length < 1) ? 'panel-danger' : 'panel-default'">
         <div class="panel-heading">
             <h4 class="panel-title">
                 <i18n>_REPORT_MEDIA</i18n>
             </h4>
         </div>
         <div class="panel-body">
+            <div ng-show="(reportController.attachmentIsRequired && reportController.report.ged.length < 1)" class="panel text-danger">
+                <i18n>_REPORT_MEDIA_REQUIRED</i18n>
+            </div>
             <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto"
                 ng-click="reportController.getPictureFromCamera();" class='btn btn-default btn-block' ng-model='reportController.report.ged'>
                 <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
@@ -171,7 +174,7 @@
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.attachmentIsRequiredAndEmpty()"
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || (reportController.attachmentIsRequired && reportController.report.ged.length < 1)"
         ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>

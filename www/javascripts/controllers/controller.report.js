@@ -66,7 +66,8 @@
 
         vm.getPictureFromGallery = getPictureFromGallery;
         vm.getPictureFromCamera = getPictureFromCamera;
-        vm.attachmentIsRequiredAndEmpty = attachmentIsRequiredAndEmpty;
+        vm.attachmentIsRequired = false;
+        vm.attachementIsVisible = true;
 
         var invalidIds = [],
             intent = Storage.get("intent") || {};
@@ -315,6 +316,7 @@
                     }
                 }
 
+                applyInitialConsequences();
                 setTimeout(function() {
                     if (!$scope.$$phase) {
                         $scope.$digest();
@@ -375,6 +377,7 @@
                 return false;
             }
 
+            // Pour chaque champs possédant une action
             for (i = 0, lim = field.actions.length; i < lim; i++) {
                 act = field.actions[i];
                 targetField = vm.report.activity._fields[act.target];
@@ -383,23 +386,43 @@
                 }
 
                 cond = vm.report.fields[srcId] == act.condition;
-                var cons = testConsequences(act.target);
-                switch (act.type) {
-                    case "show":
-                        targetField.visible = cond;
-                        // Si targetField est une case à cocher, elle a peut-être
-                        // aussi des conséquences. Si une case à cocher devient invisible,
-                        // il faut qu'on la décoche et qu'on applique ses conséquences.
-                        if (!!!cond && targetField.type === "O") {
-                            vm.report.fields[act.target] = "N";
-                            vm.applyConsequences(act.target);
-                        }
-                        break;
-                    case "require":
-                        targetField.required = cond || cons.require;
-                        break;
-                    default:
-                        targetField.required = !!targetField.required;
+
+                // Cas particulier si le champ cible est le multimedia
+                if (field.actions[i].target == "PJ") {
+                    switch (act.type) {
+                        case "show":
+                            vm.attachementIsVisible = cond;
+                            if (!cond) {
+                                vm.attachmentIsRequired = false;
+                            }
+                            break;
+                        case "require":
+                            vm.attachmentIsRequired = cond;
+                            if (cond) {
+                                vm.attachmentIsVisible = true;
+                            }
+                            break;
+                    }
+                    continue;
+                } else {
+                    var cons = testConsequences(act.target);
+                    switch (act.type) {
+                        case "show":
+                            targetField.visible = cond;
+                            // Si targetField est une case à cocher, elle a peut-être
+                            // aussi des conséquences. Si une case à cocher devient invisible,
+                            // il faut qu'on la décoche et qu'on applique ses conséquences.
+                            if (!!!cond && targetField.type === "O") {
+                                vm.report.fields[act.target] = "N";
+                                vm.applyConsequences(act.target);
+                            }
+                            break;
+                        case "require":
+                            targetField.required = cond || cons.require;
+                            break;
+                        default:
+                            targetField.required = !!targetField.required;
+                    }
                 }
             }
         }
@@ -811,16 +834,6 @@
                     callback(report);
                 });
             }
-        }
-        /**
-         * @name attachmentIsRequiredAndEmpty
-         * @desc indique si la pour un activité la pièce jointe est obligatoire et est renseignée
-         * @returns {Boolean} Retourne true si obligatoire et vide
-         */
-        function attachmentIsRequiredAndEmpty() {
-            var size = vm.report.ged.length;
-            var gedIsRequired = vm.report.gedIsRequired;
-            return gedIsRequired && !size ? true : false;
         }
     }
 })();
