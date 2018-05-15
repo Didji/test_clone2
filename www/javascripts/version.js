@@ -1,2 +1,2 @@
-window.smargeomobileversion = "2.2.1.7";
+window.smargeomobileversion = "2.2.6";
 window.smargeomobilebuild = "Veolia";
