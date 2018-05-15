@@ -13,4 +13,4 @@ dist
 .idea
 *.iml
 www/javascripts/config.js
-www/javascripts/*.config.js
+www/javascripts/config.*.js
