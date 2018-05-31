@@ -100,7 +100,7 @@
             if ( intent.map_center ) {
                 G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
             }
-            if ( intent.map_marker ) {
+            if (intent.map_marker === "true" || intent.map_marker === true) {
                 Smartgeo._addEventListener('backbutton', Intents.end);
                 if ( Site.current.activities._byId[intent.report_activity] ) {
                     Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function(e) {
@@ -112,37 +112,51 @@
                         $location.path( url );
                         $scope.$apply();
                     } ).addTo( G3ME.map );
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
+                    return;
                 } else {
                     alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
                     return Storage.remove('intent');
                 }
-            } else {
-                if ( intent.controller === 'report') {
-                    if ( intent.args === "new" ) {
-                        Smartgeo._addEventListener('backbutton', Intents.end);
-                        if (Site.current.activities._byId[intent.report_activity]) {
-                            var mission_id;
-                            if(intent.report_mission){
-                                mission_id = "/"+intent.report_mission;
-                            } else {
-                                mission_id = "";
-                            }
-                            $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
-                            $scope.$apply();
-                        } else {
-                            alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
-                            return Storage.remove('intent');
-                        }
-                    } else if ( intent.args === "simple" ) {
-                        $rootScope.multireport = vm.multireport = intent;
-                    }
-                } else {
-                    alertify.alert( i18n.get( '_INTENT_NOT_AVAILABLE_' ) );
-                    return Storage.remove('intent');
+            } 
+            if (intent.map_marker === "false" || intent.map_marker === false) {
+                if (!$scope.$$phase) {
+                    $scope.$digest();
                 }
-            }
-            if (!$scope.$$phase) {
-                $scope.$digest();
+                return;   
+            } 
+            if ( intent.controller === 'report') {
+                if ( intent.args === "new" ) {
+                    Smartgeo._addEventListener('backbutton', Intents.end);
+                    if (Site.current.activities._byId[intent.report_activity]) {
+                        var mission_id;
+                        if(intent.report_mission){
+                            mission_id = "/"+intent.report_mission;
+                        } else {
+                            mission_id = "";
+                        }
+                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
+                        $scope.$apply();
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
+                        }
+                        return;
+                    } else {
+                        alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
+                        return Storage.remove('intent');
+                    }
+                } else if ( intent.args === "simple" ) {
+                    $rootScope.multireport = vm.multireport = intent;
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
+                    return;
+                }
+            } else {
+                alertify.alert( i18n.get( '_INTENT_NOT_AVAILABLE_' ) );
+                return Storage.remove('intent');
             }
         }
 

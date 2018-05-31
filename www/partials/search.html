@@ -55,10 +55,8 @@
                 <div ng-switch-when="L">
                     <select
                         style="margin-bottom: 10px;width:100%;"
-                        ng-model="selectedCriteriaValues[fieldKey]">
-                        <option value=""></option>
-                            <option ng-repeat="(o, label) in (lists[criteria[selectedFamily.okey]._byKey[fieldKey].options])"
-                            value="{{label}}">{{label}}</option>
+                        ng-model="selectedCriteriaValues[fieldKey]"
+                        ng-options="label for label in lists[criteria[selectedFamily.okey]._byKey[fieldKey].options] track by label">
                     </select>
                 </div>
                 <div ng-switch-when="O">

@@ -1,10 +1,10 @@
 angular
 	.module( 'smartgeomobile.config', [] )
 	.constant( 'RIGHTS', {
-
 		"activelayers": true,
 		"census": false,
 		"consultation": true,
+		"downloadTiles": true,
 		"goto": false,
 		"history": false,
 		"logout": false,
@@ -20,13 +20,8 @@ angular
 		"report": false,
 		"search": true,
 		"serverUrl": "http://canopee.m-ve.com",
-		"serverDomain": "@m-ve.com",
 		"siteselection": false,
 		"synccenter": true,
 		"intent": 200,
-
 		"_DONT_REALLY_RESET": true,
-
 	});
-
-

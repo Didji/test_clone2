@@ -97,17 +97,18 @@
                                 } );
                                 scope.isTakingPhoto = false;
                             } );
-                        }, function() {
+                        }, function(error) {
                                 scope.$apply( function() {
                                     scope.isTakingPhoto = false;
                                 } );
-                                ctrl.$setValidity( "error", false );
+                                console.error('Unable to take picture: "' + error + '"');
                             }, {
                                 quality: 100,
                                 sourceType: attrs.camera === "gallery" ? navigator.camera.PictureSourceType.SAVEDPHOTOALBUM : navigator.camera.PictureSourceType.CAMERA,
                                 mediaType: navigator.camera.MediaType.PICTURE,
                                 destinationType: navigator.camera.DestinationType.FILE_URI,
                                 targetWidth: 1024,
+                                allowEdit: true,
                                 correctOrientation: true,
                                 saveToPhotoAlbum: true
                             } );

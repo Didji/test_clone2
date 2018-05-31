@@ -23,16 +23,28 @@
 
         vm.syncItems = [];
         vm.synchronizing = false;
-        $rootScope.$on('DEVICE_IS_ONLINE', activate);
-        $rootScope.$on('DEVICE_IS_OFFLINE', desactivate);
-        $rootScope.$on( 'synchronizator_update', updateList );
-        $rootScope.$on( 'synchronizator_new_item', synchronizeAll );
+        //on tue les capteurs d'events avant de les reinitialiser. 
+        //sinon ils se declenchent plusieurs fois 
+        if( typeof $rootScope.on_device_is_online != 'undefined'){
+            $rootScope.on_device_is_online();
+        }
+        if( typeof $rootScope.on_device_is_offline != 'undefined'){
+            $rootScope.on_device_is_offline();
+        }
+        if( typeof $rootScope.on_synchronizator_update != 'undefined'){
+            $rootScope.on_synchronizator_update();
+        }
+        if( typeof $rootScope.on_synchronizator_new_item != 'undefined'){
+            $rootScope.on_synchronizator_new_item();
+        }
+        $rootScope.on_device_is_online = $rootScope.$on('DEVICE_IS_ONLINE', activate);
+        $rootScope.on_device_is_offline = $rootScope.$on('DEVICE_IS_OFFLINE', desactivate);
+        $rootScope.on_synchronizator_update = $rootScope.$on( 'synchronizator_update', updateList );
+        $rootScope.on_synchronizator_new_item= $rootScope.$on( 'synchronizator_new_item', synchronizeAll );
 
 
        $scope.syncOnline;//for the view condition
         var globalinterval = 1000 * 60;
-        var syncAllInterval;
-        var checkSyncReportInterval;
         updateList();
 
         // au lancement de l'application l'instanciation du controlleur ce fait apres le smartgeo.initialise , et donc l'evenement $on de ce controlleur est instancier apres le $broadcast de la factory smartgeo; mais on peut toutefois s'appuyer sur la variable online dans le localstorage.
@@ -47,9 +59,11 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
+            //on annule d'abord tout les intervals de synchronisation , sinon on crée plusieurs intervals à chaque activate
+            desactivate();
             $scope.syncOnline = Storage.get("online");
-            syncAllInterval =  $interval( synchronizeAll, globalinterval );
-            checkSyncReportInterval =  $interval( Synchronizator.checkSynchronizedReports, globalinterval );
+            $rootScope.syncAllInterval =  $interval( synchronizeAll, globalinterval );
+            $rootScope.checkSyncReportInterval =  $interval( Synchronizator.checkSynchronizedReports, globalinterval );
             synchronizeAll();
         }
 
@@ -59,8 +73,8 @@
          */
         function desactivate() {
             $scope.syncOnline = Storage.get("online");
-            $interval.cancel( syncAllInterval );
-            $interval.cancel( checkSyncReportInterval );
+            $interval.cancel( $rootScope.syncAllInterval );
+            $interval.cancel( $rootScope.checkSyncReportInterval );
         }
 
         /**
