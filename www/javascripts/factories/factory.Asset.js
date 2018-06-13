@@ -329,7 +329,7 @@
          * @param {Array} zones
          */
         Asset.findOne = function(id, callback, zones) {
-
+            
             var tmp = +id;
             if (!isNaN( tmp )) {
                 id = +id;

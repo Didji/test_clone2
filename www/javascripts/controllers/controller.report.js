@@ -44,12 +44,29 @@
 
         activate();
 
+        function getZoneIntersect(geom) {
+            var wktReader = new jsts.io.WKTReader();
+            var position = wktReader.read(geom);
+            var result = false;
+            for (var zone in Site.current.zones_specifiques) {
+                // Pour chaque zones spécifiques existantes
+                var zone_spe = wktReader.read(Site.current.zones_specifiques[zone].geom);
+                // On teste l'intersection avec la position du CF
+                if (zone_spe.intersects(position)) {
+                    // On a trouver une intersection
+                    result = zone;
+                    // On peut s'arrêter là
+                    break;
+                }
+            }
+            return result;
+        }
+
         /**
          * @name activate
          * @desc Fonction d'initialisation
          */
         function activate() {
-            var asset;
             $rootScope.currentPage = "Saisie de compte-rendu";
 
             if (!checkInputParameters($routeParams)) {
@@ -64,14 +81,13 @@
 
             vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
-            Asset.findAssetsByGuids(vm.report.assets, function(assets) {
-
-                invalidIds = angular.copy( vm.report.assets );
+            Asset.findAssetsByGuids(vm.report.assets, function (assets) {
+                invalidIds = angular.copy(vm.report.assets);
 
                 for (var i = 0; i < assets.length; i++) {
                     if (assets[i].id) {
-                        vm.assets.push( assets[i] );
-                        invalidIds.splice( invalidIds.indexOf(assets[i].id), 1 );
+                        vm.assets.push(assets[i]);
+                        invalidIds.splice(invalidIds.indexOf(assets[i].id), 1);
                     }
                 }
 
@@ -82,18 +98,47 @@
                             invalidIds.join(', ')
                         )
                     );
+                    return;
+                }
+
+                var myPosition = null;
+                if(vm.assets.length > 0) {
+                    var asset_geom = vm.assets[0].geometry;
+                    myPosition = asset_geom.type + "(" + asset_geom.coordinates[0] + " " + asset_geom.coordinates[1] + ")";
+                }
+
+                if (vm.report.latlng) {
+                    var position_geom = vm.report.latlng.split(',');
+                    myPosition = 'POINT(' + position_geom[1] + " " + position_geom[0] + ")";
+                }
+                
+                // On récupere l'ID de la zone administrable si elle existe
+                vm.report.zone_specifique = getZoneIntersect(myPosition);
+                
+                var masked_fields = {};
+                if (vm.report.zone_specifique && (vm.report.zone_specifique in Site.current.zones_specifiques_fields)) { // On teste la presence de la zone specifique dans le filtrage des champs
+                    masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
+                }
+
+                for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
+                    for (var f = 0; f < vm.report.activity.tabs[tab].fields.length; f++) {
+                        // Pour chaque champs de chaque tabs
+                        var field_id = vm.report.activity.tabs[tab].fields[f].id;
+                        if (field_id in masked_fields && !masked_fields[field_id].visible) {
+                            // Le champs est présent dans les filtres et sa visibilité est false
+                            delete vm.report.activity.tabs[tab].fields[f];
+                        }
+                    }
                 }
 
                 applyDefaultValues();
 
+                setTimeout(function () {
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
+                }, 1000);
             });
-
-            // TODO: Pas sûr de l'utilité de ce timeout, à mettre dans le callback ci-dessus ?
-            setTimeout(function() {
-                if (!$scope.$$phase) {
-                    $scope.$digest();
-                }
-            }, 1000);
         }
 
         /**
@@ -255,7 +300,7 @@
          * @name applyDefaultValues
          * @desc Applique les valeurs par defaut
          */
-        function applyDefaultValues() {
+        function applyDefaultValues(callback) {
             var fields = vm.report.fields,
                 def, i, field, date;
             for (i in vm.report.activity._fields) {
@@ -299,9 +344,8 @@
                     vm.report.overrides[field.id] = output;
                     fields[field.id] = output.length != 0 ? output : def;
                 }
-            }
-            if (!$scope.$$phase) {
-                $scope.$digest();
+
+                
             }
         }
 

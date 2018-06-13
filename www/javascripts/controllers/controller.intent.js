@@ -14,7 +14,7 @@
      */
     function IntentController($scope, $routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo, i18n) {
         var intent = {};
-
+        
         activate();
 
         /**
@@ -94,12 +94,12 @@
 
             var match, assetid;
 
-            if ( (match = intent.map_target.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            if ((match = intent.map_target.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 assetid = match[1];
                 intent.latlng = intent.map_center = [match[2], match[3]];
-            } else if ( (match = intent.map_target.match( /^(\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            } else if ((match = intent.map_target.match( /^(\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
                 intent.map_center = intent.latlng = [match[1], match[2]];
-            } else if ( (match = intent.map_target.match( /^(\d+)$/ )) ) {
+            } else if ((match = intent.map_target.match( /^(\d+)$/ )) ) {
                 assetid = match[1];
             }
 

@@ -1,0 +1,13 @@
+{
+  "name": "com.gismartware.mobile",
+  "version": "2.2.6",
+  "displayName": "Smartgeo",
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  },
+  "dependencies": {
+    "cordova-android": "~6.1.0"
+  }
+}

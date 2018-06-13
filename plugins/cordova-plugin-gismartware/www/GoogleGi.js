@@ -1,7 +1,7 @@
 function GoogleGi() {};
 
 GoogleGi.prototype.pickAccounts = function (title, domain, success, error) {
-  cordova.exec(success, error, "GoogleGi", "pick", [title, domain]);
+  cordova.exec(success, error, "GoogleGi", "pick", [title]);
 };
 
 GoogleGi.prototype.isConnected = function (params, success, error) {

@@ -1,7 +1,6 @@
 angular
 	.module( 'smartgeomobile.config', [] )
 	.constant( 'RIGHTS', {
-
 		"activelayers": true,
 		"census": true,
 		"consultation": true,
@@ -20,13 +19,11 @@ angular
 		"project": true,
 		"report": true,
 		"search": true,
-		"serverUrl": "http://canope-rec.projets-gi.com/",
+		"serverUrl": "http://dev-canopee-frontal.hp.m-ve.com/",
 		"siteselection": true,
 		"synccenter": true,
 		"intent": 200,
-
 		"_DONT_REALLY_RESET": false,
-
 	});
 
 

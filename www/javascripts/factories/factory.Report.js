@@ -6,10 +6,10 @@
         .module( 'smartgeomobile' )
         .factory( 'Report', ReportFactory );
 
-    ReportFactory.$inject = ["Activity", "Site", "i18n", "$location", "$rootScope"];
+    ReportFactory.$inject = ["Activity", "Site", "i18n", "$location", "$rootScope", "Asset"];
 
 
-    function ReportFactory(Activity, Site, i18n, $location, $rootScope) {
+    function ReportFactory(Activity, Site, i18n, $location, $rootScope, Asset) {
 
         /**
          * @class ReportFactory
@@ -44,9 +44,13 @@
                 this.isCall = true;
                 mission = mission.substr( 5 );
             }
-
+            
+            if (reportLatLng) {
+                this.latlng = reportLatLng;
+            }
+            
             this.assets = reportTargets;
-
+            
             this.activity = Activity.findOne(activity);
             this.activity.tabs[0].show = true;
 
@@ -59,9 +63,6 @@
             this.version = window.Smartgeo._SMARTGEO_MOBILE_VERSION ;
             this.uuid = window.uuid();
             this.timestamp = new Date().getTime();
-            if (reportLatLng) {
-                this.latlng = reportLatLng;
-            }
         }
 
         Report.prototype.getLabel = function() {
