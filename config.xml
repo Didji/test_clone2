@@ -41,6 +41,8 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <hook src="./resources/android/scripts/prepare_release_signing.js" type="after_prepare" />
+        <hook src="./resources/android/scripts/prepare_debug_signing.js" type="after_prepare" />
+
     </platform>
     <platform name="ios">
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
