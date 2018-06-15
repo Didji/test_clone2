@@ -1,6 +1,6 @@
 function GoogleGi() {};
 
-GoogleGi.prototype.pickAccounts = function (title, domain, success, error) {
+GoogleGi.prototype.pickAccounts = function (title, success, error) {
   cordova.exec(success, error, "GoogleGi", "pick", [title]);
 };
 

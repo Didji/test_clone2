@@ -45,7 +45,7 @@
     	function pickAccounts() {
     	    vm.loginInProgress = true;
     	    vm.errorMessage = null;
-    	    GoogleGi.pickAccounts(i18n.get('OAUTH_PICK_ACCOUNTS'), LicenseManager.serverDomain, handlePickAccountsSuccess, handlePickAccountsError);
+    	    GoogleGi.pickAccounts(i18n.get('OAUTH_PICK_ACCOUNTS'), handlePickAccountsSuccess, handlePickAccountsError);
             if ( installed ) {
                 $location.path( '/map/' + localSites[0].id );
             }

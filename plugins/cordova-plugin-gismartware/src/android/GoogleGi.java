@@ -77,7 +77,7 @@ public class GoogleGi extends CordovaPlugin {
                     getServerUrlFromConfig();
                     mAccountManager = AccountManager.get(cordova.getActivity());
                     try {
-                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0), args.getString(1));
+                        showAccountPicker(GOOGLE_ACCOUNT_TYPE, false, args.getString(0));
                     } catch (JSONException e) {
                         e.printStackTrace();
                         handleError(OAUTH_UNKNOWN_ERROR);
@@ -143,7 +143,7 @@ public class GoogleGi extends CordovaPlugin {
      * Show all the accounts registered on the account manager. Request an auth token upon user select.
      * @param authTokenType
      */
-    private void showAccountPicker(final String authTokenType, final boolean invalidate, final String title, final String domain) {
+    private void showAccountPicker(final String authTokenType, final boolean invalidate, final String title) {
 
         mInvalidate = invalidate;
         final Account allAccounts[] = mAccountManager.getAccountsByType(authTokenType);
