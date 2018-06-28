@@ -22,12 +22,7 @@
          */
         Intents.parse = function(intent) {
             console.log("INTENT_URL = " + intent);
-            var data = intent.replace('gimap:/', '/intent').split('&redirect=');
-            var redirect = null;
-            if (data.length > 1) {
-                redirect = encodeURIComponent(data[1]);
-            };
-            data = data[0].split("?");
+            var data = intent.replace('gimap:/', '/intent').split('?');
             var params = data[1].split("&");
             var appendedParams = false;
             var allParams = {
@@ -46,10 +41,16 @@
             if (params != null && params.length > 0) {
                 url += "?";
                 appendedParams = true;
+                var callbackParam = '';
                 for (var i = 0; i < params.length; i++) {
                     var composite =  false;
                     var param = params[i].split('=');
                     var paramName = param[0];
+                    // On ignore les parametres de callback mais on les ajoute en fin d'URL
+                    if (paramName === "[LABEL_INDEXED_FIELDS]" || paramName === "[KEY_INDEXED_FIELDS]") {
+                        callbackParam = paramName;
+                        continue;
+                    }
                     //Est ce un champ composé? (exemple : fields[###564654###]=250
                     var matcher = paramName.match(/^(.+)(\[.+\])$/);
                     if (matcher != null && matcher.length > 1) {
@@ -78,11 +79,11 @@
                         url += "&";
                     }
                 }
+                url += callbackParam;
             }
-            if (redirect !== null) {
-                url += "&report_url_redirect=" + redirect + "&multi_report_redirect" + redirect;
+            if (url.indexOf("redirect") !== -1) {
                 $rootScope.fromFDR = true;
-            };
+            }
             return url;
         };
 
