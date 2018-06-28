@@ -121,9 +121,12 @@
                     for (var f = vm.report.activity.tabs[tab].fields.length-1; f >= 0; f--) {
                         var field = vm.report.activity.tabs[tab].fields[f];
                         if (
-                            (!vm.report.zone_specifique && field.zone_specifique) || 
-                            (vm.report.zone_specifique && vm.report.zone_specifique !== field.zone_specifique) ||
-                            (field.id in masked_fields && !masked_fields[field_id].visible)
+                            // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
+                            (!vm.report.zone_specifique && field.zone_specifique) ||
+                            // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
+                            (vm.report.zone_specifique && vm.report.zone_specifique !== field.zone_specifique && field.zone_specifique) ||
+                            // Le champs est taggé comme masqué dans les metadata 
+                            (field.id in masked_fields && !masked_fields[field.id].visible)
                         ) {
                             vm.report.activity.tabs[tab].fields.splice(f, 1);
                         }
@@ -266,7 +269,6 @@
                 angular.element( 'html, body' ).animate( {
                     scrollTop: elt.offset().top - 10
                 }, 250 );
-                elt = null;
             } );
 
         }
@@ -301,7 +303,7 @@
          */
         function applyDefaultValues(callback) {
             var fields = vm.report.fields,
-                def, i, field, date;
+                def, i, field;
             for (i in vm.report.activity._fields) {
                 field = vm.report.activity._fields[i];
                 def = field['default'];
