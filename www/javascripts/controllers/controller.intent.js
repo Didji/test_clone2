@@ -23,6 +23,8 @@
          */
         function activate() {
             intent = $routeParams;
+            // Si l'intent vient d'un RI sans asset, on masque le marker
+            intent.map_marker = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/) ? false : true;
 
             Storage.set( 'intent', intent );
             if (!intent.controller) {
