@@ -47,19 +47,16 @@
         function getZoneIntersect(geom) {
             var wktReader = new jsts.io.WKTReader();
             var position = wktReader.read(geom);
-            var result = false;
             for (var zone in Site.current.zones_specifiques) {
                 // Pour chaque zones spécifiques existantes
                 var zone_spe = wktReader.read(Site.current.zones_specifiques[zone].geom);
                 // On teste l'intersection avec la position du CF
                 if (zone_spe.intersects(position)) {
                     // On a trouver une intersection
-                    result = zone;
-                    // On peut s'arrêter là
-                    break;
+                    return parseInt(zone);
                 }
             }
-            return result;
+            return false;
         }
 
         /**
@@ -121,14 +118,16 @@
                 }
 
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
-                    for (var f = 0; f < vm.report.activity.tabs[tab].fields.length; f++) {
-                        // Pour chaque champs de chaque tabs
-                        var field_id = vm.report.activity.tabs[tab].fields[f].id;
-                        if (field_id in masked_fields && !masked_fields[field_id].visible) {
-                            // Le champs est présent dans les filtres et sa visibilité est false
-                            delete vm.report.activity.tabs[tab].fields[f];
+                    for (var f = vm.report.activity.tabs[tab].fields.length-1; f >= 0; f--) {
+                        var field = vm.report.activity.tabs[tab].fields[f];
+                        if (
+                            (!vm.report.zone_specifique && field.zone_specifique) || 
+                            (vm.report.zone_specifique && vm.report.zone_specifique !== field.zone_specifique) ||
+                            (field.id in masked_fields && !masked_fields[field_id].visible)
+                        ) {
+                            vm.report.activity.tabs[tab].fields.splice(f, 1);
                         }
-                    }
+                    }                    
                 }
 
                 applyDefaultValues();
