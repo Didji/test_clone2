@@ -101,7 +101,7 @@
     				}
     		    );
     		} else if (remoteSites.length === 1 && !installed) {
-    		    //$location.path( '/sites/install/' + remoteSites[0].id );
+    		    $location.path( '/sites/install/' + remoteSites[0].id );
     		} else {
     			displayError();
 			}
