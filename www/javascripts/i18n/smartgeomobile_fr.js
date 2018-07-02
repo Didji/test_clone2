@@ -86,6 +86,7 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_SELECT_ASSETS: "Sélectionner patrimoine",
     _REPORT_ASSET_NOT_FOUND_S: "L'objet (%s) n'existe pas. Veuillez mettre à jour vos données.",
     _REPORT_ASSET_NOT_FOUND_P: "Les objets (%s) n'existent pas. Veuillez mettre à jour vos données.",
+    _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_: "Aucun champs n'a été configuré côté Smartgeo pour porter les modifications multi-équipements.",
     _SEARCH_SEARCH: "Recherche",
     _SEARCH_BACK: "Retour",
     _SEARCH_ADVANCED_SEARCH: "Recherche avancée",

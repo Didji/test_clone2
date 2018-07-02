@@ -86,6 +86,7 @@ window.smartgeo_i18n_lang.en = {
     _REPORT_SELECT_ASSETS: "Select assets",
     _REPORT_ASSET_NOT_FOUND_S: "Asset (%s) not found. Please update your datas.",
     _REPORT_ASSET_NOT_FOUND_P: "Assets (%s) not found. Please update your datas.",
+    _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_: "You need to configure a specific field on multi assets report.",
     _SEARCH_SEARCH: "Search",
     _SEARCH_BACK: "Back",
     _SEARCH_ADVANCED_SEARCH: "Advanced search",

@@ -28,8 +28,6 @@
 
 
     	function activate() {
-			console.log("prefetchedlocalsites");
-			console.log(prefetchedlocalsites);
     		var	tmp = prefetchedlocalsites;
 
     		localSites = [];

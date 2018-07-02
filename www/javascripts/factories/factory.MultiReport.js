@@ -124,8 +124,6 @@
                 } ).on( 'contextmenu', function() {
                     var e = $compile(angular.element('<div ng-include="partials/veolia.html"></div>'))($rootScope.$new());
                     this.bindPopup(e[0]);
-                    console.log(intent.multi_report_activity.tabs[0].label);
-                    console.log(intent.multi_report_activity.tabs);
                 } ).addTo( G3ME.map );
             } );
         };

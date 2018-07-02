@@ -35,7 +35,8 @@
                 'fields': 'report_fields',
                 'assets': 'multi_report_target,report_assets',
                 'center': 'map_target,multi_report_center',
-                'outmsg': 'multi_report_outmsg'
+                'outmsg': 'multi_report_outmsg',
+                'installationsTraitees' : 'done_asset'
             };
             var url = data[0];
             if (params != null && params.length > 0) {

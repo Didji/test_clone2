@@ -98,12 +98,27 @@
                     return;
                 }
 
+                /*************************************** 
+                * Gestion des zones spécifiques
+                ***************************************/
                 var myPosition = null;
+                // Si un asset est fournis, on construit le WKT string de sa géométrie
                 if(vm.assets.length > 0) {
                     var asset_geom = vm.assets[0].geometry;
-                    myPosition = asset_geom.type + "(" + asset_geom.coordinates[0] + " " + asset_geom.coordinates[1] + ")";
+                    myPosition = asset_geom.type + "(";
+
+                    var coord_asset = "";
+                    if (asset_geom.type.toUpperCase() === "POINT"){
+                        coord_asset += vm.assets[0].geometry.coordinates.join(" ");
+                    } else if (asset_geom.type.toUpperCase() === "LINESTRING") {
+                        coord_asset = vm.assets[0].geometry.coordinates.map(function (geom) {
+                            return geom.join(" ");
+                        }).join(",");
+                    }
+                    myPosition += coord_asset +")";
                 }
 
+                // Si des coordonnées long/lat sont fournis, il s'agit d'un CR pointé
                 if (vm.report.latlng) {
                     var position_geom = vm.report.latlng.split(',');
                     myPosition = 'POINT(' + position_geom[1] + " " + position_geom[0] + ")";
@@ -132,6 +147,7 @@
                         }
                     }                    
                 }
+                /****************************************/
 
                 applyDefaultValues();
 

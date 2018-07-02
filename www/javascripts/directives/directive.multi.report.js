@@ -14,6 +14,10 @@
     multiReportDirective.$inject = ["G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n", "Utils", "Smartgeo", "Intents", "$rootScope"];
 
     function multiReportDirective(G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n, Utils, Smartgeo, Intents, $rootScope) {
+        var reports,
+            unwatch_report_ged = null,
+            initialTargets = [];
+        
         return {
             restrict: 'E',
             scope: {
@@ -22,10 +26,6 @@
             templateUrl: 'javascripts/directives/template/multi.report.html',
             link: link
         };
-
-        var reports,
-            unwatch_report_ged = null,
-            initialTargets = [];
 
         function link(scope, element, attrs, controller) {
             Smartgeo._addEventListener('backbutton', Intents.end);
@@ -49,6 +49,7 @@
             scope.isIOS = navigator.userAgent.match( /iP(od|hone|ad)/i );
             scope.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
 
+            var activity_id = parseInt(scope.intent.multi_report_activity);
             scope.intent.multi_report_activity = Activity.findOne( +scope.intent.multi_report_activity );
             if (!scope.intent.multi_report_activity) {
                 return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_FOUND_') );
@@ -57,11 +58,29 @@
             } else if (scope.intent.multi_report_activity.multi_assets_tour.switch_field === null || scope.intent.multi_report_activity.multi_assets_tour.switch_field === undefined) {
                 return alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
             }
-            scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
-            scope.intent.multi_report_target = scope.intent.multi_report_target.split( ',' );
-            initialTargets = angular.copy( scope.intent.multi_report_target );
-            Asset.findAssetsByGuids( scope.intent.multi_report_target, createMarkers );
-            createExitControl();
+            //scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
+            var witch_field = scope.intent.multi_report_activity.multi_assets_tour.switch_field;
+            var abort = false;
+            for (var i = 0; i < Site.current.activities._byId[activity_id].tabs.length && !abort; i++) {
+                for (var field_idx in Site.current.activities._byId[+activity_id].tabs[i].fields) {
+                    if (parseInt(Site.current.activities._byId[activity_id].tabs[i].fields[field_idx].id) == witch_field){
+                        scope.intent.multi_report_field = Site.current.activities._byId[activity_id].tabs[i].fields[field_idx];
+                        abort = true;
+                    }
+                }
+            }
+            
+            if(!scope.intent.multi_report_field){
+                // Il y a un probleme de configuration avec le switch-field des CR
+                // Certainement un probleme de configuration Smartgeo
+                // On alerte l'utilisateur
+                alertify.alert(i18n.get("_REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_"));
+            } else {
+                scope.intent.multi_report_target = scope.intent.multi_report_target.split( ',' );
+                initialTargets = angular.copy( scope.intent.multi_report_target );
+                Asset.findAssetsByGuids( scope.intent.multi_report_target, createMarkers );
+                createExitControl();
+            }
 
             $rootScope.addAssetToTour = function addAssetToTour(asset) {
                 scope.intent.multi_report_target.push( asset );
@@ -392,6 +411,21 @@
                 scope.intent.multi_report_target.forEach( createMarker );
             }
 
+            function getZoneIntersect(geom) {
+                var wktReader = new jsts.io.WKTReader();
+                var position = wktReader.read(geom);
+                for (var zone in Site.current.zones_specifiques) {
+                    // Pour chaque zones spécifiques existantes
+                    var zone_spe = wktReader.read(Site.current.zones_specifiques[zone].geom);
+                    // On teste l'intersection avec la position du CF
+                    if (zone_spe.intersects(position)) {
+                        // On a trouver une intersection
+                        return parseInt(zone);
+                    }
+                }
+                return false;
+            }
+
             function createMarkerForPosition(lat, lng) {
                 var asset = {};
                 var latlng = lat + ',' + lng;
@@ -411,6 +445,35 @@
                         field = scope.report.activity._fields[i];
                         scope.report.fields[field.id] = scope.report.fields[field.id] || '';
                     }
+
+                    /*************************************** */
+                    var myPosition = 'POINT(' + lng + " " + lat + ")";
+
+                    // On récupere l'ID de la zone administrable si elle existe
+                    scope.report.zone_specifique = getZoneIntersect(myPosition);
+
+                    var masked_fields = {};
+                    if (scope.report.zone_specifique && (scope.report.zone_specifique in Site.current.zones_specifiques_fields)) { // On teste la presence de la zone specifique dans le filtrage des champs
+                        masked_fields = Site.current.zones_specifiques_fields[scope.report.zone_specifique];
+                    }
+
+                    for (var tab = 0; tab < scope.report.activity.tabs.length; tab++) {
+                        for (var f = scope.report.activity.tabs[tab].fields.length - 1; f >= 0; f--) {
+                            var field = scope.report.activity.tabs[tab].fields[f];
+                            if (
+                                // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
+                                (!scope.report.zone_specifique && field.zone_specifique) ||
+                                // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
+                                (scope.report.zone_specifique && scope.report.zone_specifique !== field.zone_specifique && field.zone_specifique) ||
+                                // Le champs est taggé comme masqué dans les metadata 
+                                (field.id in masked_fields && !masked_fields[field.id].visible)
+                            ) {
+                                scope.report.activity.tabs[tab].fields.splice(f, 1);
+                            }
+                        }
+                    }
+                    /*************************************** */
+
                     if (!scope.$$phase) {
                         scope.$apply();
                     }
@@ -438,6 +501,49 @@
                         field = scope.report.activity._fields[i];
                         scope.report.fields[field.id] = scope.report.fields[field.id] || '';
                     }
+
+                    /*************************************** 
+                     * Gestion des zones spécifiques
+                    ***************************************/
+                    var asset_geom = asset.geometry;
+                    var myPosition = asset_geom.type + "(";
+
+                    var coord_asset = "";
+                    if (asset_geom.type.toUpperCase() === "POINT") {
+                        coord_asset += asset.geometry.coordinates.join(" ");
+                    } else if (asset_geom.type.toUpperCase() === "LINESTRING") {
+                        coord_asset = asset.geometry.coordinates.map(function (geom) {
+                            return geom.join(" ");
+                        }).join(",");
+                    }
+                    myPosition += coord_asset + ")";
+
+                    // On récupere l'ID de la zone administrable si elle existe
+                    scope.report.zone_specifique = getZoneIntersect(myPosition);
+
+                    var masked_fields = {};
+                    if (scope.report.zone_specifique && (scope.report.zone_specifique in Site.current.zones_specifiques_fields)) { // On teste la presence de la zone specifique dans le filtrage des champs
+                        masked_fields = Site.current.zones_specifiques_fields[scope.report.zone_specifique];
+                    }
+
+                    for (var tab = 0; tab < scope.report.activity.tabs.length; tab++) {
+                        for (var field_idx in scope.report.activity.tabs[tab].fields) {
+                            var field = scope.report.activity.tabs[tab].fields[field_idx];
+                            if (
+                                // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
+                                (!scope.report.zone_specifique && field.zone_specifique) ||
+                                // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
+                                (scope.report.zone_specifique && scope.report.zone_specifique !== field.zone_specifique && field.zone_specifique) ||
+                                // Le champs est taggé comme masqué dans les metadata 
+                                (field.id in masked_fields && !masked_fields[field.id].visible)
+                            ) {
+                                //scope.report.activity.tabs[tab].fields.splice(f, 1);
+                                delete scope.report.activity.tabs[tab].fields[field_idx];
+                            }
+                        }
+                    }
+                    /****************************************/
+
                     if (!scope.$$phase) {
                         scope.$apply();
                     }
