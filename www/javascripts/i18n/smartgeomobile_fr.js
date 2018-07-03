@@ -102,6 +102,7 @@ window.smartgeo_i18n_lang.fr = {
     _SITE_UPDATE: "Mise à jour de ",
     _SITE_LOADING: "Chargement",
     _SITE_LAST_UPDATE: "Dernière mise à jour le ",
+    _SYNC_ERROR_UNKNOWN_ : "Une erreur est survenue lors de la synchronisation des données",
     _SYNC_SYNC_EVERYTHING: "Synchroniser",
     _SYNC_SYNC: "Synchroniser",
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",

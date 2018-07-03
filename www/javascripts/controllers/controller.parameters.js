@@ -19,6 +19,7 @@
         vm.confirmRemove = confirmRemove;
         vm.site = Site.current.label;
         vm.lastUpdate = lastUpdate;
+        vm.errorLastUpdate = false;
 
 
         function lastUpdate() {
@@ -64,7 +65,8 @@
                 window.powermanagement.acquire(); 
             }, false);
 
-            Installer.update(Site.current, function() {
+            Installer.update(Site.current, function(error) {
+                vm.errorLastUpdate = error;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }

@@ -135,7 +135,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
         getUpdateJSON: function(site, callback) {
             var url = Utils.getServiceUrl( 'gi.maintenance.mobility.installation.json', {
                 'site': site.id,
-                'timestamp': site.timestamp
+                'timestamp': site.timestamp.trim()
             } );
 
             $http.get( url )
@@ -247,7 +247,7 @@ angular.module( 'smartgeomobile' ).factory( 'Installer', function(SQLite, G3ME, 
             Installer.getUpdateJSON( site, function(site) {
                 if (!site) {
                     $rootScope.dailyUpdate = false;
-                    callback();
+                    callback(true);
                     return;
                 }
                 var formatedSite = Installer.formatSiteMetadata( site, true );

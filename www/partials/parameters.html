@@ -8,5 +8,9 @@
     <button class="btn btn-primary btn-small btn-block" ng-click="parametersController.confirmRemove()">
         <span class="icon-refresh"></span> <i18n>_SYNC_UNINSTALL</i18n> {{::parametersController.site}}
     </button>
+    <p class="lastUpdate" ng-if="parametersController.errorLastUpdate">
+        <i class="fa fa-exclamation-triangle"></i>
+        <i18n ng-if="parametersController.lastUpdate()">_SYNC_ERROR_UNKNOWN_</i18n>
+    </p>
     <p class="lastUpdate"><i18n ng-if="parametersController.lastUpdate()">_SITE_LAST_UPDATE</i18n> {{parametersController.lastUpdate() | date:'dd/MM/yyyy à HH:mm:ss'}}</p>
 </div>

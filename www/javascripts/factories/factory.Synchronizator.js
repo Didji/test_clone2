@@ -609,9 +609,10 @@
                             reports[i].delete();
                         }
                     }
-                }).success(function (data, status) {
-                    console.log(status);
-                    console.log(data);
+                }).error(function (data, status) {
+                    if(data){
+                        alertify.alert(data);
+                    }
                 });
             });
         };
