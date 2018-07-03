@@ -527,20 +527,21 @@
                     }
 
                     for (var tab = 0; tab < scope.report.activity.tabs.length; tab++) {
+                        var fields = {};
                         for (var field_idx in scope.report.activity.tabs[tab].fields) {
                             var field = scope.report.activity.tabs[tab].fields[field_idx];
                             if (
                                 // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
-                                (!scope.report.zone_specifique && field.zone_specifique) ||
+                                !(!scope.report.zone_specifique && field.zone_specifique) &&
                                 // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
-                                (scope.report.zone_specifique && scope.report.zone_specifique !== field.zone_specifique && field.zone_specifique) ||
+                                !(scope.report.zone_specifique && scope.report.zone_specifique !== field.zone_specifique && field.zone_specifique) &&
                                 // Le champs est taggé comme masqué dans les metadata 
-                                (field.id in masked_fields && !masked_fields[field.id].visible)
+                                !(field.id in masked_fields && !masked_fields[field.id].visible)
                             ) {
-                                //scope.report.activity.tabs[tab].fields.splice(f, 1);
-                                delete scope.report.activity.tabs[tab].fields[field_idx];
+                                fields[field_idx] = scope.report.activity.tabs[tab].fields[field_idx];
                             }
                         }
+                        scope.report.activity.tabs[tab].fields = fields;  
                     }
                     /****************************************/
 
