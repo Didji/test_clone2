@@ -16,7 +16,8 @@
                 {{mission.done.length}} CR saisi{{mission.done.length>1?'s':''}} sur {{mission.done.length + mission.assets.length}}
             </span>
         </h3>
-        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;"><i class="fa fa-bell-o"></i> {{ mission.end | sanitizeDate | timeago}} de retard</p>
+        <p ng-show="mission.isLate" class="text text-danger" style="font-size: 11px;margin: 0 0 -6px -5px;">
+            <i class="fa fa-bell-o"></i> {{ mission.end | sanitizeDate | timeago}} de retard</p>
     </div>
     <div ng-show='mission.assets.length' class="custom-progress" style='width:{{100 *mission.done.length / (mission.done.length + mission.assets.length) }}%;'></div>
     <div class="panel-body" ng-show='mission.openned || false'>
@@ -48,7 +49,7 @@
             <br/>
             <i18n>_PLANNING_LOCATE_</i18n>
         </button>
-        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)' 
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.locateMission(mission)" ng-show='mission.isLoading && mission.assets.length > 0 && (!mission.objectNotFound || !mission.activity)'
             disabled="disabled">
             <span class="fa fa-search fa-3x"></span>
             <br/>
@@ -56,21 +57,19 @@
         </button>
 
         <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.showReport(mission)" ng-disabled="!mission.selectedAssets"
-          ng-show='mission.assets.length > 0 && planningController.activities._byId[mission.activity.id].type != "night_tour" && (!mission.objectNotFound || !mission.activity)'>
+            ng-show='mission.assets.length > 0 && planningController.activities._byId[mission.activity.id].type != "night_tour" && (!mission.objectNotFound || !mission.activity)'>
             <span class="fa fa-file-text fa-3x"></span>
             <span ng-show='mission.selectedAssets > 0' style="float: right;margin-left: -30px;" class="badge badge-primary">{{mission.selectedAssets}}</span>
             <br/>
             <i18n>_PLANNING_WRITE_</i18n>
         </button>
 
-        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)" 
-            ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
+        <button style='min-width: 100px' class="btn btn-warning" ng-click="planningController.launchNightTour(mission)" ng-show='!mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'>
             <span class="fa fa-lightbulb-o fa-3x"></span>
             <br>
             <i18n>_PLANNING_START_</i18n>
         </button>
-        <button style='min-width: 100px' class="btn btn-warning" 
-            ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'
+        <button style='min-width: 100px' class="btn btn-warning" ng-show='mission.isLoading && planningController.activities._byId[mission.activity.id].type == "night_tour" && !mission.objectNotFound && mission.assets.length > 0'
             disabled="disabled">
             <span class="fa fa-spin fa-refresh fa-3x"></span>
             <br>
@@ -78,7 +77,8 @@
         </button>
 
         <p ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length'>
-            <table ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length' class="table table-condensed" style="margin-bottom: -15px;">
+            <table ng-show='mission.postAddedAssets.assets.length || mission.postAddedAssets.done.length' class="table table-condensed"
+                style="margin-bottom: -15px;">
                 <thead>
                     <tr>
                         <th>

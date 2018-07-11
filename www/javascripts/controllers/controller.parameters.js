@@ -1,10 +1,7 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'ParametersController', ParametersController );
+    angular.module("smartgeomobile").controller("ParametersController", ParametersController);
 
     ParametersController.$inject = ["$scope", "i18n", "$location", "Site", "Installer", "LicenseManager"];
 
@@ -13,14 +10,12 @@
      * @desc Controlleur du menu de gestion des parametres
      */
     function ParametersController($scope, i18n, $location, Site, Installer, LicenseManager) {
-
         var vm = this;
         vm.confirmUpdate = confirmUpdate;
         vm.confirmRemove = confirmRemove;
         vm.site = Site.current.label;
         vm.lastUpdate = lastUpdate;
         vm.errorLastUpdate = false;
-
 
         function lastUpdate() {
             return Site.current.timestamp * 1000;
@@ -31,12 +26,12 @@
          * @desc Demande confirmation avant de lancer la mise à jour du site en cours
          */
         function confirmUpdate() {
-            alertify.confirm( i18n.get( '_SYNC_UPDATE_CONFIRM_MESSAGE_', Site.current.label ), function(yes) {
+            alertify.confirm(i18n.get("_SYNC_UPDATE_CONFIRM_MESSAGE_", Site.current.label), function(yes) {
                 if (yes) {
-                    update(false);
+                    update();
                     $scope.$digest();
                 }
-            } );
+            });
         }
 
         /**
@@ -44,11 +39,11 @@
          * @desc Demande confirmation avant de lancer la mise à jour du site en cours
          */
         function confirmRemove() {
-            alertify.confirm( i18n.get( '_SYNC_UNINSTALL_CONFIRM_MESSAGE_', Site.current.label ), function(yes) {
+            alertify.confirm(i18n.get("_SYNC_UNINSTALL_CONFIRM_MESSAGE_", Site.current.label), function(yes) {
                 if (yes) {
                     uninstall();
                 }
-            } );
+            });
         }
 
         /**
@@ -59,22 +54,30 @@
             // LicenseManager.update( true );
 
             //on prend garde à ne pas éteindre l'écran pendant la mise à jour, cela stoppe les requêtes
-            document.addEventListener("deviceready", function () {
-                // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
-                //et si on ne le mets pas explicitement ca ne fonctionne pas
-                window.powermanagement.acquire(); 
-            }, false);
+            document.addEventListener(
+                "deviceready",
+                function() {
+                    // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                    //et si on ne le mets pas explicitement ca ne fonctionne pas
+                    window.powermanagement.acquire();
+                },
+                false
+            );
 
             Installer.update(Site.current, function(error) {
                 vm.errorLastUpdate = error;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
-                document.addEventListener("deviceready", function () {
-                    // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
-                    //et si on ne le mets pas explicitement ca ne fonctionne pas
-                    window.powermanagement.release();
-                }, false);
+                document.addEventListener(
+                    "deviceready",
+                    function() {
+                        // le listener sur deviceReady est OBLIGATOIRE pour cette fonctionnalité
+                        //et si on ne le mets pas explicitement ca ne fonctionne pas
+                        window.powermanagement.release();
+                    },
+                    false
+                );
             });
         }
 
@@ -83,9 +86,9 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function uninstall() {
-            $scope.$apply( function() {
-                $location.path( 'sites/uninstall/' + Site.current.id );
-            } );
+            $scope.$apply(function() {
+                $location.path("sites/uninstall/" + Site.current.id);
+            });
         }
     }
 })();

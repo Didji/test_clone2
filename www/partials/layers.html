@@ -13,8 +13,7 @@
                 <span class='fa fa-check-square yes'></span>
                 <span class='fa fa-square no'></span>
                 <input type='checkbox' ng-model='layer.status' ng-change='layersController.refreshView()'></input>
-                <img ng-if='layer.src' ng-src='{{::layer.src}}' alt=''/>
-                {{::layer.label}}
+                <img ng-if='layer.src' ng-src='{{::layer.src}}' alt='' /> {{::layer.label}}
             </label>
         </div>
     </div>

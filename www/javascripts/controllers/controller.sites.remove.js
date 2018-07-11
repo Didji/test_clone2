@@ -1,12 +1,16 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("SiteRemoveController", SiteRemoveController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'SiteRemoveController', SiteRemoveController );
-
-    SiteRemoveController.$inject = ["$scope", "$location", "Installer", "Storage", "prefetchedlocalsites", "LicenseManager"];
+    SiteRemoveController.$inject = [
+        "$scope",
+        "$location",
+        "Installer",
+        "Storage",
+        "prefetchedlocalsites",
+        "LicenseManager"
+    ];
 
     /**
      * @class SiteRemoveController
@@ -14,7 +18,6 @@
      */
 
     function SiteRemoveController($scope, $location, Installer, Storage, prefetchedlocalsites, LicenseManager) {
-
         var vm = this;
 
         vm.siteLabel = "";
@@ -30,7 +33,7 @@
         function activate() {
             removedSite = prefetchedlocalsites;
             vm.siteLabel = removedSite.label;
-            Installer.uninstallSite( removedSite, siteHasBeenRemoved );
+            Installer.uninstallSite(removedSite, siteHasBeenRemoved);
         }
 
         /**
@@ -38,16 +41,12 @@
          * @desc Callback de fin de suppression de site
          */
         function siteHasBeenRemoved() {
-            Storage.get_( 'sites', function(sites) {
+            Storage.get_("sites", function(sites) {
                 delete sites[prefetchedlocalsites.id];
-                Storage.set_( 'sites', sites );
-                $location.path( Object.keys( sites ).length === 0 ? ((LicenseManager.oauth) ? '/oauth' : '/') : '/sites' );
+                Storage.set_("sites", sites);
+                $location.path(Object.keys(sites).length === 0 ? (LicenseManager.oauth ? "/oauth" : "/") : "/sites");
                 $scope.$apply();
-            } );
-
-
+            });
         }
-
     }
-
 })();

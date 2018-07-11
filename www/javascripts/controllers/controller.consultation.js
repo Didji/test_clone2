@@ -1,12 +1,22 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("ConsultationController", ConsultationController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'ConsultationController', ConsultationController );
-
-    ConsultationController.$inject = ["$scope", "$rootScope", "$window", "$location", "G3ME", "$timeout", "Site", "Storage", "Project", "Asset", "i18n", "Utils"];
+    ConsultationController.$inject = [
+        "$scope",
+        "$rootScope",
+        "$window",
+        "$location",
+        "G3ME",
+        "$timeout",
+        "Site",
+        "Storage",
+        "Project",
+        "Asset",
+        "i18n",
+        "Utils"
+    ];
 
     /**
      * @class ConsultationController
@@ -19,8 +29,20 @@
      * @property {Object}   spinnerOptions
      */
 
-    function ConsultationController($scope, $rootScope, $window, $location, G3ME, $timeout, Site, Storage, Project, Asset, i18n, Utils) {
-
+    function ConsultationController(
+        $scope,
+        $rootScope,
+        $window,
+        $location,
+        G3ME,
+        $timeout,
+        Site,
+        Storage,
+        Project,
+        Asset,
+        i18n,
+        Utils
+    ) {
         var vm = this;
 
         $rootScope.openLocatedReport = vm.openLocatedReport = openLocatedReport;
@@ -36,7 +58,7 @@
         vm.metamodel = Site.current.metamodel;
         vm.hasActivities = Site.current.activities.length > 0;
         vm.siteid = Site.current.id;
-        vm.currentLoadedProject = Project.currentLoadedProject ;
+        vm.currentLoadedProject = Project.currentLoadedProject;
         vm.isOpen = false;
         vm.loading = false;
         vm.coordinates = {};
@@ -49,10 +71,7 @@
             inMulti: {}
         };
 
-        var PREOPEN_TIMER, initialXPosition, initialWidth,
-            currentXPosition,
-            movePhase,
-            finalXPosition;
+        var PREOPEN_TIMER, initialXPosition, initialWidth, currentXPosition, movePhase, finalXPosition;
 
         activate();
 
@@ -61,87 +80,87 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
-            angular.element( $window ).bind( "resize", function() {
-                vm[!vm.isOpen ? 'close' : 'open'];
-            } );
+            angular.element($window).bind("resize", function() {
+                vm[!vm.isOpen ? "close" : "open"];
+            });
 
             // Lorsque la carte nous informe qu'une consultation est demandée,
             // on prépare une ouverture du panneau de consultation. S'il n'y a
             // pas de résultat, on annulera cette ouverture.
-            $scope.$on( "CONSULTATION_CLICK_REQUESTED", function(e, coordinates) {
+            $scope.$on("CONSULTATION_CLICK_REQUESTED", function(e, coordinates) {
                 vm.coordinates = coordinates;
                 cancelPreopenTimer();
-                PREOPEN_TIMER = $timeout( function() {
+                PREOPEN_TIMER = $timeout(function() {
                     vm.loading = true;
                     vm.open();
                     $scope.$digest();
-                }, 200 );
-            } );
+                }, 200);
+            });
 
-            $scope.$on( "CONSULTATION_CLICK_CANCELED", function() {
+            $scope.$on("CONSULTATION_CLICK_CANCELED", function() {
                 cancelPreopenTimer();
                 if (!vm.groups) {
                     vm.close();
                 }
                 vm.loading = false;
                 $scope.$digest();
-            } );
+            });
 
-            $scope.$on( "UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets, coordinates) {
+            $scope.$on("UPDATE_CONSULTATION_ASSETS_LIST", function(event, assets, coordinates) {
                 if (coordinates === false) {
                     vm.coordinates = coordinates;
                 }
                 cancelPreopenTimer();
-                updateAssetsList( assets || [] );
+                updateAssetsList(assets || []);
                 if (!assets || !assets.length) {
                     return _close();
                 }
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
-            } );
+            });
 
-            $rootScope.$on( "UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
-                addAssetToMultiselection( asset );
-            } );
+            $rootScope.$on("UPDATE_CONSULTATION_MULTISELECTION", function(event, asset) {
+                addAssetToMultiselection(asset);
+            });
 
-            $rootScope.$on( "UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
-                dropAssetFromMultiselection( asset );
-            } );
+            $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
+                dropAssetFromMultiselection(asset);
+            });
 
-            $scope.$on( "CLOSE_CONSULTATION_PANEL", _close );
+            $scope.$on("CLOSE_CONSULTATION_PANEL", _close);
 
-            $rootScope.$on( "NEW_PROJECT_LOADED", function() {
-                vm.currentLoadedProject = Project.currentLoadedProject ;
-            } );
+            $rootScope.$on("NEW_PROJECT_LOADED", function() {
+                vm.currentLoadedProject = Project.currentLoadedProject;
+            });
 
-            $rootScope.$on( "_REMOTE_DELETE_ASSETS_", function(event, guids) {
-                dropAssetsFromListAndMulti( guids );
-            } );
+            $rootScope.$on("_REMOTE_DELETE_ASSETS_", function(event, guids) {
+                dropAssetsFromListAndMulti(guids);
+            });
 
-            $rootScope.$on( "REFRESH_CONSULTATION", function() {
+            $rootScope.$on("REFRESH_CONSULTATION", function() {
                 var ids = [];
                 for (var id in vm.selectedAssets.inList) {
-                    ids.push( id );
+                    ids.push(id);
                 }
-                Asset.cache = {} ;
+                Asset.cache = {};
 
-                Asset.findAssetsByGuids( ids, function(results) {
+                Asset.findAssetsByGuids(ids, function(results) {
                     var assets = [];
                     for (var i = 0; i < results.length; i++) {
-                        assets.push( new Asset( Asset.convertRawRow( results[i] ), function() {}, true ) );
+                        assets.push(new Asset(Asset.convertRawRow(results[i]), function() {}, true));
                     }
-                    $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
+                    $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
                     if (!$scope.$$phase) {
                         $scope.$digest();
                     }
-                } );
+                });
+            });
 
-
-            } );
-
-            $( '.toggleConsultationPanelButton' ).bind( 'touchstart touchmove mousedown', toggleConsultationPanelButtonMousedownHandler );
+            $(".toggleConsultationPanelButton").bind(
+                "touchstart touchmove mousedown",
+                toggleConsultationPanelButtonMousedownHandler
+            );
         }
 
         /**
@@ -151,9 +170,9 @@
          */
         function updateAssetsList(assets) {
             if (assets.length) {
-                angular.forEach( vm.selectedAssets.inList, function(asset) {
+                angular.forEach(vm.selectedAssets.inList, function(asset) {
                     asset.hideFromMap();
-                } );
+                });
                 vm.groups = {};
                 vm.selectedAssets.inList = {};
             } else {
@@ -164,20 +183,19 @@
             for (var i = 0; i < assets.length; i++) {
                 vm.groups[assets[i].priority] = vm.groups[assets[i].priority] || {};
                 vm.groups[assets[i].priority][assets[i].okey] = vm.groups[assets[i].priority][assets[i].okey] || [];
-                vm.groups[assets[i].priority][assets[i].okey].push( assets[i] );
+                vm.groups[assets[i].priority][assets[i].okey].push(assets[i]);
                 vm.selectedAssets.inList[assets[i].guid] = assets[i];
 
-                assets[i].findRelated( function( asset ) {
-                    if ( assets.length === 1 ) {
-                        asset.toggleMapVisibility( false );
+                assets[i].findRelated(function(asset) {
+                    if (assets.length === 1) {
+                        asset.toggleMapVisibility(false);
                     }
                     $scope.$digest();
-                } );
+                });
             }
 
             vm.open();
             vm.loading = false;
-
         }
 
         /**
@@ -186,15 +204,15 @@
          * @param  {Array} guids
          */
         function dropAssetsFromListAndMulti(guids) {
-            angular.forEach( guids, function(guid) {
+            angular.forEach(guids, function(guid) {
                 if (vm.selectedAssets.inMulti[guid]) {
-                    dropAssetFromMultiselection( vm.selectedAssets.inMulti[guid] );
+                    dropAssetFromMultiselection(vm.selectedAssets.inMulti[guid]);
                 }
                 if (vm.selectedAssets.inList && vm.selectedAssets.inList[guid]) {
-                    dropAssetFromList( vm.selectedAssets.inList[guid] );
+                    dropAssetFromList(vm.selectedAssets.inList[guid]);
                 }
                 $scope.$digest();
-            } );
+            });
         }
 
         /**
@@ -203,7 +221,7 @@
          * @param {Asset}
          */
         function dropAssetFromList(asset) {
-            vm.groups[asset.priority][asset.okey].splice( vm.groups[asset.priority][asset.okey].indexOf( asset ), 1 );
+            vm.groups[asset.priority][asset.okey].splice(vm.groups[asset.priority][asset.okey].indexOf(asset), 1);
             delete vm.selectedAssets.inList[asset.guid];
         }
 
@@ -221,13 +239,12 @@
                     return;
                 }
             }
-            if (vm.multiselection[asset.okey].indexOf( asset ) === -1) {
-                vm.multiselection[asset.okey].push( asset );
+            if (vm.multiselection[asset.okey].indexOf(asset) === -1) {
+                vm.multiselection[asset.okey].push(asset);
                 vm.selectedAssets.inMulti[asset.guid] = asset;
             }
             asset.isInMultiselection = true;
         }
-
 
         /**
          * @name dropAssetFromMultiselection
@@ -235,7 +252,7 @@
          * @param {Asset} asset
          */
         function dropAssetFromMultiselection(asset) {
-            vm.multiselection[asset.okey].splice( vm.multiselection[asset.okey].indexOf( asset ), 1 );
+            vm.multiselection[asset.okey].splice(vm.multiselection[asset.okey].indexOf(asset), 1);
             delete vm.selectedAssets.inMulti[asset.guid];
             asset.isInMultiselection = false;
             vm.multiselection.length--;
@@ -261,10 +278,10 @@
          * @param {String} okey
          */
         function addMultiselectionToCurrentProject(okey) {
-            vm.currentLoadedProject.addAssets( vm.multiselection[okey], function() {
-                alertify.alert( i18n.get( "_PROJECT_ASSETS_ADDED_", vm.currentLoadedProject.name ) );
-                $rootScope.$broadcast( "UPDATE_PROJECTS" );
-            } );
+            vm.currentLoadedProject.addAssets(vm.multiselection[okey], function() {
+                alertify.alert(i18n.get("_PROJECT_ASSETS_ADDED_", vm.currentLoadedProject.name));
+                $rootScope.$broadcast("UPDATE_PROJECTS");
+            });
         }
 
         /**
@@ -274,16 +291,16 @@
          * @param {Number} lng
          */
         function openLocatedReport(lat, lng) {
-            var intent = Storage.get( 'intent' ),
-                path = 'report/' + Site.current.id + '/';
+            var intent = Storage.get("intent"),
+                path = "report/" + Site.current.id + "/";
 
-            path += (intent && intent.report_activity ? intent.report_activity : '') + '/' + lat + ',' + lng + '/';
+            path += (intent && intent.report_activity ? intent.report_activity : "") + "/" + lat + "," + lng + "/";
 
             if (intent && intent.report_mission) {
-                path += intent.report_mission + '/';
+                path += intent.report_mission + "/";
             }
 
-            $location.path( path );
+            $location.path(path);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -292,29 +309,33 @@
         function toggleConsultationPanelButtonMousedownHandler($event) {
             movePhase = 0;
 
-            $( '.toggleConsultationPanelButton' ).unbind( 'touchstart touchmove', toggleConsultationPanelButtonMousedownHandler );
-
+            $(".toggleConsultationPanelButton").unbind(
+                "touchstart touchmove",
+                toggleConsultationPanelButtonMousedownHandler
+            );
 
             initialXPosition = $event.clientX;
             initialWidth = window.Smartgeo._SIDE_MENU_WIDTH;
-            $( window ).bind( 'mousemove touchmove', mousemoveHandler );
-            $( window ).bind( 'mouseup touchend', mouseupHandler );
+            $(window).bind("mousemove touchmove", mousemoveHandler);
+            $(window).bind("mouseup touchend", mouseupHandler);
 
-            if (navigator.userAgent.match( /Android/i )) {
+            if (navigator.userAgent.match(/Android/i)) {
                 $event.preventDefault();
             }
         }
 
         function mousemoveHandler($event) {
             $event.preventDefault();
-            currentXPosition = $event.clientX ;
+            currentXPosition = $event.clientX;
             if (!currentXPosition) {
                 currentXPosition = $event.originalEvent.touches[0].clientX;
             }
-            if ((++movePhase % 5) === 0 && Math.abs(( initialXPosition - currentXPosition )) > 30) {
+            if (++movePhase % 5 === 0 && Math.abs(initialXPosition - currentXPosition) > 30) {
                 window.Smartgeo._SIDE_MENU_WIDTH = initialWidth + (initialXPosition - currentXPosition);
-                $( ".consultation-panel" ).first().css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
-                G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );
+                $(".consultation-panel")
+                    .first()
+                    .css("width", window.Smartgeo._SIDE_MENU_WIDTH);
+                G3ME.reduceMapWidth(window.Smartgeo._SIDE_MENU_WIDTH);
             }
             if (vm.isOpen === false && window.Smartgeo._SIDE_MENU_WIDTH >= 80) {
                 _open();
@@ -324,16 +345,14 @@
         }
 
         function mouseupHandler($event) {
-            $( window ).unbind( 'mousemove touchmove', mousemoveHandler );
-            $( window ).unbind( 'mouseup touchend', mouseupHandler );
+            $(window).unbind("mousemove touchmove", mousemoveHandler);
+            $(window).unbind("mouseup touchend", mouseupHandler);
             finalXPosition = $event.clientX;
             movePhase = 0;
-            if (Math.abs(( initialXPosition - finalXPosition )) < 20) {
-
+            if (Math.abs(initialXPosition - finalXPosition) < 20) {
                 toggleConsultationPanel();
             }
-            $( '.toggleConsultationPanelButton' ).bind( 'touchmove', toggleConsultationPanelButtonMousedownHandler );
-
+            $(".toggleConsultationPanelButton").bind("touchmove", toggleConsultationPanelButtonMousedownHandler);
         }
 
         /**
@@ -341,7 +360,7 @@
          * @desc
          */
         function toggleConsultationPanel() {
-            vm[vm.isOpen ? 'close' : 'open']();
+            vm[vm.isOpen ? "close" : "open"]();
         }
 
         /**
@@ -351,12 +370,11 @@
          * @returns {String} Liste des ids pour un okey de la selection multiple
          */
         function getMultiselectionAssetsIds(okey) {
-
             var tmp = [];
             for (var i = 0; i < vm.multiselection[okey].length; i++) {
-                tmp.push( vm.multiselection[okey][i].id );
+                tmp.push(vm.multiselection[okey][i].id);
             }
-            return tmp.join( '!' );
+            return tmp.join("!");
         }
 
         /**
@@ -365,7 +383,7 @@
          */
         function cancelPreopenTimer() {
             if (PREOPEN_TIMER) {
-                $timeout.cancel( PREOPEN_TIMER );
+                $timeout.cancel(PREOPEN_TIMER);
             }
         }
 
@@ -376,7 +394,9 @@
         function _close() {
             G3ME.fullscreen();
             vm.isOpen = false;
-            $( ".consultation-panel" ).first().css( 'width', 0 );
+            $(".consultation-panel")
+                .first()
+                .css("width", 0);
             if (!$scope.$$phase) {
                 $scope.$digest();
             }
@@ -390,12 +410,14 @@
             if (window.Smartgeo._SIDE_MENU_WIDTH > window.innerWidth) {
                 window.Smartgeo._SIDE_MENU_WIDTH = window.innerWidth - 70;
             }
-            G3ME.reduceMapWidth( window.Smartgeo._SIDE_MENU_WIDTH );
+            G3ME.reduceMapWidth(window.Smartgeo._SIDE_MENU_WIDTH);
             if (Utils.isRunningOnLittleScreen()) {
-                $rootScope.$broadcast( '_MENU_CLOSE_' );
+                $rootScope.$broadcast("_MENU_CLOSE_");
             }
             vm.isOpen = true;
-            $( ".consultation-panel" ).first().css( 'width', window.Smartgeo._SIDE_MENU_WIDTH );
+            $(".consultation-panel")
+                .first()
+                .css("width", window.Smartgeo._SIDE_MENU_WIDTH);
             if (!$scope.$$phase) {
                 $scope.$digest();
             }
@@ -406,35 +428,37 @@
          * @param {Array} assets
          */
         function deleteAssets(assets) {
-            alertify.confirm( i18n.get( '_CONFIRM_DELETE_ASSETS_' ), function(yes) {
+            alertify.confirm(i18n.get("_CONFIRM_DELETE_ASSETS_"), function(yes) {
                 if (!yes) {
                     return;
                 }
                 var notUpdatableAssets = [];
 
-                angular.forEach( assets, function(asset, index) {
-                    if (asset.attributes._rights !== 'U') {
-                        notUpdatableAssets.push( asset.label );
-                        assets.splice( index, 1 );
-                    } else if (Project.currentLoadedProject.assets.indexOf( asset.id ) > -1) {
-                        Project.currentLoadedProject.deleteAsset( asset );
-                        assets.splice( index, 1 );
+                angular.forEach(assets, function(asset, index) {
+                    if (asset.attributes._rights !== "U") {
+                        notUpdatableAssets.push(asset.label);
+                        assets.splice(index, 1);
+                    } else if (Project.currentLoadedProject.assets.indexOf(asset.id) > -1) {
+                        Project.currentLoadedProject.deleteAsset(asset);
+                        assets.splice(index, 1);
                     }
-                } );
+                });
 
                 if (notUpdatableAssets.length) {
-                    alertify.alert( i18n.get(
-                        notUpdatableAssets.length === 1 ? '_NOT_ALLOWED_TO_DELETE_ASSET_' : '_NOT_ALLOWED_TO_DELETE_ASSETS_',
-                        [notUpdatableAssets.join( "," )]
-                    ) );
+                    alertify.alert(
+                        i18n.get(
+                            notUpdatableAssets.length === 1
+                                ? "_NOT_ALLOWED_TO_DELETE_ASSET_"
+                                : "_NOT_ALLOWED_TO_DELETE_ASSETS_",
+                            [notUpdatableAssets.join(",")]
+                        )
+                    );
                 }
 
                 if (assets.length) {
-                    Asset.remoteDeleteAssets( assets );
+                    Asset.remoteDeleteAssets(assets);
                 }
-            } );
+            });
         }
-
     }
-
 })();

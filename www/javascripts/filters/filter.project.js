@@ -1,10 +1,7 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .filter( 'currentProjectCensusFilter', currentProjectCensusFilter );
+    angular.module("smartgeomobile").filter("currentProjectCensusFilter", currentProjectCensusFilter);
 
     currentProjectCensusFilter.$inject = ["Project"];
 
@@ -24,20 +21,17 @@
             if (metamodelWithoutProjectsOkeys) {
                 return metamodelWithoutProjectsOkeys;
             } else {
-                metamodelWithoutProjectsOkeys = {} ;
+                metamodelWithoutProjectsOkeys = {};
             }
 
             for (var okey in metamodel) {
-                if (okey.search( /PROJECT_/ ) !== 0) {
-                    metamodelWithoutProjectsOkeys[okey] = angular.copy( metamodel[okey] );
+                if (okey.search(/PROJECT_/) !== 0) {
+                    metamodelWithoutProjectsOkeys[okey] = angular.copy(metamodel[okey]);
                 }
             }
 
             return metamodelWithoutProjectsOkeys;
-
         }
         return _currentProjectCensusFilter;
     }
-
-
 })();

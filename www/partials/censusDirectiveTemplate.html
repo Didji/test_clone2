@@ -4,16 +4,17 @@
         <label ng-click="node.toggleForm()" style="width: 90%;">
             <span style="margin-right:8px" class="icon {{node.formVisible ? 'icon-caret-up' : 'icon-caret-down'}}"></span>
             <span>
-                {{metamodel[node.okey].label}}
-                {{node.fields[metamodel[node.okey].ukey]}}
+                {{metamodel[node.okey].label}} {{node.fields[metamodel[node.okey].ukey]}}
             </span>
-            <span ng-if="metamodel[node.okey].is_graphical === true" style='background-color:{{node.geometry ? "#5cb85c": "#d9534f" }}' class="badge pull-right">
+            <span ng-if="metamodel[node.okey].is_graphical === true" style='background-color:{{node.geometry ? "#5cb85c": "#d9534f" }}'
+                class="badge pull-right">
                 <span class="fa fa-map-marker"></span>
             </span>
         </label>
     </label>
 
-    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father) || (node.id && node.id === asset.showFormId)' style='font-size: 80%;border-bottom: 1px solid rgb(150, 150, 150);border-left: 1px solid rgb(150, 150, 150);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);border-color:{{node.formVisible ? "#fd9122": "rgb(150, 150, 150)" }}'>
+    <div ng-show='node.formVisible || (node.children.length == 0 && !node.father) || (node.id && node.id === asset.showFormId)'
+        style='font-size: 80%;border-bottom: 1px solid rgb(150, 150, 150);border-left: 1px solid rgb(150, 150, 150);margin:0;padding-top: 1px;background-color: rgba(0, 0, 0, 0.25);border-color:{{node.formVisible ? "#fd9122": "rgb(150, 150, 150)" }}'>
         <div style="padding-right:10px;margin: 5% 0 0 5%;">
             <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group">
@@ -63,16 +64,19 @@
     <div ng-if='!node.father' class="btn-toolbar" style="margin: 10px;" role="toolbar">
         <div class="btn-group">
             <button class='btn btn-default' ng-click="cancel()">
-                <span class="fa fa-remove"></span><i18n>_CANCEL</i18n>
+                <span class="fa fa-remove"></span>
+                <i18n>_CANCEL</i18n>
             </button>
         </div>
 
         <div class="btn-group">
-            <button ng-show = "!asset" class='btn btn-primary' ng-click="save()">
-                <span class="fa fa-save"></span><i18n>_SAVE</i18n>
+            <button ng-show="!asset" class='btn btn-primary' ng-click="save()">
+                <span class="fa fa-save"></span>
+                <i18n>_SAVE</i18n>
             </button>
-            <button ng-show = "asset" class='btn btn-primary' ng-click="save(true)">
-                <span class="fa fa-save"></span><i18n>_UPDATE</i18n>
+            <button ng-show="asset" class='btn btn-primary' ng-click="save(true)">
+                <span class="fa fa-save"></span>
+                <i18n>_UPDATE</i18n>
             </button>
         </div>
     </div>

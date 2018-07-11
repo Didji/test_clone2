@@ -1,11 +1,16 @@
 <div ng-controller="licenseRevokedController">
     <form ng-submit="update()" class="panel floating-form">
-        <h2><img src="./images/logo-smartgeo.png" alt="Smartgeo mobile"> <small>{{version}}</small></h2>
+        <h2>
+            <img src="./images/logo-smartgeo.png" alt="Smartgeo mobile">
+            <small>{{version}}</small>
+        </h2>
         <hr/>
         <div class="alert alert-danger login-errorMessage">{{errorMessage}}</div>
-        <button ng-class="{active:updateInProgress}" class="btn btn-lg btn-primary btn-block has-spinner"
-            ng-disabled = "updateInProgress">
-            <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span> <i18n>_REGISTER_UPDATE_LICENSE_</i18n>
+        <button ng-class="{active:updateInProgress}" class="btn btn-lg btn-primary btn-block has-spinner" ng-disabled="updateInProgress">
+            <span class="spinnerb">
+                <i class="icon-spin icon-refresh"></i>
+            </span>
+            <i18n>_REGISTER_UPDATE_LICENSE_</i18n>
         </button>
     </form>
 </div>

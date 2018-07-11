@@ -1,20 +1,19 @@
-( function() {
-
-    'use strict';
+(function() {
+    "use strict";
 
     angular
-        .module( 'smartgeomobile' )
-        .filter( 'prettifyField', prettifyField )
-        .filter( 'decodeBool', decodeBool )
-        .filter( 'consultationTabsFilter', consultationTabsFilter )
-        .filter( 'consultationFieldsFilter', consultationFieldsFilter )
-        .filter( 'reportTabsFilter', reportTabsFilter )
-        .filter( 'reportFieldsFilter', reportFieldsFilter )
-        .filter( 'activityListFilter', activityListFilter )
-        .filter( 'reportableAssetsForIntentFilter', reportableAssetsForIntentFilter )
-        .filter( 'isLink', isLink )
-        .filter( 'updatableAssetsFilter', updatableAssetsFilter )
-        .filter( 'guirlandeFilter', guirlandeFilter );
+        .module("smartgeomobile")
+        .filter("prettifyField", prettifyField)
+        .filter("decodeBool", decodeBool)
+        .filter("consultationTabsFilter", consultationTabsFilter)
+        .filter("consultationFieldsFilter", consultationFieldsFilter)
+        .filter("reportTabsFilter", reportTabsFilter)
+        .filter("reportFieldsFilter", reportFieldsFilter)
+        .filter("activityListFilter", activityListFilter)
+        .filter("reportableAssetsForIntentFilter", reportableAssetsForIntentFilter)
+        .filter("isLink", isLink)
+        .filter("updatableAssetsFilter", updatableAssetsFilter)
+        .filter("guirlandeFilter", guirlandeFilter);
 
     function prettifyField() {
         /**
@@ -22,10 +21,10 @@
          * @desc
          */
         function _prettifyField(s) {
-            if ('string' !== typeof s) {
+            if ("string" !== typeof s) {
                 return s;
             }
-            return ((s + '') || '').replace( /\\n/g, '\n' );
+            return (s + "" || "").replace(/\\n/g, "\n");
         }
         return _prettifyField;
     }
@@ -36,10 +35,10 @@
          * @desc
          */
         function _decodeBool(s) {
-            if (s === 'Y') {
-                return i18n.get( '_BOOL_Y_' );
+            if (s === "Y") {
+                return i18n.get("_BOOL_Y_");
             }
-            return i18n.get( '_BOOL_N_' );
+            return i18n.get("_BOOL_N_");
         }
         return _decodeBool;
     }
@@ -61,8 +60,8 @@
                 }
             }
             for (i = 0; i < tabsIn.length; i++) {
-                if ( (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) ) {
-                    tabsOut.push( tabsIn[i] );
+                if (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) {
+                    tabsOut.push(tabsIn[i]);
                 }
             }
             return tabsOut;
@@ -80,15 +79,15 @@
         function _consultationFieldsFilter(fieldsIn, asset) {
             var fieldsOut = [];
             for (var i = 0; i < fieldsIn.length; i++) {
-                if (asset.attributes[fieldsIn[i].key] ||
-                    (
-                    fieldsIn[i].options &&
-                    Site.current.lists &&
-                    asset.attributes[fieldsIn[i].key] &&
-                    Site.current.lists[fieldsIn[i].options] &&
-                    Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]])
+                if (
+                    asset.attributes[fieldsIn[i].key] ||
+                    (fieldsIn[i].options &&
+                        Site.current.lists &&
+                        asset.attributes[fieldsIn[i].key] &&
+                        Site.current.lists[fieldsIn[i].options] &&
+                        Site.current.lists[fieldsIn[i].options][asset.attributes[fieldsIn[i].key]])
                 ) {
-                    fieldsOut.push( fieldsIn[i] );
+                    fieldsOut.push(fieldsIn[i]);
                 }
             }
             return fieldsOut;
@@ -112,8 +111,8 @@
                 }
             }
             for (i = 0; i < tabsIn.length; i++) {
-                if ( (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) ) {
-                    tabsOut.push( tabsIn[i] );
+                if (tabsIn[i].nonBlankField && tabsIn[i].nonBlankField > 0) {
+                    tabsOut.push(tabsIn[i]);
                 }
             }
             return tabsOut;
@@ -131,17 +130,16 @@
         function _reportFieldsFilter(fieldsIn, report) {
             var fieldsOut = [];
             for (var i = 0; i < fieldsIn.length; i++) {
-                if (((report.fields[fieldsIn[i].id] ||
-                    (
-                    fieldsIn[i].options &&
-                    Site.current.lists &&
-                    report.fields[fieldsIn[i].id] &&
-                    Site.current.lists[fieldsIn[i].options] &&
-                    Site.current.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])
-                    )) &&
-                    JSON.stringify( report.fields[fieldsIn[i].id] ) !== '{}'
+                if (
+                    (report.fields[fieldsIn[i].id] ||
+                        (fieldsIn[i].options &&
+                            Site.current.lists &&
+                            report.fields[fieldsIn[i].id] &&
+                            Site.current.lists[fieldsIn[i].options] &&
+                            Site.current.lists[fieldsIn[i].options][report.fields[fieldsIn[i].id]])) &&
+                    JSON.stringify(report.fields[fieldsIn[i].id]) !== "{}"
                 ) {
-                    fieldsOut.push( fieldsIn[i] );
+                    fieldsOut.push(fieldsIn[i]);
                 }
             }
             return fieldsOut;
@@ -152,7 +150,6 @@
     activityListFilter.$inject = ["Site"];
 
     function activityListFilter(Site) {
-
         /**
          * @name _activityListFilter
          * @desc
@@ -166,7 +163,7 @@
             var activitiesOut = [];
             for (var i = 0; i < Site.current.activities.length; i++) {
                 if (Site.current.activities[i].okeys[0] === asset.okey) {
-                    activitiesOut.push( Site.current.activities[i] );
+                    activitiesOut.push(Site.current.activities[i]);
                 }
             }
             return activitiesOut;
@@ -182,26 +179,26 @@
          * @desc
          */
         function _reportableAssetsForIntentFilter(assets) {
-            var intent = Storage.get( 'intent' );
+            var intent = Storage.get("intent");
             if (!intent) {
                 return [];
             }
 
-            if ( assets && !( assets instanceof Array ) ) {
+            if (assets && !(assets instanceof Array)) {
                 assets = [assets];
-            } else if ( !assets ) {
+            } else if (!assets) {
                 return [];
             }
 
             var out = [];
-            
-            if ( intent && intent.controller !== 'map' ) {
+
+            if (intent && intent.controller !== "map") {
                 return [];
             }
 
             for (var i = 0; i < assets.length; i++) {
-                if ( Site.current.activities._byId[ intent.map_activity ].okeys[0] === assets[ i ].okey ) {
-                    out.push( assets[ i ] );
+                if (Site.current.activities._byId[intent.map_activity].okeys[0] === assets[i].okey) {
+                    out.push(assets[i]);
                 }
             }
             return out;
@@ -215,11 +212,10 @@
          * @desc
          */
         function _isLink(s) {
-            return ((s + '') || '').search( /(https?:\/\/.*)$/ );
+            return (s + "" || "").search(/(https?:\/\/.*)$/);
         }
         return _isLink;
     }
-
 
     function updatableAssetsFilter() {
         /**
@@ -229,15 +225,14 @@
         function _updatableAssetsFilter(assets) {
             var out = [];
             for (var i = 0; i < assets.length; i++) {
-                if (assets[i].attributes._rights === 'U') {
-                    out.push( assets[i] );
+                if (assets[i].attributes._rights === "U") {
+                    out.push(assets[i]);
                 }
             }
             return out;
         }
         return _updatableAssetsFilter;
     }
-
 
     guirlandeFilter.$inject = ["Site", "Project", "$filter", "Right", "Storage"];
 
@@ -248,27 +243,26 @@
          */
 
         var actions = {
-
             // GEO ACTIONS
-            "zoomon": {
+            zoomon: {
                 id: "zoomon",
                 icon: "map-marker",
                 method: "asset.zoomOn"
             },
-            "goto": {
+            goto: {
                 id: "goto",
                 icon: "location-arrow",
                 method: "asset.goTo"
             },
 
             // MULTI SELECTION ACTIONS
-            "addtoselection": {
+            addtoselection: {
                 id: "addtoselection",
                 icon: "shopping-cart",
                 suffix: "plus",
                 method: "scope.addToCurrentSelection"
             },
-            "dropfromcurrentselection": {
+            dropfromcurrentselection: {
                 id: "dropfromcurrentselection",
                 icon: "shopping-cart",
                 suffix: "minus",
@@ -276,58 +270,57 @@
             },
 
             // OBJECT ACTIONS
-            "edit": {
+            edit: {
                 id: "edit",
                 icon: "pencil",
                 method: "asset.toggleEdit"
             },
-            "delete": {
+            delete: {
                 id: "delete",
                 icon: "trash",
                 method: "scope.deleteAsset"
             },
-            "fetchhistory": {
+            fetchhistory: {
                 id: "fetchhistory",
                 icon: "history",
                 method: "asset.fetchHistory"
             },
 
             // INTENT ACTIONS
-            "addtoreportforintent": {
+            addtoreportforintent: {
                 id: "addtoreportforintent",
                 icon: "pencil-square-o",
                 method: "scope.addToReportForIntent"
             },
 
             // PROJECT ACTIONS
-            "markobjectasdeleteforproject": {
+            markobjectasdeleteforproject: {
                 id: "markobjectasdeleteforproject",
                 icon: "trash",
                 method: "scope.markObjectAsDeletedForCurrentProject",
                 suffix: "wrench"
             },
-            "editobjectforproject": {
+            editobjectforproject: {
                 id: "editobjectforproject",
                 icon: "pencil",
                 method: "asset.toggleEdit",
                 suffix: "wrench"
             },
-            "addtocurrentproject": {
+            addtocurrentproject: {
                 id: "addtocurrentproject",
                 icon: "plus",
                 method: "scope.addToCurrentProject",
                 suffix: "wrench"
             },
-            "deleteobjectfromprojectandreleaseit": {
+            deleteobjectfromprojectandreleaseit: {
                 id: "deleteobjectfromprojectandreleaseit",
                 icon: "minus",
                 method: "scope.removeFromProject",
                 suffix: "wrench"
             },
-            "separator": {
+            separator: {
                 separator: true
             }
-
         };
 
         function _guirlandeFilter(asset) {
@@ -335,69 +328,74 @@
                 return [];
             }
             var authAction = [],
-                isProjectable = !!Project.currentLoadedProject && (!!Site.current.metamodel[asset.okey].is_project || !!Site.current.metamodel["PROJECT_" + asset.okey]),
-                isInCurrentProject = (asset.okey.search( 'PROJECT_' ) === 0),
-                isNotMarkedAsRemoved = (!Project.currentLoadedProject) || (Project.currentLoadedProject.deleted.indexOf( asset.guid ) === -1) && (asset.project_status !== "deleted"),
-                isLocked = asset.locked || (Project.currentLoadedProject && Project.currentLoadedProject.hasAsset( asset )),
-                isReportable = !!$filter( 'activityListFilter' )( asset ).length && !isLocked,
-                isUpdatable = Right.isUpdatable( asset ) && !isLocked,
+                isProjectable =
+                    !!Project.currentLoadedProject &&
+                    (!!Site.current.metamodel[asset.okey].is_project ||
+                        !!Site.current.metamodel["PROJECT_" + asset.okey]),
+                isInCurrentProject = asset.okey.search("PROJECT_") === 0,
+                isNotMarkedAsRemoved =
+                    !Project.currentLoadedProject ||
+                    (Project.currentLoadedProject.deleted.indexOf(asset.guid) === -1 &&
+                        asset.project_status !== "deleted"),
+                isLocked =
+                    asset.locked || (Project.currentLoadedProject && Project.currentLoadedProject.hasAsset(asset)),
+                isReportable = !!$filter("activityListFilter")(asset).length && !isLocked,
+                isUpdatable = Right.isUpdatable(asset) && !isLocked,
                 isGraphical = Site.current.metamodel[asset.okey].is_graphical,
-                isAvailableToFetchHistory = Right.get( 'history' ) && isReportable && !(asset.reports && asset.reports.length),
-                isReportableForIntent = !!$filter( 'reportableAssetsForIntentFilter' )( asset ).length;
+                isAvailableToFetchHistory =
+                    Right.get("history") && isReportable && !(asset.reports && asset.reports.length),
+                isReportableForIntent = !!$filter("reportableAssetsForIntentFilter")(asset).length;
 
             if (isAvailableToFetchHistory) {
-                authAction.push( actions.fetchhistory );
+                authAction.push(actions.fetchhistory);
             }
 
             // GEO ACTIONS
             if (isGraphical) {
-                authAction.push( actions.zoomon );
+                authAction.push(actions.zoomon);
             }
 
-            if (isGraphical && Right.get( 'goto' )) {
-                authAction.push( actions.goto );
+            if (isGraphical && Right.get("goto")) {
+                authAction.push(actions.goto);
             }
 
             // INTENT ACTIONS
-            if ( isReportableForIntent ) {
-                authAction.push( actions.addtoreportforintent );
+            if (isReportableForIntent) {
+                authAction.push(actions.addtoreportforintent);
             }
 
             // OBJECT ACTIONS
             if (isUpdatable && !isInCurrentProject) {
-                authAction.push( actions.separator );
-                authAction.push( actions.edit );
-                authAction.push( actions.delete );
+                authAction.push(actions.separator);
+                authAction.push(actions.edit);
+                authAction.push(actions.delete);
             }
 
             // MULTI SELECTION ACTIONS
-            if (isReportable && Right.get( 'multiselection' )) {
-                authAction.push( asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection );
+            if (isReportable && Right.get("multiselection")) {
+                authAction.push(asset.isInMultiselection ? actions.dropfromcurrentselection : actions.addtoselection);
             }
 
             // PROJECT ACTIONS
             if (isProjectable) {
-
-                authAction.push( actions.separator );
+                authAction.push(actions.separator);
 
                 if (isInCurrentProject && isNotMarkedAsRemoved) {
-                    authAction.push( actions.editobjectforproject );
-                    authAction.push( actions.markobjectasdeleteforproject );
+                    authAction.push(actions.editobjectforproject);
+                    authAction.push(actions.markobjectasdeleteforproject);
                 }
 
                 if (isInCurrentProject) {
-                    authAction.push( actions.deleteobjectfromprojectandreleaseit );
+                    authAction.push(actions.deleteobjectfromprojectandreleaseit);
                 }
 
                 if (!isInCurrentProject && !isLocked) {
-                    authAction.push( actions.addtocurrentproject );
+                    authAction.push(actions.addtocurrentproject);
                 }
-
             }
 
             return authAction;
         }
         return _guirlandeFilter;
     }
-
-} )();
+})();

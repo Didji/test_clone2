@@ -1,36 +1,55 @@
-( function() {
+(function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").factory("ComplexAsset", ComplexAssetFactory);
 
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'ComplexAsset', ComplexAssetFactory );
+    ComplexAssetFactory.$inject = [
+        "$q",
+        "$rootScope",
+        "$http",
+        "G3ME",
+        "Storage",
+        "Site",
+        "Asset",
+        "Relationship",
+        "SQLite",
+        "Synchronizator",
+        "i18n"
+    ];
 
-    ComplexAssetFactory.$inject = ["$q", "$rootScope", "$http", "G3ME", "Storage", "Site", "Asset", "Relationship", "SQLite", "Synchronizator", "i18n"];
-
-    function ComplexAssetFactory($q, $rootScope, $http, G3ME, Storage, Site, Asset, Relationship, SQLite, Synchronizator, i18n) {
-
+    function ComplexAssetFactory(
+        $q,
+        $rootScope,
+        $http,
+        G3ME,
+        Storage,
+        Site,
+        Asset,
+        Relationship,
+        SQLite,
+        Synchronizator,
+        i18n
+    ) {
         /**
          * @class ComplexAssetFactory
          * @desc Factory de la classe ComplexAsset
          */
         function ComplexAsset(okey, father, root, asset) {
             asset = asset || {
-                    id: null,
-                    okey: null,
-                    guid: null,
-                    children: [],
-                    relatedAssets: {},
-                    geometry: null,
-                    angle: false,
-                    fields: {}
-
+                id: null,
+                okey: null,
+                guid: null,
+                children: [],
+                relatedAssets: {},
+                geometry: null,
+                angle: false,
+                fields: {}
             };
             if (asset.id !== null) {
                 this.id = asset.id;
             }
             this.okey = okey || asset.okey;
-            this.isProject = (this.okey !== null) ? (this.okey.search( /PROJECT_/ ) === 0) : false;
+            this.isProject = this.okey !== null ? this.okey.search(/PROJECT_/) === 0 : false;
             this.uuid = asset.uuid || window.uuid();
             this.children = asset.children || [];
             this.father = father && father.uuid;
@@ -46,7 +65,7 @@
             this.angle = asset.angle;
 
             if (!this.okey) {
-                console.error( 'You must provide a root okey.' );
+                console.error("You must provide a root okey.");
                 return false;
             }
 
@@ -55,17 +74,17 @@
             }
 
             var _this = this;
-            angular.forEach( Site.current.metamodel[this.okey].tabs, function(tab) {
-                angular.forEach( tab.fields, function(field) {
+            angular.forEach(Site.current.metamodel[this.okey].tabs, function(tab) {
+                angular.forEach(tab.fields, function(field) {
                     if (!_this.fields[field.key] && field.default !== null) {
-                        if (field.type === 'D') {
-                            _this.fields[field.key] = new Date( field.default );
+                        if (field.type === "D") {
+                            _this.fields[field.key] = new Date(field.default);
                         } else {
                             _this.fields[field.key] = field.default;
                         }
                     }
-                } );
-            } );
+                });
+            });
 
             return this;
         }
@@ -76,18 +95,15 @@
          * @returns     {ComplexAsset} Objet complexe créé
          */
         ComplexAsset.prototype.add = function() {
-
             var childType = Site.current.dependancies[this.okey];
 
             if (!childType) {
-                console.error( 'This node type has no child type.' );
+                console.error("This node type has no child type.");
                 return false;
             } else {
-                return this.children.push( new ComplexAsset( childType, this, this.root ) );
+                return this.children.push(new ComplexAsset(childType, this, this.root));
             }
-
         };
-
 
         /**
          * @name get
@@ -96,9 +112,8 @@
          * @returns     {ComplexAsset} Objet correspondant à l'UUID
          */
         ComplexAsset.prototype.get = function(uuid) {
-
             if (!uuid) {
-                console.error( 'You must provide node uuid.' );
+                console.error("You must provide node uuid.");
                 return false;
             }
             if (this.uuid === uuid) {
@@ -108,16 +123,15 @@
             var found = false;
 
             for (var i = 0; i < this.children.length; i++) {
-                found = found || this.children[i].get( uuid );
+                found = found || this.children[i].get(uuid);
             }
 
             if (!this.father && !found) {
-                console.error( 'Uuid ' + this.uuid + ' not found.' );
+                console.error("Uuid " + this.uuid + " not found.");
                 return false;
             } else {
                 return found;
             }
-
         };
 
         /**
@@ -126,32 +140,29 @@
          * @returns {ComplexAsset} Objet complexe créé
          */
         ComplexAsset.prototype.duplicate = function() {
-
             if (!this.father) {
-                console.error( 'You cannot duplicate root node.' );
+                console.error("You cannot duplicate root node.");
                 return false;
             }
 
-            var father = this.root.get( this.father );
+            var father = this.root.get(this.father);
 
             if (!father) {
-                console.error( 'Father node ' + this.father + ' not found.' );
+                console.error("Father node " + this.father + " not found.");
                 return false;
             }
 
             for (var i = 0; i < father.children.length; i++) {
                 if (father.children[i].uuid === this.uuid) {
                     var newNode = father.children[i].__clone();
-                    newNode.__updateUuid( father.uuid );
+                    newNode.__updateUuid(father.uuid);
                     newNode.__updateGuid();
                     newNode.__closeTreeForm();
-                    father.children.push( newNode );
+                    father.children.push(newNode);
                     return newNode;
                 }
             }
-
         };
-
 
         /**
          * @name delete
@@ -160,27 +171,26 @@
          * @returns {Boolean} True si l'objet a été supprimé
          */
         ComplexAsset.prototype.delete = function() {
-
             if (!this.father) {
-                console.error( 'You cannot remove root node.' );
+                console.error("You cannot remove root node.");
                 return false;
             }
 
-            var father = this.root.get( this.father );
+            var father = this.root.get(this.father);
 
             if (!father) {
-                console.error( 'Father node ' + this.father + ' not found.' );
+                console.error("Father node " + this.father + " not found.");
                 return false;
             }
 
             for (var i = 0; i < father.children.length; i++) {
                 if (father.children[i].uuid === this.uuid) {
                     if (father.children[i].layer) {
-                        father.children[i].layer._map.removeLayer( father.children[i].layer );
+                        father.children[i].layer._map.removeLayer(father.children[i].layer);
                         delete father.children[i].layer;
                     }
                     delete father.children[i];
-                    father.children.splice( i, 1 );
+                    father.children.splice(i, 1);
                     return true;
                 }
             }
@@ -202,7 +212,7 @@
          * @desc
          */
         ComplexAsset.prototype.getLabel = function() {
-            return this.isProject ? i18n.get( "_MENU_PROJECT" ) : i18n.get( "_MENU_CENSUS" );
+            return this.isProject ? i18n.get("_MENU_PROJECT") : i18n.get("_MENU_CENSUS");
         };
 
         /**
@@ -229,7 +239,9 @@
          * @desc
          */
         ComplexAsset.formatComplexToSimple = function(complex, Project, update) {
-            var assets = complex.gimmeYourLinearSubtree(), asset , i;
+            var assets = complex.gimmeYourLinearSubtree(),
+                asset,
+                i;
             var masterGeom = null;
             var masterBounds = null;
             for (i = 0; i < assets.length; i++) {
@@ -237,15 +249,15 @@
                 asset.guid = update ? asset.guid : asset.uuid;
                 asset.attributes = asset.fields;
                 if (Project && Project.currentLoadedProject) {
-                    asset.classindex = Project.currentLoadedProject.getClassIndexForAddedAsset( asset.okey );
+                    asset.classindex = Project.currentLoadedProject.getClassIndexForAddedAsset(asset.okey);
                 }
                 asset.classindex = asset.classindex || 0;
-                asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset( asset );
-                asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset( asset );
+                asset.geometry = asset.geometry && ComplexAsset.getGeometryFromCensusAsset(asset);
+                asset.bounds = asset.geometry && ComplexAsset.getBoundsFromCensusAsset(asset);
                 asset.maplabel = "";
                 var getZooms = SMARTGEO_CURRENT_SITE.symbology[asset.okey + asset.classindex];
-                asset.maxzoom = getZooms && getZooms.maxzoom || Infinity;
-                asset.minzoom = getZooms && getZooms.minzoom || 0;
+                asset.maxzoom = (getZooms && getZooms.maxzoom) || Infinity;
+                asset.minzoom = (getZooms && getZooms.minzoom) || 0;
                 delete asset.father;
                 delete asset.fields;
                 delete asset.formVisible;
@@ -310,7 +322,7 @@
                     }
                 };
             } else {
-                var coord ,
+                var coord,
                     lngmin = +Infinity,
                     lngmax = -Infinity,
                     latmin = +Infinity,
@@ -335,51 +347,47 @@
             }
         };
 
-
         /**
          * @name gimmeYourLinearSubtree
          * @desc
          */
         ComplexAsset.prototype.gimmeYourLinearSubtree = function() {
-            var linearMe = angular.copy( this.__clean() );
+            var linearMe = angular.copy(this.__clean());
             delete linearMe.children;
             var linearSubtree = [linearMe];
             for (var i = 0; i < this.children.length; i++) {
-                linearSubtree = linearSubtree.concat( this.children[i].gimmeYourLinearSubtree() );
+                linearSubtree = linearSubtree.concat(this.children[i].gimmeYourLinearSubtree());
             }
             return linearSubtree;
         };
-
 
         /**
          * @name save
          * @desc
          */
         ComplexAsset.prototype.save = function(Project, update) {
-
-            var node = this.__clone( true ),
-                prefix = node.okey.search( /PROJECT_/ ) === 0 ? "project_" : "",
+            var node = this.__clone(true),
+                prefix = node.okey.search(/PROJECT_/) === 0 ? "project_" : "",
                 method = prefix + (update ? "update" : "new");
 
             node.timestamp = node.timestamp = Date.now();
             node.__restoreAllDate();
 
-            var assets = node.convertToTempLinearAndSave( update, Project );
+            var assets = node.convertToTempLinearAndSave(update, Project);
 
             node.uuids = [];
 
             for (var i = 0; i < assets.length; i++) {
-                node.uuids.push( assets[i].uuid || assets[i].guid );
+                node.uuids.push(assets[i].uuid || assets[i].guid);
             }
 
             if (node.isProject && !update) {
-                Project.currentLoadedProject.addNew( assets );
+                Project.currentLoadedProject.addNew(assets);
             } else if (node.isProject && update) {
-                Project.currentLoadedProject.addUpdated( assets );
+                Project.currentLoadedProject.addUpdated(assets);
             }
 
-            Synchronizator.add( method, node.__clean() );
-
+            Synchronizator.add(method, node.__clean());
         };
 
         /**
@@ -387,16 +395,16 @@
          * @desc
          */
         ComplexAsset.prototype.convertToTempLinearAndSave = function(update, Project) {
-            var relationships = Relationship.getRelationshipsFromComplexAsset( this ),
-                assets = ComplexAsset.formatComplexToSimple( this, Project, update ),
+            var relationships = Relationship.getRelationshipsFromComplexAsset(this),
+                assets = ComplexAsset.formatComplexToSimple(this, Project, update),
                 method = update ? "update" : "save";
 
-            Asset[method]( assets, function() {
-                Relationship.save( relationships, G3ME.reloadLayers );
+            Asset[method](assets, function() {
+                Relationship.save(relationships, G3ME.reloadLayers);
                 if (update) {
-                    $rootScope.$broadcast( "REFRESH_CONSULTATION" );
+                    $rootScope.$broadcast("REFRESH_CONSULTATION");
                 }
-            } );
+            });
 
             return assets;
         };
@@ -406,8 +414,8 @@
          * @desc
          */
         ComplexAsset.prototype.__log = function() {
-            console.groupCollapsed( Site.current.metamodel[this.okey].label + ':' + this.uuid );
-            console.info( this );
+            console.groupCollapsed(Site.current.metamodel[this.okey].label + ":" + this.uuid);
+            console.info(this);
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].__log();
             }
@@ -430,15 +438,15 @@
             this.__deleteLayer();
             this.__deleteRoot();
 
-            var newNode = angular.copy( this );
+            var newNode = angular.copy(this);
 
             if (!preserveGeometry) {
-                this.__restoreGeometry( geometry );
+                this.__restoreGeometry(geometry);
             }
-            this.__restoreRoot( root );
-            this.__restoreLayer( layer );
+            this.__restoreRoot(root);
+            this.__restoreLayer(layer);
 
-            newNode.__restoreRoot( root );
+            newNode.__restoreRoot(root);
             return newNode;
         };
 
@@ -485,13 +493,13 @@
             }
             for (var j in this.fields) {
                 var field = this.fields[j];
-                if (!angular.isDate( field )) {
+                if (!angular.isDate(field)) {
                     continue;
                 }
                 var yyyy = field.getFullYear().toString(),
                     mm = (field.getMonth() + 1).toString(),
                     dd = field.getDate().toString();
-                this.fields[j] = yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]);
+                this.fields[j] = yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
             }
         };
 
@@ -521,7 +529,7 @@
         ComplexAsset.prototype.__restoreRoot = function(root) {
             this.root = root;
             for (var i = 0; i < this.children.length; i++) {
-                this.children[i].__restoreRoot( root );
+                this.children[i].__restoreRoot(root);
             }
         };
 
@@ -549,7 +557,7 @@
             this.uuid = window.uuid();
             this.father = father;
             for (var i = 0; i < this.children.length; i++) {
-                this.children[i].__updateUuid( this.uuid );
+                this.children[i].__updateUuid(this.uuid);
             }
         };
 
@@ -560,7 +568,7 @@
         ComplexAsset.prototype.__updateGuid = function(guid) {
             this.id = this.guid = this.uuid;
             for (var i = 0; i < this.children.length; i++) {
-                this.children[i].__updateGuid( guid );
+                this.children[i].__updateGuid(guid);
             }
         };
 
@@ -611,17 +619,23 @@
         ComplexAsset.find = function(id, callback) {
             id = id.length !== undefined ? id : [id];
             if (!id.length) {
-                return callback( [] );
+                return callback([]);
             }
-            SQLite.exec( ComplexAsset.database, 'SELECT * FROM ' + ComplexAsset.table + ' WHERE id in (' + id.join( ',' ) + ')', [], function(rows) {
-                var complexes = [], complex;
-                for (var i = 0; i < rows.length; i++) {
-                    complex = angular.extend( rows.item( i ), JSON.parse( rows.item( i ).json ) );
+            SQLite.exec(
+                ComplexAsset.database,
+                "SELECT * FROM " + ComplexAsset.table + " WHERE id in (" + id.join(",") + ")",
+                [],
+                function(rows) {
+                    var complexes = [],
+                        complex;
+                    for (var i = 0; i < rows.length; i++) {
+                        complex = angular.extend(rows.item(i), JSON.parse(rows.item(i).json));
 
-                    complexes.push( complex );
+                        complexes.push(complex);
+                    }
+                    (callback || function() {})(complexes);
                 }
-                (callback || function() {}) ( complexes );
-            } );
+            );
         };
 
         /**
@@ -629,11 +643,13 @@
          * @desc Serialize les attributs de l'object complexe pour la requête SQL
          */
         ComplexAsset.prototype.serializeForSQL = function() {
-            return [this.uuid || this.guid || this.id, JSON.stringify( this.__clean( true ) ), this.okey.search( /PROJECT_/ ) === 0];
+            return [
+                this.uuid || this.guid || this.id,
+                JSON.stringify(this.__clean(true)),
+                this.okey.search(/PROJECT_/) === 0
+            ];
         };
 
         return ComplexAsset;
-
     }
-
-} )();
+})();

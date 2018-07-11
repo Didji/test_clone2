@@ -1,12 +1,9 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").directive("i18n", i18nDirective);
 
-    angular
-        .module( 'smartgeomobile' )
-        .directive( 'i18n', i18nDirective );
-
-    i18nDirective.$inject = ['i18n'];
+    i18nDirective.$inject = ["i18n"];
 
     /**
      * @desc Directive pour l'internationalisation
@@ -15,11 +12,10 @@
 
     function i18nDirective(i18n) {
         return {
-            restrict: 'E',
+            restrict: "E",
             link: function(scope, element) {
-                (element.html() && element).html( i18n.get( element.html() ) );
+                (element.html() && element).html(i18n.get(element.html()));
             }
         };
     }
-
 })();

@@ -1,10 +1,7 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .filter( 'isGraphical', isGraphical );
+    angular.module("smartgeomobile").filter("isGraphical", isGraphical);
 
     isGraphical.$inject = ["Site"];
 
@@ -17,7 +14,7 @@
             var layersOut = [];
             for (var i = 0; i < layers.length; i++) {
                 if (!!!Site.current.metamodel[layers[i].okey].is_graphical) {
-                    layersOut.push( layers[i] );
+                    layersOut.push(layers[i]);
                 }
             }
             return layersOut;

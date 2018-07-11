@@ -1,15 +1,11 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'Storage', StorageFactory );
+    angular.module("smartgeomobile").factory("Storage", StorageFactory);
 
     StorageFactory.$inject = ["$q", "SQLite"];
 
     function StorageFactory($q, SQLite) {
-
         /**
          * @class StorageFactory
          * @desc Factory de la classe Storage
@@ -24,10 +20,10 @@
          */
         Storage.set = function(parameter, value) {
             if (value) {
-                localStorage.setItem( parameter, JSON.stringify( value ) );
+                localStorage.setItem(parameter, JSON.stringify(value));
                 return value;
             } else {
-                return Storage.remove( parameter );
+                return Storage.remove(parameter);
             }
         };
 
@@ -37,7 +33,7 @@
          * @param {String} parameter
          */
         Storage.get = function(parameter) {
-            return JSON.parse( localStorage.getItem( parameter ) );
+            return JSON.parse(localStorage.getItem(parameter));
         };
 
         /**
@@ -46,7 +42,7 @@
          * @param {String} parameter
          */
         Storage.remove = function(parameter) {
-            return localStorage.removeItem( parameter );
+            return localStorage.removeItem(parameter);
         };
 
         /**
@@ -58,19 +54,19 @@
          */
         Storage.set_ = function(parameter, value, callback) {
             if (!value) {
-                return Storage.remove_( parameter, callback );
+                return Storage.remove_(parameter, callback);
             }
             var deferred = $q.defer();
 
             // Nettoyage "magique" des références cycliques.
             // @fabriceds: Ce qui est magique cassera un jour où le charme rompra.
             // @gulian: Perso j'y crois pas.
-            value = JSON.parse( JSON.stringify( value ) );
-            
-            SQLite.set( parameter, value, function(value) {
-                deferred.resolve( value );
-                (callback || angular.noop)( value );
-            } );
+            value = JSON.parse(JSON.stringify(value));
+
+            SQLite.set(parameter, value, function(value) {
+                deferred.resolve(value);
+                (callback || angular.noop)(value);
+            });
             return deferred.promise;
         };
 
@@ -82,10 +78,10 @@
          */
         Storage.get_ = function(parameter, callback) {
             var deferred = $q.defer();
-            SQLite.get( parameter, function(value) {
-                deferred.resolve( value );
-                (callback || angular.noop)( value );
-            } );
+            SQLite.get(parameter, function(value) {
+                deferred.resolve(value);
+                (callback || angular.noop)(value);
+            });
             return deferred.promise;
         };
 
@@ -97,14 +93,13 @@
          */
         Storage.remove_ = function(parameter, callback) {
             var deferred = $q.defer();
-            SQLite.unset( parameter, function(value) {
-                deferred.resolve( value );
-                (callback || angular.noop)( value );
-            } );
+            SQLite.unset(parameter, function(value) {
+                deferred.resolve(value);
+                (callback || angular.noop)(value);
+            });
             return deferred.promise;
         };
 
         return Storage;
     }
-
 })();

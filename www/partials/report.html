@@ -1,10 +1,12 @@
-<form name="reportForm" class="reportForm" >
+<form name="reportForm" class="reportForm">
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
     <button type="button" class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
+    <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()"
+        ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
         <i18n>_REPORT_SAVE</i18n>
@@ -32,41 +34,59 @@
                             <span ng-if="::field.type=='O'">
                                 <span class="fa fa-check-square-o pull-left yes"></span>
                                 <span class="fa fa-square-o pull-left no"></span>
-                                <input type="checkbox" id="{{tab.id}}-{{field.id}}" ng-required='field.required' class="form-control" ng-model="reportController.report.fields[field.id]" ng-change="reportController.applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'">
+                                <input type="checkbox" id="{{tab.id}}-{{field.id}}" ng-required='field.required' class="form-control" ng-model="reportController.report.fields[field.id]"
+                                    ng-change="reportController.applyConsequences(field.id)" ng-true-value="'Y'" ng-false-value="'N'">
                             </span>
                         </label>
-                        
+
                         <div ng-if='field.type=="L" && field.options.length > 15'>
-                            <ui-select skip-focusser="true" ng-required='field.required' ng-model="reportController.report.fields[field.id]" theme="bootstrap" ng-disabled="disabled" on-select="reportController.applyConsequences(field.id)">
+                            <ui-select skip-focusser="true" ng-required='field.required' ng-model="reportController.report.fields[field.id]" theme="bootstrap"
+                                ng-disabled="disabled" on-select="reportController.applyConsequences(field.id)">
                                 <ui-select-match allow-clear="true">{{$select.selected.label}}</ui-select-match>
-                                <ui-select-choices repeat="option.value as option in reportController.report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label' | limitTo: 75" style="display:{{($select.search.length > 1 && option.label !== null && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}" value="option.value" position="down">
+                                <ui-select-choices repeat="option.value as option in reportController.report.activity._fields[field.id].options | filter: {'label': $select.search} | orderBy:'label' | limitTo: 75"
+                                    style="display:{{($select.search.length > 1 && option.label !== null && option.label.indexOf($select.search) !== -1) ? 'block' : 'none'}}"
+                                    value="option.value" position="down">
                                     <div ng-bind-html="option.label | highlight: $select.search"></div>
                                 </ui-select-choices>
                             </ui-select>
                         </div>
 
-                        <select ng-required='field.required' class="form-control" name="f" ng-model="reportController.report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15' ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'" ng-change="reportController.applyConsequences(field.id)">
+                        <select ng-required='field.required' class="form-control" name="f" ng-model="reportController.report.fields[field.id]" ng-if='field.type=="L" && field.options.length <= 15'
+                            ng-options="option.value as option.label for option in field.options | orderListAlpha:'label'" ng-change="reportController.applyConsequences(field.id)">
                             <option value=""></option>
                         </select>
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && field.default && field.default.pkey)" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]">
+                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && field.default && field.default.pkey)"
+                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]"
+                            style="margin-bottom:10px">
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey))" ng-required="field.required" type="date" name="f" ng-model="reportController.report.fields[field.id]">
+                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey))"
+                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.fields[field.id]"
+                            style="margin-bottom:10px">
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && field.default && field.default.pkey)" ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]" style="margin-bottom:10px">
+                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && field.default && field.default.pkey)"
+                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]"
+                            style="margin-bottom:10px">
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && (!field.default || !field.default.pkey))" ng-required="field.required" type="date" name="f" style="margin-bottom:10px" ng-model="reportController.report.fields[field.id]">
+                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && (!field.default || !field.default.pkey))"
+                            ng-required="field.required" type="date" name="f" style="margin-bottom:10px" ng-model="reportController.report.fields[field.id]">
 
-                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && field.default && field.default.pkey)" ng-model="reportController.report.overrides[field.id]"></input>
-                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && (!field.default || !field.default.pkey))" ng-model="reportController.report.fields[field.id]"></input>
+                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && field.default && field.default.pkey)"
+                            ng-model="reportController.report.overrides[field.id]"></input>
+                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && (!field.default || !field.default.pkey))"
+                            ng-model="reportController.report.fields[field.id]"></input>
 
-                        <input ng-required='field.required' ng-if="::(field.type=='N' && field.default && field.default.pkey)" type="number" class="form-control" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.overrides[field.id]'>
-                        <input ng-required='field.required' ng-if="::(field.type=='N' && (!field.default || !field.default.pkey))" type="number" class="form-control" ng-required="field.required"
-                        ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.fields[field.id]'>
+                        <input ng-required='field.required' ng-if="::(field.type=='N' && field.default && field.default.pkey)" type="number" class="form-control"
+                            ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.overrides[field.id]'>
+                        <input ng-required='field.required' ng-if="::(field.type=='N' && (!field.default || !field.default.pkey))" type="number"
+                            class="form-control" ng-required="field.required" ng-pattern="reportController.numberPattern" step="any"
+                            name="f" ng-model='reportController.report.fields[field.id]'>
                         <small ng-if="::(field.type=='N')" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
 
-                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && field.default && field.default.pkey)" ng-required="field.required" class="form-control" ng-model='reportController.report.overrides[field.id]'>
-                        <input ng-required='field.required' name="f"  ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required" class="form-control" ng-model='reportController.report.fields[field.id]'>
+                        <input ng-required='field.required' name="f" ng-if="::(field.type=='C' && field.default && field.default.pkey)" ng-required="field.required"
+                            class="form-control" ng-model='reportController.report.overrides[field.id]'>
+                        <input ng-required='field.required' name="f" ng-if="::(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required"
+                            class="form-control" ng-model='reportController.report.fields[field.id]'>
                     </div>
                 </div>
             </div>
@@ -86,12 +106,14 @@
             </h4>
         </div>
         <div class="panel-body">
-            <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" camera class='btn btn-default btn-block' ng-model='reportController.report.ged'>
+            <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" camera
+                class='btn btn-default btn-block' ng-model='reportController.report.ged'>
                 <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
                 <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
                 <i ng-show='isTakingPhoto' class="fa fa-refresh fa-spin"></i>
             </button>
-            <button  ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" camera="gallery" class='btn btn-default btn-block' ng-model='reportController.report.ged'>
+            <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" camera="gallery"
+                class='btn btn-default btn-block' ng-model='reportController.report.ged'>
                 <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES_FROM_GALLERY</i18n>
                 <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
                 <i ng-show='isTakingPhoto' class="fa fa-refresh fa-spin"></i>
@@ -115,7 +137,9 @@
         <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
-    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}' ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()" ng-click="reportController.sendReport()">
+    <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || reportController.containsUnfilledRequiredFields()"
+        ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
         <i18n>_REPORT_SAVE</i18n>

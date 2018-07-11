@@ -1,11 +1,7 @@
 <div id="left_panel_census" ng-controller="CensusController as censusController">
 
     <div ng-if='censusController.okey' style="margin-left:-15px;">
-        <census
-            ng-if='censusController.okey'
-            okey='censusController.okey'
-            asset='censusController.asset'
-            onclose='censusController.close()'
+        <census ng-if='censusController.okey' okey='censusController.okey' asset='censusController.asset' onclose='censusController.close()'
             classindex='censusController.classindex'>
         </census>
     </div>
@@ -13,7 +9,8 @@
     <div ng-if='!censusController.okey'>
         <div style="margin:10px" class="panel panel-warning">
             <div class="panel-heading">
-                <i class="fa fa-info-circle"> </i><i18n>_CENSUS_CHOOSE_OBJECT_</i18n>
+                <i class="fa fa-info-circle"> </i>
+                <i18n>_CENSUS_CHOOSE_OBJECT_</i18n>
             </div>
         </div>
         <ul>

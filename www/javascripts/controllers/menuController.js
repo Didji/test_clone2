@@ -8,9 +8,20 @@
  * @property {array} bottomMenuItems Item du menu fix
  */
 
-angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$routeParams", "$window", "$rootScope", "i18n", "$timeout", "$http", "$location", "$filter", "Storage", "Utils", function($scope, $routeParams, $window, $rootScope, i18n, $timeout, $http, $location, $filter, Storage, Utils) {
-
-        'use strict';
+angular.module("smartgeomobile").controller("menuController", [
+    "$scope",
+    "$routeParams",
+    "$window",
+    "$rootScope",
+    "i18n",
+    "$timeout",
+    "$http",
+    "$location",
+    "$filter",
+    "Storage",
+    "Utils",
+    function($scope, $routeParams, $window, $rootScope, i18n, $timeout, $http, $location, $filter, Storage, Utils) {
+        "use strict";
 
         var vm = $scope;
 
@@ -20,99 +31,111 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Methode d'initialisation, appelée après le chargement du DOM
          */
         vm.initialize = function() {
-            var persistence = Storage.get( "persistence.menu" );
-            var intent = Storage.get( "intent" );
+            var persistence = Storage.get("persistence.menu");
+            var intent = Storage.get("intent");
 
-            vm.display = !!intent ? false : (null === persistence) ? true : persistence.display;
+            vm.display = !!intent ? false : null === persistence ? true : persistence.display;
 
             vm.homeIsDisplayed = true;
 
             vm.siteSelectionEnable = false;
 
-            vm.menuItems = [{
-                id: 'search',
-                label: i18n.get( '_MENU_SEARCH' ),
-                icon: "fa fa-search",
-                template: 'partials/search.html',
-                forceLoadDOM: false
-                }, {
-                id: 'planning',
-                label: i18n.get( '_MENU_PLANNING' ),
-                icon: "fa fa-calendar",
-                template: 'partials/planning.html',
-                forceLoadDOM: true
-                }, {
-                id: 'census',
-                label: i18n.get( '_MENU_CENSUS' ),
-                icon: "fa fa-plus",
-                template: 'partials/census.html',
-                forceLoadDOM: true
-                }, {
-                id: 'project',
-                label: i18n.get( '_MENU_PROJECT' ),
-                icon: "fa fa-wrench",
-                template: 'partials/project.html',
-                forceLoadDOM: true
-                }, {
-                id: 'activelayers',
-                label: i18n.get( '_MENU_ACTIVE_LAYERS' ),
-                icon: "fa fa-list-ul",
-                template: 'partials/layers.html',
-                forceLoadDOM: false
-                }, {
-                id: 'synccenter',
-                label: i18n.get( '_MENU_SYNC' ),
-                badge: 'toBeSync',
-                icon: "fa fa-refresh",
-                template: 'partials/synccenter.html',
-                forceLoadDOM: true
-                }, {
-                id: 'parameters',
-                label: i18n.get( '_MENU_PARAMETERS' ),
-                icon: "fa fa-cogs",
-                template: 'partials/parameters.html',
-                forceLoadDOM: false
-            }];
+            vm.menuItems = [
+                {
+                    id: "search",
+                    label: i18n.get("_MENU_SEARCH"),
+                    icon: "fa fa-search",
+                    template: "partials/search.html",
+                    forceLoadDOM: false
+                },
+                {
+                    id: "planning",
+                    label: i18n.get("_MENU_PLANNING"),
+                    icon: "fa fa-calendar",
+                    template: "partials/planning.html",
+                    forceLoadDOM: true
+                },
+                {
+                    id: "census",
+                    label: i18n.get("_MENU_CENSUS"),
+                    icon: "fa fa-plus",
+                    template: "partials/census.html",
+                    forceLoadDOM: true
+                },
+                {
+                    id: "project",
+                    label: i18n.get("_MENU_PROJECT"),
+                    icon: "fa fa-wrench",
+                    template: "partials/project.html",
+                    forceLoadDOM: true
+                },
+                {
+                    id: "activelayers",
+                    label: i18n.get("_MENU_ACTIVE_LAYERS"),
+                    icon: "fa fa-list-ul",
+                    template: "partials/layers.html",
+                    forceLoadDOM: false
+                },
+                {
+                    id: "synccenter",
+                    label: i18n.get("_MENU_SYNC"),
+                    badge: "toBeSync",
+                    icon: "fa fa-refresh",
+                    template: "partials/synccenter.html",
+                    forceLoadDOM: true
+                },
+                {
+                    id: "parameters",
+                    label: i18n.get("_MENU_PARAMETERS"),
+                    icon: "fa fa-cogs",
+                    template: "partials/parameters.html",
+                    forceLoadDOM: false
+                }
+            ];
 
-            vm.bottomMenuItems = [{
-                id: 'logout',
-                label: 'Déconnexion',
-                icon: "fa fa-power-off redicon",
-                action: 'logout',
-                }, {
-                id: 'siteselection',
-                label: 'Selection de site',
-                icon: "fa fa-exchange",
-                action: 'changeSite',
-                specialVisibility: 'checkIfMoreThanOneSiteIsAvailable'
-                }, {
-                id: 'myposition',
-                label: 'Ma position',
-                icon: "fa fa-compass",
-                action: 'activatePosition',
-                }, {
-                id: 'consultation',
-                label: 'Consultation',
-                icon: "fa fa-info-circle",
-                action: 'activateConsultation',
-            }];
+            vm.bottomMenuItems = [
+                {
+                    id: "logout",
+                    label: "Déconnexion",
+                    icon: "fa fa-power-off redicon",
+                    action: "logout"
+                },
+                {
+                    id: "siteselection",
+                    label: "Selection de site",
+                    icon: "fa fa-exchange",
+                    action: "changeSite",
+                    specialVisibility: "checkIfMoreThanOneSiteIsAvailable"
+                },
+                {
+                    id: "myposition",
+                    label: "Ma position",
+                    icon: "fa fa-compass",
+                    action: "activatePosition"
+                },
+                {
+                    id: "consultation",
+                    label: "Consultation",
+                    icon: "fa fa-info-circle",
+                    action: "activateConsultation"
+                }
+            ];
 
             vm.applyVisibility();
 
-            $scope.$on( "$destroy", destroyHandler );
-            $rootScope.$on( 'DEVICE_IS_ONLINE', vm.checkIfMoreThanOneSiteIsAvailable );
-            $rootScope.$on( 'DEVICE_IS_OFFLINE', vm.checkIfMoreThanOneSiteIsAvailable );
-            $rootScope.$on( '_MENU_CLOSE_', function() {
+            $scope.$on("$destroy", destroyHandler);
+            $rootScope.$on("DEVICE_IS_ONLINE", vm.checkIfMoreThanOneSiteIsAvailable);
+            $rootScope.$on("DEVICE_IS_OFFLINE", vm.checkIfMoreThanOneSiteIsAvailable);
+            $rootScope.$on("_MENU_CLOSE_", function() {
                 vm.display = false;
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
-            } );
+            });
 
             vm.checkIfMoreThanOneSiteIsAvailable();
 
-            $rootScope.$watch( 'reports', function() {
-
+            $rootScope.$watch("reports", function() {
                 var uuid_;
 
                 vm.toSyncNumber = 0;
@@ -131,17 +154,15 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
                         }
                     }
                 }
-            } );
+            });
 
             for (var menuIndex in vm.menuItems) {
-                if ((null !== persistence) && (vm.menuItems[menuIndex].id === persistence.activeMenuId)) {
-                    vm.showItem( vm.menuItems[menuIndex] );
+                if (null !== persistence && vm.menuItems[menuIndex].id === persistence.activeMenuId) {
+                    vm.showItem(vm.menuItems[menuIndex]);
                     break;
                 }
             }
-
         };
-
 
         /**
          * @method
@@ -149,18 +170,14 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc
          */
         function destroyHandler() {
-            var active = $filter( 'filter' )( vm.menuItems, {
+            var active = $filter("filter")(vm.menuItems, {
                 displayItemContent: true
-            } );
-            Storage.set(
-                "persistence.menu",
-                {
-                    display: vm.display,
-                    activeMenuId: active && active[0] && active[0].id
-                }
-            );
+            });
+            Storage.set("persistence.menu", {
+                display: vm.display,
+                activeMenuId: active && active[0] && active[0].id
+            });
         }
-
 
         /**
          * @method
@@ -171,7 +188,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             vm.display = !vm.display;
             var little_screen = Utils.isRunningOnLittleScreen();
             if (vm.display && little_screen) {
-                $rootScope.$broadcast( "CLOSE_CONSULTATION_PANEL" );
+                $rootScope.$broadcast("CLOSE_CONSULTATION_PANEL");
             }
         };
 
@@ -183,12 +200,16 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
         vm.applyVisibility = function() {
             var menuItem;
             for (menuItem in vm.menuItems) {
-                vm.menuItems[menuItem].displayMenuItem = (vm.menuItems[menuItem].specialVisibility ? vm[vm.menuItems[menuItem].specialVisibility]() : true);
+                vm.menuItems[menuItem].displayMenuItem = vm.menuItems[menuItem].specialVisibility
+                    ? vm[vm.menuItems[menuItem].specialVisibility]()
+                    : true;
                 vm.menuItems[menuItem].displayItemContent = false;
             }
 
             for (menuItem in vm.bottomMenuItems) {
-                vm.bottomMenuItems[menuItem].displayMenuItem = (vm.bottomMenuItems[menuItem].specialVisibility ? vm[vm.bottomMenuItems[menuItem].specialVisibility]() : true);
+                vm.bottomMenuItems[menuItem].displayMenuItem = vm.bottomMenuItems[menuItem].specialVisibility
+                    ? vm[vm.bottomMenuItems[menuItem].specialVisibility]()
+                    : true;
                 vm.bottomMenuItems[menuItem].displayItemContent = false;
             }
         };
@@ -199,7 +220,9 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Vérifie les sites disponibles pour proposer ou non l'option de changement de site.
          */
         vm.checkIfMoreThanOneSiteIsAvailable = function() {
-            vm.siteSelectionEnable = (Storage.get( 'availableLocalSites' ) > 1) || (Storage.get( 'online' ) && Storage.get( 'availableRemoteSites' ) > 1);
+            vm.siteSelectionEnable =
+                Storage.get("availableLocalSites") > 1 ||
+                (Storage.get("online") && Storage.get("availableRemoteSites") > 1);
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -216,7 +239,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             if (vm[item.action]) {
                 return vm[item.action]();
             } else {
-                vm.showItem( item );
+                vm.showItem(item);
             }
         };
 
@@ -252,7 +275,6 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             }
 
             vm.showMenu();
-
         };
 
         /**
@@ -274,17 +296,17 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Demande la confirmation de déconnexion pour se rendre à la page d'accueil'
          */
         vm.logout = function() {
-            alertify.confirm( i18n.get( '_CONFIRM_DISCONNECT_' ), function(yes) {
+            alertify.confirm(i18n.get("_CONFIRM_DISCONNECT_"), function(yes) {
                 if (!yes) {
                     return;
                 }
-                $rootScope.$broadcast( "DESACTIVATE_POSITION" );
-                $rootScope.$broadcast( "DESACTIVATE_CONSULTATION" );
-                $location.path( '/' );
+                $rootScope.$broadcast("DESACTIVATE_POSITION");
+                $rootScope.$broadcast("DESACTIVATE_CONSULTATION");
+                $location.path("/");
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
-            } );
+            });
         };
 
         /**
@@ -293,17 +315,17 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Demande la confirmation de déconnexion pour se rendre à la page de sélection de site
          */
         vm.changeSite = function() {
-            alertify.confirm( i18n.get( '_CONFIRM_CHANGE_SITE_' ), function(yes) {
+            alertify.confirm(i18n.get("_CONFIRM_CHANGE_SITE_"), function(yes) {
                 if (!yes) {
                     return;
                 }
-                $rootScope.$broadcast( "DESACTIVATE_POSITION" );
-                $rootScope.$broadcast( "DESACTIVATE_CONSULTATION" );
-                $location.path( '/sites/' );
+                $rootScope.$broadcast("DESACTIVATE_POSITION");
+                $rootScope.$broadcast("DESACTIVATE_CONSULTATION");
+                $location.path("/sites/");
                 if (!$scope.$$phase) {
                     $scope.$apply();
                 }
-            } );
+            });
         };
 
         /**
@@ -312,7 +334,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Active la consultation
          */
         vm.activateConsultation = function() {
-            $rootScope.$broadcast( "ACTIVATE_CONSULTATION" );
+            $rootScope.$broadcast("ACTIVATE_CONSULTATION");
             vm.display = false;
         };
 
@@ -322,7 +344,7 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
          * @desc Active la fonction 'Ma position'
          */
         vm.activatePosition = function() {
-            $rootScope.$broadcast( "ACTIVATE_POSITION" );
+            $rootScope.$broadcast("ACTIVATE_POSITION");
             vm.display = false;
         };
 
@@ -344,4 +366,4 @@ angular.module( 'smartgeomobile' ).controller( 'menuController', ["$scope", "$ro
             vm.display = false;
         };
     }
-] );
+]);

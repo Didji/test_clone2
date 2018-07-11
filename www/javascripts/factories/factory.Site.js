@@ -1,16 +1,11 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'Site', SiteFactory );
+    angular.module("smartgeomobile").factory("Site", SiteFactory);
 
     SiteFactory.$inject = ["Storage", "$q"];
 
-
     function SiteFactory(Storage, $q) {
-
         /**
          * @class SiteFactory
          * @desc Factory de la classe Site
@@ -22,23 +17,24 @@
          * @name getcurrent
          * @desc Accesseur de l'attribut current
          */
-        Site.__defineGetter__( "current", function() {
+        Site.__defineGetter__("current", function() {
             if (window.SMARTGEO_CURRENT_SITE && !window.SMARTGEO_CURRENT_SITE.activities._byId) {
                 window.SMARTGEO_CURRENT_SITE.activities._byId = {};
                 for (var i = 0; i < window.SMARTGEO_CURRENT_SITE.activities.length; i++) {
-                    window.SMARTGEO_CURRENT_SITE.activities._byId[window.SMARTGEO_CURRENT_SITE.activities[i].id] = window.SMARTGEO_CURRENT_SITE.activities[i];
+                    window.SMARTGEO_CURRENT_SITE.activities._byId[window.SMARTGEO_CURRENT_SITE.activities[i].id] =
+                        window.SMARTGEO_CURRENT_SITE.activities[i];
                 }
             }
             return window.SMARTGEO_CURRENT_SITE;
-        } );
+        });
 
         /**
          * @name setcurrent
          * @desc Modificateur de l'attribut current
          */
-        Site.__defineSetter__( "current", function(site) {
+        Site.__defineSetter__("current", function(site) {
             window.SMARTGEO_CURRENT_SITE = site;
-        } );
+        });
 
         /**
          * @name all
@@ -47,10 +43,10 @@
          */
         Site.all = function(callback) {
             var deferred = $q.defer();
-            Storage.get_( 'sites', function(sites) {
-                deferred.resolve( sites );
-                (callback || function() {})( sites );
-            } );
+            Storage.get_("sites", function(sites) {
+                deferred.resolve(sites);
+                (callback || function() {})(sites);
+            });
             return deferred.promise;
         };
 
@@ -61,27 +57,26 @@
          */
         Site.get = function(id, setcurrent) {
             var deferred = $q.defer();
-            Storage.get_( 'sites', function(sites) {
+            Storage.get_("sites", function(sites) {
                 if (setcurrent) {
                     Site.current = sites[id];
                 }
-                deferred.resolve( sites[id] );
-            } );
+                deferred.resolve(sites[id]);
+            });
             return deferred.promise;
         };
 
         /**
-            * @name get
-            * @desc Retourne un site en particulier
-            * @param {String} id Identifiant du site
-            */
+         * @name get
+         * @desc Retourne un site en particulier
+         * @param {String} id Identifiant du site
+         */
         Site.save = function(site, callback) {
-            Site.all( function(sites) {
+            Site.all(function(sites) {
                 sites[site.id] = site;
-                Storage.set_( 'sites', sites, callback );
-            } );
+                Storage.set_("sites", sites, callback);
+            });
         };
-
 
         Site.getList = function(pkey, okey) {
             var mm = Site.current.metamodel[okey];
@@ -97,5 +92,4 @@
 
         return Site;
     }
-
 })();

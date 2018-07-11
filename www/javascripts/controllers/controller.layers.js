@@ -1,10 +1,7 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'LayersController', LayersController );
+    angular.module("smartgeomobile").controller("LayersController", LayersController);
 
     LayersController.$inject = ["G3ME", "Site"];
 
@@ -17,7 +14,6 @@
      */
 
     function LayersController(G3ME, Site) {
-
         var vm = this;
 
         vm.refreshView = refreshView;
@@ -33,7 +29,6 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             var currentMetamodel = {},
                 currentLayer,
                 visibilities = G3ME.getVisibility();
@@ -55,12 +50,12 @@
                         okey: currentMetamodel.okey,
                         src: window.SMARTGEO_CURRENT_SITE_IMG[currentMetamodel.okey + "0"].src
                     };
-                    vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer ;
+                    vm.groups[currentMetamodel.group].layers[currentLayer.okey] = currentLayer;
                 }
             }
 
             for (var label in vm.groups) {
-                checkGroup( vm.groups[label] );
+                checkGroup(vm.groups[label]);
             }
         }
 
@@ -84,9 +79,9 @@
          */
         function refreshView() {
             for (var i in vm.groups) {
-                checkGroup( vm.groups[i] );
+                checkGroup(vm.groups[i]);
             }
-            G3ME.setVisibility( vm.groups );
+            G3ME.setVisibility(vm.groups);
         }
 
         /**

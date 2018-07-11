@@ -1,13 +1,9 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'GPS', GPSFactory );
+    angular.module("smartgeomobile").factory("GPS", GPSFactory);
 
     function GPSFactory() {
-
         /**
          * @class GPSFactory
          * @desc Factory de la classe GPS
@@ -24,16 +20,25 @@
          */
         GPS.startWatchingPosition = function(listener) {
             if (!GPS.positionListerners.length) {
-                GPS.locationWatchIdentifier = navigator.geolocation.watchPosition( function(position) {
-                        GPS.__positionListernersDispatchor( position.coords.longitude, position.coords.latitude, position.coords.altitude, position.coords.accuracy );
-                    }, function() {}, {
-                            enableHighAccuracy: true,
-                            maximumAge: 0
-                        } );
-            } else if (GPS.positionListerners.indexOf( listener ) !== -1) {
+                GPS.locationWatchIdentifier = navigator.geolocation.watchPosition(
+                    function(position) {
+                        GPS.__positionListernersDispatchor(
+                            position.coords.longitude,
+                            position.coords.latitude,
+                            position.coords.altitude,
+                            position.coords.accuracy
+                        );
+                    },
+                    function() {},
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0
+                    }
+                );
+            } else if (GPS.positionListerners.indexOf(listener) !== -1) {
                 return false;
             }
-            return GPS.positionListerners.push( listener );
+            return GPS.positionListerners.push(listener);
         };
 
         /**
@@ -42,13 +47,12 @@
          * @param {Function} listener
          */
         GPS.stopWatchingPosition = function(listener) {
-            var index = (typeof listener === "function") ? GPS.positionListerners.indexOf( listener ) : listener;
+            var index = typeof listener === "function" ? GPS.positionListerners.indexOf(listener) : listener;
             if (index !== -1) {
-                GPS.positionListerners.splice( index );
+                GPS.positionListerners.splice(index);
             }
             if (!GPS.positionListerners.length) {
-                navigator.geolocation.clearWatch( GPS.locationWatchIdentifier );
-                
+                navigator.geolocation.clearWatch(GPS.locationWatchIdentifier);
             }
         };
 
@@ -58,10 +62,10 @@
          * @param {Function} listener
          */
         GPS.getCurrentLocation = function(listener) {
-            var index = GPS.startWatchingPosition( function(lng, lat, alt, acc) {
-                GPS.stopWatchingPosition( index - 1 );
-                listener( lng, lat, alt, acc );
-            } );
+            var index = GPS.startWatchingPosition(function(lng, lat, alt, acc) {
+                GPS.stopWatchingPosition(index - 1);
+                listener(lng, lat, alt, acc);
+            });
         };
 
         /**
@@ -74,7 +78,7 @@
          */
         GPS.__positionListernersDispatchor = function(lng, lat, alt, acc) {
             for (var i = 0; i < GPS.positionListerners.length; i++) {
-                GPS.positionListerners[i]( lng, lat, alt, acc );
+                GPS.positionListerners[i](lng, lat, alt, acc);
             }
         };
 
@@ -84,11 +88,10 @@
          */
         GPS.emptyPositionListerners = function() {
             for (var i = 0; i < GPS.positionListerners.length; i++) {
-                GPS.stopWatchingPosition( GPS.positionListerners[i] );
+                GPS.stopWatchingPosition(GPS.positionListerners[i]);
             }
         };
 
         return GPS;
     }
-
 })();

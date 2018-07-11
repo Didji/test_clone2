@@ -1,20 +1,41 @@
-( function() {
+(function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("IntentController", IntentController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'IntentController', IntentController );
-
-    IntentController.$inject = ["$scope", "$routeParams", "$location", "$rootScope", "Storage", "Site", "prefetchedlocalsites", "Asset", "LicenseManager", "Smartgeo", "i18n"];
+    IntentController.$inject = [
+        "$scope",
+        "$routeParams",
+        "$location",
+        "$rootScope",
+        "Storage",
+        "Site",
+        "prefetchedlocalsites",
+        "Asset",
+        "LicenseManager",
+        "Smartgeo",
+        "i18n"
+    ];
 
     /**
      * @class IntentController
      * @desc Controlleur du menu de gestion des intents
      */
-    function IntentController($scope, $routeParams, $location, $rootScope, Storage, Site, prefetchedlocalsites, Asset, LicenseManager, Smartgeo, i18n) {
+    function IntentController(
+        $scope,
+        $routeParams,
+        $location,
+        $rootScope,
+        Storage,
+        Site,
+        prefetchedlocalsites,
+        Asset,
+        LicenseManager,
+        Smartgeo,
+        i18n
+    ) {
         var intent = {};
-        
+
         activate();
 
         /**
@@ -24,21 +45,26 @@
         function activate() {
             intent = $routeParams;
             // On force l'affichage du marker
-            intent.map_marker = true;
-            Storage.set( 'intent', intent );
+            if (intent.report_assets) {
+                intent.map_marker = false;
+            } else {
+                intent.map_marker = true;
+            }
+
+            Storage.set("intent", intent);
             if (!intent.controller) {
                 // I18N
-                alertify.alert( "Intent non valide : veuillez spécifier une action." );
+                alertify.alert("Intent non valide : veuillez spécifier une action.");
             } else if ((!Site.current && !selectFirstSite() && intent.controller !== "oauth") || !window.connected) {
-                preprocessIntentTarget( function() {
-                    Storage.set( 'intent', intent );
+                preprocessIntentTarget(function() {
+                    Storage.set("intent", intent);
                     firstLaunch();
-                } );
+                });
             } else {
-                preprocessIntentTarget( function() {
-                    Storage.set( 'intent', intent );
+                preprocessIntentTarget(function() {
+                    Storage.set("intent", intent);
                     redirect();
-                } );
+                });
             }
         }
 
@@ -48,9 +74,9 @@
          */
         function redirect() {
             if (!Site.current) {
-                $location.path( 'sites/' );
+                $location.path("sites/");
             } else {
-                $location.path( 'map/' + Site.current.id );
+                $location.path("map/" + Site.current.id);
             }
             if (!$scope.$$phase) {
                 $scope.$apply();
@@ -73,10 +99,10 @@
          * @desc Fonction appelé à la première utilisation. Elle enregistre l'url du serveur et lance d'installation d'un site.
          */
         function firstLaunch() {
-            if ( LicenseManager.oauth ) {
-                $location.url('/oauth');
+            if (LicenseManager.oauth) {
+                $location.url("/oauth");
             } else {
-                $location.url('/');
+                $location.url("/");
             }
             if (!$scope.$$phase) {
                 $scope.$apply();
@@ -88,40 +114,34 @@
          * @desc Traduit la cible de l'intent
          */
         function preprocessIntentTarget(callback) {
-
             if (!intent.map_target) {
                 return callback();
             }
 
             var match, assetid;
 
-            if ((match = intent.map_target.match( /^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            if ((match = intent.map_target.match(/^(\d+);([-+]?\d+.?\d+),([-+]?\d+.?\d+)$/))) {
                 assetid = match[1];
                 intent.latlng = intent.map_center = [match[2], match[3]];
-            } else if ((match = intent.map_target.match( /^(\d+.?\d+),([-+]?\d+.?\d+)$/ )) ) {
+            } else if ((match = intent.map_target.match(/^(\d+.?\d+),([-+]?\d+.?\d+)$/))) {
                 intent.map_center = intent.latlng = [match[1], match[2]];
-            } else if ((match = intent.map_target.match( /^(\d+)$/ )) ) {
+            } else if ((match = intent.map_target.match(/^(\d+)$/))) {
                 assetid = match[1];
             }
 
             if (assetid) {
-                Asset.findOne( +assetid, function(asset) {
+                Asset.findOne(+assetid, function(asset) {
                     if (!asset) {
-                        alertify.log(
-                            i18n.get( '_REPORT_ASSET_NOT_FOUND_S', assetid )
-                        );
+                        alertify.log(i18n.get("_REPORT_ASSET_NOT_FOUND_S", assetid));
                     } else {
-                        intent.asset = new Asset( asset );
+                        intent.asset = new Asset(asset);
                         intent.map_center = intent.asset.getCenter();
                     }
                     callback();
-                } );
+                });
             } else {
                 callback();
             }
-
         }
-
     }
-
-} )();
+})();

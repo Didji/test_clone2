@@ -9,9 +9,13 @@
  * @property {String} licenseNumber Numéro de série fourni par l'utilisateur
  */
 
-angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "$location", "i18n", "LicenseManager", function($scope, $location, i18n, LicenseManager) {
-
-        'use strict';
+angular.module("smartgeomobile").controller("licenseController", [
+    "$scope",
+    "$location",
+    "i18n",
+    "LicenseManager",
+    function($scope, $location, i18n, LicenseManager) {
+        "use strict";
 
         /**
          * @method
@@ -19,9 +23,8 @@ angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "
          * @desc        Lance l'enregistrement de la licence
          */
         $scope.register = function() {
-            LicenseManager.register( $scope.licenseNumber, $scope.registerSuccess, $scope.registerError );
+            LicenseManager.register($scope.licenseNumber, $scope.registerSuccess, $scope.registerError);
         };
-
 
         /**
          * @method
@@ -29,7 +32,7 @@ angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "
          * @desc        Callback de succès de l'enregistrement qui va rediriger l'utilisateur vers la page d'authentification
          */
         $scope.registerSuccess = function(licence) {
-            $scope.successMessage = (i18n.get( "_REGISTER_RECORD_ID_" )) + licence.device_serial;
+            $scope.successMessage = i18n.get("_REGISTER_RECORD_ID_") + licence.device_serial;
         };
 
         /**
@@ -38,7 +41,7 @@ angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "
          * @desc        Redirige l'utilisateur vers la page d'authentification
          */
         $scope.continue = function() {
-            $location.path( '/' );
+            $location.path("/");
         };
 
         /**
@@ -50,24 +53,24 @@ angular.module( 'smartgeomobile' ).controller( 'licenseController', ["$scope", "
         $scope.registerError = function(response) {
             switch (response.status) {
                 case 0:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_OFFLINE" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_OFFLINE");
                     break;
                 case 403:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_NO_MORE_LICENSE" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_NO_MORE_LICENSE");
                     break;
                 case 404:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_NOT_FOUND" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_NOT_FOUND");
                     break;
                 case 409:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_CONFLICT" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_CONFLICT");
                     break;
                 case 500:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_G3LIC" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_G3LIC");
                     break;
                 default:
-                    $scope.errorMessage = (i18n.get( "_REGISTER_ERROR_UNKNOWN" ));
+                    $scope.errorMessage = i18n.get("_REGISTER_ERROR_UNKNOWN");
                     break;
             }
         };
-
-}] );
+    }
+]);

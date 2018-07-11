@@ -1,12 +1,23 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("ReportController", ReportController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'ReportController', ReportController );
-
-    ReportController.$inject = ["$scope", "$routeParams", "$rootScope", "$location", "Asset", "Site", "Report", "Storage", "Synchronizator", "Utils", "i18n", "Intents", "GPS"];
+    ReportController.$inject = [
+        "$scope",
+        "$routeParams",
+        "$rootScope",
+        "$location",
+        "Asset",
+        "Site",
+        "Report",
+        "Storage",
+        "Synchronizator",
+        "Utils",
+        "i18n",
+        "Intents",
+        "GPS"
+    ];
 
     /**
      * @class ReportController
@@ -22,8 +33,21 @@
      * @property {Object} intent
      */
 
-    function ReportController($scope, $routeParams, $rootScope, $location, Asset, Site, Report, Storage, Synchronizator, Utils, i18n, Intents, GPS) {
-
+    function ReportController(
+        $scope,
+        $routeParams,
+        $rootScope,
+        $location,
+        Asset,
+        Site,
+        Report,
+        Storage,
+        Synchronizator,
+        Utils,
+        i18n,
+        Intents,
+        GPS
+    ) {
         var vm = this;
 
         vm.applyConsequences = applyConsequences;
@@ -32,15 +56,15 @@
 
         vm.report = {};
         vm.sendingReport = false;
-        vm.isAndroid = navigator.userAgent.match( /Android/i );
-        vm.isIOS = navigator.userAgent.match( /iP(od|hone|ad)/i );
+        vm.isAndroid = navigator.userAgent.match(/Android/i);
+        vm.isIOS = navigator.userAgent.match(/iP(od|hone|ad)/i);
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
-        vm._MAX_MEDIA_PER_REPORT = 3 ;
+        vm._MAX_MEDIA_PER_REPORT = 3;
 
         var invalidIds = [],
-            intent = Storage.get( 'intent' ) || {};
+            intent = Storage.get("intent") || {};
 
         activate();
 
@@ -78,7 +102,7 @@
 
             vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
 
-            Asset.findAssetsByGuids(vm.report.assets, function (assets) {
+            Asset.findAssetsByGuids(vm.report.assets, function(assets) {
                 invalidIds = angular.copy(vm.report.assets);
 
                 for (var i = 0; i < assets.length; i++) {
@@ -91,48 +115,50 @@
                 if (invalidIds.length > 0) {
                     alertify.log(
                         i18n.get(
-                            invalidIds.length > 1 ? '_REPORT_ASSET_NOT_FOUND_P' : '_REPORT_ASSET_NOT_FOUND_S',
-                            invalidIds.join(', ')
+                            invalidIds.length > 1 ? "_REPORT_ASSET_NOT_FOUND_P" : "_REPORT_ASSET_NOT_FOUND_S",
+                            invalidIds.join(", ")
                         )
                     );
                     return;
                 }
 
-                /*************************************** 
-                * Gestion des zones spécifiques
-                ***************************************/
+                /***************************************
+                 * Gestion des zones spécifiques
+                 ***************************************/
                 var myPosition = null;
                 // Si un asset est fournis, on construit le WKT string de sa géométrie
-                if(vm.assets.length > 0) {
+                if (vm.assets.length > 0) {
                     var asset_geom = vm.assets[0].geometry;
                     myPosition = asset_geom.type + "(";
 
                     var coord_asset = "";
-                    if (asset_geom.type.toUpperCase() === "POINT"){
+                    if (asset_geom.type.toUpperCase() === "POINT") {
                         coord_asset += vm.assets[0].geometry.coordinates.join(" ");
                     } else if (asset_geom.type.toUpperCase() === "LINESTRING") {
-                        coord_asset = vm.assets[0].geometry.coordinates.map(function (geom) {
-                            return geom.join(" ");
-                        }).join(",");
+                        coord_asset = vm.assets[0].geometry.coordinates
+                            .map(function(geom) {
+                                return geom.join(" ");
+                            })
+                            .join(",");
                     }
-                    myPosition += coord_asset +")";
+                    myPosition += coord_asset + ")";
                 }
 
                 // Si des coordonnées long/lat sont fournis, il s'agit d'un CR pointé
                 if (vm.report.latlng) {
-                    var position_geom = vm.report.latlng.split(',');
-                    myPosition = 'POINT(' + position_geom[1] + " " + position_geom[0] + ")";
+                    var position_geom = vm.report.latlng.split(",");
+                    myPosition = "POINT(" + position_geom[1] + " " + position_geom[0] + ")";
                 }
-                
+
                 // On récupere l'ID de la zone administrable si elle existe
                 vm.report.zone_specifique = getZoneIntersect(myPosition);
-                
+
                 var masked_fields = {};
-                if (vm.report.zone_specifique && (vm.report.zone_specifique in Site.current.zones_specifiques_fields)) { // On teste la presence de la zone specifique dans le filtrage des champs
+                if (vm.report.zone_specifique && vm.report.zone_specifique in Site.current.zones_specifiques_fields) {
+                    // On teste la presence de la zone specifique dans le filtrage des champs
                     masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
                 }
 
-                
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
                     var fields = {};
                     for (var f in vm.report.activity.tabs[tab].fields) {
@@ -141,20 +167,24 @@
                             // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
                             !(!vm.report.zone_specifique && field.zone_specifique) &&
                             // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
-                            !(vm.report.zone_specifique && vm.report.zone_specifique !== field.zone_specifique && field.zone_specifique) &&
-                            // Le champs est taggé comme masqué dans les metadata 
+                            !(
+                                vm.report.zone_specifique &&
+                                vm.report.zone_specifique !== field.zone_specifique &&
+                                field.zone_specifique
+                            ) &&
+                            // Le champs est taggé comme masqué dans les metadata
                             !(field.id in masked_fields && !masked_fields[field.id].visible)
                         ) {
                             fields[f] = vm.report.activity.tabs[tab].fields[f];
                         }
                     }
-                    vm.report.activity.tabs[tab].fields = fields;  
+                    vm.report.activity.tabs[tab].fields = fields;
                 }
                 /****************************************/
 
                 applyDefaultValues();
 
-                setTimeout(function () {
+                setTimeout(function() {
                     if (!$scope.$$phase) {
                         $scope.$digest();
                     }
@@ -170,7 +200,10 @@
          */
         function applyConsequences(srcId) {
             var field = vm.report.activity._fields[srcId],
-                targetField, i, lim, act,
+                targetField,
+                i,
+                lim,
+                act,
                 cond;
 
             if (!field.actions) {
@@ -184,16 +217,16 @@
                     continue;
                 }
 
-                cond = (vm.report.fields[srcId] === act.condition);
+                cond = vm.report.fields[srcId] === act.condition;
                 switch (act.type) {
                     case "show":
                         targetField.visible = cond;
                         // Si targetField est une case à cocher, elle a peut-être
                         // aussi des conséquences. Si une case à cocher devient invisible,
                         // il faut qu'on la décoche et qu'on applique ses conséquences.
-                        if (!!!cond && targetField.type === 'O') {
-                            vm.report.fields[act.target] = 'N';
-                            vm.applyConsequences( act.target );
+                        if (!!!cond && targetField.type === "O") {
+                            vm.report.fields[act.target] = "N";
+                            vm.applyConsequences(act.target);
                         }
                         break;
                     case "require":
@@ -211,14 +244,13 @@
          * @desc Annule le compte rendu
          */
         function cancel() {
-            alertify.confirm(i18n.get( '_CANCEL_REPORT_CREATION', Site.current.label ),function(yes){
-                if(yes)
-                {
-                    $location.path( 'map/' + Site.current.id );
+            alertify.confirm(i18n.get("_CANCEL_REPORT_CREATION", Site.current.label), function(yes) {
+                if (yes) {
+                    $location.path("map/" + Site.current.id);
                     Intents.end();
                     $scope.$apply();
                 }
-            })
+            });
         }
 
         /**
@@ -228,7 +260,7 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            Synchronizator.addNew( prepareReport( vm.report ) );
+            Synchronizator.addNew(prepareReport(vm.report));
             endOfReport();
         }
 
@@ -239,22 +271,33 @@
          * @returns {Object}
          */
         function prepareReport(reportin) {
-            var report = angular.copy( reportin ),
+            var report = angular.copy(reportin),
                 i;
             for (i in report.fields) {
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "T") {
-                    report.fields[i] = Utils.pad( report.fields[i].getHours() ) + ":" + Utils.pad( report.fields[i].getMinutes() );
+                    report.fields[i] =
+                        Utils.pad(report.fields[i].getHours()) + ":" + Utils.pad(report.fields[i].getMinutes());
                 }
                 if (report.fields[i] instanceof Date && report.activity._fields[i].type === "D") {
-                    report.fields[i] = report.fields[i].getFullYear() + "-" + Utils.pad( report.fields[i].getMonth() + 1 ) + "-" + Utils.pad( report.fields[i].getDate() );
+                    report.fields[i] =
+                        report.fields[i].getFullYear() +
+                        "-" +
+                        Utils.pad(report.fields[i].getMonth() + 1) +
+                        "-" +
+                        Utils.pad(report.fields[i].getDate());
                 }
-                if (report.fields[i] && typeof report.fields[i] === "object" && report.fields[i].id && report.fields[i].text) {
+                if (
+                    report.fields[i] &&
+                    typeof report.fields[i] === "object" &&
+                    report.fields[i].id &&
+                    report.fields[i].text
+                ) {
                     report.fields[i] = report.fields[i].id;
                 }
             }
             for (i = 0; i < report.ged.length; i++) {
                 report.ged[i] = {
-                    'content': Utils.getBase64Image( report.ged[i].content )
+                    content: Utils.getBase64Image(report.ged[i].content)
                 };
             }
             for (i in report.overrides) {
@@ -273,23 +316,27 @@
          * @desc Olalalala ... A remplacer par un ng-blur ?
          */
         function bidouille() {
-            angular.element( document.getElementsByClassName( 'reportForm' )[0] ).on( 'click', "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
-                var elt;
-                if (angular.element( this ).prop( 'tagName' ) !== "label") {
-                    elt = angular.element( this );
-                } else if (!angular.element( this ).siblings( 'label' ).length) {
-                    elt = angular.element( this );
-                } else {
-                    elt = angular.element( this ).siblings( 'label' );
-                }
-                if (!elt.offset().top) {
-                    return;
-                }
-                angular.element( 'html, body' ).animate( {
-                    scrollTop: elt.offset().top - 10
-                }, 250 );
-            } );
-
+            angular
+                .element(document.getElementsByClassName("reportForm")[0])
+                .on("click", "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
+                    var elt;
+                    if (angular.element(this).prop("tagName") !== "label") {
+                        elt = angular.element(this);
+                    } else if (!angular.element(this).siblings("label").length) {
+                        elt = angular.element(this);
+                    } else {
+                        elt = angular.element(this).siblings("label");
+                    }
+                    if (!elt.offset().top) {
+                        return;
+                    }
+                    angular.element("html, body").animate(
+                        {
+                            scrollTop: elt.offset().top - 10
+                        },
+                        250
+                    );
+                });
         }
 
         /**
@@ -322,30 +369,33 @@
          */
         function applyDefaultValues(callback) {
             var fields = vm.report.fields,
-                def, i, field;
+                def,
+                i,
+                field;
             for (i in vm.report.activity._fields) {
                 field = vm.report.activity._fields[i];
-                def = field['default'];
+                def = field["default"];
 
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
                 // fixées dans le scope par les intents.
-                if (intent['report_fields[' + field.label + ']']) {
-                    def = intent['report_fields[' + field.label + ']'];
+                if (intent["report_fields[" + field.label + "]"]) {
+                    def = intent["report_fields[" + field.label + "]"];
                 }
-                if (intent['report_fields[$' + field.id + ']']) {
-                    def = intent['report_fields[$' + field.id + ']'];
+                if (intent["report_fields[$" + field.id + "]"]) {
+                    def = intent["report_fields[$" + field.id + "]"];
                 }
 
                 if (!def) {
                     continue;
-                } else if ('string' === typeof def) { //valeur par défaut de type constante
-                    if (field.type === 'D' && def === '#TODAY#') {
-                        def= new Date();
+                } else if ("string" === typeof def) {
+                    //valeur par défaut de type constante
+                    if (field.type === "D" && def === "#TODAY#") {
+                        def = new Date();
                         fields[field.id] = def;
-                    } else if (field.type === 'T' && def === '#NOW#') {
+                    } else if (field.type === "T" && def === "#NOW#") {
                         var d = new Date();
                         fields[field.id] = d;
-                    } else if (field.type === 'N') {
+                    } else if (field.type === "N") {
                         def = +def;
                         fields[field.id] = def;
                         vm.report.fields[field.id] = def;
@@ -355,17 +405,18 @@
                         vm.report.roFields[field.id] = def;
                     }
                 } else {
-                    def = getValueFromAssets( def.pkey, vm.report.activity.okeys[0] );
-                    var output = formatFieldEntry(def);
-                    if (field.type === 'N') {
-                        output = +output;
-                    }
-                    vm.report.roFields[field.id] = output;
-                    vm.report.overrides[field.id] = output;
-                    fields[field.id] = output.length != 0 ? output : def;
-                }
+                    var defasset = getValueFromAssets(def.pkey, vm.report.activity.okeys[0]);
 
-                
+                    if (!angular.equals({}, defasset)) {
+                        var output = formatFieldEntry(defasset);
+                        if (field.type === "N") {
+                            output = +output;
+                        }
+                        vm.report.roFields[field.id] = output;
+                        vm.report.overrides[field.id] = output;
+                        fields[field.id] = output.length != 0 ? output : defasset;
+                    }
+                }
             }
         }
 
@@ -375,16 +426,16 @@
          * @desc Formatte le champs
          */
         function formatFieldEntry(val) {
-            if ('string' === typeof val) {
+            if ("string" === typeof val) {
                 return val;
             }
             var str = [];
             for (var a in val) {
                 if (val[a]) {
-                    str.push( val[a] );
+                    str.push(val[a]);
                 }
             }
-            return str.join( ', ' );
+            return str.join(", ");
         }
 
         /**
@@ -393,30 +444,29 @@
          */
         function endOfReport() {
             if (intent != null && $rootScope.fromIntent === true) {
-                Storage.remove( 'intent' );
+                Storage.remove("intent");
                 $rootScope.fromIntent = false;
                 buildReport(function(report) {
                     if (intent.report_url_redirect) {
-                        intent.report_url_redirect += (intent.report_url_redirect.indexOf('?') === -1) ? '?' : '&';
-                        intent.report_url_redirect += '__PATRIID=' + report.__PATRIID;
-                        intent.report_url_redirect += '&__LATLNG=' + report.__LATLNG;
-                        intent.report_url_redirect = injectCallbackValues( intent.report_url_redirect ) || intent.report_url_redirect;
-                        window.plugins.launchmyapp.startActivity({
-                            action: "android.intent.action.VIEW",
-                            url: intent.report_url_redirect},
+                        intent.report_url_redirect += intent.report_url_redirect.indexOf("?") === -1 ? "?" : "&";
+                        intent.report_url_redirect += "__PATRIID=" + report.__PATRIID;
+                        intent.report_url_redirect += "&__LATLNG=" + report.__LATLNG;
+                        intent.report_url_redirect =
+                            injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
+                        window.plugins.launchmyapp.startActivity(
+                            {
+                                action: "android.intent.action.VIEW",
+                                url: intent.report_url_redirect
+                            },
                             angular.noop,
                             angular.noop
                         );
                     } else {
-                        window.plugins.launchmyapp.finishActivity(
-                            report,
-                            angular.noop,
-                            angular.noop
-                        );
+                        window.plugins.launchmyapp.finishActivity(report, angular.noop, angular.noop);
                     }
                 });
             }
-            $location.path( 'map/' + Site.current.id );
+            $location.path("map/" + Site.current.id);
         }
 
         /**
@@ -426,32 +476,32 @@
          */
         function injectCallbackValues(url) {
             var injectedValues;
-            if (url.indexOf( '[LABEL_INDEXED_FIELDS]' ) !== -1) {
-                injectedValues = '';
+            if (url.indexOf("[LABEL_INDEXED_FIELDS]") !== -1) {
+                injectedValues = "";
                 for (var field in vm.report.fields) {
-                    if (vm.report.fields.hasOwnProperty( field )) {
+                    if (vm.report.fields.hasOwnProperty(field)) {
                         var val = vm.report.fields[field];
                         // /!\ UGLY ALERT WORKS WITH ONLY ONE ASSETS
-                        if (typeof val === 'object') {
+                        if (typeof val === "object") {
                             for (var j in val) {
                                 val = val[j];
                                 break;
                             }
                         }
-                        injectedValues += 'fields[' + vm.report.activity._fields[field].label + ']=' + val + '&';
+                        injectedValues += "fields[" + vm.report.activity._fields[field].label + "]=" + val + "&";
                     }
                 }
-                injectedValues = injectedValues.slice( 0, injectedValues.length - 1 );
-                url = url.replace( "[LABEL_INDEXED_FIELDS]", injectedValues );
-            } else if (url.indexOf( '[KEY_INDEXED_FIELDS]' ) !== -1) {
-                injectedValues = '';
+                injectedValues = injectedValues.slice(0, injectedValues.length - 1);
+                url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
+            } else if (url.indexOf("[KEY_INDEXED_FIELDS]") !== -1) {
+                injectedValues = "";
                 for (var field_ in vm.report.fields) {
-                    if (vm.report.fields.hasOwnProperty( field_ )) {
-                        injectedValues += 'fields[' + field_ + ']=' + vm.report.fields[field_] + '&';
+                    if (vm.report.fields.hasOwnProperty(field_)) {
+                        injectedValues += "fields[" + field_ + "]=" + vm.report.fields[field_] + "&";
                     }
                 }
-                injectedValues = injectedValues.slice( 0, injectedValues.length - 1 );
-                url = url.replace( "[KEY_INDEXED_FIELDS]", injectedValues );
+                injectedValues = injectedValues.slice(0, injectedValues.length - 1);
+                url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
             }
             return url;
         }
@@ -464,13 +514,13 @@
          */
         function checkInputParameters(routeParams) {
             if (!routeParams.site) {
-                alertify.alert( 'Aucun site selectionné.' );
+                alertify.alert("Aucun site selectionné.");
                 return false;
             } else if (!routeParams.activity) {
-                alertify.alert( 'Aucune activité selectionnée.' );
+                alertify.alert("Aucune activité selectionnée.");
                 return false;
             } else if (!routeParams.assets) {
-                alertify.alert( 'Aucun patrimoine selectionné.' );
+                alertify.alert("Aucun patrimoine selectionné.");
                 return false;
             }
             return true;
@@ -499,7 +549,15 @@
             var i, center;
 
             for (i in vm.report.fields) {
-               report[vm.report.activity._fields[i].label] = (typeof vm.report.fields[i] == "object" && vm.report.fields[i].toString().match(/object/) != null && jQuery.isEmptyObject(vm.report.fields[i])) ? undefined : vm.report.fields[i];
+                // TODO : Pourquoi le champ est-il en undefined ?
+                if (vm.report.activity._fields[i] && "label" in vm.report.activity._fields[i]) {
+                    report[vm.report.activity._fields[i].label] =
+                        typeof vm.report.fields[i] == "object" &&
+                        vm.report.fields[i].toString().match(/object/) != null &&
+                        jQuery.isEmptyObject(vm.report.fields[i])
+                            ? undefined
+                            : vm.report.fields[i];
+                }
             }
             // On injecte les métadonnées
             if (vm.assets.length > 0) {
@@ -507,11 +565,11 @@
                 report.__PATRIID = [];
                 for (i in vm.assets) {
                     center = vm.assets[i].getCenter();
-                    report.__LATLNG.push( center[0] + ',' + center[1] );
+                    report.__LATLNG.push(center[0] + "," + center[1]);
                     report.__PATRIID.push(vm.assets[i].id);
                 }
-                report.__LATLNG = report.__LATLNG.join(';');
-                report.__PATRIID = report.__PATRIID.join(';');
+                report.__LATLNG = report.__LATLNG.join(";");
+                report.__PATRIID = report.__PATRIID.join(";");
                 callback(report);
             } else if (vm.report.latlng) {
                 report.__PATRIID = null;
@@ -519,13 +577,12 @@
                 callback(report);
             } else {
                 // On est jamais sensé passé par là mais c'est dans la spec...
-                GPS.getCurrentLocation( function(lng, lat) {
+                GPS.getCurrentLocation(function(lng, lat) {
                     report.__PATRIID = null;
-                    report.__LATLNG = lat + ',' + lng;
+                    report.__LATLNG = lat + "," + lng;
                     callback(report);
                 });
             }
         }
     }
-
 })();

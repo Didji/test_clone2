@@ -1,32 +1,78 @@
-( function() {
+(function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("MapController", MapController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'MapController', MapController );
-
-    MapController.$inject = ["$scope", "$compile", "$filter", "$rootScope", "G3ME", "Storage", "$location", "i18n", "Icon", "Asset", "Site", "GPS", "Installer", "Marker", "MultiReport", "Utils", "Authenticator", "Right", "$route", "Smartgeo", "Intents"];
+    MapController.$inject = [
+        "$scope",
+        "$compile",
+        "$filter",
+        "$rootScope",
+        "G3ME",
+        "Storage",
+        "$location",
+        "i18n",
+        "Icon",
+        "Asset",
+        "Site",
+        "GPS",
+        "Installer",
+        "Marker",
+        "MultiReport",
+        "Utils",
+        "Authenticator",
+        "Right",
+        "$route",
+        "Smartgeo",
+        "Intents"
+    ];
 
     /**
      * @class MapController
      * @desc Controlleur de la cartographie.
      */
-    function MapController($scope, $compile, $filter, $rootScope, G3ME, Storage, $location, i18n, Icon, Asset, Site, GPS, Installer, Marker, MultiReport, Utils, Authenticator, Right, $route, Smartgeo, Intents) {
+    function MapController(
+        $scope,
+        $compile,
+        $filter,
+        $rootScope,
+        G3ME,
+        Storage,
+        $location,
+        i18n,
+        Icon,
+        Asset,
+        Site,
+        GPS,
+        Installer,
+        Marker,
+        MultiReport,
+        Utils,
+        Authenticator,
+        Right,
+        $route,
+        Smartgeo,
+        Intents
+    ) {
         var vm = this,
             LAST_USERS_LOCATION = [],
             lastViewTimeout = 0,
             consultationIsEnabled = false,
             POSITION_ACTIVATE = false,
-            CONSULTATION_CONTROL, POSITION_CIRCLE, POSITION_MARKER, POSITION_CONTROL, POSITION_ZOOM, FIRST_POSITION,
+            CONSULTATION_CONTROL,
+            POSITION_CIRCLE,
+            POSITION_MARKER,
+            POSITION_CONTROL,
+            POSITION_ZOOM,
+            FIRST_POSITION,
             intent;
 
         // Sur iOS, les assets sont mal chargés à l'intialisation de la map, pour pallier à ça on la charge deux fois au premier lancement
         // TODO: Faire mieux
         if (
-            navigator.userAgent.match( /iP(od|hone|ad)/i )
-            && $rootScope.hasOwnProperty( 'justLaunched' )
-            && $rootScope.justLaunched == false
+            navigator.userAgent.match(/iP(od|hone|ad)/i) &&
+            $rootScope.hasOwnProperty("justLaunched") &&
+            $rootScope.justLaunched == false
         ) {
             $rootScope.justLaunched = true;
             $route.reload();
@@ -43,52 +89,55 @@
 
             Installer.checkIfDailyUpdateNeeded();
 
-            G3ME.initialize( [
+            G3ME.initialize([
                 [Site.current.extent.ymin, Site.current.extent.xmin],
                 [Site.current.extent.ymax, Site.current.extent.xmax]
-            ] )
-                .on( 'click', mapClickHandler )
-                .on( 'dragend', dragEndHandler )
-                .addControl( Utils.makeControl( i18n.get( '_MAP_REFERENCE_VIEW_CONTROL' ), "fa-arrows-alt", setReferenceView ) );
+            ])
+                .on("click", mapClickHandler)
+                .on("dragend", dragEndHandler)
+                .addControl(
+                    Utils.makeControl(i18n.get("_MAP_REFERENCE_VIEW_CONTROL"), "fa-arrows-alt", setReferenceView)
+                );
 
-            Authenticator.silentLogin( G3ME.BackgroundTile.redraw );
+            //Authenticator.silentLogin( G3ME.BackgroundTile.redraw );
+            G3ME.BackgroundTile.redraw();
 
             ($rootScope.positionActive === true ? activatePosition : angular.noop)();
             ($rootScope.consultationActive === true ? activateConsultation : angular.noop)();
 
-            $scope.$on( "ACTIVATE_CONSULTATION", function() {
+            $scope.$on("ACTIVATE_CONSULTATION", function() {
                 activateConsultation();
-            } );
+            });
 
-            $scope.$on( "DESACTIVATE_CONSULTATION", function() {
+            $scope.$on("DESACTIVATE_CONSULTATION", function() {
                 stopConsultation();
-            } );
+            });
 
-            $scope.$on( "ACTIVATE_POSITION", function() {
+            $scope.$on("ACTIVATE_POSITION", function() {
                 activatePosition();
-            } );
+            });
 
-            $scope.$on( "DESACTIVATE_POSITION", function() {
+            $scope.$on("DESACTIVATE_POSITION", function() {
                 stopPosition();
-            } );
+            });
 
-            $scope.$on( "$destroy", controllerDestroyHandler );
+            $scope.$on("$destroy", controllerDestroyHandler);
 
             $rootScope.activatePosition = activatePosition;
             $rootScope.stopPosition = stopPosition;
             $rootScope.activateConsultation = activateConsultation;
             $rootScope.stopConsultation = stopConsultation;
 
-            intent = Storage.get( 'intent' );
+            intent = Storage.get("intent");
 
             if ($rootScope.fromIntent == true) {
                 if (intent) {
-                    setTimeout( intentHandler, 0 );
+                    setTimeout(intentHandler, 0);
                 } else {
-                    alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
-                    Smartgeo._addEventListener('backbutton', Intents.end);
+                    alertify.alert(i18n.get("_INTENT_NOT_VALID_"));
+                    Smartgeo._addEventListener("backbutton", Intents.end);
                 }
-            };
+            }
         }
 
         /**
@@ -97,45 +146,55 @@
          */
         function intentHandler() {
             var url;
-            if ( intent.map_center ) {
-                G3ME.map.setView( intent.map_center, intent.map_zoom || G3ME.map.getZoom() );
+            if (intent.map_center) {
+                G3ME.map.setView(intent.map_center, intent.map_zoom || G3ME.map.getZoom());
             }
-            
+
             if (intent.map_marker === "true" || intent.map_marker === true) {
-                Smartgeo._addEventListener('backbutton', Intents.end);
-                if ( Site.current.activities._byId[intent.report_activity] ) {
-                    Marker.get( intent.latlng || intent.map_center, 'CONSULTATION', function(e) {
+                Smartgeo._addEventListener("backbutton", Intents.end);
+                if (Site.current.activities._byId[intent.report_activity]) {
+                    Marker.get(intent.latlng || intent.map_center, "CONSULTATION", function(e) {
                         e.target._icon.src = "file:///android_asset/www/images/CONSULTATION-LOADING.gif";
-                        url = '/report/' + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target;
-                        if ( intent.report_mission ) {
-                            url += '/' + intent.report_mission;
+                        url = "/report/" + Site.current.id + "/" + intent.report_activity + "/" + intent.report_target;
+                        if (intent.report_mission) {
+                            url += "/" + intent.report_mission;
                         }
-                        $location.path( url );
+                        $location.path(url);
                         $scope.$apply();
-                    } ).addTo( G3ME.map );
+                    }).addTo(G3ME.map);
                 } else {
-                    alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
-                    return Storage.remove('intent');
+                    alertify.alert(i18n.get("_INTENT_ACTIVITY_NOT_FOUND_"));
+                    return Storage.remove("intent");
                 }
             }
 
-            if ( intent.controller === 'report') {
-                if (intent.args === "new" ) {
-                    Smartgeo._addEventListener('backbutton', Intents.end);
+            if (intent.controller === "report") {
+                if (intent.args === "new") {
+                    Smartgeo._addEventListener("backbutton", Intents.end);
                     if (Site.current.activities._byId[intent.report_activity]) {
                         var mission_id;
-                        if(intent.report_mission){
-                            mission_id = "/"+intent.report_mission;
+                        if (intent.report_mission) {
+                            mission_id = "/" + intent.report_mission;
                         } else {
                             mission_id = "";
                         }
-                        $location.path( '/report/' + Site.current.id + "/" + intent.report_activity + "/" + ((intent.report_assets.match(/,/)) ? intent.report_assets.replace(',', '!') : intent.report_assets) + mission_id);
+                        $location.path(
+                            "/report/" +
+                                Site.current.id +
+                                "/" +
+                                intent.report_activity +
+                                "/" +
+                                (intent.report_assets.match(/,/)
+                                    ? intent.report_assets.replace(",", "!")
+                                    : intent.report_assets) +
+                                mission_id
+                        );
                         $scope.$apply();
                     } else {
-                        alertify.alert( i18n.get( '_INTENT_ACTIVITY_NOT_FOUND_' ) );
-                        return Storage.remove('intent');
+                        alertify.alert(i18n.get("_INTENT_ACTIVITY_NOT_FOUND_"));
+                        return Storage.remove("intent");
                     }
-                } else if ( intent.args === "simple" ) {
+                } else if (intent.args === "simple") {
                     $rootScope.multireport = vm.multireport = intent;
                 }
             }
@@ -153,17 +212,16 @@
          */
         function dragEndHandler(e) {
             (e.distance > 50 ? stopPosition : angular.noop)();
-            clearTimeout( lastViewTimeout );
-            lastViewTimeout = setTimeout( function() {
+            clearTimeout(lastViewTimeout);
+            lastViewTimeout = setTimeout(function() {
                 var e = G3ME.map.getBounds();
-                if (e._northEast.lat !== e._southWest.lat ||
-                    e._northEast.lng !== e._southWest.lng) {
-                    Storage.set( 'lastLeafletMape', [
+                if (e._northEast.lat !== e._southWest.lat || e._northEast.lng !== e._southWest.lng) {
+                    Storage.set("lastLeafletMape", [
                         [e._northEast.lat, e._northEast.lng],
                         [e._southWest.lat, e._southWest.lng]
-                    ] );
+                    ]);
                 }
-            }, 5000 );
+            }, 5000);
         }
 
         /**
@@ -178,8 +236,8 @@
             var realPosActivate = POSITION_ACTIVATE;
             stopPosition();
             G3ME.map.remove();
-            document.getElementById( G3ME.mapDivId ).parentNode.removeChild( document.getElementById( G3ME.mapDivId ) );
-            clearTimeout( lastViewTimeout );
+            document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
+            clearTimeout(lastViewTimeout);
         }
 
         /**
@@ -188,10 +246,10 @@
          */
         function setReferenceView() {
             var extent = Site.current.extent,
-                southWest = L.latLng( extent.ymax, extent.xmin ),
-                northEast = L.latLng( extent.ymin, extent.xmax ),
-                bounds = L.latLngBounds( southWest, northEast );
-            G3ME.map.fitBounds( bounds );
+                southWest = L.latLng(extent.ymax, extent.xmin),
+                northEast = L.latLng(extent.ymin, extent.xmax),
+                bounds = L.latLngBounds(southWest, northEast);
+            G3ME.map.fitBounds(bounds);
             return false;
         }
 
@@ -203,11 +261,11 @@
          */
         function openPopupIfNeeded(coords, assets) {
             var popup, okey;
-            var popupContent = '';
+            var popupContent = "";
 
             if (!assets.length) {
-                $rootScope.$broadcast( "CONSULTATION_CLICK_CANCELED" );
-                popupContent += '<p>' + i18n.get( '_MAP_ZERO_OBJECT_FOUND' ) + '</p>';
+                $rootScope.$broadcast("CONSULTATION_CLICK_CANCELED");
+                popupContent += "<p>" + i18n.get("_MAP_ZERO_OBJECT_FOUND") + "</p>";
             }
 
             //On affiche le bouton CR sur XY seulement si:
@@ -215,33 +273,56 @@
             // - on vient d'un intent qui ne soit pas un intent d'auth ('oauth')(spécifique Veolia)
             //
             // TODO: FAIRE MIEUX
-            var intent = Storage.get( 'intent' ),
-                assetsForIntent = $filter( 'reportableAssetsForIntentFilter' )( assets );
-            if ( Site.current.activities.length && ($rootScope.rights.report && !assets.length || intent && intent.controller === 'map' && !assetsForIntent.length ) ) {
-                popupContent += '<button class="btn btn-primary openLocateReportButton">'
-                    + i18n.get( '_CONSULTATION_REPORT_ON_POSITION' ) + '</button>';
-                $( document ).on( 'click', '.openLocateReportButton', function() {
+            var intent = Storage.get("intent"),
+                assetsForIntent = $filter("reportableAssetsForIntentFilter")(assets);
+            if (
+                Site.current.activities.length &&
+                (($rootScope.rights.report && !assets.length) ||
+                    (intent && intent.controller === "map" && !assetsForIntent.length))
+            ) {
+                popupContent +=
+                    '<button class="btn btn-primary openLocateReportButton">' +
+                    i18n.get("_CONSULTATION_REPORT_ON_POSITION") +
+                    "</button>";
+                $(document).on("click", ".openLocateReportButton", function() {
                     //TODO(@gulian): utiliser un ng-click si possible
-                    $rootScope.openLocatedReport( coords.lat, coords.lng );
-                } );
+                    $rootScope.openLocatedReport(coords.lat, coords.lng);
+                });
             }
 
             okey = $rootScope.multireport && $rootScope.multireport.multi_report_activity.okeys[0];
 
-            if ($rootScope.multireport && !($filter( 'filter' )( assets, {
-                    okey: okey
-                }, true )).length) {
-                popupContent += '<button ng-click="$root.addLocationToTour(' + coords.lat + ', ' + coords.lng + ')" class="btn btn-primary addLocationToTour">'
-                    + i18n.get( '_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR' ) + '</button>';
+            if (
+                $rootScope.multireport &&
+                !$filter("filter")(
+                    assets,
+                    {
+                        okey: okey
+                    },
+                    true
+                ).length
+            ) {
+                popupContent +=
+                    '<button ng-click="$root.addLocationToTour(' +
+                    coords.lat +
+                    ", " +
+                    coords.lng +
+                    ')" class="btn btn-primary addLocationToTour">' +
+                    i18n.get("_CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR") +
+                    "</button>";
             }
 
             if (popupContent.length) {
-                popupContent = $compile( '<div>' + popupContent + '</div>' )( $scope );
-                L.popup().setLatLng( coords ).setContent( popupContent[0] ).openOn( G3ME.map );
+                popupContent = $compile("<div>" + popupContent + "</div>")($scope);
+                L.popup()
+                    .setLatLng(coords)
+                    .setContent(popupContent[0])
+                    .openOn(G3ME.map);
             }
 
-            $( '.leaflet-popup' ).delay( 10000 ).fadeOut( 500 );
-
+            $(".leaflet-popup")
+                .delay(10000)
+                .fadeOut(500);
         }
 
         /**
@@ -255,22 +336,23 @@
             }
 
             var coords = e.latlng,
-                radius = 40 * 40075017 * Math.cos( L.LatLng.DEG_TO_RAD * coords.lat ) / Math.pow( 2, (G3ME.map.getZoom() + 8) ),
-                circle = new L.Circle( coords, radius, {
+                radius =
+                    (40 * 40075017 * Math.cos(L.LatLng.DEG_TO_RAD * coords.lat)) / Math.pow(2, G3ME.map.getZoom() + 8),
+                circle = new L.Circle(coords, radius, {
                     color: "#fc9e49",
                     weight: 1
-                } ).addTo( G3ME.map );
+                }).addTo(G3ME.map);
 
-            $rootScope.$broadcast( "CONSULTATION_CLICK_REQUESTED", e.latlng );
+            $rootScope.$broadcast("CONSULTATION_CLICK_REQUESTED", e.latlng);
 
-            Asset.findInBounds( coords, circle.getBounds(), function(assets) {
-                openPopupIfNeeded( coords, assets );
-                $rootScope.$broadcast( "UPDATE_CONSULTATION_ASSETS_LIST", assets );
-            } );
+            Asset.findInBounds(coords, circle.getBounds(), function(assets) {
+                openPopupIfNeeded(coords, assets);
+                $rootScope.$broadcast("UPDATE_CONSULTATION_ASSETS_LIST", assets);
+            });
 
-            $( circle._path ).fadeOut( 1500, function() {
-                G3ME.map.removeLayer( circle );
-            } );
+            $(circle._path).fadeOut(1500, function() {
+                G3ME.map.removeLayer(circle);
+            });
         }
 
         /**
@@ -281,8 +363,10 @@
             stopConsultation();
             $rootScope.consultationActive = true;
             consultationIsEnabled = true;
-            CONSULTATION_CONTROL = CONSULTATION_CONTROL || Utils.makeControl( i18n.get( '_MAP_CONSULTATION_CONTROL' ), "fa-info-circle", stopConsultation );
-            G3ME.map.addControl( CONSULTATION_CONTROL );
+            CONSULTATION_CONTROL =
+                CONSULTATION_CONTROL ||
+                Utils.makeControl(i18n.get("_MAP_CONSULTATION_CONTROL"), "fa-info-circle", stopConsultation);
+            G3ME.map.addControl(CONSULTATION_CONTROL);
         }
 
         /**
@@ -292,7 +376,7 @@
         function stopConsultation(e) {
             consultationIsEnabled = false;
             if (CONSULTATION_CONTROL && CONSULTATION_CONTROL._map) {
-                G3ME.map.removeControl( CONSULTATION_CONTROL );
+                G3ME.map.removeControl(CONSULTATION_CONTROL);
             }
             $rootScope.consultationActive = false;
             if (e) {
@@ -315,23 +399,23 @@
             //On vient de lancer le positionnement GPS et on est en dessous de 30m, on conserve le niveau de zoom ...'
             else if (POSITION_ZOOM == null && G3ME.map.getZoom() > 18) {
                 POSITION_ZOOM = G3ME.map.getZoom();
-
             } else if (G3ME.map.getZoom() > 18) {
                 POSITION_ZOOM = G3ME.map.getZoom();
-
             } else if (POSITION_ZOOM < G3ME.map.getZoom) {
                 POSITION_ZOOM = G3ME.map.getZoom();
             } else {
                 POSITION_ZOOM = 18;
             }
             if (LAST_USERS_LOCATION.length) {
-                G3ME.map.setView( LAST_USERS_LOCATION, POSITION_ZOOM );
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
                 G3ME.invalidateMapSize();
             }
 
-            if (GPS.startWatchingPosition( setLocationMarker )) {
-                POSITION_CONTROL = POSITION_CONTROL || Utils.makeControl( i18n.get( '_MAP_MY_POSITION_CONTROL' ), "fa-compass", stopPosition );
-                G3ME.map.addControl( POSITION_CONTROL );
+            if (GPS.startWatchingPosition(setLocationMarker)) {
+                POSITION_CONTROL =
+                    POSITION_CONTROL ||
+                    Utils.makeControl(i18n.get("_MAP_MY_POSITION_CONTROL"), "fa-compass", stopPosition);
+                G3ME.map.addControl(POSITION_CONTROL);
             }
         }
 
@@ -340,16 +424,16 @@
          * @desc Désactive la fonction "Ma position"
          */
         function stopPosition(e) {
-            GPS.stopWatchingPosition( setLocationMarker );
+            GPS.stopWatchingPosition(setLocationMarker);
             LAST_USERS_LOCATION = [];
             if (POSITION_CONTROL && POSITION_CONTROL._map) {
-                G3ME.map.removeControl( POSITION_CONTROL );
+                G3ME.map.removeControl(POSITION_CONTROL);
             }
             if (POSITION_CIRCLE && POSITION_CIRCLE._map) {
-                G3ME.map.removeLayer( POSITION_CIRCLE );
+                G3ME.map.removeLayer(POSITION_CIRCLE);
             }
             if (POSITION_MARKER && POSITION_MARKER._map) {
-                G3ME.map.removeLayer( POSITION_MARKER );
+                G3ME.map.removeLayer(POSITION_MARKER);
             }
             POSITION_ACTIVATE = POSITION_CIRCLE = POSITION_CONTROL = POSITION_MARKER = FIRST_POSITION = POSITION_ZOOM = null;
             //$rootScope.positionActive = false;
@@ -370,38 +454,39 @@
             LAST_USERS_LOCATION = [lat, lng];
 
             if (POSITION_CIRCLE) {
-                POSITION_CIRCLE.setLatLng( LAST_USERS_LOCATION ).setRadius( acc );
+                POSITION_CIRCLE.setLatLng(LAST_USERS_LOCATION).setRadius(acc);
             } else {
-                POSITION_CIRCLE = new L.Circle( LAST_USERS_LOCATION, acc, {
-                    color: '#fd9122',
+                POSITION_CIRCLE = new L.Circle(LAST_USERS_LOCATION, acc, {
+                    color: "#fd9122",
                     opacity: 0.1,
                     fillOpacity: 0.05
-                } ).addTo( G3ME.map );
+                }).addTo(G3ME.map);
             }
 
             if (POSITION_MARKER) {
-                POSITION_MARKER.setLatLng( LAST_USERS_LOCATION );
+                POSITION_MARKER.setLatLng(LAST_USERS_LOCATION);
             } else {
-                POSITION_MARKER = L.marker( LAST_USERS_LOCATION ).setIcon( Icon.get( 'TARGET' ) ).addTo( G3ME.map );
+                POSITION_MARKER = L.marker(LAST_USERS_LOCATION)
+                    .setIcon(Icon.get("TARGET"))
+                    .addTo(G3ME.map);
             }
 
-            $( POSITION_CIRCLE._path ).fadeOut( 3000, function() {
+            $(POSITION_CIRCLE._path).fadeOut(3000, function() {
                 if (POSITION_CIRCLE) {
-                    G3ME.map.removeLayer( POSITION_CIRCLE );
+                    G3ME.map.removeLayer(POSITION_CIRCLE);
                     POSITION_CIRCLE = null;
                 }
-            } );
+            });
             if (!FIRST_POSITION) {
                 POSITION_ZOOM = G3ME.map.getZoom();
-                G3ME.map.panTo( [lat, lng], {
+                G3ME.map.panTo([lat, lng], {
                     animate: false
-                } );
+                });
             } else {
-                G3ME.map.setView( LAST_USERS_LOCATION, POSITION_ZOOM );
+                G3ME.map.setView(LAST_USERS_LOCATION, POSITION_ZOOM);
             }
             FIRST_POSITION = false;
         }
-
 
         // ===================================================
         // ===================================================
@@ -418,62 +503,71 @@
                 iconCreateFunction: iconCreateFunction,
                 disableClusteringAtZoom: 21,
                 maxClusterRadius: 75
-            }, traces;
-        $scope.$on( "__MAP_SETVIEW__", function(event, extent) {
+            },
+            traces;
+        $scope.$on("__MAP_SETVIEW__", function(event, extent) {
             if (extent && extent.ymin && extent.xmin && extent.ymax && extent.xmax) {
-                G3ME.map.fitBounds( [
-                    [extent.ymin, extent.xmin],
-                    [extent.ymax, extent.xmax]
-                ], {
+                G3ME.map.fitBounds([[extent.ymin, extent.xmin], [extent.ymax, extent.xmax]], {
                     maxZoom: 19,
                     animate: false
-                } );
+                });
             } else {
-                alertify.error( "Extent non valide" );
+                alertify.error("Extent non valide");
             }
-        } );
-        $scope.$on( "__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng) {
+        });
+        $scope.$on("__MAP_HIGHTLIGHT_MY_POSITION", function(event, lat, lng) {
             if (!myPositionMarker) {
-                myPositionMarker = L.marker( [lat, lng], {
+                myPositionMarker = L.marker([lat, lng], {
                     zIndexOffset: 10000
-                } ).setIcon( Icon.get( 'TARGET' ) ).addTo( G3ME.map );
+                })
+                    .setIcon(Icon.get("TARGET"))
+                    .addTo(G3ME.map);
             } else {
-                myPositionMarker.setLatLng( [lat, lng] );
+                myPositionMarker.setLatLng([lat, lng]);
             }
-            G3ME.map.panTo( [lat, lng], {
+            G3ME.map.panTo([lat, lng], {
                 animate: false
-            } );
+            });
             G3ME.invalidateMapSize();
-        } );
-        $scope.$on( "__MAP_UNHIGHTLIGHT_MY_POSITION", function() {
+        });
+        $scope.$on("__MAP_UNHIGHTLIGHT_MY_POSITION", function() {
             if (myPositionMarker) {
-                G3ME.map.removeLayer( myPositionMarker );
+                G3ME.map.removeLayer(myPositionMarker);
                 myPositionMarker = null;
             }
-        } );
-        $scope.$on( "UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission) {
+        });
+        $scope.$on("UNHIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission) {
             if (missionsClusters[mission.id]) {
-                G3ME.map.removeLayer( missionsClusters[mission.id] );
+                G3ME.map.removeLayer(missionsClusters[mission.id]);
             }
-        } );
+        });
 
         function iconCreateFunction(cluster) {
-            iconCluster[cluster._childCount] = iconCluster[cluster._childCount] || new L.DivIcon( {
-                    html: '<div>' + cluster._childCount + '</div>',
-                    className: 'marker-cluster-assets',
+            iconCluster[cluster._childCount] =
+                iconCluster[cluster._childCount] ||
+                new L.DivIcon({
+                    html: "<div>" + cluster._childCount + "</div>",
+                    className: "marker-cluster-assets",
                     iconSize: [40, 40]
-                } );
+                });
             return iconCluster[cluster._childCount];
         }
 
-        $scope.$on( "HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler) {
+        $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler) {
             if (!missionsClusters[mission.id]) {
-                missionsClusters[mission.id] = new L.MarkerClusterGroup( MarkerClusterGroupOptions );
+                missionsClusters[mission.id] = new L.MarkerClusterGroup(MarkerClusterGroupOptions);
             }
             for (var i = 0; i < assetsCache.length; i++) {
                 if (assetsCache[i].marker) {
-                    if (mission.assets.indexOf( assetsCache[i].guid ) === -1 && mission.done.indexOf( assetsCache[i].guid ) === -1 && mission.postAddedAssets && mission.postAddedAssets.assets.indexOf( assetsCache[i].guid ) && mission.postAddedAssets && mission.postAddedAssets.done.indexOf( assetsCache[i].guid )) {
-                        missionsClusters[mission.id].removeLayer( "" + assetsCache[i].marker );
+                    if (
+                        mission.assets.indexOf(assetsCache[i].guid) === -1 &&
+                        mission.done.indexOf(assetsCache[i].guid) === -1 &&
+                        mission.postAddedAssets &&
+                        mission.postAddedAssets.assets.indexOf(assetsCache[i].guid) &&
+                        mission.postAddedAssets &&
+                        mission.postAddedAssets.done.indexOf(assetsCache[i].guid)
+                    ) {
+                        missionsClusters[mission.id].removeLayer("" + assetsCache[i].marker);
                         continue;
                     }
                     continue;
@@ -481,104 +575,123 @@
                 if (assetsCache[i].geometry.type === "LineString") {
                     assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
                 }
-                assetsCache[i].marker = L.marker( [assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]] );
+                assetsCache[i].marker = L.marker([
+                    assetsCache[i].geometry.coordinates[1],
+                    assetsCache[i].geometry.coordinates[0]
+                ]);
                 if (assetsCache[i].selected) {
-                    assetsCache[i].marker.setIcon( Icon.get( 'SELECTED_MISSION' ) );
-                } else if (!mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour") {
-                    assetsCache[i].marker.setIcon( Icon.get( 'NON_SELECTED_MISSION' ) );
-                } else if (mission.activity && Site.current.activities._byId[mission.activity.id].type === "night_tour") {
-                    assetsCache[i].marker.setIcon( Icon.get( 'NON_SELECTED_NIGHTTOUR' ) );
+                    assetsCache[i].marker.setIcon(Icon.get("SELECTED_MISSION"));
+                } else if (
+                    !mission.activity ||
+                    (mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour")
+                ) {
+                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
+                } else if (
+                    mission.activity &&
+                    Site.current.activities._byId[mission.activity.id].type === "night_tour"
+                ) {
+                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_NIGHTTOUR"));
                 }
-                ( function(i, marker) {
-                    marker.on( 'click', function() {
-                        clickHandler( mission.id, i );
-                    } );
-                } ) (i, assetsCache[i].marker );
-                missionsClusters[mission.id].addLayer( assetsCache[i].marker );
+                (function(i, marker) {
+                    marker.on("click", function() {
+                        clickHandler(mission.id, i);
+                    });
+                })(i, assetsCache[i].marker);
+                missionsClusters[mission.id].addLayer(assetsCache[i].marker);
             }
-            G3ME.map.addLayer( missionsClusters[mission.id] );
-        } );
-        $scope.$on( "UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission) {
-            if (missionsClusters['done-' + mission.id]) {
-                G3ME.map.removeLayer( missionsClusters['done-' + mission.id] );
+            G3ME.map.addLayer(missionsClusters[mission.id]);
+        });
+        $scope.$on("UNHIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission) {
+            if (missionsClusters["done-" + mission.id]) {
+                G3ME.map.removeLayer(missionsClusters["done-" + mission.id]);
             }
-        } );
-        $scope.$on( "DELETEMARKERFORMISSION", function(event, mission, marker) {
-            missionsClusters[mission.id].removeLayer( marker );
-        } );
-        $scope.$on( "UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions) {
+        });
+        $scope.$on("DELETEMARKERFORMISSION", function(event, mission, marker) {
+            missionsClusters[mission.id].removeLayer(marker);
+        });
+        $scope.$on("UNHIGHLIGHT_DEPRECATED_MARKERS", function(event, missions) {
             for (var i in missionsClusters) {
-                if ((!missions[i] || missions[i].assets.length === 0) && i.indexOf( 'done' ) === -1) {
-                    G3ME.map.removeLayer( missionsClusters[i] );
-                    if (missionsClusters['done-' + i]) {
-                        G3ME.map.removeLayer( missionsClusters['done-' + i] );
+                if ((!missions[i] || missions[i].assets.length === 0) && i.indexOf("done") === -1) {
+                    G3ME.map.removeLayer(missionsClusters[i]);
+                    if (missionsClusters["done-" + i]) {
+                        G3ME.map.removeLayer(missionsClusters["done-" + i]);
                     }
                 }
             }
-        } );
-        $scope.$on( "HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache) {
-            missionsClusters['done-' + mission.id] = missionsClusters['done-' + mission.id] || new L.MarkerClusterGroup( {
+        });
+        $scope.$on("HIGHLIGHT_DONE_ASSETS_FOR_MISSION", function(event, mission, assetsCache) {
+            missionsClusters["done-" + mission.id] =
+                missionsClusters["done-" + mission.id] ||
+                new L.MarkerClusterGroup({
                     iconCreateFunction: function(cluster) {
-                        return new L.DivIcon( {
-                            html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-                            className: 'marker-cluster-done',
-                            iconSize: new L.Point( 40, 40 )
-                        } );
+                        return new L.DivIcon({
+                            html: "<div><span>" + cluster.getChildCount() + "</span></div>",
+                            className: "marker-cluster-done",
+                            iconSize: new L.Point(40, 40)
+                        });
                     },
                     disableClusteringAtZoom: 21,
                     maxClusterRadius: 75
-                } );
+                });
             for (var i = 0; assetsCache && i < assetsCache.length; i++) {
-                assetsCache[i].marker = assetsCache[i].marker || L.marker( [assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]] );
-                var icon = !mission.activity || mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour" ? Icon.get( 'DONE_MISSION' ) : Icon.get( 'DONE_NIGHTTOUR' );
-                assetsCache[i].marker.setIcon( icon );
-                missionsClusters['done-' + mission.id].addLayer( assetsCache[i].marker );
+                assetsCache[i].marker =
+                    assetsCache[i].marker ||
+                    L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
+                var icon =
+                    !mission.activity ||
+                    (mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour")
+                        ? Icon.get("DONE_MISSION")
+                        : Icon.get("DONE_NIGHTTOUR");
+                assetsCache[i].marker.setIcon(icon);
+                missionsClusters["done-" + mission.id].addLayer(assetsCache[i].marker);
             }
-            G3ME.map.addLayer( missionsClusters['done-' + mission.id] );
-        } );
-        $scope.$on( "TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset) {
-            asset.marker.setIcon( asset.selected ? Icon.get( 'SELECTED_MISSION' ) : Icon.get( 'NON_SELECTED_MISSION' ) );
-        } );
-        $scope.$on( "__MAP_HIDE_TRACE__", function(event, mission) {
+            G3ME.map.addLayer(missionsClusters["done-" + mission.id]);
+        });
+        $scope.$on("TOGGLE_ASSET_MARKER_FOR_MISSION", function(event, asset) {
+            asset.marker.setIcon(asset.selected ? Icon.get("SELECTED_MISSION") : Icon.get("NON_SELECTED_MISSION"));
+        });
+        $scope.$on("__MAP_HIDE_TRACE__", function(event, mission) {
             if (traces && traces[mission.id]) {
-                G3ME.map.removeLayer( traces[mission.id] );
-                G3ME.map.removeLayer( myLastPositionMarker );
+                G3ME.map.removeLayer(traces[mission.id]);
+                G3ME.map.removeLayer(myLastPositionMarker);
                 delete traces[mission.id];
                 myLastPositionMarker = null;
             }
-        } );
+        });
 
-        $scope.$on( "__MAP_DISPLAY_TRACE__", function(event, mission, setView) {
+        $scope.$on("__MAP_DISPLAY_TRACE__", function(event, mission, setView) {
             if (!mission.trace || !mission.trace.length) {
                 return;
             }
 
             traces = traces || {};
-            var lastPosition = mission.trace[ mission.trace.length - 1 ];
+            var lastPosition = mission.trace[mission.trace.length - 1];
 
-            if ( !traces[mission.id] ) {
-                traces[mission.id] = new L.Polyline(mission.trace,{
-                    color: 'orange',
+            if (!traces[mission.id]) {
+                traces[mission.id] = new L.Polyline(mission.trace, {
+                    color: "orange",
                     opacity: 0.9,
                     weight: 7
                 }).addTo(G3ME.map);
             } else {
-                traces[mission.id].addLatLng( lastPosition );
+                traces[mission.id].addLatLng(lastPosition);
             }
 
             if (!myLastPositionMarker) {
-                myLastPositionMarker = L.marker( lastPosition, {
+                myLastPositionMarker = L.marker(lastPosition, {
                     zIndexOffset: 1000
-                } ).setIcon( Icon.get( 'GRAY_TARGET' ) ).addTo( G3ME.map );
+                })
+                    .setIcon(Icon.get("GRAY_TARGET"))
+                    .addTo(G3ME.map);
             } else {
-                myLastPositionMarker.setLatLng( lastPosition );
+                myLastPositionMarker.setLatLng(lastPosition);
             }
 
             if (setView) {
-                G3ME.map.panTo( lastPosition, {
+                G3ME.map.panTo(lastPosition, {
                     animate: false
-                } );
+                });
             }
-        } );
+        });
     }
-} )();
+})();

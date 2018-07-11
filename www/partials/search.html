@@ -1,38 +1,28 @@
 <div id="left_panel_search" ng-controller="searchController">
     <div class="checkbox">
-        <label><input type="checkbox" ng-model="advancedSearchDisplay"> <span class="fa fa-search"></span>
-            <i18n>_SEARCH_ADVANCED_SEARCH</i18n></label>
+        <label>
+            <input type="checkbox" ng-model="advancedSearchDisplay">
+            <span class="fa fa-search"></span>
+            <i18n>_SEARCH_ADVANCED_SEARCH</i18n>
+        </label>
     </div>
-    <input style="margin-bottom: 10px;" class="form-control"
-        type="text" ng-model="searchTerms" placeholder="Code metier" ng-show="!advancedSearchDisplay"></input>
+    <input style="margin-bottom: 10px;" class="form-control" type="text" ng-model="searchTerms" placeholder="Code metier" ng-show="!advancedSearchDisplay"></input>
     <div id="left_panel_search_advanced" ng-show="advancedSearchDisplay">
-        <label><i18n>_SEARCH_TYPE</i18n></label>
-        <select
-            class="form-control"
-            ng-model="selectedFamily"
-            ng-change="selectedFamilyChangeHandler()"
-            ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
+        <label>
+            <i18n>_SEARCH_TYPE</i18n>
+        </label>
+        <select class="form-control" ng-model="selectedFamily" ng-change="selectedFamilyChangeHandler()" ng-options=" family.label for (okey, family) in metamodel | filterObj:'is_project':true | orderObjectBy:'label'">
         </select>
-        <label ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_CRITERIA</i18n></label> <br/>
-        <select
-            ng-show="isIOS"
-            style="margin-bottom: 10px;width:100%;"
-            ng-model="selectedCriteria.keys"
-            ng-change="selectedCriteriaChangeHandlerForIos()" multiple>
-            <option
-                ng-repeat="(value, criter) in criteria[selectedFamily.okey]"
-                value="{{criter.key}}">{{criter.label}}</option>
+        <label ng-show="criteria[selectedFamily.okey]">
+            <i18n>_SEARCH_CRITERIA</i18n>
+        </label>
+        <br/>
+        <select ng-show="isIOS" style="margin-bottom: 10px;width:100%;" ng-model="selectedCriteria.keys" ng-change="selectedCriteriaChangeHandlerForIos()"
+            multiple>
+            <option ng-repeat="(value, criter) in criteria[selectedFamily.okey]" value="{{criter.key}}">{{criter.label}}</option>
         </select>
-        <ui-select
-            style="margin-bottom: 10px;width:100%;"
-            ng-model="selectedCriteria.labels"
-            multiple
-            on-remove="removeCriteria($item)"
-            ng-show="criteria[selectedFamily.okey] && !isIOS"
-            title="Select Criteria"
-            close-on-select="false"
-            ng-click="showCriteria($event)"
-            >
+        <ui-select style="margin-bottom: 10px;width:100%;" ng-model="selectedCriteria.labels" multiple on-remove="removeCriteria($item)"
+            ng-show="criteria[selectedFamily.okey] && !isIOS" title="Select Criteria" close-on-select="false" ng-click="showCriteria($event)">
             <ui-select-match to-select>{{$item}}</ui-select-match>
             <ui-select-choices repeat="criter in criteria[selectedFamily.okey]" value="criter.key" style="display:none;">
                 {{criter.label}}
@@ -40,50 +30,40 @@
         </ui-select>
         <div class="form-group" ng-repeat='fieldKey in selectedCriteria.keys'>
             <label for="adSearchField-{{fieldKey}}">{{criteria[selectedFamily.okey]._byKey[fieldKey].label}}</label>
-            <div class="animate-switch-container" ng-switch
-                on="criteria[selectedFamily.okey]._byKey[fieldKey].type">
+            <div class="animate-switch-container" ng-switch on="criteria[selectedFamily.okey]._byKey[fieldKey].type">
                 <div ng-switch-when="D">
-                    <input type="date"
-                        ng-model="selectedCriteriaValues[fieldKey]"
-                        class="form-control"
-                        id="adSearchField-{{fieldKey}}">
+                    <input type="date" ng-model="selectedCriteriaValues[fieldKey]" class="form-control" id="adSearchField-{{fieldKey}}">
                 </div>
                 <div ng-switch-when="T">
-                    <input class="form-control" type="time"
-                        ng-model="selectedCriteriaValues[fieldKey]"></input>
+                    <input class="form-control" type="time" ng-model="selectedCriteriaValues[fieldKey]"></input>
                 </div>
                 <div ng-switch-when="L">
-                    <select
-                        style="margin-bottom: 10px;width:100%;"
-                        ng-model="selectedCriteriaValues[fieldKey]"
-                        ng-options="label for label in lists[criteria[selectedFamily.okey]._byKey[fieldKey].options] track by label">
+                    <select style="margin-bottom: 10px;width:100%;" ng-model="selectedCriteriaValues[fieldKey]" ng-options="label for label in lists[criteria[selectedFamily.okey]._byKey[fieldKey].options] track by label">
                     </select>
                 </div>
                 <div ng-switch-when="O">
-                    <input class="form-control"
-                        ng-model="selectedCriteriaValues[fieldKey]"
-                        id="adSearchField-{{fieldKey}}" type="checkbox"
-                        ng-true-value="'Y'" ng-false-value="'N'"></input>
+                    <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="checkbox" ng-true-value="'Y'"
+                        ng-false-value="'N'"></input>
                 </div>
                 <div ng-switch-when="N">
-                    <input class="form-control"
-                        ng-model="selectedCriteriaValues[fieldKey]"
-                        id="adSearchField-{{fieldKey}}" type="number"
-                        step="any"></input>
+                    <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="number" step="any"></input>
                 </div>
                 <div ng-switch-default>
-                    <input class="form-control"
-                        ng-model="selectedCriteriaValues[fieldKey]"
-                        id="adSearchField-{{fieldKey}}" type="text"></input>
+                    <input class="form-control" ng-model="selectedCriteriaValues[fieldKey]" id="adSearchField-{{fieldKey}}" type="text"></input>
                 </div>
             </div>
         </div>
-        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()" ng-show="criteria[selectedFamily.okey]"><i18n>_SEARCH_ERASE_CRITERIA</i18n></button>
+        <button class="btn btn-default btn-block btn-custom-block" ng-click="resetCriteria()" ng-show="criteria[selectedFamily.okey]">
+            <i18n>_SEARCH_ERASE_CRITERIA</i18n>
+        </button>
     </div>
     <button class="btn btn-default btn-block has-spinner btn-custom-block" ng-class='{active:searchIsPerforming}' ng-click="sendCriteria($event)">
-        <span class="spinnerb"><i class="icon-spin icon-refresh"></i></span>
+        <span class="spinnerb">
+            <i class="icon-spin icon-refresh"></i>
+        </span>
         <i18n ng-show='!searchIsPerforming'>_SEARCH_SEARCH</i18n>
-        <i ng-show='searchIsPerforming' class="fa fa-refresh fa-spin"></i> <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
+        <i ng-show='searchIsPerforming' class="fa fa-refresh fa-spin"></i>
+        <i18n ng-show='searchIsPerforming'>_SEARCH_CANCEL_SEARCH</i18n>
     </button>
     <label ng-show="!advancedSearchDisplay">{{searchMessage | i18n}}</label>
     <label ng-show="advancedSearchDisplay">{{advancedSearchMessage | i18n}}</label>

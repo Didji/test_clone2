@@ -1,8 +1,10 @@
 <a href="#">{{metamodel[key].label}}</a>
 <!-- {{okey}} -->
 <div class="mp-level">
-    <a class="mp-back" ng-click='backToPreviousLevel($event)' href="#"><i18n>_SEARCH_BACK</i18n></a>
+    <a class="mp-back" ng-click='backToPreviousLevel($event)' href="#">
+        <i18n>_SEARCH_BACK</i18n>
+    </a>
     <ul>
-        <li ng-repeat="child in okey.children"  ng-include="'partials/census-okey-child.html'"></li>
+        <li ng-repeat="child in okey.children" ng-include="'partials/census-okey-child.html'"></li>
     </ul>
 </div>

@@ -1,15 +1,11 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module('smartgeomobile')
-        .factory('Activity', ActivityFactory);
+    angular.module("smartgeomobile").factory("Activity", ActivityFactory);
 
     ActivityFactory.$inject = ["Site"];
 
     function ActivityFactory(Site) {
-
         /**
          * @class ActivityFactory
          * @desc Factory de la classe Activity

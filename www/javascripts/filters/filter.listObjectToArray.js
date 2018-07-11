@@ -1,10 +1,7 @@
 (function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .filter( 'listObjectToArray', listObjectToArray );
+    angular.module("smartgeomobile").filter("listObjectToArray", listObjectToArray);
 
     listObjectToArray.$inject = ["Site"];
 
@@ -18,10 +15,10 @@
         var listsArray = {};
 
         function _listObjectToArray(options) {
-            var currentList ;
+            var currentList;
             if (typeof options !== "string") {
-                currentList = angular.copy( options );
-                options = JSON.stringify( options );
+                currentList = angular.copy(options);
+                options = JSON.stringify(options);
             }
             if (listsArray[options]) {
                 return listsArray[options];
@@ -30,15 +27,14 @@
             }
             var out = [];
             for (var value in currentList) {
-                out.push( {
-                    'value': value,
-                    'label': currentList[value]
-                } );
+                out.push({
+                    value: value,
+                    label: currentList[value]
+                });
             }
             listsArray[options] = out;
             return out;
         }
         return _listObjectToArray;
     }
-
 })();

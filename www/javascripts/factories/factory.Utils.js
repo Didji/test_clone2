@@ -1,15 +1,11 @@
-( function() {
+(function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'Utils', UtilsFactory );
+    angular.module("smartgeomobile").factory("Utils", UtilsFactory);
 
     UtilsFactory.$inject = ["$http", "Storage", "SQLite", "$rootScope"];
 
     function UtilsFactory($http, Storage, SQLite, $rootScope) {
-
         /**
          * @class UtilsFactory
          * @desc Factory de la classe Utils
@@ -21,18 +17,18 @@
          * @desc
          */
         Utils.clearPersistence = function() {
-            Storage.remove( 'persitence.menu.open' );
-            Storage.remove( 'persitence.menu.open.level' );
-            Storage.remove( 'persistence.menu' );
-            if (!(Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )]) {
+            Storage.remove("persitence.menu.open");
+            Storage.remove("persitence.menu.open.level");
+            Storage.remove("persistence.menu");
+            if (!(Storage.get("users") || {})[Storage.get("lastUser")]) {
                 return;
             }
-            var missions = Storage.get( 'missions_' + (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )].username );
+            var missions = Storage.get("missions_" + (Storage.get("users") || {})[Storage.get("lastUser")].username);
             for (var i in missions) {
                 missions[i].openned = false;
             }
             if (missions) {
-                Storage.set( 'missions_' + (Storage.get( 'users' ) || {})[Storage.get( 'lastUser' )].username, missions );
+                Storage.set("missions_" + (Storage.get("users") || {})[Storage.get("lastUser")].username, missions);
             }
         };
 
@@ -42,7 +38,7 @@
          * @desc Rajoute un 0 au nombre inférieur à 10
          */
         Utils.pad = function(number) {
-            return (number < 10) ? ('0' + number) : number;
+            return number < 10 ? "0" + number : number;
         };
 
         /**
@@ -73,7 +69,7 @@
                 var data = canvas.toDataURL("image/jpeg", 0.75);
                 callback(data);
             };
-         };
+        };
 
         /**
          * @name makeControl
@@ -83,21 +79,20 @@
          * @desc Fonction utilitaire créant un contrôle Leaflet.
          */
         Utils.makeControl = function(title, icon, onclick) {
-            var c = L.Control.extend( {
+            var c = L.Control.extend({
                 options: {
-                    position: 'topright'
+                    position: "topright"
                 },
                 onAdd: function() {
-                    var container = L.DomUtil.create( 'div', 'leaflet-bar' );
-                    $( container )
-                        .html( '<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>' )
-                        .on( 'click', onclick );
+                    var container = L.DomUtil.create("div", "leaflet-bar");
+                    $(container)
+                        .html('<a href="#" title="' + title + '"><span class="fa ' + icon + '"></span></a>')
+                        .on("click", onclick);
                     return container;
                 }
-            } );
+            });
             return new c();
         };
-
 
         /**
          * @name setGimapUrl
@@ -109,28 +104,28 @@
             if (url === null) {
                 return null;
             }
-            if (url.indexOf( 'http' ) === -1) {
-                url = 'http://' + url;
+            if (url.indexOf("http") === -1) {
+                url = "http://" + url;
             }
-            if (url.indexOf( 'index.php?service=' ) === -1) {
-                url = url + '/index.php?service=';
+            if (url.indexOf("index.php?service=") === -1) {
+                url = url + "/index.php?service=";
             }
             Utils.reset();
-            Storage.set( 'url', url );
+            Storage.set("url", url);
             return url;
         };
 
         /**
-        * @name getServiceUrl
-        * @desc
-        */
+         * @name getServiceUrl
+         * @desc
+         */
         Utils.getServiceUrl = function(serviceName, GETParameters) {
-            var url = Storage.get( 'url' );
+            var url = Storage.get("url");
             url += serviceName;
 
             for (var parameter in GETParameters) {
-                if (GETParameters.hasOwnProperty( parameter )) {
-                    url += '&' + parameter + '=' + GETParameters[parameter];
+                if (GETParameters.hasOwnProperty(parameter)) {
+                    url += "&" + parameter + "=" + GETParameters[parameter];
                 }
             }
 
@@ -142,12 +137,12 @@
          * @returns {boolean} is smartgeo running on little screen
          */
         Utils.isRunningOnLittleScreen = function() {
-            var width = window.screen.width; 
+            var width = window.screen.width;
             var height = window.screen.height;
 
             //Si la largeur est inférieur à la hauteur, cela veut dire que l'on est en mode portrait, on renvoie donc true pour "petit ecran"
-            if(width < height) {
-                return true;              
+            if (width < height) {
+                return true;
             } else {
                 return false;
             }
@@ -164,22 +159,22 @@
 
             Utils.clearPersistence();
             for (var val in localStorage) {
-                if (val.indexOf( "LicenseManager" ) !== 0) {
-                    localStorage.removeItem( val );
+                if (val.indexOf("LicenseManager") !== 0) {
+                    localStorage.removeItem(val);
                 }
             }
-            var sites = Storage.get_( 'sites' );
-            Storage.remove_( 'sites' );
+            var sites = Storage.get_("sites");
+            Storage.remove_("sites");
             for (var k in sites) {
                 var site = sites[k];
                 for (var i = 0; site.zones && i < site.zones.length; i++) {
-                    SQLite.exec( site.zones[i].database_name, 'DROP TABLE IF EXISTS ASSETS', [], angular.noop );
+                    SQLite.exec(site.zones[i].database_name, "DROP TABLE IF EXISTS ASSETS", [], angular.noop);
                 }
             }
-            SQLite.exec( 'parameters', 'DELETE FROM PARAMETERS' );
-            SQLite.exec( 'parameters', 'DELETE FROM PROJECTS' );
-            SQLite.exec( 'parameters', 'DELETE FROM SYNCITEM' );
-            SQLite.exec( 'parameters', 'DELETE FROM relationship' );
+            SQLite.exec("parameters", "DELETE FROM PARAMETERS");
+            SQLite.exec("parameters", "DELETE FROM PROJECTS");
+            SQLite.exec("parameters", "DELETE FROM SYNCITEM");
+            SQLite.exec("parameters", "DELETE FROM relationship");
         };
 
         /**
@@ -188,20 +183,24 @@
          */
         Utils.ping = function(callback) {
             callback = callback || angular.noop;
-            $http.post( Utils.getServiceUrl( 'global.dcnx.json' ), {}, {
-                timeout: 10000
-            } )
-                .success( function() {
-                    Storage.set( 'online', true );
-                    callback( true );
-                } ).error( function() {
-                Storage.set( 'online', false );
-                callback( false );
-            } );
+            $http
+                .post(
+                    Utils.getServiceUrl("global.dcnx.json"),
+                    {},
+                    {
+                        timeout: 10000
+                    }
+                )
+                .success(function() {
+                    Storage.set("online", true);
+                    callback(true);
+                })
+                .error(function() {
+                    Storage.set("online", false);
+                    callback(false);
+                });
         };
-
 
         return Utils;
     }
-
-} )();
+})();

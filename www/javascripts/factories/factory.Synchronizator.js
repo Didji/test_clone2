@@ -1,53 +1,79 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").factory("Synchronizator", SynchronizatorFactory);
 
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'Synchronizator', SynchronizatorFactory );
-
-    SynchronizatorFactory.$inject = ["Site", "$http", "$rootScope", "G3ME", "SQLite", "Asset", "i18n", "Relationship", "Utils", "Storage"];
-
+    SynchronizatorFactory.$inject = [
+        "Site",
+        "$http",
+        "$rootScope",
+        "G3ME",
+        "SQLite",
+        "Asset",
+        "i18n",
+        "Relationship",
+        "Utils",
+        "Storage"
+    ];
 
     function SynchronizatorFactory(Site, $http, $rootScope, G3ME, SQLite, Asset, i18n, Relationship, Utils, Storage) {
-
         /**
          * @class SyncItemFactory
          * @desc Factory de la classe SyncItem
          */
 
         function SyncItem(syncitem, action) {
-            angular.extend( this, {
-                label: (syncitem.getLabel && syncitem.getLabel()) || syncitem.label || this.type || syncitem.type || syncitem.constructor.name,
-                description: (syncitem.getDescription && syncitem.getDescription()) || syncitem.description || "",
-                type: syncitem.constructor.name,
-                action: action,
-                id: syncitem.id || syncitem.uuid
-            }, syncitem );
+            angular.extend(
+                this,
+                {
+                    label:
+                        (syncitem.getLabel && syncitem.getLabel()) ||
+                        syncitem.label ||
+                        this.type ||
+                        syncitem.type ||
+                        syncitem.constructor.name,
+                    description: (syncitem.getDescription && syncitem.getDescription()) || syncitem.description || "",
+                    type: syncitem.constructor.name,
+                    action: action,
+                    id: syncitem.id || syncitem.uuid
+                },
+                syncitem
+            );
         }
 
-        SyncItem.prototype.id = undefined ;
-        SyncItem.prototype.json = undefined ;
-        SyncItem.prototype.type = undefined ;
-        SyncItem.prototype.action = undefined ;
-        SyncItem.prototype.deleted = false ;
-        SyncItem.prototype.synced = false ;
+        SyncItem.prototype.id = undefined;
+        SyncItem.prototype.json = undefined;
+        SyncItem.prototype.type = undefined;
+        SyncItem.prototype.action = undefined;
+        SyncItem.prototype.deleted = false;
+        SyncItem.prototype.synced = false;
 
-        SyncItem.database = "parameters" ;
-        SyncItem.table = "SYNCITEM" ;
-        SyncItem.columns = ['id', 'json', 'type', 'action', 'deleted', 'synced'];
-        SyncItem.prepareStatement = SyncItem.columns.join( ',' ).replace( /[a-z]+/gi, '?' );
+        SyncItem.database = "parameters";
+        SyncItem.table = "SYNCITEM";
+        SyncItem.columns = ["id", "json", "type", "action", "deleted", "synced"];
+        SyncItem.prepareStatement = SyncItem.columns.join(",").replace(/[a-z]+/gi, "?");
 
         /**
          * @name save
          * @desc
          */
         SyncItem.prototype.save = function(callback) {
-            SQLite.exec( SyncItem.database, 'INSERT OR REPLACE INTO ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ) + ') VALUES (' + SyncItem.prepareStatement + ')', this.serializeForSQL(), function() {
-                $rootScope.$broadcast( 'synchronizator_update' );
-                G3ME.reloadLayers();
-                (callback || function() {})();
-            } );
+            SQLite.exec(
+                SyncItem.database,
+                "INSERT OR REPLACE INTO " +
+                    SyncItem.table +
+                    "(" +
+                    SyncItem.columns.join(",") +
+                    ") VALUES (" +
+                    SyncItem.prepareStatement +
+                    ")",
+                this.serializeForSQL(),
+                function() {
+                    $rootScope.$broadcast("synchronizator_update");
+                    G3ME.reloadLayers();
+                    (callback || function() {})();
+                }
+            );
         };
 
         /**
@@ -55,13 +81,14 @@
          * @desc
          */
         SyncItem.prototype.delete = function() {
-            var item = this ;
-            (SyncItem["delete" + item.type] || function(item, callback) {
-                (callback || function() {})();
-            })( item, function() {
-                item.deleted = true ;
+            var item = this;
+            (SyncItem["delete" + item.type] ||
+                function(item, callback) {
+                    (callback || function() {})();
+                })(item, function() {
+                item.deleted = true;
                 item.save();
-            } );
+            });
         };
 
         /**
@@ -71,7 +98,7 @@
         SyncItem.prototype.serializeForSQL = function() {
             delete this.relatedAssets;
             delete this.consultationMarker;
-            return [this.id, JSON.stringify( this ), this.type, this.action, this.deleted, this.synced];
+            return [this.id, JSON.stringify(this), this.type, this.action, this.deleted, this.synced];
         };
 
         /**
@@ -81,7 +108,7 @@
         SyncItem.prototype.JSONify = function() {
             delete this.relatedAssets;
             delete this.consultationMarker;
-            return JSON.stringify( this );
+            return JSON.stringify(this);
         };
 
         /**
@@ -96,20 +123,20 @@
                         allGeoms.push(this.checkChildGeom(this.children[child], this.geometry));
                     }
                     // on récupère le barycentre si l'objet racine n'a pas de geometrie
-                    (this.geometry == null) ? this.geometry = this.getBarycentre(allGeoms) : null;
+                    this.geometry == null ? (this.geometry = this.getBarycentre(allGeoms)) : null;
                 }
                 return this.geometry;
             } else {
                 // on vérifie que l'objet a une geometrie, si non et que le paramètre geometry
                 // n'est pas vide, on le set
-                (geometry && object.geometry == null) ? object.geometry = geometry : null;
+                geometry && object.geometry == null ? (object.geometry = geometry) : null;
                 if (object.children.length > 0) {
                     // on récupère ou applique les geometries de ou à tous les enfants
                     for (var child in object.children) {
                         allGeoms.push(this.checkChildGeom(object.children[child], object.geometry));
                     }
                     // on récupère le barycentre si l'objet n'a toujours pas de geometrie
-                    (object.geometry == null) ? object.geometry = this.getBarycentre(allGeoms) : null;
+                    object.geometry == null ? (object.geometry = this.getBarycentre(allGeoms)) : null;
                 }
                 // on retourne la géometrie pour que les parents qui n'avaient pas de geometrie
                 // puissent en avoir une aussi.
@@ -123,9 +150,9 @@
          * @desc
          */
         SyncItem.prototype.getBarycentre = function(object) {
-            var barycentre = [0,0];
+            var barycentre = [0, 0];
             var geom;
-            for(var i = 0; i < object.length; i++) {
+            for (var i = 0; i < object.length; i++) {
                 geom = object[i];
                 barycentre[0] += geom[0];
                 barycentre[1] += geom[1];
@@ -139,18 +166,24 @@
          * @desc
          */
         SyncItem.list = function(wheres, callback) {
-            SQLite.exec( SyncItem.database, 'SELECT * FROM ' + SyncItem.table + SyncItem.buildListWhere( wheres ), [], function(rows) {
-                var syncItems = [], syncItem ;
-                for (var i = 0; i < rows.length; i++) {
-                    syncItem = new SyncItem( rows.item( i ) ) ;
-                    syncItem = angular.extend( syncItem, JSON.parse( syncItem.json ) );
-                    syncItem.deleted = syncItem.deleted === "true";
-                    syncItem.synced = syncItem.synced === "true";
-                    delete syncItem.json;
-                    syncItems.push( syncItem );
+            SQLite.exec(
+                SyncItem.database,
+                "SELECT * FROM " + SyncItem.table + SyncItem.buildListWhere(wheres),
+                [],
+                function(rows) {
+                    var syncItems = [],
+                        syncItem;
+                    for (var i = 0; i < rows.length; i++) {
+                        syncItem = new SyncItem(rows.item(i));
+                        syncItem = angular.extend(syncItem, JSON.parse(syncItem.json));
+                        syncItem.deleted = syncItem.deleted === "true";
+                        syncItem.synced = syncItem.synced === "true";
+                        delete syncItem.json;
+                        syncItems.push(syncItem);
+                    }
+                    (callback || function() {})(syncItems);
                 }
-                (callback || function() {})( syncItems );
-            } );
+            );
         };
 
         /**
@@ -163,9 +196,9 @@
             }
             var where = " where ";
             for (var i = 0; i < wheres.length; i++) {
-                where += wheres[i].column + ' ' + wheres[i].operator + ' "' + wheres[i].value + '" and ';
+                where += wheres[i].column + " " + wheres[i].operator + ' "' + wheres[i].value + '" and ';
             }
-            return where.slice( 0, -4 );
+            return where.slice(0, -4);
         };
 
         /**
@@ -175,17 +208,17 @@
         SyncItem.listSynced = function(callback) {
             var wheres = [
                 {
-                    column: 'deleted',
-                    operator: '!=',
-                    value: 'true'
+                    column: "deleted",
+                    operator: "!=",
+                    value: "true"
                 },
                 {
-                    column: 'synced',
-                    operator: '==',
-                    value: 'true'
+                    column: "synced",
+                    operator: "==",
+                    value: "true"
                 }
             ];
-            SyncItem.list( wheres, callback );
+            SyncItem.list(wheres, callback);
         };
 
         /**
@@ -195,17 +228,17 @@
         SyncItem.listNotSynced = function(callback) {
             var wheres = [
                 {
-                    column: 'deleted',
-                    operator: '!=',
-                    value: 'true'
+                    column: "deleted",
+                    operator: "!=",
+                    value: "true"
                 },
                 {
-                    column: 'synced',
-                    operator: '!=',
-                    value: 'true'
+                    column: "synced",
+                    operator: "!=",
+                    value: "true"
                 }
             ];
-            SyncItem.list( wheres, callback );
+            SyncItem.list(wheres, callback);
         };
 
         /**
@@ -215,49 +248,55 @@
         SyncItem.listWithoutProject = function(callback) {
             var wheres = [
                 {
-                    column: 'action',
-                    operator: 'NOT LIKE',
-                    value: 'project_%'
+                    column: "action",
+                    operator: "NOT LIKE",
+                    value: "project_%"
                 },
                 {
-                    column: 'synced',
-                    operator: '!=',
-                    value: 'true'
+                    column: "synced",
+                    operator: "!=",
+                    value: "true"
                 },
                 {
-                    column: 'deleted',
-                    operator: '!=',
-                    value: 'true'
+                    column: "deleted",
+                    operator: "!=",
+                    value: "true"
                 }
             ];
-            SyncItem.list( wheres, callback );
+            SyncItem.list(wheres, callback);
         };
 
-        SQLite.exec( SyncItem.database, 'CREATE TABLE IF NOT EXISTS ' + SyncItem.table + '(' + SyncItem.columns.join( ',' ).replace( 'id', 'id unique' ) + ')' );
+        SQLite.exec(
+            SyncItem.database,
+            "CREATE TABLE IF NOT EXISTS " +
+                SyncItem.table +
+                "(" +
+                SyncItem.columns.join(",").replace("id", "id unique") +
+                ")"
+        );
 
         /**
          * @class Synchronizator
          * @desc Factory de la classe Synchronizator
          */
-        function Synchronizator() {
-        }
+        function Synchronizator() {}
 
-        Synchronizator.globalSyncInProgress = false ;
+        Synchronizator.globalSyncInProgress = false;
 
         /**
          * @name add
          * @desc
          */
         Synchronizator.add = function(action, object) {
-            var syncItem = new SyncItem( object, action );
+            var syncItem = new SyncItem(object, action);
 
-            Synchronizator.log( syncItem );
-            syncItem.save( function() {
-                if(action === "update"){
+            Synchronizator.log(syncItem);
+            syncItem.save(function() {
+                if (action === "update") {
                     $rootScope.$broadcast("syncUpdateList");
                 }
-                $rootScope.$broadcast( 'synchronizator_new_item' );
-            } );
+                $rootScope.$broadcast("synchronizator_new_item");
+            });
         };
 
         /**
@@ -265,7 +304,7 @@
          * @desc
          */
         Synchronizator.addNew = function(object) {
-            Synchronizator.add( "new", object );
+            Synchronizator.add("new", object);
         };
 
         /**
@@ -273,7 +312,7 @@
          * @desc
          */
         Synchronizator.addDeleted = function(object) {
-            Synchronizator.add( "delete", object );
+            Synchronizator.add("delete", object);
         };
 
         /**
@@ -281,7 +320,7 @@
          * @desc
          */
         Synchronizator.addUpdated = function(object) {
-            Synchronizator.add( "update", object );
+            Synchronizator.add("update", object);
         };
 
         /**
@@ -289,7 +328,7 @@
          * @desc
          */
         Synchronizator.listItems = function(callback) {
-            SyncItem.listNotSynced( callback );
+            SyncItem.listNotSynced(callback);
         };
 
         /**
@@ -297,7 +336,7 @@
          * @desc
          */
         Synchronizator.listSyncedItems = function(callback) {
-            SyncItem.listSynced( callback );
+            SyncItem.listSynced(callback);
         };
 
         /**
@@ -305,7 +344,7 @@
          * @desc
          */
         Synchronizator.listItemsNotInProject = function(callback) {
-            SyncItem.listWithoutProject( callback );
+            SyncItem.listWithoutProject(callback);
         };
 
         /**
@@ -317,7 +356,7 @@
                 return;
             }
 
-            Synchronizator.globalSyncInProgress = true ;
+            Synchronizator.globalSyncInProgress = true;
 
             if (items.length === undefined) {
                 items = [items];
@@ -328,16 +367,16 @@
                     G3ME.reloadLayers();
                     delete Synchronizator.needRefresh;
                 }
-                Synchronizator.globalSyncInProgress = false ;
+                Synchronizator.globalSyncInProgress = false;
                 return (callback || function() {})();
             }
             if (!Synchronizator[items[0].action + items[0].type + "Synchronizator"]) {
-                return Synchronizator.syncItems( items.slice( 1 ), callback, true );
+                return Synchronizator.syncItems(items.slice(1), callback, true);
             }
 
-            Synchronizator[items[0].action + items[0].type + "Synchronizator"]( items[0], function() {
-                Synchronizator.syncItems( items.slice( 1 ), callback, true );
-            } );
+            Synchronizator[items[0].action + items[0].type + "Synchronizator"](items[0], function() {
+                Synchronizator.syncItems(items.slice(1), callback, true);
+            });
         };
 
         /**
@@ -353,52 +392,54 @@
          * @desc
          */
         Synchronizator.newComplexAssetSynchronizator = function(complexasset, callback) {
-            var assets = [] ;
+            var assets = [];
             complexasset.syncInProgress = true;
             complexasset.checkChildGeom();
-            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.census.json' ), complexasset, {
-                timeout: 1e5
-            } ).success( function(data) {
-                if (data instanceof Object) {
-                    complexasset.synced = true;
-                    var i;
-                    for (var okey in data) {
-                        if (okey === "relationship") {
-                            continue ;
+            $http
+                .post(Utils.getServiceUrl("gi.maintenance.mobility.census.json"), complexasset, {
+                    timeout: 1e5
+                })
+                .success(function(data) {
+                    if (data instanceof Object) {
+                        complexasset.synced = true;
+                        var i;
+                        for (var okey in data) {
+                            if (okey === "relationship") {
+                                continue;
+                            }
+                            for (i = 0; i < data[okey].length; i++) {
+                                assets.push(data[okey][i]);
+                            }
                         }
-                        for (i = 0; i < data[okey].length; i++) {
-                            assets.push( data[okey][i] );
-                        }
+                        Asset.delete(complexasset.uuids, function() {
+                            Relationship.delete(complexasset.uuids, function() {
+                                Asset.save(assets, function() {
+                                    Relationship.save(data.relationship, function() {
+                                        complexasset.syncInProgress = false;
+                                        Synchronizator.needRefresh = true;
+                                        complexasset.save(callback);
+                                    });
+                                });
+                            });
+                        });
+                    } else {
+                        complexasset.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
+                        (callback || function() {})();
                     }
-                    Asset.delete( complexasset.uuids, function() {
-                        Relationship.delete( complexasset.uuids, function() {
-                            Asset.save( assets, function() {
-                                Relationship.save( data.relationship, function() {
-                                    complexasset.syncInProgress = false;
-                                    Synchronizator.needRefresh = true;
-                                    complexasset.save( callback );
-                                } );
-                            } );
-                        } );
-                    } );
-                } else {
-                    complexasset.error = i18n.get( "_SYNC_UNKNOWN_ERROR_" );
-                    (callback || function() {})();
-                }
-            } ).error( function(data, code) {
-                if (+code === 404) {
-                    complexasset.synced = true ;
+                })
+                .error(function(data, code) {
+                    if (+code === 404) {
+                        complexasset.synced = true;
+                        complexasset.syncInProgress = false;
+                        complexasset.save(callback);
+                        alertify.alert(i18n.get("_SYNC_UPDATE_HAS_BEEN_DELETED"));
+                        Asset.delete(Asset.getIds(complexasset));
+                    } else {
+                        complexasset.error = data && data.error && data.error.text;
+                    }
                     complexasset.syncInProgress = false;
-                    complexasset.save( callback );
-                    alertify.alert( i18n.get( "_SYNC_UPDATE_HAS_BEEN_DELETED" ) );
-                    Asset.delete( Asset.getIds( complexasset ) );
-                } else {
-                    complexasset.error = (data && data.error && data.error.text) ;
-                }
-                complexasset.syncInProgress = false;
-                complexasset.save( callback );
-            } );
-
+                    complexasset.save(callback);
+                });
         };
 
         /**
@@ -406,7 +447,7 @@
          * @desc
          */
         Synchronizator.updateComplexAssetSynchronizator = function(complexasset, callback) {
-            Synchronizator.newComplexAssetSynchronizator( complexasset, callback );
+            Synchronizator.newComplexAssetSynchronizator(complexasset, callback);
         };
 
         /**
@@ -415,23 +456,24 @@
          */
         Synchronizator.deleteAssetSynchronizator = function(asset, callback) {
             asset.syncInProgress = true;
-            $http.post(
-                Utils.getServiceUrl( 'gi.maintenance.mobility.installation.assets.json' ),
-                {
+            $http
+                .post(Utils.getServiceUrl("gi.maintenance.mobility.installation.assets.json"), {
                     deleted: asset.payload
-                }
-            ).success( function(data) {
-                if (Asset.handleDeleteAssets( data )) {
-                    asset.synced = true;
-                    Synchronizator.needRefresh = true;
-                    asset.save();
-                }
-            } ).error( function(data) {
-                Asset.handleDeleteAssets( data );
-            } ).finally( function() {
-                asset.syncInProgress = false;
-                (callback || function() {})();
-            } );
+                })
+                .success(function(data) {
+                    if (Asset.handleDeleteAssets(data)) {
+                        asset.synced = true;
+                        Synchronizator.needRefresh = true;
+                        asset.save();
+                    }
+                })
+                .error(function(data) {
+                    Asset.handleDeleteAssets(data);
+                })
+                .finally(function() {
+                    asset.syncInProgress = false;
+                    (callback || function() {})();
+                });
         };
 
         /**
@@ -440,43 +482,50 @@
          */
         Synchronizator.newReportSynchronizator = function(report, callback) {
             report.syncInProgress = true;
-            $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.json' ), report, {
-                timeout: 60*1000
-            }).success(function(data) {
-                if (data.cri && data.cri.length) {
-                    report.synced = true;
-                    report.error = undefined;
-                }
-            }).error(function(data) {
-                report.error = (data && data.error && data.error.text) ? data.error.text : i18n.get("_SYNC_UNKNOWN_ERROR_");
-            }).finally(function(data) {
-                report.syncInProgress = false;
-                report.save(callback);
-            });
+            $http
+                .post(Utils.getServiceUrl("gi.maintenance.mobility.report.json"), report, {
+                    timeout: 60 * 1000
+                })
+                .success(function(data) {
+                    if (data.cri && data.cri.length) {
+                        report.synced = true;
+                        report.error = undefined;
+                    }
+                })
+                .error(function(data) {
+                    report.error =
+                        data && data.error && data.error.text ? data.error.text : i18n.get("_SYNC_UNKNOWN_ERROR_");
+                })
+                .finally(function(data) {
+                    report.syncInProgress = false;
+                    report.save(callback);
+                });
         };
 
         /**
          * @name updateReportSynchronizator
          * @desc
          */
-         Synchronizator.updateReportSynchronizator = function(report, callback) {
-            Synchronizator.newReportSynchronizator( report, callback );
+        Synchronizator.updateReportSynchronizator = function(report, callback) {
+            Synchronizator.newReportSynchronizator(report, callback);
         };
-
 
         /**
          * @name deleteAll
          * @desc
          */
         Synchronizator.deleteAll = function(type, actions, callback) {
-            Synchronizator.listItems( function(items) {
+            Synchronizator.listItems(function(items) {
                 for (var i = 0, ii = items.length; i < ii; i++) {
-                    if ((type ? items[i].type === type : true) && (actions ? actions.indexOf( items[i].action ) !== -1 : true)) {
-                        Synchronizator.deleteItem( items[i] );
+                    if (
+                        (type ? items[i].type === type : true) &&
+                        (actions ? actions.indexOf(items[i].action) !== -1 : true)
+                    ) {
+                        Synchronizator.deleteItem(items[i]);
                     }
                 }
                 (callback || function() {})();
-            } );
+            });
         };
 
         /**
@@ -484,7 +533,7 @@
          * @desc
          */
         Synchronizator.deleteAllProjectItems = function(callback) {
-            Synchronizator.deleteAll( null, ["project_new", "project_update"], callback );
+            Synchronizator.deleteAll(null, ["project_new", "project_update"], callback);
         };
 
         /**
@@ -492,15 +541,15 @@
          * @desc
          */
         Synchronizator.getAll = function(type, action, callback) {
-            Synchronizator.listItems( function(items) {
+            Synchronizator.listItems(function(items) {
                 var typedItems = [];
                 for (var i = 0, ii = items.length; i < ii; i++) {
                     if ((type ? items[i].type === type : true) && (action ? items[i].action === action : true)) {
-                        typedItems.push( items[i] );
+                        typedItems.push(items[i]);
                     }
                 }
-                (callback || function() {})( typedItems );
-            } );
+                (callback || function() {})(typedItems);
+            });
         };
 
         /**
@@ -508,7 +557,7 @@
          * @desc
          */
         Synchronizator.getAllByType = function(type, callback) {
-            Synchronizator.getAll( type, null, callback );
+            Synchronizator.getAll(type, null, callback);
         };
 
         /**
@@ -516,7 +565,7 @@
          * @desc
          */
         Synchronizator.getAllByAction = function(action, callback) {
-            Synchronizator.getAll( null, action, callback );
+            Synchronizator.getAll(null, action, callback);
         };
 
         /**
@@ -524,63 +573,76 @@
          * @desc
          */
         Synchronizator.getAllSynced = function(type, callback) {
-            Synchronizator.listSyncedItems( function(items) {
+            Synchronizator.listSyncedItems(function(items) {
                 var typedItems = [];
                 for (var i = 0, ii = items.length; i < ii; i++) {
                     if (items[i].type === type) {
-                        typedItems.push( items[i] );
+                        typedItems.push(items[i]);
                     }
                 }
-                (callback || function() {})( typedItems );
-            } );
+                (callback || function() {})(typedItems);
+            });
         };
 
         /**
-        * @name log
-        * @desc
-        */
+         * @name log
+         * @desc
+         */
         Synchronizator.log = function(report) {
-
             var reportbis = angular.copy(report);
 
             if (reportbis.ged) {
                 delete reportbis.ged;
             }
-            if(window.cordova){
-                var fileName = reportbis.uuid || reportbis.id + '.json';
-                window.resolveLocalFileSystemURL("file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/", function(dir) {
-                    dir.getDirectory('reports', {create:true}, function(reportDir) {
-                        reportDir.getFile(fileName, {create:true}, function(file) {
-                            if (!file) {
-                                return;
-                            }
-                            file.createWriter(function(fileWriter) {
-                                fileWriter.seek(fileWriter.length);
-                                fileWriter.write(JSON.stringify(reportbis));
-                            }, function(error) {
-                                    console.error(JSON.stringify(error));
-                            });
-                        });
-                    });
-                }, function(err){
-                    window.resolveLocalFileSystemURL(cordova.file.externalCacheDirectory, function(dir) {
-                        dir.getDirectory('reports', {create:true}, function(reportDir) {
-                            reportDir.getFile(fileName, {create:true}, function(file) {
+            if (window.cordova) {
+                var fileName = reportbis.uuid || reportbis.id + ".json";
+                window.resolveLocalFileSystemURL(
+                    "file:///storage/extSdCard/Android/data/com.gismartware.mobile/cache/",
+                    function(dir) {
+                        dir.getDirectory("reports", { create: true }, function(reportDir) {
+                            reportDir.getFile(fileName, { create: true }, function(file) {
                                 if (!file) {
                                     return;
                                 }
-                                file.createWriter(function(fileWriter) {
-                                    fileWriter.seek(fileWriter.length);
-                                    fileWriter.write(JSON.stringify(reportbis));
-                                }, function(error) {
-                                    console.error(JSON.stringify(error));
-                                });
+                                file.createWriter(
+                                    function(fileWriter) {
+                                        fileWriter.seek(fileWriter.length);
+                                        fileWriter.write(JSON.stringify(reportbis));
+                                    },
+                                    function(error) {
+                                        console.error(JSON.stringify(error));
+                                    }
+                                );
                             });
                         });
-                    }, function(error) {
-                        console.error(JSON.stringify(error));
-                    });
-                });
+                    },
+                    function(err) {
+                        window.resolveLocalFileSystemURL(
+                            cordova.file.externalCacheDirectory,
+                            function(dir) {
+                                dir.getDirectory("reports", { create: true }, function(reportDir) {
+                                    reportDir.getFile(fileName, { create: true }, function(file) {
+                                        if (!file) {
+                                            return;
+                                        }
+                                        file.createWriter(
+                                            function(fileWriter) {
+                                                fileWriter.seek(fileWriter.length);
+                                                fileWriter.write(JSON.stringify(reportbis));
+                                            },
+                                            function(error) {
+                                                console.error(JSON.stringify(error));
+                                            }
+                                        );
+                                    });
+                                });
+                            },
+                            function(error) {
+                                console.error(JSON.stringify(error));
+                            }
+                        );
+                    }
+                );
                 return this;
             } else {
                 return;
@@ -592,32 +654,34 @@
          * @desc
          */
         Synchronizator.checkSynchronizedReports = function() {
-            Synchronizator.getAllSynced( 'Report', function(reports) {
+            Synchronizator.getAllSynced("Report", function(reports) {
                 var luuids = [];
                 for (var i = 0; i < reports.length; i++) {
-                    luuids.push( reports[i].uuid );
+                    luuids.push(reports[i].uuid);
                 }
-                $http.post( Utils.getServiceUrl( 'gi.maintenance.mobility.report.check.json' ), {
-                    uuids: luuids
-                }).success( function(data) {
-                    if ((typeof data) === "string") {
-                        return;
-                    }
-                    var ruuids = data.uuids || data;
-                    for (var i = 0, ii = reports.length; i < ii; i++) {
-                        if (ruuids[reports[i].uuid]) {
-                            reports[i].delete();
+                $http
+                    .post(Utils.getServiceUrl("gi.maintenance.mobility.report.check.json"), {
+                        uuids: luuids
+                    })
+                    .success(function(data) {
+                        if (typeof data === "string") {
+                            return;
                         }
-                    }
-                }).error(function (data, status) {
-                    if(data){
-                        alertify.alert(data);
-                    }
-                });
+                        var ruuids = data.uuids || data;
+                        for (var i = 0, ii = reports.length; i < ii; i++) {
+                            if (ruuids[reports[i].uuid]) {
+                                reports[i].delete();
+                            }
+                        }
+                    })
+                    .error(function(data, status) {
+                        if (data) {
+                            alertify.alert(data);
+                        }
+                    });
             });
         };
 
         return Synchronizator;
     }
-
 })();

@@ -1,12 +1,21 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").controller("SiteListController", SiteListController);
 
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'SiteListController', SiteListController );
-
-    SiteListController.$inject = ["$scope", "$rootScope", "$http", "$location", "i18n", "Storage", "prefetchedlocalsites", "Site", "Utils", "Authenticator", "G3ME"];
+    SiteListController.$inject = [
+        "$scope",
+        "$rootScope",
+        "$http",
+        "$location",
+        "i18n",
+        "Storage",
+        "prefetchedlocalsites",
+        "Site",
+        "Utils",
+        "Authenticator",
+        "G3ME"
+    ];
 
     /**
      * @class SiteListController
@@ -17,8 +26,19 @@
      * @property {Array} sites Sites chargés
      */
 
-    function SiteListController($scope, $rootScope, $http, $location, i18n, Storage, prefetchedlocalsites, Site, Utils, Authenticator, G3ME) {
-
+    function SiteListController(
+        $scope,
+        $rootScope,
+        $http,
+        $location,
+        i18n,
+        Storage,
+        prefetchedlocalsites,
+        Site,
+        Utils,
+        Authenticator,
+        G3ME
+    ) {
         var vm = this;
 
         vm.select = select;
@@ -36,18 +56,16 @@
          * @desc Fonction d'initialisation
          */
         function activate() {
-
             $rootScope.currentPage = "Sélection de site";
 
             vm.ready = false;
-            vm.online = Storage.get( 'online' );
+            vm.online = Storage.get("online");
 
             if (vm.online) {
-                getRemoteSites( prefetchedlocalsites || {} );
+                getRemoteSites(prefetchedlocalsites || {});
             } else {
-                getLocalSites( prefetchedlocalsites || {} );
+                getLocalSites();
             }
-
         }
 
         /**
@@ -55,9 +73,10 @@
          * @desc Récupère la liste des sites sur le serveur
          */
         function getRemoteSites(knownSites) {
-            var url = Utils.getServiceUrl( 'gi.maintenance.mobility.site.json' );
-            $http.get( url )
-                .success( function(sites) {
+            var url = Utils.getServiceUrl("gi.maintenance.mobility.site.json");
+            $http
+                .get(url)
+                .success(function(sites) {
                     var sitesById = {},
                         site,
                         tmpsites = {};
@@ -65,35 +84,32 @@
                         site = sites[i];
                         tmpsites[site.id] = site;
                     }
-                    angular.extend( tmpsites, sitesById, knownSites );
+                    angular.extend(tmpsites, sitesById, knownSites);
                     // Pour que les filtres fonctionnent, il nous faut un simple tableau.
                     vm.sites = [];
                     for (var id in tmpsites) {
-                        vm.sites.push( tmpsites[id] );
+                        vm.sites.push(tmpsites[id]);
                     }
-                    vm.sites.sort(function(a, b){
-                        if (a.label.toLowerCase() < b.label.toLowerCase())
-                            return -1;
-                        if (a.label.toLowerCase() > b.label.toLowerCase())
-                            return 1;
+                    vm.sites.sort(function(a, b) {
+                        if (a.label.toLowerCase() < b.label.toLowerCase()) return -1;
+                        if (a.label.toLowerCase() > b.label.toLowerCase()) return 1;
                         return 0;
                     });
                     vm.ready = true;
-                } ).error( function() {
-                // Pour que les filtres fonctionnent, il nous faut un simple tableau.
-                vm.sites = [];
-                for (var id in knownSites) {
-                    vm.sites.push( knownSites[id] );
-                }
-                vm.sites.sort(function(a, b){
-                    if (a.label.toLowerCase() < b.label.toLowerCase())
-                        return -1;
-                    if (a.label.toLowerCase() > b.label.toLowerCase())
-                        return 1;
-                    return 0;
+                })
+                .error(function() {
+                    // Pour que les filtres fonctionnent, il nous faut un simple tableau.
+                    vm.sites = [];
+                    for (var id in knownSites) {
+                        vm.sites.push(knownSites[id]);
+                    }
+                    vm.sites.sort(function(a, b) {
+                        if (a.label.toLowerCase() < b.label.toLowerCase()) return -1;
+                        if (a.label.toLowerCase() > b.label.toLowerCase()) return 1;
+                        return 0;
+                    });
+                    vm.ready = true;
                 });
-                vm.ready = true;
-            } );
         }
 
         /**
@@ -101,19 +117,16 @@
          * @desc Récupère la liste des sites locaux
          */
         function getLocalSites() {
-
             var knownSites = prefetchedlocalsites || {};
 
             // Pour que les filtres fonctionnent, il nous faut un simple tableau.
             vm.sites = [];
             for (var id in knownSites) {
-                vm.sites.push( knownSites[id] );
+                vm.sites.push(knownSites[id]);
             }
-            vm.sites.sort(function(a, b){
-                if (a.label.toLowerCase() < b.label.toLowerCase())
-                    return -1;
-                if (a.label.toLowerCase() > b.label.toLowerCase())
-                    return 1;
+            vm.sites.sort(function(a, b) {
+                if (a.label.toLowerCase() < b.label.toLowerCase()) return -1;
+                if (a.label.toLowerCase() > b.label.toLowerCase()) return 1;
                 return 0;
             });
             vm.ready = true;
@@ -127,11 +140,15 @@
         function select(site) {
             Site.current = site;
             vm.ready = false;
-            Authenticator.selectSiteRemotely( site.id, function() {
-                redirect( site );
-            }, function() {
-                    redirect( site );
-                } );
+            Authenticator.selectSiteRemotely(
+                site.id,
+                function() {
+                    redirect(site);
+                },
+                function() {
+                    redirect(site);
+                }
+            );
         }
 
         /**
@@ -142,7 +159,7 @@
         function redirect(site) {
             G3ME.resetMap();
             Utils.clearPersistence();
-            $location.path( '/map/' + site.id );
+            $location.path("/map/" + site.id);
         }
 
         /**
@@ -151,11 +168,11 @@
          * @param {Object} site Site à désinstaller
          */
         function confirmUninstallSite(site) {
-            alertify.confirm( i18n.get( '_SYNC_UNINSTALL_CONFIRM_MESSAGE_', site.label ), function(yes) {
+            alertify.confirm(i18n.get("_SYNC_UNINSTALL_CONFIRM_MESSAGE_", site.label), function(yes) {
                 if (yes) {
-                    vm.uninstallSite( site );
+                    vm.uninstallSite(site);
                 }
-            } );
+            });
         }
 
         /**
@@ -164,10 +181,8 @@
          * @param {Object} site Site à désinstaller
          */
         function uninstallSite(site) {
-            $location.path( 'sites/uninstall/' + site.id );
+            $location.path("sites/uninstall/" + site.id);
             $scope.$apply();
         }
-
     }
-
 })();

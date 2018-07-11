@@ -1,10 +1,7 @@
-( function() {
+(function() {
+    "use strict";
 
-    'use strict';
-
-    angular
-        .module( 'smartgeomobile' )
-        .controller( 'CensusController', CensusController );
+    angular.module("smartgeomobile").controller("CensusController", CensusController);
 
     CensusController.$inject = ["Site", "$rootScope", "Asset", "$scope", "ComplexAsset", "Relationship", "Project"];
 
@@ -15,7 +12,6 @@
      * @property {String} classindex Okey de l'objet recencé en cours
      */
     function CensusController(Site, $rootScope, Asset, $scope, ComplexAsset, Relationship, Project) {
-
         var vm = this;
 
         vm.startCensus = startCensus;
@@ -26,17 +22,16 @@
         vm.metamodel = Site.current.metamodel;
         vm.isProject = !!Project.currentLoadedProject;
 
-        $rootScope.$on( 'NEW_PROJECT_LOADED', function() {
+        $rootScope.$on("NEW_PROJECT_LOADED", function() {
             vm.isProject = true;
-        } );
-        $rootScope.$on( 'OLD_PROJECT_UNLOADED', function() {
+        });
+        $rootScope.$on("OLD_PROJECT_UNLOADED", function() {
             vm.isProject = false;
-        } );
+        });
 
         vm.asset = {};
 
         vm.classindex = "";
-
 
         activate();
 
@@ -47,7 +42,7 @@
         function activate() {
             vm.classindex = "0";
             //Event pour l'édition d'un asset
-            $rootScope.$on( 'START_UPDATE_ASSET', startUpdateAssetHandler );
+            $rootScope.$on("START_UPDATE_ASSET", startUpdateAssetHandler);
         }
 
         /**
@@ -57,11 +52,9 @@
          */
         function startCensus(data) {
             if (data.okey) {
-
                 vm.okey = data.okey;
                 vm.asset = data;
             } else {
-
                 vm.okey = data;
                 vm.asset = null;
             }
@@ -89,62 +82,58 @@
                 return;
             }
 
-
-            var isProjectAsset = (asset.okey.search( 'PROJECT_' ) === 0);
+            var isProjectAsset = asset.okey.search("PROJECT_") === 0;
 
             if (isProjectAsset) {
-                vm.classindex = Project.currentLoadedProject.getClassIndexForUpdatedAsset( asset.okey );
+                vm.classindex = Project.currentLoadedProject.getClassIndexForUpdatedAsset(asset.okey);
             }
 
-            asset.findRelated( function(data) {
+            asset.findRelated(function(data) {
                 var theAsset, complex;
                 if (data !== undefined) {
                     if ((data.root === data.id || +data.root === +data.id) && data.isComplex) {
                         //Cet élément est déjà la racine, on cherche ses enfants
-                        theAsset = formatAsset( data );
-                        complex = new ComplexAsset( null, null, '', theAsset );
-                        fillChildren( complex, theAsset.tree, theAsset.relatedAssets, complex );
+                        theAsset = formatAsset(data);
+                        complex = new ComplexAsset(null, null, "", theAsset);
+                        fillChildren(complex, theAsset.tree, theAsset.relatedAssets, complex);
                         theAsset.root = complex;
                         theAsset.isProject = isProjectAsset;
                         theAsset.relatedAssets = {};
                         theAsset.showFormId = data.id;
-                        fixTypeField( theAsset );
-                        startCensus( theAsset );
+                        fixTypeField(theAsset);
+                        startCensus(theAsset);
                     } else {
-                        Relationship.findRoot( data.id, function(r) {
-                            Asset.findOne( r, function(root) {
-                                theAsset = formatAsset( root );
-                                complex = new ComplexAsset( null, null, '', theAsset );
-                                fillChildren( complex, data.tree, data.relatedAssets, complex );
+                        Relationship.findRoot(data.id, function(r) {
+                            Asset.findOne(r, function(root) {
+                                theAsset = formatAsset(root);
+                                complex = new ComplexAsset(null, null, "", theAsset);
+                                fillChildren(complex, data.tree, data.relatedAssets, complex);
                                 theAsset.root = complex;
                                 theAsset.isProject = isProjectAsset;
                                 theAsset.relatedAssets = {};
                                 theAsset.showFormId = data.id;
-                                fixTypeField( theAsset );
-                                startCensus( theAsset );
-                            } );
-                        } );
-
+                                fixTypeField(theAsset);
+                                startCensus(theAsset);
+                            });
+                        });
                     }
                 } else {
-                    theAsset = formatAsset( asset );
-                    complex = new ComplexAsset( null, null, '', theAsset );
+                    theAsset = formatAsset(asset);
+                    complex = new ComplexAsset(null, null, "", theAsset);
                     theAsset.root = complex;
                     theAsset.isProject = isProjectAsset;
-                    fixTypeField( theAsset );
-                    startCensus( theAsset );
+                    fixTypeField(theAsset);
+                    startCensus(theAsset);
                 }
-            } );
+            });
         }
-
-
 
         /**
          * Mise en forme de l'asset
          * @param asset
          */
         function formatAsset(asset, father) {
-            var object = new ComplexAsset( asset.okey );
+            var object = new ComplexAsset(asset.okey);
             object.id = asset.id;
             object.fields = asset.attributes;
             object.children = [];
@@ -159,11 +148,10 @@
             return object;
         }
 
-
         function fixTypeField(complex) {
             if (complex.children.length) {
                 for (var k = 0, kk = complex.children.length; k < kk; k++) {
-                    fixTypeField( complex.children[k] );
+                    fixTypeField(complex.children[k]);
                 }
             }
 
@@ -179,16 +167,15 @@
                             }
                         }
                     }
-                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate( complex.fields[field.key] )) {
+                    if (complex.fields[field.key] && field.type === "D" && !angular.isDate(complex.fields[field.key])) {
                         var pattern = /(\d{2})\/(\d{2})\/(\d{2})/;
-                        complex.fields[field.key] = new Date( complex.fields[field.key].replace( pattern, '20$3-$2-$1' ) );
+                        complex.fields[field.key] = new Date(complex.fields[field.key].replace(pattern, "20$3-$2-$1"));
                     }
                     if (complex.fields[field.key] && field.type === "N") {
-                        complex.fields[field.key] = +("" + complex.fields[field.key]).replace( ",", "." );
+                        complex.fields[field.key] = +("" + complex.fields[field.key]).replace(",", ".");
                     }
                 }
             }
-
         }
 
         /**
@@ -201,7 +188,7 @@
                 for (var id in tree[node.id]) {
                     var j = tree[node.id][id];
                     relatedAssets[j].root = rootId;
-                    node.children.push( formatAsset( relatedAssets[j], node ) );
+                    node.children.push(formatAsset(relatedAssets[j], node));
                 }
             }
 
@@ -210,10 +197,8 @@
             }
 
             for (var i = 0; i < node.children.length; i++) {
-                fillChildren( node.children[i], tree, relatedAssets, rootId );
+                fillChildren(node.children[i], tree, relatedAssets, rootId);
             }
-
         }
     }
-
-} )();
+})();

@@ -4,21 +4,22 @@
             <span class='left_panel_back_menu'>
                 <i class="fa fa-arrow-circle-left"></i>
             </span>
-            <img  src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img> <span id='smartgeo-version'>{{version}}</span>
+            <img src="images/logo-smartgeo-white.png" alt="Smartgeo Mobile"></img>
+            <span id='smartgeo-version'>{{version}}</span>
         </h2>
         <ul id="left_panel_menu_items">
             <div ng-repeat="item in menuItems" ng-if="rights[item.id]">
                 <li ng-if="item.displayMenuItem" ng-click='execute(item)'>
-                        <span ng-class="item.icon"></span> {{item.label}}
-                        <!-- TODO(@gulian): trouver mieux -->
-                        <span class="badge" ng-if="item.badge == 'toBeSync' && ($root.syncBadgeItems.length >0) ">{{$root.syncBadgeItems.length}}</span>
+                    <span ng-class="item.icon"></span> {{item.label}}
+                    <!-- TODO(@gulian): trouver mieux -->
+                    <span class="badge" ng-if="item.badge == 'toBeSync' && ($root.syncBadgeItems.length >0) ">{{$root.syncBadgeItems.length}}</span>
                 </li>
                 <div ng-if="item.forceLoadDOM" ng-show="item.displayItemContent" ng-include="item.template"></div>
                 <div ng-if="item.displayItemContent && !item.forceLoadDOM" ng-include="item.template"></div>
             </div>
         </ul>
         <ul id="left_panel_bottom_fixed">
-             <li ng-repeat="item in bottomMenuItems" ng-if="rights[item.id] && item.displayMenuItem" ng-click='execute(item)' >
+            <li ng-repeat="item in bottomMenuItems" ng-if="rights[item.id] && item.displayMenuItem" ng-click='execute(item)'>
                 <span ng-class="item.icon"></span>
             </li>
         </ul>
@@ -26,7 +27,7 @@
 
     <div id="left_panel_toggle_bar">
         <div id="left_panel_toggle_shadow" ng-show="display" ng-click="toggleDisplay();"></div>
-        <a id="left_panel_toggle_button"  ng-click="toggleDisplay();" >
+        <a id="left_panel_toggle_button" ng-click="toggleDisplay();">
             <span class="fa fa-ellipsis-v"></span>
         </a>
     </div>

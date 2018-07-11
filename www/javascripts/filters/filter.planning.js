@@ -1,17 +1,16 @@
 (function() {
-
-    'use strict';
+    "use strict";
 
     angular
-        .module( 'smartgeomobile' )
-        .filter( 'todayMissions', todayMissions )
-        .filter( 'specificDayMissions', specificDayMissions )
-        .filter( 'lateMissions', lateMissions )
-        .filter( 'doneMissions', doneMissions )
-        .filter( 'sanitizeDate', sanitizeDate )
-        .filter( 'opennedMissions', opennedMissions )
-        .filter( 'opennedTours', opennedTours )
-        .filter( 'opennedCalls', opennedCalls );
+        .module("smartgeomobile")
+        .filter("todayMissions", todayMissions)
+        .filter("specificDayMissions", specificDayMissions)
+        .filter("lateMissions", lateMissions)
+        .filter("doneMissions", doneMissions)
+        .filter("sanitizeDate", sanitizeDate)
+        .filter("opennedMissions", opennedMissions)
+        .filter("opennedTours", opennedTours)
+        .filter("opennedCalls", opennedCalls);
 
     todayMissions.$inject = ["$filter"];
 
@@ -23,27 +22,32 @@
         function _todayMissions(in_) {
             var out = {},
                 mission,
-                begin, end,
+                begin,
+                end,
                 now = new Date(),
                 tomorrow = new Date(),
-                startsToday, endsToday, overlapsToday;
-            now.setHours( 0, 0, 0, 0 ); // MINUIT
-            tomorrow.setHours( 23, 59, 59, 99 );
+                startsToday,
+                endsToday,
+                overlapsToday;
+            now.setHours(0, 0, 0, 0); // MINUIT
+            tomorrow.setHours(23, 59, 59, 99);
 
             now = now.getTime();
             tomorrow = tomorrow.getTime();
 
             for (var id in in_) {
                 mission = in_[id];
-                begin = $filter( 'sanitizeDate' )( mission.begin );
-                end = $filter( 'sanitizeDate' )( mission.end );
+                begin = $filter("sanitizeDate")(mission.begin);
+                end = $filter("sanitizeDate")(mission.end);
 
-                startsToday = (begin >= now && begin <= tomorrow);
-                endsToday = (end >= now && end <= tomorrow);
-                overlapsToday = (begin <= now && end >= tomorrow);
-                if ((startsToday || endsToday || overlapsToday) &&
+                startsToday = begin >= now && begin <= tomorrow;
+                endsToday = end >= now && end <= tomorrow;
+                overlapsToday = begin <= now && end >= tomorrow;
+                if (
+                    (startsToday || endsToday || overlapsToday) &&
                     (mission.assets.length || !mission.activity) &&
-                    !mission.isLate) {
+                    !mission.isLate
+                ) {
                     out[id] = mission;
                 }
             }
@@ -65,8 +69,13 @@
             day *= 1;
             for (var id in in_) {
                 mission = in_[id];
-                if ($filter( 'sanitizeDate' )( mission.end ) > day && $filter( 'sanitizeDate' )( mission.begin ) >= day && $filter( 'sanitizeDate' )( mission.begin ) < (day + 86400000) && (mission.assets.length || !mission.activity)) {
-                    out.push( mission );
+                if (
+                    $filter("sanitizeDate")(mission.end) > day &&
+                    $filter("sanitizeDate")(mission.begin) >= day &&
+                    $filter("sanitizeDate")(mission.begin) < day + 86400000 &&
+                    (mission.assets.length || !mission.activity)
+                ) {
+                    out.push(mission);
                 }
             }
             return out;
@@ -84,19 +93,19 @@
         function _lateMissions(in_) {
             var out = [],
                 mission,
-                now = (new Date()).getTime();
+                now = new Date().getTime();
             for (var id in in_) {
                 mission = in_[id];
-                mission.sanitizedEnd = mission.sanitizedEnd || $filter( 'sanitizeDate' )( mission.end );
-                mission.sanitizedBegin = mission.sanitizedBegin || $filter( 'sanitizeDate' )( mission.begin );
+                mission.sanitizedEnd = mission.sanitizedEnd || $filter("sanitizeDate")(mission.end);
+                mission.sanitizedBegin = mission.sanitizedBegin || $filter("sanitizeDate")(mission.begin);
                 if (mission.sanitizedEnd < now && (mission.assets.length || !mission.activity)) {
                     mission.isLate = true;
-                    out.push( mission );
+                    out.push(mission);
                 }
             }
-            out.sort( function(a, b) {
+            out.sort(function(a, b) {
                 return a.sanitizedEnd - b.sanitizedEnd;
-            } );
+            });
             return out;
         }
         return _lateMissions;
@@ -132,7 +141,7 @@
          * @desc
          */
         function _sanitizeDate(date) {
-            return date && (new Date( date.slice( 3, 5 ) + '/' + date.slice( 0, 2 ) + '/' + date.slice( 6 ) )).getTime() || '';
+            return (date && new Date(date.slice(3, 5) + "/" + date.slice(0, 2) + "/" + date.slice(6)).getTime()) || "";
         }
         return _sanitizeDate;
     }
@@ -169,7 +178,7 @@
                     }
                 }
                 if (isCompatible && in_[i].openned && !nightTour && !alreadyInMission) {
-                    out.push( in_[i] );
+                    out.push(in_[i]);
                 }
             }
             return out;
@@ -188,7 +197,7 @@
             var out = [];
             for (var i in in_) {
                 if (!in_[i].activity && in_[i].openned) {
-                    out.push( in_[i] );
+                    out.push(in_[i]);
                 }
             }
             return out;
@@ -196,7 +205,7 @@
         return _opennedCalls;
     }
 
-    opennedTours.$inject = ['Site'];
+    opennedTours.$inject = ["Site"];
 
     function opennedTours(Site) {
         /**
@@ -209,17 +218,15 @@
                 in_ = [in_];
             }
             for (var i in in_) {
-                if ( !in_[i] || !in_[i].multi_report_activity || in_[i].assets_by_id[ asset.id ] ) {
+                if (!in_[i] || !in_[i].multi_report_activity || in_[i].assets_by_id[asset.id]) {
                     continue;
                 }
                 if (Site.current.activities._byId[+in_[i].multi_report_activity.id].okeys[0] === asset.okey) {
-                    out.push( in_[i] );
+                    out.push(in_[i]);
                 }
             }
             return out;
         }
         return _opennedTours;
     }
-
-
 })();

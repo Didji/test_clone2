@@ -10,10 +10,7 @@
         <i18n ng-if="oauthController.loginInProgress">OAUTH_IN_PROGRESS</i18n>
         <i18n ng-if="!oauthController.loginInProgress">_RETRY_</i18n>
     </button>
-    <button ng-click="oauthController.close()"
-            ng-if="!oauthController.loginInProgress && oauthController.errorMessage"
-            class="btn btn-lg btn-default btn-block"
-    >
+    <button ng-click="oauthController.close()" ng-if="!oauthController.loginInProgress && oauthController.errorMessage" class="btn btn-lg btn-default btn-block">
         <i18n>OAUTH_EXIT</i18n>
     </button>
 </form>

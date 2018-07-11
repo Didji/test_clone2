@@ -4,18 +4,35 @@
  *
  */
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").factory("MultiReport", MultiReportFactory);
 
-    angular
-        .module( 'smartgeomobile' )
-        .factory( 'MultiReport', MultiReportFactory );
+    MultiReportFactory.$inject = [
+        "$compile",
+        "$rootScope",
+        "G3ME",
+        "Asset",
+        "Report",
+        "Synchronizator",
+        "Activity",
+        "Site",
+        "Storage",
+        "i18n"
+    ];
 
-    MultiReportFactory.$inject = ["$compile", "$rootScope", "G3ME", "Asset", "Report", "Synchronizator", "Activity", "Site", "Storage", "i18n"];
-
-
-    function MultiReportFactory($compile, $rootScope, G3ME, Asset, Report, Synchronizator, Activity, Site, Storage, i18n) {
-
+    function MultiReportFactory(
+        $compile,
+        $rootScope,
+        G3ME,
+        Asset,
+        Report,
+        Synchronizator,
+        Activity,
+        Site,
+        Storage,
+        i18n
+    ) {
         /**
          * @class MultiReportFactory
          * @desc Factory de la classe MultiReport
@@ -26,36 +43,42 @@
 
         function MultiReport(intent_) {
             intent = intent_;
-            intent.multi_report_activity = Activity.findOne( intent.multi_report_activity );
+            intent.multi_report_activity = Activity.findOne(intent.multi_report_activity);
             if (!intent.multi_report_activity) {
-                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_FOUND_') );
-            } else if (intent.multi_report_activity.type !== "multi_assets_tour" || !intent.multi_report_activity.multi_assets_tour) {
-                return alertify.alert( i18n.get('_INTENT_ACTIVITY_NOT_COMPATIBLE_') );
-            } else if (intent.multi_report_activity.multi_assets_tour.switch_field === null || intent.multi_report_activity.multi_assets_tour.switch_field === undefined) {
-                return alertify.alert( i18n.get('_INTENT_NOT_VALID_') );
+                return alertify.alert(i18n.get("_INTENT_ACTIVITY_NOT_FOUND_"));
+            } else if (
+                intent.multi_report_activity.type !== "multi_assets_tour" ||
+                !intent.multi_report_activity.multi_assets_tour
+            ) {
+                return alertify.alert(i18n.get("_INTENT_ACTIVITY_NOT_COMPATIBLE_"));
+            } else if (
+                intent.multi_report_activity.multi_assets_tour.switch_field === null ||
+                intent.multi_report_activity.multi_assets_tour.switch_field === undefined
+            ) {
+                return alertify.alert(i18n.get("_INTENT_NOT_VALID_"));
             }
-            intent.multi_report_field = intent.multi_report_activity._fields[+intent.multi_report_activity.multi_assets_tour.switch_field];
-            intent.multi_report_target = intent.multi_report_target.split( ',' );
-            Asset.findAssetsByGuids( intent.multi_report_target, MultiReport.createMarkers );
+            intent.multi_report_field =
+                intent.multi_report_activity._fields[+intent.multi_report_activity.multi_assets_tour.switch_field];
+            intent.multi_report_target = intent.multi_report_target.split(",");
+            Asset.findAssetsByGuids(intent.multi_report_target, MultiReport.createMarkers);
             MultiReport.createExitControl();
         }
-
 
         /**
          * @name createExitControl
          * @desc Crée le control de sortie de multi report
          */
         MultiReport.createExitControl = function() {
-            var control = L.Control.extend( {
+            var control = L.Control.extend({
                 onAdd: function() {
-                    var container = L.DomUtil.create( 'div', 'bottom-bar' );
-                    $( container )
-                        .html( '<a href="#">' + (intent.multi_report_outmsg || "Quitter") + '</a>' )
-                        .on( 'click', MultiReport.exitClickHandler );
+                    var container = L.DomUtil.create("div", "bottom-bar");
+                    $(container)
+                        .html('<a href="#">' + (intent.multi_report_outmsg || "Quitter") + "</a>")
+                        .on("click", MultiReport.exitClickHandler);
                     return container;
                 }
-            } );
-            G3ME.map.addControl( new control() );
+            });
+            G3ME.map.addControl(new control());
         };
 
         /**
@@ -76,27 +99,38 @@
                 if (asset.currentState === 0) {
                     continue;
                 }
-                intent.multi_report_assets_id.push( asset.id );
+                intent.multi_report_assets_id.push(asset.id);
                 if (!intent.multi_report_reports[intent.multi_report_field.options[asset.currentState].value]) {
-                    intent.multi_report_reports[intent.multi_report_field.options[asset.currentState].value] = new Report( asset.id, intent.multi_report_activity.id, intent.multi_report_mission );
-                    intent.multi_report_reports[intent.multi_report_field.options[asset.currentState].value].fields[intent.multi_report_field.id] = intent.multi_report_field.options[asset.currentState].value;
+                    intent.multi_report_reports[
+                        intent.multi_report_field.options[asset.currentState].value
+                    ] = new Report(asset.id, intent.multi_report_activity.id, intent.multi_report_mission);
+                    intent.multi_report_reports[intent.multi_report_field.options[asset.currentState].value].fields[
+                        intent.multi_report_field.id
+                    ] =
+                        intent.multi_report_field.options[asset.currentState].value;
                 } else {
-                    intent.multi_report_reports[intent.multi_report_field.options[asset.currentState].value].assets.push( asset.id );
+                    intent.multi_report_reports[
+                        intent.multi_report_field.options[asset.currentState].value
+                    ].assets.push(asset.id);
                 }
             }
             for (reportValue in intent.multi_report_reports) {
                 if (angular.isObject(intent.multi_report_reports[reportValue].activity)) {
-                    intent.multi_report_reports[reportValue].activity = intent.multi_report_reports[reportValue].activity.id;
+                    intent.multi_report_reports[reportValue].activity =
+                        intent.multi_report_reports[reportValue].activity.id;
                 }
-                Synchronizator.addNew( intent.multi_report_reports[reportValue] );
+                Synchronizator.addNew(intent.multi_report_reports[reportValue]);
             }
             if (intent.multi_report_redirect) {
-                redirect = intent.multi_report_redirect.replace( "[DONE_ASSETS]", intent.multi_report_assets_id.join( ',' ) );
+                redirect = intent.multi_report_redirect.replace(
+                    "[DONE_ASSETS]",
+                    intent.multi_report_assets_id.join(",")
+                );
 
                 //TODO: pour ce dev spé Veolia, gérer le passage en 2.0/full web view en remplacant l'appel suivant à Chromium:
-                SmartgeoChromium.redirect( decodeURI( redirect ) );
+                SmartgeoChromium.redirect(decodeURI(redirect));
             }
-            Storage.remove( 'intent' );
+            Storage.remove("intent");
             return false;
         };
 
@@ -105,27 +139,36 @@
          * @desc Crée les marqueurs qui changent d'état
          */
         MultiReport.createMarkers = function(assets) {
+            // On desactive le marker par défaut de la map
+            intent.map_marker = false;
             intent.multi_report_target = assets;
             intent.multi_report_icons = {};
             for (var state in intent.multi_report_field.options) {
                 var icon = intent.multi_report_field.options[state].icon;
-                intent.multi_report_icons[state] = L.icon( {
+                intent.multi_report_icons[state] = L.icon({
                     iconUrl: icon.content,
                     iconSize: [icon.width, icon.height],
                     iconAnchor: [icon.width / 2, icon.height / 2]
-                } );
+                });
             }
-            intent.multi_report_target.forEach( function(asset) {
+            intent.multi_report_target.forEach(function(asset) {
                 asset.currentState = 0;
-                L.marker( Asset.getCenter( asset ), {
+                L.marker(Asset.getCenter(asset), {
                     icon: intent.multi_report_icons[asset.currentState]
-                } ).on( 'click', function() {
-                    this.setIcon( intent.multi_report_icons[++asset.currentState % intent.multi_report_field.options.length] );
-                } ).on( 'contextmenu', function() {
-                    var e = $compile(angular.element('<div ng-include="partials/veolia.html"></div>'))($rootScope.$new());
-                    this.bindPopup(e[0]);
-                } ).addTo( G3ME.map );
-            } );
+                })
+                    .on("click", function() {
+                        this.setIcon(
+                            intent.multi_report_icons[++asset.currentState % intent.multi_report_field.options.length]
+                        );
+                    })
+                    .on("contextmenu", function() {
+                        var e = $compile(angular.element('<div ng-include="partials/veolia.html"></div>'))(
+                            $rootScope.$new()
+                        );
+                        this.bindPopup(e[0]);
+                    })
+                    .addTo(G3ME.map);
+            });
         };
 
         MultiReport.handleLongTap = function() {
@@ -134,5 +177,4 @@
 
         return MultiReport;
     }
-
 })();

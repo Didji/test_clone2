@@ -1,33 +1,37 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").directive("assetConsultation", assetConsultation);
 
-    angular
-        .module( 'smartgeomobile' )
-        .directive( 'assetConsultation', assetConsultation );
-
-    assetConsultation.$inject = ["$rootScope", "$location", "Asset", "Site", "Project", "i18n", "Synchronizator", "Storage"];
+    assetConsultation.$inject = [
+        "$rootScope",
+        "$location",
+        "Asset",
+        "Site",
+        "Project",
+        "i18n",
+        "Synchronizator",
+        "Storage"
+    ];
 
     function assetConsultation($rootScope, $location, Asset, Site, Project, i18n, Synchronizator, Storage) {
-
         var directive = {
             link: link,
-            templateUrl: 'javascripts/directives/template/consultation.asset.html',
-            restrict: 'EA',
+            templateUrl: "javascripts/directives/template/consultation.asset.html",
+            restrict: "EA",
             scope: {
-                'asset': '=',
-                'noButton': '@'
+                asset: "=",
+                noButton: "@"
             }
         };
         return directive;
 
         function link(scope) {
-
             /* Scope Attributes */
             scope.site = Site.current;
             scope.rights = $rootScope.rights;
             scope.missions = $rootScope.missions;
-            scope.currentLoadedProject = Project.currentLoadedProject ;
+            scope.currentLoadedProject = Project.currentLoadedProject;
 
             /* Scope Methodes */
             scope.addToCurrentProject = addToCurrentProject;
@@ -41,29 +45,33 @@
             scope.removeFromProject = removeFromProject;
             scope.addToReportForIntent = addToReportForIntent;
 
-            scope.$on( '$destroy', destroy );
+            scope.$on("$destroy", destroy);
 
             /**
              * @name addToCurrentSelection
              * @param {Asset} asset
              */
             function addToCurrentProject(asset) {
-                Project.currentLoadedProject.addAsset( asset, function() {
-                    alertify.log( i18n.get( "_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name ) );
-                    $rootScope.$broadcast( "UPDATE_PROJECTS" );
-                    scope.$apply();
-                }, true );
+                Project.currentLoadedProject.addAsset(
+                    asset,
+                    function() {
+                        alertify.log(i18n.get("_PROJECT_ASSETS_ADDED_", Project.currentLoadedProject.name));
+                        $rootScope.$broadcast("UPDATE_PROJECTS");
+                        scope.$apply();
+                    },
+                    true
+                );
             }
 
             function markObjectAsDeletedForCurrentProject(asset) {
                 var name = Project.currentLoadedProject.name;
-                alertify.confirm( i18n.get( '_PROJECT_CONFIRM_ASSETS_DELETED_', name ), function(yes) {
+                alertify.confirm(i18n.get("_PROJECT_CONFIRM_ASSETS_DELETED_", name), function(yes) {
                     if (!yes) {
                         return;
                     }
-                    Project.currentLoadedProject.deleteAsset( asset, function() {
-                        alertify.log( i18n.get( "_PROJECT_ASSETS_DELETED_", name ) );
-                        $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                    Project.currentLoadedProject.deleteAsset(asset, function() {
+                        alertify.log(i18n.get("_PROJECT_ASSETS_DELETED_", name));
+                        $rootScope.$broadcast("UPDATE_PROJECTS");
                         scope.$apply();
                     });
                 });
@@ -75,13 +83,13 @@
              */
             function removeFromProject(asset) {
                 var name = Project.currentLoadedProject.name;
-                alertify.confirm( i18n.get( '_PROJECT_CONFIRM_ASSETS_REMOVED_', name ), function(yes) {
+                alertify.confirm(i18n.get("_PROJECT_CONFIRM_ASSETS_REMOVED_", name), function(yes) {
                     if (!yes) {
                         return;
                     }
-                    Project.currentLoadedProject.removeAsset( asset, function() {
-                        alertify.log( i18n.get( "_PROJECT_ASSETS_REMOVED_", name ) );
-                        $rootScope.$broadcast( "UPDATE_PROJECTS" );
+                    Project.currentLoadedProject.removeAsset(asset, function() {
+                        alertify.log(i18n.get("_PROJECT_ASSETS_REMOVED_", name));
+                        $rootScope.$broadcast("UPDATE_PROJECTS");
                         scope.$apply();
                     });
                 });
@@ -92,7 +100,7 @@
              * @param {Event} event
              */
             function addToCurrentSelection(asset) {
-                $rootScope.$broadcast( "UPDATE_CONSULTATION_MULTISELECTION", asset );
+                $rootScope.$broadcast("UPDATE_CONSULTATION_MULTISELECTION", asset);
                 asset.isInMultiselection = true;
             }
 
@@ -101,7 +109,7 @@
              * @desc
              */
             function dropFromCurrentSelection(asset) {
-                $rootScope.$broadcast( "UPDATE_DROP_CONSULTATION_MULTISELECTION", asset );
+                $rootScope.$broadcast("UPDATE_DROP_CONSULTATION_MULTISELECTION", asset);
                 asset.isInMultiselection = false;
             }
 
@@ -113,7 +121,7 @@
              */
             function openInApp(url, event) {
                 event.preventDefault();
-                window.open( url, '_system' );
+                window.open(url, "_system");
             }
 
             function toggleMapVisibility(asset, dontPlaceMarker) {
@@ -134,33 +142,33 @@
              * @param  {Object} asset
              */
             function deleteAsset(asset) {
-
-                alertify.confirm( i18n.get( '_CONFIRM_DELETE_ASSET_' ), function(yes) {
+                alertify.confirm(i18n.get("_CONFIRM_DELETE_ASSET_"), function(yes) {
                     if (!yes) {
                         return;
                     }
-                    asset.payload = [{
-                        okey: asset.okey,
-                        guid: asset.guid
-                    }];
+                    asset.payload = [
+                        {
+                            okey: asset.okey,
+                            guid: asset.guid
+                        }
+                    ];
 
                     if (asset.relatedAssets) {
                         for (var i in asset.relatedAssets) {
-                            asset.payload.push( {
+                            asset.payload.push({
                                 okey: asset.relatedAssets[i].okey,
                                 guid: asset.relatedAssets[i].guid
-                            } );
+                            });
                             asset.relatedAssets[i].hideFromMap();
-
                         }
                     }
                     asset.hideFromMap();
                     asset.timestamp = Date.now();
 
                     Asset.delete(asset, function() {
-                        Synchronizator.addDeleted( asset );
+                        Synchronizator.addDeleted(asset);
                     });
-                } );
+                });
             }
 
             /**
@@ -169,7 +177,7 @@
              * @param  {String} method
              */
             function exec(method) {
-                method = method.split( '.' );
+                method = method.split(".");
                 if (method[0] === "asset") {
                     if (scope.asset.id !== this.asset.id) {
                         this.asset[method[1]]();
@@ -177,15 +185,14 @@
                         scope.asset[method[1]]();
                     }
                 } else {
-                    eval( method[1] + '(scope.asset);' );
+                    eval(method[1] + "(scope.asset);");
                 }
             }
 
             function addToReportForIntent(asset) {
-                var intent = Storage.get( 'intent' );
-                $location.path('/report/' + Site.current.id + "/" + intent.report_activity + "/" + asset.id);
+                var intent = Storage.get("intent");
+                $location.path("/report/" + Site.current.id + "/" + intent.report_activity + "/" + asset.id);
             }
         }
     }
-
 })();

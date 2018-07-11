@@ -1,12 +1,9 @@
 (function() {
+    "use strict";
 
-    'use strict';
+    angular.module("smartgeomobile").filter("i18n", i18nFilter);
 
-    angular
-        .module( 'smartgeomobile' )
-        .filter( 'i18n', i18nFilter );
-
-    i18nFilter.$inject = ['i18n'];
+    i18nFilter.$inject = ["i18n"];
 
     /**
      * @desc Filtre pour l'internationalisation
@@ -16,5 +13,4 @@
     function i18nFilter(i18n) {
         return i18n.get;
     }
-
 })();
