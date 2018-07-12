@@ -60,7 +60,6 @@
         vm.isIOS = navigator.userAgent.match(/iP(od|hone|ad)/i);
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
-        vm.containsUnfilledRequiredFields = containsUnfilledRequiredFields;
         vm._MAX_MEDIA_PER_REPORT = 3;
 
         var invalidIds = [],
@@ -153,10 +152,10 @@
                 // On récupere l'ID de la zone administrable si elle existe
                 vm.report.zone_specifique = getZoneIntersect(myPosition);
 
-                var masked_fields = {};
+                vm.report.masked_fields = {};
                 if (vm.report.zone_specifique && vm.report.zone_specifique in Site.current.zones_specifiques_fields) {
                     // On teste la presence de la zone specifique dans le filtrage des champs
-                    masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
+                    vm.report.masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
                 }
 
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
@@ -166,15 +165,14 @@
                         if (
                             // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
                             !(!vm.report.zone_specifique && field.zone_specifique) &&
-                            // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
                             !(
                                 vm.report.zone_specifique &&
                                 vm.report.zone_specifique !== field.zone_specifique &&
                                 field.zone_specifique
                             ) &&
-                            // Le champs est taggé comme masqué dans les metadata
-                            !(field.id in masked_fields && !masked_fields[field.id].visible)
+                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible)
                         ) {
+                            // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
                             fields[f] = vm.report.activity.tabs[tab].fields[f];
                         }
                     }
@@ -524,20 +522,6 @@
                 return false;
             }
             return true;
-        }
-
-        /**
-         * @name containsUnfilledRequiredFields
-         * @desc Detecte si un onglet possède un champs requis
-         */
-        function containsUnfilledRequiredFields() {
-            for (var i in vm.report.activity._fields) {
-                var field = vm.report.activity._fields[i];
-                if (field.required && !vm.report.fields[field.id] && vm.report.fields[field.id] !== 0) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         /**
