@@ -675,8 +675,9 @@
                         }
                     })
                     .error(function(data, status) {
+                        // En cas d'erreur sur le check report, on prévient l'utilisateur
                         if (data) {
-                            alertify.alert(data);
+                            alertify.error(data);
                         }
                     });
             });

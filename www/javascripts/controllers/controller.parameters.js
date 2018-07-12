@@ -65,7 +65,9 @@
             );
 
             Installer.update(Site.current, function(error) {
-                vm.errorLastUpdate = error;
+                if (error) {
+                    vm.errorLastUpdate = true;
+                }
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
