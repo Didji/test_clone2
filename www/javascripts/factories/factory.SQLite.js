@@ -116,7 +116,6 @@
         SQLite.set = function(parameter, value, callback) {
             if (parameter === "sites") {
                 //on doit vider la table d'abord... Sinon on ne peut pas desinstaller de site
-                console.log(value);
                 SQLite.parameters().transaction(
                     function(tx) {
                         tx.executeSql(
