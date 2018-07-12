@@ -171,10 +171,6 @@
             });
         };
 
-        MultiReport.handleLongTap = function() {
-            //alert('long tap');
-        };
-
         return MultiReport;
     }
 })();

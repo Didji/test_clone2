@@ -294,9 +294,7 @@
                 }
             }
             for (i = 0; i < report.ged.length; i++) {
-                report.ged[i] = {
-                    content: Utils.getBase64Image(report.ged[i].content)
-                };
+                report.ged[i] = { content: Utils.getBase64Image(report.ged[i].content) };
             }
             for (i in report.overrides) {
                 if (report.overrides[i]) {
@@ -305,6 +303,21 @@
             }
             report.activity = report.activity.id;
             report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
+
+            // On vérifie l présence du parametre assets
+            if (report.assets && report.assets.constructor === Array) {
+                // On supprime les valeurs erronées
+                report.assets = report.assets.filter(function(n) {
+                    return !(n == undefined || n == "undefined" || n == "");
+                });
+            }
+
+            //On vérifie que l'ID mission soit valable
+            if (report.mission && isNaN(report.mission)) {
+                // Dans le cas contraire on le vide
+                report.mission = null;
+            }
+
             return report;
         }
 
@@ -452,10 +465,7 @@
                         intent.report_url_redirect =
                             injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
                         window.plugins.launchmyapp.startActivity(
-                            {
-                                action: "android.intent.action.VIEW",
-                                url: intent.report_url_redirect
-                            },
+                            { action: "android.intent.action.VIEW", url: intent.report_url_redirect },
                             angular.noop,
                             angular.noop
                         );
