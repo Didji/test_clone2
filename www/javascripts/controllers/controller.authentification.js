@@ -157,12 +157,9 @@
             } else if (sites.length === 0) {
                 vm.errorMessage = i18n.get("_AUTH_INIT_WITHOUT_NETWORK_ERROR_", [vm.user.username]);
             } else if (sites.length > 0 && users[vm.user.username].password === vm.user.password) {
-                return loginSuccess(
-                    {
-                        sites: []
-                    },
-                    0
-                );
+                return loginSuccess({
+                    sites: []
+                });
             }
             vm.loginInProgress = false;
         }

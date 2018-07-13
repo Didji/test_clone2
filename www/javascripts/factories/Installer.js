@@ -14,7 +14,8 @@ angular
         Relationship,
         Utils,
         Authenticator,
-        Right
+        Right,
+        ConnectionService
     ) {
         "use strict";
 
@@ -157,15 +158,25 @@ angular
             getUpdateJSON: function(site, callback) {
                 var url = Utils.getServiceUrl("gi.maintenance.mobility.installation.json", {
                     site: site.id,
-                    timestamp: site.timestamp.trim()
+                    timestamp: site.timestamp
                 });
 
-                $http
-                    .get(url)
-                    .success(callback)
-                    .error(function(response, code) {
-                        (callback || function() {})();
-                    });
+                if (ConnectionService.isConnected()) {
+                    $http
+                        .get(url, {
+                            timeout: 20000
+                        })
+                        .success(callback)
+                        .error(function(data, status) {
+                            if (data && data.statusText) {
+                                alertify.error(data.statusText);
+                            }
+                            (callback || function() {})(null, true);
+                        });
+                } else {
+                    alertify.error(i18n.get("_INSTALL_OFFLINE"));
+                    $rootScope.dailyUpdate = false;
+                }
             },
 
             saveSite: function(site, callback) {
@@ -312,10 +323,12 @@ angular
                 var oldSymbology = angular.copy(Site.current.symbology);
                 $rootScope.dailyUpdate = true;
                 callback = callback || function() {};
-                Installer.getUpdateJSON(site, function(site) {
+                Installer.getUpdateJSON(site, function(site, error) {
                     if (!site) {
                         $rootScope.dailyUpdate = false;
-                        callback(true);
+                        if (error) {
+                            callback(true);
+                        }
                         return;
                     }
                     var formatedSite = Installer.formatSiteMetadata(site, true);

@@ -49,6 +49,7 @@ window.smartgeo_i18n_lang.en = {
     _CONSULTATION_ADD_TO_: "Add to",
     _CONSULTATION_WRITE_FOR_: "Write for ",
     _CONSULTATION_ADD_TO_SELECTION: "Add to current selection",
+    _INSTALL_OFFLINE: "You can't synchronize data while in offline mode.",
     _INSTALL_SPACE_WARNING:
         "Your data seem too large or there's not enough remaining space on your device.\nSetup may not finish.",
     _INSTALL_INSTALLING: "Installing ",
@@ -103,7 +104,12 @@ window.smartgeo_i18n_lang.en = {
     _SITE_UNINSTALL: "Uninstalling ",
     _SITE_UPDATE: "Updating ",
     _SITE_LOADING: "Loading ...",
-    _SITE_LAST_UPDATE: "Last update on ",
+    _SITE_LAST_UPDATE: "Last successful update on ",
+    _SYNC_ERROR_UNKNOWN: "Something goes wrong with the last update",
+    _SYNC_ERROR_NOT_AUTH: "You're not authenticated anymore, please restart application",
+    _SYNC_ERROR_NOT_FOUND: "Sync service not found on the server",
+    _SYNC_ERROR_SERVER: "A critical error occured on the server, Sync has been aborted",
+    _SYNC_ERROR_TIMEOUT: "Server didn't respond to the sync request",
     _SYNC_SYNC_EVERYTHING: "Synchronize all",
     _SYNC_SYNC: "Synchronize",
     _SYNC_SYNC_IN_PROGRESS: "Synchronizing",
@@ -203,5 +209,13 @@ window.smartgeo_i18n_lang.en = {
     OAUTH_CANCELED_ERROR: "Authentification canceled.",
     OAUTH_NO_SERVER_ERROR: "No serveur found.",
     OAUTH_NO_ACCOUNT_ERROR: "No account found.",
-    OAUTH_UNKNOWN_ERROR: "Authentication error."
+    OAUTH_UNKNOWN_ERROR: "Authentication error.",
+    _CONNTYPE_2G_: "Cell 2G connection",
+    _CONNTYPE_3G_: "Cell 3G connection",
+    _CONNTYPE_4G_: "Cell 4G connection",
+    _CONNTYPE_CELLULAR_: "Cell generic connection",
+    _CONNTYPE_ETHERNET_: "Ethernet connection",
+    _CONNTYPE_NONE_: "No network connection",
+    _CONNTYPE_UNKNOWN_: "Unknown connection",
+    _CONNTYPE_WIFI_: "WiFi connection"
 };

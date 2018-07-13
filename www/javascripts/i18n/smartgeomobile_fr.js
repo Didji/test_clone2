@@ -52,6 +52,7 @@ window.smartgeo_i18n_lang.fr = {
     _CONSULTATION_ADD_TO_: "Ajouter à ",
     _CONSULTATION_WRITE_FOR_: "Saisir pour ",
     _CONSULTATION_ADD_TO_SELECTION: "Ajouter à la selection",
+    _INSTALL_OFFLINE: "Vous êtes actuellement hors-ligne, la synchronisation est désactivée.",
     _INSTALL_SPACE_WARNING:
         "Votre installation semble volumineuse ou votre espace disque restant n'est pas suffisant.\nIl est possible que celle-ci ne puisse pas se terminer.",
     _INSTALL_INSTALLING: "Installation de ",
@@ -108,8 +109,12 @@ window.smartgeo_i18n_lang.fr = {
     _SITE_UNINSTALL: "Désinstallation de ",
     _SITE_UPDATE: "Mise à jour de ",
     _SITE_LOADING: "Chargement",
-    _SITE_LAST_UPDATE: "Dernière mise à jour le ",
-    _SYNC_ERROR_UNKNOWN_: "Une erreur est survenue lors de la synchronisation des données",
+    _SITE_LAST_UPDATE: "Dernière mise à jour réussie le ",
+    _SYNC_ERROR_UNKNOWN: "Une erreur est survenue lors de la dernière synchronisation des données",
+    _SYNC_ERROR_NOT_AUTH: "Votre utilisateur n'est plus authentifié, veuillez redémarrer l'application.",
+    _SYNC_ERROR_NOT_FOUND: "Le service de synchronisation n'est plus présent sur le serveur",
+    _SYNC_ERROR_SERVER: "Une erreur critique s'est produite sur le serveur, la synchronisation est impossible",
+    _SYNC_ERROR_TIMEOUT: "Le serveur n'a pas répondu à votre demande dans le temps imparti.",
     _SYNC_SYNC_EVERYTHING: "Synchroniser",
     _SYNC_SYNC: "Synchroniser",
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",
@@ -211,5 +216,13 @@ window.smartgeo_i18n_lang.fr = {
     OAUTH_CANCELED_ERROR: "Authentification annulée.",
     OAUTH_NO_SERVER_ERROR: "Aucun serveur n'est configuré.",
     OAUTH_NO_ACCOUNT_ERROR: "Aucun compte n'est configuré.",
-    OAUTH_UNKNOWN_ERROR: "Authentification impossible."
+    OAUTH_UNKNOWN_ERROR: "Authentification impossible.",
+    _CONNTYPE_2G_: "Connexion 2G réseau cellulaire",
+    _CONNTYPE_3G_: "Connexion 3G réseau cellulaire",
+    _CONNTYPE_4G_: "Connexion 4G réseau cellulaire",
+    _CONNTYPE_CELLULAR_: "Conenxion cellulaire générique",
+    _CONNTYPE_ETHERNET_: "Connexion ethernet",
+    _CONNTYPE_NONE_: "Aucune connexion réseau",
+    _CONNTYPE_UNKNOWN_: "Connexion réseau inconnue",
+    _CONNTYPE_WIFI_: "Connexion réseau Wi-Fi"
 };

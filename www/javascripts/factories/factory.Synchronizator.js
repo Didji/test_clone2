@@ -142,7 +142,6 @@
                 // puissent en avoir une aussi.
                 return object.geometry;
             }
-            return false;
         };
 
         /**
@@ -676,8 +675,25 @@
                     })
                     .error(function(data, status) {
                         // En cas d'erreur sur le check report, on prévient l'utilisateur
-                        if (data) {
-                            alertify.error(data);
+                        switch (status) {
+                            case 0:
+                                alertify.error(i18n.get("_INSTALL_OFFLINE"));
+                                break;
+                            case 403:
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
+                                break;
+                            case 404:
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_FOUND"));
+                                break;
+                            case 500:
+                                alertify.error(i18n.get("_SYNC_ERROR_SERVER"));
+                                break;
+                            case 504:
+                                alertify.error(i18n.get("_SYNC_ERROR_TIMEOUT"));
+                                break;
+                            default:
+                                alertify.error(i18n.get("_SYNC_ERROR_UNKNOWN"));
+                                break;
                         }
                     });
             });
