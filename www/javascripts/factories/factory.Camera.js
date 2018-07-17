@@ -81,7 +81,7 @@
                     },
                     function() {},
                     {
-                        quality: 100,
+                        quality: 50,
                         sourceType: navigator.camera.PictureSourceType.CAMERA,
                         mediaType: navigator.camera.MediaType.PICTURE,
                         destinationType: navigator.camera.DestinationType.FILE_URI,
