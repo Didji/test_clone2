@@ -373,6 +373,7 @@
                 return Synchronizator.syncItems(items.slice(1), callback, true);
             }
 
+            // Construction dynamique du nom de la fonction à appeler (ex : "new"+"Report"+"Synchronizator")
             Synchronizator[items[0].action + items[0].type + "Synchronizator"](items[0], function() {
                 Synchronizator.syncItems(items.slice(1), callback, true);
             });
@@ -482,18 +483,38 @@
         Synchronizator.newReportSynchronizator = function(report, callback) {
             report.syncInProgress = true;
             $http
-                .post(Utils.getServiceUrl("gi.maintenance.mobility.report.json"), report, {
-                    timeout: 60 * 1000
-                })
+                .post(Utils.getServiceUrl("gi.maintenance.mobility.report.json"), report)
                 .success(function(data) {
                     if (data.cri && data.cri.length) {
                         report.synced = true;
                         report.error = undefined;
+                    } else {
+                        report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
                     }
                 })
-                .error(function(data) {
-                    report.error =
-                        data && data.error && data.error.text ? data.error.text : i18n.get("_SYNC_UNKNOWN_ERROR_");
+                .error(function(data, status) {
+                    console.log("Status : " + status);
+                    // En cas d'erreur sur le check report, on prévient l'utilisateur
+                    switch (status) {
+                        case 403:
+                            report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
+                            break;
+                        case 404:
+                            report.error = i18n.get("_SYNC_ERROR_NOT_FOUND");
+                            break;
+                        case 500:
+                            report.error = i18n.get("_SYNC_ERROR_SERVER");
+                            break;
+                        case 504:
+                            report.error = i18n.get("_SYNC_ERROR_TIMEOUT");
+                            break;
+                        case 503:
+                            report.error = i18n.get("_SYNC_ERROR_SERVER_UNAVAILABLE");
+                            break;
+                        default:
+                            report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
+                            break;
+                    }
                 })
                 .finally(function(data) {
                     report.syncInProgress = false;
@@ -676,9 +697,6 @@
                     .error(function(data, status) {
                         // En cas d'erreur sur le check report, on prévient l'utilisateur
                         switch (status) {
-                            case 0:
-                                alertify.error(i18n.get("_INSTALL_OFFLINE"));
-                                break;
                             case 403:
                                 alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
                                 break;
@@ -692,7 +710,6 @@
                                 alertify.error(i18n.get("_SYNC_ERROR_TIMEOUT"));
                                 break;
                             default:
-                                alertify.error(i18n.get("_SYNC_ERROR_UNKNOWN"));
                                 break;
                         }
                     });
