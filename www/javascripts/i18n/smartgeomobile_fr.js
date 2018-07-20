@@ -95,6 +95,8 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_ASSET_NOT_FOUND_P: "Les objets (%s) n'existent pas. Veuillez mettre à jour vos données.",
     _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_:
         "Aucun champs n'a été configuré côté Smartgeo pour porter les modifications multi-équipements.",
+    _REPORT_MULTIMEDIA_TOO_LARGE:
+        "Certaines images ne respectent pas les dimensions maximales autorisées. Veuillez réduire la résolution de votre appareil photo, ou le nombre de photos jointes",
     _SEARCH_SEARCH: "Recherche",
     _SEARCH_BACK: "Retour",
     _SEARCH_ADVANCED_SEARCH: "Recherche avancée",
@@ -111,10 +113,11 @@ window.smartgeo_i18n_lang.fr = {
     _SITE_LOADING: "Chargement",
     _SITE_LAST_UPDATE: "Dernière mise à jour réussie le ",
     _SYNC_ERROR_UNKNOWN: "Une erreur est survenue lors de la dernière synchronisation des données",
-    _SYNC_ERROR_NOT_AUTH: "Votre utilisateur n'est plus authentifié, veuillez redémarrer l'application.",
+    _SYNC_ERROR_NOT_AUTH: "Vous n'êtes plus authentifié, veuillez redémarrer l'application.",
     _SYNC_ERROR_NOT_FOUND: "Le service de synchronisation n'est plus présent sur le serveur",
     _SYNC_ERROR_SERVER: "Une erreur critique s'est produite sur le serveur, la synchronisation est impossible",
     _SYNC_ERROR_TIMEOUT: "Le serveur n'a pas répondu à votre demande dans le temps imparti.",
+    _SYNC_ERROR_SERVER_UNAVAILABLE: "Le serveur est temporairement inaccessible.",
     _SYNC_SYNC_EVERYTHING: "Synchroniser",
     _SYNC_SYNC: "Synchroniser",
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",

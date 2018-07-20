@@ -20,7 +20,8 @@
         "Utils",
         "Smartgeo",
         "Intents",
-        "$rootScope"
+        "$rootScope",
+        "Right"
     ];
 
     function multiReportDirective(
@@ -35,7 +36,8 @@
         Utils,
         Smartgeo,
         Intents,
-        $rootScope
+        $rootScope,
+        Right
     ) {
         var reports,
             unwatch_report_ged = null,
@@ -43,9 +45,7 @@
 
         return {
             restrict: "E",
-            scope: {
-                intent: "="
-            },
+            scope: { intent: "=" },
             templateUrl: "javascripts/directives/template/multi.report.html",
             link: link
         };
@@ -191,13 +191,13 @@
              * @name applyDefaultValues
              * @desc Applique les valeurs par defaut
              */
-            function applyDefaultValues() {
+            function applyDefaultValues(_fields) {
                 var fields = scope.report.fields,
                     def,
                     i,
                     field,
                     date;
-                for (i in scope.report.activity._fields) {
+                for (var i = 0; i < _fields.length; i++) {
                     field = scope.report.activity._fields[i];
 
                     if (fields[field.id]) {
@@ -257,36 +257,6 @@
                 if (!scope.$$phase) {
                     scope.$digest();
                 }
-            }
-
-            /**
-             * @name bidouille
-             * @param {Event} event
-             * @desc Olalalala ... A remplacer par un ng-blur ?
-             */
-            function bidouille() {
-                angular
-                    .element(document.getElementsByClassName("js-report-form")[0])
-                    .on("click", "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
-                        var elt;
-                        if (angular.element(this).prop("tagName") !== "label") {
-                            elt = angular.element(this);
-                        } else if (!angular.element(this).siblings("label").length) {
-                            elt = angular.element(this);
-                        } else {
-                            elt = angular.element(this).siblings("label");
-                        }
-                        if (!elt.offset().top) {
-                            return;
-                        }
-                        angular.element(".modal").animate(
-                            {
-                                scrollTop: elt.offset().top - 10
-                            },
-                            250
-                        );
-                        elt = null;
-                    });
             }
 
             /**
@@ -402,23 +372,17 @@
                         scope.intent.multi_report_assets_id.join(",")
                     );
                     window.plugins.launchmyapp.startActivity(
-                        {
-                            action: "android.intent.action.VIEW",
-                            url: redirect
-                        },
+                        { action: "android.intent.action.VIEW", url: redirect },
                         angular.noop,
                         angular.noop
                     );
                 } else {
                     window.plugins.launchmyapp.finishActivity(
-                        {
-                            done: scope.intent.multi_report_assets_id
-                        },
+                        { done: scope.intent.multi_report_assets_id },
                         angular.noop,
                         angular.noop
                     );
                 }
-                Storage.remove("intent");
                 return false;
             }
 
@@ -454,9 +418,7 @@
                     }
                 }
                 for (i = 0; i < report.ged.length; i++) {
-                    report.ged[i] = {
-                        content: Utils.getBase64Image(report.ged[i].content)
-                    };
+                    report.ged[i] = { content: Utils.getBase64Image(report.ged[i].content) };
                 }
                 for (i in report.overrides) {
                     if (report.overrides[i]) {
@@ -543,52 +505,73 @@
                             scope.report.fields[field.id] = scope.report.fields[field.id] || "";
                         }
 
-                        /*************************************** */
                         var myPosition = "POINT(" + lng + " " + lat + ")";
 
                         // On récupere l'ID de la zone administrable si elle existe
                         scope.report.zone_specifique = getZoneIntersect(myPosition);
 
-                        var masked_fields = {};
+                        // On construit les règles de masquage lié aux zones spécifique
+                        scope.report.masked_fields = {};
                         if (
                             scope.report.zone_specifique &&
                             scope.report.zone_specifique in Site.current.zones_specifiques_fields
                         ) {
                             // On teste la presence de la zone specifique dans le filtrage des champs
-                            masked_fields = Site.current.zones_specifiques_fields[scope.report.zone_specifique];
+                            scope.report.masked_fields =
+                                Site.current.zones_specifiques_fields[scope.report.zone_specifique];
                         }
 
-                        for (var tab = 0; tab < scope.report.activity.tabs.length; tab++) {
-                            var fields = {};
-                            for (var f = scope.report.activity.tabs[tab].fields.length - 1; f >= 0; f--) {
-                                var field = scope.report.activity.tabs[tab].fields[f];
-                                if (
-                                    // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
-                                    (!scope.report.zone_specifique && field.zone_specifique) ||
-                                    // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
-                                    (scope.report.zone_specifique &&
-                                        scope.report.zone_specifique !== field.zone_specifique &&
-                                        field.zone_specifique) ||
-                                    // Le champs est taggé comme masqué dans les metadata
-                                    (field.id in masked_fields && !masked_fields[field.id].visible)
-                                ) {
-                                    fields[f] = scope.report.activity.tabs[tab].fields[f];
-                                    //scope.report.activity.tabs[tab].fields.splice(f, 1);
+                        // On parcourt les champs présent dans les tabs d'activité pour les filtrer
+                        var all_cr_fields = {};
+                        for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
+                            var cr_fields = {};
+                            for (var f in scope.report.activity.tabs[cr_tab].fields) {
+                                var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
+                                if (checkFieldZoneSpecifique(cr_field)) {
+                                    cr_fields[f] = all_cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
                                 }
                             }
-                            scope.report.activity.tabs[tab].fields = fields;
+                            scope.report.activity.tabs[tab].fields = cr_fields;
                         }
-                        /*************************************** */
+
+                        // On applique les valeurs par défaut des champs
+                        applyDefaultValues(all_cr_fields);
+
+                        // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
+                        for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
+                            for (var f in scope.report.activity.tabs[cons_tab].fields) {
+                                var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
+                                applyConsequences(cons_field.id);
+                            }
+                        }
 
                         if (!scope.$$phase) {
                             scope.$apply();
                         }
-                        applyDefaultValues();
-                        //bidouille();
 
                         $("#multireport").modal("toggle");
                     })
                     .addTo(G3ME.map);
+            }
+
+            /**
+             * @name checkFieldZoneSpecifique
+             * @param {Object} field
+             * @vm
+             * @desc Permet de savoir si un champs doit être filtré en fonction des zones spécifiques
+             */
+            function checkFieldZoneSpecifique(field) {
+                var result =
+                    // Dans le cas du ref national avec un champs national
+                    (!scope.report.zone_specifique && !field.zone_specifique) || // Dans le cas d'une zone specifique
+                    (scope.report.zone_specifique && //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
+                        (field.zone_specifique == scope.report.zone_specifique ||
+                            (!field.zone_specifique &&
+                                !(
+                                    field.id in scope.report.masked_fields &&
+                                    !scope.report.masked_fields[field.id].visible
+                                ))));
+                return result;
             }
 
             function createMarker(asset) {
@@ -617,9 +600,6 @@
                             scope.report.fields[field.id] = scope.report.fields[field.id] || "";
                         }
 
-                        /***************************************
-                         * Gestion des zones spécifiques
-                         ***************************************/
                         var asset_geom = asset.geometry;
                         var myPosition = asset_geom.type + "(";
 
@@ -638,37 +618,42 @@
                         // On récupere l'ID de la zone administrable si elle existe
                         scope.report.zone_specifique = getZoneIntersect(myPosition);
 
-                        var masked_fields = {};
+                        // On construit les règles de masquage lié aux zones spécifique
+                        scope.report.masked_fields = {};
                         if (
                             scope.report.zone_specifique &&
                             scope.report.zone_specifique in Site.current.zones_specifiques_fields
                         ) {
                             // On teste la presence de la zone specifique dans le filtrage des champs
-                            masked_fields = Site.current.zones_specifiques_fields[scope.report.zone_specifique];
+                            scope.report.masked_fields =
+                                Site.current.zones_specifiques_fields[scope.report.zone_specifique];
                         }
 
-                        for (var tab = 0; tab < scope.report.activity.tabs.length; tab++) {
+                        // On parcourt les champs présent dans les tabs d'activité pour les filtrer
+                        var all_cr_fields = {};
+                        for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
                             var fields = {};
-                            for (var field_idx in scope.report.activity.tabs[tab].fields) {
-                                var field = scope.report.activity.tabs[tab].fields[field_idx];
-                                if (
-                                    // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
-                                    !(!scope.report.zone_specifique && field.zone_specifique) &&
-                                    // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
-                                    !(
-                                        scope.report.zone_specifique &&
-                                        scope.report.zone_specifique !== field.zone_specifique &&
-                                        field.zone_specifique
-                                    ) &&
-                                    // Le champs est taggé comme masqué dans les metadata
-                                    !(field.id in masked_fields && !masked_fields[field.id].visible)
-                                ) {
-                                    fields[field_idx] = scope.report.activity.tabs[tab].fields[field_idx];
+                            for (var f in scope.report.activity.tabs[cr_tab].fields) {
+                                var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
+                                if (checkFieldZoneSpecifique(cr_field)) {
+                                    fields[f] = all_cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
                                 }
                             }
-                            scope.report.activity.tabs[tab].fields = fields;
+                            scope.report.activity.tabs[cr_tab].fields = fields;
                         }
-                        /****************************************/
+
+                        // On applique les valeurs par défaut sur tous les champs
+                        applyDefaultValues(all_cr_fields);
+
+                        // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
+
+                        for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
+                            for (var f in scope.report.activity.tabs[cons_tab].fields) {
+                                var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
+                                applyConsequences(cons_field.id);
+                            }
+                            scope.report.activity.tabs[cons_tab].fields = fields;
+                        }
 
                         if (!scope.$$phase) {
                             scope.$apply();
@@ -676,8 +661,6 @@
                         for (var i = 0; i < scope.report.assets.length; i++) {
                             scope.assets.push(new Asset(scope.report.assets[i]));
                         }
-                        applyDefaultValues();
-                        bidouille();
 
                         unwatch_report_ged = scope.$watch("report.ged", function(n, o) {
                             scope.reportForm.$setDirty();
@@ -692,9 +675,17 @@
              * @name save
              * @return Sauvegarde le rapport courant en attendant la synchro
              */
-            function save() {
-                reports[scope.report.assets[0] || scope.report.latlng] = scope.report;
-                close();
+            function save(reportin) {
+                var report = angular.copy(reportin);
+                var preparedReport = prepareReport(report);
+                var reportSize = JSON.stringify(preparedReport).length;
+                if (reportSize > Right.get("_MAX_SIZE_POST_REQ")) {
+                    reportin.imgError = true;
+                    reportin.ged = Array();
+                } else {
+                    reports[scope.report.assets[0] || scope.report.latlng] = scope.report;
+                    close();
+                }
             }
 
             /**

@@ -119,6 +119,12 @@
             </button>
             <div id="images">
                 <ul class='ged-gallery'>
+                    <div ng-show="reportController.report.imgError && reportController.report.ged.length == 0" class="alert alert-danger">
+                        <p>
+                            <span class="required-marker icon-asterisk"></span>
+                            <i18n>_REPORT_MULTIMEDIA_TOO_LARGE</i18n>
+                        </p>
+                    </div>
                     <li ng-repeat='image in reportController.report.ged'>
                         <img ng-src="{{image.content}}" alt=""></img>
                         <button class="btn btn-default btn-danger btn-block" ng-click="">

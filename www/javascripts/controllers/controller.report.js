@@ -16,7 +16,8 @@
         "Utils",
         "i18n",
         "Intents",
-        "GPS"
+        "GPS",
+        "Right"
     ];
 
     /**
@@ -46,7 +47,8 @@
         Utils,
         i18n,
         Intents,
-        GPS
+        GPS,
+        Right
     ) {
         var vm = this;
 
@@ -93,8 +95,6 @@
                 return;
             }
 
-            bidouille();
-
             if (!isNaN(+$routeParams.assets)) {
                 $routeParams.assets = [+$routeParams.assets];
             }
@@ -104,7 +104,7 @@
             Asset.findAssetsByGuids(vm.report.assets, function(assets) {
                 invalidIds = angular.copy(vm.report.assets);
 
-                for (var i = 0; i < assets.length; i++) {
+                for (let i = 0; i < assets.length; i++) {
                     if (assets[i].id) {
                         vm.assets.push(assets[i]);
                         invalidIds.splice(invalidIds.indexOf(assets[i].id), 1);
@@ -121,9 +121,6 @@
                     return;
                 }
 
-                /***************************************
-                 * Gestion des zones spécifiques
-                 ***************************************/
                 var myPosition = null;
                 // Si un asset est fournis, on construit le WKT string de sa géométrie
                 if (vm.assets.length > 0) {
@@ -152,35 +149,36 @@
                 // On récupere l'ID de la zone administrable si elle existe
                 vm.report.zone_specifique = getZoneIntersect(myPosition);
 
+                // On construit les règles de masquage lié aux zones spécifique
                 vm.report.masked_fields = {};
                 if (vm.report.zone_specifique && vm.report.zone_specifique in Site.current.zones_specifiques_fields) {
                     // On teste la presence de la zone specifique dans le filtrage des champs
                     vm.report.masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
                 }
 
+                // On parcourt les champs présent dans les tabs d'activité pour les filtrer
+                var all_cr_fields = {};
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
-                    var fields = {};
+                    var cr_fields = {};
                     for (var f in vm.report.activity.tabs[tab].fields) {
-                        var field = vm.report.activity.tabs[tab].fields[f];
-                        if (
-                            // On ne se trouve pas dans une zone spécifique et il s'agit d'un champs spécifique
-                            !(!vm.report.zone_specifique && field.zone_specifique) &&
-                            !(
-                                vm.report.zone_specifique &&
-                                vm.report.zone_specifique !== field.zone_specifique &&
-                                field.zone_specifique
-                            ) &&
-                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible)
-                        ) {
-                            // On se trouve dans une zone spécifique, le champs n'appartient pas à la zone spécifique et le champs ne fait pas partie du ref national
-                            fields[f] = vm.report.activity.tabs[tab].fields[f];
+                        var cr_field = vm.report.activity.tabs[tab].fields[f];
+                        if (checkFieldZoneSpecifique(cr_field)) {
+                            cr_fields[f] = all_cr_fields[f] = vm.report.activity.tabs[tab].fields[f];
                         }
                     }
-                    vm.report.activity.tabs[tab].fields = fields;
+                    vm.report.activity.tabs[tab].fields = cr_fields;
                 }
-                /****************************************/
 
-                applyDefaultValues();
+                // On applique les valeurs par défaut des champs
+                applyDefaultValues(all_cr_fields);
+
+                // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
+                for (var cons_tab = 0; cons_tab < vm.report.activity.tabs.length; cons_tab++) {
+                    for (var f in vm.report.activity.tabs[cons_tab].fields) {
+                        var cons_field = vm.report.activity.tabs[cons_tab].fields[f];
+                        applyConsequences(cons_field.id);
+                    }
+                }
 
                 setTimeout(function() {
                     if (!$scope.$$phase) {
@@ -188,6 +186,23 @@
                     }
                 }, 1000);
             });
+        }
+
+        /**
+         * @name checkFieldZoneSpecifique
+         * @param {Object} field
+         * @vm
+         * @desc Permet de savoir si un champs doit être filtré en fonction des zones spécifiques
+         */
+        function checkFieldZoneSpecifique(field) {
+            var result =
+                // Dans le cas du ref national avec un champs national
+                (!vm.report.zone_specifique && !field.zone_specifique) || // Dans le cas d'une zone specifique
+                (vm.report.zone_specifique && //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
+                    (field.zone_specifique == vm.report.zone_specifique ||
+                        (!field.zone_specifique &&
+                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible))));
+            return result;
         }
 
         /**
@@ -258,8 +273,25 @@
          */
         function sendReport() {
             vm.sendingReport = true;
-            Synchronizator.addNew(prepareReport(vm.report));
-            endOfReport();
+            var preparedReport = prepareReport(vm.report);
+            var reportSize = JSON.stringify(preparedReport).length;
+            // Si la taille du JSON est trop importante, on prévient l'utilisateur pour qu'il
+            // réduise les pièces jointes ou la résolution des photos
+            if (reportSize > Right.get("_MAX_SIZE_POST_REQ")) {
+                //TODO : Faire mieux que simplement supprimer les images
+                // On vide toutes les images sélectionnées
+                vm.report.ged = Array();
+                // On affiche le message d'erreur
+                vm.report.imgError = true;
+                vm.sendingReport = false;
+                if (!$scope.$$phase) {
+                    $scope.$digest();
+                }
+            } else {
+                // Le rapport est prêt a être envoyé
+                Synchronizator.addNew(preparedReport);
+                endOfReport();
+            }
         }
 
         /**
@@ -322,35 +354,6 @@
         }
 
         /**
-         * @name bidouille
-         * @param {Event} event
-         * @desc Olalalala ... A remplacer par un ng-blur ?
-         */
-        function bidouille() {
-            angular
-                .element(document.getElementsByClassName("reportForm")[0])
-                .on("click", "input:not(input[type=checkbox]), select, label, .chosen-container", function() {
-                    var elt;
-                    if (angular.element(this).prop("tagName") !== "label") {
-                        elt = angular.element(this);
-                    } else if (!angular.element(this).siblings("label").length) {
-                        elt = angular.element(this);
-                    } else {
-                        elt = angular.element(this).siblings("label");
-                    }
-                    if (!elt.offset().top) {
-                        return;
-                    }
-                    angular.element("html, body").animate(
-                        {
-                            scrollTop: elt.offset().top - 10
-                        },
-                        250
-                    );
-                });
-        }
-
-        /**
          * @name getValueFromAssets
          * @param {String} pkey
          * @param {String} okey
@@ -378,12 +381,13 @@
          * @name applyDefaultValues
          * @desc Applique les valeurs par defaut
          */
-        function applyDefaultValues(callback) {
+        function applyDefaultValues(_fields) {
             var fields = vm.report.fields,
                 def,
                 i,
                 field;
-            for (i in vm.report.activity._fields) {
+
+            for (var i = 0; i < _fields.length; i++) {
                 field = vm.report.activity._fields[i];
                 def = field["default"];
 

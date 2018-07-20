@@ -90,6 +90,8 @@ window.smartgeo_i18n_lang.en = {
     _REPORT_ASSET_NOT_FOUND_S: "Asset (%s) not found. Please update your datas.",
     _REPORT_ASSET_NOT_FOUND_P: "Assets (%s) not found. Please update your datas.",
     _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_: "You need to configure a specific field on multi assets report.",
+    _REPORT_MULTIMEDIA_TOO_LARGE:
+        "Some pictures are too heavy and can't be send. Please reduce your camera resolution or the number of pictures to send",
     _SEARCH_SEARCH: "Search",
     _SEARCH_BACK: "Back",
     _SEARCH_ADVANCED_SEARCH: "Advanced search",
@@ -110,6 +112,7 @@ window.smartgeo_i18n_lang.en = {
     _SYNC_ERROR_NOT_FOUND: "Sync service not found on the server",
     _SYNC_ERROR_SERVER: "A critical error occured on the server, Sync has been aborted",
     _SYNC_ERROR_TIMEOUT: "Server didn't respond to the sync request",
+    _SYNC_ERROR_SERVER_UNAVAILABLE: "Server is temporarily unavailable",
     _SYNC_SYNC_EVERYTHING: "Synchronize all",
     _SYNC_SYNC: "Synchronize",
     _SYNC_SYNC_IN_PROGRESS: "Synchronizing",

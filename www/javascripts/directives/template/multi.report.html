@@ -110,6 +110,12 @@
 							</button>
 							<div id="images">
 								<ul class='ged-gallery'>
+									<div ng-show="report.imgError && report.ged.length == 0" class="alert alert-danger">
+										<p>
+											<span class="required-marker icon-asterisk"></span>
+											<i18n>_REPORT_MULTIMEDIA_TOO_LARGE</i18n>
+										</p>
+									</div>
 									<li ng-repeat='image in report.ged'>
 										<img ng-src="{{image.content}}" alt="" />
 										<button class="btn btn-default btn-danger btn-block" ng-click="">
@@ -127,7 +133,7 @@
 				<button type="button" class="btn btn-default" ng-click="cancel()">
 					<i class="fa fa-times"></i>
 					<i18n>_REPORT_CANCEL</i18n>
-					<button type="button" class="btn btn-primary" ng-click="save()">
+					<button type="button" class="btn btn-primary" ng-click="save(report)">
 						<i class="fa fa-save"></i>
 						<i18n>_REPORT_SAVE</i18n>
 					</button>
