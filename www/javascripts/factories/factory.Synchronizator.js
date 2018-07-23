@@ -492,10 +492,10 @@
                         report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
                     }
                 })
-                .error(function(data, status) {
-                    console.log("Status : " + status);
+                .error(function(data) {
+                    console.log("gi.maintenance.mobility.report.json response : " + data);
                     // En cas d'erreur sur le check report, on prévient l'utilisateur
-                    switch (status) {
+                    switch (data) {
                         case 403:
                             report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
                             break;
