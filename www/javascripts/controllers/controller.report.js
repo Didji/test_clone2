@@ -277,7 +277,7 @@
             var reportSize = JSON.stringify(preparedReport).length;
             // Si la taille du JSON est trop importante, on prévient l'utilisateur pour qu'il
             // réduise les pièces jointes ou la résolution des photos
-            if (reportSize > Right.get("_MAX_SIZE_POST_REQ")) {
+            if ((4 * reportSize) / 3 > Right.get("_MAX_SIZE_POST_REQ")) {
                 //TODO : Faire mieux que simplement supprimer les images
                 // On vide toutes les images sélectionnées
                 vm.report.ged = Array();
@@ -349,6 +349,9 @@
                 // Dans le cas contraire on le vide
                 report.mission = null;
             }
+
+            // Nous n'avons plus besoin de cette clef
+            delete report.masked_fields;
 
             return report;
         }
