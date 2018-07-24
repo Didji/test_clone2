@@ -311,11 +311,12 @@
 
                 scope.intent.multi_report_assets_id = [];
 
-                var asset, assetid, latlng, redirect;
+                var asset, latlng, redirect;
+                for (var i = 0; i < scope.intent.multi_report_target.length; i++) {
+                    asset = scope.intent.multi_report_target[i];
 
-                for (assetid in scope.intent.multi_report_target) {
-                    asset = scope.intent.multi_report_target[assetid];
-
+                    // On passe automatiquement l'etat d'un equipement à "fait"
+                    // si un l'agent a saisis un rapport dessus
                     if (asset.currentState === 0) {
                         if (!reports[+asset.id]) {
                             continue;
@@ -324,7 +325,9 @@
                         }
                     }
 
+                    // Si aucun rapport n'a été saisi
                     if (!reports[+asset.id]) {
+                        // On en créé un vierge sans valeur de champs
                         reports[+asset.id] = new Report(
                             asset.id,
                             scope.intent.multi_report_activity.id,
@@ -371,6 +374,7 @@
                         "[DONE_ASSETS]",
                         scope.intent.multi_report_assets_id.join(",")
                     );
+
                     window.plugins.launchmyapp.startActivity(
                         { action: "android.intent.action.VIEW", url: redirect },
                         angular.noop,
@@ -441,6 +445,10 @@
                     // Dans le cas contraire on le vide
                     report.mission = null;
                 }
+
+                // Nous n'avons plus besoin de cette clef
+                delete report.masked_fields;
+
                 return report;
             }
 
@@ -528,7 +536,8 @@
                             for (var f in scope.report.activity.tabs[cr_tab].fields) {
                                 var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
                                 if (checkFieldZoneSpecifique(cr_field)) {
-                                    cr_fields[f] = all_cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
+                                    cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
+                                    all_cr_fields[f] = cr_fields[f];
                                 }
                             }
                             scope.report.activity.tabs[tab].fields = cr_fields;
@@ -636,7 +645,9 @@
                             for (var f in scope.report.activity.tabs[cr_tab].fields) {
                                 var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
                                 if (checkFieldZoneSpecifique(cr_field)) {
-                                    fields[f] = all_cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
+                                    var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
+                                    fields[field_id] = scope.report.activity.tabs[cr_tab].fields[f];
+                                    all_cr_fields[field_id] = fields[field_id];
                                 }
                             }
                             scope.report.activity.tabs[cr_tab].fields = fields;
@@ -652,7 +663,6 @@
                                 var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
                                 applyConsequences(cons_field.id);
                             }
-                            scope.report.activity.tabs[cons_tab].fields = fields;
                         }
 
                         if (!scope.$$phase) {
@@ -679,7 +689,7 @@
                 var report = angular.copy(reportin);
                 var preparedReport = prepareReport(report);
                 var reportSize = JSON.stringify(preparedReport).length;
-                if (reportSize > Right.get("_MAX_SIZE_POST_REQ")) {
+                if ((4 * reportSize) / 3 > Right.get("_MAX_SIZE_POST_REQ")) {
                     reportin.imgError = true;
                     reportin.ged = Array();
                 } else {
