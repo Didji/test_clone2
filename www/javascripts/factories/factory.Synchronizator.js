@@ -375,7 +375,10 @@
 
             // Construction dynamique du nom de la fonction à appeler (ex : "new"+"Report"+"Synchronizator")
             Synchronizator[items[0].action + items[0].type + "Synchronizator"](items[0], function() {
-                Synchronizator.syncItems(items.slice(1), callback, true);
+                // On ajoute un timeout pour fluidifier l'envoi des JSON
+                setTimeout(function() {
+                    Synchronizator.syncItems(items.slice(1), callback, true);
+                }, 200);
             });
         };
 
