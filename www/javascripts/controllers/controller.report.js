@@ -64,11 +64,40 @@
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
         vm._MAX_MEDIA_PER_REPORT = 3;
 
+        vm.getPictureFromGallery = getPictureFromGallery;
+
         var invalidIds = [],
             intent = Storage.get("intent") || {};
 
         activate();
 
+        /**
+         * @name getPictureFromGallery
+         * @desc Retourne l'URI d'une image selectionnée par l'utilisateur
+         */
+        function getPictureFromGallery() {
+            navigator.camera.getPicture(
+                function(imageURI) {
+                    vm.report.ged.push({ content: imageURI });
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
+                },
+                angular.noop,
+                {
+                    quality: 50,
+                    destinationType: navigator.camera.DestinationType.FILE_URL,
+                    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
+                    correctOrientation: true
+                }
+            );
+        }
+
+        /**
+         * @name getZoneIntersect
+         * @param {String} geom
+         * @desc Retourne la zone spécifique correspondant au wkt passé en paramètre ou false
+         */
         function getZoneIntersect(geom) {
             var wktReader = new jsts.io.WKTReader();
             var position = wktReader.read(geom);
@@ -77,7 +106,7 @@
                 var zone_spe = wktReader.read(Site.current.zones_specifiques[zone].geom);
                 // On teste l'intersection avec la position du CF
                 if (zone_spe.intersects(position)) {
-                    // On a trouver une intersection
+                    // On a trouvé une intersection
                     return parseInt(zone);
                 }
             }
@@ -197,11 +226,11 @@
         function checkFieldZoneSpecifique(field) {
             var result =
                 // Dans le cas du ref national avec un champs national
-                (!vm.report.zone_specifique && !field.zone_specifique) || // Dans le cas d'une zone specifique
-                (vm.report.zone_specifique && //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
+                (!vm.report.zone_specifique && !field.zone_specifique) ||
+                (vm.report.zone_specifique &&
                     (field.zone_specifique == vm.report.zone_specifique ||
                         (!field.zone_specifique &&
-                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible))));
+                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible)))); // Dans le cas d'une zone specifique //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
             return result;
         }
 

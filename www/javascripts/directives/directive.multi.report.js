@@ -65,6 +65,7 @@
             scope.cancel = cancel;
             scope.save = save;
             scope.applyConsequences = applyConsequences;
+            scope.getPictureFromGallery = getPictureFromGallery;
 
             scope.report = null;
             scope.assets = [];
@@ -123,6 +124,28 @@
                 G3ME.map.closePopup();
                 createMarkerForPosition(lat, lng);
             };
+
+            /**
+             * @name getPictureFromGallery
+             * @desc Retourne l'URI d'une image selectionnée par l'utilisateur
+             */
+            function getPictureFromGallery() {
+                navigator.camera.getPicture(
+                    function(imageURI) {
+                        scope.report.ged.push({ content: imageURI });
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
+                        }
+                    },
+                    angular.noop,
+                    {
+                        quality: 50,
+                        destinationType: navigator.camera.DestinationType.FILE_URL,
+                        sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
+                        correctOrientation: true
+                    }
+                );
+            }
 
             /**
              * @name createExitControl
@@ -470,6 +493,11 @@
                 scope.intent.multi_report_target.forEach(createMarker);
             }
 
+            /**
+             * @name getZoneIntersect
+             * @param {String} geom
+             * @desc Retourne la zone spécifique correspondant au wkt passé en paramètre ou false
+             */
             function getZoneIntersect(geom) {
                 var wktReader = new jsts.io.WKTReader();
                 var position = wktReader.read(geom);
@@ -572,14 +600,14 @@
             function checkFieldZoneSpecifique(field) {
                 var result =
                     // Dans le cas du ref national avec un champs national
-                    (!scope.report.zone_specifique && !field.zone_specifique) || // Dans le cas d'une zone specifique
-                    (scope.report.zone_specifique && //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
+                    (!scope.report.zone_specifique && !field.zone_specifique) ||
+                    (scope.report.zone_specifique &&
                         (field.zone_specifique == scope.report.zone_specifique ||
                             (!field.zone_specifique &&
                                 !(
                                     field.id in scope.report.masked_fields &&
                                     !scope.report.masked_fields[field.id].visible
-                                ))));
+                                )))); // Dans le cas d'une zone specifique //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
                 return result;
             }
 

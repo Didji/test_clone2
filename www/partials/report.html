@@ -111,7 +111,7 @@
                 <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
                 <i ng-show='isTakingPhoto' class="fa fa-refresh fa-spin"></i>
             </button>
-            <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" camera="gallery"
+            <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto" ng-click="reportController.getPictureFromGallery();"
                 class='btn btn-default btn-block' ng-model='reportController.report.ged'>
                 <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES_FROM_GALLERY</i18n>
                 <i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
