@@ -163,14 +163,13 @@ angular
 
                 if (ConnectionService.isConnected()) {
                     $http
-                        .get(url, {
-                            timeout: 20000
-                        })
+                        .get(url)
                         .success(callback)
-                        .error(function(data, status) {
-                            if (data && data.statusText) {
-                                alertify.error(data.statusText);
-                            }
+                        .error(function(data) {
+                            // TODO : Améliorer l'interpretation des erreurs et le retour user
+                            // Nécessite d'ajouter des statusCode côté smartgeo
+
+                            //On renvoie un site null et un une error à true via le callback
                             (callback || function() {})(null, true);
                         });
                 } else {
@@ -323,12 +322,9 @@ angular
                 var oldSymbology = angular.copy(Site.current.symbology);
                 $rootScope.dailyUpdate = true;
                 callback = callback || function() {};
-                Installer.getUpdateJSON(site, function(site, error) {
+                Installer.getUpdateJSON(site, function(site, statusCode) {
                     if (!site) {
                         $rootScope.dailyUpdate = false;
-                        if (error) {
-                            callback(true);
-                        }
                         return;
                     }
                     var formatedSite = Installer.formatSiteMetadata(site, true);

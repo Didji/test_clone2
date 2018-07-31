@@ -51,7 +51,7 @@
          * @desc Démarre la mise à jour du site en cours
          */
         function update() {
-            // LicenseManager.update( true );
+            // LicenseManager.update(true);
 
             //on prend garde à ne pas éteindre l'écran pendant la mise à jour, cela stoppe les requêtes
             document.addEventListener(
@@ -64,10 +64,15 @@
                 false
             );
 
-            Installer.update(Site.current, function(error) {
+            Installer.update(Site.current, function(error, statusCode) {
                 if (error) {
                     vm.errorLastUpdate = true;
+                } else {
+                    // On masque le message d'erreur dans l'hypothèse ou la précedante MAJ
+                    // se soit mal passée
+                    vm.errorLastUpdate = false;
                 }
+
                 if (!$scope.$$phase) {
                     $scope.$digest();
                 }
