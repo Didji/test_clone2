@@ -558,21 +558,21 @@
                         }
 
                         // On parcourt les champs présent dans les tabs d'activité pour les filtrer
-                        var all_cr_fields = {};
                         for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
                             var cr_fields = {};
                             for (var f in scope.report.activity.tabs[cr_tab].fields) {
                                 var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
                                 if (checkFieldZoneSpecifique(cr_field)) {
                                     cr_fields[f] = scope.report.activity.tabs[cr_tab].fields[f];
-                                    all_cr_fields[f] = cr_fields[f];
                                 }
                             }
                             scope.report.activity.tabs[tab].fields = cr_fields;
                         }
 
-                        // On applique les valeurs par défaut des champs
-                        applyDefaultValues(all_cr_fields);
+                        // On applique les valeurs par défaut sur chaque tab
+                        for (var i = 0; i < scope.report.activity.tabs.length; i++) {
+                            applyDefaultValues(scope.report.activity.tabs[i].fields);
+                        }
 
                         // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
                         for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
@@ -667,7 +667,6 @@
                         }
 
                         // On parcourt les champs présent dans les tabs d'activité pour les filtrer
-                        var all_cr_fields = {};
                         for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
                             var fields = {};
                             for (var f in scope.report.activity.tabs[cr_tab].fields) {
@@ -675,17 +674,17 @@
                                 if (checkFieldZoneSpecifique(cr_field)) {
                                     var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
                                     fields[field_id] = scope.report.activity.tabs[cr_tab].fields[f];
-                                    all_cr_fields[field_id] = fields[field_id];
                                 }
                             }
                             scope.report.activity.tabs[cr_tab].fields = fields;
                         }
 
-                        // On applique les valeurs par défaut sur tous les champs
-                        applyDefaultValues(all_cr_fields);
+                        // On applique les valeurs par défaut sur chaque tab
+                        for (var i = 0; i < scope.report.activity.tabs.length; i++) {
+                            applyDefaultValues(scope.report.activity.tabs[i].fields);
+                        }
 
                         // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
-
                         for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
                             for (var f in scope.report.activity.tabs[cons_tab].fields) {
                                 var cons_field = scope.report.activity.tabs[cons_tab].fields[f];

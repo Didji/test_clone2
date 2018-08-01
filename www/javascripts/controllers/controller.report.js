@@ -186,20 +186,21 @@
                 }
 
                 // On parcourt les champs présent dans les tabs d'activité pour les filtrer
-                var all_cr_fields = {};
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
                     var cr_fields = {};
                     for (var f in vm.report.activity.tabs[tab].fields) {
                         var cr_field = vm.report.activity.tabs[tab].fields[f];
                         if (checkFieldZoneSpecifique(cr_field)) {
-                            cr_fields[f] = all_cr_fields[f] = vm.report.activity.tabs[tab].fields[f];
+                            cr_fields[f] = vm.report.activity.tabs[tab].fields[f];
                         }
                     }
                     vm.report.activity.tabs[tab].fields = cr_fields;
                 }
 
-                // On applique les valeurs par défaut des champs
-                applyDefaultValues(all_cr_fields);
+                // On applique les valeurs par défaut sur chaque tab
+                for (var i = 0; i < vm.report.activity.tabs.length; i++) {
+                    applyDefaultValues(vm.report.activity.tabs[i].fields);
+                }
 
                 // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
                 for (var cons_tab = 0; cons_tab < vm.report.activity.tabs.length; cons_tab++) {
@@ -416,11 +417,11 @@
         function applyDefaultValues(_fields) {
             var fields = vm.report.fields,
                 def,
-                i,
                 field;
 
-            for (var i = 0; i < _fields.length; i++) {
-                field = vm.report.activity._fields[i];
+            //for (var i = 0; i < _fields.length; i++) {
+            for (var f in _fields) {
+                field = vm.report.activity._fields[_fields[f].id];
                 def = field["default"];
 
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
