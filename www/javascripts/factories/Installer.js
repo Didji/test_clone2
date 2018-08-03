@@ -158,7 +158,7 @@ angular
             getUpdateJSON: function(site, callback) {
                 var url = Utils.getServiceUrl("gi.maintenance.mobility.installation.json", {
                     site: site.id,
-                    timestamp: site.timestamp
+                    timestamp: parseInt(site.timestamp)
                 });
 
                 if (ConnectionService.isConnected()) {
@@ -166,11 +166,7 @@ angular
                         .get(url)
                         .success(callback)
                         .error(function(data) {
-                            // TODO : Améliorer l'interpretation des erreurs et le retour user
-                            // Nécessite d'ajouter des statusCode côté smartgeo
-
-                            //On renvoie un site null et un une error à true via le callback
-                            (callback || function() {})(null, true);
+                            $rootScope.dailyUpdate = false;
                         });
                 } else {
                     alertify.error(i18n.get("_INSTALL_OFFLINE"));
@@ -322,9 +318,9 @@ angular
                 var oldSymbology = angular.copy(Site.current.symbology);
                 $rootScope.dailyUpdate = true;
                 callback = callback || function() {};
-                Installer.getUpdateJSON(site, function(site, statusCode) {
+                Installer.getUpdateJSON(site, function(site) {
+                    $rootScope.dailyUpdate = false;
                     if (!site) {
-                        $rootScope.dailyUpdate = false;
                         return;
                     }
                     var formatedSite = Installer.formatSiteMetadata(site, true);
@@ -332,7 +328,6 @@ angular
                     angular.extend(Site.current, formatedSite);
                     if (onlySite) {
                         Site.save(Site.current, function() {
-                            $rootScope.dailyUpdate = false;
                             if (!$rootScope.$$phase) {
                                 $rootScope.$digest();
                             }
@@ -341,7 +336,6 @@ angular
                         });
                         return;
                     }
-
                     Installer.deleteAssets(Site.current, site.obsoletes, function() {
                         Installer.install(
                             Site.current,
