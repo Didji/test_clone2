@@ -55,25 +55,10 @@
                             <option value=""></option>
                         </select>
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && field.default && field.default.pkey)"
-                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]"
-                            style="margin-bottom:10px">
+                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D')" ng-required="field.required"
+                            type="date" name="f" ng-model="reportController.report.fields[field.id]" style="margin-bottom:10px">
 
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && reportController.isAndroid && (!field.default || !field.default.pkey))"
-                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.fields[field.id]"
-                            style="margin-bottom:10px">
-
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && field.default && field.default.pkey)"
-                            ng-required="field.required" type="date" name="f" ng-model="reportController.report.overrides[field.id]"
-                            style="margin-bottom:10px">
-
-                        <input ng-required='field.required' class="form-control pull-left" ng-if="::(field.type=='D' && !reportController.isAndroid && (!field.default || !field.default.pkey))"
-                            ng-required="field.required" type="date" name="f" style="margin-bottom:10px" ng-model="reportController.report.fields[field.id]">
-
-                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && field.default && field.default.pkey)"
-                            ng-model="reportController.report.overrides[field.id]"></input>
-                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T' && (!field.default || !field.default.pkey))"
-                            ng-model="reportController.report.fields[field.id]"></input>
+                        <input type="time" class="form-control pull-left" ng-required='field.required' ng-if="::(field.type=='T')" ng-model="reportController.report.fields[field.id]"></input>
 
                         <input ng-required='field.required' ng-if="::(field.type=='N' && field.default && field.default.pkey)" type="number" class="form-control"
                             ng-required="field.required" ng-pattern="reportController.numberPattern" step="any" name="f" ng-model='reportController.report.overrides[field.id]'>

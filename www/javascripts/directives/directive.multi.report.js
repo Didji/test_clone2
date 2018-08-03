@@ -220,7 +220,7 @@
                     i,
                     field,
                     date;
-                for (var i = 0; i < _fields.length; i++) {
+                for (var i in _fields) {
                     field = scope.report.activity._fields[i];
 
                     if (fields[field.id]) {
@@ -243,38 +243,72 @@
                         continue;
                     } else if ("string" === typeof def) {
                         //valeur par défaut de type constante
-                        if (field.type === "D" && def === "#TODAY#") {
-                            date = new Date();
-                            def =
-                                date.getUTCFullYear() +
-                                "-" +
-                                Utils.pad(date.getUTCMonth() + 1) +
-                                "-" +
-                                Utils.pad(date.getUTCDate());
-                            fields[field.id] = new Date(def);
-                            scope.report.fields[field.id] = new Date(def);
-                        } else if (field.type === "T" && def === "#NOW#") {
-                            var d = new Date();
-                            fields[field.id] = d;
+                        if (field.type === "D") {
+                            if (def === "#TODAY#") {
+                                var d = new Date();
+                                def = d;
+                            } else {
+                                try {
+                                    def = new Date(def);
+                                } catch (error) {
+                                    def = new Date();
+                                }
+                            }
+                            var month = String(d.getMonth() + 1);
+                            var day = String(d.getDate());
+                            var year = String(d.getFullYear());
+                            if (month.length < 2) month = "0" + month;
+                            if (day.length < 2) day = "0" + day;
+                            var formated_def = [day, month, year].join("/");
+
+                            fields[field.id] = def;
+                            scope.report.roFields[field.id] = formated_def;
+                        } else if (field.type === "T") {
+                            if (def === "#NOW#") {
+                                var d = new Date();
+                                d.setSeconds(0);
+                                d.setMilliseconds(0);
+                                def = d;
+                            } else {
+                                try {
+                                    d = def.split(":");
+                                    var hours = d[0];
+                                    var minutes = d[1];
+                                    def = new Date(1970, 0, 1, hours, minutes, 0);
+                                } catch (error) {
+                                    var d = new Date();
+                                    d.setSeconds(0);
+                                    d.setMilliseconds(0);
+                                    def = d;
+                                }
+                            }
+                            var hour = String(d.getHours());
+                            var minute = String(d.getMinutes());
+                            if (hour.length < 2) hour = "0" + hour;
+                            if (minute.length < 2) minute = "0" + minute;
+                            var formated_def = [hour, minute, "00"].join(":");
+
+                            fields[field.id] = def;
+                            scope.report.roFields[field.id] = formated_def;
                         } else if (field.type === "N") {
                             def = +def;
                             fields[field.id] = def;
-                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = def;
                         } else {
                             fields[field.id] = def;
-                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = def;
                         }
                     } else {
-                        def = getValueFromAssets(def.pkey, scope.report.activity.okeys[0]);
-                        var output = formatFieldEntry(def);
-                        if (field.type === "N") {
-                            output = +output;
+                        var defasset = getValueFromAssets(def.pkey, scope.report.activity.okeys[0]);
+                        if (!angular.equals({}, defasset)) {
+                            var output = formatFieldEntry(defasset);
+                            if (field.type === "N") {
+                                output = +output;
+                            }
+                            scope.report.roFields[field.id] = output;
+                            scope.report.overrides[field.id] = output;
+                            fields[field.id] = output.length != 0 ? output : defasset;
                         }
-                        scope.report.roFields[field.id] = output;
-                        scope.report.overrides[field.id] = output;
-                        fields[field.id] = def;
                     }
                 }
                 if (!scope.$$phase) {
@@ -759,6 +793,7 @@
                 scope.report = null;
                 scope.assets = [];
                 scope.reportForm.$setPristine();
+                $rootScope.multireport = null;
                 $("#multireport").modal("toggle");
                 Smartgeo._removeEventListener("backbutton", cancel);
                 Smartgeo._addEventListener("backbutton", Intents.end);
