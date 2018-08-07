@@ -33,6 +33,7 @@
         function activate() {
             removedSite = prefetchedlocalsites;
             vm.siteLabel = removedSite.label;
+            Storage.remove("users");
             Installer.uninstallSite(removedSite, siteHasBeenRemoved);
         }
 
