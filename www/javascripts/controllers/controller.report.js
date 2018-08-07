@@ -488,7 +488,6 @@
                     } else if (field.type === "N") {
                         def = +def;
                         fields[field.id] = def;
-                        //vm.report.fields[field.id] = def;
                         vm.report.roFields[field.id] = def;
                     } else {
                         fields[field.id] = def;
