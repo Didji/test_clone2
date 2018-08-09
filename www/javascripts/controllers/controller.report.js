@@ -128,7 +128,7 @@
                 $routeParams.assets = [+$routeParams.assets];
             }
 
-            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.mission);
+            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.report_mission);
 
             Asset.findAssetsByGuids(vm.report.assets, function(assets) {
                 invalidIds = angular.copy(vm.report.assets);
