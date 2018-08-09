@@ -113,6 +113,7 @@ window.smartgeo_i18n_lang.en = {
     _SYNC_ERROR_SERVER: "A critical error occured on the server, Sync has been aborted",
     _SYNC_ERROR_TIMEOUT: "Server didn't respond to the sync request",
     _SYNC_ERROR_SERVER_UNAVAILABLE: "Server is temporarily unavailable",
+    _SYNC_ERROR_NOT_ALLOWED: "You have insufficient rigths, please check your team assignment",
     _SYNC_SYNC_EVERYTHING: "Synchronize all",
     _SYNC_SYNC: "Synchronize",
     _SYNC_SYNC_IN_PROGRESS: "Synchronizing",

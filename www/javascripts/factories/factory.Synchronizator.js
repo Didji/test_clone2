@@ -495,12 +495,14 @@
                         report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
                     }
                 })
-                .error(function(data) {
-                    console.log("gi.maintenance.mobility.report.json response : " + data);
+                .error(function(data, status) {
                     // En cas d'erreur sur le check report, on prévient l'utilisateur
-                    switch (data) {
-                        case 403:
+                    switch (status) {
+                        case 401:
                             report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
+                            break;
+                        case 403:
+                            report.error = i18n.get("_SYNC_ERROR_NOT_ALLOWED");
                             break;
                         case 404:
                             report.error = i18n.get("_SYNC_ERROR_NOT_FOUND");
@@ -700,8 +702,11 @@
                     .error(function(data, status) {
                         // En cas d'erreur sur le check report, on prévient l'utilisateur
                         switch (status) {
-                            case 403:
+                            case 401:
                                 alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
+                                break;
+                            case 403:
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_ALLOWED"));
                                 break;
                             case 404:
                                 alertify.error(i18n.get("_SYNC_ERROR_NOT_FOUND"));

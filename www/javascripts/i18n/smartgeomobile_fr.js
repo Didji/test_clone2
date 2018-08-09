@@ -118,6 +118,8 @@ window.smartgeo_i18n_lang.fr = {
     _SYNC_ERROR_SERVER: "Une erreur critique s'est produite sur le serveur, la synchronisation est impossible",
     _SYNC_ERROR_TIMEOUT: "Le serveur n'a pas répondu à votre demande dans le temps imparti.",
     _SYNC_ERROR_SERVER_UNAVAILABLE: "Le serveur est temporairement inaccessible.",
+    _SYNC_ERROR_NOT_ALLOWED:
+        "Vous n'avez pas les droits nécessaire pour cette synchronisation, verifier votre affectation d'équipe",
     _SYNC_SYNC_EVERYTHING: "Synchroniser",
     _SYNC_SYNC: "Synchroniser",
     _SYNC_SYNC_IN_PROGRESS: "Synchronisation en cours",
