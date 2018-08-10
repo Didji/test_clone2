@@ -9,16 +9,42 @@
                 <i18n>_INSTALL_INSTALLING</i18n> {{site.label}}</b>
         </p>
         <hr>
-        <p ng-show='!site.installed && currentInstalledOkey'>
-            <i18n>_INSTALL_INSTALLING</i18n> {{site.metamodel[currentInstalledOkey].label}}
+        <p ng-show="!site.installed && currentInstalledOkey">
+            <i18n>_INSTALL_INSTALLING</i18n>
+            <i>{{site.metamodel[currentInstalledOkey].label}}</i>
             <i18n>_INSTALL_IN_PROGRESS</i18n>
         </p>
         <div class="progress">
             <div ng-repeat="(key, step) in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}"
                 aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
 
-                <span class="sr-only">{{Math.round(100 * step.progress / totalProgress)}}%</span>
+                <span class="sr-only">{{Math.round(200 * step.progress / totalProgress)}}%</span>
 
+            </div>
+        </div>
+
+        <div ng-if="progress_asset.length !==0" style="padding: 5px;">
+            <div class="row">
+                <a class="btn btn-primary btn-xs" role="button" ng-click="toggleLogTable()">
+                    <i18n ng-if="!showLogTable">_INSTALL_DISPLAY_LOGTABLE</i18n>
+                    <i18n ng-if="showLogTable">_INSTALL_HIDE_LOGTABLE</i18n>
+                </a>
+            </div>
+            <div class="row" ng-if="showLogTable">
+                <table class="table table-striped " style="font-size: 50% ">
+                    <thead style="height:15px; ">
+                        <tr>
+                            <th style="text-align:center;">_INSTALL_LOGTABLE_PROCESS</th>
+                            <th style="text-align:center;">_INSTALL_LOGTABLE_TIME</th>
+                        </tr>
+                    </thead>
+                    <tbody style="height:100px; overflow-y:auto; ">
+                        <tr ng-repeat="(key, log) in progress_asset ">
+                            <td>{{log.message}}</td>
+                            <td>{{log.time}} ms</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -27,6 +27,12 @@ angular.module("smartgeomobile").controller("siteInstallController", [
         $scope.totalProgress = 100;
         $scope.sites = Storage.get_("sites") || {};
         $scope.Math = Math;
+
+        // Variables nécessaires à l'affichage du tableau de log des perf
+        $scope.showLogTable = false;
+        $scope.progress_asset = new Array();
+        $scope.toggleLogTable = toggleLogTable;
+
         /* Si le site est déjà installé, on ne le reinstalle pas (#132), on retourne sur la carte */
         if ($scope.sites[$routeParams.site] && !!$scope.sites[$routeParams.site].installed) {
             $location.path("/map/" + $routeParams.site);
@@ -39,6 +45,11 @@ angular.module("smartgeomobile").controller("siteInstallController", [
                 event.preventDefault();
             }
         });
+
+        function toggleLogTable() {
+            console.log("toggleLogTable");
+            $scope.showLogTable = !$scope.showLogTable;
+        }
 
         function buildSteps(site) {
             var steps = [],
@@ -135,6 +146,20 @@ angular.module("smartgeomobile").controller("siteInstallController", [
 
         $scope.$on("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", function(event, action) {
             $scope.currentInstalledOkey = action.okey;
+            // On vérifie si la variable d'action contient bien les infos nécessaires
+            // à l'affichage du tableau de log
+            if ("progress_asset" in action) {
+                // On fixe à 5 le nombre de ligne du tableau
+                if ($scope.progress_asset.length > 4) {
+                    // Si le tableau est complet, on supprime le dernier element
+                    $scope.progress_asset.pop();
+                }
+                // On insert le log le plus récent en première position
+                $scope.progress_asset.unshift({
+                    message: action.progress_asset.message,
+                    time: parseFloat(action.progress_asset.time).toFixed(2)
+                });
+            }
             stepsByOkey[action.okey].progress = 1 * action.progress;
             if (!$scope.$$phase) {
                 $scope.$apply();

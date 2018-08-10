@@ -54,6 +54,10 @@ window.smartgeo_i18n_lang.en = {
         "Your data seem too large or there's not enough remaining space on your device.\nSetup may not finish.",
     _INSTALL_INSTALLING: "Installing ",
     _INSTALL_IN_PROGRESS: " in progress",
+    _INSTALL_DISPLAY_LOGTABLE: "Display log table",
+    _INSTALL_HIDE_LOGTABLE: "Hide log table",
+    _INSTALL_LOGTABLE_PROCESS: "Processing",
+    _INSTALL_LOGTABLE_TIME: "Time",
     _INSTALL_ERR: "An error has been detected (code %s).\nApplication will stop. Please, contact your support.",
     _INSTALL_QUOTA_ERR:
         "Your quota has been reached, no more data can be installed.\nApplication will stop. Please, contact your support.",

@@ -6,14 +6,12 @@ angular
         $http,
         $rootScope,
         $timeout,
-        $route,
         Storage,
         Site,
         Asset,
         i18n,
         Relationship,
         Utils,
-        Authenticator,
         Right,
         ConnectionService
     ) {
@@ -396,14 +394,19 @@ angular
                     if (update) {
                         url += "&timestamp=" + site.oldTimestamp;
                     }
-
+                    var t_start = performance.now();
                     $http
                         .get(url)
                         .success(function(data) {
                             Installer.save(site, data.assets, function() {
+                                var t_end = performance.now();
                                 $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                                     okey: objectType.okey,
-                                    progress: objectType.amount
+                                    progress: objectType.amount,
+                                    progress_asset: {
+                                        message: objectType.okey,
+                                        time: t_end - t_start
+                                    }
                                 });
                                 $timeout(function() {
                                     callback();
@@ -437,6 +440,7 @@ angular
                     url += "&lastid=" + Installer._LAST_ID_OKEY[objectType.okey];
                 }
 
+                var t_start = performance.now();
                 $http
                     .get(url)
                     .success(function(data) {
@@ -448,9 +452,14 @@ angular
                             ? data.assets[data.assets.length - 1].guid
                             : Installer._LAST_ID_OKEY[objectType.okey];
                         Installer.save(site, data.assets, function() {
+                            var t_end = performance.now();
                             $rootScope.$broadcast("_INSTALLER_I_AM_CURRENTLY_DOING_THIS_", {
                                 okey: objectType.okey,
-                                progress: Math.min(newlastFetched, objectType.amount)
+                                progress: Math.min(newlastFetched, objectType.amount),
+                                progress_asset: {
+                                    message: objectType.okey + "(" + lastFetched + ":" + newlastFetched + ")",
+                                    time: t_end - t_start
+                                }
                             });
                             $timeout(function() {
                                 Installer.installOkeyPerSlice(site, objectType, newlastFetched, callback, update);
@@ -498,27 +507,27 @@ angular
                             zone.insert_requests.push(Asset.__buildRequest(sub_zone, site));
                             temp_zone = temp_zone.slice(Installer._INSTALL_MAX_ASSETS_PER_INSERT_REQUEST);
                         }
-                        Installer.execute_requests_for_zone(site, zone, function() {
+                        Installer.execute_requests_for_zone(zone, function() {
                             Installer.checkpoint("saved_zones", site.zones.length, callback);
                         });
                     })(i);
                 }
             },
 
-            execute_requests_for_zone: function(site, zone, callback) {
+            execute_requests_for_zone: function(zone, callback) {
                 if (zone.insert_requests.length === 0) {
-                    return Installer.checkpoint("rqst" + zone.table_name, zone.insert_requests.length, callback);
+                    return Installer.checkpoint("rqst" + zone.table_name, 0, callback);
                 }
 
-                for (var i = 0; i < zone.insert_requests.length; i++) {
-                    (function(zone, request) {
-                        SQLite.openDatabase({
-                            name: zone.database_name
-                        }).transaction(
-                            function(transaction) {
+                SQLite.openDatabase({
+                    name: zone.database_name
+                }).transaction(
+                    function(transaction) {
+                        for (var i = 0; i < zone.insert_requests.length; i++) {
+                            (function(zone, i) {
                                 transaction.executeSql(
-                                    request.request,
-                                    request.args,
+                                    zone.insert_requests[i].request,
+                                    zone.insert_requests[i].args,
                                     function() {
                                         Installer.checkpoint(
                                             "rqst" + zone.table_name,
@@ -536,25 +545,23 @@ angular
                                         );
                                     }
                                 );
-                            },
-                            function(err) {
-                                //callback d'erreur de transaction, cf http://www.w3.org/TR/webdatabase/#sqlerror
-                                console.error(
-                                    "TX error " + err.code + " on DB " + zone.database_name + " : " + err.message
-                                );
-                                if (!Installer._DB_ERR) {
-                                    Installer._DB_ERR = true;
-                                    var msg = i18n.get("_INSTALL_ERR", err.code);
-                                    if (err.code == err.QUOTA_ERR) {
-                                        msg = i18n.get("_INSTALL_QUOTA_ERR");
-                                    }
-                                    alertify.alert(msg); //TODO: en 2.0/full web view, quitter l'application sur le callback de confirmation
-                                    //du message pour être ISO à la 1.2.4 (dev spé Veolia) ou trouver une autre solution
-                                }
+                            })(zone, i);
+                        }
+                    },
+                    function(err) {
+                        //callback d'erreur de transaction, cf http://www.w3.org/TR/webdatabase/#sqlerror
+                        console.error("TX error " + err.code + " on DB " + zone.database_name + " : " + err.message);
+                        if (!Installer._DB_ERR) {
+                            Installer._DB_ERR = true;
+                            var msg = i18n.get("_INSTALL_ERR", err.code);
+                            if (err.code == err.QUOTA_ERR) {
+                                msg = i18n.get("_INSTALL_QUOTA_ERR");
                             }
-                        );
-                    })(zone, zone.insert_requests[i]);
-                }
+                            alertify.alert(msg); //TODO: en 2.0/full web view, quitter l'application sur le callback de confirmation
+                            //du message pour être ISO à la 1.2.4 (dev spé Veolia) ou trouver une autre solution
+                        }
+                    }
+                );
             },
 
             uninstallSite: function(site, callback) {

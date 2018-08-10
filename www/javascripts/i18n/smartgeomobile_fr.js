@@ -57,6 +57,10 @@ window.smartgeo_i18n_lang.fr = {
         "Votre installation semble volumineuse ou votre espace disque restant n'est pas suffisant.\nIl est possible que celle-ci ne puisse pas se terminer.",
     _INSTALL_INSTALLING: "Installation de ",
     _INSTALL_IN_PROGRESS: "en cours",
+    _INSTALL_DISPLAY_LOGTABLE: "Afficher le détail",
+    _INSTALL_HIDE_LOGTABLE: "Masquer le détail",
+    _INSTALL_LOGTABLE_PROCESS: "Avancement",
+    _INSTALL_LOGTABLE_TIME: "Durée",
     _INSTALL_ERR:
         "Une erreur empêchant l'installation a été détectée (code %s).\nL'application va s'arrêter, merci de contacter votre support.",
     _INSTALL_QUOTA_ERR:
