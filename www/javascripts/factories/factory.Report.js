@@ -3,9 +3,9 @@
 
     angular.module("smartgeomobile").factory("Report", ReportFactory);
 
-    ReportFactory.$inject = ["Activity", "Site", "i18n", "$location", "$rootScope", "Asset"];
+    ReportFactory.$inject = ["Activity", "Site", "i18n"];
 
-    function ReportFactory(Activity, Site, i18n, $location, $rootScope, Asset) {
+    function ReportFactory(Activity, Site, i18n) {
         /**
          * @class ReportFactory
          * @desc Factory de la classe Report
