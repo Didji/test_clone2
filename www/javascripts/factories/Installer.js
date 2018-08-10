@@ -251,10 +251,10 @@ angular
                 for (var i = 0; i < zones_matrix_length; i++) {
                     for (var j = 0; j < zones_matrix_length; j++) {
                         extent = {
-                            xmin: site.extent.xmin + i * zones_matrix_width,
-                            xmax: site.extent.xmin + (i + 1) * zones_matrix_width,
-                            ymin: site.extent.ymin + j * zones_matrix_height,
-                            ymax: site.extent.ymin + (j + 1) * zones_matrix_height
+                            xmin: Number(site.extent.xmin) + i * zones_matrix_width,
+                            xmax: Number(site.extent.xmin) + (i + 1) * zones_matrix_width,
+                            ymin: Number(site.extent.ymin) + j * zones_matrix_height,
+                            ymax: Number(site.extent.ymin) + (j + 1) * zones_matrix_height
                         };
                         site.zones.push({
                             extent: extent,

@@ -487,7 +487,7 @@
             report.syncInProgress = true;
             $http
                 .post(Utils.getServiceUrl("gi.maintenance.mobility.report.json"), report)
-                .success(function(data) {
+                .then(function(data) {
                     if (data.cri && data.cri.length) {
                         report.synced = true;
                         report.error = undefined;
@@ -495,9 +495,8 @@
                         report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
                     }
                 })
-                .error(function(data, status) {
-                    // En cas d'erreur sur le check report, on prévient l'utilisateur
-                    switch (status) {
+                .catch(function(data) {
+                    switch (data.status) {
                         case 401:
                             report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
                             break;
@@ -521,7 +520,7 @@
                             break;
                     }
                 })
-                .finally(function(data) {
+                .finally(function() {
                     report.syncInProgress = false;
                     report.save(callback);
                 });
@@ -688,7 +687,7 @@
                     .post(Utils.getServiceUrl("gi.maintenance.mobility.report.check.json"), {
                         uuids: luuids
                     })
-                    .success(function(data) {
+                    .then(function(data) {
                         if (typeof data === "string") {
                             return;
                         }
@@ -699,25 +698,28 @@
                             }
                         }
                     })
-                    .error(function(data, status) {
-                        // En cas d'erreur sur le check report, on prévient l'utilisateur
-                        switch (status) {
+                    .catch(function(data) {
+                        switch (data.status) {
                             case 401:
-                                alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
+                                report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
                                 break;
                             case 403:
-                                alertify.error(i18n.get("_SYNC_ERROR_NOT_ALLOWED"));
+                                report.error = i18n.get("_SYNC_ERROR_NOT_ALLOWED");
                                 break;
                             case 404:
-                                alertify.error(i18n.get("_SYNC_ERROR_NOT_FOUND"));
+                                report.error = i18n.get("_SYNC_ERROR_NOT_FOUND");
                                 break;
                             case 500:
-                                alertify.error(i18n.get("_SYNC_ERROR_SERVER"));
+                                report.error = i18n.get("_SYNC_ERROR_SERVER");
                                 break;
                             case 504:
-                                alertify.error(i18n.get("_SYNC_ERROR_TIMEOUT"));
+                                report.error = i18n.get("_SYNC_ERROR_TIMEOUT");
+                                break;
+                            case 503:
+                                report.error = i18n.get("_SYNC_ERROR_SERVER_UNAVAILABLE");
                                 break;
                             default:
+                                report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
                                 break;
                         }
                     });
