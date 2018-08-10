@@ -101,7 +101,7 @@ function config($routeProvider, $httpProvider, $provide, $compileProvider) {
                 var $location = $injector.get("$location");
                 var $http = $injector.get("$http");
                 if (
-                    rejection.status === 403 &&
+                    rejection.status === 401 &&
                     $location.path() !== "/" &&
                     rejection.config.url.indexOf("global.auth") === -1 &&
                     rejection.config.url.indexOf("gi.maintenance.mobility.site.json") === -1
