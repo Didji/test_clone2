@@ -47,7 +47,6 @@ angular.module("smartgeomobile").controller("siteInstallController", [
         });
 
         function toggleLogTable() {
-            console.log("toggleLogTable");
             $scope.showLogTable = !$scope.showLogTable;
         }
 
