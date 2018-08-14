@@ -487,8 +487,8 @@
             report.syncInProgress = true;
             $http
                 .post(Utils.getServiceUrl("gi.maintenance.mobility.report.json"), report)
-                .then(function(data) {
-                    if (data.cri && data.cri.length) {
+                .then(function(resp) {
+                    if (resp.data.cri && resp.data.cri.length) {
                         report.synced = true;
                         report.error = undefined;
                     } else {
@@ -687,39 +687,39 @@
                     .post(Utils.getServiceUrl("gi.maintenance.mobility.report.check.json"), {
                         uuids: luuids
                     })
-                    .then(function(data) {
-                        if (typeof data === "string") {
+                    .then(function(resp) {
+                        if (typeof resp.data === "string") {
                             return;
                         }
-                        var ruuids = data.uuids || data;
+                        var ruuids = resp.data.uuids || resp.data;
                         for (var i = 0, ii = reports.length; i < ii; i++) {
                             if (ruuids[reports[i].uuid]) {
                                 reports[i].delete();
                             }
                         }
                     })
-                    .catch(function(data) {
-                        switch (data.status) {
+                    .catch(function(resp) {
+                        switch (resp.data.status) {
                             case 401:
-                                report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
                                 break;
                             case 403:
-                                report.error = i18n.get("_SYNC_ERROR_NOT_ALLOWED");
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_ALLOWED"));
                                 break;
                             case 404:
-                                report.error = i18n.get("_SYNC_ERROR_NOT_FOUND");
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_FOUND"));
                                 break;
                             case 500:
-                                report.error = i18n.get("_SYNC_ERROR_SERVER");
+                                alertify.error(i18n.get("_SYNC_ERROR_SERVER"));
                                 break;
                             case 504:
-                                report.error = i18n.get("_SYNC_ERROR_TIMEOUT");
+                                alertify.error(i18n.get("_SYNC_ERROR_TIMEOUT"));
                                 break;
                             case 503:
-                                report.error = i18n.get("_SYNC_ERROR_SERVER_UNAVAILABLE");
+                                alertify.error(i18n.get("_SYNC_ERROR_SERVER_UNAVAILABLE"));
                                 break;
                             default:
-                                report.error = i18n.get("_SYNC_UNKNOWN_ERROR_");
+                                alertify.error(i18n.get("_SYNC_UNKNOWN_ERROR_"));
                                 break;
                         }
                     });
