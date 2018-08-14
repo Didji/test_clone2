@@ -40,7 +40,7 @@
 
         $scope.syncOnline; //for the view condition
         // Temps de synchronisation automatique des rapports : 5min
-        var globalinterval = 1000 * 60 * 5;
+        $scope.globalinterval = 1000 * 60 * 5;
         updateList();
 
         // au lancement de l'application l'instanciation du controlleur ce fait apres le smartgeo.initialise , et donc l'evenement $on de ce controlleur est instancier apres le $broadcast de la factory smartgeo; mais on peut toutefois s'appuyer sur la variable online dans le localstorage.
@@ -58,8 +58,11 @@
             //on annule d'abord tout les intervals de synchronisation , sinon on crée plusieurs intervals à chaque activate
             desactivate();
             $scope.syncOnline = Storage.get("online");
-            $rootScope.syncAllInterval = $interval(synchronizeAll, globalinterval);
-            $rootScope.checkSyncReportInterval = $interval(Synchronizator.checkSynchronizedReports, globalinterval);
+            $rootScope.syncAllInterval = $interval(synchronizeAll, $scope.globalinterval);
+            $rootScope.checkSyncReportInterval = $interval(
+                Synchronizator.checkSynchronizedReports,
+                $scope.globalinterval
+            );
             synchronizeAll();
         }
 
