@@ -133,8 +133,8 @@
                 navigator.camera.getPicture(
                     function(imageURI) {
                         scope.report.ged.push({ content: imageURI });
-                        if (!$scope.$$phase) {
-                            $scope.$digest();
+                        if (!scope.$$phase) {
+                            scope.$digest();
                         }
                     },
                     angular.noop,
@@ -189,7 +189,8 @@
                         continue;
                     }
 
-                    cond = scope.report.fields[srcId] === act.condition;
+                    cond = scope.report.fields[srcId] == act.condition;
+                    var cons = testConsequences(act.target);
                     switch (act.type) {
                         case "show":
                             targetField.visible = cond;
@@ -202,12 +203,51 @@
                             }
                             break;
                         case "require":
-                            targetField.required = cond;
+                            targetField.required = cond || cons.require;
                             break;
                         default:
                             targetField.required = !!targetField.required;
                     }
                 }
+            }
+
+            /**
+             * @name testConsequences
+             * @param {Number} targetId
+             * @vm
+             * @desc On test
+             */
+            function testConsequences(targetId) {
+                var visible = undefined;
+                var require = undefined;
+                // On Parcours les champs
+                for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
+                    for (var f in scope.report.activity.tabs[cons_tab].fields) {
+                        var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
+                        if ("actions" in cons_field) {
+                            for (var i = 0; i < cons_field.actions.length; i++) {
+                                // Le champs doit être visible pour que l'on en tienne compte
+                                if (cons_field.actions[i].target == targetId && cons_field.visible != false) {
+                                    var act = cons_field.actions[i];
+                                    var cond = scope.report.fields[cons_field.id] == act.condition;
+                                    switch (act.type) {
+                                        case "show":
+                                            // Théoriquement on ne peut pas arriver ici car Smartgeo empeche
+                                            // via l'UI de saisir plusieur conséquence de visible sur un même champs
+                                            // Note : Certains client passent par des insert direct en base (Véolia)
+                                            // Il faut donc gérer ce cas de figure
+                                            visible = visible || cond;
+                                            break;
+                                        case "require":
+                                            require = require || cond;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return { visible: visible, require: require };
             }
 
             /**
@@ -217,11 +257,9 @@
             function applyDefaultValues(_fields) {
                 var fields = scope.report.fields,
                     def,
-                    i,
-                    field,
-                    date;
-                for (var i in _fields) {
-                    field = scope.report.activity._fields[i];
+                    field;
+                for (var i = 0; i < _fields.length; i++) {
+                    field = scope.report.activity._fields[_fields[i].id];
 
                     if (fields[field.id]) {
                         //champ déjà enregistré, on applique pas les valeurs par défaut
@@ -310,9 +348,6 @@
                             fields[field.id] = output.length != 0 ? output : defasset;
                         }
                     }
-                }
-                if (!scope.$$phase) {
-                    scope.$digest();
                 }
             }
 
@@ -616,11 +651,16 @@
                             }
                         }
 
-                        if (!scope.$$phase) {
-                            scope.$apply();
-                        }
+                        setTimeout(function() {
+                            if (!scope.$$phase) {
+                                scope.$digest();
+                            }
+                        }, 100);
 
                         $("#multireport").modal("toggle");
+                        $("#multireport input, #multireport select")
+                            .first()
+                            .focus();
                     })
                     .addTo(G3ME.map);
             }
@@ -702,17 +742,20 @@
 
                         // On parcourt les champs présent dans les tabs d'activité pour les filtrer
                         for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
-                            var fields = {};
+                            var fields = [];
                             for (var f in scope.report.activity.tabs[cr_tab].fields) {
                                 var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
                                 if (checkFieldZoneSpecifique(cr_field)) {
                                     var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
-                                    fields[field_id] = scope.report.activity.tabs[cr_tab].fields[f];
+                                    fields.push(scope.report.activity.tabs[cr_tab].fields[f]);
                                 }
                             }
                             scope.report.activity.tabs[cr_tab].fields = fields;
                         }
 
+                        for (var i = 0; i < scope.report.assets.length; i++) {
+                            scope.assets.push(new Asset(scope.report.assets[i]));
+                        }
                         // On applique les valeurs par défaut sur chaque tab
                         for (var i = 0; i < scope.report.activity.tabs.length; i++) {
                             applyDefaultValues(scope.report.activity.tabs[i].fields);
@@ -726,18 +769,20 @@
                             }
                         }
 
-                        if (!scope.$$phase) {
-                            scope.$apply();
-                        }
-                        for (var i = 0; i < scope.report.assets.length; i++) {
-                            scope.assets.push(new Asset(scope.report.assets[i]));
-                        }
+                        setTimeout(function() {
+                            if (!scope.$$phase) {
+                                scope.$digest();
+                            }
+                        }, 100);
 
                         unwatch_report_ged = scope.$watch("report.ged", function(n, o) {
                             scope.reportForm.$setDirty();
                         });
 
                         $("#multireport").modal("toggle");
+                        $("#multireport input, #multireport select")
+                            .first()
+                            .focus();
                     })
                     .addTo(G3ME.map);
             }

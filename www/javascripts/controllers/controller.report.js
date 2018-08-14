@@ -187,11 +187,11 @@
 
                 // On parcourt les champs présent dans les tabs d'activité pour les filtrer
                 for (var tab = 0; tab < vm.report.activity.tabs.length; tab++) {
-                    var cr_fields = {};
+                    var cr_fields = [];
                     for (var f in vm.report.activity.tabs[tab].fields) {
                         var cr_field = vm.report.activity.tabs[tab].fields[f];
                         if (checkFieldZoneSpecifique(cr_field)) {
-                            cr_fields[f] = vm.report.activity.tabs[tab].fields[f];
+                            cr_fields.push(vm.report.activity.tabs[tab].fields[f]);
                         }
                     }
                     vm.report.activity.tabs[tab].fields = cr_fields;
@@ -214,7 +214,7 @@
                     if (!$scope.$$phase) {
                         $scope.$digest();
                     }
-                }, 1000);
+                }, 100);
             });
         }
 
@@ -260,10 +260,11 @@
                     continue;
                 }
 
-                cond = vm.report.fields[srcId] === act.condition;
+                cond = vm.report.fields[srcId] == act.condition;
+                var cons = testConsequences(act.target);
                 switch (act.type) {
                     case "show":
-                        targetField.visible = cond;
+                        targetField.visible = cond || cons.visible;
                         // Si targetField est une case à cocher, elle a peut-être
                         // aussi des conséquences. Si une case à cocher devient invisible,
                         // il faut qu'on la décoche et qu'on applique ses conséquences.
@@ -273,12 +274,51 @@
                         }
                         break;
                     case "require":
-                        targetField.required = cond;
+                        targetField.required = cond || cons.require;
                         break;
                     default:
                         targetField.required = !!targetField.required;
                 }
             }
+        }
+
+        /**
+         * @name testConsequences
+         * @param {Number} targetId
+         * @vm
+         * @desc On test
+         */
+        function testConsequences(targetId) {
+            var visible = undefined;
+            var require = undefined;
+            // On Parcours les champs
+            for (var cons_tab = 0; cons_tab < vm.report.activity.tabs.length; cons_tab++) {
+                for (var f in vm.report.activity.tabs[cons_tab].fields) {
+                    var cons_field = vm.report.activity.tabs[cons_tab].fields[f];
+                    if ("actions" in cons_field) {
+                        for (var i = 0; i < cons_field.actions.length; i++) {
+                            // Le champs doit être visible pour que l'on en tienne compte
+                            if (cons_field.actions[i].target == targetId && cons_field.visible != false) {
+                                var act = cons_field.actions[i];
+                                var cond = vm.report.fields[cons_field.id] == act.condition;
+                                switch (act.type) {
+                                    case "show":
+                                        // Théoriquement on ne peut pas arriver ici car Smartgeo empeche
+                                        // via l'UI de saisir plusieur conséquence de visible sur un même champs
+                                        // Note : Certains client passent par des insert direct en base (Véolia)
+                                        // On gere ici ce cas de figure
+                                        visible = visible || cond;
+                                        break;
+                                    case "require":
+                                        require = require || cond;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return { visible: visible, require: require };
         }
 
         /**
@@ -419,9 +459,8 @@
                 def,
                 field;
 
-            //for (var i = 0; i < _fields.length; i++) {
-            for (var f in _fields) {
-                field = vm.report.activity._fields[_fields[f].id];
+            for (var i = 0; i < _fields.length; i++) {
+                field = vm.report.activity._fields[_fields[i].id];
                 def = field["default"];
 
                 // Par priorité sur les valeurs par défaut, on applique les valeurs
