@@ -88,6 +88,7 @@
             ) {
                 return alertify.alert(i18n.get("_INTENT_NOT_VALID_"));
             }
+
             //scope.intent.multi_report_field = scope.intent.multi_report_activity._fields[+scope.intent.multi_report_activity.multi_assets_tour.switch_field];
             var witch_field = scope.intent.multi_report_activity.multi_assets_tour.switch_field;
             var abort = false;
@@ -551,6 +552,7 @@
             function createMarkers(assets) {
                 scope.intent.multi_report_target = assets;
                 scope.intent.multi_report_icons = {};
+                scope.intent.multi_report_markers = {};
                 for (var state in scope.intent.multi_report_field.options) {
                     var icon = scope.intent.multi_report_field.options[state].icon;
                     scope.intent.multi_report_icons[state] = L.icon({
@@ -559,7 +561,12 @@
                         iconAnchor: [icon.width / 2, icon.height / 2]
                     });
                 }
-                scope.intent.multi_report_target.forEach(createMarker);
+
+                angular.forEach(scope.intent.multi_report_target, function(asset, idx) {
+                    // Pour chaque asset on lui associe un Marker
+                    var marker = createMarker(asset);
+                    G3ME.map.addLayer(marker);
+                });
             }
 
             /**
@@ -587,7 +594,7 @@
                 var latlng = lat + "," + lng;
                 scope.intent.positions[latlng] = asset;
                 asset.currentState = 0;
-                L.marker([lat, lng], {
+                return L.marker([lat, lng], {
                     icon: scope.intent.multi_report_icons[asset.currentState]
                 })
                     .on("click", function() {
@@ -685,10 +692,10 @@
                 return result;
             }
 
-            function createMarker(asset) {
+            function createMarker(asset, status) {
                 scope.intent.assets_by_id[asset.id] = asset;
-                asset.currentState = 0;
-                L.marker(Asset.getCenter(asset), {
+                asset.currentState = status || 0;
+                var marker = L.marker(Asset.getCenter(asset), {
                     icon: scope.intent.multi_report_icons[asset.currentState]
                 })
                     .on("click", function() {
@@ -761,6 +768,10 @@
                             applyDefaultValues(scope.report.activity.tabs[i].fields);
                         }
 
+                        // On applique la valeur par défaut sur le switch field
+                        scope.report.fields[scope.intent.multi_report_activity.multi_assets_tour.switch_field] =
+                            scope.intent.multi_report_field.options[asset.currentState].value;
+
                         // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
                         for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
                             for (var f in scope.report.activity.tabs[cons_tab].fields) {
@@ -783,8 +794,11 @@
                         $("#multireport input, #multireport select")
                             .first()
                             .focus();
-                    })
-                    .addTo(G3ME.map);
+                    });
+
+                // On stocke le marker dans un array pour faciliter les manipulations futures
+                scope.intent.multi_report_markers[asset.id] = marker;
+                return marker;
             }
 
             /**
@@ -800,7 +814,8 @@
                     reportin.ged = Array();
                 } else {
                     reports[scope.report.assets[0] || scope.report.latlng] = scope.report;
-                    close();
+                    // Fermeture avec demande de MAJ Marker
+                    close(true, reportin);
                 }
             }
 
@@ -831,7 +846,25 @@
              * @name close
              * @return Ferme la fenêtre
              */
-            function close() {
+            function close(refresh_marker, reportin) {
+                if (refresh_marker && scope.assets.length) {
+                    angular.forEach(scope.assets, function(asset, idx) {
+                        G3ME.map.removeLayer(scope.intent.multi_report_markers[asset.id]);
+                        var current_state = 0;
+                        angular.forEach(scope.intent.multi_report_field.options, function(elem, idx) {
+                            if (
+                                elem.value ==
+                                reportin.fields[scope.intent.multi_report_activity.multi_assets_tour.switch_field]
+                            ) {
+                                current_state = idx;
+                            }
+                        });
+
+                        var marker = createMarker(asset, current_state);
+                        G3ME.map.addLayer(marker);
+                    });
+                }
+
                 if (unwatch_report_ged) {
                     unwatch_report_ged();
                 }

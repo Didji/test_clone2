@@ -264,7 +264,7 @@
                 var cons = testConsequences(act.target);
                 switch (act.type) {
                     case "show":
-                        targetField.visible = cond || cons.visible;
+                        targetField.visible = cond;
                         // Si targetField est une case à cocher, elle a peut-être
                         // aussi des conséquences. Si une case à cocher devient invisible,
                         // il faut qu'on la décoche et qu'on applique ses conséquences.
