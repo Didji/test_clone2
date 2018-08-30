@@ -582,7 +582,7 @@
                         intent.report_url_redirect =
                             injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
                         window.plugins.launchmyapp.startActivity(
-                            { action: "android.intent.action.VIEW", url: intent.report_url_redirect },
+                            { action: "android.intent.action.VIEW", url: encodeURI(intent.report_url_redirect) },
                             angular.noop,
                             angular.noop
                         );
@@ -628,6 +628,7 @@
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
                 url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
             }
+            console.log(url);
             return url;
         }
 
