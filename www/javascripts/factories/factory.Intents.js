@@ -17,7 +17,10 @@
          * @desc
          */
         Intents.parse = function(intent) {
+<<<<<<< HEAD
             console.log(intent);
+=======
+>>>>>>> ac00c9fb0ca5894d0bda018726167c6dc71fc6e4
             var data = intent.replace("gimap:/", "/intent").split("&redirect=");
             var redirect = null;
             if (data.length > 1) {
