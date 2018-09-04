@@ -21,7 +21,7 @@
 								<div ng-repeat='field in tab.fields'>
 									<p ng-if="field.readonly" ng-show="field.visible !== false">
 										<b class="ro-label">{{field.label}}</b>
-										<span class="ro-value">{{report.roFields[field.id]}}</span>
+										<span class="ro-value">{{report.fields[field.id]}}</span>
 									</p>
 									<div class="form-group" ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm" ng-class="{'isconsequence': field.visible}">
 										<label class="control-label" style="{overflow: hidden; text-overflow: ellipsis; width: 90%; float: right;}" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && report.fields[field.id] === 'Y') }">
@@ -60,13 +60,14 @@
 
 
 										<input ng-if="(field.type=='N' && field.default && field.default.pkey)" type="number" class="form-control" ng-required="field.required"
-										 ng-pattern="numberPattern" step="any" name="f" ng-model='report.overrides[field.id]'>
+										 ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'>
 										<input ng-if="(field.type=='N' && (!field.default || !field.default.pkey))" type="number" class="form-control" ng-required="field.required"
 										 ng-pattern="numberPattern" step="any" name="f" ng-model='report.fields[field.id]'>
-										<small ng-if="(field.type=='N')" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit être un nombre.</small>
+										<small ng-if="(field.type=='N')" class="helper-text" ng-show="validatorForm.f.$error.number">Cette valeur doit
+											être un nombre.</small>
 
 										<input name="f" ng-if="(field.type=='C' && field.default && field.default.pkey)" ng-required="field.required" class="form-control"
-										 ng-model='report.overrides[field.id]'>
+										 ng-model='report.fields[field.id]'>
 										<input name="f" ng-if="(field.type=='C' && (!field.default || !field.default.pkey))" ng-required="field.required" class="form-control"
 										 ng-model='report.fields[field.id]'>
 

@@ -256,13 +256,11 @@
              * @desc Applique les valeurs par defaut
              */
             function applyDefaultValues(_fields) {
-                var fields = scope.report.fields,
-                    def,
-                    field;
+                var def, field;
                 for (var i = 0; i < _fields.length; i++) {
                     field = scope.report.activity._fields[_fields[i].id];
 
-                    if (fields[field.id]) {
+                    if (scope.report.fields[field.id]) {
                         //champ déjà enregistré, on applique pas les valeurs par défaut
                         continue;
                     }
@@ -300,7 +298,7 @@
                             if (day.length < 2) day = "0" + day;
                             var formated_def = [day, month, year].join("/");
 
-                            fields[field.id] = def;
+                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = formated_def;
                         } else if (field.type === "T") {
                             if (def === "#NOW#") {
@@ -327,14 +325,14 @@
                             if (minute.length < 2) minute = "0" + minute;
                             var formated_def = [hour, minute, "00"].join(":");
 
-                            fields[field.id] = def;
+                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = formated_def;
                         } else if (field.type === "N") {
                             def = +def;
-                            fields[field.id] = def;
+                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = def;
                         } else {
-                            fields[field.id] = def;
+                            scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = def;
                         }
                     } else {
@@ -346,7 +344,7 @@
                             }
                             scope.report.roFields[field.id] = output;
                             scope.report.overrides[field.id] = output;
-                            fields[field.id] = output.length != 0 ? output : defasset;
+                            scope.report.fields[field.id] = output.length != 0 ? output : defasset;
                         }
                     }
                 }
@@ -709,7 +707,7 @@
 
                         if (reports[asset.id]) {
                             // Si un rapport a déjà été saisi, on le récupere
-                            scope.report = angular.copy(reports[asset.id]);
+                            scope.report = reports[asset.id];
                         } else {
                             // Sinon on initialise un nouveau rapport
                             scope.report = new Report(
@@ -719,7 +717,8 @@
                             );
                             for (var i in scope.report.activity._fields) {
                                 field = scope.report.activity._fields[i];
-                                scope.report.fields[field.id] = scope.report.fields[field.id] || "";
+                                // On initialise les champs du modele
+                                scope.report.fields[field.id] = "";
                             }
 
                             var asset_geom = asset.geometry;
@@ -790,15 +789,14 @@
                             scope.reportForm.$setDirty();
                         });
 
-                        $("#multireport").modal("toggle");
-                        $("#multireport input, #multireport select")
-                            .first()
-                            .focus();
-
                         setTimeout(function() {
                             if (!scope.$$phase) {
                                 scope.$digest();
                             }
+                            $("#multireport").modal("toggle");
+                            $("#multireport input, #multireport select")
+                                .first()
+                                .focus();
                         }, 100);
                     });
 
