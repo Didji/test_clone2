@@ -24,7 +24,6 @@
             }
             data = data[0].split("?");
             var params = data[1].split("&");
-            var appendedParams = false;
             var allParams = {
                 target: "map_target,report_target",
                 marker: "map_marker",
@@ -41,7 +40,6 @@
             var url = data[0];
             if (params != null && params.length > 0) {
                 url += "?";
-                appendedParams = true;
                 var callbackParam = "";
                 for (var i = 0; i < params.length; i++) {
                     var composite = false;
