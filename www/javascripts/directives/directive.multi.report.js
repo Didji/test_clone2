@@ -706,85 +706,85 @@
                         Smartgeo._removeEventListener("backbutton", Intents.end);
                         Smartgeo._addEventListener("backbutton", cancel);
                         var field;
-                        scope.report =
-                            angular.copy(reports[asset.id]) ||
-                            new Report(
+
+                        if (reports[asset.id]) {
+                            // Si un rapport a déjà été saisi, on le récupere
+                            scope.report = angular.copy(reports[asset.id]);
+                        } else {
+                            // Sinon on initialise un nouveau rapport
+                            scope.report = new Report(
                                 asset.id,
                                 scope.intent.multi_report_activity.id,
                                 scope.intent.multi_report_mission
                             );
-                        for (var i in scope.report.activity._fields) {
-                            field = scope.report.activity._fields[i];
-                            scope.report.fields[field.id] = scope.report.fields[field.id] || "";
-                        }
+                            for (var i in scope.report.activity._fields) {
+                                field = scope.report.activity._fields[i];
+                                scope.report.fields[field.id] = scope.report.fields[field.id] || "";
+                            }
 
-                        var asset_geom = asset.geometry;
-                        var myPosition = asset_geom.type + "(";
+                            var asset_geom = asset.geometry;
+                            var myPosition = asset_geom.type + "(";
 
-                        var coord_asset = "";
-                        if (asset_geom.type.toUpperCase() === "POINT") {
-                            coord_asset += asset.geometry.coordinates.join(" ");
-                        } else if (asset_geom.type.toUpperCase() === "LINESTRING") {
-                            coord_asset = asset.geometry.coordinates
-                                .map(function(geom) {
-                                    return geom.join(" ");
-                                })
-                                .join(",");
-                        }
-                        myPosition += coord_asset + ")";
+                            var coord_asset = "";
+                            if (asset_geom.type.toUpperCase() === "POINT") {
+                                coord_asset += asset.geometry.coordinates.join(" ");
+                            } else if (asset_geom.type.toUpperCase() === "LINESTRING") {
+                                coord_asset = asset.geometry.coordinates
+                                    .map(function(geom) {
+                                        return geom.join(" ");
+                                    })
+                                    .join(",");
+                            }
+                            myPosition += coord_asset + ")";
 
-                        // On récupere l'ID de la zone administrable si elle existe
-                        scope.report.zone_specifique = getZoneIntersect(myPosition);
+                            // On récupere l'ID de la zone administrable si elle existe
+                            scope.report.zone_specifique = getZoneIntersect(myPosition);
 
-                        // On construit les règles de masquage lié aux zones spécifique
-                        scope.report.masked_fields = {};
-                        if (
-                            scope.report.zone_specifique &&
-                            scope.report.zone_specifique in Site.current.zones_specifiques_fields
-                        ) {
-                            // On teste la presence de la zone specifique dans le filtrage des champs
-                            scope.report.masked_fields =
-                                Site.current.zones_specifiques_fields[scope.report.zone_specifique];
-                        }
+                            // On construit les règles de masquage lié aux zones spécifique
+                            scope.report.masked_fields = {};
+                            if (
+                                scope.report.zone_specifique &&
+                                scope.report.zone_specifique in Site.current.zones_specifiques_fields
+                            ) {
+                                // On teste la presence de la zone specifique dans le filtrage des champs
+                                scope.report.masked_fields =
+                                    Site.current.zones_specifiques_fields[scope.report.zone_specifique];
+                            }
 
-                        // On parcourt les champs présent dans les tabs d'activité pour les filtrer
-                        for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
-                            var fields = [];
-                            for (var f in scope.report.activity.tabs[cr_tab].fields) {
-                                var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
-                                if (checkFieldZoneSpecifique(cr_field)) {
-                                    var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
-                                    fields.push(scope.report.activity.tabs[cr_tab].fields[f]);
+                            // On parcourt les champs présent dans les tabs d'activité pour les filtrer
+                            for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
+                                var fields = [];
+                                for (var f in scope.report.activity.tabs[cr_tab].fields) {
+                                    var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
+                                    if (checkFieldZoneSpecifique(cr_field)) {
+                                        var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
+                                        fields.push(scope.report.activity.tabs[cr_tab].fields[f]);
+                                    }
+                                }
+                                scope.report.activity.tabs[cr_tab].fields = fields;
+                            }
+
+                            for (var i = 0; i < scope.report.assets.length; i++) {
+                                scope.assets.push(new Asset(scope.report.assets[i]));
+                            }
+
+                            // On applique les valeurs par défaut sur chaque tab
+                            for (var i = 0; i < scope.report.activity.tabs.length; i++) {
+                                applyDefaultValues(scope.report.activity.tabs[i].fields);
+                            }
+
+                            // On applique la valeur par défaut sur le switch field
+                            scope.report.fields[scope.intent.multi_report_activity.multi_assets_tour.switch_field] =
+                                scope.intent.multi_report_field.options[asset.currentState].value;
+
+                            // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
+                            for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
+                                for (var f in scope.report.activity.tabs[cons_tab].fields) {
+                                    var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
+                                    applyConsequences(cons_field.id);
                                 }
                             }
-                            scope.report.activity.tabs[cr_tab].fields = fields;
                         }
-
-                        for (var i = 0; i < scope.report.assets.length; i++) {
-                            scope.assets.push(new Asset(scope.report.assets[i]));
-                        }
-                        // On applique les valeurs par défaut sur chaque tab
-                        for (var i = 0; i < scope.report.activity.tabs.length; i++) {
-                            applyDefaultValues(scope.report.activity.tabs[i].fields);
-                        }
-
-                        // On applique la valeur par défaut sur le switch field
-                        scope.report.fields[scope.intent.multi_report_activity.multi_assets_tour.switch_field] =
-                            scope.intent.multi_report_field.options[asset.currentState].value;
-
-                        // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
-                        for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
-                            for (var f in scope.report.activity.tabs[cons_tab].fields) {
-                                var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
-                                applyConsequences(cons_field.id);
-                            }
-                        }
-
-                        setTimeout(function() {
-                            if (!scope.$$phase) {
-                                scope.$digest();
-                            }
-                        }, 100);
 
                         unwatch_report_ged = scope.$watch("report.ged", function(n, o) {
                             scope.reportForm.$setDirty();
@@ -794,6 +794,12 @@
                         $("#multireport input, #multireport select")
                             .first()
                             .focus();
+
+                        setTimeout(function() {
+                            if (!scope.$$phase) {
+                                scope.$digest();
+                            }
+                        }, 100);
                     });
 
                 // On stocke le marker dans un array pour faciliter les manipulations futures
