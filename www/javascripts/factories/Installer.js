@@ -65,12 +65,14 @@ angular
                     symbology = {},
                     activities = [],
                     stats = [],
-                    i = 0,
+                    i,
                     okey;
 
-                for (i = 0; i < site.metamodel.length; i++) {
-                    if (update || site.number[site.metamodel[i].okey] !== 0) {
-                        metamodel[site.metamodel[i].okey] = site.metamodel[i];
+                if (site.metamodel) {
+                    for (i = 0; i < site.metamodel.length; i++) {
+                        if (update || site.number[site.metamodel[i].okey] !== 0) {
+                            metamodel[site.metamodel[i].okey] = site.metamodel[i];
+                        }
                     }
                 }
                 site.metamodel = angular.copy(metamodel);

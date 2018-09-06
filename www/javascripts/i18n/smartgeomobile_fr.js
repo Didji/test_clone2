@@ -56,7 +56,7 @@ window.smartgeo_i18n_lang.fr = {
     _INSTALL_SPACE_WARNING:
         "Votre installation semble volumineuse ou votre espace disque restant n'est pas suffisant.\nIl est possible que celle-ci ne puisse pas se terminer.",
     _INSTALL_INSTALLING: "Installation de ",
-    _INSTALL_IN_PROGRESS: "en cours",
+    _INSTALL_INSTALLING_IN_PROGRESS: "Installation en cours ",
     _INSTALL_DISPLAY_LOGTABLE: "Afficher le détail",
     _INSTALL_HIDE_LOGTABLE: "Masquer le détail",
     _INSTALL_LOGTABLE_PROCESS: "Avancement",

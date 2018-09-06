@@ -10,24 +10,31 @@
         </p>
         <hr>
         <p ng-show="!site.installed && currentInstalledOkey">
-            <i18n>_INSTALL_INSTALLING</i18n>
-            <i>{{site.metamodel[currentInstalledOkey].label}}</i>
-            <i18n>_INSTALL_IN_PROGRESS</i18n>
+            <div class="row">
+                <i18n>_INSTALL_INSTALLING_IN_PROGRESS</i18n>
+            </div>
+            <div class="row">
+                <i>{{site.metamodel[currentInstalledOkey].label}}</i>
+            </div>
         </p>
         <div class="progress">
             <div ng-repeat="(key, step) in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}"
-                aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
-
+                aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(200 * step.progress / totalProgress)}}%;">
                 <span class="sr-only">{{Math.round(200 * step.progress / totalProgress)}}%</span>
-
             </div>
         </div>
 
         <div ng-if="progress_asset.length !==0" style="padding: 5px;">
             <div class="row">
                 <a class="btn btn-primary btn-xs" role="button" ng-click="toggleLogTable()">
-                    <i18n ng-if="!showLogTable">_INSTALL_DISPLAY_LOGTABLE</i18n>
-                    <i18n ng-if="showLogTable">_INSTALL_HIDE_LOGTABLE</i18n>
+                    <span ng-if="!showLogTable">
+                        <i class="fa fa-caret-down"> </i>
+                        <i18n>_INSTALL_DISPLAY_LOGTABLE</i18n>
+                    </span>
+                    <span ng-if="showLogTable">
+                        <i class="fa fa-caret-up"> </i>
+                        <i18n>_INSTALL_HIDE_LOGTABLE</i18n>
+                    </span>
                 </a>
             </div>
             <div class="row" ng-if="showLogTable">
