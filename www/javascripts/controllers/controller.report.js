@@ -601,7 +601,8 @@
          */
         function injectCallbackValues(url) {
             var injectedValues;
-            if (url.indexOf("[LABEL_INDEXED_FIELDS]") !== -1) {
+
+            if ($rootScope.report_url_redirect.indexOf("[LABEL_INDEXED_FIELDS]") !== -1) {
                 injectedValues = "";
                 for (var field in vm.report.fields) {
                     if (vm.report.fields.hasOwnProperty(field)) {
@@ -617,8 +618,9 @@
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
-            } else if (url.indexOf("[KEY_INDEXED_FIELDS]") !== -1) {
+                // /url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
+                url += injectedValues;
+            } else if ($rootScope.report_url_redirect.indexOf("[KEY_INDEXED_FIELDS]") !== -1) {
                 injectedValues = "";
                 for (var field_ in vm.report.fields) {
                     if (vm.report.fields.hasOwnProperty(field_)) {
@@ -626,9 +628,9 @@
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+                //url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
+                url += injectedValues;
             }
-            console.log(url);
             return url;
         }
 

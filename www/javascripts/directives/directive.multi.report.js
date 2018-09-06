@@ -279,10 +279,11 @@
                     if (!def) {
                         continue;
                     } else if ("string" === typeof def) {
+                        var formated_def, d;
                         //valeur par défaut de type constante
                         if (field.type === "D") {
                             if (def === "#TODAY#") {
-                                var d = new Date();
+                                d = new Date();
                                 def = d;
                             } else {
                                 try {
@@ -296,13 +297,13 @@
                             var year = String(d.getFullYear());
                             if (month.length < 2) month = "0" + month;
                             if (day.length < 2) day = "0" + day;
-                            var formated_def = [day, month, year].join("/");
+                            formated_def = [day, month, year].join("/");
 
                             scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = formated_def;
                         } else if (field.type === "T") {
                             if (def === "#NOW#") {
-                                var d = new Date();
+                                d = new Date();
                                 d.setSeconds(0);
                                 d.setMilliseconds(0);
                                 def = d;
@@ -323,7 +324,7 @@
                             var minute = String(d.getMinutes());
                             if (hour.length < 2) hour = "0" + hour;
                             if (minute.length < 2) minute = "0" + minute;
-                            var formated_def = [hour, minute, "00"].join(":");
+                            formated_def = [hour, minute, "00"].join(":");
 
                             scope.report.fields[field.id] = def;
                             scope.report.roFields[field.id] = formated_def;
@@ -336,6 +337,9 @@
                             scope.report.roFields[field.id] = def;
                         }
                     } else {
+                        /*
+                        Dans le cas d'un champs associé à un valeur patrimoine
+                        */
                         var defasset = getValueFromAssets(def.pkey, scope.report.activity.okeys[0]);
                         if (!angular.equals({}, defasset)) {
                             var output = formatFieldEntry(defasset);
@@ -433,7 +437,9 @@
                         scope.intent.multi_report_assets_id.push(asset.id);
                     }
 
-                    Synchronizator.addNew(prepareReport(reports[+asset.id]));
+                    var preparedReport = prepareReport(reports[+asset.id]);
+
+                    Synchronizator.addNew(preparedReport);
                 }
 
                 for (latlng in scope.intent.positions) {
@@ -460,12 +466,13 @@
                     Synchronizator.addNew(prepareReport(reports[latlng]));
                 }
 
-                if (scope.intent.multi_report_redirect) {
-                    redirect = scope.intent.multi_report_redirect.replace(
-                        "[DONE_ASSETS]",
-                        scope.intent.multi_report_assets_id.join(",")
-                    );
-
+                // Si une URL de redirection a été spécifié à la lecture de l'intent
+                if ($rootScope.multi_report_redirect) {
+                    redirect = $rootScope.multi_report_redirect;
+                    // Si la balise DONE_ASSETS est presente, on la remplace par les id des assets traités
+                    redirect = redirect.replace("[DONE_ASSETS]", scope.intent.multi_report_assets_id.join(","));
+                    // On vide l'URL de redirection
+                    $rootScope.multi_report_redirect = null;
                     window.plugins.launchmyapp.startActivity(
                         { action: "android.intent.action.VIEW", url: redirect },
                         angular.noop,
@@ -523,7 +530,7 @@
                 report.activity = report.activity.id;
                 report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
-                // On vérifie l présence du parametre assets
+                // On vérifie la présence du parametre assets
                 if (report.assets && report.assets.constructor === Array) {
                     // On supprime les valeurs erronées
                     report.assets = report.assets.filter(function(n) {
@@ -703,7 +710,7 @@
                     .on("contextmenu", function() {
                         Smartgeo._removeEventListener("backbutton", Intents.end);
                         Smartgeo._addEventListener("backbutton", cancel);
-                        var field;
+                        var field, i, f;
 
                         if (reports[asset.id]) {
                             // Si un rapport a déjà été saisi, on le récupere
@@ -715,7 +722,7 @@
                                 scope.intent.multi_report_activity.id,
                                 scope.intent.multi_report_mission
                             );
-                            for (var i in scope.report.activity._fields) {
+                            for (i in scope.report.activity._fields) {
                                 field = scope.report.activity._fields[i];
                                 // On initialise les champs du modele
                                 scope.report.fields[field.id] = "";
@@ -753,22 +760,21 @@
                             // On parcourt les champs présent dans les tabs d'activité pour les filtrer
                             for (var cr_tab = 0; cr_tab < scope.report.activity.tabs.length; cr_tab++) {
                                 var fields = [];
-                                for (var f in scope.report.activity.tabs[cr_tab].fields) {
+                                for (f in scope.report.activity.tabs[cr_tab].fields) {
                                     var cr_field = scope.report.activity.tabs[cr_tab].fields[f];
                                     if (checkFieldZoneSpecifique(cr_field)) {
-                                        var field_id = scope.report.activity.tabs[cr_tab].fields[f].id;
                                         fields.push(scope.report.activity.tabs[cr_tab].fields[f]);
                                     }
                                 }
                                 scope.report.activity.tabs[cr_tab].fields = fields;
                             }
 
-                            for (var i = 0; i < scope.report.assets.length; i++) {
+                            for (i = 0; i < scope.report.assets.length; i++) {
                                 scope.assets.push(new Asset(scope.report.assets[i]));
                             }
 
                             // On applique les valeurs par défaut sur chaque tab
-                            for (var i = 0; i < scope.report.activity.tabs.length; i++) {
+                            for (i = 0; i < scope.report.activity.tabs.length; i++) {
                                 applyDefaultValues(scope.report.activity.tabs[i].fields);
                             }
 
@@ -778,7 +784,7 @@
 
                             // On parcourt une nouvelle fois les tabs pour appliquer les conséquences entres champs
                             for (var cons_tab = 0; cons_tab < scope.report.activity.tabs.length; cons_tab++) {
-                                for (var f in scope.report.activity.tabs[cons_tab].fields) {
+                                for (f in scope.report.activity.tabs[cons_tab].fields) {
                                     var cons_field = scope.report.activity.tabs[cons_tab].fields[f];
                                     applyConsequences(cons_field.id);
                                 }

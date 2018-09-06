@@ -17,6 +17,7 @@
          * @desc
          */
         Intents.parse = function(intent) {
+            console.log(intent);
             var data = intent.replace("gimap:/", "/intent").split("&redirect=");
             var redirect = null;
             if (data.length > 1) {
@@ -40,14 +41,13 @@
             var url = data[0];
             if (params != null && params.length > 0) {
                 url += "?";
-                var callbackParam = "";
                 for (var i = 0; i < params.length; i++) {
                     var composite = false;
                     var param = params[i].split("=");
                     var paramName = param[0];
                     // On ignore les parametres de callback mais on les ajoute en fin d'URL
                     if (paramName === "[LABEL_INDEXED_FIELDS]" || paramName === "[KEY_INDEXED_FIELDS]") {
-                        callbackParam = paramName;
+                        $rootScope.report_callback_param = paramName;
                         continue;
                     }
                     //Est ce un champ composé? (exemple : fields[###564654###]=250
@@ -78,11 +78,13 @@
                         url += "&";
                     }
                 }
-                url += callbackParam;
             }
             if (redirect !== null) {
                 url += "&report_url_redirect=" + redirect + "&multi_report_redirect=" + redirect;
                 $rootScope.fromFDR = true;
+                // On stocke l'URL de redirection dans le cas de multi equipements
+                $rootScope.report_url_redirect = redirect;
+                $rootScope.multi_report_redirect = redirect;
             }
             return url;
         };
