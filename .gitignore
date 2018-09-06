@@ -12,8 +12,6 @@ build
 dist
 .idea
 *.iml
-www/javascripts/config.js
-www/javascripts/*.config.js
 jsconfig.json
 package-lock.json
 cordova-typings.d.ts
