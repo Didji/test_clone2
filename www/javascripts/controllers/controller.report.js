@@ -575,14 +575,17 @@
                 Storage.remove("intent");
                 $rootScope.fromIntent = false;
                 buildReport(function(report) {
-                    if (intent.report_url_redirect) {
-                        intent.report_url_redirect += intent.report_url_redirect.indexOf("?") === -1 ? "?" : "&";
-                        intent.report_url_redirect += "__PATRIID=" + report.__PATRIID;
-                        intent.report_url_redirect += "&__LATLNG=" + report.__LATLNG;
-                        intent.report_url_redirect =
-                            injectCallbackValues(intent.report_url_redirect) || intent.report_url_redirect;
+                    if ($rootScope.report_url_redirect) {
+                        var base_url = $rootScope.report_url_redirect.split("?")[0];
+                        var anchor = $rootScope.report_url_redirect.split("?")[1].split("#")[1];
+                        var intent = base_url + "#" + anchor;
+                        intent = injectCallbackValues(intent) || intent;
+                        intent += "&__PATRIID=" + report.__PATRIID;
+                        intent += "&__LATLNG=" + report.__LATLNG;
+
+                        console.log(intent);
                         window.plugins.launchmyapp.startActivity(
-                            { action: "android.intent.action.VIEW", url: encodeURI(intent.report_url_redirect) },
+                            { action: "android.intent.action.VIEW", url: encodeURI(intent) },
                             angular.noop,
                             angular.noop
                         );
@@ -614,22 +617,20 @@
                                 break;
                             }
                         }
-                        injectedValues += "fields[" + vm.report.activity._fields[field].label + "]=" + val + "&";
+                        injectedValues += "&fields[" + vm.report.activity._fields[field].label + "]=" + val;
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                // /url = url.replace("[LABEL_INDEXED_FIELDS]", injectedValues);
-                url += injectedValues;
+                url = url.replace("&[LABEL_INDEXED_FIELDS]", injectedValues);
             } else if ($rootScope.report_url_redirect.indexOf("[KEY_INDEXED_FIELDS]") !== -1) {
                 injectedValues = "";
                 for (var field_ in vm.report.fields) {
                     if (vm.report.fields.hasOwnProperty(field_)) {
-                        injectedValues += "fields[" + field_ + "]=" + vm.report.fields[field_] + "&";
+                        injectedValues += "&fields[" + field_ + "]=" + vm.report.fields[field_];
                     }
                 }
                 injectedValues = injectedValues.slice(0, injectedValues.length - 1);
-                //url = url.replace("[KEY_INDEXED_FIELDS]", injectedValues);
-                url += injectedValues;
+                url = url.replace("&[KEY_INDEXED_FIELDS]", injectedValues);
             }
             return url;
         }
