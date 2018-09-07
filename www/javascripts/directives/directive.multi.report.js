@@ -522,11 +522,6 @@
                 for (i = 0; i < report.ged.length; i++) {
                     report.ged[i] = { content: Utils.getBase64Image(report.ged[i].content) };
                 }
-                for (i in report.overrides) {
-                    if (report.overrides[i]) {
-                        report.fields[i] = report.overrides[i];
-                    }
-                }
                 report.activity = report.activity.id;
                 report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
