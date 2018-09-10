@@ -575,17 +575,23 @@
                 Storage.remove("intent");
                 $rootScope.fromIntent = false;
                 buildReport(function(report) {
+                    var intentUrl = "";
                     if ($rootScope.report_url_redirect) {
-                        var base_url = $rootScope.report_url_redirect.split("?")[0];
-                        var anchor = $rootScope.report_url_redirect.split("?")[1].split("#")[1];
-                        var intent = base_url + "#" + anchor;
-                        intent = injectCallbackValues(intent) || intent;
-                        intent += "&__PATRIID=" + report.__PATRIID;
-                        intent += "&__LATLNG=" + report.__LATLNG;
+                        //Dans certains cas, l'intent contient des "?", dans d'autres cas nottament les (DI, CRI) il n'y en a pas.
+                        if ($rootScope.report_url_redirect.indexOf("?") != -1) {
+                            var base_url = $rootScope.report_url_redirect.split("?")[0];
+                            var anchor = $rootScope.report_url_redirect.split("?")[1].split("#")[1];
+                            intentUrl = base_url + "#" + anchor;
+                        } else {
+                            intentUrl = $rootScope.report_url_redirect;
+                        }
 
-                        console.log(intent);
+                        intentUrl = injectCallbackValues(intentUrl) || intentUrl;
+                        intentUrl += "&__PATRIID=" + report.__PATRIID;
+                        intentUrl += "&__LATLNG=" + report.__LATLNG;
+
                         window.plugins.launchmyapp.startActivity(
-                            { action: "android.intent.action.VIEW", url: encodeURI(intent) },
+                            { action: "android.intent.action.VIEW", url: encodeURI(intentUrl) },
                             angular.noop,
                             angular.noop
                         );
