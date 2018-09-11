@@ -489,7 +489,7 @@ angular.module("smartgeomobile").controller("nightTourController", [
 
         /**
          * @memberOf nightTourController
-         * @desc on alimente les tableau payloadok et payloadko en cache; puis on les envoient sous forme de rapports.
+         * @desc on alimente les tableau payloadok et payloadko en cache; puis on les envoie sous forme de rapports.
          */
         $scope.secureData = function() {
             if ($scope.assetsCache) {
@@ -512,13 +512,13 @@ angular.module("smartgeomobile").controller("nightTourController", [
                     $scope.sendReports($scope.payloadKO);
                     $scope.payloadKO = { status: "payloadko", guids: [] };
                 } else {
-                    console.log("aucun élement ko a securisé");
+                    console.log("aucun élement ko à securiser");
                 }
                 if ($scope.payloadOK.guids.length) {
                     $scope.sendReports($scope.payloadOK);
                     $scope.payloadOK = { status: "payloadok", guids: [] };
                 } else {
-                    console.log("aucun élement ok a securisé");
+                    console.log("aucun élement ok à securiser");
                 }
             } else {
                 return;
