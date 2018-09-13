@@ -410,13 +410,19 @@
                 for (var i = 0; i < scope.intent.multi_report_target.length; i++) {
                     asset = scope.intent.multi_report_target[i];
 
-                    // On passe automatiquement l'etat d'un equipement à "fait"
-                    // si un l'agent a saisis un rapport dessus
-                    if (asset.currentState === 0) {
-                        if (!reports[+asset.id]) {
-                            continue;
-                        } else {
-                            asset.currentState++;
+                    // Si pas de rapport sur l'asset et un état de 0 (A faire), alors on continue, pas besoin de s'en occuper
+                    if (!reports[+asset.id] && asset.currentState === 0) {
+                        continue;
+                    } else if (reports[+asset.id]) {
+                        // Si le rapport existe, on récupère l'état renseigné dans le formulaire
+                        var selectedState = scope.intent.multi_report_field.options.find(function(element){
+                            return element.value == reports[+asset.id].fields[scope.intent.multi_report_field.id];
+                        });
+
+                        // Si l'état a été renseigné, on l'applique à l'asset,
+                        // sinon on laisse l'état sélectionné au clic sur la pastille
+                        if (selectedState) {
+                            asset.currentState = scope.intent.multi_report_field.options.indexOf(selectedState);
                         }
                     }
 
@@ -445,11 +451,19 @@
                 for (latlng in scope.intent.positions) {
                     asset = scope.intent.positions[latlng];
 
-                    if (asset.currentState === 0) {
-                        if (!reports[latlng]) {
-                            continue;
-                        } else {
-                            asset.currentState++;
+                    // Si pas de rapport sur l'asset et un état de 0 (A faire), alors on continue, pas besoin de s'en occuper
+                    if (!reports[+asset.id] && asset.currentState === 0) {
+                        continue;
+                    } else if (reports[+asset.id]) {
+                        // Si le rapport existe, on récupère l'état renseigné dans le formulaire
+                        var selectedState = scope.intent.multi_report_field.options.find(function(element){
+                            return element.value == reports[+asset.id].fields[scope.intent.multi_report_field.id];
+                        });
+
+                        // Si l'état a été renseigné, on l'applique à l'asset,
+                        // sinon on laisse l'état sélectionné au clic sur la pastille
+                        if (selectedState) {
+                            asset.currentState = scope.intent.multi_report_field.options.indexOf(selectedState);
                         }
                     }
 
