@@ -607,8 +607,6 @@
                         intentUrl += "&__PATRIID=" + report.__PATRIID;
                         intentUrl += "&__LATLNG=" + report.__LATLNG;
 
-                        console.log(intentUrl);
-
                         window.plugins.launchmyapp.startActivity(
                             { action: "android.intent.action.VIEW", url: encodeURI(intentUrl) },
                             angular.noop,
