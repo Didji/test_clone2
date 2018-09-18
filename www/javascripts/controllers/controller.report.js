@@ -225,14 +225,31 @@
          * @desc Permet de savoir si un champs doit être filtré en fonction des zones spécifiques
          */
         function checkFieldZoneSpecifique(field) {
-            var result =
-                // Dans le cas du ref national avec un champs national
-                (!vm.report.zone_specifique && !field.zone_specifique) ||
-                (vm.report.zone_specifique &&
-                    (field.zone_specifique == vm.report.zone_specifique ||
-                        (!field.zone_specifique &&
-                            !(field.id in vm.report.masked_fields && !vm.report.masked_fields[field.id].visible)))); // Dans le cas d'une zone specifique //avec un champs de la même zone specifique ou du ref national et qui ne soit pas masqué
-            return result;
+            // Si on est dans le référentiel national
+            if (!vm.report.zone_specifique) {
+                if (!(field.id in vm.report.masked_fields)) {
+                    // On affiche tous les champs qui ne sont pas dans le tableau des champs masqués (champs du national standards)
+                    return true;
+                }
+                if (!vm.report.masked_fields[field.id].visible) {
+                    // On affiche tous les champs qui sont dans le tableau des champs masqués
+                    // et qui ont visible à false (champs du national masqués quelque part)
+                    return true;
+                }
+                return false;
+            } else {
+                // Si on est dans un référentiel spécifique
+                if (!(field.id in vm.report.masked_fields)) {
+                    // On affiche tous les champs qui ne sont pas dans le tableau des champs masqués (champs du national standards)
+                    return true;
+                }
+                if (vm.report.zone_specifique == field.zone_specifique && vm.report.masked_fields[field.id].visible) {
+                    // On affiche tous les champs du tableau des champs masqués
+                    // qui ont un zone_spe_id égal à celui du rapport et visible à true (champs spécifiques de la zone)
+                    return true;
+                }
+                return false;
+            }
         }
 
         /**
@@ -589,6 +606,8 @@
                         intentUrl = injectCallbackValues(intentUrl) || intentUrl;
                         intentUrl += "&__PATRIID=" + report.__PATRIID;
                         intentUrl += "&__LATLNG=" + report.__LATLNG;
+
+                        console.log(intentUrl);
 
                         window.plugins.launchmyapp.startActivity(
                             { action: "android.intent.action.VIEW", url: encodeURI(intentUrl) },
