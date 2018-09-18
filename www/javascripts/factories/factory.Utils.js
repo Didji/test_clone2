@@ -110,7 +110,7 @@
             if (url.indexOf("index.php?service=") === -1) {
                 url = url + "/index.php?service=";
             }
-            Utils.reset();
+
             Storage.set("url", url);
             return url;
         };
