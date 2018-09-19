@@ -183,6 +183,13 @@
                 if (vm.report.zone_specifique && vm.report.zone_specifique in Site.current.zones_specifiques_fields) {
                     // On teste la presence de la zone specifique dans le filtrage des champs
                     vm.report.masked_fields = Site.current.zones_specifiques_fields[vm.report.zone_specifique];
+                } else {
+                    // On est dans un référentiel nationnal. On concatène tous les champs du zones_specifiques_fields pour distinguer les champs nationaux des champs spécifiques
+                    for (var zc in Site.current.zones_specifiques_fields) {
+                        // Quand visible true dans masked_fields --> Champ spécifique
+                        // Quand visible false dans masked_fields --> Champ du nationnal
+                        Object.assign(vm.report.masked_fields, Site.current.zones_specifiques_fields[zc]);
+                    }
                 }
 
                 // On parcourt les champs présent dans les tabs d'activité pour les filtrer
