@@ -120,7 +120,7 @@
 
         function displayError(error) {
             vm.loginInProgress = false;
-            vm.errorMessage = error ? i18n.get(error) : i18n.get("OAUTH_UNKNOWN_ERROR");
+            vm.errorMessage = error && typeof error === 'string' ? i18n.get(error) : i18n.get("OAUTH_UNKNOWN_ERROR");
             if (!$scope.$$phase) {
                 $scope.$apply();
             }

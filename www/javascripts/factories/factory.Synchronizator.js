@@ -498,10 +498,10 @@
                 .catch(function(data) {
                     switch (data.status) {
                         case 401:
-                            report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
+                            report.error = i18n.get("_SYNC_ERROR_NOT_ALLOWED");
                             break;
                         case 403:
-                            report.error = i18n.get("_SYNC_ERROR_NOT_ALLOWED");
+                            report.error = i18n.get("_SYNC_ERROR_NOT_AUTH");
                             break;
                         case 404:
                             report.error = i18n.get("_SYNC_ERROR_NOT_FOUND");
@@ -699,12 +699,12 @@
                         }
                     })
                     .catch(function(resp) {
-                        switch (resp.data.status) {
+                        switch (resp.status) {
                             case 401:
-                                alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_ALLOWED"));
                                 break;
                             case 403:
-                                alertify.error(i18n.get("_SYNC_ERROR_NOT_ALLOWED"));
+                                alertify.error(i18n.get("_SYNC_ERROR_NOT_AUTH"));
                                 break;
                             case 404:
                                 alertify.error(i18n.get("_SYNC_ERROR_NOT_FOUND"));
