@@ -17,12 +17,13 @@
          * @desc
          */
         Intents.parse = function(intent) {
+            intent = decodeURIComponent(intent);
             console.log(intent);
             var data = intent.replace("gimap:/", "/intent").split("&redirect=");
             var redirect = null;
             if (data.length > 1) {
                 //On utilise decodeURIComponent pour nous assurer que l'URL de retour est bien formatée.
-                redirect = decodeURIComponent(data[1]);
+                redirect = data[1];
             }
             data = data[0].split("?");
             var params = data[1].split("&");
