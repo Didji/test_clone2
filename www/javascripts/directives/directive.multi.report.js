@@ -66,7 +66,7 @@
             scope.save = save;
             scope.applyConsequences = applyConsequences;
             scope.getPictureFromGallery = getPictureFromGallery;
-
+            scope.getPictureFromCamera = getPictureFromCamera;
             scope.report = null;
             scope.assets = [];
             scope.isAndroid = navigator.userAgent.match(/Android/i);
@@ -143,7 +143,31 @@
                         quality: 50,
                         destinationType: navigator.camera.DestinationType.FILE_URL,
                         sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
-                        correctOrientation: true
+                        correctOrientation: true,
+                        allowEdit: false
+                    }
+                );
+            }
+
+            /**
+             * @name getPictureFromCamera
+             * @desc Retourne l'URI d'une image prise par l'utilisateur
+             */
+            function getPictureFromCamera() {
+                navigator.camera.getPicture(
+                    function(imageURI) {
+                        scope.report.ged.push({ content: imageURI });
+                        if (!scope.$$phase) {
+                            scope.$digest();
+                        }
+                    },
+                    angular.noop,
+                    {
+                        quality: 50,
+                        destinationType: navigator.camera.DestinationType.FILE_URL,
+                        sourceType: navigator.camera.PictureSourceType.CAMERA,
+                        correctOrientation: true,
+                        allowEdit: false
                     }
                 );
             }
@@ -415,7 +439,7 @@
                         continue;
                     } else if (reports[+asset.id]) {
                         // Si le rapport existe, on récupère l'état renseigné dans le formulaire
-                        var selectedState = scope.intent.multi_report_field.options.find(function(element){
+                        var selectedState = scope.intent.multi_report_field.options.find(function(element) {
                             return element.value == reports[+asset.id].fields[scope.intent.multi_report_field.id];
                         });
 
@@ -456,7 +480,7 @@
                         continue;
                     } else if (reports[+asset.id]) {
                         // Si le rapport existe, on récupère l'état renseigné dans le formulaire
-                        var selectedState = scope.intent.multi_report_field.options.find(function(element){
+                        var selectedState = scope.intent.multi_report_field.options.find(function(element) {
                             return element.value == reports[+asset.id].fields[scope.intent.multi_report_field.id];
                         });
 

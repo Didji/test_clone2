@@ -65,6 +65,7 @@
         vm._MAX_MEDIA_PER_REPORT = 3;
 
         vm.getPictureFromGallery = getPictureFromGallery;
+        vm.getPictureFromCamera = getPictureFromCamera;
 
         var invalidIds = [],
             intent = Storage.get("intent") || {};
@@ -88,7 +89,31 @@
                     quality: 50,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
-                    correctOrientation: true
+                    correctOrientation: true,
+                    allowEdit: false
+                }
+            );
+        }
+
+        /**
+         * @name getPictureFromCamera
+         * @desc Retourne l'URI d'une photo prise par l'utilisateur
+         */
+        function getPictureFromCamera() {
+            navigator.camera.getPicture(
+                function(imageURI) {
+                    vm.report.ged.push({ content: imageURI });
+                    if (!$scope.$$phase) {
+                        $scope.$digest();
+                    }
+                },
+                angular.noop,
+                {
+                    quality: 50,
+                    destinationType: navigator.camera.DestinationType.FILE_URL,
+                    sourceType: navigator.camera.PictureSourceType.CAMERA,
+                    correctOrientation: true,
+                    allowEdit: false
                 }
             );
         }
@@ -128,7 +153,11 @@
                 $routeParams.assets = [+$routeParams.assets];
             }
 
-            vm.report = new Report($routeParams.assets, $routeParams.activity, $routeParams.report_mission);
+            vm.report = new Report(
+                $routeParams.assets,
+                $routeParams.activity,
+                $routeParams.report_mission || $routeParams.mission
+            );
 
             Asset.findAssetsByGuids(vm.report.assets, function(assets) {
                 invalidIds = angular.copy(vm.report.assets);
