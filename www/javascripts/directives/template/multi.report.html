@@ -93,7 +93,7 @@
 							</h4>
 						</div>
 						<div class="panel-body">
-							<button ng-disabled="report.ged.length >= 3 || isTakingPhoto" ng-click="getPictureFromGallery();" class='btn btn-default btn-block'
+							<button ng-disabled="report.ged.length >= 3 || isTakingPhoto" ng-click="getPictureFromCamera();" class='btn btn-default btn-block'
 							 ng-model='report.ged'>
 								<i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
 								<i18n ng-show='isTakingPhoto'>_REPORT_LOADING</i18n>
