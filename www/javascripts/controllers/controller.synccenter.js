@@ -3,13 +3,13 @@
 
     angular.module("smartgeomobile").controller("SyncCenterController", SyncCenterController);
 
-    SyncCenterController.$inject = ["$scope", "$rootScope", "Synchronizator", "i18n", "Storage", "$interval"];
+    SyncCenterController.$inject = ["$scope", "$rootScope", "Synchronizator", "i18n", "Storage", "$interval", "Site"];
 
     /**
      * @class SyncCenterController
      * @desc Controlleur du menu de gestion des parametres
      */
-    function SyncCenterController($scope, $rootScope, Synchronizator, i18n, Storage, $interval) {
+    function SyncCenterController($scope, $rootScope, Synchronizator, i18n, Storage, $interval, Site) {
         var vm = this;
 
         vm.synchronize = synchronize;
@@ -40,7 +40,9 @@
 
         $scope.syncOnline; //for the view condition
         // Temps de synchronisation automatique des rapports : 1min
-        $scope.globalinterval = 1000 * 60 * 1;
+        $scope.globalReportInterval = 1000 * 60 * 1;
+        // Temps de synchronisation automatique des items : 15min
+        $scope.globalItemInterval = 1000 * 60 * 5;
         updateList();
 
         // au lancement de l'application l'instanciation du controlleur ce fait apres le smartgeo.initialise , et donc l'evenement $on de ce controlleur est instancier apres le $broadcast de la factory smartgeo; mais on peut toutefois s'appuyer sur la variable online dans le localstorage.
@@ -58,12 +60,19 @@
             //on annule d'abord tout les intervals de synchronisation , sinon on crée plusieurs intervals à chaque activate
             desactivate();
             $scope.syncOnline = Storage.get("online");
-            $rootScope.syncAllInterval = $interval(synchronizeAll, $scope.globalinterval);
+            $rootScope.syncAllInterval = $interval(function() {
+                var siteLastUpdate = new Date(Site.current.timestamp * 1000);
+                var now = new Date();
+                // On ne déclenche la synchronisation que le ref. est périmé depuis plus de 24h
+                if (now - siteLastUpdate > 24 * 60 * 60 * 1000) {
+                    synchronizeAll();
+                }
+            }, $scope.globalItemInterval);
+            // On déclare l'interval de mise de synchronisation des CR
             $rootScope.checkSyncReportInterval = $interval(
                 Synchronizator.checkSynchronizedReports,
-                $scope.globalinterval
+                $scope.globalReportInterval
             );
-            synchronizeAll();
         }
 
         /**
@@ -81,6 +90,7 @@
          * @desc Synchronize tous les items
          */
         function synchronizeAll() {
+            // Si nous sommes déjà en synchronisation
             if (vm.synchronizing) {
                 return;
             }
@@ -92,7 +102,6 @@
                         $rootScope.$broadcast("endSynchroniseAll");
                     });
                 } else {
-                    console.log("Synchronisation en attente de connexion");
                     $rootScope.$broadcast("syncOffline");
                 }
             });
