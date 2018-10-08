@@ -24,6 +24,7 @@ angular.module("smartgeomobile.config", []).constant("RIGHTS", {
     siteselection: false,
     synccenter: true,
     intent: 200,
+    debug: false,
     _MAX_SIZE_POST_REQ: 2500000, //2,5Mo
     _DONT_REALLY_RESET: false
 });

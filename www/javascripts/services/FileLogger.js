@@ -26,7 +26,7 @@ angular.module("smartgeomobile").factory("FileLogger", [
                 console.debug(formated_message);
 
                 // Est-on en mode debug ?
-                var debug = Right.get("debug");
+                var debug = Right.get("debug") || false;
                 // Si oui, les logs sont ajouté dans le fichier de log spécifié
                 if (window.cordova && debug) {
                     window.resolveLocalFileSystemURL(
