@@ -18,7 +18,7 @@ angular.module("smartgeomobile").factory("FileLogger", [
                 if (!filename) {
                     filename = "smartgeomobile";
                 }
-                filename += ".log";
+                filename += ".txt";
 
                 // Formatage du message à logger
                 var dateLog = new Date();
