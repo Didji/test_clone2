@@ -16,3 +16,4 @@ jsconfig.json
 package-lock.json
 cordova-typings.d.ts
 .vscode
+www/javascripts/config.js
