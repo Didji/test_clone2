@@ -400,12 +400,17 @@
             var reportSize = JSON.stringify(preparedReport).length;
             // Si la taille du JSON est trop importante, on prévient l'utilisateur pour qu'il
             // réduise les pièces jointes ou la résolution des photos
-            if ((4 * reportSize) / 3 > Right.get("_MAX_SIZE_POST_REQ")) {
+            var _actualReportSize = (4 * reportSize) / 3;
+            if (_actualReportSize > Right.get("_MAX_SIZE_POST_REQ")) {
                 //TODO : Faire mieux que simplement supprimer les images
                 // On vide toutes les images sélectionnées
                 vm.report.ged = Array();
                 // On affiche le message d'erreur
                 vm.report.imgError = true;
+                vm.report.imgErrorValue = {
+                    actualReportSize: (_actualReportSize / 1000000).toFixed(2),
+                    maxReportSize: (Right.get("_MAX_SIZE_POST_REQ") / 1000000).toFixed(2)
+                };
                 vm.sendingReport = false;
                 if (!$scope.$$phase) {
                     $scope.$digest();

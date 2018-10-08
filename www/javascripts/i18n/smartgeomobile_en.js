@@ -78,6 +78,8 @@ window.smartgeo_i18n_lang.en = {
     _MENU_LOGOUT: "Log out",
     _MENU_CHANGE_SITE: "Change area",
     _MENU_PARAMETERS: "Parameters",
+    _REPORT_MAX_SIZE_ALLOWED: "Max size allowed",
+    _REPORT_CURRENT_SIZE_ALLOWED: "Report's current size",
     _REPORT_REPORT: "Report",
     _REPORT_CANCEL: "Cancel",
     _REPORT_NEXT: "Next",

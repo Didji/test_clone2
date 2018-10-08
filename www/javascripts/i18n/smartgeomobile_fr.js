@@ -82,6 +82,8 @@ window.smartgeo_i18n_lang.fr = {
     _MENU_LOGOUT: "Déconnexion",
     _MENU_CHANGE_SITE: "Changer de site",
     _MENU_PARAMETERS: "Paramètres",
+    _REPORT_MAX_SIZE_ALLOWED: "Taille max. autorisée",
+    _REPORT_CURRENT_SIZE_ALLOWED: "Taille de votre rapport",
     _REPORT_REPORT: "Compte rendu",
     _REPORT_CANCEL: "Annuler",
     _REPORT_NEXT: "Suivant",

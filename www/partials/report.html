@@ -116,6 +116,14 @@
                             <span class="required-marker icon-asterisk"></span>
                             <i18n>_REPORT_MULTIMEDIA_TOO_LARGE</i18n>
                         </p>
+                        <p>
+                            <i18n>_REPORT_MAX_SIZE_ALLOWED</i18n> :
+                            {{reportController.report.imgErrorValue.maxReportSize}}Mo
+                        </p>
+                        <p>
+                            <i18n>_REPORT_CURRENT_SIZE_ALLOWED</i18n> :
+                            {{reportController.report.imgErrorValue.actualReportSize}}Mo
+                        </p>
                     </div>
                     <li ng-repeat='image in reportController.report.ged'>
                         <img ng-src="{{image.content}}" alt=""></img>

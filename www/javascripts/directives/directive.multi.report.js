@@ -852,8 +852,13 @@
                 var report = angular.copy(reportin);
                 var preparedReport = prepareReport(report);
                 var reportSize = JSON.stringify(preparedReport).length;
-                if ((4 * reportSize) / 3 > Right.get("_MAX_SIZE_POST_REQ")) {
+                var _actualReportSize = (4 * reportSize) / 3;
+                if (_actualReportSize > Right.get("_MAX_SIZE_POST_REQ")) {
                     reportin.imgError = true;
+                    vm.report.imgErrorValue = {
+                        actualReportSize: (_actualReportSize / 1000000).toFixed(2),
+                        maxReportSize: (Right.get("_MAX_SIZE_POST_REQ") / 1000000).toFixed(2)
+                    };
                     reportin.ged = Array();
                 } else {
                     reports[scope.report.assets[0] || scope.report.latlng] = scope.report;
