@@ -133,10 +133,34 @@
             function getPictureFromGallery() {
                 navigator.camera.getPicture(
                     function(imageURI) {
-                        scope.report.ged.push({ content: imageURI });
-                        if (!scope.$$phase) {
-                            scope.$digest();
-                        }
+                        window.resolveLocalFileSystemURL(
+                            imageURI,
+                            function(fileEntry) {
+                                fileEntry.file(function(fileObject) {
+                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                                        // On affiche le message d'erreur
+                                        scope.report.imgError = true;
+                                        scope.report.imgErrorValue = {
+                                            // L'image est trop lourde et ne respecte pas la limite imposée.
+                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                        };
+                                    } else {
+                                        // On ajoute la photo au tableau de ged
+                                        scope.report.ged.push({ content: imageURI });
+                                    }
+
+                                    if (!scope.$$phase) {
+                                        scope.$digest();
+                                    }
+                                });
+                            },
+                            function(error) {
+                                console.log(error);
+                            }
+                        );
                     },
                     angular.noop,
                     {
@@ -156,10 +180,35 @@
             function getPictureFromCamera() {
                 navigator.camera.getPicture(
                     function(imageURI) {
-                        scope.report.ged.push({ content: imageURI });
-                        if (!scope.$$phase) {
-                            scope.$digest();
-                        }
+                        window.resolveLocalFileSystemURL(
+                            imageURI,
+                            function(fileEntry) {
+                                fileEntry.file(function(fileObject) {
+                                    scope.isTakingPhoto = false;
+                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                                        // On affiche le message d'erreur
+                                        scope.report.imgError = true;
+                                        scope.report.imgErrorValue = {
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                        };
+                                    } else {
+                                        // On ajoute la photo au tableau de ged
+                                        scope.report.ged.push({ content: imageURI });
+                                    }
+
+                                    if (!scope.$$phase) {
+                                        scope.$digest();
+                                    }
+                                });
+                            },
+                            function(error) {
+                                console.log(error);
+                            }
+                        );
                     },
                     angular.noop,
                     {
@@ -167,7 +216,8 @@
                         destinationType: navigator.camera.DestinationType.FILE_URL,
                         sourceType: navigator.camera.PictureSourceType.CAMERA,
                         correctOrientation: true,
-                        allowEdit: false
+                        allowEdit: false,
+                        saveToPhotoAlbum: true
                     }
                 );
             }

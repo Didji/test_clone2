@@ -62,7 +62,7 @@
         vm.isIOS = navigator.userAgent.match(/iP(od|hone|ad)/i);
         vm.assets = [];
         vm.numberPattern = /^(\d+([.]\d*)?|[.]\d+)$/;
-        vm._MAX_MEDIA_PER_REPORT = 3;
+        vm._MAX_MEDIA_PER_REPORT = Right.get("_MAX_MEDIA_PER_REPORT");
 
         vm.getPictureFromGallery = getPictureFromGallery;
         vm.getPictureFromCamera = getPictureFromCamera;
@@ -77,16 +77,42 @@
          * @desc Retourne l'URI d'une image selectionnée par l'utilisateur
          */
         function getPictureFromGallery() {
+            vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    vm.report.ged.push({ content: imageURI });
-                    if (!$scope.$$phase) {
-                        $scope.$digest();
-                    }
+                    window.resolveLocalFileSystemURL(
+                        imageURI,
+                        function(fileEntry) {
+                            fileEntry.file(function(fileObject) {
+                                if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                    // L'image est trop lourde et ne respecte pas la limite imposée.
+                                    // On affiche le message d'erreur
+                                    vm.report.imgError = true;
+                                    vm.report.imgErrorValue = {
+                                        // On retourne la taille de l'image en Mo avec 2 décimales
+                                        actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                        // On retourne la taille de l'image en Mo avec 2 décimales
+                                        maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                    };
+                                } else {
+                                    // On ajoute la photo au tableau de ged
+                                    vm.report.ged.push({ content: imageURI });
+                                }
+
+                                if (!$scope.$$phase) {
+                                    $scope.$digest();
+                                }
+                            });
+                        },
+                        function(error) {
+                            console.log(error);
+                        }
+                    );
                 },
                 angular.noop,
                 {
                     quality: 50,
+                    targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
                     correctOrientation: true,
@@ -100,20 +126,48 @@
          * @desc Retourne l'URI d'une photo prise par l'utilisateur
          */
         function getPictureFromCamera() {
+            vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    vm.report.ged.push({ content: imageURI });
-                    if (!$scope.$$phase) {
-                        $scope.$digest();
-                    }
+                    window.resolveLocalFileSystemURL(
+                        imageURI,
+                        function(fileEntry) {
+                            fileEntry.file(function(fileObject) {
+                                $scope.isTakingPhoto = false;
+                                if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                    // L'image est trop lourde et ne respecte pas la limite imposée.
+                                    // On affiche le message d'erreur
+                                    vm.report.imgError = true;
+                                    vm.report.imgErrorValue = {
+                                        // On retourne la taille de l'image en Mo avec 2 décimales
+                                        actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                        // On retourne la taille de l'image en Mo avec 2 décimales
+                                        maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                    };
+                                } else {
+                                    // On ajoute la photo au tableau de ged
+                                    vm.report.ged.push({ content: imageURI });
+                                }
+
+                                if (!$scope.$$phase) {
+                                    $scope.$digest();
+                                }
+                            });
+                        },
+                        function(error) {
+                            console.log(error);
+                        }
+                    );
                 },
                 angular.noop,
                 {
                     quality: 50,
+                    targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.CAMERA,
                     correctOrientation: true,
-                    allowEdit: false
+                    allowEdit: false,
+                    saveToPhotoAlbum: true
                 }
             );
         }
@@ -397,29 +451,8 @@
         function sendReport() {
             vm.sendingReport = true;
             var preparedReport = prepareReport(vm.report);
-            var reportSize = JSON.stringify(preparedReport).length;
-            // Si la taille du JSON est trop importante, on prévient l'utilisateur pour qu'il
-            // réduise les pièces jointes ou la résolution des photos
-            var _actualReportSize = (4 * reportSize) / 3;
-            if (_actualReportSize > Right.get("_MAX_SIZE_POST_REQ")) {
-                //TODO : Faire mieux que simplement supprimer les images
-                // On vide toutes les images sélectionnées
-                vm.report.ged = Array();
-                // On affiche le message d'erreur
-                vm.report.imgError = true;
-                vm.report.imgErrorValue = {
-                    actualReportSize: (_actualReportSize / 1000000).toFixed(2),
-                    maxReportSize: (Right.get("_MAX_SIZE_POST_REQ") / 1000000).toFixed(2)
-                };
-                vm.sendingReport = false;
-                if (!$scope.$$phase) {
-                    $scope.$digest();
-                }
-            } else {
-                // Le rapport est prêt a être envoyé
-                Synchronizator.addNew(preparedReport);
-                endOfReport();
-            }
+            Synchronizator.addNew(preparedReport);
+            endOfReport();
         }
 
         /**

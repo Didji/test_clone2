@@ -107,18 +107,18 @@
 							</button>
 							<div id="images">
 								<ul class='ged-gallery'>
-									<div ng-show="report.imgError && report.ged.length == 0" class="alert alert-danger">
-										<p>
+									<div ng-show="report.imgError" class="alert alert-danger">
+										<p style="text-align:justify">
 											<span class="required-marker icon-asterisk"></span>
 											<i18n>_REPORT_MULTIMEDIA_TOO_LARGE</i18n>
 										</p>
 										<p>
-											<i18n>_REPORT_MAX_SIZE_ALLOWED</i18n> :
-											{{reportController.report.imgErrorValue.maxReportSize}}Mo
+											<i18n>_REPORT_IMG_MAX_SIZE_ALLOWED</i18n> :
+											{{report.imgErrorValue.maxImgSize}} Mo
 										</p>
 										<p>
-											<i18n>_REPORT_CURRENT_SIZE_ALLOWED</i18n> :
-											{{reportController.report.imgErrorValue.actualReportSize}}Mo
+											<i18n>_REPORT_IMG_CURRENT_SIZE</i18n> :
+											{{report.imgErrorValue.actualImgSize}} Mo
 										</p>
 									</div>
 									<li ng-repeat='image in report.ged'>

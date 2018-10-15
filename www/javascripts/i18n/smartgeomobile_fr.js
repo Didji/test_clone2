@@ -82,8 +82,8 @@ window.smartgeo_i18n_lang.fr = {
     _MENU_LOGOUT: "Déconnexion",
     _MENU_CHANGE_SITE: "Changer de site",
     _MENU_PARAMETERS: "Paramètres",
-    _REPORT_MAX_SIZE_ALLOWED: "Taille max. autorisée",
-    _REPORT_CURRENT_SIZE_ALLOWED: "Taille de votre rapport",
+    _REPORT_IMG_MAX_SIZE_ALLOWED: "Taille max. autorisée",
+    _REPORT_IMG_CURRENT_SIZE: "Taille image compressée",
     _REPORT_REPORT: "Compte rendu",
     _REPORT_CANCEL: "Annuler",
     _REPORT_NEXT: "Suivant",
@@ -102,7 +102,7 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_:
         "Aucun champs n'a été configuré côté Smartgeo pour porter les modifications multi-équipements.",
     _REPORT_MULTIMEDIA_TOO_LARGE:
-        "Certaines images ne respectent pas les dimensions maximales autorisées. Veuillez réduire la résolution de votre appareil photo, ou le nombre de photos jointes",
+        "Après compression, l'image que vous venez d'importer ne respecte pas la taille maximale autorisée. Veuillez réduire la résolution de votre appareil photo.",
     _SEARCH_SEARCH: "Recherche",
     _SEARCH_BACK: "Retour",
     _SEARCH_ADVANCED_SEARCH: "Recherche avancée",
