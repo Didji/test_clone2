@@ -65,10 +65,9 @@ angular.module("smartgeomobile.config", []).constant("RIGHTS", {
     _MAX_MEDIA_PER_REPORT: 3,
     /* Limite de taille des images CR
     *       => exprimée en bytes
-    *       => il s'agit de la taille compressé
-    *       (=> 150kBytes compressé correspond env. à une photo de 3,5Mo)
+    *       => il s'agit de la taille compressé => 200kBytes
     */
-    _MAX_SIZE_IMG_POST_REQ: 150000,
+    _MAX_SIZE_IMG_POST_REQ: 200000,
     // Permet de ne pas désisntallé la base de données
     _DONT_REALLY_RESET: false
 });

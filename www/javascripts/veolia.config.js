@@ -56,6 +56,8 @@ angular.module("smartgeomobile.config", []).constant("RIGHTS", {
     oauth: true,
     // Adresse du serveur smartgeo (uniquement si oauth: true)
     serverUrl: "http://rec3-canopee-frontal.hp.m-ve.com/",
+    //serverUrl: "http://canopee-mobile.m-ve.com/",
+    //serverUrl: "http://dev-canopee-frontal.hp.m-ve.com/",
     // ???
     intent: 200,
     // Active le service FileLogger et la création d'un fichier de log
@@ -66,9 +68,9 @@ angular.module("smartgeomobile.config", []).constant("RIGHTS", {
     /* Limite de taille des images CR
     *       => exprimée en bytes
     *       => il s'agit de la taille compressé
-    *       (=> 150kBytes compressé correspond env. à une photo de 3,5Mo)
+    *       => il s'agit de la taille compressé => 200kBytes
     */
-    _MAX_SIZE_IMG_POST_REQ: 150000,
+    _MAX_SIZE_IMG_POST_REQ: 200000,
     // Permet de ne pas désisntallé la base de données
     _DONT_REALLY_RESET: false
 });
