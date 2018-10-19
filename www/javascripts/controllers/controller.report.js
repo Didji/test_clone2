@@ -112,7 +112,6 @@
                 angular.noop,
                 {
                     quality: 50,
-                    targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
                     correctOrientation: true,
@@ -162,13 +161,39 @@
                 angular.noop,
                 {
                     quality: 50,
-                    targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.CAMERA,
                     correctOrientation: true,
                     allowEdit: false,
                     saveToPhotoAlbum: true
                 }
+            );
+        }
+
+        function renameFile(currentName, currentDir, newName, successFunction) {
+            window.requestFileSystem(
+                LocalFileSystem.PERSISTENT,
+                0,
+                function(fileSystem) {
+                    fileSystem.root.getFile(
+                        currentDir + currentName,
+                        null,
+                        function(fileEntry) {
+                            fileSystem.root.getDirectory(
+                                currentDir,
+                                { create: true },
+                                function(dirEntry) {
+                                    //parentEntry = new DirectoryEntry(currentName, currentDir + currentName);
+
+                                    fileEntry.moveTo(dirEntry, newName, angular.noop, angular.noop);
+                                },
+                                angular.noop
+                            );
+                        },
+                        angular.noop
+                    );
+                },
+                angular.noop
             );
         }
 
@@ -230,7 +255,9 @@
                             invalidIds.join(", ")
                         )
                     );
-                    return;
+                    // Des assets invalides sont présent (problème de droits, de cache patrimoine ...)
+                    // On vide complètement la clef d'asset pour transformer le CR en CR sur X,Y
+                    vm.assets = [];
                 }
 
                 var myPosition = null;
@@ -681,6 +708,7 @@
                         intentUrl += "&__PATRIID=" + report.__PATRIID;
                         intentUrl += "&__LATLNG=" + report.__LATLNG;
 
+                        $rootScope.report_url_redirect = null;
                         window.plugins.launchmyapp.startActivity(
                             { action: "android.intent.action.VIEW", url: encodeURI(intentUrl) },
                             angular.noop,
