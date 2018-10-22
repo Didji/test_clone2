@@ -112,6 +112,7 @@
                 angular.noop,
                 {
                     quality: 50,
+                    targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.FILE_URL,
                     sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
                     correctOrientation: true,
