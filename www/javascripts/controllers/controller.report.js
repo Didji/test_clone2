@@ -83,26 +83,33 @@
                     window.resolveLocalFileSystemURL(
                         imageURI,
                         function(fileEntry) {
-                            fileEntry.file(function(fileObject) {
-                                if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
-                                    // L'image est trop lourde et ne respecte pas la limite imposée.
-                                    // On affiche le message d'erreur
-                                    vm.report.imgError = true;
-                                    vm.report.imgErrorValue = {
-                                        // On retourne la taille de l'image en Mo avec 2 décimales
-                                        actualImgSize: (fileObject.size / 1000000).toFixed(2),
-                                        // On retourne la taille de l'image en Mo avec 2 décimales
-                                        maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
-                                    };
-                                } else {
-                                    // On ajoute la photo au tableau de ged
-                                    vm.report.ged.push({ content: imageURI });
-                                }
+                            fileEntry.file(
+                                function(fileObject) {
+                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                                        // On affiche le message d'erreur
+                                        vm.report.imgError = true;
+                                        vm.report.imgErrorValue = {
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                        };
+                                    } else {
+                                        // On ajoute la photo au tableau de ged
+                                        vm.report.ged.push({ content: imageURI });
+                                    }
 
-                                if (!$scope.$$phase) {
-                                    $scope.$digest();
+                                    setTimeout(function() {
+                                        if (!$scope.$$phase) {
+                                            $scope.$digest();
+                                        }
+                                    }, 100);
+                                },
+                                function(error) {
+                                    console.log(error);
                                 }
-                            });
+                            );
                         },
                         function(error) {
                             console.log(error);
@@ -113,7 +120,7 @@
                 {
                     quality: 50,
                     targetWidth: 1024,
-                    destinationType: navigator.camera.DestinationType.FILE_URL,
+                    destinationType: navigator.camera.DestinationType.NATIVE_URI,
                     sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
                     correctOrientation: true,
                     allowEdit: false
@@ -132,27 +139,32 @@
                     window.resolveLocalFileSystemURL(
                         imageURI,
                         function(fileEntry) {
-                            fileEntry.file(function(fileObject) {
-                                $scope.isTakingPhoto = false;
-                                if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
-                                    // L'image est trop lourde et ne respecte pas la limite imposée.
-                                    // On affiche le message d'erreur
-                                    vm.report.imgError = true;
-                                    vm.report.imgErrorValue = {
-                                        // On retourne la taille de l'image en Mo avec 2 décimales
-                                        actualImgSize: (fileObject.size / 1000000).toFixed(2),
-                                        // On retourne la taille de l'image en Mo avec 2 décimales
-                                        maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
-                                    };
-                                } else {
-                                    // On ajoute la photo au tableau de ged
-                                    vm.report.ged.push({ content: imageURI });
-                                }
+                            fileEntry.file(
+                                function(fileObject) {
+                                    $scope.isTakingPhoto = false;
+                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                                        // On affiche le message d'erreur
+                                        vm.report.imgError = true;
+                                        vm.report.imgErrorValue = {
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
+                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                                        };
+                                    } else {
+                                        // On ajoute la photo au tableau de ged
+                                        vm.report.ged.push({ content: imageURI });
+                                    }
 
-                                if (!$scope.$$phase) {
-                                    $scope.$digest();
+                                    if (!$scope.$$phase) {
+                                        $scope.$digest();
+                                    }
+                                },
+                                function(error) {
+                                    console.log(error);
                                 }
-                            });
+                            );
                         },
                         function(error) {
                             console.log(error);
@@ -162,7 +174,7 @@
                 angular.noop,
                 {
                     quality: 50,
-                    destinationType: navigator.camera.DestinationType.FILE_URL,
+                    destinationType: navigator.camera.DestinationType.NATIVE_URI,
                     sourceType: navigator.camera.PictureSourceType.CAMERA,
                     correctOrientation: true,
                     allowEdit: false,
