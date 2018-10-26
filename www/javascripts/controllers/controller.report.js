@@ -80,7 +80,8 @@
             vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    window.resolveLocalFileSystemURL(
+                    alertify.log(imageURI);
+                    window.resolveLocalFileSystemURI(
                         imageURI,
                         function(fileEntry) {
                             fileEntry.file(
@@ -91,8 +92,7 @@
                                         vm.report.imgError = true;
                                         vm.report.imgErrorValue = {
                                             // On retourne la taille de l'image en Mo avec 2 décimales
-                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
-                                            // On retourne la taille de l'image en Mo avec 2 décimales
+                                            actualImgSize: (fileObject.size / 1000000).toFixed(2), // On retourne la taille de l'image en Mo avec 2 décimales
                                             maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
                                         };
                                     } else {
@@ -112,7 +112,8 @@
                             );
                         },
                         function(error) {
-                            console.log(error);
+                            alertify.error(i18n.get("_REPORT_MULTIMEDIA_ERROR"));
+                            console.log("Error while retrieving picture : " + JSON.stringify(error));
                         }
                     );
                 },
@@ -121,7 +122,7 @@
                     quality: 50,
                     targetWidth: 1024,
                     destinationType: navigator.camera.DestinationType.NATIVE_URI,
-                    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY,
+                    sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
                     correctOrientation: true,
                     allowEdit: false
                 }
@@ -136,7 +137,7 @@
             vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    window.resolveLocalFileSystemURL(
+                    window.resolveLocalFileSystemURI(
                         imageURI,
                         function(fileEntry) {
                             fileEntry.file(

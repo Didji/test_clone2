@@ -103,6 +103,8 @@ window.smartgeo_i18n_lang.fr = {
         "Aucun champs n'a été configuré côté Smartgeo pour porter les modifications multi-équipements.",
     _REPORT_MULTIMEDIA_TOO_LARGE:
         "Après compression, l'image que vous venez d'importer ne respecte pas la taille maximale autorisée. Veuillez réduire la résolution de votre appareil photo.",
+    _REPORT_MULTIMEDIA_ERROR:
+        "Une erreur est survenue lors de la récupération de votre photo, le dossier est inaccessible pour l'application.",
     _SEARCH_SEARCH: "Recherche",
     _SEARCH_BACK: "Retour",
     _SEARCH_ADVANCED_SEARCH: "Recherche avancée",

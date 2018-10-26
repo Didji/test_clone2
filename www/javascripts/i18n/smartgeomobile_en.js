@@ -98,6 +98,7 @@ window.smartgeo_i18n_lang.en = {
     _REPORT_MULTI_SWITCH_FIELD_NOT_FOUND_: "You need to configure a specific field on multi assets report.",
     _REPORT_MULTIMEDIA_TOO_LARGE:
         "After compression, the picture you are trying to import exceed the maximum size. Please reduce your camera resolution or the number of pictures to send",
+    _REPORT_MULTIMEDIA_ERROR: "An error occured while retrieving your picture, application can't access this folder.",
     _SEARCH_SEARCH: "Search",
     _SEARCH_BACK: "Back",
     _SEARCH_ADVANCED_SEARCH: "Advanced search",
