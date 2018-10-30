@@ -13,7 +13,9 @@ angular
         Relationship,
         Utils,
         Right,
-        ConnectionService
+        ConnectionService,
+        $location,
+        $route
     ) {
         "use strict";
 
@@ -416,9 +418,18 @@ angular
                             });
                         })
                         .error(function() {
-                            $timeout(function() {
-                                Installer.installOkey(site, objectType, callback, update);
-                            }, 100);
+                            // Si une erreur survient on laisse le choix à l'utilisateur
+                            alertify.confirm(i18n.get("_INSTALL_ASSETS_ERROR_RETRY", objectType.okey), function(yes) {
+                                if (yes) {
+                                    // On essaye de nouveau
+                                    Installer.installOkey(site, objectType, callback, update);
+                                } else {
+                                    // On annule en retournant sur la page de login
+                                    // On rédige l'utilsateur vers la page de connexion
+                                    $route.reload();
+                                    $location.path("/");
+                                }
+                            });
                         });
                 }
             },
@@ -469,9 +480,18 @@ angular
                         });
                     })
                     .error(function() {
-                        $timeout(function() {
-                            Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
-                        }, 100);
+                        // Si une erreur survient on laisse le choix à l'utilisateur
+                        alertify.confirm(i18n.get("_INSTALL_ASSETS_ERROR_RETRY", objectType.okey), function(yes) {
+                            if (yes) {
+                                // On essaye de nouveau
+                                Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
+                            } else {
+                                // On annule en retournant sur la page de login
+                                // On rédige l'utilsateur vers la page de connexion
+                                $route.reload();
+                                $location.path("/");
+                            }
+                        });
                     });
             },
 

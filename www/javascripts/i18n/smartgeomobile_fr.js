@@ -65,6 +65,7 @@ window.smartgeo_i18n_lang.fr = {
         "Une erreur empêchant l'installation a été détectée (code %s).\nL'application va s'arrêter, merci de contacter votre support.",
     _INSTALL_QUOTA_ERR:
         "L'application ne peut installer plus de données car votre quota a été atteint.\nL'installation va s'arrêter, merci de contacter votre support.",
+    _INSTALL_ASSETS_ERROR_RETRY: "La récupération du patrimoine %s a échoué. Voulez-vous réessayer ?",
     _UNINSTALL_UNINSTALLING: "Désinstallation de ",
     _UPDATE_UPDATING: "Mise à jour de ",
     _UPDATE_SITE_END: "Vos données référentielles ont été mises à jour",

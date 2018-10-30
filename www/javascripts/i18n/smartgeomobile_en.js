@@ -61,6 +61,7 @@ window.smartgeo_i18n_lang.en = {
     _INSTALL_ERR: "An error has been detected (code %s).\nApplication will stop. Please, contact your support.",
     _INSTALL_QUOTA_ERR:
         "Your quota has been reached, no more data can be installed.\nApplication will stop. Please, contact your support.",
+    _INSTALL_ASSETS_ERROR_RETRY: "An error occured while retrieving asset %s. Do you want retry ?",
     _UNINSTALL_UNINSTALLING: "Uninstalling ",
     _UPDATE_UPDATING: "Updating ",
     _UPDATE_SITE_END: "Your activities' repository has been updated",
