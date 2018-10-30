@@ -80,48 +80,33 @@
             vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    alertify.log(imageURI);
-                    window.resolveLocalFileSystemURI(
-                        imageURI,
-                        function(fileEntry) {
-                            fileEntry.file(
-                                function(fileObject) {
-                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
-                                        // L'image est trop lourde et ne respecte pas la limite imposée.
-                                        // On affiche le message d'erreur
-                                        vm.report.imgError = true;
-                                        vm.report.imgErrorValue = {
-                                            // On retourne la taille de l'image en Mo avec 2 décimales
-                                            actualImgSize: (fileObject.size / 1000000).toFixed(2), // On retourne la taille de l'image en Mo avec 2 décimales
-                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
-                                        };
-                                    } else {
-                                        // On ajoute la photo au tableau de ged
-                                        vm.report.ged.push({ content: imageURI });
-                                    }
+                    var base64String = "data:image/jpeg;base64," + imageURI;
+                    var ImgSize = base64String.length * (3 / 4) - 1;
 
-                                    setTimeout(function() {
-                                        if (!$scope.$$phase) {
-                                            $scope.$digest();
-                                        }
-                                    }, 100);
-                                },
-                                function(error) {
-                                    console.log(error);
-                                }
-                            );
-                        },
-                        function(error) {
-                            alertify.error(i18n.get("_REPORT_MULTIMEDIA_ERROR"));
-                            console.log("Error while retrieving picture : " + JSON.stringify(error));
+                    if (ImgSize > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                        // On affiche le message d'erreur
+                        vm.report.imgError = true;
+                        vm.report.imgErrorValue = {
+                            // On retourne la taille de l'image en Mo avec 2 décimales
+                            actualImgSize: (ImgSize / 1000000).toFixed(2),
+                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                        }; // On retourne la taille de l'image en Mo avec 2 décimales
+                    } else {
+                        // On ajoute la photo au tableau de ged
+                        vm.report.ged.push({ content: base64String });
+                    }
+
+                    setTimeout(function() {
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
                         }
-                    );
+                    }, 100);
                 },
                 angular.noop,
                 {
                     quality: 50,
-                    targetWidth: 1024,
-                    destinationType: navigator.camera.DestinationType.NATIVE_URI,
+                    destinationType: navigator.camera.DestinationType.DATA_URL,
                     sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
                     correctOrientation: true,
                     allowEdit: false
@@ -137,45 +122,33 @@
             vm.report.imgError = false;
             navigator.camera.getPicture(
                 function(imageURI) {
-                    window.resolveLocalFileSystemURI(
-                        imageURI,
-                        function(fileEntry) {
-                            fileEntry.file(
-                                function(fileObject) {
-                                    $scope.isTakingPhoto = false;
-                                    if (fileObject.size > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
-                                        // L'image est trop lourde et ne respecte pas la limite imposée.
-                                        // On affiche le message d'erreur
-                                        vm.report.imgError = true;
-                                        vm.report.imgErrorValue = {
-                                            // On retourne la taille de l'image en Mo avec 2 décimales
-                                            actualImgSize: (fileObject.size / 1000000).toFixed(2),
-                                            // On retourne la taille de l'image en Mo avec 2 décimales
-                                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
-                                        };
-                                    } else {
-                                        // On ajoute la photo au tableau de ged
-                                        vm.report.ged.push({ content: imageURI });
-                                    }
+                    var base64String = "data:image/jpeg;base64," + imageURI;
+                    var ImgSize = base64String.length * (3 / 4) - 1;
 
-                                    if (!$scope.$$phase) {
-                                        $scope.$digest();
-                                    }
-                                },
-                                function(error) {
-                                    console.log(error);
-                                }
-                            );
-                        },
-                        function(error) {
-                            console.log(error);
+                    if (ImgSize > Right.get("_MAX_SIZE_IMG_POST_REQ")) {
+                        // L'image est trop lourde et ne respecte pas la limite imposée.
+                        // On affiche le message d'erreur
+                        vm.report.imgError = true;
+                        vm.report.imgErrorValue = {
+                            // On retourne la taille de l'image en Mo avec 2 décimales
+                            actualImgSize: (ImgSize / 1000000).toFixed(2),
+                            maxImgSize: (Right.get("_MAX_SIZE_IMG_POST_REQ") / 1000000).toFixed(2)
+                        }; // On retourne la taille de l'image en Mo avec 2 décimales
+                    } else {
+                        // On ajoute la photo au tableau de ged
+                        vm.report.ged.push({ content: base64String });
+                    }
+
+                    setTimeout(function() {
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
                         }
-                    );
+                    }, 100);
                 },
                 angular.noop,
                 {
                     quality: 50,
-                    destinationType: navigator.camera.DestinationType.NATIVE_URI,
+                    destinationType: navigator.camera.DestinationType.DATA_URL,
                     sourceType: navigator.camera.PictureSourceType.CAMERA,
                     correctOrientation: true,
                     allowEdit: false,
