@@ -424,10 +424,8 @@ angular
                                     // On essaye de nouveau
                                     Installer.installOkey(site, objectType, callback, update);
                                 } else {
-                                    // On annule en retournant sur la page de login
-                                    // On rédige l'utilsateur vers la page de connexion
-                                    $route.reload();
-                                    $location.path("/");
+                                    // On annule en quittant l'application
+                                    navigator.app.exitApp();
                                 }
                             });
                         });
@@ -454,6 +452,7 @@ angular
                 }
 
                 var t_start = performance.now();
+                console.log(url);
                 $http
                     .get(url)
                     .success(function(data) {
@@ -479,17 +478,17 @@ angular
                             }, 100);
                         });
                     })
-                    .error(function() {
+                    .error(function(error, status) {
+                        console.log(error);
+                        console.log(status);
                         // Si une erreur survient on laisse le choix à l'utilisateur
                         alertify.confirm(i18n.get("_INSTALL_ASSETS_ERROR_RETRY", objectType.okey), function(yes) {
                             if (yes) {
                                 // On essaye de nouveau
                                 Installer.installOkeyPerSlice(site, objectType, lastFetched, callback, update);
                             } else {
-                                // On annule en retournant sur la page de login
-                                // On rédige l'utilsateur vers la page de connexion
-                                $route.reload();
-                                $location.path("/");
+                                // On annule en quittant l'application
+                                navigator.app.exitApp();
                             }
                         });
                     });
