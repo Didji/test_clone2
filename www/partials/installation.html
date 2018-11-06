@@ -6,7 +6,8 @@
         </h2>
         <p style="margin-top: 30px;">
             <b>
-                <i18n>_INSTALL_INSTALLING</i18n> {{site.label}}</b>
+                <i18n>_INSTALL_INSTALLING</i18n> {{site.label}}
+            </b>
         </p>
         <hr>
         <p ng-show="!site.installed && currentInstalledOkey">
@@ -19,7 +20,7 @@
         </p>
         <div class="progress">
             <div ng-repeat="(key, step) in steps" class="progress-bar" role="progressbar" aria-valuenow="{{Math.round(100 * step.progress / totalProgress)}}"
-                aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(200 * step.progress / totalProgress)}}%;">
+                aria-valuemin="0" aria-valuemax="100" style="background:{{step.color}};width: {{Math.round(100 * step.progress / totalProgress)}}%;">
                 <span class="sr-only">{{Math.round(200 * step.progress / totalProgress)}}%</span>
             </div>
         </div>
