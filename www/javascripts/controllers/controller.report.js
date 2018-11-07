@@ -316,7 +316,6 @@
                     }
                 }
 
-                applyInitialConsequences();
                 setTimeout(function() {
                     if (!$scope.$$phase) {
                         $scope.$digest();
