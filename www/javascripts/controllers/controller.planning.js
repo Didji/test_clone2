@@ -571,11 +571,7 @@
                 }
                 switch (useMethode) {
                     case "_METHODE_AUTO":
-                        if (
-                            selectedAssets.length === 1 &&
-                            (assetsCache[mission.id][0].geometry.type === "LineString" ||
-                                assetsCache[mission.id][0].geometry.type === "Point")
-                        ) {
+                        if (selectedAssets.length === 1) {
                             $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", true, i18n.get("_CONSULTATION_GPS_"));
                             navigator.geolocation.getCurrentPosition(
                                 function(pos) {
@@ -627,17 +623,14 @@
 
             if (mission.activity) {
                 $location.path(
-                    "report/" +
-                        Site.current.id +
-                        "/" +
-                        mission.activity.id +
-                        "/" +
-                        selectedAssets.join("!") +
-                        "/" +
-                        mission.id
+                    "report/" + Site.current.id + "/" + mission.activity.id + "/" + assets + "/" + mission.id
                 );
             } else {
-                $location.path("report/" + Site.current.id + "//" + selectedAssets.join("!") + "/" + mission.id);
+                $location.path("report/" + Site.current.id + "//" + assets + "/" + mission.id);
+            }
+
+            if (!$scope.$$phase) {
+                $scope.$apply();
             }
         }
 
