@@ -379,10 +379,6 @@
             // Pour chaque champs possédant une action
             for (i = 0, lim = field.actions.length; i < lim; i++) {
                 act = field.actions[i];
-                targetField = vm.report.activity._fields[act.target];
-                if (!targetField) {
-                    continue;
-                }
 
                 cond = vm.report.fields[srcId] == act.condition;
 
@@ -404,6 +400,10 @@
                     }
                     continue;
                 } else {
+                    targetField = vm.report.activity._fields[act.target];
+                    if (!targetField) {
+                        continue;
+                    }
                     var cons = testConsequences(act.target);
                     switch (act.type) {
                         case "show":
