@@ -758,7 +758,6 @@ ul.ged-gallery li img {
 .mission-label {
     display: block;
     width: 73%;
-
     margin-left: -7px;
     font-size: 12px;
     font-weight: 400;
@@ -766,7 +765,6 @@ ul.ged-gallery li img {
 .custom-progress {
     border: 1px solid rgb(255, 133, 0);
 }
-
 .mission-assets-count-badge {
     margin-top: -15px;
     margin-right: -10px;
@@ -790,7 +788,6 @@ ul.ged-gallery li img {
 .panel-default > .panel-heading.report-heading {
     background-color: #d6d6d6;
 }
-
 .panel-heading.emergency {
     color: white;
     background-color: rgb(189, 76, 76);
@@ -798,7 +795,6 @@ ul.ged-gallery li img {
 .panel-heading.emergency .text-danger {
     color: white;
 }
-
 .btn.two-lines,
 .dropdown-menu > li > a {
     font-size: 0.9em;
@@ -817,7 +813,6 @@ ul.ged-gallery li img {
 .select2-results .select2-result-label {
     padding: 13px 7px 12px;
 }
-
 .select2-container .select2-choice abbr {
     margin-top: -10px;
     background: none;
@@ -856,7 +851,6 @@ ul.ged-gallery li img {
 .NON_SELECTED_NIGHTTOUR {
     background-image: url(../images/NON_SELECTED_NIGHTTOUR.png);
 }
-
 .chosen-container-single .chosen-single {
     height: 35px;
     line-height: 35px;
@@ -912,18 +906,15 @@ ul.ged-gallery li img {
 .ui-select-bootstrap .ui-select-toggle > .caret + a {
     margin: 0px !important;
 }
-
 .ui-select-container .ui-select-bootstrap .ui-select-match {
     padding: 0px !important;
 }
-
 #report-position .modal-header {
     background: grey;
     color: white;
 }
 #report-position .modal-dialog {
     max-width: 300px;
-
     margin: auto;
     margin-top: 20px;
 }
@@ -1085,4 +1076,10 @@ ul.ged-gallery li img {
     40% {
         opacity: 1;
     }
+}
+/* Nécessaire par rapport aux events touchScreen
+"Unable to preventDefault inside passive event listener due to target being treated as passive."
+https://www.chromestatus.com/features/5093566007214080 */
+* {
+    touch-action: inherit;
 }
