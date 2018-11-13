@@ -530,17 +530,6 @@
             $rootScope.$broadcast("__MAP_SETVIEW__", mission.extent);
             $rootScope.$broadcast("DESACTIVATE_POSITION");
         }
-        /**
-         * @name methodeGpsAdmin
-         * @param {Booléen} methode true pour la methode automatique et false pour la methode manuel
-         * @desc permet de savoir quelle méthode utiliser pour remplir les coordonnée CR XY dans le formulaire
-         */
-        function useGpsMethode(methode) {
-            if (methode) {
-                return "_METHODE_AUTO";
-            }
-            return "_METHODE_MANO";
-        }
 
         /**
          * @name showReport
@@ -548,13 +537,16 @@
          * @desc Open report with concerned assets
          */
         function showReport(mission) {
+            console.log(mission);
             var selectedAssets = [];
-            var useMethode = useGpsMethode(mission.gps_auto);
 
-            var _OK = true; // Flag autorisant l'ouverture du formulaire CR
+            // Flag autorisant l'ouverture du formulaire CR
+            var _OK = true;
             // Contrôle permettant de determiner si l'activité de l'OT est bien présente dans l'objet Activity
             if (mission.activity) {
                 _OK = !!Activity.findOne(mission.activity.id);
+            } else {
+                _OK = false;
             }
 
             if (!_OK) {
@@ -569,39 +561,26 @@
                         selectedAssets.push(assetsCache[mission.id][i].guid);
                     }
                 }
-                switch (useMethode) {
-                    case "_METHODE_AUTO":
-                        if (selectedAssets.length === 1) {
-                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", true, i18n.get("_CONSULTATION_GPS_"));
-                            navigator.geolocation.getCurrentPosition(
-                                function(pos) {
-                                    goToReport(mission, selectedAssets, [pos.coords.longitude, pos.coords.latitude]);
-                                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
-                                },
-                                function(err) {
-                                    goToReport(mission, selectedAssets);
-                                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
-                                },
-                                {
-                                    enableHighAccuracy: false,
-                                    maximumAge: 10000,
-                                    timeout: 7000
-                                }
-                            );
-                        } else {
+                if (!!mission.gps_auto && selectedAssets.length === 1) {
+                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", true, i18n.get("_CONSULTATION_GPS_"));
+                    navigator.geolocation.getCurrentPosition(
+                        function(pos) {
+                            goToReport(mission, selectedAssets, [pos.coords.longitude, pos.coords.latitude]);
+                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
+                        },
+                        function(err) {
+                            console.error(JSON.stringify(err));
                             goToReport(mission, selectedAssets);
+                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
+                        },
+                        {
+                            enableHighAccuracy: false,
+                            maximumAge: 10000,
+                            timeout: 30000
                         }
-                        break;
-                    case "_METHODE_MANO":
-                    default:
-                        if (selectedAssets.length === 1 && assetsCache[mission.id][0].geometry.type === "LineString") {
-                            $rootScope.$broadcast("GET_REPORT_POSITION", function(position) {
-                                goToReport(mission, selectedAssets, position);
-                            });
-                        } else {
-                            goToReport(mission, selectedAssets);
-                        }
-                        break;
+                    );
+                } else {
+                    goToReport(mission, selectedAssets);
                 }
             }
         }
