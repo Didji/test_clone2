@@ -64,10 +64,10 @@ angular.module("smartgeomobile.config", []).constant("RIGHTS", {
     // Limite du nombre de photo jointe à un CR
     _MAX_MEDIA_PER_REPORT: 3,
     /* Limite de taille des images CR
-    *       => exprimée en bytes
-    *       => il s'agit de la taille compressé => 200kBytes
-    */
+     *       => exprimée en bytes
+     *       => il s'agit de la taille compressé => 200kBytes
+     */
     _MAX_SIZE_IMG_POST_REQ: 200000,
-    // Permet de ne pas désisntallé la base de données
+    // true pour que les intents restent dans le localstorage lorsque l'utilisateur s'authentifie (Voir Utils.reset/setGimapUrl).
     _DONT_REALLY_RESET: false
 });
