@@ -1,18 +1,26 @@
-----------
-
 # SmartgeoMobile
 
-----------
+### **Rappel des version Android:**
+**VersionName:** | **VersionCode** | **ReleaseDate** | **API Level**
+------------ | ------------- | ------------- | -------------
+Jelly Bean | 4.1 – 4.3.1 | 3.0.31 to 3.4.39 | July 9, 2012 | 16 – 18
+KitKat | 4.4 – 4.4.4 | 3.10 | October 31, 2013 | 19 – 20
+Lollipop | 5.0 – 5.1.1 | 3.16 | November 12, 2014 | 21 – 22
+Marshmallow | 6.0 – 6.0.1 | 3.18 | October 5, 2015 | 23
+Nougat | 7.0 – 7.1.2 | 4.4 | August 22, 2016 | 24 – 25
+Oreo | 8.0 – 8.1 | 4.10 | August 21, 2017 | 26 – 27
+Pie | 9.0 | 4.4.107, 4.9.84, and 4.14.42 | August 6, 2018 | 28
 
 ### **Dépendances:**
 
-- Node.js et npm:
+- Node.js et npm (latest):
 	- https://nodejs.org
 
-- Cordova:
-	- npm install -g cordova
+- Cordova (version 8.1.2):
+	- npm install -g cordova@8.1.2
 
-- Installer les sdk android et les dépendances afin de pouvoir Build:
+- Installer le(s) SDK-Android ainsi que les dépendances afin de pouvoir Build:
+	- API level 26
 	- https://developer.android.com/sdk/installing/index.html
 
 - Installer ncp:
@@ -20,34 +28,35 @@
 
 ----------
 
-### **Configuration:**
+### **Configuration APK :**
 
-- Dans le fichier config.js.template:
-	- Oauth: true pour l'authentification google.
-	- serverUrl: url du serveur smartgeo pour l'authentification oauth, lorsque le paramètre oauth est à true.
-	- DONT_REALLY_RESET: true pour que les intents restent dans le localstorage lorsque l'utilisateur s'authentifie (Voir Utils.reset/setGimapUrl).
-
-- Pour modifier le serverUrl sans avoir à regénérer l'apk, il faut ajouter le ficher Android/data/com.gismartware.mobile/files/app.properties contenant la clé server_url ayant pour valeur le serveur smartgeo désiré.
-
-Exemple: server_url=http://smartgeo.domain.com
-
-Note: Si l'appareil est doté d'une carte sd, le répertoire cible du fichier app.properties se trouvera dans celle ci.
-Note 2: Lors de la suppression des données depuis le gestionnaire d'applications d'Android, ce fichier sera également supprimé et il faudra le recréer manuellement.
+Copier le fichier generic.config.js à la racine du dossier www/ et renommer le en config.js. Le descriptif des configurations est présent en commentaire dans ce fichier.
 
 ----------
 
-**Android:** | **iOs:**
------------- | -------------
-cordova platform add android | cordova platform add ios
-cordova build android | cordova build ios
-cordova run android --nobuild | cordova run ios --device --nobuild
+### **Configuration Environnement**
 
-----------
+#### **Ajouter un environnement android au projet**
+```console
+cordova platform add android@6.3.0
+```
 
-Le fork de la version entreprise du plugin sqlite:
-	- [Cordova Sqlite Entreprise](https://github.com/Diliz/Cordova-sqlite-enterprise-free)
+#### **Builder l'APK**
+En mode debug pour autoriser les points d'arrêts et l'inspection de variables :
+```console
+cordova build android --debug
+```
 
-----------
+En mode production pour les livraisons client
+```console
+cordova build android --release
+```
+
+Les APK apparaissent dans le dossier suivant :
+```console
+/platform/android/build/output/apk/
+```
+Avec les noms suivants : **android-debug.apk** et **android-release.apk**
 
 ### **Exécution locale / poste de développement :**
 
