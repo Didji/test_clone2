@@ -21,6 +21,13 @@
 
 # Release Notes
 
+### 3.0.1 (Dec 27, 2017)
+* [CB-13710](https://issues.apache.org/jira/browse/CB-13710) Fix to allow 3.0.0 version install (#28)
+
+### 3.0.0 (Dec 15, 2017)
+* [CB-13673](https://issues.apache.org/jira/browse/CB-13673) : Remove deprecated platforms
+* [CB-13405](https://issues.apache.org/jira/browse/CB-13405) (ios) undo lock when resetting
+* [CB-13405](https://issues.apache.org/jira/browse/CB-13405) (ios) Screen unlock bug fix
 
 ### 2.0.2 (Nov 06, 2017)
 * [CB-13472](https://issues.apache.org/jira/browse/CB-13472) (CI) Fixed Travis **Android** builds again

@@ -3,7 +3,7 @@
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="uk.co.workingedge.phonegap.plugin.istablet"
-    version="1.1.0">
+    version="1.2.0">
 
   <name>Is Tablet</name>
   <description>Cordova/Phonegap plugin to determine if current device is a tablet</description>
@@ -34,7 +34,7 @@
 
     <source-file src="src/android/IsTablet.java" target-dir="src/uk/co/workingedge/phonegap/plugin" />
   </platform>
-  
+
   <!-- iOS -->
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
@@ -47,4 +47,9 @@
     <source-file src="src/ios/IsTablet.m" />
   </platform>
 
+  <platform name="windows">
+    <js-module src="src/windows/istabletproxy.js" name="IsTabletProxy">
+      <merges target="" />
+    </js-module>
+  </platform>
 </plugin>

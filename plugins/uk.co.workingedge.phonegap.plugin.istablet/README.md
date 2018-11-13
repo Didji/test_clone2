@@ -1,9 +1,18 @@
-IsTablet Cordova/Phonegap Plugin
+IsTablet Cordova/Phonegap Plugin [![Latest Stable Version](https://img.shields.io/npm/v/uk.co.workingedge.phonegap.plugin.istablet.svg)](https://www.npmjs.com/package/uk.co.workingedge.phonegap.plugin.istablet) [![Total Downloads](https://img.shields.io/npm/dt/uk.co.workingedge.phonegap.plugin.istablet.svg)](https://npm-stat.com/charts.html?package=uk.co.workingedge.phonegap.plugin.istablet)
 =================================
 
-This Cordova/PhoneGap Plugin indicates whether the current Android or iOS device is a tablet.
+This Cordova/PhoneGap Plugin indicates whether the current device is a tablet.
+
+Supported platforms: Android, iOS, Windows 10 Mobile
 
 The plugin is registered on [npm](https://www.npmjs.com/package/uk.co.workingedge.phonegap.plugin.istablet) as `uk.co.workingedge.phonegap.plugin.istablet`
+
+<!-- DONATE -->
+[![donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZRD3W47HQ3EMJ)
+
+I dedicate a considerable amount of my free time to developing and maintaining this Cordova plugin, along with my other Open Source software.
+To help ensure this plugin is kept updated, new features are added and bugfixes are implemented quickly, please donate a couple of dollars (or a little more if you can stretch) as this will help me to afford to dedicate time to its maintenance. Please consider donating if you're using this plugin in an app that makes you money, if you're being paid to make the app, if you're asking for new features or priority bug fixes.
+<!-- END DONATE -->
 
 ## Contents
 
@@ -19,12 +28,6 @@ The plugin is registered on [npm](https://www.npmjs.com/package/uk.co.workingedg
 
     $ cordova plugin add uk.co.workingedge.phonegap.plugin.istablet
     $ phonegap plugin add uk.co.workingedge.phonegap.plugin.istablet
-
-**NOTE**: Make sure your Cordova CLI version is 5.0.0+ (check with `cordova -v`). Cordova 4.x and below uses the now deprecated [Cordova Plugin Registry](http://plugins.cordova.io) as its plugin repository, so using a version of Cordova 4.x or below will result in installing an [old version](http://plugins.cordova.io/#/package/uk.co.workingedge.phonegap.plugin.istablet) of this plugin.
-
-## Using [Cordova Plugman](https://github.com/apache/cordova-plugman)
-
-    $ plugman install --plugin=uk.co.workingedge.phonegap.plugin.istablet --platform=<platform> --project=<project_path> --plugins_dir=plugins
 
 For example, to install for the Android platform
 
@@ -45,14 +48,13 @@ For example:
     
 # Example project
 
-https://github.com/dpa99c/phonegap-istablet-example
-
-The above link is to an example Cordova project which demonstrates usage of this plugin.
-The example contains Android and iOS projects, and a compiled [Android APK](https://github.com/dpa99c/phonegap-istablet-example/blob/master/build/IsTablet.apk).
+The [example Cordova project](https://github.com/dpa99c/phonegap-istablet-example) demonstrates usage of this plugin.
 
 # Credits
 
 Android plugin code based on [this answer on stackoverflow](http://stackoverflow.com/a/18740974/777265) by [Pawan M](http://stackoverflow.com/users/648030/pawan-m)
+
+[Timon Orawski](https://github.com/timonorawski) for Windows implementation.
 
 License
 ================

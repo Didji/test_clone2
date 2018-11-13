@@ -1,0 +1,69 @@
+{
+  "_from": "cordova-sqlite-ext",
+  "_id": "cordova-sqlite-ext@2.2.0",
+  "_inBundle": false,
+  "_integrity": "sha512-Nsqeuzma5X1dw2NhSI6jy0Wawyd4WowIzctMP43VXXd+AnzG7kpDJ7HKBA8a9uoe2xv0JVix/iFIUf8TBx9Ttg==",
+  "_location": "/cordova-sqlite-ext",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-sqlite-ext",
+    "name": "cordova-sqlite-ext",
+    "escapedName": "cordova-sqlite-ext",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-sqlite-ext/-/cordova-sqlite-ext-2.2.0.tgz",
+  "_shasum": "a11b8915f5b69fce3fe59f837c737ea8f2a8ab40",
+  "_spec": "cordova-sqlite-ext",
+  "_where": "D:\\SMARTGEOMOBILE\\smartgeomobile",
+  "author": {
+    "name": "various"
+  },
+  "bugs": {
+    "url": "https://github.com/litehelpers/cordova-sqlite-ext/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-sqlite-ext",
+    "platforms": [
+      "android",
+      "ios",
+      "osx",
+      "windows"
+    ]
+  },
+  "dependencies": {
+    "cordova-sqlite-ext-deps": "1.1.0"
+  },
+  "deprecated": false,
+  "description": "Native interface to SQLite for PhoneGap/Cordova with extra features",
+  "devDependencies": {
+    "shelljs": "^0.7.4"
+  },
+  "homepage": "https://github.com/litehelpers/cordova-sqlite-ext",
+  "keywords": [
+    "sqlite",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-osx",
+    "cordova-windows"
+  ],
+  "license": "MIT",
+  "name": "cordova-sqlite-ext",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litehelpers/cordova-sqlite-ext.git"
+  },
+  "scripts": {
+    "start": "node scripts/prepareSpec.js"
+  },
+  "version": "2.2.0"
+}
