@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="20206037" id="com.gismartware.mobile" version="2.2.6-rc37" 
+<widget android-versionCode="20300000" id="com.gismartware.mobile" version="2.3.0" 
     xmlns="http://www.w3.org/ns/widgets" 
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Smartgeo</name>
@@ -44,7 +44,6 @@
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <hook src="./resources/android/scripts/prepare_release_signing.js" type="after_prepare" />
         <hook src="./resources/android/scripts/prepare_debug_signing.js" type="after_prepare" />
-
     </platform>
     <platform name="ios">
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -76,5 +75,4 @@
         <preference name="BackupWebStorage" value="none" />
         <preference name="iosPersistentFileLocation" value="Library" />
     </platform>
-    <engine name="android" spec="~6.1.0" />
 </widget>
