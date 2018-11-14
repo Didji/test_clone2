@@ -569,14 +569,21 @@
                             $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
                         },
                         function(err) {
-                            console.error(JSON.stringify(err));
-                            goToReport(mission, selectedAssets);
                             $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
+                            alertify.confirm(i18n.get("_GPS_PERMISSION_DENIED_"), function(yes) {
+                                if (!yes) {
+                                    return;
+                                }
+                                goToReport(mission, selectedAssets);
+                            });
                         },
                         {
+                            // false permet a la geolocation d'utiliser des coordonées mise en cache précédemment
                             enableHighAccuracy: false,
+                            // Si la geolocation utilise des coordonnées mise en cache, elles ne doivent pas être vieille de plus de 10s
                             maximumAge: 10000,
-                            timeout: 30000
+                            // On autorise un timeout de 5 secondes avant de déclencher une erreur
+                            timeout: 50000
                         }
                     );
                 } else {
