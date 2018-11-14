@@ -3,17 +3,10 @@
   "version": "2.2.6",
   "displayName": "Smartgeo",
   "cordova": {
-<<<<<<< HEAD
-    "platforms": []
-  },
-  "dependencies": {
-    "cordova-android": "^6.3.0"
-=======
     "platforms": [
       "android"
     ],
     "plugins": {
-      "cordova-plugin-file": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-camera": {
@@ -21,7 +14,8 @@
         "PHOTOLIBRARY_USAGE_DESCRIPTION": ""
       },
       "uk.co.workingedge.phonegap.plugin.istablet": {},
-      "cordova-sqlite-ext": {}
+      "cordova-sqlite-ext": {},
+      "cordova-plugin-file": {}
     }
   },
   "dependencies": {
@@ -32,6 +26,5 @@
     "cordova-plugin-whitelist": "1",
     "cordova-sqlite-ext": "^2.2.0",
     "uk.co.workingedge.phonegap.plugin.istablet": "1.2.0"
->>>>>>> merge-2.2.6-sitere
   }
 }

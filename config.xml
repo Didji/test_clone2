@@ -1,11 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<<<<<<< HEAD
-<widget android-versionCode="20300000" id="com.gismartware.mobile" version="2.3.0" 
-=======
-<widget android-versionCode="20300003" id="com.gismartware.mobile" version="2.3.0-rc3" 
->>>>>>> merge-2.2.6-sitere
-    xmlns="http://www.w3.org/ns/widgets" 
-    xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="20300003" id="com.gismartware.mobile" version="2.3.0-rc3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Smartgeo</name>
     <description>Smartgeo Mobile Application</description>
     <author email="dev@gismartware.com" href="http://www.gismartware.com">
@@ -79,9 +73,6 @@
         <preference name="BackupWebStorage" value="none" />
         <preference name="iosPersistentFileLocation" value="Library" />
     </platform>
-<<<<<<< HEAD
-=======
-    <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-screen-orientation" spec="git+https://github.com/apache/cordova-plugin-screen-orientation.git" />
     <plugin name="cordova-plugin-camera" spec="4.0.3">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="" />
@@ -89,6 +80,6 @@
     </plugin>
     <plugin name="uk.co.workingedge.phonegap.plugin.istablet" spec="1.2.0" />
     <plugin name="cordova-sqlite-ext" spec="^2.2.0" />
-    <engine name="android" spec="^6.3.0" />
->>>>>>> merge-2.2.6-sitere
+    <plugin name="cordova-plugin-file" spec="^6.0.1" />
+    <engine name="android" spec="~6.3.0" />
 </widget>
