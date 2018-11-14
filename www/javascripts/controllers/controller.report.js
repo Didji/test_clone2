@@ -511,12 +511,16 @@
             report.activity = report.activity.id;
             report.version = Smartgeo._SMARTGEO_MOBILE_VERSION;
 
-            // On vérifie l présence du parametre assets
-            if (report.assets && report.assets.constructor === Array) {
-                // On supprime les valeurs erronées
-                report.assets = report.assets.filter(function(n) {
-                    return !(n == undefined || n == "undefined" || n == "");
-                });
+            // Si les identifiants d'asset ne sont pas numérique ou si ils sont vides
+            if ("assets" in report && Array.isArray(report.assets)) {
+                for (i = report.assets.length - 1; i >= 0; i--) {
+                    if (isNaN(report.assets[i]) || report.assets[i] == "") {
+                        // On les retire du tableau
+                        report.assets.splice(i, 1);
+                    }
+                }
+            } else {
+                report.assets = [];
             }
 
             //On vérifie que l'ID mission soit valable

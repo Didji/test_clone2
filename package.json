@@ -3,11 +3,9 @@
   "version": "2.2.6",
   "displayName": "Smartgeo",
   "cordova": {
-    "platforms": [
-      "android"
-    ]
+    "platforms": []
   },
   "dependencies": {
-    "cordova-android": "~6.1.0"
+    "cordova-android": "^5.1.1"
   }
 }
