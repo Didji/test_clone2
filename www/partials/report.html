@@ -1,11 +1,12 @@
-<form name="reportForm" class="reportForm">
+<form name="reportForm" class="reportForm col-sm-10 col-md-10 col-sm-offset-1 col-md-offset-1">
     <h3>Compte rendu {{reportController.report.activity.label}}</h3>
     <button type="button" class="btn btn-default needPadding" ng-click="reportController.cancel()">
         <i class="fa fa-ban"></i>
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button type="submit" style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || (reportController.attachmentIsRequired && reportController.report.ged.length < 1)"
+        ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
         <i18n>_REPORT_SAVE</i18n>
@@ -22,13 +23,13 @@
             <div class="panel-body">
                 <div ng-repeat='field in tab.fields'>
                     <p ng-if="field.readonly" ng-show="field.visible !== false">
-                        <b class="ro-label">{{::field.label}}</b>
+                        <b class="ro-label" ng-bind-html="field.label"></b>
                         <span class="ro-value">{{::reportController.report.roFields[field.id]}}</span>
                     </p>
                     <div class="form-group" ng-if="!field.readonly && field.visible !== false" ng-form="validatorForm"
                         ng-class="{'isconsequence': field.visible}">
                         <label class="control-label" ng-class="{'prettycheckbox': (field.type === 'O') , checked : (field.type === 'O' && reportController.report.fields[field.id] === 'Y') }">
-                            <span>{{::field.label}}</span>
+                            <span ng-bind-html="field.label"></span>
                             <span class="required-marker fa fa-asterisk" ng-show="field.required"></span>
 
                             <span ng-if="::field.type=='O'">
@@ -111,19 +112,22 @@
         </div>
     </div>
 
-    <div ng-show="!reportForm.$valid" class="alert alert-danger">
-        <p ng-show="reportForm.$error.required">
+    <div ng-show="!reportForm.$valid || reportController.attachmentIsRequiredAndEmpty()" class="alert alert-danger">
+        <p ng-show="reportForm.$error.required || reportController.attachmentIsRequiredAndEmpty()">
             <span class="required-marker icon-asterisk"></span>
             <i18n>_REPORT_REQUIRED_FIELDS</i18n>
         </p>
     </div>
-    <div ng-show="rights.media" class="panel panel-default report">
+    <div ng-show="reportController.attachementIsVisible" class="panel report" ng-class="(reportController.attachmentIsRequired && reportController.report.ged.length < 1) ? 'panel-danger' : 'panel-default'">
         <div class="panel-heading">
             <h4 class="panel-title">
                 <i18n>_REPORT_MEDIA</i18n>
             </h4>
         </div>
         <div class="panel-body">
+            <div ng-show="(reportController.attachmentIsRequired && reportController.report.ged.length < 1)" class="panel text-danger">
+                <i18n>_REPORT_MEDIA_REQUIRED</i18n>
+            </div>
             <button ng-disabled="reportController.report.ged.length >= reportController._MAX_MEDIA_PER_REPORT || isTakingPhoto"
                 ng-click="reportController.getPictureFromCamera();" class='btn btn-default btn-block' ng-model='reportController.report.ged'>
                 <i18n ng-show='!isTakingPhoto'>_REPORT_ADD_PICTURES</i18n>
@@ -170,7 +174,8 @@
         <i18n>_REPORT_CANCEL</i18n>
     </button>
     <button style="white-space:normal;" class="btn btn-primary has-spinner needPadding" ng-class='{active:reportController.sendingReport}'
-        ng-disabled="!reportForm.$valid || reportController.sendingReport" ng-click="reportController.sendReport()">
+        ng-disabled="!reportForm.$valid || reportController.sendingReport || (reportController.attachmentIsRequired && reportController.report.ged.length < 1)"
+        ng-click="reportController.sendReport()">
         <span class="icon-save"></span>
         <i class="fa fa-save"></i>
         <i18n>_REPORT_SAVE</i18n>

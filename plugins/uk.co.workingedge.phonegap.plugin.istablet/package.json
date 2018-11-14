@@ -1,40 +1,68 @@
 {
-    "version": "1.1.0",
+  "_from": "uk.co.workingedge.phonegap.plugin.istablet",
+  "_id": "uk.co.workingedge.phonegap.plugin.istablet@1.2.0",
+  "_inBundle": false,
+  "_integrity": "sha1-PJ2KJAv5zsrEAz56wdqHr3MrPkU=",
+  "_location": "/uk.co.workingedge.phonegap.plugin.istablet",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "uk.co.workingedge.phonegap.plugin.istablet",
     "name": "uk.co.workingedge.phonegap.plugin.istablet",
-    "cordova_name": "Is Tablet",
-    "description": "Cordova/Phonegap plugin to determine if current device is a tablet.",
-    "author": "Dave Alden",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/dpa99c/phonegap-istablet.git"
-    },
-    "cordova": {
-        "id": "uk.co.workingedge.phonegap.plugin.istablet",
-        "platforms": [
-          "android",
-          "ios"
-        ]
-    },
-    "issue": "https://github.com/dpa99c/phonegap-istablet/issues",
-    "keywords": [
-        "ecosystem:cordova",
-        "cordova",
-        "phonegap",
-        "ios",
-        "android",
-        "tablet",
-        "phone",
-        "mobile",
-        "cellphone",
-        "detect",
-        "screen size",
-        "display"
-    ],
-    "engines": [
-        {
-            "name": "cordova",
-            "version": ">=3.0.0"
-        }
+    "escapedName": "uk.co.workingedge.phonegap.plugin.istablet",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/uk.co.workingedge.phonegap.plugin.istablet/-/uk.co.workingedge.phonegap.plugin.istablet-1.2.0.tgz",
+  "_shasum": "3c9d8a240bf9cecac4033e7ac1da87af732b3e45",
+  "_spec": "uk.co.workingedge.phonegap.plugin.istablet",
+  "_where": "D:\\SMARTGEOMOBILE\\smartgeomobile",
+  "author": {
+    "name": "Dave Alden"
+  },
+  "bugs": {
+    "url": "https://github.com/dpa99c/phonegap-istablet/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "uk.co.workingedge.phonegap.plugin.istablet",
+    "platforms": [
+      "android",
+      "ios",
+      "windows"
     ]
+  },
+  "cordova_name": "Is Tablet",
+  "deprecated": false,
+  "description": "Cordova/Phonegap plugin to determine if current device is a tablet.",
+  "homepage": "https://github.com/dpa99c/phonegap-istablet#readme",
+  "issue": "https://github.com/dpa99c/phonegap-istablet/issues",
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova",
+    "phonegap",
+    "ios",
+    "android",
+    "tablet",
+    "phone",
+    "mobile",
+    "cellphone",
+    "detect",
+    "screen size",
+    "display"
+  ],
+  "license": "MIT",
+  "name": "uk.co.workingedge.phonegap.plugin.istablet",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dpa99c/phonegap-istablet.git"
+  },
+  "types": "./uk.co.workingedge.phonegap.plugin.istablet.d.ts",
+  "version": "1.2.0"
 }

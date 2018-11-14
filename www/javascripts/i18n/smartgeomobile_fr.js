@@ -48,6 +48,9 @@ window.smartgeo_i18n_lang.fr = {
     _CONSULTATION_GOTO: "S'y rendre",
     _CONSULTATION_REPORT_ON_POSITION: "Compte rendu sur cette position",
     _CONSULTATION_ADD_POSITION_TO_CURRENT_TOUR: "Ajouter cette position à la tournée",
+    _GPS_PERMISSION_DENIED_:
+        "L'application n'est pas autorisé à utiliser la fonctionnalité de localisation, veuillez configurer les autorisations dans les paramètres Android. Voulez-vous continuer la création du Compte rendu ?",
+    _CONSULTATION_GPS_: "Récupération des données GPS en cours...",
     _CONSULTATION_GPS_FAIL: "Erreur lors de la récupération des coordonnées GPS",
     _CONSULTATION_ADD_TO_: "Ajouter à ",
     _CONSULTATION_WRITE_FOR_: "Saisir pour ",
@@ -91,6 +94,8 @@ window.smartgeo_i18n_lang.fr = {
     _REPORT_PREVIOUS: "Précedent",
     _REPORT_DELETE: "Supprimer",
     _REPORT_MEDIA: "Média",
+    _REPORT_MEDIA_REQUIRED:
+        "L'ajout d'un multimédia est obligatoire pour la création de ce compte-rendu, veuillez prendre ou joindre une photo.",
     _REPORT_SELECT_ACTIVITY: "Sélection de l'activité",
     _REPORT_REQUIRED_FIELDS: "Certains champs obligatoires ne sont pas renseignés.",
     _REPORT_ADD_PICTURES_FROM_GALLERY: "Ajouter une photo depuis la galerie",
@@ -166,6 +171,7 @@ window.smartgeo_i18n_lang.fr = {
     _PLANNING_DISPLAY_DONE_ASSETS_: "Afficher objets terminés",
     _PLANNING_LOCATE_: "Localiser",
     _PLANNING_WRITE_: "CR",
+    _PLANNING_WRITE_NOT_FOUND_: "Vous ne possedez pas les droits à l'ouverture de ce CR",
     _PLANNING_FINISH_: "terminé",
     _PLANNING_REFRESHED_: "Actualisé il y a ",
     _PLANNING_DISPLAY_FINISHED_: "Afficher les OT terminés",

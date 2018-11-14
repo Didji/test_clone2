@@ -552,10 +552,35 @@
         }
 
         $scope.$on("HIGHLIGHT_ASSETS_FOR_MISSION", function(event, mission, assetsCache, marker, clickHandler) {
-            if (!missionsClusters[mission.id]) {
-                missionsClusters[mission.id] = new L.MarkerClusterGroup(MarkerClusterGroupOptions);
-            }
+            missionsClusters[mission.id] =
+                missionsClusters[mission.id] || new L.MarkerClusterGroup(MarkerClusterGroupOptions);
+
+            // Création d'une liste de GUID valide sans doublon
+            var guid_list = [];
             for (var i = 0; i < assetsCache.length; i++) {
+                if (assetsCache[i] !== undefined && "guid" in assetsCache[i]) {
+                    if (guid_list.indexOf(assetsCache[i].guid) > -1) {
+                        delete assetsCache[i];
+                    } else {
+                        guid_list.push(assetsCache[i].guid);
+                    }
+                } else {
+                    delete assetsCache[i];
+                }
+            }
+
+            // Nettoyage des doublons dans l'assetsCache
+            var newAssetsCache = [];
+            for (var i = 0; i < assetsCache.length; i++) {
+                if (assetsCache[i]) {
+                    newAssetsCache.push(assetsCache[i]);
+                }
+            }
+            assetsCache = newAssetsCache;
+
+            for (var i = 0; i < assetsCache.length; i++) {
+                // Initialisation de la selection à faux, notamment en cas de récupération d'une selection existante
+                assetsCache[i].selected = false;
                 if (assetsCache[i].marker) {
                     if (
                         mission.assets.indexOf(assetsCache[i].guid) === -1 &&
@@ -568,28 +593,49 @@
                         missionsClusters[mission.id].removeLayer("" + assetsCache[i].marker);
                         continue;
                     }
+                    //pas besoin de continuer la boucle pour cet asset
                     continue;
                 }
+
+                //Réutilisation du marker si présent
+                assetsCache[i].marker =
+                    assetsCache[i].marker ||
+                    new L.marker([assetsCache[i].geometry.coordinates[1], assetsCache[i].geometry.coordinates[0]]);
+
+                //traitement spéciale pour les LineString
                 if (assetsCache[i].geometry.type === "LineString") {
-                    assetsCache[i].geometry.coordinates = assetsCache[i].geometry.coordinates[0];
+                    // On selectionne le centre de la lineString.
+                    // En cas de multi-lignes, il s'agit du centre surfacique
+                    // TODO : Prévoir la prise en compte de chemins de câbles plus complexe
+                    assetsCache[i].geometry.coordinates = [
+                        (assetsCache[i]["xmax"] + assetsCache[i]["xmin"]) / 2,
+                        (assetsCache[i]["ymax"] + assetsCache[i]["ymin"]) / 2
+                    ];
                 }
+
                 assetsCache[i].marker = L.marker([
                     assetsCache[i].geometry.coordinates[1],
                     assetsCache[i].geometry.coordinates[0]
                 ]);
                 if (assetsCache[i].selected) {
+                    // Si le curseur est selectionné
                     assetsCache[i].marker.setIcon(Icon.get("SELECTED_MISSION"));
-                } else if (
-                    !mission.activity ||
-                    (mission.activity && Site.current.activities._byId[mission.activity.id].type !== "night_tour")
-                ) {
-                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
-                } else if (
-                    mission.activity &&
-                    Site.current.activities._byId[mission.activity.id].type === "night_tour"
-                ) {
-                    assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_NIGHTTOUR"));
+                } else {
+                    // si le curseur n'est pas selectionné
+                    try {
+                        if (Site.current.activities._byId[mission.activity.id]["type"] == "night_tour") {
+                            assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_NIGHTTOUR"));
+                        } else {
+                            assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
+                        }
+                    } catch (error) {
+                        // En cas de TypeError, c'est que le type d'activité n'est pas définit
+                        // il s'agit donc d'une activité standard.
+                        assetsCache[i].marker.setIcon(Icon.get("NON_SELECTED_MISSION"));
+                    }
                 }
+                missionsClusters[mission.id].addLayer(assetsCache[i].marker);
+
                 (function(i, marker) {
                     marker.on("click", function() {
                         clickHandler(mission.id, i);

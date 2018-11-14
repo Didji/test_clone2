@@ -16,7 +16,9 @@
         "$interval",
         "Site",
         "Asset",
-        "Synchronizator"
+        "Synchronizator",
+        "GPS",
+        "Activity"
     ];
 
     /**
@@ -36,7 +38,9 @@
         $interval,
         Site,
         Asset,
-        Synchronizator
+        Synchronizator,
+        GPS,
+        Activity
     ) {
         var vm = this;
 
@@ -533,25 +537,86 @@
          * @desc Open report with concerned assets
          */
         function showReport(mission) {
+            console.log(mission);
             var selectedAssets = [];
-            for (var i = 0, assetsLength = assetsCache[mission.id].length; i < assetsLength; i++) {
-                if (assetsCache[mission.id][i].selected) {
-                    selectedAssets.push(assetsCache[mission.id][i].guid);
+
+            // Flag autorisant l'ouverture du formulaire CR
+            var _OK = true;
+            // Contrôle permettant de determiner si l'activité de l'OT est bien présente dans l'objet Activity
+            if (mission.activity) {
+                _OK = !!Activity.findOne(mission.activity.id);
+            } else {
+                _OK = false;
+            }
+
+            if (!_OK) {
+                alertify.alert(i18n.get("_PLANNING_WRITE_NOT_FOUND_", mission.activity.label));
+            } else {
+                for (var i = 0; i < assetsCache[mission.id].length; i++) {
+                    //Si l'asset est undefined on l'ignore
+                    if (!assetsCache[mission.id][i]) {
+                        continue;
+                    }
+                    if (assetsCache[mission.id][i].selected) {
+                        selectedAssets.push(assetsCache[mission.id][i].guid);
+                    }
+                }
+                if (!!mission.gps_auto && selectedAssets.length === 1) {
+                    $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", true, i18n.get("_CONSULTATION_GPS_"));
+                    navigator.geolocation.getCurrentPosition(
+                        function(pos) {
+                            goToReport(mission, selectedAssets, [pos.coords.longitude, pos.coords.latitude]);
+                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
+                        },
+                        function(err) {
+                            $rootScope.$broadcast("SHOW_CR_FORM_SPINNER", false);
+                            alertify.confirm(i18n.get("_GPS_PERMISSION_DENIED_"), function(yes) {
+                                if (!yes) {
+                                    return;
+                                }
+                                goToReport(mission, selectedAssets);
+                            });
+                        },
+                        {
+                            // false permet a la geolocation d'utiliser des coordonées mise en cache précédemment
+                            enableHighAccuracy: false,
+                            // Si la geolocation utilise des coordonnées mise en cache, elles ne doivent pas être vieille de plus de 10s
+                            maximumAge: 10000,
+                            // On autorise un timeout de 5 secondes avant de déclencher une erreur
+                            timeout: 50000
+                        }
+                    );
+                } else {
+                    goToReport(mission, selectedAssets);
                 }
             }
+        }
+
+        /**
+         * Ouvre le formulaire de compte-rendu avec les paramètres nécessaires
+         *
+         */
+        function goToReport(mission, assets, position) {
+            if (assets.length === 1) {
+                assets = assets[0];
+            } else {
+                assets = assets.join("!");
+            }
+
+            if (position) {
+                assets += ";" + position.join(",");
+            }
+
             if (mission.activity) {
                 $location.path(
-                    "report/" +
-                        Site.current.id +
-                        "/" +
-                        mission.activity.id +
-                        "/" +
-                        selectedAssets.join("!") +
-                        "/" +
-                        mission.id
+                    "report/" + Site.current.id + "/" + mission.activity.id + "/" + assets + "/" + mission.id
                 );
             } else {
-                $location.path("report/" + Site.current.id + "//" + selectedAssets.join("!") + "/" + mission.id);
+                $location.path("report/" + Site.current.id + "//" + assets + "/" + mission.id);
+            }
+
+            if (!$scope.$$phase) {
+                $scope.$apply();
             }
         }
 

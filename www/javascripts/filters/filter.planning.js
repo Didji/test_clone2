@@ -160,8 +160,13 @@
                 if (!in_[i].activity) {
                     continue;
                 }
-                var isCompatible = Site.current.activities._byId[+in_[i].activity.id].okeys[0] === asset.okey;
-                var nightTour = Site.current.activities._byId[+in_[i].activity.id].type === "night_tour";
+                var act_id = in_[i].activity.id;
+                var isCompatible = false;
+                var nightTour = false;
+                if (act_id in Site.current.activities._byId) {
+                    isCompatible = Site.current.activities._byId[+act_id].okeys[0] === asset.okey;
+                    nightTour = Site.current.activities._byId[+in_[i].activity.id].type === "night_tour";
+                }
 
                 if (typeof in_[i].openned != "undefined" && in_[i].openned) {
                     for (var j in in_[i].assets) {

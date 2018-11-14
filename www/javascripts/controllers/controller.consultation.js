@@ -124,6 +124,16 @@
                 addAssetToMultiselection(asset);
             });
 
+            $rootScope.$on("SHOW_CR_FORM_SPINNER", function(event, visibility, message) {
+                if (visibility) {
+                    $("#loading-message").html(message);
+                    angular.element("#appSpinner").show();
+                } else {
+                    $("#loading-message").html("");
+                    angular.element("#appSpinner").hide();
+                }
+            });
+
             $rootScope.$on("UPDATE_DROP_CONSULTATION_MULTISELECTION", function(event, asset) {
                 dropAssetFromMultiselection(asset);
             });
