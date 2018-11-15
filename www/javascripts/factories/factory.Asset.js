@@ -741,14 +741,14 @@
             var a = angular.copy(asset),
                 parsed;
             try {
-                parsed = a.asset ? JSON.parse(a.asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\")) : a;
+                parsed = a.asset ? JSON.parse(a.asset) : a;
                 return angular.extend(a, {
                     okey: parsed.okey,
                     attributes: parsed.attributes,
                     guid: a.id,
                     geometry: JSON.parse(a.geometry),
                     asset: undefined,
-                    label: a.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"),
+                    label: a.label,
                     project_status: parsed.project_status
                 });
             } catch (e) {
@@ -875,14 +875,11 @@
                 for (j = 0; j < fields_in_request.length; j++) {
                     request +=
                         " , '" +
-                        ((typeof values_in_request[j] === "string" && values_in_request[j].length) ||
-                        typeof values_in_request[j] !== "string"
+                        Utils.escapeSqlLite(((typeof values_in_request[j] === "string" && values_in_request[j].length) 
+                        || typeof values_in_request[j] !== "string"
                             ? JSON.stringify(values_in_request[j])
                             : ""
-                        )
-                            .replace(/^"(.+)"$/, "$1")
-                            .replace(/\\"/g, '"')
-                            .replace(/'/g, "&#039;") +
+                        )) +
                         "' as " +
                         fields_in_request[j];
                 }
@@ -1124,7 +1121,6 @@
                 function(rows) {
                     for (var i = 0; i < rows.length; i++) {
                         var asset = angular.copy(rows.item(i));
-                        asset.label = asset.label.replace(/&#039;/g, "'").replace(/\\\\/g, "\\");
                         asset.okey = Asset.sanitizeAsset(asset.asset).okey;
                         partial_response.push(asset);
                     }
@@ -1237,7 +1233,7 @@
          * @desc Sanitize asset eg. replace horrible characters
          */
         Asset.sanitizeAsset = function(asset) {
-            return JSON.parse(asset.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"));
+            return JSON.parse(asset);
         };
 
         /**

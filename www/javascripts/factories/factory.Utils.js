@@ -201,6 +201,16 @@
                 });
         };
 
+
+        /** 
+         * Echappe les carcatère spéciaux pour les requête SQL 
+         */
+        Utils.escapeSqlLite = function(string){
+            return string.replace(/^"(.+)"$/, "$1")
+                .replace(/\\"/g, '"')
+                .replace(/'/g, "''");
+        };
+
         return Utils;
     }
 })();

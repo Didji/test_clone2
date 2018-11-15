@@ -1,4 +1,4 @@
-angular.module("smartgeomobile").factory("G3ME", function(SQLite, $rootScope, i18n, Storage, Site) {
+angular.module("smartgeomobile").factory("G3ME", function(SQLite, $rootScope, i18n, Storage, Site, Utils) {
     "use strict";
 
     var acos = Math.acos,
@@ -573,7 +573,7 @@ angular.module("smartgeomobile").factory("G3ME", function(SQLite, $rootScope, i1
                     }
 
                     labelCache.push({
-                        txt: asset.maplabel.replace(/&#039;/g, "'").replace(/\\\\/g, "\\"),
+                        txt: asset.maplabel,
                         x: _middlex,
                         y: _middley,
                         size: assetSymbology.label.size * 3,
@@ -612,7 +612,7 @@ angular.module("smartgeomobile").factory("G3ME", function(SQLite, $rootScope, i1
                 ctx.restore();
                 if (zoomUpper16 && asset.maplabel) {
                     labelCache.push({
-                        txt: asset.maplabel, //.replace( /&#039;/g, "'" ).replace( /\\\\/g, "\\" ), // FAUT FAIRE CA A L'INSTALL
+                        txt: asset.maplabel,
                         x: coord_x,
                         y: coord_y,
                         size: imageWidth != 0 ? imageWidth : image.width,
