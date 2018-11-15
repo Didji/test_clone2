@@ -231,7 +231,6 @@
         function controllerDestroyHandler() {
             $rootScope.positionActive = !!GPS.positionListerners.length;
             GPS.emptyPositionListerners();
-            var realPosActivate = POSITION_ACTIVATE;
             stopPosition();
             G3ME.map.remove();
             document.getElementById(G3ME.mapDivId).parentNode.removeChild(document.getElementById(G3ME.mapDivId));
@@ -258,7 +257,7 @@
          * @param {Array} assets
          */
         function openPopupIfNeeded(coords, assets) {
-            var popup, okey;
+            var okey;
             var popupContent = "";
 
             if (!assets.length) {
@@ -606,7 +605,7 @@
                 if (assetsCache[i].geometry.type === "LineString") {
                     // On selectionne le centre de la lineString.
                     // En cas de multi-lignes, il s'agit du centre surfacique
-                    // TODO : Prévoir la prise en compte de chemins de câbles plus complexe
+                    // TODO: Prévoir la prise en compte de chemins de câbles plus complexe
                     assetsCache[i].geometry.coordinates = [
                         (assetsCache[i]["xmax"] + assetsCache[i]["xmin"]) / 2,
                         (assetsCache[i]["ymax"] + assetsCache[i]["ymin"]) / 2
